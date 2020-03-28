@@ -48,6 +48,7 @@ namespace Kaenx.Creator
             MenuVersion.IsEnabled = true;
             MenuDevices.IsEnabled = true;
             MenuPublish.IsEnabled = true;
+            TabsEdit.IsEnabled = true;
         }
 
         private void Changed(string name)
@@ -57,11 +58,11 @@ namespace Kaenx.Creator
 
         private void ClickAddVersion(object sender, RoutedEventArgs e)
         {
-            int newId = 0;
-            if (General.Versions.Count > 0)
-                newId = General.Versions[General.Versions.Count - 1].VersionNumber + 1;
+            //int newId = 0;
+            //if (General.Versions.Count > 0)
+            //    newId = General.Versions[General.Versions.Count - 1].VersionNumber + 1;
 
-            General.Versions.Add(new Models.AppVersion());
+            //General.Versions.Add(new Models.AppVersion());
         }
 
         private void Test(object sender, RoutedEventArgs e)

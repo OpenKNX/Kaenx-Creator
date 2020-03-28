@@ -40,18 +40,32 @@
             </MenuItem>
         </Menu>
 
-        <TabControl Grid.Row="1" Margin=" 0 10 0 0">
+        <TabControl x:Name="TabsEdit" Grid.Row="1" Margin=" 0 10 0 0" IsEnabled="False">
             <TabItem Header="Allgemein">
                 <StackPanel>
                     <HeaderedContentControl Header="Manufacturer ID">
                         <TextBox Text="{Binding General.ManufacturerId}" MaxLength="4" />
                     </HeaderedContentControl>
-
-                    <Button Content="Gerät hinzufügen" Margin="0 20 0 0" Click="ClickAddDevice" />
-                    <Button Content="Version hinzufügen" Margin="0 20 0 0" Click="ClickAddVersion" />
                 </StackPanel>
             </TabItem>
-            
+
+            <TabItem Header="Geräte">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="300" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Button Content="Hinzufügen" Click="ClickAddDevice" />
+
+                    <ListView Grid.Row="1" ItemsSource="{Binding General.Devices}" DisplayMemberPath="Name" />
+
+                    <StackPanel Grid.Column="1" Grid.RowSpan="2" />
+                </Grid>
+            </TabItem>
             
         </TabControl>
     </Grid>
