@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -42,13 +43,7 @@ namespace Kaenx.Creator
         private void ClickNew(object sender, RoutedEventArgs e)
         {
             General = new Models.ModelGeneral();
-
-            MenuSave.IsEnabled = true;
-            MenuClose.IsEnabled = true;
-            MenuVersion.IsEnabled = true;
-            MenuDevices.IsEnabled = true;
-            MenuPublish.IsEnabled = true;
-            TabsEdit.IsEnabled = true;
+            SetButtons(true);
         }
 
         private void Changed(string name)
@@ -83,6 +78,52 @@ namespace Kaenx.Creator
         private void ClickOpenDevice(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void ClickSave(object sender, RoutedEventArgs e)
+        {
+            foreach(Models.Device dev in General.Devices)
+            {
+                if (!dev.HasApplicationProgramm)
+                    dev.App = null;
+            }
+
+            string general = Newtonsoft.Json.JsonConvert.SerializeObject(General);
+
+            SaveFileDialog diag = new SaveFileDialog();
+            diag.FileName = General.ProjectName;
+            diag.Title = "Projekt speichern";
+            diag.Filter = "Kaenx hersteller Projekt|*.ae-manu";
+            
+            if(diag.ShowDialog() == true)
+            {
+                System.IO.File.WriteAllText(diag.FileName, general);
+            }
+        }
+
+        private void ClickOpen(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog diag = new OpenFileDialog();
+            diag.Title = "Projekt öffnen";
+            diag.Filter = "Kaenx hersteller Projekt|*.ae-manu";
+            if(diag.ShowDialog() == true)
+            {
+                string general = System.IO.File.ReadAllText(diag.FileName);
+                General = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.ModelGeneral>(general);
+                SetButtons(true);
+            }
+        }
+
+
+
+        private void SetButtons(bool enable)
+        {
+            MenuSave.IsEnabled = enable;
+            MenuClose.IsEnabled = enable;
+            MenuVersion.IsEnabled = enable;
+            MenuDevices.IsEnabled = enable;
+            MenuPublish.IsEnabled = enable;
+            TabsEdit.IsEnabled = enable;
         }
     }
 }

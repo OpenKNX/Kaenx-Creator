@@ -6,5 +6,6 @@ namespace Kaenx.Creator.Models
 {
     public class Application
     {
+        public string Name { get; set; } = "Taster 2-fach";
     }
 }

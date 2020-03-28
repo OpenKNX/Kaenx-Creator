@@ -16,8 +16,8 @@
         <Menu>
             <MenuItem Header="Projekt">
                 <MenuItem Header="Neu" Click="ClickNew"/>
-                <MenuItem Header="Öffnen" Click="Test" />
-                <MenuItem x:Name="MenuSave" IsEnabled="False" Header="Speichern" />
+                <MenuItem Header="Öffnen" Click="ClickOpen" />
+                <MenuItem x:Name="MenuSave" IsEnabled="False" Header="Speichern" Click="ClickSave" />
                 <MenuItem x:Name="MenuClose" IsEnabled="False" Header="Schließen" />
             </MenuItem>
             <MenuItem x:Name="MenuDevices" IsEnabled="False" Header="Geräte" Click="ClickOpenDevice" ItemsSource="{Binding General.Devices}">
@@ -46,6 +46,9 @@
                     <HeaderedContentControl Header="Manufacturer ID">
                         <TextBox Text="{Binding General.ManufacturerId}" MaxLength="4" />
                     </HeaderedContentControl>
+                    <HeaderedContentControl Header="Projekt Name">
+                        <TextBox Text="{Binding General.ProjectName}" />
+                    </HeaderedContentControl>
                 </StackPanel>
             </TabItem>
 
@@ -61,9 +64,39 @@
                     </Grid.ColumnDefinitions>
                     <Button Content="Hinzufügen" Click="ClickAddDevice" />
 
-                    <ListView Grid.Row="1" ItemsSource="{Binding General.Devices}" DisplayMemberPath="Name" />
+                    <ListView x:Name="DeviceList" Grid.Row="1" ItemsSource="{Binding General.Devices}" DisplayMemberPath="Alias" />
 
-                    <StackPanel Grid.Column="1" Grid.RowSpan="2" />
+                    <StackPanel Grid.Column="1" Grid.RowSpan="2" DataContext="{Binding ElementName=DeviceList, Path=SelectedItem}">
+                        <StackPanel.Resources>
+                            <Style TargetType="HeaderedContentControl">
+                                <Setter Property="Margin" Value="5" />
+                            </Style>
+                            <Style TargetType="CheckBox">
+                                <Setter Property="Margin" Value="5" />
+                            </Style>
+                            <Style TargetType="ComboBox">
+                                <Setter Property="Margin" Value="5" />
+                            </Style>
+                        </StackPanel.Resources>
+                        <HeaderedContentControl Header="Interner Name">
+                            <TextBox Text="{Binding Alias, UpdateSourceTrigger=PropertyChanged}" />
+                        </HeaderedContentControl>
+                        <HeaderedContentControl Header="Name">
+                            <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
+                        </HeaderedContentControl>
+                        <HeaderedContentControl Header="Ordernumber">
+                            <TextBox Text="{Binding OrderNumber}" />
+                        </HeaderedContentControl>
+                        <HeaderedContentControl Header="Busstrom">
+                            <TextBox Text="{Binding BusCurrent}" />
+                        </HeaderedContentControl>
+
+                        <CheckBox IsChecked="{Binding IsRailMounted}" Content="Ist ein REG" />
+                        <CheckBox IsChecked="{Binding HasApplicationProgramm}" Content="Hat ein Applikationsprogramm" />
+                        <CheckBox IsChecked="{Binding HasIndividualAddress, Mode=TwoWay}" Content="Hat eine Individuelle Adresse" />
+
+                        <ComboBox IsEnabled="{Binding HasApplicationProgramm, Mode=TwoWay}" SelectedItem="{Binding App}" ItemsSource="{Binding General.Applications, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" DisplayMemberPath="Name" />
+                    </StackPanel>
                 </Grid>
             </TabItem>
             
