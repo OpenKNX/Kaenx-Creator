@@ -20,13 +20,6 @@
                 <MenuItem x:Name="MenuSave" IsEnabled="False" Header="Speichern" Click="ClickSave" />
                 <MenuItem x:Name="MenuClose" IsEnabled="False" Header="Schließen" />
             </MenuItem>
-            <MenuItem x:Name="MenuDevices" IsEnabled="False" Header="Geräte" Click="ClickOpenDevice" ItemsSource="{Binding General.Devices}">
-                <MenuItem.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding Name}" />
-                    </DataTemplate>
-                </MenuItem.ItemTemplate>
-            </MenuItem>
             <MenuItem x:Name="MenuPublish" IsEnabled="False" Header="Veröffentlichen">
                 <MenuItem Header="Für ETS" />
                 <MenuItem Header="Für Kaenx" IsEnabled="False" />
@@ -40,7 +33,7 @@
                         <TextBox Text="{Binding General.ManufacturerId}" MaxLength="4" />
                     </HeaderedContentControl>
                     <HeaderedContentControl Header="Projekt Name">
-                        <TextBox Text="{Binding General.ProjectName}" />
+                        <TextBox Text="{Binding General.ProjectName, UpdateSourceTrigger=PropertyChanged}" />
                     </HeaderedContentControl>
                 </StackPanel>
             </TabItem>
@@ -52,14 +45,16 @@
                         <RowDefinition />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="300" />
+                        <ColumnDefinition Width="150" />
+                        <ColumnDefinition Width="150" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
-                    <Button Content="Hinzufügen" Click="ClickAddDevice" />
+                    <Button Content="Hinzufügen" Click="ClickAddDevice" Margin="0 0 1 2" />
+                    <Button Grid.Column="1" Content="Löschen" Click="ClickRemoveDevice" Margin="1 0 0 2" />
 
-                    <ListView x:Name="DeviceList" Grid.Row="1" ItemsSource="{Binding General.Devices}" DisplayMemberPath="Alias" />
+                    <ListView x:Name="DeviceList" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding General.Devices}" DisplayMemberPath="Alias" />
 
-                    <StackPanel Grid.Column="1" Grid.RowSpan="2" DataContext="{Binding ElementName=DeviceList, Path=SelectedItem}">
+                    <StackPanel Grid.Column="2" Grid.RowSpan="2" DataContext="{Binding ElementName=DeviceList, Path=SelectedItem}">
                         <StackPanel.Resources>
                             <Style TargetType="HeaderedContentControl">
                                 <Setter Property="Margin" Value="5" />
@@ -93,6 +88,81 @@
                 </Grid>
             </TabItem>
             
+            <TabItem Header="Applikationen">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="150" />
+                        <ColumnDefinition Width="150" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Button Content="Hinzufügen" Click="ClickAddApp" Margin="0 0 1 2" />
+                    <Button Grid.Column="1" Content="Löschen" Click="ClickRemoveApp" Margin="1 0 0 2" />
+
+                    <ListView x:Name="AppList" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding General.Applications}" DisplayMemberPath="Alias" />
+
+                    <Grid Grid.Column="2" Grid.RowSpan="2" DataContext="{Binding ElementName=AppList, Path=SelectedItem}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.ColumnSpan="2">
+                            <StackPanel.Resources>
+                                <Style TargetType="HeaderedContentControl">
+                                    <Setter Property="Margin" Value="5" />
+                                </Style>
+                                <Style TargetType="CheckBox">
+                                    <Setter Property="Margin" Value="5" />
+                                </Style>
+                                <Style TargetType="ComboBox">
+                                    <Setter Property="Margin" Value="5" />
+                                </Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Margin" Value="5" />
+                                </Style>
+                            </StackPanel.Resources>
+                            <HeaderedContentControl Header="Interner Name">
+                                <TextBox Text="{Binding Alias, UpdateSourceTrigger=PropertyChanged}" />
+                            </HeaderedContentControl>
+                            <HeaderedContentControl Header="Name">
+                                <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
+                            </HeaderedContentControl>
+                            <HeaderedContentControl Header="Nummer">
+                                <TextBox Text="{Binding Number}" />
+                            </HeaderedContentControl>
+                            <HeaderedContentControl Header="Busstrom">
+                                <TextBox Text="{Binding BusCurrent}" />
+                            </HeaderedContentControl>
+                        </StackPanel>
+
+                        <TextBlock Grid.Row="1" Text="Versionen:" Margin="5" />
+
+                        <Button Grid.Row="2" Content="Version hinzufügen" Click="ClickAddVersion" Margin="5 5 2.5 2" />
+                        <Button Grid.Row="2" Grid.Column="1" Content="Version Löschen" Click="ClickRemoveVersion" Margin="2.5 5 5 2" />
+
+                        <ListView x:Name="VersionList" Grid.Row="3" Grid.ColumnSpan="2" ItemsSource="{Binding Versions}" DisplayMemberPath="VersionText" Margin="5 5 5 0" />
+                    </Grid>
+                </Grid>
+            </TabItem>
+
+            <TabItem DataContext="{Binding ElementName=VersionList, Path=SelectedItem}">
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding ElementName=AppList, Path=SelectedItem.Name}" Margin="0 0 5 0" />
+                        <TextBlock Text="{Binding VersionText}" />
+                    </StackPanel>
+                </TabItem.Header>
+            </TabItem>
         </TabControl>
     </Grid>
 </Window>

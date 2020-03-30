@@ -23,7 +23,7 @@ namespace Kaenx.Creator
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
         private Models.ModelGeneral _general;
-
+        private string filePath = "";
 
         public Models.ModelGeneral General
         {
@@ -51,33 +51,63 @@ namespace Kaenx.Creator
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
-        private void ClickAddVersion(object sender, RoutedEventArgs e)
-        {
-            //int newId = 0;
-            //if (General.Versions.Count > 0)
-            //    newId = General.Versions[General.Versions.Count - 1].VersionNumber + 1;
 
-            //General.Versions.Add(new Models.AppVersion());
-        }
-
-        private void Test(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void ClickOpenVersion(object sender, RoutedEventArgs e)
-        {
-
-        }
 
         private void ClickAddDevice(object sender, RoutedEventArgs e)
         {
             General.Devices.Add(new Models.Device());
         }
 
-        private void ClickOpenDevice(object sender, RoutedEventArgs e)
+        private void ClickRemoveDevice(object sender, RoutedEventArgs e)
         {
+            if(DeviceList.SelectedItem == null) return;
 
+            Models.Device dev = DeviceList.SelectedItem as Models.Device;
+            General.Devices.Remove(dev);
+        }
+
+        private void ClickAddVersion(object sender, RoutedEventArgs e)
+        {
+            Models.Application app = AppList.SelectedItem as Models.Application;
+            Models.AppVersion newVer = new Models.AppVersion();
+
+            if(app.Versions.Count > 0){
+                Models.AppVersion ver = app.Versions.OrderByDescending(v => v.Number).ElementAt(0);
+                newVer.Number = ver.Number + 1;
+            }
+
+            app.Versions.Add(newVer);
+        }
+
+        private void ClickRemoveVersion(object sender, RoutedEventArgs e)
+        {
+            if(AppList.SelectedItem == null || VersionList.SelectedItem == null) return;
+
+            Models.Application app = AppList.SelectedItem as Models.Application;
+            Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
+
+            app.Versions.Remove(ver);
+        }
+
+        private void ClickAddApp(object sender, RoutedEventArgs e)
+        {
+            Models.Application newApp = new Models.Application();
+            newApp.Versions.Add(new Models.AppVersion());
+            
+            if(General.Applications.Count > 0){
+                Models.Application app = General.Applications.OrderByDescending(a => a.Number).ElementAt(0);
+                newApp.Number = app.Number + 1;
+            }
+
+            General.Applications.Add(newApp);
+        }
+
+        private void ClickRemoveApp(object sender, RoutedEventArgs e)
+        {
+            if(AppList.SelectedItem == null) return;
+
+            Models.Application app = AppList.SelectedItem as Models.Application;
+            General.Applications.Remove(app);
         }
 
         private void ClickSave(object sender, RoutedEventArgs e)
@@ -90,14 +120,20 @@ namespace Kaenx.Creator
 
             string general = Newtonsoft.Json.JsonConvert.SerializeObject(General);
 
+            if(filePath != "") {
+                System.IO.File.WriteAllText(filePath, general);
+                return;
+            }
+
             SaveFileDialog diag = new SaveFileDialog();
             diag.FileName = General.ProjectName;
             diag.Title = "Projekt speichern";
-            diag.Filter = "Kaenx hersteller Projekt|*.ae-manu";
+            diag.Filter = "Kaenx Hersteller Projekt (*.ae-manu)|*.ae-manu";
             
             if(diag.ShowDialog() == true)
             {
                 System.IO.File.WriteAllText(diag.FileName, general);
+                filePath = diag.FileName;
             }
         }
 
@@ -105,11 +141,12 @@ namespace Kaenx.Creator
         {
             OpenFileDialog diag = new OpenFileDialog();
             diag.Title = "Projekt öffnen";
-            diag.Filter = "Kaenx hersteller Projekt|*.ae-manu";
+            diag.Filter = "Kaenx Hersteller Projekt (*.ae-manu)|*.ae-manu";
             if(diag.ShowDialog() == true)
             {
                 string general = System.IO.File.ReadAllText(diag.FileName);
                 General = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.ModelGeneral>(general);
+                filePath = diag.FileName;
                 SetButtons(true);
             }
         }
@@ -120,8 +157,6 @@ namespace Kaenx.Creator
         {
             MenuSave.IsEnabled = enable;
             MenuClose.IsEnabled = enable;
-            MenuVersion.IsEnabled = enable;
-            MenuDevices.IsEnabled = enable;
             MenuPublish.IsEnabled = enable;
             TabsEdit.IsEnabled = enable;
         }
