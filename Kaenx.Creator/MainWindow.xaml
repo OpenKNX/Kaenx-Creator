@@ -27,16 +27,9 @@
                     </DataTemplate>
                 </MenuItem.ItemTemplate>
             </MenuItem>
-            <MenuItem x:Name="MenuVersion" IsEnabled="False" Header="Versionen" Click="ClickOpenVersion" ItemsSource="{Binding General.Versions}">
-                <MenuItem.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding VersionText}" />
-                    </DataTemplate>
-                </MenuItem.ItemTemplate>
-            </MenuItem>
             <MenuItem x:Name="MenuPublish" IsEnabled="False" Header="Veröffentlichen">
                 <MenuItem Header="Für ETS" />
-                <MenuItem Header="Für Kaenx" />
+                <MenuItem Header="Für Kaenx" IsEnabled="False" />
             </MenuItem>
         </Menu>
 
