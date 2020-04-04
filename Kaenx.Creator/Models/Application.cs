@@ -7,7 +7,6 @@ namespace Kaenx.Creator.Models
 {
     public class Application
     {
-        public string Alias { get; set; } = "Dummy";
         public string Name { get; set; } = "Dummy";
         public int Number { get; set; } = 1;
 

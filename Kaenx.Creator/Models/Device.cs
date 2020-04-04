@@ -6,7 +6,6 @@ namespace Kaenx.Creator.Models
 {
     public class Device
     {
-        public string Alias { get; set; } = "Dummy";
         public string Name { get; set; } = "Dummy";
         public string OrderNumber { get; set; } = "TA-00002.1";
         public string Description { get; set; } = "Dummy Einbautaster 2-fach";
@@ -15,6 +14,6 @@ namespace Kaenx.Creator.Models
         public bool HasIndividualAddress { get; set; } = true;
         public bool HasApplicationProgramm { get; set; } = true;
 
-        public Application App { get; set; }
+        public int AppNumber { get; set; }
     }
 }

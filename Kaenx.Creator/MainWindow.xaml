@@ -52,7 +52,7 @@
                     <Button Content="Hinzufügen" Click="ClickAddDevice" Margin="0 0 1 2" />
                     <Button Grid.Column="1" Content="Löschen" Click="ClickRemoveDevice" Margin="1 0 0 2" />
 
-                    <ListView x:Name="DeviceList" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding General.Devices}" DisplayMemberPath="Alias" />
+                    <ListView x:Name="DeviceList" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding General.Devices}" DisplayMemberPath="Name" />
 
                     <StackPanel Grid.Column="2" Grid.RowSpan="2" DataContext="{Binding ElementName=DeviceList, Path=SelectedItem}">
                         <StackPanel.Resources>
@@ -66,9 +66,6 @@
                                 <Setter Property="Margin" Value="5" />
                             </Style>
                         </StackPanel.Resources>
-                        <HeaderedContentControl Header="Interner Name">
-                            <TextBox Text="{Binding Alias, UpdateSourceTrigger=PropertyChanged}" />
-                        </HeaderedContentControl>
                         <HeaderedContentControl Header="Name">
                             <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
                         </HeaderedContentControl>
@@ -83,7 +80,7 @@
                         <CheckBox IsChecked="{Binding HasApplicationProgramm}" Content="Hat ein Applikationsprogramm" />
                         <CheckBox IsChecked="{Binding HasIndividualAddress, Mode=TwoWay}" Content="Hat eine Individuelle Adresse" />
 
-                        <ComboBox IsEnabled="{Binding HasApplicationProgramm, Mode=TwoWay}" SelectedItem="{Binding App}" ItemsSource="{Binding General.Applications, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" DisplayMemberPath="Name" />
+                        <ComboBox IsEnabled="{Binding HasApplicationProgramm, Mode=TwoWay}" SelectedValue="{Binding AppNumber, Mode=TwoWay}" ItemsSource="{Binding General.Applications, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" DisplayMemberPath="Name" SelectedValuePath="Number" />
                     </StackPanel>
                 </Grid>
             </TabItem>
@@ -102,7 +99,7 @@
                     <Button Content="Hinzufügen" Click="ClickAddApp" Margin="0 0 1 2" />
                     <Button Grid.Column="1" Content="Löschen" Click="ClickRemoveApp" Margin="1 0 0 2" />
 
-                    <ListView x:Name="AppList" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding General.Applications}" DisplayMemberPath="Alias" />
+                    <ListView x:Name="AppList" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding General.Applications}" DisplayMemberPath="Name" />
 
                     <Grid Grid.Column="2" Grid.RowSpan="2" DataContext="{Binding ElementName=AppList, Path=SelectedItem}">
                         <Grid.RowDefinitions>
@@ -131,9 +128,6 @@
                                     <Setter Property="Margin" Value="5" />
                                 </Style>
                             </StackPanel.Resources>
-                            <HeaderedContentControl Header="Interner Name">
-                                <TextBox Text="{Binding Alias, UpdateSourceTrigger=PropertyChanged}" />
-                            </HeaderedContentControl>
                             <HeaderedContentControl Header="Name">
                                 <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
                             </HeaderedContentControl>
@@ -162,6 +156,48 @@
                         <TextBlock Text="{Binding VersionText}" />
                     </StackPanel>
                 </TabItem.Header>
+
+                <TabControl TabStripPlacement="Left">
+                    <TabItem Header="Speicher" />
+                
+                    <TabItem Header="ParameterTypes">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="300" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto" />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+
+                            <Button Content="Hinzufügen" Click="ClickAddParamType" />
+
+                            <ListView x:Name="ListParamTypes" Grid.Row="1" ItemsSource="{Binding ParameterTypes}" DisplayMemberPath="Name" />
+                        </Grid>
+                    </TabItem>
+                    
+
+                    <TabItem Header="Parameter">
+
+                    </TabItem>
+
+                    
+
+                    <TabItem Header="ParameterRefs">
+
+                    </TabItem>
+
+
+                    <TabItem Header="Comobjects">
+
+                    </TabItem>
+                    
+
+                    <TabItem Header="ComobjectRefs">
+
+                    </TabItem>
+                </TabControl>
             </TabItem>
         </TabControl>
     </Grid>

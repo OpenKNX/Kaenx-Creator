@@ -79,6 +79,12 @@ namespace Kaenx.Creator
             app.Versions.Add(newVer);
         }
 
+        private void ClickAddParamType(object sender, RoutedEventArgs e)
+        {
+            Models.AppVersion version = (sender as Button).DataContext as Models.AppVersion;
+            version.ParameterTypes.Add(new Models.ParameterType());
+        }
+
         private void ClickRemoveVersion(object sender, RoutedEventArgs e)
         {
             if(AppList.SelectedItem == null || VersionList.SelectedItem == null) return;
@@ -115,7 +121,7 @@ namespace Kaenx.Creator
             foreach(Models.Device dev in General.Devices)
             {
                 if (!dev.HasApplicationProgramm)
-                    dev.App = null;
+                    dev.AppNumber = -1;
             }
 
             string general = Newtonsoft.Json.JsonConvert.SerializeObject(General);
