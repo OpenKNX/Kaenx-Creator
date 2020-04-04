@@ -11,10 +11,13 @@ namespace Kaenx.Creator.Models
     }
 
     public enum ParameterTypes {
+        Text,
         Enum,
-        Number,
-        UNumber,
+        NumberUInt,
+        NumberInt,
+        Float9,
         Picture,
-        Text
+        None,
+        IpAdress
     }
 }

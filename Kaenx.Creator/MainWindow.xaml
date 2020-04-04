@@ -4,6 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Kaenx.Creator"
+        xmlns:models="clr-namespace:Kaenx.Creator.Models"
+        xmlns:System="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         Title="Kaenx Creator" Height="450" Width="800">
     
@@ -163,7 +165,8 @@
                     <TabItem Header="ParameterTypes">
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="300" />
+                                <ColumnDefinition Width="150" />
+                                <ColumnDefinition Width="150" />
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
@@ -171,9 +174,37 @@
                                 <RowDefinition />
                             </Grid.RowDefinitions>
 
-                            <Button Content="Hinzufügen" Click="ClickAddParamType" />
+                            <Button Content="Hinzufügen" Click="ClickAddParamType" Margin="0 0 1 2" />
+                            <Button Grid.Column="1" Content="Löschen" Click="ClickRemoveParamType" Margin="1 0 0 2" />
 
-                            <ListView x:Name="ListParamTypes" Grid.Row="1" ItemsSource="{Binding ParameterTypes}" DisplayMemberPath="Name" />
+                            <ListView x:Name="ListParamTypes" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding ParameterTypes}" DisplayMemberPath="Name" />
+
+                            <StackPanel Grid.Column="3" Grid.RowSpan="2" Margin="5" DataContext="{Binding ElementName=ListParamTypes, Path=SelectedItem}">
+                                <StackPanel.Resources>
+                                    <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+                                        <ObjectDataProvider.MethodParameters>
+                                            <x:Type TypeName="models:ParameterTypes"/>
+                                        </ObjectDataProvider.MethodParameters>
+                                    </ObjectDataProvider>
+                                    <Style TargetType="HeaderedContentControl">
+                                        <Setter Property="Margin" Value="5" />
+                                    </Style>
+                                    <Style TargetType="CheckBox">
+                                        <Setter Property="Margin" Value="5" />
+                                    </Style>
+                                    <Style TargetType="ComboBox">
+                                        <Setter Property="Margin" Value="5" />
+                                    </Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Margin" Value="5" />
+                                    </Style>
+                                    </StackPanel.Resources>
+                                <HeaderedContentControl Header="Type">
+                                    <ComboBox ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding Type, Mode=TwoWay}" />
+                                </HeaderedContentControl>
+
+
+                            </StackPanel>
                         </Grid>
                     </TabItem>
                     

@@ -85,6 +85,12 @@ namespace Kaenx.Creator
             version.ParameterTypes.Add(new Models.ParameterType());
         }
 
+        private void ClickRemoveParamType(object sender, RoutedEventArgs e)
+        {
+            Models.AppVersion version = (sender as Button).DataContext as Models.AppVersion;
+            version.ParameterTypes.Remove(null);
+        }
+
         private void ClickRemoveVersion(object sender, RoutedEventArgs e)
         {
             if(AppList.SelectedItem == null || VersionList.SelectedItem == null) return;
