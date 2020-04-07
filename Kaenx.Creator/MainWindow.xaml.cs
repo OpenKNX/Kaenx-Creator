@@ -164,6 +164,46 @@ namespace Kaenx.Creator
         }
 
 
+        private void ClickAddParamEnum(object sender, RoutedEventArgs e)
+        {
+            Models.ParameterType type = ListParamTypes.SelectedItem as Models.ParameterType;
+
+            type.Enums.Add(new Models.ParameterTypeEnum() { Name = "Name", Value = "Wert" });
+        }
+
+
+        private void ParamTypeChanged(object sender, SelectionChangedEventArgs e) 
+        {
+            Models.ParameterTypes type = (Models.ParameterTypes) (sender as ComboBox).SelectedItem;
+
+            if(type == Models.ParameterTypes.Enum)
+                Paramtype_Enum.Visibility = Visibility.Visible;
+            else
+                Paramtype_Enum.Visibility = Visibility.Collapsed;
+
+            if(type == Models.ParameterTypes.Float9 ||
+                type == Models.ParameterTypes.NumberInt ||
+                type == Models.ParameterTypes.NumberUInt)
+                Paramtype_MinMax.Visibility = Visibility.Visible;
+            else
+                Paramtype_MinMax.Visibility = Visibility.Collapsed;
+        }
+
+
+        private void ClickAddParam(object sender, RoutedEventArgs e)
+        {
+            Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
+            ver.Parameters.Add(new Models.Parameter());
+        }
+
+
+        private void ClickRemoveParam(object sender, RoutedEventArgs e)
+        {
+            Models.ParameterType type = ListParamTypes.SelectedItem as Models.ParameterType;
+
+            type.Enums.Add(new Models.ParameterTypeEnum() { Name = "Name", Value = "Wert" });
+        }
+
 
         private void SetButtons(bool enable)
         {

@@ -136,9 +136,6 @@
                             <HeaderedContentControl Header="Nummer">
                                 <TextBox Text="{Binding Number}" />
                             </HeaderedContentControl>
-                            <HeaderedContentControl Header="Busstrom">
-                                <TextBox Text="{Binding BusCurrent}" />
-                            </HeaderedContentControl>
                         </StackPanel>
 
                         <TextBlock Grid.Row="1" Text="Versionen:" Margin="5" />
@@ -198,19 +195,119 @@
                                     <Style TargetType="Button">
                                         <Setter Property="Margin" Value="5" />
                                     </Style>
+                                    <Style TargetType="ListView">
+                                        <Setter Property="Margin" Value="5" />
+                                    </Style>
                                     </StackPanel.Resources>
+                                    
+                                <HeaderedContentControl Header="Name">
+                                    <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+                                </HeaderedContentControl>
+                                <HeaderedContentControl Header="Größe in Bits">
+                                    <TextBox Text="{Binding SizeInBit, UpdateSourceTrigger=PropertyChanged}"/>
+                                </HeaderedContentControl>
                                 <HeaderedContentControl Header="Type">
-                                    <ComboBox ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding Type, Mode=TwoWay}" />
+                                    <ComboBox Margin="0 5" ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding Type, Mode=TwoWay}" SelectionChanged="ParamTypeChanged" />
                                 </HeaderedContentControl>
 
+                                <Grid x:Name="Paramtype_Enum" Visibility="Collapsed">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto" />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
 
+                                    <Button Content="Hinzufügen" Click="ClickAddParamEnum" />
+                                    <Button Grid.Column="1" Content="Löschen" />
+
+                                    <ListView Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding Enums}">
+                                        <ListView.ItemContainerStyle>
+                                            <Style TargetType="ListViewItem">
+                                                <Setter Property="HorizontalContentAlignment"  Value="Stretch"></Setter>
+                                            </Style>
+                                        </ListView.ItemContainerStyle>
+                                        <ListView.ItemTemplate>
+                                            <DataTemplate>
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition />
+                                                        <ColumnDefinition />
+                                                    </Grid.ColumnDefinitions>
+                                                    
+                                                    <TextBox Text="{Binding Name}" />
+                                                    <TextBox Grid.Column="1" Text="{Binding Value}" />
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ListView.ItemTemplate>
+                                    </ListView>
+                                </Grid>
+
+                                <StackPanel x:Name="Paramtype_MinMax" Visibility="Collapsed">
+                                    <HeaderedContentControl Header="Min">
+                                        <TextBox Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </HeaderedContentControl>
+                                    <HeaderedContentControl Header="Wert">
+                                        <TextBox Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </HeaderedContentControl>
+                                </StackPanel>
                             </StackPanel>
                         </Grid>
                     </TabItem>
                     
 
                     <TabItem Header="Parameter">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto" />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150" />
+                                <ColumnDefinition Width="150" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Button Content="Hinzufügen" Click="ClickAddParam" Margin="0 0 1 2" />
+                            <Button Grid.Column="1" Content="Löschen" Click="ClickRemoveParam" Margin="1 0 0 2" />
 
+                            <ListView x:Name="ParamList" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding Parameters}" DisplayMemberPath="Name" />
+                        
+                        
+                            <StackPanel Grid.Column="3" Grid.RowSpan="2" Margin="5" DataContext="{Binding ElementName=ParamList, Path=SelectedItem}">
+                                <StackPanel.Resources>
+                                    <Style TargetType="HeaderedContentControl">
+                                        <Setter Property="Margin" Value="5" />
+                                    </Style>
+                                    <Style TargetType="CheckBox">
+                                        <Setter Property="Margin" Value="5" />
+                                    </Style>
+                                    <Style TargetType="ComboBox">
+                                        <Setter Property="Margin" Value="5" />
+                                    </Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Margin" Value="5" />
+                                    </Style>
+                                    <Style TargetType="ListView">
+                                        <Setter Property="Margin" Value="5" />
+                                    </Style>
+                                    </StackPanel.Resources>
+                                    
+                                <HeaderedContentControl Header="Name">
+                                    <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+                                </HeaderedContentControl>
+                                <HeaderedContentControl Header="Text">
+                                    <TextBox Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}"/>
+                                </HeaderedContentControl>
+                                <HeaderedContentControl Header="Wert">
+                                    <TextBox Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}"/>
+                                </HeaderedContentControl>
+                                <HeaderedContentControl Header="Type">
+                                    <ComboBox Margin="0 5" ItemsSource="{Binding ElementName=ListParamTypes, Path=ItemsSource}" DisplayMemberPath="Name" SelectedValue="{Binding ParameterType}" SelectedValuePath="Name" />
+                                </HeaderedContentControl>
+                            </StackPanel>
+                        </Grid>
                     </TabItem>
 
                     

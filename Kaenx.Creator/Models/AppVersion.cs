@@ -9,6 +9,7 @@ namespace Kaenx.Creator.Models
     {
 
         public ObservableCollection<ParameterType> ParameterTypes { get; set; } = new ObservableCollection<ParameterType>();
+        public ObservableCollection<Parameter> Parameters { get; set; } = new ObservableCollection<Parameter>();
 
 
         public string VersionText { 
