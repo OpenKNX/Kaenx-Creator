@@ -199,9 +199,7 @@ namespace Kaenx.Creator
 
         private void ClickRemoveParam(object sender, RoutedEventArgs e)
         {
-            Models.ParameterType type = ListParamTypes.SelectedItem as Models.ParameterType;
-
-            type.Enums.Add(new Models.ParameterTypeEnum() { Name = "Name", Value = "Wert" });
+            
         }
 
 

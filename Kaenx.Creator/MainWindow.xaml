@@ -247,10 +247,10 @@
 
                                 <StackPanel x:Name="Paramtype_MinMax" Visibility="Collapsed">
                                     <HeaderedContentControl Header="Min">
-                                        <TextBox Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}"/>
+                                        <TextBox Text="{Binding Min, UpdateSourceTrigger=PropertyChanged}"/>
                                     </HeaderedContentControl>
-                                    <HeaderedContentControl Header="Wert">
-                                        <TextBox Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}"/>
+                                    <HeaderedContentControl Header="Max">
+                                        <TextBox Text="{Binding Max, UpdateSourceTrigger=PropertyChanged}"/>
                                     </HeaderedContentControl>
                                 </StackPanel>
                             </StackPanel>
