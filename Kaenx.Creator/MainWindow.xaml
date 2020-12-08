@@ -22,6 +22,10 @@
                 <MenuItem x:Name="MenuSave" IsEnabled="False" Header="Speichern" Click="ClickSave" />
                 <MenuItem x:Name="MenuClose" IsEnabled="False" Header="Schließen" />
             </MenuItem>
+            <MenuItem x:Name="MenuImport" IsEnabled="False" Header="Import">
+                <MenuItem Header="ETS Produktdatenbank" />
+                <MenuItem Header="Kaenx Produkt" IsEnabled="False" />
+            </MenuItem>
             <MenuItem x:Name="MenuPublish" IsEnabled="False" Header="Veröffentlichen">
                 <MenuItem Header="Für ETS" />
                 <MenuItem Header="Für Kaenx" IsEnabled="False" />

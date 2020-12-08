@@ -174,6 +174,7 @@ namespace Kaenx.Creator
 
         private void ParamTypeChanged(object sender, SelectionChangedEventArgs e) 
         {
+            if((sender as ComboBox).SelectedItem == null) return;
             Models.ParameterTypes type = (Models.ParameterTypes) (sender as ComboBox).SelectedItem;
 
             if(type == Models.ParameterTypes.Enum)
@@ -208,6 +209,7 @@ namespace Kaenx.Creator
             MenuSave.IsEnabled = enable;
             MenuClose.IsEnabled = enable;
             MenuPublish.IsEnabled = enable;
+            MenuImport.IsEnabled = enable;
             TabsEdit.IsEnabled = enable;
         }
     }
