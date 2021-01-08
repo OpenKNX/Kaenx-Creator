@@ -1,6 +1,8 @@
-﻿using Microsoft.Win32;
+﻿using Kaenx.Creator.Classes;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -14,6 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Xml.Linq;
 
 namespace Kaenx.Creator
 {
@@ -31,6 +34,13 @@ namespace Kaenx.Creator
             set { _general = value; Changed("General"); }
         }
 
+        private ObservableCollection<Models.MaskVersion> bcus;
+        public ObservableCollection<Models.MaskVersion> BCUs
+        {
+            get { return bcus; }
+            set { bcus = value; Changed("BCUs"); }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
 
@@ -38,6 +48,7 @@ namespace Kaenx.Creator
         {
             InitializeComponent();
             this.DataContext = this;
+            LoadBcus();
         }
 
         private void ClickNew(object sender, RoutedEventArgs e)
@@ -52,6 +63,67 @@ namespace Kaenx.Creator
         }
 
 
+        private void LoadBcus()
+        {
+            string jsonPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "maskversion.json");
+            string xmlPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "maskversion.xml");
+            if (System.IO.File.Exists(jsonPath))
+            {
+                BCUs = Newtonsoft.Json.JsonConvert.DeserializeObject<ObservableCollection<Models.MaskVersion>>(System.IO.File.ReadAllText(jsonPath));
+            } else
+            {
+                BCUs = new ObservableCollection<Models.MaskVersion>();
+                XDocument xdoc = XDocument.Load(xmlPath);
+                foreach(XElement xmask in xdoc.Root.Elements())
+                {
+                    Models.MaskVersion mask = new Models.MaskVersion();
+                    mask.Id = xmask.Attribute("Id").Value;
+
+                    string eleStr = xmask.ToString();
+                    if (eleStr.Contains("<Procedure ProcedureType=\"Load\""))
+                    {
+                        XElement prodLoad = xmask.Descendants(XName.Get("Procedure")).First(p => p.Attribute("ProcedureType")?.Value == "Load");
+                        if (prodLoad.ToString().Contains("<LdCtrlMerge"))
+                            mask.Procedure = Models.ProcedureTypes.Merge;
+                        else
+                            mask.Procedure = Models.ProcedureTypes.Default;
+                    } else
+                    {
+                        mask.Procedure = Models.ProcedureTypes.Application;
+                    }
+
+
+                    if(mask.Procedure != Models.ProcedureTypes.Application)
+                    {
+                        if (eleStr.Contains("<LdCtrlAbsSegment"))
+                        {
+                            mask.Memory = Models.MemoryTypes.Absolute;
+                        }
+                        else if (eleStr.Contains("<LdCtrlWriteRelMem"))
+                        {
+                            mask.Memory = Models.MemoryTypes.Relative;
+                        }
+                        else if (eleStr.Contains("<LdCtrlWriteMem"))
+                        {
+                            mask.Memory = Models.MemoryTypes.Relative;
+                        }
+                        else
+                        {
+                            continue;
+                        }
+                    }
+
+                    BCUs.Add(mask);
+                }
+
+                System.IO.File.WriteAllText(jsonPath, Newtonsoft.Json.JsonConvert.SerializeObject(BCUs));
+            }
+        }
+
+
+        #region Clicks
+
+        #region Clicks Add/Remove
 
         private void ClickAddDevice(object sender, RoutedEventArgs e)
         {
@@ -64,6 +136,20 @@ namespace Kaenx.Creator
 
             Models.Device dev = DeviceList.SelectedItem as Models.Device;
             General.Devices.Remove(dev);
+        }
+
+        private void ClickAddParamRef(object sender, RoutedEventArgs e)
+        {
+            Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
+            ver.ParameterRefs.Add(new Models.ParameterRef());
+        }
+
+        private void ClickRemoveParamRef(object sender, RoutedEventArgs e)
+        {
+            Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
+
+            Models.ParameterRef dev = ParamRefList.SelectedItem as Models.ParameterRef;
+            ver.ParameterRefs.Remove(dev);
         }
 
         private void ClickAddVersion(object sender, RoutedEventArgs e)
@@ -85,10 +171,22 @@ namespace Kaenx.Creator
             version.ParameterTypes.Add(new Models.ParameterType());
         }
 
+        private void ClickAddMemory(object sender, RoutedEventArgs e)
+        {
+            Models.AppVersion version = (sender as Button).DataContext as Models.AppVersion;
+            version.Memories.Add(new Models.Memory());
+        }
+
         private void ClickRemoveParamType(object sender, RoutedEventArgs e)
         {
             Models.AppVersion version = (sender as Button).DataContext as Models.AppVersion;
-            version.ParameterTypes.Remove(null);
+            version.ParameterTypes.Remove(ListParamTypes.SelectedItem as Models.ParameterType);
+        }
+
+        private void ClickRemoveMemory(object sender, RoutedEventArgs e)
+        {
+            Models.AppVersion version = (sender as Button).DataContext as Models.AppVersion;
+            version.Memories.Remove(ListMemories.SelectedItem as Models.Memory);
         }
 
         private void ClickRemoveVersion(object sender, RoutedEventArgs e)
@@ -122,14 +220,80 @@ namespace Kaenx.Creator
             General.Applications.Remove(app);
         }
 
+
+        private void ClickAddParamEnum(object sender, RoutedEventArgs e)
+        {
+            Models.ParameterType type = ListParamTypes.SelectedItem as Models.ParameterType;
+
+            type.Enums.Add(new Models.ParameterTypeEnum() { Name = "Name", Value = "Wert" });
+        }
+
+
+        private void ParamTypeChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if ((sender as ComboBox).SelectedItem == null) return;
+            Models.ParameterTypes type = (Models.ParameterTypes)(sender as ComboBox).SelectedItem;
+
+            if (type == Models.ParameterTypes.Enum)
+                Paramtype_Enum.Visibility = Visibility.Visible;
+            else
+                Paramtype_Enum.Visibility = Visibility.Collapsed;
+
+            if (type == Models.ParameterTypes.Float9 ||
+                type == Models.ParameterTypes.NumberInt ||
+                type == Models.ParameterTypes.NumberUInt)
+                Paramtype_MinMax.Visibility = Visibility.Visible;
+            else
+                Paramtype_MinMax.Visibility = Visibility.Collapsed;
+        }
+
+
+        private void ClickAddParam(object sender, RoutedEventArgs e)
+        {
+            Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
+            ver.Parameters.Add(new Models.Parameter());
+        }
+
+
+        private void ClickRemoveParam(object sender, RoutedEventArgs e)
+        {
+            Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
+            ver.Parameters.Remove(ParamList.SelectedItem as Models.Parameter);
+        }
+
+
+        private void ClickAddHardware(object sender, RoutedEventArgs e)
+        {
+            General.Hardware.Add(new Models.Hardware());
+        }
+
+
+        private void ClickRemoveHardware(object sender, RoutedEventArgs e)
+        {
+            General.Hardware.Remove(HardwareList.SelectedItem as Models.Hardware);
+        }
+
+        private void ClickAddHardwareApp(object sender, RoutedEventArgs e)
+        {
+            Models.Hardware hard = HardwareList.SelectedItem as Models.Hardware;
+            Models.HardwareApp happ = new Models.HardwareApp();
+            happ.AppObject = InHardwareApp.SelectedItem as Models.Application;
+            happ.AppVersionObject = InHardwareVer.SelectedItem as Models.AppVersion;
+            if (happ.AppObject == null || happ.AppVersionObject == null) return;
+            hard.Apps.Add(happ);
+        }
+
+
+        private void ClickRemoveHardwareApp(object sender, RoutedEventArgs e)
+        {
+            Models.Hardware hard = HardwareList.SelectedItem as Models.Hardware;
+            hard.Apps.Remove(HardwareAppList.SelectedItem as Models.HardwareApp);
+        }
+
+        #endregion
+
         private void ClickSave(object sender, RoutedEventArgs e)
         {
-            foreach(Models.Device dev in General.Devices)
-            {
-                if (!dev.HasApplicationProgramm)
-                    dev.AppNumber = -1;
-            }
-
             string general = Newtonsoft.Json.JsonConvert.SerializeObject(General);
 
             if(filePath != "") {
@@ -159,50 +323,46 @@ namespace Kaenx.Creator
                 string general = System.IO.File.ReadAllText(diag.FileName);
                 General = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.ModelGeneral>(general);
                 filePath = diag.FileName;
+
+                foreach(Models.Hardware hard in General.Hardware)
+                {
+                    hard.DeviceObject = General.Devices.Single(d => d.Name == hard.GetDevice());
+
+                    foreach(Models.HardwareApp happ in hard.Apps)
+                    {
+                        Models.Application mapp = General.Applications.Single(app => app.Name == happ.GetApp());
+                        happ.AppObject = mapp;
+                        Models.AppVersion mver = mapp.Versions.Single(ver => ver.Number == happ.GetVersion());
+                        happ.AppVersionObject = mver;
+                    }
+                }
+
+
+                SetSubCatalogItems(General.Catalog[0]);
+
                 SetButtons(true);
             }
         }
 
 
-        private void ClickAddParamEnum(object sender, RoutedEventArgs e)
+        private void SetSubCatalogItems(Models.CatalogItem parent)
         {
-            Models.ParameterType type = ListParamTypes.SelectedItem as Models.ParameterType;
+            foreach(Models.CatalogItem item in parent.Items)
+            {
+                item.Parent = parent;
 
-            type.Enums.Add(new Models.ParameterTypeEnum() { Name = "Name", Value = "Wert" });
+                if (!string.IsNullOrEmpty(item.GetHardwareName()))
+                {
+                    item.Hardware = General.Hardware.Single(h => h.Name == item.GetHardwareName());
+                    if(item.GetHardwareApp() != -1)
+                    {
+                        item.HardApp = item.Hardware.Apps.Single(h => h.AppVersionObject.Number == item.GetHardwareApp());
+                    }
+                }
+
+                SetSubCatalogItems(item);
+            }
         }
-
-
-        private void ParamTypeChanged(object sender, SelectionChangedEventArgs e) 
-        {
-            if((sender as ComboBox).SelectedItem == null) return;
-            Models.ParameterTypes type = (Models.ParameterTypes) (sender as ComboBox).SelectedItem;
-
-            if(type == Models.ParameterTypes.Enum)
-                Paramtype_Enum.Visibility = Visibility.Visible;
-            else
-                Paramtype_Enum.Visibility = Visibility.Collapsed;
-
-            if(type == Models.ParameterTypes.Float9 ||
-                type == Models.ParameterTypes.NumberInt ||
-                type == Models.ParameterTypes.NumberUInt)
-                Paramtype_MinMax.Visibility = Visibility.Visible;
-            else
-                Paramtype_MinMax.Visibility = Visibility.Collapsed;
-        }
-
-
-        private void ClickAddParam(object sender, RoutedEventArgs e)
-        {
-            Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
-            ver.Parameters.Add(new Models.Parameter());
-        }
-
-
-        private void ClickRemoveParam(object sender, RoutedEventArgs e)
-        {
-            
-        }
-
 
         private void SetButtons(bool enable)
         {
@@ -212,5 +372,69 @@ namespace Kaenx.Creator
             MenuImport.IsEnabled = enable;
             TabsEdit.IsEnabled = enable;
         }
+
+        private void ClickExportEts(object sender, RoutedEventArgs e)
+        {
+            ExportHelper helper = new ExportHelper();
+            helper.ExportEts(General);
+            helper.SignOutput();
+        }
+
+        private void ClickGenerateRefAuto(object sender, RoutedEventArgs e)
+        {
+            Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
+            ver.ParameterRefs.Clear();
+
+            foreach(Models.Parameter para in ver.Parameters)
+            {
+                Models.ParameterRef pref = new Models.ParameterRef();
+                pref.Name = para.Name + " - 1";
+                pref.ParameterId = para.Name;
+                ver.ParameterRefs.Add(pref);
+            }
+        }
+
+        private void HardwareAppChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Models.Application app = InHardwareApp.SelectedItem as Models.Application;
+            InHardwareVer.ItemsSource = app.Versions;
+        }
+
+        private void ClickExportSign(object sender, RoutedEventArgs e)
+        {
+            ExportHelper helper = new ExportHelper();
+            helper.SignOutput();
+        }
+
+        private void ClickTest(object sender, RoutedEventArgs e)
+        {
+            General.Catalog.Add(new Models.CatalogItem() { Name = "Allgemeine Geräte" });
+            General.Catalog[0].Items.Add(new Models.CatalogItem() { Name = "Sensoren", Parent = General.Catalog[0] });
+        }
+
+        private void ClickCatalogContext(object sender, RoutedEventArgs e)
+        {
+            Models.CatalogItem item = (sender as MenuItem).DataContext as Models.CatalogItem;
+            item.Items.Add(new Models.CatalogItem() { Name = "Neue Kategorie", Parent = item });
+        }
+
+        private void LoadedCatalogContext(object sender, RoutedEventArgs e)
+        {
+            ContextMenu menu = sender as ContextMenu;
+            Models.CatalogItem item = menu.DataContext as Models.CatalogItem;
+            
+            (menu.Items[0] as MenuItem).IsEnabled = item.IsSection;
+            (menu.Items[1] as MenuItem).IsEnabled = item.Parent != null;
+        }
+
+        private void ClickCatalogContextRemove(object sender, RoutedEventArgs e)
+        {
+            Models.CatalogItem item = (sender as MenuItem).DataContext as Models.CatalogItem;
+            item.Parent.Items.Remove(item);
+        }
+
+#endregion
+
+
     }
 }

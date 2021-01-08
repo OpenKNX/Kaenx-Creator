@@ -10,6 +10,8 @@ namespace Kaenx.Creator.Models
 
         public ObservableCollection<ParameterType> ParameterTypes { get; set; } = new ObservableCollection<ParameterType>();
         public ObservableCollection<Parameter> Parameters { get; set; } = new ObservableCollection<Parameter>();
+        public ObservableCollection<ParameterRef> ParameterRefs { get; set; } = new ObservableCollection<ParameterRef>();
+        public ObservableCollection<Memory> Memories { get; set; } = new ObservableCollection<Memory>();
 
 
         public string VersionText { 

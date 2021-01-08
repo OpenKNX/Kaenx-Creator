@@ -27,8 +27,10 @@
                 <MenuItem Header="Kaenx Produkt" IsEnabled="False" />
             </MenuItem>
             <MenuItem x:Name="MenuPublish" IsEnabled="False" Header="Veröffentlichen">
-                <MenuItem Header="Für ETS" />
+                <MenuItem Header="Für ETS" Click="ClickExportEts" />
                 <MenuItem Header="Für Kaenx" IsEnabled="False" />
+                <MenuItem Header="Nur signieren" Click="ClickExportSign" />
+                <MenuItem Header="Test" Click="ClickTest" />
             </MenuItem>
         </Menu>
 
@@ -42,6 +44,66 @@
                         <TextBox Text="{Binding General.ProjectName, UpdateSourceTrigger=PropertyChanged}" />
                     </HeaderedContentControl>
                 </StackPanel>
+            </TabItem>
+
+            <TabItem Header="Katalog">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition MaxWidth="250" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <TreeView Name="CatalogTree" ItemsSource="{Binding General.Catalog}">
+                        <TreeView.Resources>
+                            <HierarchicalDataTemplate DataType="{x:Type models:CatalogItem}" ItemsSource="{Binding Items}">
+                                <StackPanel Orientation="Horizontal">
+                                    <StackPanel.ContextMenu>
+                                        <ContextMenu Loaded="LoadedCatalogContext">
+                                            <MenuItem Header="Unterpunkt hinzufügen" Click="ClickCatalogContext"/>
+                                            <MenuItem Header="Entfernen" Click="ClickCatalogContextRemove"/>
+                                        </ContextMenu>
+                                    </StackPanel.ContextMenu>
+                                    <Image Source="/WpfTutorialSamples;component/Images/group.png" Margin="0,0,5,0" />
+                                    <TextBlock Text="{Binding Name}" />
+                                    <TextBlock Text=" [" Foreground="Blue" />
+                                    <TextBlock Text="{Binding Items.Count}" Foreground="Blue" />
+                                    <TextBlock Text="]" Foreground="Blue" />
+                                </StackPanel>
+                            </HierarchicalDataTemplate>
+                        </TreeView.Resources>
+                    </TreeView>
+
+                    <StackPanel Grid.Column="1" DataContext="{Binding ElementName=CatalogTree, Path=SelectedItem}">
+                        <StackPanel.Resources>
+                            <Style TargetType="HeaderedContentControl">
+                                <Setter Property="Margin" Value="5" />
+                            </Style>
+                            <Style TargetType="CheckBox">
+                                <Setter Property="Margin" Value="5" />
+                            </Style>
+                            <Style TargetType="ComboBox">
+                                <Setter Property="Margin" Value="5" />
+                            </Style>
+                        </StackPanel.Resources>
+                        <HeaderedContentControl Header="Name">
+                            <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
+                        </HeaderedContentControl>
+                        <HeaderedContentControl Header="Beschreibung">
+                            <TextBox Text="{Binding VisibleDescription, UpdateSourceTrigger=PropertyChanged}" />
+                        </HeaderedContentControl>
+                        <CheckBox IsChecked="{Binding IsSection}" Content="Element ist eine Kategorie" />
+
+
+                        <HeaderedContentControl Header="Hardware">
+                            <ComboBox Name="InCatalogHardware" Margin="0" ItemsSource="{Binding General.Hardware, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" SelectedItem="{Binding Hardware, Mode=TwoWay}" DisplayMemberPath="Name"/>
+                        </HeaderedContentControl>
+
+                        <HeaderedContentControl Header="Applikation">
+                            <ComboBox Margin="0" ItemsSource="{Binding ElementName=InCatalogHardware, Path=SelectedItem.Apps}" SelectedItem="{Binding HardApp, Mode=TwoWay}" DisplayMemberPath="DisplayText"/>
+                        </HeaderedContentControl>
+
+                    </StackPanel>
+                </Grid>
             </TabItem>
 
             <TabItem Header="Geräte">
@@ -75,22 +137,95 @@
                         <HeaderedContentControl Header="Name">
                             <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
                         </HeaderedContentControl>
-                        <HeaderedContentControl Header="Ordernumber">
+                        <HeaderedContentControl Header="Text">
+                            <TextBox Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                        </HeaderedContentControl>
+                        <HeaderedContentControl Header="Bestellnummer">
                             <TextBox Text="{Binding OrderNumber}" />
                         </HeaderedContentControl>
-                        <HeaderedContentControl Header="Busstrom">
-                            <TextBox Text="{Binding BusCurrent}" />
+                        <HeaderedContentControl Header="Beschreibung">
+                            <TextBox Text="{Binding Description}" />
                         </HeaderedContentControl>
 
                         <CheckBox IsChecked="{Binding IsRailMounted}" Content="Ist ein REG" />
-                        <CheckBox IsChecked="{Binding HasApplicationProgramm}" Content="Hat ein Applikationsprogramm" />
-                        <CheckBox IsChecked="{Binding HasIndividualAddress, Mode=TwoWay}" Content="Hat eine Individuelle Adresse" />
-
-                        <ComboBox IsEnabled="{Binding HasApplicationProgramm, Mode=TwoWay}" SelectedValue="{Binding AppNumber, Mode=TwoWay}" ItemsSource="{Binding General.Applications, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" DisplayMemberPath="Name" SelectedValuePath="Number" />
                     </StackPanel>
                 </Grid>
             </TabItem>
-            
+
+            <TabItem Header="Hardware">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition MaxWidth="125" />
+                        <ColumnDefinition MaxWidth="125" />
+                        <ColumnDefinition />
+                        <ColumnDefinition MaxWidth="125" />
+                        <ColumnDefinition MaxWidth="125" />
+                    </Grid.ColumnDefinitions>
+                    <Button Content="Hinzufügen" Click="ClickAddHardware" Margin="0 0 1 2" />
+                    <Button Grid.Column="1" Content="Löschen" Click="ClickRemoveHardware" Margin="1 0 0 2" />
+
+                    <ListView x:Name="HardwareList" Grid.Row="1" Grid.RowSpan="2" Grid.ColumnSpan="2" ItemsSource="{Binding General.Hardware}" DisplayMemberPath="Name" />
+
+                    <StackPanel Grid.RowSpan="3" Grid.Column="2" DataContext="{Binding ElementName=HardwareList, Path=SelectedItem}">
+                        <StackPanel.Resources>
+                            <Style TargetType="HeaderedContentControl">
+                                <Setter Property="Margin" Value="5" />
+                            </Style>
+                            <Style TargetType="CheckBox">
+                                <Setter Property="Margin" Value="5" />
+                            </Style>
+                            <Style TargetType="ComboBox">
+                                <Setter Property="Margin" Value="5" />
+                            </Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Margin" Value="5" />
+                            </Style>
+                        </StackPanel.Resources>
+                        <HeaderedContentControl Header="Name">
+                            <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
+                        </HeaderedContentControl>
+                        <HeaderedContentControl Header="Seriennummer">
+                            <TextBox Text="{Binding SerialNumber, UpdateSourceTrigger=PropertyChanged}" />
+                        </HeaderedContentControl>
+                        <HeaderedContentControl Header="Busstrom">
+                            <TextBox Text="{Binding BusCurrent, UpdateSourceTrigger=PropertyChanged}" />
+                        </HeaderedContentControl>
+                        <HeaderedContentControl Header="Gerät">
+                            <ComboBox Margin="0" ItemsSource="{Binding General.Devices, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" SelectedItem="{Binding DeviceObject, Mode=TwoWay}" DisplayMemberPath="Name"/>
+                        </HeaderedContentControl>
+                        <CheckBox IsChecked="{Binding HasIndividualAddress, Mode=TwoWay}" Content="Hat eine Individuelle Adresse" />
+                        <CheckBox IsChecked="{Binding IsPowerSupply, Mode=TwoWay}" Content="Gerät ist eine Spannungsversorgung" />
+                        <CheckBox IsChecked="{Binding IsCoppler, Mode=TwoWay}" Content="Gerät ist ein Koppler" />
+                        <CheckBox IsChecked="{Binding IsIpEnabled, Mode=TwoWay}" Content="Gerät kann KNXnet/IP" />
+
+                        <CheckBox IsChecked="{Binding HasApplicationProgram, Mode=TwoWay}" Content="Hat ein Applikationsprogramm" />
+                        <CheckBox IsChecked="{Binding HasApplicationProgram2, Mode=TwoWay}" Content="Hat ein zweites Applikationsprogramm" />
+                    </StackPanel>
+
+                    <ComboBox Name="InHardwareApp" Grid.Column="3" IsEnabled="{Binding ElementName=HardwareList, Path=SelectedItem.HasApplicationProgram}" SelectedValue="{Binding AppName, Mode=TwoWay}" ItemsSource="{Binding General.Applications, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" SelectionChanged="HardwareAppChanged" DisplayMemberPath="Name" SelectedValuePath="Name" />
+                    <ComboBox Name="InHardwareVer" Grid.Column="4" IsEnabled="{Binding ElementName=HardwareList, Path=SelectedItem.HasApplicationProgram}" SelectedValue="{Binding AppVersion, Mode=TwoWay}" DisplayMemberPath="VersionText" SelectedValuePath="Number" />
+
+                    <Button Grid.Row="1" Grid.Column="3" IsEnabled="{Binding ElementName=HardwareList, Path=SelectedItem.HasApplicationProgram}" Content="Hinzufügen" Click="ClickAddHardwareApp" Margin="0 2 1 2" />
+                    <Button Grid.Row="1" Grid.Column="4" IsEnabled="{Binding ElementName=HardwareList, Path=SelectedItem.HasApplicationProgram}" Content="Löschen" Click="ClickRemoveHardwareApp" Margin="1 2 0 2" />
+
+                    <ListView x:Name="HardwareAppList" Grid.Row="2" Grid.Column="3" Grid.ColumnSpan="2" IsEnabled="{Binding ElementName=HardwareList, Path=SelectedItem.HasApplicationProgram}" ItemsSource="{Binding ElementName=HardwareList, Path=SelectedItem.Apps}">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock>
+                                    <Run Text="{Binding AppObject.Name}" />
+                                    <Run Text="{Binding AppVersionObject.VersionText, Mode=OneTime}" />
+                                </TextBlock>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
+            </TabItem>
+
             <TabItem Header="Applikationen">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -140,6 +275,9 @@
                             <HeaderedContentControl Header="Nummer">
                                 <TextBox Text="{Binding Number}" />
                             </HeaderedContentControl>
+                            <HeaderedContentControl Header="BCU">
+                                <ComboBox SelectedItem="{Binding Mask, Mode=TwoWay}" Margin="0" DisplayMemberPath="Id" ItemsSource="{Binding BCUs, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
+                            </HeaderedContentControl>
                         </StackPanel>
 
                         <TextBlock Grid.Row="1" Text="Versionen:" Margin="5" />
@@ -161,8 +299,64 @@
                 </TabItem.Header>
 
                 <TabControl TabStripPlacement="Left">
-                    <TabItem Header="Speicher" />
-                
+                    <TabItem Header="Speicher">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150" />
+                                <ColumnDefinition Width="150" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto" />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+
+                            <Button Content="Hinzufügen" Click="ClickAddMemory" Margin="0 0 1 2" />
+                            <Button Grid.Column="1" Content="Löschen" Click="ClickRemoveMemory" Margin="1 0 0 2" />
+
+                            <ListView x:Name="ListMemories" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding Memories}" DisplayMemberPath="Name" />
+
+                            <StackPanel Grid.Column="3" Grid.RowSpan="2" Margin="5" DataContext="{Binding ElementName=ListMemories, Path=SelectedItem}">
+                                <StackPanel.Resources>
+                                    <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+                                        <ObjectDataProvider.MethodParameters>
+                                            <x:Type TypeName="models:MemoryTypes"/>
+                                        </ObjectDataProvider.MethodParameters>
+                                    </ObjectDataProvider>
+                                    <Style TargetType="HeaderedContentControl">
+                                        <Setter Property="Margin" Value="5" />
+                                    </Style>
+                                    <Style TargetType="CheckBox">
+                                        <Setter Property="Margin" Value="5" />
+                                    </Style>
+                                    <Style TargetType="ComboBox">
+                                        <Setter Property="Margin" Value="5" />
+                                    </Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Margin" Value="5" />
+                                    </Style>
+                                    <Style TargetType="ListView">
+                                        <Setter Property="Margin" Value="5" />
+                                    </Style>
+                                </StackPanel.Resources>
+
+                                <HeaderedContentControl Header="Name">
+                                    <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+                                </HeaderedContentControl>
+                                <HeaderedContentControl Header="SpeicherTyp">
+                                    <ComboBox Margin="0 5" ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding Type, Mode=TwoWay}" />
+                                </HeaderedContentControl>
+                                <HeaderedContentControl Header="Adresse">
+                                    <TextBox Text="{Binding Address, UpdateSourceTrigger=PropertyChanged}"/>
+                                </HeaderedContentControl>
+                                <HeaderedContentControl Header="Größe">
+                                    <TextBox Text="{Binding Size, UpdateSourceTrigger=PropertyChanged}"/>
+                                </HeaderedContentControl>
+                            </StackPanel>
+
+                        </Grid>
+                    </TabItem>
+
                     <TabItem Header="ParameterTypes">
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -277,47 +471,120 @@
                             <Button Grid.Column="1" Content="Löschen" Click="ClickRemoveParam" Margin="1 0 0 2" />
 
                             <ListView x:Name="ParamList" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding Parameters}" DisplayMemberPath="Name" />
-                        
-                        
-                            <StackPanel Grid.Column="3" Grid.RowSpan="2" Margin="5" DataContext="{Binding ElementName=ParamList, Path=SelectedItem}">
-                                <StackPanel.Resources>
-                                    <Style TargetType="HeaderedContentControl">
-                                        <Setter Property="Margin" Value="5" />
-                                    </Style>
-                                    <Style TargetType="CheckBox">
-                                        <Setter Property="Margin" Value="5" />
-                                    </Style>
-                                    <Style TargetType="ComboBox">
-                                        <Setter Property="Margin" Value="5" />
-                                    </Style>
-                                    <Style TargetType="Button">
-                                        <Setter Property="Margin" Value="5" />
-                                    </Style>
-                                    <Style TargetType="ListView">
-                                        <Setter Property="Margin" Value="5" />
-                                    </Style>
+
+                            <ScrollViewer Grid.Column="3" Grid.RowSpan="2">
+                                <StackPanel Margin="5" DataContext="{Binding ElementName=ParamList, Path=SelectedItem}">
+                                    <StackPanel.Resources>
+                                        <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+                                            <ObjectDataProvider.MethodParameters>
+                                                <x:Type TypeName="models:ParamAccess"/>
+                                            </ObjectDataProvider.MethodParameters>
+                                        </ObjectDataProvider>
+                                        <Style TargetType="HeaderedContentControl">
+                                            <Setter Property="Margin" Value="5" />
+                                        </Style>
+                                        <Style TargetType="CheckBox">
+                                            <Setter Property="Margin" Value="5" />
+                                        </Style>
+                                        <Style TargetType="ComboBox">
+                                            <Setter Property="Margin" Value="0 5" />
+                                        </Style>
+                                        <Style TargetType="Button">
+                                            <Setter Property="Margin" Value="5" />
+                                        </Style>
+                                        <Style TargetType="ListView">
+                                            <Setter Property="Margin" Value="5" />
+                                        </Style>
                                     </StackPanel.Resources>
-                                    
-                                <HeaderedContentControl Header="Name">
-                                    <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
-                                </HeaderedContentControl>
-                                <HeaderedContentControl Header="Text">
-                                    <TextBox Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}"/>
-                                </HeaderedContentControl>
-                                <HeaderedContentControl Header="Wert">
-                                    <TextBox Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}"/>
-                                </HeaderedContentControl>
-                                <HeaderedContentControl Header="Type">
-                                    <ComboBox Margin="0 5" ItemsSource="{Binding ElementName=ListParamTypes, Path=ItemsSource}" DisplayMemberPath="Name" SelectedValue="{Binding ParameterType}" SelectedValuePath="Name" />
-                                </HeaderedContentControl>
-                            </StackPanel>
-                        </Grid>
+
+                                    <HeaderedContentControl Header="Name">
+                                        <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </HeaderedContentControl>
+                                    <HeaderedContentControl Header="Text">
+                                        <TextBox Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </HeaderedContentControl>
+                                    <HeaderedContentControl Header="Wert">
+                                        <TextBox Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </HeaderedContentControl>
+                                    <HeaderedContentControl Header="Zugriff">
+                                        <ComboBox ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding Access, Mode=TwoWay}" />
+                                    </HeaderedContentControl>
+                                    <HeaderedContentControl Header="Suffix">
+                                        <TextBox Text="{Binding Suffix, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                    </HeaderedContentControl>
+
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition />
+                                            <ColumnDefinition Width="auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <HeaderedContentControl Header="Type">
+                                            <ComboBox Name="InParaType" ItemsSource="{Binding ElementName=ListParamTypes, Path=ItemsSource}" DisplayMemberPath="Name" SelectedValue="{Binding ParameterType}" SelectedValuePath="Name" />
+                                        </HeaderedContentControl>
+
+                                        <TextBlock Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0 0 10 14">
+                                        <Run Text="{Binding ElementName=InParaType, Path=SelectedItem.SizeInBit}" />
+                                        <Run Text="Bit" />
+                                        </TextBlock>
+                                    </Grid>
+
+                                    <CheckBox Name="InParaInMemory" IsChecked="{Binding IsInMemory}" Content="Parameter ist in einem Speicher" />
+
+                                    <HeaderedContentControl Header="Speicherort" IsEnabled="{Binding ElementName=InParaInMemory, Path=IsChecked}">
+                                        <ComboBox ItemsSource="{Binding ElementName=ListMemories, Path=Items}" SelectedValue="{Binding Memory}" SelectedValuePath="Name" DisplayMemberPath="Name" />
+                                    </HeaderedContentControl>
+                                    <HeaderedContentControl Header="Offset" IsEnabled="{Binding ElementName=InParaInMemory, Path=IsChecked}">
+                                        <TextBox Text="{Binding Offset, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </HeaderedContentControl>
+                                    <HeaderedContentControl Header="Bit Offset" IsEnabled="{Binding ElementName=InParaInMemory, Path=IsChecked}">
+                                        <TextBox Text="{Binding OffsetBit, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </HeaderedContentControl>
+                                </StackPanel>
+                            </ScrollViewer>
+
+                            </Grid>
                     </TabItem>
 
                     
 
                     <TabItem Header="ParameterRefs">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150" />
+                                <ColumnDefinition Width="150" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Button Content="Hinzufügen" Click="ClickAddParamRef" Margin="0 0 1 2" />
+                            <Button Grid.Column="1" Content="Löschen" Click="ClickRemoveParamRef" Margin="1 0 0 2" />
+                            <Button Grid.Row="1" Grid.ColumnSpan="2" Content="Auto generieren" Click="ClickGenerateRefAuto" Margin="0 0 0 2" />
 
+                            <ListView x:Name="ParamRefList" Grid.Row="2" Grid.ColumnSpan="2" ItemsSource="{Binding ParameterRefs}" DisplayMemberPath="Name" />
+
+
+                            <StackPanel Grid.Column="3" Grid.RowSpan="3" Margin="5" DataContext="{Binding ElementName=ParamRefList, Path=SelectedItem}">
+                                <StackPanel.Resources>
+                                    <Style TargetType="HeaderedContentControl">
+                                        <Setter Property="Margin" Value="5" />
+                                    </Style>
+                                    <Style TargetType="ComboBox">
+                                        <Setter Property="Margin" Value="0 5" />
+                                    </Style>
+                                </StackPanel.Resources>
+
+                                <HeaderedContentControl Header="Name">
+                                    <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+                                </HeaderedContentControl>
+                                <HeaderedContentControl Header="Parameter">
+                                    <ComboBox ItemsSource="{Binding ElementName=ParamList, Path=Items}" DisplayMemberPath="Name" SelectedValue="{Binding ParameterId}" SelectedValuePath="Name" />
+                                </HeaderedContentControl>
+
+                            </StackPanel>
+                        </Grid>
                     </TabItem>
 
 
