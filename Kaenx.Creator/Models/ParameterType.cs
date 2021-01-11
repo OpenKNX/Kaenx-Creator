@@ -11,6 +11,7 @@ namespace Kaenx.Creator.Models
         public int Min { get; set; } = 0;
         public int Max { get; set; } = 255;
         public int SizeInBit { get; set; } = 8;
+        public bool IsSizeAuto { get; set; } = false;
         public ParameterTypes Type { get; set; } = ParameterTypes.Text;
 
         public ObservableCollection<ParameterTypeEnum> Enums {get;set;} = new ObservableCollection<ParameterTypeEnum>();
@@ -24,6 +25,6 @@ namespace Kaenx.Creator.Models
         Float9,
         Picture,
         None,
-        IpAdress
+        IpAddress
     }
 }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Xml.Linq;
 
@@ -14,7 +15,7 @@ namespace Kaenx.Creator.Classes
 
         public void ExportEts(ModelGeneral general)
         {
-            string Manu = "M-" + Fill(general.ManufacturerId.ToString("X2"), 4);
+            string Manu = "M-" + general.ManufacturerId.ToString("X4");
 
             if (!System.IO.Directory.Exists(GetRelPath("")))
                 System.IO.Directory.CreateDirectory(GetRelPath(""));
@@ -42,11 +43,11 @@ namespace Kaenx.Creator.Classes
 
             foreach (Application app in general.Applications)
             {
-                string appName = Manu + "_A-" + Fill(app.Number.ToString("X2"), 4);
+                string appName = Manu + "_A-" + app.Number.ToString("X4");
 
                 foreach(AppVersion ver in app.Versions)
                 {
-                    string appVersion = appName + "-" + Fill(ver.Number.ToString("X2"), 2);
+                    string appVersion = appName + "-" + ver.Number.ToString("X2");
                     string hash = "0000";
                     appVersion += "-" + hash;
 
@@ -81,10 +82,10 @@ namespace Kaenx.Creator.Classes
                         {
                             case MemoryTypes.Absolute:
                                 xmem = new XElement(Get("AbsoluteSegment"));
-                                id = appVersion + "_AS-" + Fill(mem.Address.ToString("X2"), 4);
+                                id = appVersion + "_AS-" + mem.Address.ToString("X4");
                                 xmem.SetAttributeValue("Id", id);
                                 xmem.SetAttributeValue("Address", mem.Address);
-                                xmem.Add(new XElement(Get("Data"), "Hier kommt toller Base64 String hin"));
+                                //xmem.Add(new XElement(Get("Data"), "Hier kommt toller Base64 String hin"));
                                 break;
 
                             case MemoryTypes.Relative:
@@ -283,7 +284,7 @@ namespace Kaenx.Creator.Classes
 
                 foreach (HardwareApp happ in hard.Apps)
                 {
-                    string appidx = Fill(happ.AppObject.Number.ToString("X2"), 4) + "-" + Fill(happ.AppVersionObject.Number.ToString("X2"), 2) + "-0000"; //Todo check hash
+                    string appidx = happ.AppObject.Number.ToString("X4") + "-" + happ.AppVersionObject.Number.ToString("X2") + "-0000"; //Todo check hash
 
                     XElement xh2p = new XElement(Get("Hardware2Program"));
                     xh2p.SetAttributeValue("Id", hid + "_HP-" + appidx);
@@ -343,7 +344,6 @@ namespace Kaenx.Creator.Classes
 
             if (!string.IsNullOrWhiteSpace(item.VisibleDescription)) xitem.SetAttributeValue("VisibleDescription", item.VisibleDescription);
 
-            int counter = 0;
             foreach (CatalogItem sub in item.Items)
                 GetCatalogItems(sub, xitem, productIds, hardwareIds);
         }
@@ -386,11 +386,21 @@ namespace Kaenx.Creator.Classes
 
         private string GetEncoded(string input)
         {
-            input = input.Replace("_", ".5F");
-            input = input.Replace("-", ".2D");
-            input = input.Replace(" ", ".20");
-            input = input.Replace("/", ".2F");
-            return HttpUtility.UrlEncode(input).Replace('%', '.');
+            StringBuilder sb = new StringBuilder();
+            foreach (char c in input)
+            {
+                if ((c >32 && c < 48) || (c >57 && c < 65))
+                {
+                    // This character is too big for ASCII
+                    string encodedValue = "." + ((int)c).ToString("X2");
+                    sb.Append(encodedValue);
+                }
+                else
+                {
+                    sb.Append(c);
+                }
+            }
+            return sb.ToString();
         }
 
         private string GetRelPath(string path)
@@ -406,13 +416,6 @@ namespace Kaenx.Creator.Classes
         private XName Get(string name, string ns = "http://knx.org/xml/project/14")
         {
             return XName.Get(name, ns);
-        }
-
-        private string Fill(string input, int length)
-        {
-            for (int i = input.Length; i < length; i++)
-                input = "0" + input;
-            return input;
         }
     }
 }

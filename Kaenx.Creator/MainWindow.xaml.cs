@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -54,6 +55,7 @@ namespace Kaenx.Creator
         private void ClickNew(object sender, RoutedEventArgs e)
         {
             General = new Models.ModelGeneral();
+            General.Catalog.Add(new Models.CatalogItem() { Name = "Hauptkategorie (wird nicht exportiert)" });
             SetButtons(true);
         }
 
@@ -155,13 +157,14 @@ namespace Kaenx.Creator
         private void ClickAddVersion(object sender, RoutedEventArgs e)
         {
             Models.Application app = AppList.SelectedItem as Models.Application;
-            Models.AppVersion newVer = new Models.AppVersion();
+            Models.AppVersion newVer = new Models.AppVersion() { Name = app.Name };
 
             if(app.Versions.Count > 0){
                 Models.AppVersion ver = app.Versions.OrderByDescending(v => v.Number).ElementAt(0);
                 newVer.Number = ver.Number + 1;
             }
 
+            newVer.Dynamics.Add(new Models.Dynamic.DynamicMain());
             app.Versions.Add(newVer);
         }
 
@@ -173,8 +176,9 @@ namespace Kaenx.Creator
 
         private void ClickAddMemory(object sender, RoutedEventArgs e)
         {
+            Models.Application app = AppList.SelectedItem as Models.Application;
             Models.AppVersion version = (sender as Button).DataContext as Models.AppVersion;
-            version.Memories.Add(new Models.Memory());
+            version.Memories.Add(new Models.Memory() { Type = app.Mask.Memory });
         }
 
         private void ClickRemoveParamType(object sender, RoutedEventArgs e)
@@ -201,15 +205,7 @@ namespace Kaenx.Creator
 
         private void ClickAddApp(object sender, RoutedEventArgs e)
         {
-            Models.Application newApp = new Models.Application();
-            newApp.Versions.Add(new Models.AppVersion());
-            
-            if(General.Applications.Count > 0){
-                Models.Application app = General.Applications.OrderByDescending(a => a.Number).ElementAt(0);
-                newApp.Number = app.Number + 1;
-            }
-
-            General.Applications.Add(newApp);
+            General.Applications.Add(new Models.Application());
         }
 
         private void ClickRemoveApp(object sender, RoutedEventArgs e)
@@ -225,7 +221,7 @@ namespace Kaenx.Creator
         {
             Models.ParameterType type = ListParamTypes.SelectedItem as Models.ParameterType;
 
-            type.Enums.Add(new Models.ParameterTypeEnum() { Name = "Name", Value = "Wert" });
+            type.Enums.Add(new Models.ParameterTypeEnum() { Name = "Name", Value = 0 });
         }
 
 
@@ -287,6 +283,7 @@ namespace Kaenx.Creator
         private void ClickRemoveHardwareApp(object sender, RoutedEventArgs e)
         {
             Models.Hardware hard = HardwareList.SelectedItem as Models.Hardware;
+            if (hard == null) return;
             hard.Apps.Remove(HardwareAppList.SelectedItem as Models.HardwareApp);
         }
 
@@ -294,7 +291,7 @@ namespace Kaenx.Creator
 
         private void ClickSave(object sender, RoutedEventArgs e)
         {
-            string general = Newtonsoft.Json.JsonConvert.SerializeObject(General);
+            string general = Newtonsoft.Json.JsonConvert.SerializeObject(General, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Auto });
 
             if(filePath != "") {
                 System.IO.File.WriteAllText(filePath, general);
@@ -321,7 +318,7 @@ namespace Kaenx.Creator
             if(diag.ShowDialog() == true)
             {
                 string general = System.IO.File.ReadAllText(diag.FileName);
-                General = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.ModelGeneral>(general);
+                General = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.ModelGeneral>(general, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Auto });
                 filePath = diag.FileName;
 
                 foreach(Models.Hardware hard in General.Hardware)
@@ -335,6 +332,34 @@ namespace Kaenx.Creator
                         Models.AppVersion mver = mapp.Versions.Single(ver => ver.Number == happ.GetVersion());
                         happ.AppVersionObject = mver;
                     }
+                }
+
+
+                foreach(Models.Application app in General.Applications)
+                {
+                    foreach(Models.AppVersion ver in app.Versions)
+                    {
+                        foreach(Models.Parameter para in ver.Parameters)
+                        {
+                            if (!string.IsNullOrEmpty(para.GetMemory()))
+                            {
+                                Models.Memory mem = ver.Memories.Single(m => m.Name == para.GetMemory());
+                                para.MemoryObject = mem;
+                            }
+                            if (!string.IsNullOrEmpty(para.GetParameterType()))
+                            {
+                                Models.ParameterType pt = ver.ParameterTypes.Single(p => p.Name == para.GetParameterType());
+                                para.ParameterTypeObject = pt;
+                            }
+                        }
+                    }
+
+
+                    string mid = app.GetMaskId();
+                    if (string.IsNullOrEmpty(mid)) continue;
+
+                    Models.MaskVersion mask = BCUs.Single(bcu => bcu.Id == mid);
+                    app.Mask = mask;
                 }
 
 
@@ -418,23 +443,100 @@ namespace Kaenx.Creator
             item.Items.Add(new Models.CatalogItem() { Name = "Neue Kategorie", Parent = item });
         }
 
-        private void LoadedCatalogContext(object sender, RoutedEventArgs e)
-        {
-            ContextMenu menu = sender as ContextMenu;
-            Models.CatalogItem item = menu.DataContext as Models.CatalogItem;
-            
-            (menu.Items[0] as MenuItem).IsEnabled = item.IsSection;
-            (menu.Items[1] as MenuItem).IsEnabled = item.Parent != null;
-        }
-
         private void ClickCatalogContextRemove(object sender, RoutedEventArgs e)
         {
             Models.CatalogItem item = (sender as MenuItem).DataContext as Models.CatalogItem;
             item.Parent.Items.Remove(item);
         }
 
-#endregion
 
 
+
+        #endregion
+
+        private void ClickCalcHeatmap(object sender, RoutedEventArgs e)
+        {
+            Models.Memory mem = (sender as Button).DataContext as Models.Memory;
+            Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
+            byte[] data = new byte[mem.Size];
+
+            foreach(Models.Parameter para in ver.Parameters.Where(p => p.Memory == mem.Name))
+            {
+                if(para.ParameterTypeObject.SizeInBit > 7)
+                {
+                    for (int i = 0; i < (para.ParameterTypeObject.SizeInBit / 8); i++){
+                        data[para.Offset + i] += 8;
+                    }
+                }
+                else
+                {
+                    data[para.Offset] += Convert.ToByte(para.ParameterTypeObject.SizeInBit);
+                }
+            }
+
+            int height = Convert.ToInt32(Math.Ceiling(data.Length / 16.0));
+            Debug.WriteLine("Höhe: " + height);
+
+            WriteableBitmap map = new WriteableBitmap(16, height, 1, 1, PixelFormats.Indexed8, BitmapPalettes.WebPalette);
+
+            int stride = (map.PixelWidth * map.Format.BitsPerPixel + 7) / 8;
+            byte[] pixelByteArray = new byte[map.PixelHeight * stride];
+
+            map.CopyPixels(pixelByteArray, stride, 0);
+
+            for(int i = 0; i < pixelByteArray.Length; i++)
+            {
+                int val = (i >= data.Length) ? 0 : data[i];
+                switch (val)
+                {
+                    case 0:
+                        pixelByteArray[i] = 18;
+                        break;
+
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                        pixelByteArray[i] = 205;
+                        break;
+
+                    case 5:
+                    case 6:
+                    case 7:
+                        pixelByteArray[i] = 193;
+                        break;
+
+                    case 8:
+                        pixelByteArray[i] = 180;
+                        break;
+
+                    default:
+                        pixelByteArray[i] = 0;
+                        break;
+                }
+                
+            }
+
+            map.WritePixels(new Int32Rect(0, 0, map.PixelWidth, map.PixelHeight), pixelByteArray, stride, 0);
+            OutHeatmap.Source = map;
+        }
+
+        private void ClickDynAddIndep(object sender, RoutedEventArgs e)
+        {
+            Models.Dynamic.DynamicMain main = (sender as MenuItem).DataContext as Models.Dynamic.DynamicMain;
+            main.Items.Add(new Models.Dynamic.DynChannelIndependet());
+        }
+
+        private void ClickDynAddBlock(object sender, RoutedEventArgs e)
+        {
+            Models.Dynamic.IDynChannel main = (sender as MenuItem).DataContext as Models.Dynamic.IDynChannel;
+            main.Blocks.Add(new Models.Dynamic.DynParaBlock());
+        }
+
+        private void ClickAddDynPara(object sender, RoutedEventArgs e)
+        {
+            Models.Dynamic.DynParaBlock block = (sender as MenuItem).DataContext as Models.Dynamic.DynParaBlock;
+            block.Parameters.Add(new Models.Dynamic.DynParameter());
+        }
     }
 }

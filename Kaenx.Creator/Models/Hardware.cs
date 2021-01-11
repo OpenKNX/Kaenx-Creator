@@ -7,9 +7,15 @@ using System.Text;
 
 namespace Kaenx.Creator.Models
 {
-    public class Hardware:INotifyPropertyChanged
+    public class Hardware : INotifyPropertyChanged
     {
-        public string Name { get; set; } = "Hardware Name";
+        private string _name = "Hardware Name";
+        public string Name
+        {
+            get { return _name; }
+            set { _name = value; Changed("Name"); }
+        }
+
         public string SerialNumber { get; set; } = "1";
         [JsonIgnore]
         public Device DeviceObject { get; set; }
@@ -67,7 +73,7 @@ namespace Kaenx.Creator.Models
 
         public string DisplayText
         {
-            get { return App + " " + AppVersionObject.VersionText; }
+            get { return App + " " + AppVersionObject.NameText; }
         }
 
         private string _app;

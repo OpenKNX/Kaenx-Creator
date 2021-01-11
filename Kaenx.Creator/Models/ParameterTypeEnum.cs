@@ -8,6 +8,6 @@ namespace Kaenx.Creator.Models
     public class ParameterTypeEnum
     {
         public string Name {get;set;}
-        public string Value {get;set;}
+        public int Value {get;set;}
     }
 }

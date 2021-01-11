@@ -5,9 +5,21 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Kaenx.Creator"
         xmlns:models="clr-namespace:Kaenx.Creator.Models"
+        xmlns:conv="clr-namespace:Kaenx.Creator.Converter"
+        xmlns:dyn="clr-namespace:Kaenx.Creator.Models.Dynamic"
         xmlns:System="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
-        Title="Kaenx Creator" Height="450" Width="800">
+        Title="Kaenx Creator" Height="700" Width="1000">
+    <Window.Resources>
+        <conv:BoolNegation x:Key="BoolNegate" />
+        <conv:EmptyOListToBool x:Key="EmptyListToBool" />
+        <conv:EmptyToBool x:Key="EmptyToBool" />
+        <conv:EnumToVisibility x:Key="EnumToVis" />
+        <conv:EnumToVisibility x:Key="EnumToVisNeg" Negate="True" />
+        <conv:BoolToVisibility x:Key="BoolToVis" />
+        <conv:DynHasIndependent x:Key="DynIndToBool" />
+        <conv:TypeToBool x:Key="TypeToBool" />
+    </Window.Resources>
     
     <Grid>
         <Grid.RowDefinitions>
@@ -35,6 +47,13 @@
         </Menu>
 
         <TabControl x:Name="TabsEdit" Grid.Row="1" Margin=" 0 10 0 0" IsEnabled="False">
+            <TabControl.Resources>
+                <Style TargetType="TabItem">
+                    <Setter Property="Padding" Value="10 5" />
+                </Style>
+            </TabControl.Resources>
+            
+            
             <TabItem Header="Allgemein">
                 <StackPanel>
                     <HeaderedContentControl Header="Manufacturer ID">
@@ -58,9 +77,9 @@
                             <HierarchicalDataTemplate DataType="{x:Type models:CatalogItem}" ItemsSource="{Binding Items}">
                                 <StackPanel Orientation="Horizontal">
                                     <StackPanel.ContextMenu>
-                                        <ContextMenu Loaded="LoadedCatalogContext">
-                                            <MenuItem Header="Unterpunkt hinzufügen" Click="ClickCatalogContext"/>
-                                            <MenuItem Header="Entfernen" Click="ClickCatalogContextRemove"/>
+                                        <ContextMenu>
+                                            <MenuItem Header="Unterpunkt hinzufügen" Click="ClickCatalogContext" IsEnabled="{Binding IsSection}" />
+                                            <MenuItem Header="Entfernen" Click="ClickCatalogContextRemove" IsEnabled="{Binding Parent, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
                                         </ContextMenu>
                                     </StackPanel.ContextMenu>
                                     <Image Source="/WpfTutorialSamples;component/Images/group.png" Margin="0,0,5,0" />
@@ -73,7 +92,7 @@
                         </TreeView.Resources>
                     </TreeView>
 
-                    <StackPanel Grid.Column="1" DataContext="{Binding ElementName=CatalogTree, Path=SelectedItem}">
+                    <StackPanel Grid.Column="1" DataContext="{Binding ElementName=CatalogTree, Path=SelectedItem}" IsEnabled="{Binding ElementName=CatalogTree, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
                         <StackPanel.Resources>
                             <Style TargetType="HeaderedContentControl">
                                 <Setter Property="Margin" Value="5" />
@@ -85,21 +104,18 @@
                                 <Setter Property="Margin" Value="5" />
                             </Style>
                         </StackPanel.Resources>
-                        <HeaderedContentControl Header="Name">
+                        <HeaderedContentControl Header="Name" IsEnabled="{Binding Parent, Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
                             <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
                         </HeaderedContentControl>
-                        <HeaderedContentControl Header="Beschreibung">
+                        <CheckBox Name="InCatalogSection" IsChecked="{Binding IsSection}" Content="Element ist eine Kategorie" IsEnabled="{Binding Items.Count, Converter={StaticResource EmptyListToBool}}" />
+                        <HeaderedContentControl Header="Beschreibung" IsEnabled="{Binding ElementName=InCatalogSection, Path=IsChecked, Converter={StaticResource BoolNegate}}">
                             <TextBox Text="{Binding VisibleDescription, UpdateSourceTrigger=PropertyChanged}" />
                         </HeaderedContentControl>
-                        <CheckBox IsChecked="{Binding IsSection}" Content="Element ist eine Kategorie" />
-
-
-                        <HeaderedContentControl Header="Hardware">
+                        <HeaderedContentControl Header="Hardware" IsEnabled="{Binding ElementName=InCatalogSection, Path=IsChecked, Converter={StaticResource BoolNegate}}">
                             <ComboBox Name="InCatalogHardware" Margin="0" ItemsSource="{Binding General.Hardware, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" SelectedItem="{Binding Hardware, Mode=TwoWay}" DisplayMemberPath="Name"/>
                         </HeaderedContentControl>
-
-                        <HeaderedContentControl Header="Applikation">
-                            <ComboBox Margin="0" ItemsSource="{Binding ElementName=InCatalogHardware, Path=SelectedItem.Apps}" SelectedItem="{Binding HardApp, Mode=TwoWay}" DisplayMemberPath="DisplayText"/>
+                        <HeaderedContentControl Header="Applikation" IsEnabled="{Binding ElementName=InCatalogSection, Path=IsChecked, Converter={StaticResource BoolNegate}}">
+                            <ComboBox Margin="0" ItemsSource="{Binding Hardware.Apps}" SelectedItem="{Binding HardApp, Mode=TwoWay}" DisplayMemberPath="DisplayText"/>
                         </HeaderedContentControl>
 
                     </StackPanel>
@@ -122,7 +138,7 @@
 
                     <ListView x:Name="DeviceList" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding General.Devices}" DisplayMemberPath="Name" />
 
-                    <StackPanel Grid.Column="2" Grid.RowSpan="2" DataContext="{Binding ElementName=DeviceList, Path=SelectedItem}">
+                    <StackPanel Grid.Column="2" Grid.RowSpan="2" DataContext="{Binding ElementName=DeviceList, Path=SelectedItem}" IsEnabled="{Binding ElementName=DeviceList, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
                         <StackPanel.Resources>
                             <Style TargetType="HeaderedContentControl">
                                 <Setter Property="Margin" Value="5" />
@@ -171,7 +187,7 @@
 
                     <ListView x:Name="HardwareList" Grid.Row="1" Grid.RowSpan="2" Grid.ColumnSpan="2" ItemsSource="{Binding General.Hardware}" DisplayMemberPath="Name" />
 
-                    <StackPanel Grid.RowSpan="3" Grid.Column="2" DataContext="{Binding ElementName=HardwareList, Path=SelectedItem}">
+                    <StackPanel Grid.RowSpan="3" Grid.Column="2" DataContext="{Binding ElementName=HardwareList, Path=SelectedItem}" IsEnabled="{Binding ElementName=HardwareList, Path=SelectedItem, Converter={StaticResource EmptyToBool},ConverterParameter=true}">
                         <StackPanel.Resources>
                             <Style TargetType="HeaderedContentControl">
                                 <Setter Property="Margin" Value="5" />
@@ -207,8 +223,8 @@
                         <CheckBox IsChecked="{Binding HasApplicationProgram2, Mode=TwoWay}" Content="Hat ein zweites Applikationsprogramm" />
                     </StackPanel>
 
-                    <ComboBox Name="InHardwareApp" Grid.Column="3" IsEnabled="{Binding ElementName=HardwareList, Path=SelectedItem.HasApplicationProgram}" SelectedValue="{Binding AppName, Mode=TwoWay}" ItemsSource="{Binding General.Applications, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" SelectionChanged="HardwareAppChanged" DisplayMemberPath="Name" SelectedValuePath="Name" />
-                    <ComboBox Name="InHardwareVer" Grid.Column="4" IsEnabled="{Binding ElementName=HardwareList, Path=SelectedItem.HasApplicationProgram}" SelectedValue="{Binding AppVersion, Mode=TwoWay}" DisplayMemberPath="VersionText" SelectedValuePath="Number" />
+                    <ComboBox Name="InHardwareApp" Grid.Column="3" IsEnabled="{Binding ElementName=HardwareList, Path=SelectedItem.HasApplicationProgram}" ItemsSource="{Binding General.Applications, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" SelectionChanged="HardwareAppChanged" DisplayMemberPath="Name" SelectedValuePath="Name" />
+                    <ComboBox Name="InHardwareVer" Grid.Column="4" IsEnabled="{Binding ElementName=HardwareList, Path=SelectedItem.HasApplicationProgram}" DisplayMemberPath="NameText" SelectedValuePath="Number" />
 
                     <Button Grid.Row="1" Grid.Column="3" IsEnabled="{Binding ElementName=HardwareList, Path=SelectedItem.HasApplicationProgram}" Content="Hinzufügen" Click="ClickAddHardwareApp" Margin="0 2 1 2" />
                     <Button Grid.Row="1" Grid.Column="4" IsEnabled="{Binding ElementName=HardwareList, Path=SelectedItem.HasApplicationProgram}" Content="Löschen" Click="ClickRemoveHardwareApp" Margin="1 2 0 2" />
@@ -240,9 +256,9 @@
                     <Button Content="Hinzufügen" Click="ClickAddApp" Margin="0 0 1 2" />
                     <Button Grid.Column="1" Content="Löschen" Click="ClickRemoveApp" Margin="1 0 0 2" />
 
-                    <ListView x:Name="AppList" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding General.Applications}" DisplayMemberPath="Name" />
+                    <ListView x:Name="AppList" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding General.Applications}" DisplayMemberPath="NameText" />
 
-                    <Grid Grid.Column="2" Grid.RowSpan="2" DataContext="{Binding ElementName=AppList, Path=SelectedItem}">
+                    <Grid Grid.Column="2" Grid.RowSpan="2" DataContext="{Binding ElementName=AppList, Path=SelectedItem}" IsEnabled="{Binding ElementName=AppList, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="auto" />
                             <RowDefinition Height="auto" />
@@ -273,32 +289,82 @@
                                 <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
                             </HeaderedContentControl>
                             <HeaderedContentControl Header="Nummer">
-                                <TextBox Text="{Binding Number}" />
+                                <TextBox Text="{Binding Number, UpdateSourceTrigger=PropertyChanged}" />
                             </HeaderedContentControl>
                             <HeaderedContentControl Header="BCU">
-                                <ComboBox SelectedItem="{Binding Mask, Mode=TwoWay}" Margin="0" DisplayMemberPath="Id" ItemsSource="{Binding BCUs, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
+                                <ComboBox SelectedItem="{Binding Mask, Mode=TwoWay}" Margin="0" DisplayMemberPath="Id" IsEnabled="{Binding Versions.Count, Converter={StaticResource EmptyListToBool}}" ItemsSource="{Binding BCUs, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
                             </HeaderedContentControl>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock HorizontalAlignment="Center">
+                                    <Run Text="Speicherart:" />
+                                    <Run Text="{Binding Mask.Memory}" />
+                                </TextBlock>
+
+                                <TextBlock Grid.Column="1" HorizontalAlignment="Center">
+                                    <Run Text="Ladeprocedure:" />
+                                    <Run Text="{Binding Mask.Procedure}" />
+                                </TextBlock>
+                            </Grid>
                         </StackPanel>
 
-                        <TextBlock Grid.Row="1" Text="Versionen:" Margin="5" />
 
-                        <Button Grid.Row="2" Content="Version hinzufügen" Click="ClickAddVersion" Margin="5 5 2.5 2" />
-                        <Button Grid.Row="2" Grid.Column="1" Content="Version Löschen" Click="ClickRemoveVersion" Margin="2.5 5 5 2" />
+                        <Separator Grid.Row="1" Grid.ColumnSpan="2" Margin="0 10 0 4" />
 
-                        <ListView x:Name="VersionList" Grid.Row="3" Grid.ColumnSpan="2" ItemsSource="{Binding Versions}" DisplayMemberPath="VersionText" Margin="5 5 5 0" />
+                        <Button Grid.Row="2" Content="Version hinzufügen" Click="ClickAddVersion" Margin="5 5 2.5 2" IsEnabled="{Binding Mask, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
+                        <Button Grid.Row="2" Grid.Column="1" Content="Version Löschen" Click="ClickRemoveVersion" Margin="2.5 5 5 2" IsEnabled="{Binding Mask, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
+
+                        <ListView x:Name="VersionList" Grid.Row="3" Grid.ColumnSpan="2" ItemsSource="{Binding Versions}" DisplayMemberPath="NameText" Margin="5 5 5 0" />
                     </Grid>
                 </Grid>
             </TabItem>
 
-            <TabItem DataContext="{Binding ElementName=VersionList, Path=SelectedItem}">
+            <TabItem DataContext="{Binding ElementName=VersionList, Path=SelectedItem}" IsEnabled="{Binding ElementName=VersionList, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{Binding ElementName=AppList, Path=SelectedItem.Name}" Margin="0 0 5 0" />
-                        <TextBlock Text="{Binding VersionText}" />
+                        <TextBlock Text="{Binding NameText}" />
                     </StackPanel>
                 </TabItem.Header>
 
                 <TabControl TabStripPlacement="Left">
+                    <TabItem Header="Allgemein">
+                        <StackPanel>
+                            <StackPanel.Resources>
+                                <Style TargetType="HeaderedContentControl">
+                                    <Setter Property="Margin" Value="5" />
+                                </Style>
+                                <Style TargetType="CheckBox">
+                                    <Setter Property="Margin" Value="5" />
+                                </Style>
+                                <Style TargetType="ComboBox">
+                                    <Setter Property="Margin" Value="5" />
+                                </Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Margin" Value="5" />
+                                </Style>
+                                <Style TargetType="ListView">
+                                    <Setter Property="Margin" Value="5" />
+                                </Style>
+                            </StackPanel.Resources>
+                            
+                            <HeaderedContentControl Header="Version">
+                                <TextBox Text="{Binding Number, UpdateSourceTrigger=PropertyChanged}" />
+                            </HeaderedContentControl>
+
+                            <HeaderedContentControl Header="Name">
+                                <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
+                            </HeaderedContentControl>
+
+                            <CheckBox IsChecked="{Binding ElementName=AppList, Path=SelectedItem.IsAutoMemory}" Content="Speicher automatisch berechnen" />
+                        </StackPanel>
+                    </TabItem>
+                    
                     <TabItem Header="Speicher">
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -316,44 +382,49 @@
 
                             <ListView x:Name="ListMemories" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding Memories}" DisplayMemberPath="Name" />
 
-                            <StackPanel Grid.Column="3" Grid.RowSpan="2" Margin="5" DataContext="{Binding ElementName=ListMemories, Path=SelectedItem}">
-                                <StackPanel.Resources>
-                                    <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
-                                        <ObjectDataProvider.MethodParameters>
-                                            <x:Type TypeName="models:MemoryTypes"/>
-                                        </ObjectDataProvider.MethodParameters>
-                                    </ObjectDataProvider>
-                                    <Style TargetType="HeaderedContentControl">
-                                        <Setter Property="Margin" Value="5" />
-                                    </Style>
-                                    <Style TargetType="CheckBox">
-                                        <Setter Property="Margin" Value="5" />
-                                    </Style>
-                                    <Style TargetType="ComboBox">
-                                        <Setter Property="Margin" Value="5" />
-                                    </Style>
-                                    <Style TargetType="Button">
-                                        <Setter Property="Margin" Value="5" />
-                                    </Style>
-                                    <Style TargetType="ListView">
-                                        <Setter Property="Margin" Value="5" />
-                                    </Style>
-                                </StackPanel.Resources>
+                            <ScrollViewer Grid.Column="3" Grid.RowSpan="2">
+                                <StackPanel Margin="5" DataContext="{Binding ElementName=ListMemories, Path=SelectedItem}" IsEnabled="{Binding Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
+                                    <StackPanel.Resources>
+                                        <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+                                            <ObjectDataProvider.MethodParameters>
+                                                <x:Type TypeName="models:MemoryTypes"/>
+                                            </ObjectDataProvider.MethodParameters>
+                                        </ObjectDataProvider>
+                                        <Style TargetType="HeaderedContentControl">
+                                            <Setter Property="Margin" Value="5" />
+                                        </Style>
+                                        <Style TargetType="CheckBox">
+                                            <Setter Property="Margin" Value="5" />
+                                        </Style>
+                                        <Style TargetType="ComboBox">
+                                            <Setter Property="Margin" Value="5" />
+                                        </Style>
+                                        <Style TargetType="Button">
+                                            <Setter Property="Margin" Value="5" />
+                                        </Style>
+                                        <Style TargetType="ListView">
+                                            <Setter Property="Margin" Value="5" />
+                                        </Style>
+                                    </StackPanel.Resources>
 
-                                <HeaderedContentControl Header="Name">
-                                    <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
-                                </HeaderedContentControl>
-                                <HeaderedContentControl Header="SpeicherTyp">
-                                    <ComboBox Margin="0 5" ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding Type, Mode=TwoWay}" />
-                                </HeaderedContentControl>
-                                <HeaderedContentControl Header="Adresse">
-                                    <TextBox Text="{Binding Address, UpdateSourceTrigger=PropertyChanged}"/>
-                                </HeaderedContentControl>
-                                <HeaderedContentControl Header="Größe">
-                                    <TextBox Text="{Binding Size, UpdateSourceTrigger=PropertyChanged}"/>
-                                </HeaderedContentControl>
-                            </StackPanel>
+                                    <HeaderedContentControl Header="Name">
+                                        <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </HeaderedContentControl>
+                                    <HeaderedContentControl Header="Adresse">
+                                        <TextBox Text="{Binding Address, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </HeaderedContentControl>
+                                    <HeaderedContentControl Header="Größe" IsEnabled="{Binding ElementName=AppList, Path=SelectedItem.IsAutoMemory, Converter={StaticResource BoolNegate}}" Visibility="{Binding ElementName=AppList, Path=SelectedItem.Mask.Memory, Converter={StaticResource EnumToVis}, ConverterParameter=Absolute}">
+                                        <TextBox Text="{Binding Size, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </HeaderedContentControl>
+                                    <HeaderedContentControl Header="Offset" Visibility="{Binding ElementName=AppList, Path=SelectedItem.Mask.Memory, Converter={StaticResource EnumToVis}, ConverterParameter=Relative}">
+                                        <TextBox Text="{Binding Offset, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </HeaderedContentControl>
+                                    <CheckBox Content="Parameter automatisch anordnen"  IsChecked="{Binding IsParasAuto}" Visibility="{Binding ElementName=AppList, Path=SelectedItem.IsAutoMemory, Converter={StaticResource BoolToVis}, ConverterParameter=true}" />
 
+                                    <Button Content="Heatmap berechnen" Click="ClickCalcHeatmap" />
+                                    <Image Name="OutHeatmap" MaxWidth="500" />
+                                </StackPanel>
+                            </ScrollViewer>
                         </Grid>
                     </TabItem>
 
@@ -374,7 +445,7 @@
 
                             <ListView x:Name="ListParamTypes" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding ParameterTypes}" DisplayMemberPath="Name" />
 
-                            <StackPanel Grid.Column="3" Grid.RowSpan="2" Margin="5" DataContext="{Binding ElementName=ListParamTypes, Path=SelectedItem}">
+                            <StackPanel Grid.Column="3" Grid.RowSpan="2" Margin="5" DataContext="{Binding ElementName=ListParamTypes, Path=SelectedItem}" IsEnabled="{Binding Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
                                 <StackPanel.Resources>
                                     <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
                                         <ObjectDataProvider.MethodParameters>
@@ -396,17 +467,21 @@
                                     <Style TargetType="ListView">
                                         <Setter Property="Margin" Value="5" />
                                     </Style>
-                                    </StackPanel.Resources>
+                                </StackPanel.Resources>
                                     
                                 <HeaderedContentControl Header="Name">
                                     <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
                                 </HeaderedContentControl>
-                                <HeaderedContentControl Header="Größe in Bits">
-                                    <TextBox Text="{Binding SizeInBit, UpdateSourceTrigger=PropertyChanged}"/>
-                                </HeaderedContentControl>
                                 <HeaderedContentControl Header="Type">
                                     <ComboBox Margin="0 5" ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding Type, Mode=TwoWay}" SelectionChanged="ParamTypeChanged" />
                                 </HeaderedContentControl>
+                                
+                                <StackPanel Visibility="{Binding Type, Converter={StaticResource EnumToVisNeg}, ConverterParameter=None-IpAddress-Picture}">
+                                    <CheckBox IsChecked="{Binding IsSizeAuto}" Content="Größe automatisch" />
+                                    <HeaderedContentControl Header="Größe in Bits" Visibility="{Binding IsSizeAuto, Converter={StaticResource BoolToVis}, ConverterParameter=true}">
+                                        <TextBox Text="{Binding SizeInBit, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </HeaderedContentControl>
+                                </StackPanel>
 
                                 <Grid x:Name="Paramtype_Enum" Visibility="Collapsed">
                                     <Grid.RowDefinitions>
@@ -472,8 +547,8 @@
 
                             <ListView x:Name="ParamList" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding Parameters}" DisplayMemberPath="Name" />
 
-                            <ScrollViewer Grid.Column="3" Grid.RowSpan="2">
-                                <StackPanel Margin="5" DataContext="{Binding ElementName=ParamList, Path=SelectedItem}">
+                            <ScrollViewer Grid.Column="3" Grid.RowSpan="2" DataContext="{Binding ElementName=ParamList, Path=SelectedItem}" IsEnabled="{Binding Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
+                                <StackPanel Margin="5">
                                     <StackPanel.Resources>
                                         <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
                                             <ObjectDataProvider.MethodParameters>
@@ -519,11 +594,11 @@
                                             <ColumnDefinition Width="auto" />
                                         </Grid.ColumnDefinitions>
                                         <HeaderedContentControl Header="Type">
-                                            <ComboBox Name="InParaType" ItemsSource="{Binding ElementName=ListParamTypes, Path=ItemsSource}" DisplayMemberPath="Name" SelectedValue="{Binding ParameterType}" SelectedValuePath="Name" />
+                                            <ComboBox ItemsSource="{Binding ElementName=VersionList, Path=SelectedItem.ParameterTypes}" DisplayMemberPath="Name" SelectedItem="{Binding ParameterTypeObject}" />
                                         </HeaderedContentControl>
 
                                         <TextBlock Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0 0 10 14">
-                                        <Run Text="{Binding ElementName=InParaType, Path=SelectedItem.SizeInBit}" />
+                                        <Run Text="{Binding ParameterTypeObject.SizeInBit}" />
                                         <Run Text="Bit" />
                                         </TextBlock>
                                     </Grid>
@@ -531,21 +606,55 @@
                                     <CheckBox Name="InParaInMemory" IsChecked="{Binding IsInMemory}" Content="Parameter ist in einem Speicher" />
 
                                     <HeaderedContentControl Header="Speicherort" IsEnabled="{Binding ElementName=InParaInMemory, Path=IsChecked}">
-                                        <ComboBox ItemsSource="{Binding ElementName=ListMemories, Path=Items}" SelectedValue="{Binding Memory}" SelectedValuePath="Name" DisplayMemberPath="Name" />
+                                        <ComboBox ItemsSource="{Binding ElementName=VersionList, Path=SelectedItem.Memories}" SelectedItem="{Binding MemoryObject, Mode=TwoWay}" DisplayMemberPath="Name" />
                                     </HeaderedContentControl>
-                                    <HeaderedContentControl Header="Offset" IsEnabled="{Binding ElementName=InParaInMemory, Path=IsChecked}">
-                                        <TextBox Text="{Binding Offset, UpdateSourceTrigger=PropertyChanged}"/>
-                                    </HeaderedContentControl>
-                                    <HeaderedContentControl Header="Bit Offset" IsEnabled="{Binding ElementName=InParaInMemory, Path=IsChecked}">
-                                        <TextBox Text="{Binding OffsetBit, UpdateSourceTrigger=PropertyChanged}"/>
-                                    </HeaderedContentControl>
+
+                                    <StackPanel Visibility="{Binding MemoryObject.IsParasAuto, Converter={StaticResource BoolToVis}, ConverterParameter=true}">
+                                        <StackPanel Visibility="{Binding ElementName=AppList, Path=SelectedItem.IsAutoMemory, Converter={StaticResource BoolToVis}, ConverterParameter=true}">
+                                            <CheckBox IsChecked="{Binding IsOffsetAuto}" Content="Automatisch im Speicher anordnen" />
+
+                                            <StackPanel Visibility="{Binding IsOffsetAuto, Converter={StaticResource BoolToVis}, ConverterParameter=true}">
+                                                <HeaderedContentControl Header="Offset" IsEnabled="{Binding ElementName=InParaInMemory, Path=IsChecked}">
+                                                    <TextBox Text="{Binding Offset, UpdateSourceTrigger=PropertyChanged}"/>
+                                                </HeaderedContentControl>
+                                                <HeaderedContentControl Header="Bit Offset" IsEnabled="{Binding ElementName=InParaInMemory, Path=IsChecked}">
+                                                    <TextBox Text="{Binding OffsetBit, UpdateSourceTrigger=PropertyChanged}"/>
+                                                </HeaderedContentControl>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <TextBlock Text="Adresse wird automatisch festgelegt (Applikation)" Margin="5" Visibility="{Binding ElementName=AppList, Path=SelectedItem.IsAutoMemory, Converter={StaticResource BoolToVis}}" />
+                                    <Border Visibility="{Binding ElementName=AppList, Path=SelectedItem.IsAutoMemory, Converter={StaticResource BoolToVis}, ConverterParameter=true}">
+                                        <TextBlock Text="Adresse wird automatisch festgelegt (Speicher)" Margin="5" Visibility="{Binding MemoryObject.IsParasAuto, Converter={StaticResource BoolToVis}}" />
+                                    </Border>
+
+                                    <Border Visibility="{Binding ElementName=AppList, Path=SelectedItem.IsAutoMemory, Converter={StaticResource BoolToVis}}">
+                                        <TextBlock Margin="5">
+                                                <Run Text="Offset:" />
+                                                <Run Text="{Binding Offset, Mode=OneWay}" />
+                                                <LineBreak />
+                                                <Run Text="Bit Offset:" />
+                                                <Run Text="{Binding OffsetBit, Mode=OneWay}" />
+                                        </TextBlock>
+                                    </Border>
+
+                                    <Border Visibility="{Binding ElementName=AppList, Path=SelectedItem.IsAutoMemory, Converter={StaticResource BoolToVis}, ConverterParameter=true}">
+                                        <Border Visibility="{Binding MemoryObject.IsParasAuto, Converter={StaticResource BoolToVis}}">
+                                            <TextBlock Margin="5">
+                                                <Run Text="Offset:" />
+                                                <Run Text="{Binding Offset, Mode=OneWay}" />
+                                                <LineBreak />
+                                                <Run Text="Bit Offset:" />
+                                                <Run Text="{Binding OffsetBit, Mode=OneWay}" />
+                                            </TextBlock>
+                                        </Border>
+                                    </Border>
                                 </StackPanel>
                             </ScrollViewer>
 
                             </Grid>
                     </TabItem>
-
-                    
 
                     <TabItem Header="ParameterRefs">
                         <Grid>
@@ -566,7 +675,7 @@
                             <ListView x:Name="ParamRefList" Grid.Row="2" Grid.ColumnSpan="2" ItemsSource="{Binding ParameterRefs}" DisplayMemberPath="Name" />
 
 
-                            <StackPanel Grid.Column="3" Grid.RowSpan="3" Margin="5" DataContext="{Binding ElementName=ParamRefList, Path=SelectedItem}">
+                            <StackPanel Grid.Column="3" Grid.RowSpan="3" Margin="5" DataContext="{Binding ElementName=ParamRefList, Path=SelectedItem}" IsEnabled="{Binding Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
                                 <StackPanel.Resources>
                                     <Style TargetType="HeaderedContentControl">
                                         <Setter Property="Margin" Value="5" />
@@ -587,7 +696,6 @@
                         </Grid>
                     </TabItem>
 
-
                     <TabItem Header="Comobjects">
 
                     </TabItem>
@@ -596,6 +704,99 @@
                     <TabItem Header="ComobjectRefs">
 
                     </TabItem>
+
+
+                    <TabItem Header="Ladeprozedur" Visibility="{Binding ElementName=AppList, Path=SelectedItem.Mask.Procedure, Converter={StaticResource EnumToVis}, ConverterParameter=Application}">
+
+                    </TabItem>
+
+
+                    <TabItem Header="Ladeprozedur Merge" Visibility="{Binding ElementName=AppList, Path=SelectedItem.Mask.Procedure, Converter={StaticResource EnumToVis}, ConverterParameter=Merge}">
+
+                    </TabItem>
+
+
+
+                    <TabItem Header="Dynamic">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+
+
+                            <TreeView Name="DynamicList" ItemsSource="{Binding ElementName=VersionList, Path=SelectedItem.Dynamics}" MinWidth="300">
+                                <TreeView.Resources>
+                                    <HierarchicalDataTemplate DataType="{x:Type dyn:DynamicMain}" ItemsSource="{Binding Items}">
+                                        <TextBlock Text="{Binding Name}">
+                                            <TextBlock.ContextMenu>
+                                                <ContextMenu>
+                                                    <MenuItem Header="Independent Channel hinzufügen" IsEnabled="{Binding Path=ItemsCount, Converter={StaticResource  EmptyListToBool}}" Click="ClickDynAddIndep" />
+                                                    <MenuItem Header="Channel hinzufügen" IsEnabled="{Binding Items, Converter={StaticResource DynIndToBool}, ConverterParameter=true}" />
+                                                </ContextMenu>
+                                            </TextBlock.ContextMenu>
+                                        </TextBlock>
+                                    </HierarchicalDataTemplate>
+                                    <HierarchicalDataTemplate DataType="{x:Type dyn:DynChannelIndependet}" ItemsSource="{Binding Blocks}">
+                                        <TextBlock Text="{Binding Name}">
+                                            <TextBlock.ContextMenu>
+                                                <ContextMenu>
+                                                    <MenuItem Header="Block hinzufügen" Click="ClickDynAddBlock" />
+                                                    <MenuItem Header="Entfernen" />
+                                                </ContextMenu>
+                                            </TextBlock.ContextMenu>
+                                        </TextBlock>
+                                    </HierarchicalDataTemplate>
+                                    <HierarchicalDataTemplate DataType="{x:Type dyn:DynParaBlock}" ItemsSource="{Binding Parameters}">
+                                        <TextBlock Text="{Binding Name}">
+                                            <TextBlock.ContextMenu>
+                                                <ContextMenu>
+                                                    <MenuItem Header="Parameter hinzufügen" Click="ClickAddDynPara" />
+                                                    <MenuItem Header="KO hinzufügen" />
+                                                    <MenuItem Header="Abfrage hinzufügen" />
+                                                    <MenuItem Header="Entfernen" />
+                                                </ContextMenu>
+                                            </TextBlock.ContextMenu>
+                                        </TextBlock>
+                                    </HierarchicalDataTemplate>
+                                </TreeView.Resources>
+                            </TreeView>
+
+                            <StackPanel Grid.Column="1" DataContext="{Binding ElementName=DynamicList, Path=SelectedItem}">
+                                <StackPanel.Resources>
+                                    <Style TargetType="HeaderedContentControl">
+                                        <Setter Property="Margin" Value="5" />
+                                    </Style>
+                                    <Style TargetType="CheckBox">
+                                        <Setter Property="Margin" Value="5" />
+                                    </Style>
+                                    <Style TargetType="ComboBox">
+                                        <Setter Property="Margin" Value="5" />
+                                    </Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Margin" Value="5" />
+                                    </Style>
+                                    <Style TargetType="ListView">
+                                        <Setter Property="Margin" Value="5" />
+                                    </Style>
+                                </StackPanel.Resources>
+                                
+                                <HeaderedContentControl Header="Name">
+                                    <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
+                                </HeaderedContentControl>
+
+                                <StackPanel Visibility="{Binding ElementName=DynamicList, Path=SelectedItem, Converter={StaticResource TypeToBool}, ConverterParameter=DynParameter}">
+                                    <HeaderedContentControl Header="Name">
+                                        <ComboBox ItemsSource="{Binding ElementName=VersionList, Path=SelectedItem.ParameterRefs}" SelectedItem="{Binding Parameter}" DisplayMemberPath="Name" />
+                                    </HeaderedContentControl>
+                                </StackPanel>
+                            </StackPanel>
+
+
+                        </Grid>
+                    </TabItem>
+
+
                 </TabControl>
             </TabItem>
         </TabControl>
