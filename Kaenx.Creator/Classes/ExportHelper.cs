@@ -1,4 +1,5 @@
 ﻿using Kaenx.Creator.Models;
+using Kaenx.Creator.Models.Dynamic;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -204,10 +205,12 @@ namespace Kaenx.Creator.Classes
                     foreach(ParameterRef pref in ver.ParameterRefs)
                     {
                         XElement xpref = new XElement(Get("ParameterRef"));
-                        string refid = ParamIds[pref.ParameterId];
+                        string refid = ParamIds[pref.ParameterObject.Name];
                         xpref.SetAttributeValue("Id", refid + "_R-" + refCount);
                         xpref.SetAttributeValue("RefId", refid);
+                        pref.RefId = refid + "_R-" + refCount;
                         temp.Add(xpref);
+                        refCount++;
                     }
 
                     xunderapp.Add(temp);
@@ -237,6 +240,7 @@ namespace Kaenx.Creator.Classes
                     xunderapp = new XElement(Get("Dynamic"));
                     xapp.Add(xunderapp);
 
+                    HandleSubItems(ver.Dynamics[0], xunderapp);
                 }
             }
 
@@ -321,6 +325,70 @@ namespace Kaenx.Creator.Classes
 
             doc.Save(GetRelPath("temp.xml"));
         }
+
+
+        #region Create Dyn Stuff
+
+        private void HandleSubItems(IDynItems parent, XElement xparent)
+        {
+            foreach (IDynItems item in parent.Items)
+            {
+                XElement xitem = null;
+
+                switch (item)
+                {
+                    case DynChannelIndependet dci:
+                        xitem = Handle(dci, xparent);
+                        break;
+
+                    case DynParaBlock dpb:
+                        xitem = HandleBlock(dpb, xparent);
+                        break;
+
+                    case DynParameter dp:
+                        HandleParam(dp, xparent);
+                        break;
+                }
+
+                if (item.Items != null && xitem != null)
+                    HandleSubItems(item, xitem);
+            }
+        }
+
+
+        private XElement Handle(IDynItems ch, XElement parent)
+        {
+            string name = "Channel";
+            if (ch is DynChannelIndependet) name = "ChannelIndependentBlock";
+            XElement channel = new XElement(Get(name));
+            parent.Add(channel);
+
+            channel.SetAttributeValue("Name", ch.Name);
+            channel.SetAttributeValue("Text", ""); //Todo einfügen
+
+            return channel;
+        }
+
+        private XElement HandleBlock(DynParaBlock bl, XElement parent)
+        {
+            XElement block = new XElement(Get("ParameterBlock"));
+            parent.Add(block);
+
+            block.SetAttributeValue("Name", bl.Name);
+            block.SetAttributeValue("Text", "ParaBlock Text");
+
+
+            return block;
+        }
+
+        private void HandleParam(DynParameter pa, XElement parent)
+        {
+            XElement xpara = new XElement(Get("ParameterRefRef"));
+            parent.Add(xpara);
+            xpara.SetAttributeValue("RefId", pa.ParameterRefObject.RefId);
+        }
+        #endregion
+
 
         private int catalogCounter = 1;
         private void GetCatalogItems(CatalogItem item, XElement parent, Dictionary<string, string> productIds, Dictionary<string, string> hardwareIds)

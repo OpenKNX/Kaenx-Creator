@@ -6,11 +6,11 @@ using System.Text;
 
 namespace Kaenx.Creator.Models.Dynamic
 {
-    public class DynChannelIndependet : IDynChannel, INotifyPropertyChanged
+    public class DynChannelIndependet : IDynItems, IDynChannel, INotifyPropertyChanged
     {
         public string Name { get; set; } = "Platzhalter";
 
-        public ObservableCollection<DynParaBlock> Blocks { get; set; } = new ObservableCollection<DynParaBlock>();
+        public ObservableCollection<IDynItems> Items { get; set; } = new ObservableCollection<IDynItems>();
 
         public event PropertyChangedEventHandler PropertyChanged;
     }

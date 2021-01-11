@@ -5,9 +5,9 @@ using System.Text;
 
 namespace Kaenx.Creator.Models.Dynamic
 {
-    public class DynChannel : IDynItems, IDynChannel
+    public interface IDynItems
     {
         public string Name { get; set; }
-        public ObservableCollection<IDynItems> Items { get; set; } = new ObservableCollection<IDynItems>();
+        public ObservableCollection<IDynItems> Items { get; set; }
     }
 }

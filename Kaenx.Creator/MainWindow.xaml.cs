@@ -352,6 +352,17 @@ namespace Kaenx.Creator
                                 para.ParameterTypeObject = pt;
                             }
                         }
+
+                        foreach(Models.ParameterRef pref in ver.ParameterRefs)
+                        {
+                            if (!string.IsNullOrEmpty(pref.GetParameter()))
+                            {
+                                Models.Parameter para = ver.Parameters.Single(p => p.Name == pref.GetParameter());
+                                pref.ParameterObject = para;
+                            }
+                        }
+
+                        LoadSubDyn(ver.Dynamics[0], ver.ParameterRefs.ToList());
                     }
 
 
@@ -366,6 +377,26 @@ namespace Kaenx.Creator
                 SetSubCatalogItems(General.Catalog[0]);
 
                 SetButtons(true);
+            }
+        }
+
+        private void LoadSubDyn(Models.Dynamic.IDynItems dyn, List<Models.ParameterRef> paras)
+        {
+            foreach (Models.Dynamic.IDynItems item in dyn.Items)
+            {
+                if(item is Models.Dynamic.DynParameter)
+                {
+                    Models.Dynamic.DynParameter para = item as Models.Dynamic.DynParameter;
+                    if (!string.IsNullOrEmpty(para.GetParameter()))
+                    {
+                        Models.ParameterRef pr = paras.Single(p => p.Name == para.GetParameter());
+                        para.ParameterRefObject = pr;
+                    }
+                } else
+                {
+                    if (item.Items != null)
+                        LoadSubDyn(item, paras);
+                }
             }
         }
 
@@ -413,8 +444,8 @@ namespace Kaenx.Creator
             foreach(Models.Parameter para in ver.Parameters)
             {
                 Models.ParameterRef pref = new Models.ParameterRef();
-                pref.Name = para.Name + " - 1";
-                pref.ParameterId = para.Name;
+                pref.Name = para.Name;
+                pref.ParameterObject = para;
                 ver.ParameterRefs.Add(pref);
             }
         }
@@ -529,14 +560,14 @@ namespace Kaenx.Creator
 
         private void ClickDynAddBlock(object sender, RoutedEventArgs e)
         {
-            Models.Dynamic.IDynChannel main = (sender as MenuItem).DataContext as Models.Dynamic.IDynChannel;
-            main.Blocks.Add(new Models.Dynamic.DynParaBlock());
+            Models.Dynamic.IDynItems main = (sender as MenuItem).DataContext as Models.Dynamic.IDynItems;
+            main.Items.Add(new Models.Dynamic.DynParaBlock());
         }
 
         private void ClickAddDynPara(object sender, RoutedEventArgs e)
         {
             Models.Dynamic.DynParaBlock block = (sender as MenuItem).DataContext as Models.Dynamic.DynParaBlock;
-            block.Parameters.Add(new Models.Dynamic.DynParameter());
+            block.Items.Add(new Models.Dynamic.DynParameter());
         }
     }
 }

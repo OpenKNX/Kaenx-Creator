@@ -14,7 +14,7 @@ namespace Kaenx.Creator.Converter
         {
             if (value == null) return false;
             bool neg = (parameter?.ToString() == "true");
-            ObservableCollection<IDynChannel> main = value as ObservableCollection<IDynChannel>;
+            ObservableCollection<IDynItems> main = value as ObservableCollection<IDynItems>;
             if (main.Count == 0) return neg ? true : false;
 
             bool val = main[0] is DynChannelIndependet;

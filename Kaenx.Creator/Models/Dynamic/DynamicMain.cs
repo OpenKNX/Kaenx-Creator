@@ -6,11 +6,11 @@ using System.Text;
 
 namespace Kaenx.Creator.Models.Dynamic
 {
-    public class DynamicMain : INotifyPropertyChanged
+    public class DynamicMain : IDynItems, INotifyPropertyChanged
     {
         public string Name { get; set; } = "Root Knoten";
 
-        public ObservableCollection<IDynChannel> Items { get; set; } = new ObservableCollection<IDynChannel>();
+        public ObservableCollection<IDynItems> Items { get; set; } = new ObservableCollection<IDynItems>();
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void Changed(string name)

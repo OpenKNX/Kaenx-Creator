@@ -5,10 +5,10 @@ using System.Text;
 
 namespace Kaenx.Creator.Models.Dynamic
 {
-    public class DynParaBlock
+    public class DynParaBlock : IDynItems
     {
         public string Name { get; set; } = "Block";
 
-        public ObservableCollection<DynParameter> Parameters { get; set; } = new ObservableCollection<DynParameter>();
+        public ObservableCollection<IDynItems> Items { get; set; } = new ObservableCollection<IDynItems>();
     }
 }

@@ -234,7 +234,7 @@
                             <DataTemplate>
                                 <TextBlock>
                                     <Run Text="{Binding AppObject.Name}" />
-                                    <Run Text="{Binding AppVersionObject.VersionText, Mode=OneTime}" />
+                                    <Run Text="{Binding AppVersionObject.NameText, Mode=OneTime}" />
                                 </TextBlock>
                             </DataTemplate>
                         </ListView.ItemTemplate>
@@ -689,7 +689,7 @@
                                     <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
                                 </HeaderedContentControl>
                                 <HeaderedContentControl Header="Parameter">
-                                    <ComboBox ItemsSource="{Binding ElementName=ParamList, Path=Items}" DisplayMemberPath="Name" SelectedValue="{Binding ParameterId}" SelectedValuePath="Name" />
+                                    <ComboBox ItemsSource="{Binding ElementName=ParamList, Path=Items}" DisplayMemberPath="Name" SelectedItem="{Binding ParameterObject}" />
                                 </HeaderedContentControl>
 
                             </StackPanel>
@@ -737,7 +737,7 @@
                                             </TextBlock.ContextMenu>
                                         </TextBlock>
                                     </HierarchicalDataTemplate>
-                                    <HierarchicalDataTemplate DataType="{x:Type dyn:DynChannelIndependet}" ItemsSource="{Binding Blocks}">
+                                    <HierarchicalDataTemplate DataType="{x:Type dyn:DynChannelIndependet}" ItemsSource="{Binding Items}">
                                         <TextBlock Text="{Binding Name}">
                                             <TextBlock.ContextMenu>
                                                 <ContextMenu>
@@ -747,7 +747,7 @@
                                             </TextBlock.ContextMenu>
                                         </TextBlock>
                                     </HierarchicalDataTemplate>
-                                    <HierarchicalDataTemplate DataType="{x:Type dyn:DynParaBlock}" ItemsSource="{Binding Parameters}">
+                                    <HierarchicalDataTemplate DataType="{x:Type dyn:DynParaBlock}" ItemsSource="{Binding Items}">
                                         <TextBlock Text="{Binding Name}">
                                             <TextBlock.ContextMenu>
                                                 <ContextMenu>
@@ -787,7 +787,7 @@
 
                                 <StackPanel Visibility="{Binding ElementName=DynamicList, Path=SelectedItem, Converter={StaticResource TypeToBool}, ConverterParameter=DynParameter}">
                                     <HeaderedContentControl Header="Name">
-                                        <ComboBox ItemsSource="{Binding ElementName=VersionList, Path=SelectedItem.ParameterRefs}" SelectedItem="{Binding Parameter}" DisplayMemberPath="Name" />
+                                        <ComboBox ItemsSource="{Binding ElementName=VersionList, Path=SelectedItem.ParameterRefs}" SelectedItem="{Binding ParameterRefObject}" DisplayMemberPath="Name" />
                                     </HeaderedContentControl>
                                 </StackPanel>
                             </StackPanel>
