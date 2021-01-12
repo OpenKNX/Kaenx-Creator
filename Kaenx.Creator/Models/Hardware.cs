@@ -17,13 +17,6 @@ namespace Kaenx.Creator.Models
         }
 
         public string SerialNumber { get; set; } = "1";
-        [JsonIgnore]
-        public Device DeviceObject { get; set; }
-        public string Device
-        {
-            get { return DeviceObject?.Name; }
-            set { _device = value; }
-        }
         public int Version { get; set; } = 1;
         public int BusCurrent { get; set; } = 10;
         public bool HasIndividualAddress { get; set; } = true;
@@ -37,56 +30,24 @@ namespace Kaenx.Creator.Models
         public bool IsPowerSupply { get; set; } = false;
         public bool IsCoppler { get; set; } = false;
         public bool IsIpEnabled { get; set; } = false;
-        public ObservableCollection<HardwareApp> Apps { get; set; } = new ObservableCollection<HardwareApp>();
-
+        public ObservableCollection<Device> Devices { get; set; } = new ObservableCollection<Device>();
+        [JsonIgnore]
+        public ObservableCollection<Application> Apps { get; set; } = new ObservableCollection<Application>();
+        public string _appsString;
+        public string AppsString {
+            get {
+                List<string> names = new List<string>();
+                foreach(Application app in Apps)
+                    names.Add(app.Name);
+                return string.Join(",", names.ToArray());
+            }
+            set { _appsString = value; }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
         public void Changed(string name)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-
-        private string _device = "";
-
-        public string GetDevice()
-        {
-            return _device;
-        }
-    }
-
-    public class HardwareApp
-    {
-        [JsonIgnore]
-        public Application AppObject { get; set; }
-        [JsonIgnore]
-        public AppVersion AppVersionObject { get; set; }
-        public string App
-        {
-            get { return AppObject.Name; }
-            set { _app = value; }
-        }
-        public int AppVersion
-        {
-            get { return AppVersionObject.Number; }
-            set { _appVersion = value; }
-        }
-
-        public string DisplayText
-        {
-            get { return App + " " + AppVersionObject.NameText; }
-        }
-
-        private string _app;
-        private int _appVersion;
-
-        public string GetApp()
-        {
-            return _app;
-        }
-
-        public int GetVersion()
-        {
-            return _appVersion;
         }
     }
 }

@@ -127,18 +127,28 @@ namespace Kaenx.Creator
 
         #region Clicks Add/Remove
 
-        private void ClickAddDevice(object sender, RoutedEventArgs e)
+        private void ClickAddHardDevice(object sender, RoutedEventArgs e)
         {
-            General.Devices.Add(new Models.Device());
+            Models.Hardware hard = (sender as Button).DataContext as Models.Hardware;
+            hard.Devices.Add(new Models.Device());
         }
 
-        private void ClickRemoveDevice(object sender, RoutedEventArgs e)
+        private void ClickAddHardApp(object sender, RoutedEventArgs e)
+        {
+            Models.Hardware hard = (sender as Button).DataContext as Models.Hardware;
+            if(!hard.Apps.Contains(InHardApp.SelectedItem as Models.Application)) {
+                hard.Apps.Add(InHardApp.SelectedItem as Models.Application);
+            }
+            InHardApp.SelectedItem = null;
+        }
+
+        /*private void ClickRemoveDevice(object sender, RoutedEventArgs e)
         {
             if(DeviceList.SelectedItem == null) return;
 
             Models.Device dev = DeviceList.SelectedItem as Models.Device;
             General.Devices.Remove(dev);
-        }
+        }*/
 
         private void ClickAddParamRef(object sender, RoutedEventArgs e)
         {
@@ -269,7 +279,7 @@ namespace Kaenx.Creator
             General.Hardware.Remove(HardwareList.SelectedItem as Models.Hardware);
         }
 
-        private void ClickAddHardwareApp(object sender, RoutedEventArgs e)
+        /*private void ClickAddHardwareApp(object sender, RoutedEventArgs e)
         {
             Models.Hardware hard = HardwareList.SelectedItem as Models.Hardware;
             Models.HardwareApp happ = new Models.HardwareApp();
@@ -285,7 +295,7 @@ namespace Kaenx.Creator
             Models.Hardware hard = HardwareList.SelectedItem as Models.Hardware;
             if (hard == null) return;
             hard.Apps.Remove(HardwareAppList.SelectedItem as Models.HardwareApp);
-        }
+        }*/
 
         #endregion
 
@@ -320,20 +330,6 @@ namespace Kaenx.Creator
                 string general = System.IO.File.ReadAllText(diag.FileName);
                 General = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.ModelGeneral>(general, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Auto });
                 filePath = diag.FileName;
-
-                foreach(Models.Hardware hard in General.Hardware)
-                {
-                    hard.DeviceObject = General.Devices.Single(d => d.Name == hard.GetDevice());
-
-                    foreach(Models.HardwareApp happ in hard.Apps)
-                    {
-                        Models.Application mapp = General.Applications.Single(app => app.Name == happ.GetApp());
-                        happ.AppObject = mapp;
-                        Models.AppVersion mver = mapp.Versions.Single(ver => ver.Number == happ.GetVersion());
-                        happ.AppVersionObject = mver;
-                    }
-                }
-
 
                 foreach(Models.Application app in General.Applications)
                 {
@@ -374,6 +370,16 @@ namespace Kaenx.Creator
                 }
 
 
+                foreach(Models.Hardware hard in General.Hardware){
+                    if(string.IsNullOrEmpty(hard._appsString)) continue;
+                    
+                    foreach(string name in hard._appsString.Split(',')){
+                        try{
+                            hard.Apps.Add(General.Applications.Single(app => app.Name == name));
+                        } catch{}
+                    }
+                }
+
                 SetSubCatalogItems(General.Catalog[0]);
 
                 SetButtons(true);
@@ -410,10 +416,6 @@ namespace Kaenx.Creator
                 if (!string.IsNullOrEmpty(item.GetHardwareName()))
                 {
                     item.Hardware = General.Hardware.Single(h => h.Name == item.GetHardwareName());
-                    if(item.GetHardwareApp() != -1)
-                    {
-                        item.HardApp = item.Hardware.Apps.Single(h => h.AppVersionObject.Number == item.GetHardwareApp());
-                    }
                 }
 
                 SetSubCatalogItems(item);
@@ -450,22 +452,10 @@ namespace Kaenx.Creator
             }
         }
 
-        private void HardwareAppChanged(object sender, SelectionChangedEventArgs e)
-        {
-            Models.Application app = InHardwareApp.SelectedItem as Models.Application;
-            InHardwareVer.ItemsSource = app.Versions;
-        }
-
         private void ClickExportSign(object sender, RoutedEventArgs e)
         {
             ExportHelper helper = new ExportHelper();
             helper.SignOutput();
-        }
-
-        private void ClickTest(object sender, RoutedEventArgs e)
-        {
-            General.Catalog.Add(new Models.CatalogItem() { Name = "Allgemeine Geräte" });
-            General.Catalog[0].Items.Add(new Models.CatalogItem() { Name = "Sensoren", Parent = General.Catalog[0] });
         }
 
         private void ClickCatalogContext(object sender, RoutedEventArgs e)

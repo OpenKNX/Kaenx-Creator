@@ -40,9 +40,7 @@
             </MenuItem>
             <MenuItem x:Name="MenuPublish" IsEnabled="False" Header="Veröffentlichen">
                 <MenuItem Header="Für ETS" Click="ClickExportEts" />
-                <MenuItem Header="Für Kaenx" IsEnabled="False" />
                 <MenuItem Header="Nur signieren" Click="ClickExportSign" />
-                <MenuItem Header="Test" Click="ClickTest" />
             </MenuItem>
         </Menu>
 
@@ -114,17 +112,14 @@
                         <HeaderedContentControl Header="Hardware" IsEnabled="{Binding ElementName=InCatalogSection, Path=IsChecked, Converter={StaticResource BoolNegate}}">
                             <ComboBox Name="InCatalogHardware" Margin="0" ItemsSource="{Binding General.Hardware, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" SelectedItem="{Binding Hardware, Mode=TwoWay}" DisplayMemberPath="Name"/>
                         </HeaderedContentControl>
-                        <HeaderedContentControl Header="Applikation" IsEnabled="{Binding ElementName=InCatalogSection, Path=IsChecked, Converter={StaticResource BoolNegate}}">
-                            <ComboBox Margin="0" ItemsSource="{Binding Hardware.Apps}" SelectedItem="{Binding HardApp, Mode=TwoWay}" DisplayMemberPath="DisplayText"/>
-                        </HeaderedContentControl>
-
                     </StackPanel>
                 </Grid>
             </TabItem>
 
-            <TabItem Header="Geräte">
+            <TabItem Header="Hardware/Geräte">
                 <Grid>
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="25" />
                         <RowDefinition Height="auto" />
                         <RowDefinition />
                     </Grid.RowDefinitions>
@@ -132,62 +127,13 @@
                         <ColumnDefinition Width="150" />
                         <ColumnDefinition Width="150" />
                         <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-                    <Button Content="Hinzufügen" Click="ClickAddDevice" Margin="0 0 1 2" />
-                    <Button Grid.Column="1" Content="Löschen" Click="ClickRemoveDevice" Margin="1 0 0 2" />
-
-                    <ListView x:Name="DeviceList" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding General.Devices}" DisplayMemberPath="Name" />
-
-                    <StackPanel Grid.Column="2" Grid.RowSpan="2" DataContext="{Binding ElementName=DeviceList, Path=SelectedItem}" IsEnabled="{Binding ElementName=DeviceList, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
-                        <StackPanel.Resources>
-                            <Style TargetType="HeaderedContentControl">
-                                <Setter Property="Margin" Value="5" />
-                            </Style>
-                            <Style TargetType="CheckBox">
-                                <Setter Property="Margin" Value="5" />
-                            </Style>
-                            <Style TargetType="ComboBox">
-                                <Setter Property="Margin" Value="5" />
-                            </Style>
-                        </StackPanel.Resources>
-                        <HeaderedContentControl Header="Name">
-                            <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
-                        </HeaderedContentControl>
-                        <HeaderedContentControl Header="Text">
-                            <TextBox Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
-                        </HeaderedContentControl>
-                        <HeaderedContentControl Header="Bestellnummer">
-                            <TextBox Text="{Binding OrderNumber}" />
-                        </HeaderedContentControl>
-                        <HeaderedContentControl Header="Beschreibung">
-                            <TextBox Text="{Binding Description}" />
-                        </HeaderedContentControl>
-
-                        <CheckBox IsChecked="{Binding IsRailMounted}" Content="Ist ein REG" />
-                    </StackPanel>
-                </Grid>
-            </TabItem>
-
-            <TabItem Header="Hardware">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                        <RowDefinition />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition MaxWidth="125" />
-                        <ColumnDefinition MaxWidth="125" />
-                        <ColumnDefinition />
-                        <ColumnDefinition MaxWidth="125" />
-                        <ColumnDefinition MaxWidth="125" />
                     </Grid.ColumnDefinitions>
                     <Button Content="Hinzufügen" Click="ClickAddHardware" Margin="0 0 1 2" />
                     <Button Grid.Column="1" Content="Löschen" Click="ClickRemoveHardware" Margin="1 0 0 2" />
 
-                    <ListView x:Name="HardwareList" Grid.Row="1" Grid.RowSpan="2" Grid.ColumnSpan="2" ItemsSource="{Binding General.Hardware}" DisplayMemberPath="Name" />
+                    <ListView x:Name="HardwareList" Grid.Row="1" Grid.RowSpan="3" Grid.ColumnSpan="2" ItemsSource="{Binding General.Hardware}" DisplayMemberPath="Name" />
 
-                    <StackPanel Grid.RowSpan="3" Grid.Column="2" DataContext="{Binding ElementName=HardwareList, Path=SelectedItem}" IsEnabled="{Binding ElementName=HardwareList, Path=SelectedItem, Converter={StaticResource EmptyToBool},ConverterParameter=true}">
+                    <StackPanel Grid.Column="2" Grid.Row="1" DataContext="{Binding ElementName=HardwareList, Path=SelectedItem}" IsEnabled="{Binding ElementName=HardwareList, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
                         <StackPanel.Resources>
                             <Style TargetType="HeaderedContentControl">
                                 <Setter Property="Margin" Value="5" />
@@ -196,9 +142,6 @@
                                 <Setter Property="Margin" Value="5" />
                             </Style>
                             <Style TargetType="ComboBox">
-                                <Setter Property="Margin" Value="5" />
-                            </Style>
-                            <Style TargetType="Button">
                                 <Setter Property="Margin" Value="5" />
                             </Style>
                         </StackPanel.Resources>
@@ -211,9 +154,6 @@
                         <HeaderedContentControl Header="Busstrom">
                             <TextBox Text="{Binding BusCurrent, UpdateSourceTrigger=PropertyChanged}" />
                         </HeaderedContentControl>
-                        <HeaderedContentControl Header="Gerät">
-                            <ComboBox Margin="0" ItemsSource="{Binding General.Devices, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" SelectedItem="{Binding DeviceObject, Mode=TwoWay}" DisplayMemberPath="Name"/>
-                        </HeaderedContentControl>
                         <CheckBox IsChecked="{Binding HasIndividualAddress, Mode=TwoWay}" Content="Hat eine Individuelle Adresse" />
                         <CheckBox IsChecked="{Binding IsPowerSupply, Mode=TwoWay}" Content="Gerät ist eine Spannungsversorgung" />
                         <CheckBox IsChecked="{Binding IsCoppler, Mode=TwoWay}" Content="Gerät ist ein Koppler" />
@@ -223,22 +163,53 @@
                         <CheckBox IsChecked="{Binding HasApplicationProgram2, Mode=TwoWay}" Content="Hat ein zweites Applikationsprogramm" />
                     </StackPanel>
 
-                    <ComboBox Name="InHardwareApp" Grid.Column="3" IsEnabled="{Binding ElementName=HardwareList, Path=SelectedItem.HasApplicationProgram}" ItemsSource="{Binding General.Applications, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" SelectionChanged="HardwareAppChanged" DisplayMemberPath="Name" SelectedValuePath="Name" />
-                    <ComboBox Name="InHardwareVer" Grid.Column="4" IsEnabled="{Binding ElementName=HardwareList, Path=SelectedItem.HasApplicationProgram}" DisplayMemberPath="NameText" SelectedValuePath="Number" />
 
-                    <Button Grid.Row="1" Grid.Column="3" IsEnabled="{Binding ElementName=HardwareList, Path=SelectedItem.HasApplicationProgram}" Content="Hinzufügen" Click="ClickAddHardwareApp" Margin="0 2 1 2" />
-                    <Button Grid.Row="1" Grid.Column="4" IsEnabled="{Binding ElementName=HardwareList, Path=SelectedItem.HasApplicationProgram}" Content="Löschen" Click="ClickRemoveHardwareApp" Margin="1 2 0 2" />
 
-                    <ListView x:Name="HardwareAppList" Grid.Row="2" Grid.Column="3" Grid.ColumnSpan="2" IsEnabled="{Binding ElementName=HardwareList, Path=SelectedItem.HasApplicationProgram}" ItemsSource="{Binding ElementName=HardwareList, Path=SelectedItem.Apps}">
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock>
-                                    <Run Text="{Binding AppObject.Name}" />
-                                    <Run Text="{Binding AppVersionObject.NameText, Mode=OneTime}" />
-                                </TextBlock>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
+                    <TabControl Grid.Row="2" Grid.Column="2" Margin="5" DataContext="{Binding ElementName=HardwareList, Path=SelectedItem}"  IsEnabled="{Binding ElementName=HardwareList, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
+                        <TabItem Header="Geräte">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="auto" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Content="Hinzufügen" Click="ClickAddHardDevice" Margin="2" />
+                                    <Button Content="Entfernen" Margin="2" />
+                                </StackPanel>
+                                
+                                <DataGrid Grid.Row="1" ItemsSource="{Binding Devices}" AutoGenerateColumns="False">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
+                                        <DataGridTextColumn Header="Text" Binding="{Binding Text}" />
+                                        <DataGridTextColumn Header="Beschreibung" Binding="{Binding Description}" />
+                                        <DataGridTextColumn Header="Bestellnummer" Binding="{Binding OrderNumber}" />
+                                        <DataGridCheckBoxColumn Header="Ist REG" Binding="{Binding IsRailMounted}" />
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </Grid>
+                        </TabItem>
+
+                        <TabItem Header="Applikationen">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="auto" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+
+                                <StackPanel Orientation="Horizontal">
+                                    <ComboBox Width="150" Name="InHardApp" Margin="2" ItemsSource="{Binding General.Applications, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" DisplayMemberPath="Name" />
+                                    <Button Content="Hinzufügen" Click="ClickAddHardApp" Margin="2" />
+                                    <Button Content="Entfernen" Margin="2" />
+                                </StackPanel>
+                                
+                                <ListBox Grid.Row="1" ItemsSource="{Binding Apps}" DisplayMemberPath="Name" />
+                            </Grid>
+                        </TabItem>
+                    </TabControl>
+
+
+                    
                 </Grid>
             </TabItem>
 
@@ -410,10 +381,10 @@
                                     <HeaderedContentControl Header="Name">
                                         <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
                                     </HeaderedContentControl>
-                                    <HeaderedContentControl Header="Adresse">
+                                    <HeaderedContentControl Header="Adresse" Visibility="{Binding ElementName=AppList, Path=SelectedItem.Mask.Memory, Converter={StaticResource EnumToVis}, ConverterParameter=Absolute}">
                                         <TextBox Text="{Binding Address, UpdateSourceTrigger=PropertyChanged}"/>
                                     </HeaderedContentControl>
-                                    <HeaderedContentControl Header="Größe" IsEnabled="{Binding ElementName=AppList, Path=SelectedItem.IsAutoMemory, Converter={StaticResource BoolNegate}}" Visibility="{Binding ElementName=AppList, Path=SelectedItem.Mask.Memory, Converter={StaticResource EnumToVis}, ConverterParameter=Absolute}">
+                                    <HeaderedContentControl Header="Größe" IsEnabled="{Binding ElementName=AppList, Path=SelectedItem.IsAutoMemory, Converter={StaticResource BoolNegate}}">
                                         <TextBox Text="{Binding Size, UpdateSourceTrigger=PropertyChanged}"/>
                                     </HeaderedContentControl>
                                     <HeaderedContentControl Header="Offset" Visibility="{Binding ElementName=AppList, Path=SelectedItem.Mask.Memory, Converter={StaticResource EnumToVis}, ConverterParameter=Relative}">
@@ -798,6 +769,10 @@
 
 
                 </TabControl>
+            </TabItem>
+
+            <TabItem Header="Veröffentlichen">
+
             </TabItem>
         </TabControl>
     </Grid>

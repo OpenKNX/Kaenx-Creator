@@ -20,8 +20,6 @@ namespace Kaenx.Creator.Models
 
         [JsonIgnore]
         public Hardware Hardware { get; set; }
-        [JsonIgnore]
-        public HardwareApp HardApp { get; set; }
 
         private string hardwareName;
         public string HardwareName
@@ -30,21 +28,9 @@ namespace Kaenx.Creator.Models
             set { hardwareName = value; }
         }
 
-        private int hardwareApp;
-        public int HardwareApp
-        {
-            get { return HardApp == null ? -1 : HardApp.AppVersionObject.Number; }
-            set { hardwareApp = value; }
-        }
-
         public string GetHardwareName()
         {
             return hardwareName;
         }
-
-        public int GetHardwareApp()
-        {
-            return hardwareApp;
-        }
-}
+    }
 }

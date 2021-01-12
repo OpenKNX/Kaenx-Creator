@@ -251,6 +251,7 @@ namespace Kaenx.Creator.Classes
             XElement xhards = new XElement(Get("Hardware"));
             xmanu.Add(xhards);
 
+
             int hardCount = 1;
             foreach (Hardware hard in general.Hardware)
             {
@@ -273,40 +274,44 @@ namespace Kaenx.Creator.Classes
                 xhard.SetAttributeValue("IsCable", "0"); //Todo check if means PoweLine Cable
                 if(hard.IsIpEnabled) xhard.SetAttributeValue("IsIPEnabled", "1");
 
-                XElement xprod = new XElement(Get("Product"));
-                string pid = hid + "_P-" + GetEncoded(hard.DeviceObject.OrderNumber);
-                ProductIds.Add(hard.DeviceObject.Name, pid);
-                xprod.SetAttributeValue("Id", pid);
-                xprod.SetAttributeValue("Text", hard.DeviceObject.Text);
-                xprod.SetAttributeValue("OrderNumber", hard.DeviceObject.OrderNumber);
-                xprod.SetAttributeValue("IsRailMounted", hard.DeviceObject.IsRailMounted ? "1" : "0");
-                xprod.SetAttributeValue("DefaultLanguage", "de-DE");
-                xprod.Add(new XElement(Get("RegistrationInfo"), new XAttribute("RegistrationStatus", "Registered")));
+                XElement xprods = new XElement(Get("Products"));
+                xhard.Add(xprods);
+                foreach(Device dev in hard.Devices){
+                    XElement xprod = new XElement(Get("Product"));
+                    string pid = hid + "_P-" + GetEncoded(dev.OrderNumber);
+                    ProductIds.Add(dev.Name, pid);
+                    xprod.SetAttributeValue("Id", pid);
+                    xprod.SetAttributeValue("Text", dev.Text);
+                    xprod.SetAttributeValue("OrderNumber", dev.OrderNumber);
+                    xprod.SetAttributeValue("IsRailMounted", dev.IsRailMounted ? "1" : "0");
+                    xprod.SetAttributeValue("DefaultLanguage", "de-DE");
+                    xprod.Add(new XElement(Get("RegistrationInfo"), new XAttribute("RegistrationStatus", "Registered")));
+                    xprods.Add(xprod);
+                }
 
 
                 XElement xasso = new XElement(Get("Hardware2Programs"));
-
-                foreach (HardwareApp happ in hard.Apps)
-                {
-                    string appidx = happ.AppObject.Number.ToString("X4") + "-" + happ.AppVersionObject.Number.ToString("X2") + "-0000"; //Todo check hash
-
-                    XElement xh2p = new XElement(Get("Hardware2Program"));
-                    xh2p.SetAttributeValue("Id", hid + "_HP-" + appidx);
-                    xh2p.SetAttributeValue("MediumTypes", "MT-0");
-
-                    HardwareIds.Add(hard.Version + "-" + happ.AppObject.Number + "-" + happ.AppVersionObject.Number, hid + "_HP-" + appidx);
-
-                    xh2p.Add(new XElement(Get("ApplicationProgramRef"), new XAttribute("RefId", Manu + "_A-" + appidx)));
-
-                    XElement xreginfo = new XElement(Get("RegistrationInfo"));
-                    xreginfo.SetAttributeValue("RegistrationStatus", "Registered");
-                    xreginfo.SetAttributeValue("RegistrationNumber", "0001/" + hard.Version + happ.AppVersion);
-                    xh2p.Add(xreginfo);
-                    xasso.Add(xh2p);
-                }
-                xhard.Add(new XElement(Get("Products"), xprod));
                 xhard.Add(xasso);
 
+                foreach(Application app in hard.Apps){
+                    foreach(AppVersion ver in app.Versions){
+                        string appidx = app.Number.ToString("X4") + "-" + ver.Number.ToString("X2") + "-0000"; //Todo check hash
+
+                        XElement xh2p = new XElement(Get("Hardware2Program"));
+                        xh2p.SetAttributeValue("Id", hid + "_HP-" + appidx);
+                        xh2p.SetAttributeValue("MediumTypes", "MT-0");
+
+                        HardwareIds.Add(hard.Version + "-" + app.Number + "-" + ver.Number, hid + "_HP-" + appidx);
+
+                        xh2p.Add(new XElement(Get("ApplicationProgramRef"), new XAttribute("RefId", Manu + "_A-" + appidx)));
+
+                        XElement xreginfo = new XElement(Get("RegistrationInfo"));
+                        xreginfo.SetAttributeValue("RegistrationStatus", "Registered");
+                        xreginfo.SetAttributeValue("RegistrationNumber", "0001/" + hard.Version + ver.Number);
+                        xh2p.Add(xreginfo);
+                        xasso.Add(xh2p);
+                    }
+                }
 
                 xhards.Add(xhard);
             }
@@ -393,27 +398,31 @@ namespace Kaenx.Creator.Classes
         private int catalogCounter = 1;
         private void GetCatalogItems(CatalogItem item, XElement parent, Dictionary<string, string> productIds, Dictionary<string, string> hardwareIds)
         {
-            XElement xitem = new XElement(Get(item.IsSection ? "CatalogSection" : "CatalogItem"));
-            parent.Add(xitem);
-
-            if (item.IsSection)
-            {
+            if(item.IsSection){
+                XElement xitem = new XElement(Get("CatalogSection"));
                 xitem.SetAttributeValue("Name", item.Name);
                 xitem.SetAttributeValue("Number", catalogCounter++);
-            }
-            else
-            {
-                xitem.SetAttributeValue("Name", item.Hardware.DeviceObject.Name);
-                xitem.SetAttributeValue("Number", item.Hardware.SerialNumber);
-                xitem.SetAttributeValue("ProductRefId", productIds[item.Hardware.DeviceObject.Name]);
-                string hardid = item.Hardware.Version + "-" + item.HardApp.AppObject.Number + "-" + item.HardApp.AppVersionObject.Number;
-                xitem.SetAttributeValue("Hardware2ProgramRefId", hardwareIds[hardid]);
+                parent.Add(xitem);
+                foreach (CatalogItem sub in item.Items)
+                    GetCatalogItems(sub, xitem, productIds, hardwareIds);
+            } else {
+                foreach(Device dev in item.Hardware.Devices) {
+                    foreach(Application app in item.Hardware.Apps){
+                        foreach(AppVersion ver in app.Versions){
+                            XElement xitem = new XElement(Get("CatalogItem"));
+                            xitem.SetAttributeValue("Name", dev.Name);
+                            xitem.SetAttributeValue("Number", item.Hardware.SerialNumber);
+                            xitem.SetAttributeValue("ProductRefId", productIds[dev.Name]);
+                            string hardid = item.Hardware.Version + "-" + app.Number + "-" + ver.Number;
+                            xitem.SetAttributeValue("Hardware2ProgramRefId", hardwareIds[hardid]);
+                            if (!string.IsNullOrWhiteSpace(item.VisibleDescription)) xitem.SetAttributeValue("VisibleDescription", item.VisibleDescription);
+                            parent.Add(xitem);
+                        }
+                    }
+                }
             }
 
-            if (!string.IsNullOrWhiteSpace(item.VisibleDescription)) xitem.SetAttributeValue("VisibleDescription", item.VisibleDescription);
 
-            foreach (CatalogItem sub in item.Items)
-                GetCatalogItems(sub, xitem, productIds, hardwareIds);
         }
 
         public void SignOutput()
