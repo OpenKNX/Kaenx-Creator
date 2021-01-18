@@ -23,7 +23,8 @@ namespace Kaenx.Creator.Models
             set { _parameterObject = value; Changed("ParameterObject"); }
         }
 
-        private string _parameter;
+        [JsonIgnore]
+        public string _parameter;
         public string Parameter
         {
             get { return ParameterObject?.Name; }
@@ -40,12 +41,6 @@ namespace Kaenx.Creator.Models
         private void Changed(string name)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-
-
-        public string GetParameter()
-        {
-            return _parameter;
         }
 
 

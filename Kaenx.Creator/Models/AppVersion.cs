@@ -13,6 +13,7 @@ namespace Kaenx.Creator.Models
         public ObservableCollection<ParameterType> ParameterTypes { get; set; } = new ObservableCollection<ParameterType>();
         public ObservableCollection<Parameter> Parameters { get; set; } = new ObservableCollection<Parameter>();
         public ObservableCollection<ParameterRef> ParameterRefs { get; set; } = new ObservableCollection<ParameterRef>();
+        public ObservableCollection<ComObject> ComObjects { get; set; } = new ObservableCollection<ComObject>();
         public ObservableCollection<Memory> Memories { get; set; } = new ObservableCollection<Memory>();
         public List<DynamicMain> Dynamics { get; set; } = new List<DynamicMain>();
 
@@ -39,6 +40,14 @@ namespace Kaenx.Creator.Models
         {
             get { return _number; }
             set { _number = value; Changed("Number"); Changed("NameText"); }
+        }
+
+
+        private bool _isAutoPR = true;
+        public bool IsParameterRefAuto
+        {
+            get { return _isAutoPR; }
+            set { _isAutoPR = value; Changed("IsParameterRefAuto"); }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

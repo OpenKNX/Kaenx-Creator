@@ -33,6 +33,8 @@ namespace Kaenx.Creator.Models
         public ObservableCollection<Device> Devices { get; set; } = new ObservableCollection<Device>();
         [JsonIgnore]
         public ObservableCollection<Application> Apps { get; set; } = new ObservableCollection<Application>();
+
+        [JsonIgnore]
         public string _appsString;
         public string AppsString {
             get {

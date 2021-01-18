@@ -1,14 +1,54 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Text;
 
 namespace Kaenx.Creator.Models.Dynamic
 {
-    public class DynParaBlock : IDynItems
+    public class DynParaBlock : IDynItems, INotifyPropertyChanged
     {
-        public string Name { get; set; } = "Block";
+        [JsonIgnore]
+        public IDynItems Parent { get; set; }
+
+        private string _name = "Unbenannt";
+        public string Name
+        {
+            get { return _name; }
+            set { _name = value; Changed("Name"); }
+        }
+
+        private string _text = "Block";
+        public string Text
+        {
+            get { return _text; }
+            set { _text = value; Changed("Text"); }
+        }
+
+
+        private ParameterRef _parameterRefObject;
+        [JsonIgnore]
+        public ParameterRef ParameterRefObject
+        {
+            get { return _parameterRefObject; }
+            set { _parameterRefObject = value; Changed("ParameterRefObject"); }
+        }
+
+        [JsonIgnore]
+        public string _parameter;
+        public string ParameterRef
+        {
+            get { return ParameterRefObject?.Name; }
+            set { _parameter = value; }
+        }
+
 
         public ObservableCollection<IDynItems> Items { get; set; } = new ObservableCollection<IDynItems>();
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void Changed(string name)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
     }
 }

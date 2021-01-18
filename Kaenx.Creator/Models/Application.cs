@@ -9,7 +9,7 @@ namespace Kaenx.Creator.Models
 {
     public class Application : INotifyPropertyChanged
     {
-        public string _name = "Dummy";
+        private string _name = "Dummy";
         public string Name
         {
             get { return _name; }
@@ -21,13 +21,6 @@ namespace Kaenx.Creator.Models
         {
             get { return _number; }
             set { _number = value; Changed("Number"); Changed("NameText"); }
-        }
-
-        private bool _isAutoMem = false;
-        public bool IsAutoMemory
-        {
-            get { return _isAutoMem; }
-            set { _isAutoMem = value; Changed("IsAutoMemory"); }
         }
 
         public string NameText
@@ -43,7 +36,8 @@ namespace Kaenx.Creator.Models
             set { _mask = value; Changed("Mask"); }
         }
 
-        private string _maskId;
+        [JsonIgnore]
+        public string _maskId;
         public string MaskId
         {
             get { return _mask.Id; }
@@ -65,11 +59,6 @@ namespace Kaenx.Creator.Models
             for (int i = input.Length; i < length; i++)
                 input = "0" + input;
             return input;
-        }
-
-        public string GetMaskId()
-        {
-            return _maskId;
         }
     }
 }

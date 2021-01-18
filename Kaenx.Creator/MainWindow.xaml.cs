@@ -234,26 +234,6 @@ namespace Kaenx.Creator
             type.Enums.Add(new Models.ParameterTypeEnum() { Name = "Name", Value = 0 });
         }
 
-
-        private void ParamTypeChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if ((sender as ComboBox).SelectedItem == null) return;
-            Models.ParameterTypes type = (Models.ParameterTypes)(sender as ComboBox).SelectedItem;
-
-            if (type == Models.ParameterTypes.Enum)
-                Paramtype_Enum.Visibility = Visibility.Visible;
-            else
-                Paramtype_Enum.Visibility = Visibility.Collapsed;
-
-            if (type == Models.ParameterTypes.Float9 ||
-                type == Models.ParameterTypes.NumberInt ||
-                type == Models.ParameterTypes.NumberUInt)
-                Paramtype_MinMax.Visibility = Visibility.Visible;
-            else
-                Paramtype_MinMax.Visibility = Visibility.Collapsed;
-        }
-
-
         private void ClickAddParam(object sender, RoutedEventArgs e)
         {
             Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
@@ -337,23 +317,23 @@ namespace Kaenx.Creator
                     {
                         foreach(Models.Parameter para in ver.Parameters)
                         {
-                            if (!string.IsNullOrEmpty(para.GetMemory()))
+                            if (!string.IsNullOrEmpty(para._memory))
                             {
-                                Models.Memory mem = ver.Memories.Single(m => m.Name == para.GetMemory());
+                                Models.Memory mem = ver.Memories.Single(m => m.Name == para._memory);
                                 para.MemoryObject = mem;
                             }
-                            if (!string.IsNullOrEmpty(para.GetParameterType()))
+                            if (!string.IsNullOrEmpty(para._parameterType))
                             {
-                                Models.ParameterType pt = ver.ParameterTypes.Single(p => p.Name == para.GetParameterType());
+                                Models.ParameterType pt = ver.ParameterTypes.Single(p => p.Name == para._parameterType);
                                 para.ParameterTypeObject = pt;
                             }
                         }
 
                         foreach(Models.ParameterRef pref in ver.ParameterRefs)
                         {
-                            if (!string.IsNullOrEmpty(pref.GetParameter()))
+                            if (!string.IsNullOrEmpty(pref._parameter))
                             {
-                                Models.Parameter para = ver.Parameters.Single(p => p.Name == pref.GetParameter());
+                                Models.Parameter para = ver.Parameters.Single(p => p.Name == pref._parameter);
                                 pref.ParameterObject = para;
                             }
                         }
@@ -362,7 +342,7 @@ namespace Kaenx.Creator
                     }
 
 
-                    string mid = app.GetMaskId();
+                    string mid = app._maskId;
                     if (string.IsNullOrEmpty(mid)) continue;
 
                     Models.MaskVersion mask = BCUs.Single(bcu => bcu.Id == mid);
@@ -390,19 +370,28 @@ namespace Kaenx.Creator
         {
             foreach (Models.Dynamic.IDynItems item in dyn.Items)
             {
-                if(item is Models.Dynamic.DynParameter)
+                item.Parent = dyn;
+
+                if (item is Models.Dynamic.DynParameter)
                 {
                     Models.Dynamic.DynParameter para = item as Models.Dynamic.DynParameter;
-                    if (!string.IsNullOrEmpty(para.GetParameter()))
+                    if (!string.IsNullOrEmpty(para._parameter))
                     {
-                        Models.ParameterRef pr = paras.Single(p => p.Name == para.GetParameter());
+                        Models.ParameterRef pr = paras.Single(p => p.Name == para._parameter);
                         para.ParameterRefObject = pr;
                     }
-                } else
+                } else if(item is Models.Dynamic.DynChoose)
                 {
-                    if (item.Items != null)
-                        LoadSubDyn(item, paras);
+                    Models.Dynamic.DynChoose ch = item as Models.Dynamic.DynChoose;
+                    if (!string.IsNullOrEmpty(ch._parameterRef))
+                    {
+                        Models.ParameterRef pr = paras.Single(p => p.Name == ch._parameterRef);
+                        ch.ParameterRefObject = pr;
+                    }
                 }
+
+                if (!(item is Models.Dynamic.DynParameter) && item.Items != null)
+                    LoadSubDyn(item, paras);
             }
         }
 
@@ -413,9 +402,9 @@ namespace Kaenx.Creator
             {
                 item.Parent = parent;
 
-                if (!string.IsNullOrEmpty(item.GetHardwareName()))
+                if (!string.IsNullOrEmpty(item._hardwareName))
                 {
-                    item.Hardware = General.Hardware.Single(h => h.Name == item.GetHardwareName());
+                    item.Hardware = General.Hardware.Single(h => h.Name == item._hardwareName);
                 }
 
                 SetSubCatalogItems(item);
@@ -479,21 +468,7 @@ namespace Kaenx.Creator
         {
             Models.Memory mem = (sender as Button).DataContext as Models.Memory;
             Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
-            byte[] data = new byte[mem.Size];
-
-            foreach(Models.Parameter para in ver.Parameters.Where(p => p.Memory == mem.Name))
-            {
-                if(para.ParameterTypeObject.SizeInBit > 7)
-                {
-                    for (int i = 0; i < (para.ParameterTypeObject.SizeInBit / 8); i++){
-                        data[para.Offset + i] += 8;
-                    }
-                }
-                else
-                {
-                    data[para.Offset] += Convert.ToByte(para.ParameterTypeObject.SizeInBit);
-                }
-            }
+            byte[] data = AutoHelper.GetMemorySize(ver, mem);
 
             int height = Convert.ToInt32(Math.Ceiling(data.Length / 16.0));
             Debug.WriteLine("Höhe: " + height);
@@ -542,22 +517,73 @@ namespace Kaenx.Creator
             OutHeatmap.Source = map;
         }
 
-        private void ClickDynAddIndep(object sender, RoutedEventArgs e)
-        {
-            Models.Dynamic.DynamicMain main = (sender as MenuItem).DataContext as Models.Dynamic.DynamicMain;
-            main.Items.Add(new Models.Dynamic.DynChannelIndependet());
-        }
-
-        private void ClickDynAddBlock(object sender, RoutedEventArgs e)
+        #region Clicks Dyn
+        private void ClickAddDynIndep(object sender, RoutedEventArgs e)
         {
             Models.Dynamic.IDynItems main = (sender as MenuItem).DataContext as Models.Dynamic.IDynItems;
-            main.Items.Add(new Models.Dynamic.DynParaBlock());
+            main.Items.Add(new Models.Dynamic.DynChannelIndependet() { Parent = main });
+        }
+
+        private void ClickAddDynBlock(object sender, RoutedEventArgs e)
+        {
+            Models.Dynamic.IDynItems main = (sender as MenuItem).DataContext as Models.Dynamic.IDynItems;
+            main.Items.Add(new Models.Dynamic.DynParaBlock() { Parent = main });
         }
 
         private void ClickAddDynPara(object sender, RoutedEventArgs e)
         {
-            Models.Dynamic.DynParaBlock block = (sender as MenuItem).DataContext as Models.Dynamic.DynParaBlock;
-            block.Items.Add(new Models.Dynamic.DynParameter());
+            Models.Dynamic.IDynItems block = (sender as MenuItem).DataContext as Models.Dynamic.IDynItems;
+            Models.Dynamic.DynParameter para = new Models.Dynamic.DynParameter() { Parent = block };
+            if ((VersionList.SelectedItem as Models.AppVersion).IsParameterRefAuto)
+            {
+                Models.ParameterRef pref = new Models.ParameterRef() { Name = "Ref" + (new Random().Next(0, 10000)) };
+                (VersionList.SelectedItem as Models.AppVersion).ParameterRefs.Add(pref);
+                para.ParameterRefObject = pref;
+            }
+            block.Items.Add(para);
+        }
+
+        private void ClickAddDynChoose(object sender, RoutedEventArgs e)
+        {
+            Models.Dynamic.IDynItems item = (sender as MenuItem).DataContext as Models.Dynamic.IDynItems;
+            item.Items.Add(new Models.Dynamic.DynChoose() { Parent = item });
+        }
+
+        private void ClickAddDynWhen(object sender, RoutedEventArgs e)
+        {
+            Models.Dynamic.IDynItems item = (sender as MenuItem).DataContext as Models.Dynamic.IDynItems;
+            item.Items.Add(new Models.Dynamic.DynWhen() { Parent = item });
+        }
+
+        private void ClickRemoveDyn(object sender, RoutedEventArgs e)
+        {
+            Models.Dynamic.IDynItems item = (sender as MenuItem).DataContext as Models.Dynamic.IDynItems;
+            item.Parent.Items.Remove(item);
+        }
+
+        private void LoadingContextDynWhen(object sender, RoutedEventArgs e)
+        {
+            ContextMenu menu = sender as ContextMenu;
+            Models.Dynamic.DynWhen when = menu.DataContext as Models.Dynamic.DynWhen;
+            bool chann = when.CanAddIndependent;
+            (menu.Items[0] as MenuItem).IsEnabled = chann;
+            (menu.Items[1] as MenuItem).IsEnabled = chann;
+            (menu.Items[2] as MenuItem).IsEnabled = when.CanAddBlock;
+
+            bool subs = when.CanAddPara;
+            (menu.Items[5] as MenuItem).IsEnabled = subs;
+            (menu.Items[6] as MenuItem).IsEnabled = subs;
+        }
+        #endregion
+
+        private void ClickRemoveDeviceApp(object sender, RoutedEventArgs e)
+        {
+            (HardwareList.SelectedItem as Models.Hardware).Apps.Remove(DeviceAppList.SelectedItem as Models.Application);
+        }
+
+        private void ClickAddCom(object sender, RoutedEventArgs e)
+        {
+            (VersionList.SelectedItem as Models.AppVersion).ComObjects.Add(new Models.ComObject());
         }
     }
 }

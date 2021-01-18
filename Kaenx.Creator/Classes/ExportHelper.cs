@@ -21,11 +21,6 @@ namespace Kaenx.Creator.Classes
             if (!System.IO.Directory.Exists(GetRelPath("")))
                 System.IO.Directory.CreateDirectory(GetRelPath(""));
 
-            if (System.IO.Directory.Exists(GetRelPath(Manu)))
-                System.IO.Directory.Delete(GetRelPath(Manu), true);
-
-            System.IO.Directory.CreateDirectory(GetRelPath(Manu));
-
             FileVersionInfo fileVersion = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location);
             string toolVersion = fileVersion.FileVersion;
 
@@ -204,6 +199,7 @@ namespace Kaenx.Creator.Classes
                     int refCount = 1;
                     foreach(ParameterRef pref in ver.ParameterRefs)
                     {
+                        if (pref.ParameterObject == null) continue;
                         XElement xpref = new XElement(Get("ParameterRef"));
                         string refid = ParamIds[pref.ParameterObject.Name];
                         xpref.SetAttributeValue("Id", refid + "_R-" + refCount);
@@ -315,13 +311,12 @@ namespace Kaenx.Creator.Classes
 
                 xhards.Add(xhard);
             }
-            System.IO.File.WriteAllText(GetRelPath(Manu, "Hardware.xml"), doc.ToString());
             #endregion
 
             #region XML Catalog
 
             XElement cat = new XElement(Get("Catalog"));
-            foreach (CatalogItem item in general.Catalog)
+            foreach (CatalogItem item in general.Catalog[0].Items)
             {
                 GetCatalogItems(item, cat, ProductIds, HardwareIds);
             }
@@ -353,6 +348,14 @@ namespace Kaenx.Creator.Classes
                     case DynParameter dp:
                         HandleParam(dp, xparent);
                         break;
+
+                    case DynChoose dch:
+                        xitem = HandleChoose(dch, xparent);
+                        break;
+
+                    case DynWhen dw:
+                        xitem = HandleWhen(dw, xparent);
+                        break;
                 }
 
                 if (item.Items != null && xitem != null)
@@ -363,15 +366,46 @@ namespace Kaenx.Creator.Classes
 
         private XElement Handle(IDynItems ch, XElement parent)
         {
-            string name = "Channel";
-            if (ch is DynChannelIndependet) name = "ChannelIndependentBlock";
-            XElement channel = new XElement(Get(name));
+            XElement channel = new XElement(Get("ChannelIndependentBlock"));
             parent.Add(channel);
+
+            if(ch is DynChannel)
+            {
+                DynChannel dch = ch as DynChannel;
+                channel.Name = Get("Channel");
+                if(dch.ParameterRefObject != null)
+                    channel.SetAttributeValue("ParamRefId", dch.ParameterRefObject.RefId);
+            }
 
             channel.SetAttributeValue("Name", ch.Name);
             channel.SetAttributeValue("Text", ""); //Todo einfügen
 
             return channel;
+        }
+
+        private XElement HandleChoose(DynChoose cho, XElement parent)
+        {
+            XElement xcho = new XElement(Get("choose"));
+            parent.Add(xcho);
+            xcho.SetAttributeValue("ParamRefId", cho.ParameterRefObject.RefId);
+            return xcho;
+        }
+
+        private XElement HandleWhen(DynWhen when, XElement parent)
+        {
+            XElement xwhen = new XElement(Get("when"));
+            parent.Add(xwhen);
+
+            when.Condition = when.Condition.Replace(">", "&gt;");
+            when.Condition = when.Condition.Replace("<", "&lt;");
+
+
+            if (when.IsDefault)
+                xwhen.SetAttributeValue("default", "true");
+            else
+                xwhen.SetAttributeValue("test", when.Condition);
+
+            return xwhen;
         }
 
         private XElement HandleBlock(DynParaBlock bl, XElement parent)
@@ -380,8 +414,12 @@ namespace Kaenx.Creator.Classes
             parent.Add(block);
 
             block.SetAttributeValue("Name", bl.Name);
-            block.SetAttributeValue("Text", "ParaBlock Text");
 
+
+            if (bl.ParameterRefObject != null)
+                block.SetAttributeValue("ParamRefId", bl.ParameterRefObject.RefId);
+            else
+                block.SetAttributeValue("Text", bl.Text);
 
             return block;
         }
@@ -402,6 +440,7 @@ namespace Kaenx.Creator.Classes
                 XElement xitem = new XElement(Get("CatalogSection"));
                 xitem.SetAttributeValue("Name", item.Name);
                 xitem.SetAttributeValue("Number", catalogCounter++);
+                xitem.SetAttributeValue("DefaultLanguage", "de-DE");
                 parent.Add(xitem);
                 foreach (CatalogItem sub in item.Items)
                     GetCatalogItems(sub, xitem, productIds, hardwareIds);
@@ -410,12 +449,13 @@ namespace Kaenx.Creator.Classes
                     foreach(Application app in item.Hardware.Apps){
                         foreach(AppVersion ver in app.Versions){
                             XElement xitem = new XElement(Get("CatalogItem"));
-                            xitem.SetAttributeValue("Name", dev.Name);
+                            xitem.SetAttributeValue("Name", dev.Text);
                             xitem.SetAttributeValue("Number", item.Hardware.SerialNumber);
+                            if (!string.IsNullOrWhiteSpace(item.VisibleDescription)) xitem.SetAttributeValue("VisibleDescription", item.VisibleDescription);
                             xitem.SetAttributeValue("ProductRefId", productIds[dev.Name]);
                             string hardid = item.Hardware.Version + "-" + app.Number + "-" + ver.Number;
                             xitem.SetAttributeValue("Hardware2ProgramRefId", hardwareIds[hardid]);
-                            if (!string.IsNullOrWhiteSpace(item.VisibleDescription)) xitem.SetAttributeValue("VisibleDescription", item.VisibleDescription);
+                            xitem.SetAttributeValue("DefaultLanguage", "de-DE");
                             parent.Add(xitem);
                         }
                     }
@@ -466,7 +506,7 @@ namespace Kaenx.Creator.Classes
             StringBuilder sb = new StringBuilder();
             foreach (char c in input)
             {
-                if ((c >32 && c < 48) || (c >57 && c < 65))
+                if ((c >32 && c < 48) || (c >57 && c < 65) || c == 95)
                 {
                     // This character is too big for ASCII
                     string encodedValue = "." + ((int)c).ToString("X2");

@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Data;
 using System.Globalization;
 using System.ComponentModel;
+using Newtonsoft.Json;
 
 namespace Kaenx.Creator.Models
 {
@@ -26,13 +27,15 @@ namespace Kaenx.Creator.Models
         }
 
         private Memory _memoryObject;
+        [JsonIgnore]
         public Memory MemoryObject
         {
             get { return _memoryObject; }
             set { _memoryObject = value; Changed("MemoryObject"); }
         }
 
-        private string _memory;
+        [JsonIgnore]
+        public string _memory;
         public string Memory
         {
             get { return MemoryObject?.Name; }
@@ -40,13 +43,15 @@ namespace Kaenx.Creator.Models
         }
 
         private ParameterType _parameterTypeObject;
+        [JsonIgnore]
         public ParameterType ParameterTypeObject
         {
             get { return _parameterTypeObject; }
             set { _parameterTypeObject = value; Changed("ParameterTypeObject"); }
         }
 
-        private string _parameterType;
+        [JsonIgnore]
+        public string _parameterType;
         public string ParameterType
         {
             get { return ParameterTypeObject?.Name; }
@@ -63,14 +68,14 @@ namespace Kaenx.Creator.Models
             set { _isOffsetAuto = value; Changed("IsOffsetAuto"); }
         }
 
-        private int _offset;
+        private int _offset = -1;
         public int Offset
         {
             get { return _offset; }
             set { _offset = value; Changed("Offset"); }
         }
 
-        private int _offsetBit;
+        private int _offsetBit = -1;
         public int OffsetBit
         {
             get { return _offsetBit; }
@@ -80,21 +85,12 @@ namespace Kaenx.Creator.Models
         public string Suffix { get; set; }
         public ParamAccess Access { get; set; } = ParamAccess.Default;
 
-        public string GetMemory()
-        {
-            return _memory;
-        }
-
         public event PropertyChangedEventHandler PropertyChanged;
         private void Changed(string name)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
-        public string GetParameterType()
-        {
-            return _parameterType;
-        }
     }
 
     public enum ParamAccess

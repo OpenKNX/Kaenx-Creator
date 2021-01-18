@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Kaenx.Creator.Models.Dynamic
 {
-    public class DynChannel : IDynItems, IDynChannel, INotifyPropertyChanged
+    public class DynChoose : IDynItems, INotifyPropertyChanged
     {
         [JsonIgnore]
         public IDynItems Parent { get; set; }
@@ -19,13 +19,6 @@ namespace Kaenx.Creator.Models.Dynamic
             set { _name = value; Changed("Name"); }
         }
 
-        private string _text = "Channel";
-        public string Text
-        {
-            get { return _text; }
-            set { _text = value; Changed("Text"); }
-        }
-
         private ParameterRef _parameterRefObject;
         [JsonIgnore]
         public ParameterRef ParameterRefObject
@@ -35,18 +28,15 @@ namespace Kaenx.Creator.Models.Dynamic
         }
 
         [JsonIgnore]
-        public string _parameter;
+        public string _parameterRef;
         public string ParameterRef
         {
             get { return ParameterRefObject?.Name; }
-            set { _parameter = value; }
+            set { _parameterRef = value; }
         }
 
-
         public ObservableCollection<IDynItems> Items { get; set; } = new ObservableCollection<IDynItems>();
-
         public event PropertyChangedEventHandler PropertyChanged;
-
         private void Changed(string name)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));

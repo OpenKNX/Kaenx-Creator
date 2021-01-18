@@ -21,16 +21,12 @@ namespace Kaenx.Creator.Models
         [JsonIgnore]
         public Hardware Hardware { get; set; }
 
-        private string hardwareName;
+        [JsonIgnore]
+        public string _hardwareName;
         public string HardwareName
         {
             get { return Hardware?.Name; }
-            set { hardwareName = value; }
-        }
-
-        public string GetHardwareName()
-        {
-            return hardwareName;
+            set { _hardwareName = value; }
         }
     }
 }

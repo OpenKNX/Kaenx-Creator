@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -8,7 +9,15 @@ namespace Kaenx.Creator.Models.Dynamic
 {
     public class DynamicMain : IDynItems, INotifyPropertyChanged
     {
-        public string Name { get; set; } = "Root Knoten";
+        [JsonIgnore]
+        public IDynItems Parent { get; set; }
+
+        private string _name = "Root Knoten";
+        public string Name
+        {
+            get { return _name; }
+            set { _name = value; Changed("Name"); }
+        }
 
         public ObservableCollection<IDynItems> Items { get; set; } = new ObservableCollection<IDynItems>();
 
@@ -16,23 +25,6 @@ namespace Kaenx.Creator.Models.Dynamic
         private void Changed(string name)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-
-        public int ItemsCount
-        {
-            get { return Items.Count; }
-        }
-
-
-        public DynamicMain()
-        {
-            Items.CollectionChanged += Items_CollectionChanged;
-        }
-
-        private void Items_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            Changed("ItemsCount");
-            Changed("Items");
         }
     }
 }

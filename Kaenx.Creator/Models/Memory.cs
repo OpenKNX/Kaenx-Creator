@@ -36,11 +36,18 @@ namespace Kaenx.Creator.Models
             set { _offset = value; Changed("Offset"); }
         }
 
-        private bool _isParasAuto = false;
-        public bool IsParasAuto
+        private bool _isPAutoPara = true;
+        public bool IsAutoPara
         {
-            get { return _isParasAuto; }
-            set { _isParasAuto = value; Changed("IsParasAuto"); }
+            get { return _isPAutoPara; }
+            set { _isPAutoPara = value; Changed("IsAutoPara"); }
+        }
+
+        private bool _isAutoSize = true;
+        public bool IsAutoSize
+        {
+            get { return _isAutoSize; }
+            set { _isAutoSize = value; Changed("IsAutoSize"); }
         }
 
         private MemoryTypes _type = MemoryTypes.Absolute;

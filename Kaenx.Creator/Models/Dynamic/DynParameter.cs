@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -8,7 +9,10 @@ namespace Kaenx.Creator.Models.Dynamic
 {
     public class DynParameter : IDynItems, INotifyPropertyChanged
     {
-        private string _name = "Parameter";
+        [JsonIgnore]
+        public IDynItems Parent { get; set; }
+
+        private string _name = "Unbenannt";
         public string Name
         {
             get { return _name; }
@@ -16,13 +20,15 @@ namespace Kaenx.Creator.Models.Dynamic
         }
 
         private ParameterRef _parameterRefObject;
+        [JsonIgnore]
         public ParameterRef ParameterRefObject
         {
             get { return _parameterRefObject; }
             set { _parameterRefObject = value; Changed("ParameterRefObject"); }
         }
 
-        private string _parameter;
+        [JsonIgnore]
+        public string _parameter;
         public string ParameterRef
         {
             get { return ParameterRefObject?.Name; }
@@ -37,11 +43,6 @@ namespace Kaenx.Creator.Models.Dynamic
         private void Changed(string name)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-
-        public string GetParameter()
-        {
-            return _parameter;
         }
     }
 }

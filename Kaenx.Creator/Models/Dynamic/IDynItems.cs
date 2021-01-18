@@ -7,6 +7,7 @@ namespace Kaenx.Creator.Models.Dynamic
 {
     public interface IDynItems
     {
+        public IDynItems Parent { get; set; }
         public string Name { get; set; }
         public ObservableCollection<IDynItems> Items { get; set; }
     }
