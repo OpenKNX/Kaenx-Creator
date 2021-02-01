@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -42,6 +43,16 @@ namespace Kaenx.Creator
             set { bcus = value; Changed("BCUs"); }
         }
 
+        private ObservableCollection<Models.DataPointType> dpts;
+        public ObservableCollection<Models.DataPointType> DPTs
+        {
+            get { return dpts; }
+            set { dpts = value; Changed("DPTs"); }
+        }
+
+        public ObservableCollection<Models.ExportItem> Exports { get; set; } = new ObservableCollection<Models.ExportItem>();
+        public ObservableCollection<Models.PublishAction> PublishActions { get; set; } = new ObservableCollection<Models.PublishAction>();
+
         public event PropertyChangedEventHandler PropertyChanged;
 
 
@@ -50,6 +61,7 @@ namespace Kaenx.Creator
             InitializeComponent();
             this.DataContext = this;
             LoadBcus();
+            LoadDpts();
         }
 
         private void ClickNew(object sender, RoutedEventArgs e)
@@ -122,6 +134,54 @@ namespace Kaenx.Creator
             }
         }
 
+        private void LoadDpts()
+        {
+            string jsonPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "datapoints.json");
+            string xmlPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "datapoints.xml");
+            if (System.IO.File.Exists(jsonPath))
+            {
+                DPTs = Newtonsoft.Json.JsonConvert.DeserializeObject<ObservableCollection<Models.DataPointType>>(System.IO.File.ReadAllText(jsonPath));
+            } else
+            {
+                DPTs = new ObservableCollection<Models.DataPointType>();
+                XDocument xdoc = XDocument.Load(xmlPath);
+                IEnumerable<XElement> xdpts = xdoc.Descendants(XName.Get("DatapointType"));
+
+                foreach(XElement xdpt in xdpts)
+                {
+                    Models.DataPointType dpt = new Models.DataPointType();
+                    dpt.Name = xdpt.Attribute("Name").Value + " " + xdpt.Attribute("Text").Value;
+                    int size = int.Parse(xdpt.Attribute("SizeInBit").Value);
+                    string numb = xdpt.Attribute("Number").Value;
+
+                    IEnumerable<XElement> xsubs = xdpt.Descendants(XName.Get("DatapointSubtype"));
+
+                    foreach(XElement xsub in xsubs)
+                    {
+                        Models.DataPointSubType dpst = new Models.DataPointSubType();
+                        dpst.Name = numb + "." + Fill(xsub.Attribute("Number").Value, 3, "0") + " " + xsub.Attribute("Text").Value;
+                        dpst.Size = size;
+                        dpst.Number = xsub.Attribute("Number").Value;
+                        dpst.ParentNumber = numb;
+                        dpt.SubTypes.Add(dpst);
+                    }
+
+                    DPTs.Add(dpt);
+                }
+
+
+                System.IO.File.WriteAllText(jsonPath, Newtonsoft.Json.JsonConvert.SerializeObject(DPTs));
+            }
+        }
+
+        private string Fill(string input, int length, string fill)
+        {
+            for(int i = input.Length; i < length; i++)
+            {
+                input = fill + input;
+            }
+            return input;
+        }
 
         #region Clicks
 
@@ -205,12 +265,23 @@ namespace Kaenx.Creator
 
         private void ClickRemoveVersion(object sender, RoutedEventArgs e)
         {
-            if(AppList.SelectedItem == null || VersionList.SelectedItem == null) return;
+            if (AppList.SelectedItem == null || VersionList.SelectedItem == null) return;
 
             Models.Application app = AppList.SelectedItem as Models.Application;
             Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
 
             app.Versions.Remove(ver);
+        }
+
+        private void ClickCopyVersion(object sender, RoutedEventArgs e)
+        {
+            if (AppList.SelectedItem == null || VersionList.SelectedItem == null) return;
+
+            Models.Application app = AppList.SelectedItem as Models.Application;
+            Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
+
+            Models.AppVersion copy = new Models.AppVersion(ver);
+            app.Versions.Add(copy);
         }
 
         private void ClickAddApp(object sender, RoutedEventArgs e)
@@ -258,24 +329,20 @@ namespace Kaenx.Creator
         {
             General.Hardware.Remove(HardwareList.SelectedItem as Models.Hardware);
         }
-
-        /*private void ClickAddHardwareApp(object sender, RoutedEventArgs e)
+        private void ClickRemoveDeviceApp(object sender, RoutedEventArgs e)
         {
-            Models.Hardware hard = HardwareList.SelectedItem as Models.Hardware;
-            Models.HardwareApp happ = new Models.HardwareApp();
-            happ.AppObject = InHardwareApp.SelectedItem as Models.Application;
-            happ.AppVersionObject = InHardwareVer.SelectedItem as Models.AppVersion;
-            if (happ.AppObject == null || happ.AppVersionObject == null) return;
-            hard.Apps.Add(happ);
+            (HardwareList.SelectedItem as Models.Hardware).Apps.Remove(DeviceAppList.SelectedItem as Models.Application);
         }
 
-
-        private void ClickRemoveHardwareApp(object sender, RoutedEventArgs e)
+        private void ClickAddCom(object sender, RoutedEventArgs e)
         {
-            Models.Hardware hard = HardwareList.SelectedItem as Models.Hardware;
-            if (hard == null) return;
-            hard.Apps.Remove(HardwareAppList.SelectedItem as Models.HardwareApp);
-        }*/
+            (VersionList.SelectedItem as Models.AppVersion).ComObjects.Add(new Models.ComObject());
+        }
+
+        private void ClickRemoveCom(object sender, RoutedEventArgs e)
+        {
+            (VersionList.SelectedItem as Models.AppVersion).ComObjects.Remove(ComobjectList.SelectedItem as Models.ComObject);
+        }
 
         #endregion
 
@@ -338,7 +405,16 @@ namespace Kaenx.Creator
                             }
                         }
 
-                        LoadSubDyn(ver.Dynamics[0], ver.ParameterRefs.ToList());
+                        foreach(Models.ComObjectRef cref in ver.ComObjectRefs)
+                        {
+                            if (!string.IsNullOrEmpty(cref._comObject))
+                            {
+                                Models.ComObject com = ver.ComObjects.Single(c => c.Name == cref._comObject);
+                                cref.ComObjectObject = com;
+                            }
+                        }
+
+                        LoadSubDyn(ver.Dynamics[0], ver.ParameterRefs.ToList(), ver.ComObjectRefs.ToList());
                     }
 
 
@@ -366,7 +442,7 @@ namespace Kaenx.Creator
             }
         }
 
-        private void LoadSubDyn(Models.Dynamic.IDynItems dyn, List<Models.ParameterRef> paras)
+        private void LoadSubDyn(Models.Dynamic.IDynItems dyn, List<Models.ParameterRef> paras, List<Models.ComObjectRef> coms)
         {
             foreach (Models.Dynamic.IDynItems item in dyn.Items)
             {
@@ -388,10 +464,18 @@ namespace Kaenx.Creator
                         Models.ParameterRef pr = paras.Single(p => p.Name == ch._parameterRef);
                         ch.ParameterRefObject = pr;
                     }
+                } else if(item is Models.Dynamic.DynComObject)
+                {
+                    Models.Dynamic.DynComObject dc = item as Models.Dynamic.DynComObject;
+                    if (!string.IsNullOrEmpty(dc._comObjectRef))
+                    {
+                        Models.ComObjectRef cr = coms.Single(c => c.Name == dc._comObjectRef);
+                        dc.ComObjectRefObject = cr;
+                    }
                 }
 
                 if (!(item is Models.Dynamic.DynParameter) && item.Items != null)
-                    LoadSubDyn(item, paras);
+                    LoadSubDyn(item, paras, coms);
             }
         }
 
@@ -557,8 +641,30 @@ namespace Kaenx.Creator
 
         private void ClickRemoveDyn(object sender, RoutedEventArgs e)
         {
+            Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
             Models.Dynamic.IDynItems item = (sender as MenuItem).DataContext as Models.Dynamic.IDynItems;
+            if(item is Models.Dynamic.DynParameter && ver.IsParameterRefAuto)
+            {
+                ver.ParameterRefs.Remove((item as Models.Dynamic.DynParameter).ParameterRefObject);
+            }
+            if(item is Models.Dynamic.DynComObject && ver.IsComObjectRefAuto)
+            {
+                ver.ComObjectRefs.Remove((item as Models.Dynamic.DynComObject).ComObjectRefObject);
+            }
             item.Parent.Items.Remove(item);
+        }
+
+        private void ClickAddDynCom(object sender, RoutedEventArgs e)
+        {
+            Models.Dynamic.IDynItems item = (sender as MenuItem).DataContext as Models.Dynamic.IDynItems;
+            Models.Dynamic.DynComObject para = new Models.Dynamic.DynComObject() { Parent = item };
+            if ((VersionList.SelectedItem as Models.AppVersion).IsComObjectRefAuto)
+            {
+                Models.ComObjectRef oref = new Models.ComObjectRef() { Name = "Ref" + (new Random().Next(0, 10000)) };
+                (VersionList.SelectedItem as Models.AppVersion).ComObjectRefs.Add(oref);
+                para.ComObjectRefObject = oref;
+            }
+            item.Items.Add(para);
         }
 
         private void LoadingContextDynWhen(object sender, RoutedEventArgs e)
@@ -576,14 +682,79 @@ namespace Kaenx.Creator
         }
         #endregion
 
-        private void ClickRemoveDeviceApp(object sender, RoutedEventArgs e)
+        private void TabItem_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            (HardwareList.SelectedItem as Models.Hardware).Apps.Remove(DeviceAppList.SelectedItem as Models.Application);
+            Exports.Clear();
+            foreach(Models.Hardware hard in General.Hardware)
+            {
+                foreach(Models.Device dev in hard.Devices)
+                {
+                    foreach(Models.Application app in hard.Apps)
+                    {
+                        foreach(Models.AppVersion ver in app.Versions)
+                        {
+                            Models.ExportItem item = new Models.ExportItem();
+                            item.Hardware = hard;
+                            item.Device = dev;
+                            item.App = app;
+                            item.Version = ver;
+                            Exports.Add(item);
+                        }
+                    }
+                }
+            }
+
+            ExportList.ItemsSource = Exports;
         }
 
-        private void ClickAddCom(object sender, RoutedEventArgs e)
+        private void ExportInFilter_TextChanged(object sender, TextChangedEventArgs e)
         {
-            (VersionList.SelectedItem as Models.AppVersion).ComObjects.Add(new Models.ComObject());
+            ExportList.ItemsSource = Exports.Where(i => i.Version.NameText.Contains(ExportInFilter.Text) || i.App.NameText.Contains(ExportInFilter.Text) || i.Hardware.Name.Contains(ExportInFilter.Text) || i.Device.Name.Contains(ExportInFilter.Text)).ToList();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            PublishActions.Clear();
+            List<Models.Hardware> hardware = new List<Models.Hardware>();
+            List<Models.Device> devices = new List<Models.Device>();
+            List<Models.Application> apps = new List<Models.Application>();
+            List<Models.AppVersion> versions = new List<Models.AppVersion>();
+
+            foreach(Models.ExportItem item in Exports.Where(ex => ex.Selected).ToList())
+            {
+                if (!hardware.Contains(item.Hardware)) hardware.Add(item.Hardware);
+                if (!devices.Contains(item.Device)) devices.Add(item.Device);
+                if (!apps.Contains(item.App)) apps.Add(item.App);
+                if (!versions.Contains(item.Version)) versions.Add(item.Version);
+            }
+
+            PublishActions.Add(new Models.PublishAction() { Text = "Starte Veröffentlichen" });
+            PublishActions.Add(new Models.PublishAction() { Text = $"{devices.Count} Geräte - {hardware.Count} Hardware - {apps.Count} Applikationen - {versions.Count} Versionen" });
+
+            PublishActions.Add(new Models.PublishAction() { Text = "Überprüfe Hardware" });
+            Regex reg = new Regex("^([0-9a-zA-Z_-]|\\s)+$");
+            List<string> serials = new List<string>();
+
+
+
+            foreach(Models.Hardware hard in hardware)
+            {
+                if(!reg.IsMatch(hard.Name))
+                    PublishActions.Add(new Models.PublishAction() { Text = hard.Name +  " hat ungültige Zeichen im Namen", State = Models.PublishState.Fail });
+
+                if (serials.Contains(hard.SerialNumber))
+                {
+                    PublishActions.Add(new Models.PublishAction() { 
+                        Text = "Seriennummer (" + hard.SerialNumber + ") wird von mehreren Hardware benutzt:\r\n" + string.Join(',', hardware.Where(h => h.SerialNumber == hard.SerialNumber).ToList()), 
+                        State = Models.PublishState.Fail });
+                }
+                else
+                {
+                    serials.Add(hard.SerialNumber);
+                }
+            }
+
+            PublishActions.Add(new Models.PublishAction() { Text = "Überprüfe Hardware" });
         }
     }
 }

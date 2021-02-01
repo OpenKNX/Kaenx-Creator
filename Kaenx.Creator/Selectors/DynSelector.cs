@@ -16,6 +16,7 @@ namespace Kaenx.Creator.Selectors
         public DataTemplate DWhen { get; set; }
         public DataTemplate DMain { get; set; }
         public DataTemplate DIndependent { get; set; }
+        public DataTemplate DCom { get; set; }
 
 
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
@@ -42,6 +43,9 @@ namespace Kaenx.Creator.Selectors
 
                 case DynChannelIndependet dic:
                     return DIndependent;
+
+                case DynComObject dco:
+                    return DCom;
             }
 
             return null;

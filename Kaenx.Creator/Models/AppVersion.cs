@@ -14,8 +14,31 @@ namespace Kaenx.Creator.Models
         public ObservableCollection<Parameter> Parameters { get; set; } = new ObservableCollection<Parameter>();
         public ObservableCollection<ParameterRef> ParameterRefs { get; set; } = new ObservableCollection<ParameterRef>();
         public ObservableCollection<ComObject> ComObjects { get; set; } = new ObservableCollection<ComObject>();
+        public ObservableCollection<ComObjectRef> ComObjectRefs { get; set; } = new ObservableCollection<ComObjectRef>();
         public ObservableCollection<Memory> Memories { get; set; } = new ObservableCollection<Memory>();
         public List<DynamicMain> Dynamics { get; set; } = new List<DynamicMain>();
+
+
+
+        public AppVersion() { }
+
+        public AppVersion(AppVersion ver)
+        {
+            ParameterRefs = ver.ParameterRefs;
+            Parameters = ver.Parameters;
+            ParameterTypes = ver.ParameterTypes;
+            ComObjects = ver.ComObjects;
+            ComObjectRefs = ver.ComObjectRefs;
+            Memories = ver.Memories;
+            Dynamics = ver.Dynamics;
+
+            Name = ver.Name + " (Kopie)";
+            Number = ver.Number;
+            Number++;
+            IsComObjectRefAuto = ver.IsComObjectRefAuto;
+            IsParameterRefAuto = ver.IsParameterRefAuto;
+            IsMemSizeAuto = ver.IsMemSizeAuto;
+        }
 
 
         private string _name = "";
@@ -48,6 +71,20 @@ namespace Kaenx.Creator.Models
         {
             get { return _isAutoPR; }
             set { _isAutoPR = value; Changed("IsParameterRefAuto"); }
+        }
+
+        private bool _isAutoCR= true;
+        public bool IsComObjectRefAuto
+        {
+            get { return _isAutoCR; }
+            set { _isAutoCR = value; Changed("IsComObjectRefAuto"); }
+        }
+
+        private bool _isMemSizeAuto = true;
+        public bool IsMemSizeAuto
+        {
+            get { return _isMemSizeAuto; }
+            set { _isMemSizeAuto = value; Changed("IsMemSizeAuto"); }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

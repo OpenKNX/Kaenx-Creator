@@ -13,6 +13,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Data\datapoints.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Data\maskversion.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

@@ -72,6 +72,10 @@ namespace Kaenx.Creator.Classes
                     xunderapp.Add(temp);
                     foreach(Memory mem in ver.Memories)
                     {
+                        if(ver.IsMemSizeAuto && mem.IsAutoSize)
+                            AutoHelper.GetMemorySize(ver, mem);
+
+
                         XElement xmem = null;
                         string id = "";
                         switch (mem.Type)
@@ -162,11 +166,15 @@ namespace Kaenx.Creator.Classes
                     #region Parameter
                     temp = new XElement(Get("Parameters"));
 
-                    int paraCount = 1;
+                    StringBuilder headers = new StringBuilder();
+
+                    int counter = 1;
                     foreach(Parameter para in ver.Parameters)
                     {
+                        headers.AppendLine("#define PARAM_" + para.Name + " " + para.Offset);
+
                         XElement xpara = new XElement(Get("Parameter"));
-                        string id = appVersion + "_P-" + paraCount++;
+                        string id = appVersion + "_P-" + counter++;
                         ParamIds.Add(para.Name, id);
                         xpara.SetAttributeValue("Id", id);
                         xpara.SetAttributeValue("Name", para.Name);
@@ -187,6 +195,8 @@ namespace Kaenx.Creator.Classes
 
                         temp.Add(xpara);
                     }
+                    System.IO.File.WriteAllText(GetRelPath(appVersion + ".h"), headers.ToString());
+                    headers = null;
 
                     xunderapp.Add(temp);
                     #endregion
@@ -196,29 +206,71 @@ namespace Kaenx.Creator.Classes
                     #region ParameterRefs
                     temp = new XElement(Get("ParameterRefs"));
 
-                    int refCount = 1;
+                    counter = 1;
                     foreach(ParameterRef pref in ver.ParameterRefs)
                     {
                         if (pref.ParameterObject == null) continue;
                         XElement xpref = new XElement(Get("ParameterRef"));
                         string refid = ParamIds[pref.ParameterObject.Name];
-                        xpref.SetAttributeValue("Id", refid + "_R-" + refCount);
+                        xpref.SetAttributeValue("Id", refid + "_R-" + counter);
                         xpref.SetAttributeValue("RefId", refid);
-                        pref.RefId = refid + "_R-" + refCount;
+                        pref.RefId = refid + "_R-" + counter;
                         temp.Add(xpref);
-                        refCount++;
+                        counter++;
                     }
 
                     xunderapp.Add(temp);
                     #endregion
 
-                    #region ComObjectTable
+                    #region ConObjects
                     temp = new XElement(Get("ComObjectTable"));
+                    counter = 1;
+
+                    foreach(ComObject com in ver.ComObjects)
+                    {
+                        XElement xcom = new XElement(Get("ComObject"));
+                        string id = appVersion + "_O-" + counter++;
+                        com.RefId = id;
+                        xcom.SetAttributeValue("Id", id);
+                        xcom.SetAttributeValue("Name", com.Name);
+                        xcom.SetAttributeValue("Text", com.Text);
+                        xcom.SetAttributeValue("Number", com.Number);
+                        xcom.SetAttributeValue("FunctionText", com.FunctionText);
+                        xcom.SetAttributeValue("VisibleDescription", com.Description);
+                        int size = com.Type.Size;
+                        if (size > 7)
+                            xcom.SetAttributeValue("ObjectSize", (size / 8) + " Byte");
+                        else
+                            xcom.SetAttributeValue("ObjectSize", size + " Bit");
+
+                        if (com.FlagComm != FlagType.Default) xcom.SetAttributeValue("CommunicationFlag", com.FlagComm.ToString());
+                        if (com.FlagRead != FlagType.Default) xcom.SetAttributeValue("ReadFlag", com.FlagRead.ToString());
+                        if (com.FlagWrite != FlagType.Default) xcom.SetAttributeValue("WriteFlag", com.FlagWrite.ToString());
+                        if (com.FlagTrans != FlagType.Default) xcom.SetAttributeValue("TransmitFlag", com.FlagTrans.ToString());
+                        if (com.FlagUpdate != FlagType.Default) xcom.SetAttributeValue("UpdateFlag", com.FlagUpdate.ToString());
+                        if (com.FlagOnInit != FlagType.Default) xcom.SetAttributeValue("ReadOnInitFlag", com.FlagOnInit.ToString());
+
+                        xcom.SetAttributeValue("DatapointType", "DPST-" + com.Type.ParentNumber + "-" + com.Type.Number);
+                        temp.Add(xcom);
+                    }
+
                     xunderapp.Add(temp);
                     #endregion
 
                     #region ComObjectRefs
                     temp = new XElement(Get("ComObjectRefs"));
+                    counter = 1;
+
+                    foreach(ComObjectRef cref in ver.ComObjectRefs)
+                    {
+                        XElement xcref = new XElement(Get("ComObjectRef"));
+                        string id = cref.ComObjectObject.RefId + "_R-" + counter++;
+                        cref.RefId = id;
+                        xcref.SetAttributeValue("Id", id);
+                        xcref.SetAttributeValue("RefId", cref.ComObjectObject.RefId);
+                        temp.Add(xcref);
+                    }
+
                     xunderapp.Add(temp);
                     #endregion
 
@@ -229,7 +281,7 @@ namespace Kaenx.Creator.Classes
                     temp = new XElement(Get("AssociationTable"));
                     temp.SetAttributeValue("MaxEntries", "65535");
                     xunderapp.Add(temp);
-                    temp = XDocument.Parse("<LoadProcedures><LoadProcedure MergeId=\"2\"><LdCtrlRelSegment LsmIdx=\"4\" Size=\"1\" Mode=\"0\" Fill=\"0\" AppliesTo=\"full\" /></LoadProcedure><LoadProcedure MergeId=\"4\"><LdCtrlWriteRelMem ObjIdx=\"4\" Offset=\"0\" Size=\"1\" Verify=\"true\" /></LoadProcedure></LoadProcedures>").Root;
+                    temp = XDocument.Parse("<LoadProcedures xmlns=\"http://knx.org/xml/project/14\"><LoadProcedure MergeId=\"2\"><LdCtrlRelSegment LsmIdx=\"4\" Size=\"1\" Mode=\"0\" Fill=\"0\" AppliesTo=\"full\" /></LoadProcedure><LoadProcedure MergeId=\"4\"><LdCtrlWriteRelMem ObjIdx=\"4\" Offset=\"0\" Size=\"1\" Verify=\"true\" /></LoadProcedure></LoadProcedures>").Root;
                     xunderapp.Add(temp);
                     #endregion
 
@@ -324,6 +376,9 @@ namespace Kaenx.Creator.Classes
             #endregion
 
             doc.Save(GetRelPath("temp.xml"));
+
+
+
         }
 
 
@@ -356,6 +411,10 @@ namespace Kaenx.Creator.Classes
                     case DynWhen dw:
                         xitem = HandleWhen(dw, xparent);
                         break;
+
+                    case DynComObject dc:
+                        HandleCom(dc, xparent);
+                        break;
                 }
 
                 if (item.Items != null && xitem != null)
@@ -381,6 +440,13 @@ namespace Kaenx.Creator.Classes
             channel.SetAttributeValue("Text", ""); //Todo einfügen
 
             return channel;
+        }
+
+        private void HandleCom(DynComObject com, XElement parent)
+        {
+            XElement xcom = new XElement(Get("ComObjectRefRef"));
+            xcom.SetAttributeValue("RefId", com.ComObjectRefObject.RefId);
+            parent.Add(xcom);
         }
 
         private XElement HandleChoose(DynChoose cho, XElement parent)
