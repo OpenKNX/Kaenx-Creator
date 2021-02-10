@@ -488,7 +488,7 @@ namespace Kaenx.Creator
 
                 if (!string.IsNullOrEmpty(item._hardwareName))
                 {
-                    item.Hardware = General.Hardware.Single(h => h.Name == item._hardwareName);
+                    item.Hardware = General.Hardware.First(h => h.Name == item._hardwareName);
                 }
 
                 SetSubCatalogItems(item);
@@ -684,21 +684,43 @@ namespace Kaenx.Creator
 
         private void TabItem_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
+            ListDevicesForExport();
+        }
+
+        private void ChangedPublishOnlyLatest(object sender, RoutedEventArgs e)
+        {
+            ListDevicesForExport();
+        }
+
+        private void ListDevicesForExport()
+        {
             Exports.Clear();
-            foreach(Models.Hardware hard in General.Hardware)
+            foreach (Models.Hardware hard in General.Hardware)
             {
-                foreach(Models.Device dev in hard.Devices)
+                foreach (Models.Device dev in hard.Devices)
                 {
-                    foreach(Models.Application app in hard.Apps)
+                    foreach (Models.Application app in hard.Apps)
                     {
-                        foreach(Models.AppVersion ver in app.Versions)
+                        if (InPublishOnlyLatest.IsChecked == true)
                         {
+                            Models.AppVersion ver = app.Versions.OrderByDescending(v => v.Number).First();
                             Models.ExportItem item = new Models.ExportItem();
                             item.Hardware = hard;
                             item.Device = dev;
                             item.App = app;
                             item.Version = ver;
                             Exports.Add(item);
+                        } else
+                        {
+                            foreach (Models.AppVersion ver in app.Versions)
+                            {
+                                Models.ExportItem item = new Models.ExportItem();
+                                item.Hardware = hard;
+                                item.Device = dev;
+                                item.App = app;
+                                item.Version = ver;
+                                Exports.Add(item);
+                            }
                         }
                     }
                 }
@@ -728,33 +750,75 @@ namespace Kaenx.Creator
                 if (!versions.Contains(item.Version)) versions.Add(item.Version);
             }
 
-            PublishActions.Add(new Models.PublishAction() { Text = "Starte Veröffentlichen" });
+            PublishActions.Add(new Models.PublishAction() { Text = "Starte Check" });
             PublishActions.Add(new Models.PublishAction() { Text = $"{devices.Count} Geräte - {hardware.Count} Hardware - {apps.Count} Applikationen - {versions.Count} Versionen" });
 
+
+            #region Hardware Check
             PublishActions.Add(new Models.PublishAction() { Text = "Überprüfe Hardware" });
             Regex reg = new Regex("^([0-9a-zA-Z_-]|\\s)+$");
             List<string> serials = new List<string>();
 
+            var check1 = General.Hardware.GroupBy(h => h.Name).Where(h => h.Count() > 1);
+            foreach(var group in check1)
+                PublishActions.Add(new Models.PublishAction() { Text = "Hardwarename '" + group.Key + "' wird von " + group.Count() + " Hardware verwendet", State = Models.PublishState.Fail });
 
+            check1 = General.Hardware.GroupBy(h => h.SerialNumber).Where(h => h.Count() > 1);
+            foreach (var group in check1)
+                PublishActions.Add(new Models.PublishAction() { Text = "Hardwareserial '" + group.Key + "' wird von " + group.Count() + " Hardware verwendet", State = Models.PublishState.Fail });
 
-            foreach(Models.Hardware hard in hardware)
+            check1 = null;
+            var check2 = General.Hardware.Where(h => h.Devices.Count == 0);
+            foreach (var group in check2)
+                PublishActions.Add(new Models.PublishAction() { Text = "Hardware '" + group.Name + "' hat keine Geräte zugeordnet", State = Models.PublishState.Warning });
+
+            check2 = General.Hardware.Where(h => h.HasApplicationProgram && h.Apps.Count == 0);
+            foreach (var group in check2)
+                PublishActions.Add(new Models.PublishAction() { Text = "Hardware '" + group.Name + "' hat keine Applikation zugeordnet", State = Models.PublishState.Warning });
+
+            check2 = General.Hardware.Where(h => !h.HasApplicationProgram && h.Apps.Count != 0);
+            foreach (var group in check2)
+                PublishActions.Add(new Models.PublishAction() { Text = "Hardware '" + group.Name + "' hat Applikation zugeordnet obwohl angegeben ist, dass keine benötigt wird", State = Models.PublishState.Warning });
+
+            check2 = General.Hardware.Where(h => !reg.IsMatch(h.Name));
+            foreach (var group in check2)
+                PublishActions.Add(new Models.PublishAction() { Text = "Hardware '" + group.Name + "' hat ungültige Zeichen im Namen", State = Models.PublishState.Fail });
+            check2 = null;
+            #endregion
+
+            #region Applikation Check
+            PublishActions.Add(new Models.PublishAction() { Text = "Überprüfe Applikationen" });
+
+            var check3 = General.Applications.GroupBy(h => h.Name).Where(h => h.Count() > 1);
+            foreach (var group in check3)
+                PublishActions.Add(new Models.PublishAction() { Text = "Applikationsname '" + group.Key + "' wird von " + group.Count() + " Applikationen verwendet", State = Models.PublishState.Fail });
+
+            check3 = null;
+            var check4 = General.Applications.GroupBy(h => h.Number).Where(h => h.Count() > 1);
+            foreach (var group in check4)
+                PublishActions.Add(new Models.PublishAction() { Text = "Applikations Nummer " + group.Key + " (" + group.Key.ToString("X4") + ") wird von " + group.Count() + " Applikationen verwendet", State = Models.PublishState.Fail });
+
+            check4 = null;
+            foreach(Models.Application app in General.Applications)
             {
-                if(!reg.IsMatch(hard.Name))
-                    PublishActions.Add(new Models.PublishAction() { Text = hard.Name +  " hat ungültige Zeichen im Namen", State = Models.PublishState.Fail });
-
-                if (serials.Contains(hard.SerialNumber))
-                {
-                    PublishActions.Add(new Models.PublishAction() { 
-                        Text = "Seriennummer (" + hard.SerialNumber + ") wird von mehreren Hardware benutzt:\r\n" + string.Join(',', hardware.Where(h => h.SerialNumber == hard.SerialNumber).ToList()), 
-                        State = Models.PublishState.Fail });
-                }
-                else
-                {
-                    serials.Add(hard.SerialNumber);
-                }
+                var check5 = app.Versions.GroupBy(v => v.Number).Where(l => l.Count() > 1);
+                foreach (var group in check5)
+                    PublishActions.Add(new Models.PublishAction() { Text = "Applikation '" + app.Name + "' verwendet Version " + group.Key + " (" + Math.Floor(group.Key / 16.0) + "." + (group.Key % 16) + ") " + group.Count() + " mal", State = Models.PublishState.Fail });
             }
+            #endregion
 
-            PublishActions.Add(new Models.PublishAction() { Text = "Überprüfe Hardware" });
+
+            if(PublishActions.Count(pa => pa.State == Models.PublishState.Fail) > 0)
+            {
+                PublishActions.Add(new Models.PublishAction() { Text = "Erstellen abgebrochen. Es traten Fehler bei der Überprüfung auf.", State = Models.PublishState.Fail });
+                return;
+            }
+            else
+                PublishActions.Add(new Models.PublishAction() { Text = "Überprüfung bestanden", State = Models.PublishState.Success });
+
+            PublishActions.Add(new Models.PublishAction() { Text = "Erstellen abgebrochen. Es traten Fehler bei der Überprüfung auf.", State = Models.PublishState.Fail });
+
         }
+
     }
 }

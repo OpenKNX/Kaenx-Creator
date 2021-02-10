@@ -20,6 +20,173 @@
         <conv:BoolToVisibility x:Key="BoolToVis" />
         <conv:TypeToBool x:Key="TypeToBool" />
 
+        <Style x:Key="TopTabControl" TargetType="TabControl">
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TabControl">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Border BorderThickness="0 4 0 0" BorderBrush="#D0CEBF" Grid.Row="1">
+                                <Border BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}">
+                                    <Border Background="{TemplateBinding Background}">
+                                        <ContentPresenter ContentSource="SelectedContent"/>
+                                    </Border>
+                                </Border>
+                            </Border>
+                            <TabPanel Grid.Row="0" IsItemsHost="true" Margin="10 0" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="LeftTabControl" TargetType="TabControl">
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TabControl">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Border BorderThickness="4 0 0 0" BorderBrush="#D0CEBF" Grid.Column="1">
+                                <Border BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}">
+                                    <Border Background="{TemplateBinding Background}">
+                                        <ContentPresenter ContentSource="SelectedContent"/>
+                                    </Border>
+                                </Border>
+                            </Border>
+                            <TabPanel IsItemsHost="true"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="TopTabItem" TargetType="TabItem">
+            <Setter Property="BorderThickness" Value="0 0 0 4" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TabItem}">
+                        <Border Padding="0 0 0 7" Background="Transparent">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="SelectionStates">
+                                    <VisualState x:Name="Unselected">
+                                        <Storyboard>
+                                            <ColorAnimationUsingKeyFrames Duration="0:0:0.5" Storyboard.TargetName="Border" Storyboard.TargetProperty="BorderBrush.Color">
+                                                <EasingColorKeyFrame KeyTime="0:0:0.5" Value="Transparent" />
+                                            </ColorAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Selected">
+                                        <Storyboard>
+                                            <ColorAnimationUsingKeyFrames Duration="0:0:0.5" Storyboard.TargetName="Border" Storyboard.TargetProperty="BorderBrush.Color">
+                                                <EasingColorKeyFrame KeyTime="0:0:0.5" Value="Green" />
+                                            </ColorAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal">
+                                        <Storyboard>
+                                            <DoubleAnimationUsingKeyFrames Duration="0:0:1" Storyboard.TargetName="Border" Storyboard.TargetProperty="Opacity">
+                                                <LinearDoubleKeyFrame KeyTime="0:0:1" Value="1" />
+                                            </DoubleAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="MouseOver" />
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <DoubleAnimationUsingKeyFrames Duration="0:0:1" Storyboard.TargetName="Border" Storyboard.TargetProperty="Opacity">
+                                                <LinearDoubleKeyFrame KeyTime="0:0:1" Value="0.5" />
+                                            </DoubleAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Border.Resources>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="FontSize" Value="20" />
+                                </Style>
+                            </Border.Resources>
+                            <Border Name="Border" BorderBrush="Transparent" BorderThickness="{TemplateBinding BorderThickness}" Padding="5 15 5 5" >
+                                <ContentPresenter ContentSource="Header" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5 0">
+                                    <ContentPresenter.Resources>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="FontSize" Value="17" />
+                                        </Style>
+                                    </ContentPresenter.Resources>
+                                </ContentPresenter>
+                            </Border>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="LeftTabItem" TargetType="TabItem">
+            <Setter Property="BorderThickness" Value="0 0 4 0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TabItem}">
+                        <Border Padding="0 0 0 7" Background="Transparent">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="SelectionStates">
+                                    <VisualState x:Name="Unselected">
+                                        <Storyboard>
+                                            <ColorAnimationUsingKeyFrames Duration="0:0:0.5" Storyboard.TargetName="Backx" Storyboard.TargetProperty="Color">
+                                                <EasingColorKeyFrame KeyTime="0:0:0.5" Value="Transparent" />
+                                            </ColorAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Selected">
+                                        <Storyboard>
+                                            <ColorAnimationUsingKeyFrames Duration="0:0:0.5" Storyboard.TargetName="Backx" Storyboard.TargetProperty="Color">
+                                                <EasingColorKeyFrame KeyTime="0:0:0.5" Value="Green" />
+                                            </ColorAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal">
+                                        <Storyboard>
+                                            <DoubleAnimationUsingKeyFrames Duration="0:0:1" Storyboard.TargetName="Head" Storyboard.TargetProperty="Opacity">
+                                                <LinearDoubleKeyFrame KeyTime="0:0:1" Value="1" />
+                                            </DoubleAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="MouseOver" />
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <DoubleAnimationUsingKeyFrames Duration="0:0:1" Storyboard.TargetName="Head" Storyboard.TargetProperty="Opacity">
+                                                <LinearDoubleKeyFrame KeyTime="0:0:1" Value="0.5" />
+                                            </DoubleAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Border.Resources>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="FontSize" Value="20" />
+                                </Style>
+                            </Border.Resources>
+
+                            <Grid>
+                                <Border Name="Border" BorderBrush="Transparent" BorderThickness="{TemplateBinding BorderThickness}" Padding="5" Opacity="0.5" >
+                                    <Border.Background>
+                                        <SolidColorBrush x:Name="Backx" Color="Transparent" />
+                                    </Border.Background>
+                                </Border>
+                                <ContentPresenter Name="Head" ContentSource="Header" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10" />
+                            </Grid>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <DataTemplate x:Key="TempDynMain">
             <TextBlock Margin="5" Text="Dieser Knotenpunkt wird nicht exportiert und kann somit nicht gelöscht oder geändert werden." />
         </DataTemplate>
@@ -157,15 +324,9 @@
             </MenuItem>
         </Menu>
 
-        <TabControl x:Name="TabsEdit" Grid.Row="1" Margin=" 0 10 0 0" IsEnabled="False">
-            <TabControl.Resources>
-                <Style TargetType="TabItem">
-                    <Setter Property="Padding" Value="10 5" />
-                </Style>
-            </TabControl.Resources>
-            
-            
-            <TabItem Header="Allgemein">
+        <TabControl x:Name="TabsEdit" Grid.Row="1" Margin=" 0 10 0 0" IsEnabled="False" BorderThickness="0 0 0 4" Style="{StaticResource ResourceKey=TopTabControl}">
+
+            <TabItem Header="Allgemein" Style="{StaticResource TopTabItem}">
                 <StackPanel>
                     <HeaderedContentControl Header="Manufacturer ID">
                         <TextBox Text="{Binding General.ManufacturerId}" MaxLength="4" />
@@ -176,7 +337,7 @@
                 </StackPanel>
             </TabItem>
 
-            <TabItem Header="Katalog">
+            <TabItem Header="Katalog" Style="{StaticResource TopTabItem}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition MaxWidth="250" />
@@ -229,10 +390,11 @@
                 </Grid>
             </TabItem>
 
-            <TabItem Header="Hardware/Geräte">
+            <TabItem Header="Hardware/Geräte" Style="{StaticResource TopTabItem}">
+
+
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="25" />
                         <RowDefinition Height="auto" />
                         <RowDefinition />
                     </Grid.RowDefinitions>
@@ -246,40 +408,43 @@
 
                     <ListView x:Name="HardwareList" Grid.Row="1" Grid.RowSpan="3" Grid.ColumnSpan="2" ItemsSource="{Binding General.Hardware}" DisplayMemberPath="Name" />
 
-                    <StackPanel Grid.Column="2" Grid.Row="1" DataContext="{Binding ElementName=HardwareList, Path=SelectedItem}" IsEnabled="{Binding ElementName=HardwareList, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
-                        <StackPanel.Resources>
-                            <Style TargetType="HeaderedContentControl">
-                                <Setter Property="Margin" Value="5" />
-                            </Style>
-                            <Style TargetType="CheckBox">
-                                <Setter Property="Margin" Value="5" />
-                            </Style>
-                            <Style TargetType="ComboBox">
-                                <Setter Property="Margin" Value="5" />
-                            </Style>
-                        </StackPanel.Resources>
-                        <HeaderedContentControl Header="Name">
-                            <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
-                        </HeaderedContentControl>
-                        <HeaderedContentControl Header="Seriennummer">
-                            <TextBox Text="{Binding SerialNumber, UpdateSourceTrigger=PropertyChanged}" />
-                        </HeaderedContentControl>
-                        <HeaderedContentControl Header="Busstrom">
-                            <TextBox Text="{Binding BusCurrent, UpdateSourceTrigger=PropertyChanged}" />
-                        </HeaderedContentControl>
-                        <CheckBox IsChecked="{Binding HasIndividualAddress, Mode=TwoWay}" Content="Hat eine Individuelle Adresse" />
-                        <CheckBox IsChecked="{Binding IsPowerSupply, Mode=TwoWay}" Content="Gerät ist eine Spannungsversorgung" />
-                        <CheckBox IsChecked="{Binding IsCoppler, Mode=TwoWay}" Content="Gerät ist ein Koppler" />
-                        <CheckBox IsChecked="{Binding IsIpEnabled, Mode=TwoWay}" Content="Gerät kann KNXnet/IP" />
 
-                        <CheckBox IsChecked="{Binding HasApplicationProgram, Mode=TwoWay}" Content="Hat ein Applikationsprogramm" />
-                        <CheckBox IsChecked="{Binding HasApplicationProgram2, Mode=TwoWay}" Content="Hat ein zweites Applikationsprogramm" />
-                    </StackPanel>
+                    <TabControl Grid.RowSpan="2" Grid.Column="2" Style="{StaticResource TopTabControl}" DataContext="{Binding ElementName=HardwareList, Path=SelectedItem}"  IsEnabled="{Binding ElementName=HardwareList, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
 
+                        <TabItem Header="Allgemein" Style="{StaticResource TopTabItem}">
 
+                            <StackPanel DataContext="{Binding ElementName=HardwareList, Path=SelectedItem}" IsEnabled="{Binding ElementName=HardwareList, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
+                                <StackPanel.Resources>
+                                    <Style TargetType="HeaderedContentControl">
+                                        <Setter Property="Margin" Value="5" />
+                                    </Style>
+                                    <Style TargetType="CheckBox">
+                                        <Setter Property="Margin" Value="5" />
+                                    </Style>
+                                    <Style TargetType="ComboBox">
+                                        <Setter Property="Margin" Value="5" />
+                                    </Style>
+                                </StackPanel.Resources>
+                                <HeaderedContentControl Header="Name">
+                                    <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
+                                </HeaderedContentControl>
+                                <HeaderedContentControl Header="Seriennummer">
+                                    <TextBox Text="{Binding SerialNumber, UpdateSourceTrigger=PropertyChanged}" />
+                                </HeaderedContentControl>
+                                <HeaderedContentControl Header="Busstrom">
+                                    <TextBox Text="{Binding BusCurrent, UpdateSourceTrigger=PropertyChanged}" />
+                                </HeaderedContentControl>
+                                <CheckBox IsChecked="{Binding HasIndividualAddress, Mode=TwoWay}" Content="Hat eine Individuelle Adresse" />
+                                <CheckBox IsChecked="{Binding IsPowerSupply, Mode=TwoWay}" Content="Gerät ist eine Spannungsversorgung" />
+                                <CheckBox IsChecked="{Binding IsCoppler, Mode=TwoWay}" Content="Gerät ist ein Koppler" />
+                                <CheckBox IsChecked="{Binding IsIpEnabled, Mode=TwoWay}" Content="Gerät kann KNXnet/IP" />
 
-                    <TabControl Grid.Row="2" Grid.Column="2" Margin="5" DataContext="{Binding ElementName=HardwareList, Path=SelectedItem}"  IsEnabled="{Binding ElementName=HardwareList, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
-                        <TabItem Header="Geräte">
+                                <CheckBox IsChecked="{Binding HasApplicationProgram, Mode=TwoWay}" Content="Hat ein Applikationsprogramm" />
+                                <CheckBox IsChecked="{Binding HasApplicationProgram2, Mode=TwoWay}" Content="Hat ein zweites Applikationsprogramm" />
+                            </StackPanel>
+                        </TabItem>
+
+                        <TabItem Header="Geräte" Style="{StaticResource TopTabItem}">
                             <DataGrid Grid.Row="1" ItemsSource="{Binding Devices}" AutoGenerateColumns="False">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
@@ -291,7 +456,7 @@
                             </DataGrid>
                         </TabItem>
 
-                        <TabItem Header="Applikationen">
+                        <TabItem Header="Applikationen" Style="{StaticResource TopTabItem}">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="auto" />
@@ -303,18 +468,19 @@
                                     <Button Content="Hinzufügen" Click="ClickAddHardApp" Margin="2" />
                                     <Button Content="Entfernen" Margin="2" Click="ClickRemoveDeviceApp" IsEnabled="{Binding ElementName=DeviceAppList, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
                                 </StackPanel>
-                                
+
                                 <ListBox Name="DeviceAppList" Grid.Row="1" ItemsSource="{Binding Apps}" DisplayMemberPath="Name" />
                             </Grid>
                         </TabItem>
                     </TabControl>
 
-
-                    
                 </Grid>
+
+
+                
             </TabItem>
 
-            <TabItem Header="Applikationen">
+            <TabItem Header="Applikationen" Style="{StaticResource TopTabItem}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto" />
@@ -398,16 +564,16 @@
                 </Grid>
             </TabItem>
 
-            <TabItem DataContext="{Binding ElementName=VersionList, Path=SelectedItem}" IsEnabled="{Binding ElementName=VersionList, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
+            <TabItem DataContext="{Binding ElementName=VersionList, Path=SelectedItem}" Style="{StaticResource TopTabItem}" IsEnabled="{Binding ElementName=VersionList, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding ElementName=AppList, Path=SelectedItem.Name}" Margin="0 0 5 0" />
-                        <TextBlock Text="{Binding NameText}" />
+                        <TextBlock FontSize="18" Text="{Binding ElementName=AppList, Path=SelectedItem.Name}" Margin="0 0 5 0" />
+                        <TextBlock FontSize="18" Text="{Binding NameText}" />
                     </StackPanel>
                 </TabItem.Header>
 
-                <TabControl TabStripPlacement="Left">
-                    <TabItem Header="Allgemein">
+                <TabControl TabStripPlacement="Left" Style="{StaticResource LeftTabControl}">
+                    <TabItem Header="Allgemein" BorderThickness="0 0 4 0" Style="{StaticResource LeftTabItem}">
                         <StackPanel>
                             <StackPanel.Resources>
                                 <Style TargetType="HeaderedContentControl">
@@ -435,16 +601,13 @@
                                 <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
                             </HeaderedContentControl>
 
-                            <HeaderedContentControl Header="Automatisch Speicher berechnen beim Veröffentlichen">
-                                <TextBox Text="{Binding IsMemSizeAuto}" />
-                            </HeaderedContentControl>
-
+                            <CheckBox IsChecked="{Binding IsMemSizeAuto}" Content="Automatisch Speicher berechnen beim Veröffentlichen" />
                             <CheckBox IsChecked="{Binding IsParameterRefAuto}" Content="Parameter Refs automatisch berechnen" />
                             <CheckBox IsChecked="{Binding IsComObjectRefAuto}" Content="KO Refs automatisch berechnen" />
                         </StackPanel>
                     </TabItem>
-                    
-                    <TabItem Header="Speicher">
+
+                    <TabItem Header="Speicher" Style="{StaticResource LeftTabItem}">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="150" />
@@ -508,7 +671,7 @@
                         </Grid>
                     </TabItem>
 
-                    <TabItem Header="ParameterTypes">
+                    <TabItem Header="ParameterTypes" Style="{StaticResource LeftTabItem}">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="150" />
@@ -582,8 +745,8 @@
                             </StackPanel>
                         </Grid>
                     </TabItem>
-                 
-                    <TabItem Header="Parameter">
+
+                    <TabItem Header="Parameter" Style="{StaticResource LeftTabItem}">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="auto" />
@@ -691,7 +854,7 @@
                             </Grid>
                     </TabItem>
 
-                    <TabItem Header="ParameterRefs" Visibility="{Binding IsParameterRefAuto, Converter={StaticResource BoolToVis}, ConverterParameter=true}">
+                    <TabItem Header="ParameterRefs" Visibility="{Binding IsParameterRefAuto, Converter={StaticResource BoolToVis}, ConverterParameter=true}" Style="{StaticResource LeftTabItem}">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="auto" />
@@ -731,7 +894,7 @@
                         </Grid>
                     </TabItem>
 
-                    <TabItem Header="Comobjects">
+                    <TabItem Header="Comobjects" Style="{StaticResource LeftTabItem}">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="auto" />
@@ -830,25 +993,25 @@
                     </TabItem>
 
 
-                    <TabItem Header="ComobjectRefs" Visibility="{Binding IsComObjectRefAuto, Converter={StaticResource BoolToVis}, ConverterParameter=true}">
+                    <TabItem Header="ComobjectRefs" Visibility="{Binding IsComObjectRefAuto, Converter={StaticResource BoolToVis}, ConverterParameter=true}" Style="{StaticResource LeftTabItem}">
                         <TextBlock>
                             Dieser Modus wird noch nicht unterstützt...
                         </TextBlock>
                     </TabItem>
 
 
-                    <TabItem Header="Ladeprozedur" Visibility="{Binding ElementName=AppList, Path=SelectedItem.Mask.Procedure, Converter={StaticResource EnumToVis}, ConverterParameter=Application}">
+                    <TabItem Header="Ladeprozedur" Visibility="{Binding ElementName=AppList, Path=SelectedItem.Mask.Procedure, Converter={StaticResource EnumToVis}, ConverterParameter=Application}" Style="{StaticResource LeftTabItem}">
 
                     </TabItem>
 
 
-                    <TabItem Header="Ladeprozedur Merge" Visibility="{Binding ElementName=AppList, Path=SelectedItem.Mask.Procedure, Converter={StaticResource EnumToVis}, ConverterParameter=Merge}">
+                    <TabItem Header="Ladeprozedur Merge" Visibility="{Binding ElementName=AppList, Path=SelectedItem.Mask.Procedure, Converter={StaticResource EnumToVis}, ConverterParameter=Merge}" Style="{StaticResource LeftTabItem}">
 
                     </TabItem>
 
 
 
-                    <TabItem Header="Dynamic">
+                    <TabItem Header="Dynamic" Style="{StaticResource LeftTabItem}">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="auto" />
@@ -997,9 +1160,9 @@
                 </TabControl>
             </TabItem>
 
-            <TabItem>
+            <TabItem Style="{StaticResource TopTabItem}">
                 <TabItem.Header>
-                    <TextBlock Text="Veröffentlichen" MouseLeftButtonUp="TabItem_MouseLeftButtonUp" />
+                    <TextBlock FontSize="18" Text="Veröffentlichen" MouseLeftButtonUp="TabItem_MouseLeftButtonUp" />
                 </TabItem.Header>
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -1011,7 +1174,7 @@
                         <RowDefinition />
                     </Grid.RowDefinitions>
 
-                    <DataGrid Grid.RowSpan="2" Name="ExportList" AutoGenerateColumns="False">
+                    <DataGrid Grid.RowSpan="2" Name="ExportList" AutoGenerateColumns="False" BorderThickness="0 0 1 0">
                         <DataGrid.Columns>
                             <DataGridCheckBoxColumn Header="Publish" Binding="{Binding Selected}" />
                             <DataGridTextColumn Header="Gerät" Binding="{Binding Device.Name}" />
@@ -1042,6 +1205,15 @@
                         <HeaderedContentControl Header="Filtern:">
                             <TextBox x:Name="ExportInFilter" TextChanged="ExportInFilter_TextChanged" />
                         </HeaderedContentControl>
+
+                        <CheckBox x:Name="InPublishOnlyLatest" Content="Nur neueste Applikationversion exportieren" Checked="ChangedPublishOnlyLatest" Unchecked="ChangedPublishOnlyLatest" />
+
+                        <ComboBox SelectedIndex="0">
+                            <ComboBoxItem Content="Eine Knxprod Datei für alle" Tag="combined" />
+                            <ComboBoxItem Content="Für jedes Gerät eine Datei" Tag="device" />
+                            <ComboBoxItem Content="Jede Version in eigene Datei" Tag="single" />
+                        </ComboBox>
+                        
                         <Button Content="Veröffentlichen" Click="Button_Click" />
                     </StackPanel>
 

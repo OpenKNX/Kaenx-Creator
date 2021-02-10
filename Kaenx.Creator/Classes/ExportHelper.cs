@@ -517,7 +517,7 @@ namespace Kaenx.Creator.Classes
                             XElement xitem = new XElement(Get("CatalogItem"));
                             xitem.SetAttributeValue("Name", dev.Text);
                             xitem.SetAttributeValue("Number", item.Hardware.SerialNumber);
-                            if (!string.IsNullOrWhiteSpace(item.VisibleDescription)) xitem.SetAttributeValue("VisibleDescription", item.VisibleDescription);
+                            if (!string.IsNullOrWhiteSpace(dev.Description)) xitem.SetAttributeValue("VisibleDescription", dev.Description);
                             xitem.SetAttributeValue("ProductRefId", productIds[dev.Name]);
                             string hardid = item.Hardware.Version + "-" + app.Number + "-" + ver.Number;
                             xitem.SetAttributeValue("Hardware2ProgramRefId", hardwareIds[hardid]);
@@ -589,11 +589,6 @@ namespace Kaenx.Creator.Classes
         private string GetRelPath(string path)
         {
             return System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Output", path);
-        }
-
-        private string GetRelPath(string manu, string path)
-        {
-            return System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Output", manu, path);
         }
 
         private XName Get(string name, string ns = "http://knx.org/xml/project/14")
