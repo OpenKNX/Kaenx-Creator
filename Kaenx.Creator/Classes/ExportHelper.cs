@@ -311,8 +311,8 @@ namespace Kaenx.Creator.Classes
                 xhard.SetAttributeValue("VersionNumber", hard.Version.ToString());
                 xhard.SetAttributeValue("BusCurrent", hard.BusCurrent);
                 if(hard.HasIndividualAddress) xhard.SetAttributeValue("HasIndividualAddress", "1");
-                if(hard.HasApplicationProgram) xhard.SetAttributeValue("HasApplicationProgam", "1");
-                if(hard.HasApplicationProgram2) xhard.SetAttributeValue("HasApplicationProgam2", "1");
+                if(hard.HasApplicationProgram) xhard.SetAttributeValue("HasApplicationProgram", "1");
+                if(hard.HasApplicationProgram2) xhard.SetAttributeValue("HasApplicationProgram2", "1");
                 if(hard.IsPowerSupply) xhard.SetAttributeValue("IsPowerSupply", "1");
                 xhard.SetAttributeValue("IsChocke", "0"); //Todo check what this is
                 if(hard.IsCoppler) xhard.SetAttributeValue("IsCoupler", "1");
@@ -462,8 +462,8 @@ namespace Kaenx.Creator.Classes
             XElement xwhen = new XElement(Get("when"));
             parent.Add(xwhen);
 
-            when.Condition = when.Condition.Replace(">", "&gt;");
-            when.Condition = when.Condition.Replace("<", "&lt;");
+            //when.Condition = when.Condition.Replace(">", "&gt;");
+            //when.Condition = when.Condition.Replace("<", "&lt;");
 
 
             if (when.IsDefault)

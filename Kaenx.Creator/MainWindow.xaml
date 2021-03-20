@@ -268,9 +268,9 @@
                     <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
                 </HeaderedContentControl>
                 <HeaderedContentControl Header="Bedingung">
-                    <TextBox Text="{Binding Condition}" />
+                    <TextBox Text="{Binding Condition}" IsEnabled="{Binding IsDefault, Converter={StaticResource BoolNegate}}" />
                 </HeaderedContentControl>
-                <CheckBox Content="Anzeigen, wenn alle anderen Bedingungen nicht erfüllt sind" />
+                <CheckBox IsChecked="{Binding IsDefault}" Content="Anzeigen, wenn alle anderen Bedingungen nicht erfüllt sind" />
                 <TextBlock Margin="5">
                     <Run Text="Gleich: Wert mit Istgleichzeichen davor (Beispiel: =4)" />
                     <LineBreak />
