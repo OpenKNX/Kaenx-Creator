@@ -198,12 +198,12 @@
                 <HeaderedContentControl Header="Name">
                     <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
                 </HeaderedContentControl>
-                <HeaderedContentControl Header="Paremeter Ref" Visibility="{Binding ElementName=VersionList, Path=SelectedItem.IsParameterRefAuto, Converter={StaticResource BoolToVis}, ConverterParameter=true}">
+                <HeaderedContentControl Header="Paremeter Ref">
                     <ComboBox ItemsSource="{Binding ElementName=VersionList, Path=SelectedItem.ParameterRefs}" SelectedItem="{Binding ParameterRefObject}" DisplayMemberPath="Name" />
                 </HeaderedContentControl>
-                <HeaderedContentControl Header="Parameter" Visibility="{Binding ElementName=VersionList, Path=SelectedItem.IsParameterRefAuto, Converter={StaticResource BoolToVis}}">
+                <!--<HeaderedContentControl Header="Parameter" Visibility="{Binding ElementName=VersionList, Path=SelectedItem.IsParameterRefAuto, Converter={StaticResource BoolToVis}}">
                     <ComboBox ItemsSource="{Binding ElementName=VersionList, Path=SelectedItem.Parameters}" SelectedItem="{Binding ParameterRefObject.ParameterObject, Mode=TwoWay}" DisplayMemberPath="Name" />
-                </HeaderedContentControl>
+                </HeaderedContentControl>-->
                 <TextBlock Margin="5" Visibility="{Binding ElementName=VersionList, Path=SelectedItem.IsParameterRefAuto, Converter={StaticResource BoolToVis}}">
                     <Run Text="ParameterRef Name:" />
                     <Run Text="{Binding ParameterRefObject.Name}" />
@@ -315,7 +315,7 @@
                 <MenuItem x:Name="MenuClose" IsEnabled="False" Header="Schließen" />
             </MenuItem>
             <MenuItem x:Name="MenuImport" IsEnabled="False" Header="Import">
-                <MenuItem Header="ETS Produktdatenbank" />
+                <MenuItem Header="ETS Produktdatenbank" Click="ClickImport" />
                 <MenuItem Header="Kaenx Produkt" IsEnabled="False" />
             </MenuItem>
             <MenuItem x:Name="MenuPublish" IsEnabled="False" Header="Veröffentlichen">
@@ -1018,7 +1018,6 @@
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
 
-
                             <TreeView Name="DynamicList" ItemsSource="{Binding ElementName=VersionList, Path=SelectedItem.Dynamics}" MinWidth="300">
                                 <TreeView.Resources>
                                     <HierarchicalDataTemplate DataType="{x:Type dyn:DynamicMain}" ItemsSource="{Binding Items}">
@@ -1101,11 +1100,12 @@
                                             <TextBlock>
                                                 <Run Text="Parameter" />
                                                 <Run Text="{Binding Name}" />
-                                                <Run Text="{Binding ParameterRefObject.ParameterObject.Name}" />
-                                            </TextBlock>
-                                            <TextBlock Margin="10 0 0 0" Visibility="{Binding ElementName=VersionList, Path=SelectedItem.IsParameterRefAuto, Converter={StaticResource BoolToVis}}">
-                                                <Run Text="[" />
                                                 <Run Text="{Binding ParameterRefObject.Name}" />
+                                            </TextBlock>
+                                            <!-- Visibility="{Binding ElementName=VersionList, Path=SelectedItem.IsParameterRefAuto, Converter={StaticResource BoolToVis}}"-->
+                                            <TextBlock Margin="10 0 0 0">
+                                                <Run Text="[" />
+                                                <Run Text="{Binding ParameterRefObject.ParameterObject.Name}" />
                                                 <Run Text="]" />
                                             </TextBlock>
                                         </StackPanel>

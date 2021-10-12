@@ -308,7 +308,12 @@ namespace Kaenx.Creator
         private void ClickAddParam(object sender, RoutedEventArgs e)
         {
             Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
-            ver.Parameters.Add(new Models.Parameter());
+            Models.Parameter para = new Models.Parameter();
+            ver.Parameters.Add(para);
+
+            if(ver.IsParameterRefAuto){
+                ver.ParameterRefs.Add(new Models.ParameterRef(para));
+            }
         }
 
 
@@ -336,7 +341,13 @@ namespace Kaenx.Creator
 
         private void ClickAddCom(object sender, RoutedEventArgs e)
         {
-            (VersionList.SelectedItem as Models.AppVersion).ComObjects.Add(new Models.ComObject());
+            Models.ComObject com = new Models.ComObject();
+            Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
+            ver.ComObjects.Add(com);
+
+            if(ver.IsComObjectRefAuto){
+                ver.ComObjectRefs.Add(new Models.ComObjectRef(com));
+            }
         }
 
         private void ClickRemoveCom(object sender, RoutedEventArgs e)
@@ -504,6 +515,22 @@ namespace Kaenx.Creator
             TabsEdit.IsEnabled = enable;
         }
 
+        private void ClickImport(object sender, RoutedEventArgs e)
+        {
+            var dialog = new Microsoft.Win32.OpenFileDialog();
+            dialog.DefaultExt = ".knxprod"; // Default file extension
+            dialog.Filter = "KNX Produktdatenbank|*.knxprod";
+            bool? result = dialog.ShowDialog();
+
+            if (result == true)
+            {
+                ImportHelper helper = new ImportHelper(dialog.FileName, bcus);
+                helper.Start(_general);
+            }
+
+            
+        }
+
         private void ClickExportEts(object sender, RoutedEventArgs e)
         {
             ExportHelper helper = new ExportHelper();
@@ -556,6 +583,8 @@ namespace Kaenx.Creator
 
             int height = Convert.ToInt32(Math.Ceiling(data.Length / 16.0));
             Debug.WriteLine("Höhe: " + height);
+
+            if(height == 0) return;
 
             WriteableBitmap map = new WriteableBitmap(16, height, 1, 1, PixelFormats.Indexed8, BitmapPalettes.WebPalette);
 
@@ -618,12 +647,6 @@ namespace Kaenx.Creator
         {
             Models.Dynamic.IDynItems block = (sender as MenuItem).DataContext as Models.Dynamic.IDynItems;
             Models.Dynamic.DynParameter para = new Models.Dynamic.DynParameter() { Parent = block };
-            if ((VersionList.SelectedItem as Models.AppVersion).IsParameterRefAuto)
-            {
-                Models.ParameterRef pref = new Models.ParameterRef() { Name = "Ref" + (new Random().Next(0, 10000)) };
-                (VersionList.SelectedItem as Models.AppVersion).ParameterRefs.Add(pref);
-                para.ParameterRefObject = pref;
-            }
             block.Items.Add(para);
         }
 
@@ -643,14 +666,6 @@ namespace Kaenx.Creator
         {
             Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
             Models.Dynamic.IDynItems item = (sender as MenuItem).DataContext as Models.Dynamic.IDynItems;
-            if(item is Models.Dynamic.DynParameter && ver.IsParameterRefAuto)
-            {
-                ver.ParameterRefs.Remove((item as Models.Dynamic.DynParameter).ParameterRefObject);
-            }
-            if(item is Models.Dynamic.DynComObject && ver.IsComObjectRefAuto)
-            {
-                ver.ComObjectRefs.Remove((item as Models.Dynamic.DynComObject).ComObjectRefObject);
-            }
             item.Parent.Items.Remove(item);
         }
 
@@ -658,12 +673,6 @@ namespace Kaenx.Creator
         {
             Models.Dynamic.IDynItems item = (sender as MenuItem).DataContext as Models.Dynamic.IDynItems;
             Models.Dynamic.DynComObject para = new Models.Dynamic.DynComObject() { Parent = item };
-            if ((VersionList.SelectedItem as Models.AppVersion).IsComObjectRefAuto)
-            {
-                Models.ComObjectRef oref = new Models.ComObjectRef() { Name = "Ref" + (new Random().Next(0, 10000)) };
-                (VersionList.SelectedItem as Models.AppVersion).ComObjectRefs.Add(oref);
-                para.ComObjectRefObject = oref;
-            }
             item.Items.Add(para);
         }
 
