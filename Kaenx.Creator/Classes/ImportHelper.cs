@@ -100,20 +100,20 @@ namespace Kaenx.Creator.Classes
 
         public void ImportSegments(XElement xcodes) {
             foreach(XElement xcode in xcodes.Elements()) {
-                if(currentApp.Mask.Memory == MemoryTypes.Absolute) {
+                if(xcode.Name.LocalName == "AbsoluteSegment") {
                     currentVers.Memories.Add(new Models.Memory() {
                         Address = int.Parse(xcode.Attribute("Address").Value),
                         Size = int.Parse(xcode.Attribute("Size").Value),
-                        Name = string.IsNullOrEmpty(xcode.Attribute("Name")?.Value) ? GetLastSplit(xcode.Attribute("Id").Value) : xcode.Attribute("Name")?.Value,
+                        Name = GetLastSplit(xcode.Attribute("Id").Value) +  " " + (xcode.Attribute("Name").Value ?? "Unnamed"),
                         Type = MemoryTypes.Absolute,
                         IsAutoSize = false,
                         IsAutoPara = false
                     });
-                } else if(currentApp.Mask.Memory == MemoryTypes.Relative) {
+                } else if(xcode.Name.LocalName == "RelativeSegment") {
                     currentVers.Memories.Add(new Models.Memory() {
                         Size = int.Parse(xcode.Attribute("Size").Value),
-                        Offset = int.Parse(xcode.Attribute("Offset").Value),
-                        Name = string.IsNullOrEmpty(xcode.Attribute("Name")?.Value) ? GetLastSplit(xcode.Attribute("Id").Value) : xcode.Attribute("Name")?.Value,
+                        Offset = int.Parse(xcode.Attribute("Offset")?.Value ?? "0"),
+                        Name = GetLastSplit(xcode.Attribute("Id").Value) + (xcode.Attribute("Name").Value ?? ""),
                         Type = MemoryTypes.Relative,
                         IsAutoSize = false,
                         IsAutoPara = false
@@ -165,6 +165,11 @@ namespace Kaenx.Creator.Classes
                         ptype.SizeInBit = int.Parse(xsub.Attribute("SizeInBit").Value);
                         break;
 
+                    case "TypeIPAddress":
+                        ptype.Type = ParameterTypes.IpAddress;
+                        //TODO read if ipv4 or ipv6
+                        break;
+
                     default:
                         throw new Exception("Unbekannter ParameterType: " + xsub.Name.LocalName);
                 }
@@ -201,7 +206,7 @@ namespace Kaenx.Creator.Classes
                     para.IsInMemory = true;
                     if(xmem.Name.LocalName == "Memory") {
                         string memName = GetLastSplit(xmem.Attribute("CodeSegment").Value);
-                        para.MemoryObject = currentVers.Memories.Single(m => m.Name == memName);
+                        para.MemoryObject = currentVers.Memories.Single(m => m.Name.StartsWith(memName));
                         para.Offset = int.Parse(xmem.Attribute("Offset").Value);
                         para.OffsetBit = int.Parse(xmem.Attribute("BitOffset").Value);
                     } else {

@@ -119,7 +119,7 @@ namespace Kaenx.Creator
                         }
                         else if (eleStr.Contains("<LdCtrlWriteMem"))
                         {
-                            mask.Memory = Models.MemoryTypes.Relative;
+                            mask.Memory = Models.MemoryTypes.Absolute;
                         }
                         else
                         {
