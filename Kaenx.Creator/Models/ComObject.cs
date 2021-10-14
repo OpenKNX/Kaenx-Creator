@@ -98,6 +98,12 @@ namespace Kaenx.Creator.Models
             set { if (value == null) return;  _typeValue = value; Changed("TypeValue"); }
         }
 
+        private bool _hasSub = false;
+        public bool HasSub
+        {
+            get { return _hasSub; }
+            set { _hasSub = value; Changed("HasSub"); }
+        }
 
         private string _typeParentValue;
         public string TypeParentValue

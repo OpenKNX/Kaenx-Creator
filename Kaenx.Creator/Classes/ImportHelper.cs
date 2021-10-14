@@ -35,6 +35,22 @@ namespace Kaenx.Creator.Classes
         public void Start(Models.ModelGeneral general) {
             _general = general;
             Archive = ZipFile.OpenRead(_path);
+
+            foreach (ZipArchiveEntry entryTemp in Archive.Entries)
+            {
+                if(entryTemp.FullName.Contains("M-")) {
+                    int manuId = int.Parse(entryTemp.FullName.Substring(2,4), System.Globalization.NumberStyles.HexNumber);
+                    if(_general.ManufacturerId == -1) {
+                        _general.ManufacturerId = manuId;
+                    } else if(_general.ManufacturerId != manuId) {
+                        if (System.Windows.MessageBox.Show("Hersteller der Produktdatenbank stimmt nicht mit dem Hersteller des Projekts über ein.\r\nSoll trotzdem importiert werden?", "Question", System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Warning) == System.Windows.MessageBoxResult.No) {
+                            Archive.Dispose();
+                            return;
+                        }
+                        break;
+                    }
+                }
+            }
             
             foreach (ZipArchiveEntry entryTemp in Archive.Entries)
             {
@@ -96,6 +112,8 @@ namespace Kaenx.Creator.Classes
             ImportSegments(xstatic.Element(GetXName("Code")));
             ImportParameterTypes(xstatic.Element(GetXName("ParameterTypes")));
             ImportParameter(xstatic.Element(GetXName("Parameters")));
+            ImportParameterRefs(xstatic.Element(GetXName("ParameterRefs")));
+            ImportComObjects(xstatic.Element(GetXName("ComObjectTable")));
         }
 
         public void ImportSegments(XElement xcodes) {
@@ -104,7 +122,7 @@ namespace Kaenx.Creator.Classes
                     currentVers.Memories.Add(new Models.Memory() {
                         Address = int.Parse(xcode.Attribute("Address").Value),
                         Size = int.Parse(xcode.Attribute("Size").Value),
-                        Name = GetLastSplit(xcode.Attribute("Id").Value) +  " " + (xcode.Attribute("Name").Value ?? "Unnamed"),
+                        Name = GetLastSplit(xcode.Attribute("Id").Value) +  " " + (xcode.Attribute("Name")?.Value ?? "Unnamed"),
                         Type = MemoryTypes.Absolute,
                         IsAutoSize = false,
                         IsAutoPara = false
@@ -181,41 +199,131 @@ namespace Kaenx.Creator.Classes
         public void ImportParameter(XElement xparas) {
             //TODO also import unions!
             foreach(XElement xpara in xparas.Elements(GetXName("Parameter"))) {
+                ParseParameter(xpara, null);
+            }
 
-                Models.Parameter para = new Models.Parameter() {
-                    Name = xpara.Attribute("Name").Value,
-                    Text = xpara.Attribute("Text").Value,
-                    Value = xpara.Attribute("Value").Value,
-                    IsOffsetAuto = false,
-                    Suffix = xpara.Attribute("SuffixText")?.Value ?? "",
-                    IsInMemory = false
-                };
+            int unionId = 1;
+            foreach(XElement xunion in xparas.Elements(GetXName("Union"))) {
+                XElement xmem = xunion.Elements().ElementAt(0);
+                foreach(XElement xpara in xunion.Elements(GetXName("Parameter"))) {
+                    ParseParameter(xpara, xmem);
+                }
+            }
+        }
 
-                para.Access = (xpara.Attribute("Access")?.Value ?? "ReadWrite") switch {
+        public void ParseParameter(XElement xpara, XElement xmemory) {
+            Models.Parameter para = new Models.Parameter() {
+                Name = xpara.Attribute("Name").Value,
+                Text = xpara.Attribute("Text").Value,
+                Value = xpara.Attribute("Value").Value,
+                IsOffsetAuto = false,
+                Suffix = xpara.Attribute("SuffixText")?.Value ?? "",
+                IsInMemory = false
+            };
+            string id = GetLastSplit(xpara.Attribute("Id").Value, 2);
+            if(id.StartsWith("-"))
+                id = id.Substring(1);
+            para.Id = int.Parse(id);
+
+            para.Access = (xpara.Attribute("Access")?.Value ?? "ReadWrite") switch {
+                "None" => ParamAccess.None,
+                "Read" => ParamAccess.Read,
+                "ReadWrite" => ParamAccess.ReadWrite,
+                _ => throw new Exception("Unbekannter AccesType für Parameter: " + xpara.Attribute("Access").Value)
+            };
+
+            string typeName = Unescape(GetLastSplit(xpara.Attribute("ParameterType").Value, 3));
+            para.ParameterTypeObject = currentVers.ParameterTypes.Single(t => t.Name == typeName);
+
+            if(xmemory != null || xpara.Elements().Count() > 0) {
+                XElement xmem = xmemory ?? xpara.Elements().ElementAt(0);
+                para.IsInMemory = true;
+                if(xmem.Name.LocalName == "Memory") {
+                    string memName = GetLastSplit(xmem.Attribute("CodeSegment").Value);
+                    para.MemoryObject = currentVers.Memories.Single(m => m.Name.StartsWith(memName));
+                    para.Offset = int.Parse(xmem.Attribute("Offset").Value);
+                    para.OffsetBit = int.Parse(xmem.Attribute("BitOffset").Value);
+                } else {
+                    throw new Exception("Unbekannter MemoryTyp für Parameter: " + xmem.Name.LocalName);
+                }
+            }
+
+            currentVers.Parameters.Add(para);
+        }
+
+        public void ImportParameterRefs(XElement xrefs) {
+            foreach(XElement xref in xrefs.Elements()) {
+                //TODO also import DisplayOrder and Tag
+                Models.ParameterRef pref = new Models.ParameterRef();
+
+                pref.Id = int.Parse(GetLastSplit(xref.Attribute("Id").Value, 2));
+                
+                pref.Value = xref.Attribute("Value")?.Value ?? "";
+                pref.Access = xref.Attribute("Access")?.Value switch {
                     "None" => ParamAccess.None,
                     "Read" => ParamAccess.Read,
                     "ReadWrite" => ParamAccess.ReadWrite,
-                    _ => throw new Exception("Unbekannter AccesType für Parameter: " + xpara.Attribute("Access").Value)
+                    null => ParamAccess.Default,
+                    _ => throw new Exception("Unbekannter Access Typ für ParameterRef: " + xref.Attribute("Access")?.Value)
+                };
+                string id = GetLastSplit(xref.Attribute("RefId").Value, 2);
+                if(id.StartsWith("-"))
+                    id = id.Substring(1);
+                int paraId = int.Parse(id);
+                pref.ParameterObject = currentVers.Parameters.Single(p => p.Id == paraId);
+                pref.Name = pref.Id + " " + pref.ParameterObject.Name;
+
+                currentVers.ParameterRefs.Add(pref);
+            }
+        }
+
+        public void ImportComObjects(XElement xcoms) {
+            foreach(XElement xcom in xcoms.Elements()) {
+                Models.ComObject com = new Models.ComObject() {
+                    Name = xcom.Attribute("Name")?.Value ?? "",
+                    Text = xcom.Attribute("Text")?.Value ?? "",
+                    FunctionText = xcom.Attribute("FunctionText")?.Value ?? "",
+                    Description = xcom.Attribute("VisibleDescription")?.Value ?? "",
+                    Number = int.Parse(xcom.Attribute("Number").Value)
                 };
 
-                string typeName = Unescape(GetLastSplit(xpara.Attribute("ParameterType").Value, 3));
-                para.ParameterTypeObject = currentVers.ParameterTypes.Single(t => t.Name == typeName);
+                com.FlagRead = ParseFlagType(xcom.Attribute("ReadFlag")?.Value);
+                com.FlagWrite = ParseFlagType(xcom.Attribute("WriteFlag")?.Value);
+                com.FlagComm = ParseFlagType(xcom.Attribute("CommunicationFlag")?.Value);
+                com.FlagTrans = ParseFlagType(xcom.Attribute("TransmitFlag")?.Value);
+                com.FlagUpdate = ParseFlagType(xcom.Attribute("UpdateFlag")?.Value);
+                com.FlagOnInit = ParseFlagType(xcom.Attribute("ReadOnInitFlag")?.Value);
 
-                if(xpara.Elements().Count() > 0) {
-                    XElement xmem = xpara.Elements().ElementAt(0);
-                    para.IsInMemory = true;
-                    if(xmem.Name.LocalName == "Memory") {
-                        string memName = GetLastSplit(xmem.Attribute("CodeSegment").Value);
-                        para.MemoryObject = currentVers.Memories.Single(m => m.Name.StartsWith(memName));
-                        para.Offset = int.Parse(xmem.Attribute("Offset").Value);
-                        para.OffsetBit = int.Parse(xmem.Attribute("BitOffset").Value);
+                string type = xcom.Attribute("DatapointType")?.Value;
+
+                if(type != null) {
+                    if(type.StartsWith("DPST-")) {
+                        string[] xtype = type.Split("-");
+                        com.TypeParentValue = xtype[1];
+                        com.TypeValue = xtype[2];
+                        com.HasSub = true;
+                    } else if(type.StartsWith("DPT-")) {
+                        string[] xtype = type.Split("-");
+                        com.TypeParentValue = xtype[1];
+                        com.HasSub = false;
                     } else {
-                        throw new Exception("Unbekannter MemoryTyp für Parameter: " + xmem.Name.LocalName);
+                        throw new Exception("Unbekanntes DPT Format für KO: " + type);
                     }
+                } else {
+
                 }
 
-                currentVers.Parameters.Add(para);
+                currentVers.ComObjects.Add(com);
             }
+        }
+
+        public FlagType ParseFlagType(string type) {
+            return type switch {
+                    "Enabled" => FlagType.Enabled,
+                    "Disabled" => FlagType.Disabled,
+                    null => FlagType.Default,
+                    _ => throw new Exception("Unbekannter FlagTyp: " + type)
+                };
         }
 
         public string Unescape(string input) {

@@ -151,18 +151,18 @@ namespace Kaenx.Creator
                 {
                     Models.DataPointType dpt = new Models.DataPointType();
                     dpt.Name = xdpt.Attribute("Name").Value + " " + xdpt.Attribute("Text").Value;
+                    dpt.Number = xdpt.Attribute("Number").Value;
                     int size = int.Parse(xdpt.Attribute("SizeInBit").Value);
-                    string numb = xdpt.Attribute("Number").Value;
 
                     IEnumerable<XElement> xsubs = xdpt.Descendants(XName.Get("DatapointSubtype"));
 
                     foreach(XElement xsub in xsubs)
                     {
                         Models.DataPointSubType dpst = new Models.DataPointSubType();
-                        dpst.Name = numb + "." + Fill(xsub.Attribute("Number").Value, 3, "0") + " " + xsub.Attribute("Text").Value;
+                        dpst.Name = dpt.Number + "." + Fill(xsub.Attribute("Number").Value, 3, "0") + " " + xsub.Attribute("Text").Value;
                         dpst.Size = size;
                         dpst.Number = xsub.Attribute("Number").Value;
-                        dpst.ParentNumber = numb;
+                        dpst.ParentNumber = dpt.Number;
                         dpt.SubTypes.Add(dpst);
                     }
 

@@ -391,8 +391,6 @@
             </TabItem>
 
             <TabItem Header="Hardware/Geräte" Style="{StaticResource TopTabItem}">
-
-
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto" />
@@ -408,11 +406,8 @@
 
                     <ListView x:Name="HardwareList" Grid.Row="1" Grid.RowSpan="3" Grid.ColumnSpan="2" ItemsSource="{Binding General.Hardware}" DisplayMemberPath="Name" />
 
-
                     <TabControl Grid.RowSpan="2" Grid.Column="2" Style="{StaticResource TopTabControl}" DataContext="{Binding ElementName=HardwareList, Path=SelectedItem}"  IsEnabled="{Binding ElementName=HardwareList, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
-
                         <TabItem Header="Allgemein" Style="{StaticResource TopTabItem}">
-
                             <StackPanel DataContext="{Binding ElementName=HardwareList, Path=SelectedItem}" IsEnabled="{Binding ElementName=HardwareList, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
                                 <StackPanel.Resources>
                                     <Style TargetType="HeaderedContentControl">
@@ -787,6 +782,10 @@
                                         </Style>
                                     </StackPanel.Resources>
 
+                                    <TextBlock Margin="5">
+                                        <Run Text="ID:" />
+                                        <Run Text="{Binding Id, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </TextBlock>
                                     <HeaderedContentControl Header="Name">
                                         <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
                                     </HeaderedContentControl>
@@ -820,34 +819,37 @@
 
                                     <CheckBox Name="InParaInMemory" IsChecked="{Binding IsInMemory}" Content="Parameter ist in einem Speicher" />
 
-                                    <HeaderedContentControl Header="Speicherort" IsEnabled="{Binding ElementName=InParaInMemory, Path=IsChecked}">
-                                        <ComboBox ItemsSource="{Binding ElementName=VersionList, Path=SelectedItem.Memories}" SelectedItem="{Binding MemoryObject, Mode=TwoWay}" DisplayMemberPath="Name" />
-                                    </HeaderedContentControl>
+                                    <StackPanel Visibility="{Binding IsInMemory, Converter={StaticResource BoolToVis}}">
+                                        <HeaderedContentControl Header="Speicherort" IsEnabled="{Binding ElementName=InParaInMemory, Path=IsChecked}">
+                                            <ComboBox ItemsSource="{Binding ElementName=VersionList, Path=SelectedItem.Memories}" SelectedItem="{Binding MemoryObject, Mode=TwoWay}" DisplayMemberPath="Name" />
+                                        </HeaderedContentControl>
 
-                                    <StackPanel Visibility="{Binding MemoryObject.IsAutoPara, Converter={StaticResource BoolToVis}, ConverterParameter=true}">
-                                        <CheckBox IsChecked="{Binding IsOffsetAuto}" Content="Automatisch im Speicher anordnen" />
+                                        <StackPanel Visibility="{Binding MemoryObject.IsAutoPara, Converter={StaticResource BoolToVis}, ConverterParameter=true}">
+                                            <CheckBox IsChecked="{Binding IsOffsetAuto}" Content="Automatisch im Speicher anordnen" />
 
-                                        <StackPanel IsEnabled="{Binding IsOffsetAuto, Converter={StaticResource BoolNegate}}">
-                                            <HeaderedContentControl Header="Offset" IsEnabled="{Binding ElementName=InParaInMemory, Path=IsChecked}">
-                                                <TextBox Text="{Binding Offset, UpdateSourceTrigger=PropertyChanged}"/>
-                                            </HeaderedContentControl>
-                                            <HeaderedContentControl Header="Bit Offset" IsEnabled="{Binding ElementName=InParaInMemory, Path=IsChecked}">
-                                                <TextBox Text="{Binding OffsetBit, UpdateSourceTrigger=PropertyChanged}"/>
-                                            </HeaderedContentControl>
+                                            <StackPanel IsEnabled="{Binding IsOffsetAuto, Converter={StaticResource BoolNegate}}">
+                                                <HeaderedContentControl Header="Offset" IsEnabled="{Binding ElementName=InParaInMemory, Path=IsChecked}">
+                                                    <TextBox Text="{Binding Offset, UpdateSourceTrigger=PropertyChanged}"/>
+                                                </HeaderedContentControl>
+                                                <HeaderedContentControl Header="Bit Offset" IsEnabled="{Binding ElementName=InParaInMemory, Path=IsChecked}">
+                                                    <TextBox Text="{Binding OffsetBit, UpdateSourceTrigger=PropertyChanged}"/>
+                                                </HeaderedContentControl>
+                                            </StackPanel>
                                         </StackPanel>
+
+                                        <TextBlock Text="Adresse wird automatisch festgelegt (Speicher)" Margin="5" Visibility="{Binding MemoryObject.IsAutoPara, Converter={StaticResource BoolToVis}}" />
+
+                                        <Border Visibility="{Binding MemoryObject.IsAutoPara, Converter={StaticResource BoolToVis}}">
+                                            <TextBlock Margin="5">
+                                                    <Run Text="Offset:" />
+                                                    <Run Text="{Binding Offset, Mode=OneWay}" />
+                                                    <LineBreak />
+                                                    <Run Text="Bit Offset:" />
+                                                    <Run Text="{Binding OffsetBit, Mode=OneWay}" />
+                                            </TextBlock>
+                                        </Border>
                                     </StackPanel>
-
-                                    <TextBlock Text="Adresse wird automatisch festgelegt (Speicher)" Margin="5" Visibility="{Binding MemoryObject.IsAutoPara, Converter={StaticResource BoolToVis}}" />
-
-                                    <Border Visibility="{Binding MemoryObject.IsAutoPara, Converter={StaticResource BoolToVis}}">
-                                        <TextBlock Margin="5">
-                                                <Run Text="Offset:" />
-                                                <Run Text="{Binding Offset, Mode=OneWay}" />
-                                                <LineBreak />
-                                                <Run Text="Bit Offset:" />
-                                                <Run Text="{Binding OffsetBit, Mode=OneWay}" />
-                                        </TextBlock>
-                                    </Border>
+                                    
                                 </StackPanel>
                             </ScrollViewer>
 
@@ -875,6 +877,11 @@
 
                             <StackPanel Grid.Column="3" Grid.RowSpan="3" Margin="5" DataContext="{Binding ElementName=ParamRefList, Path=SelectedItem}" IsEnabled="{Binding Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
                                 <StackPanel.Resources>
+                                    <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+                                        <ObjectDataProvider.MethodParameters>
+                                            <x:Type TypeName="models:ParamAccess"/>
+                                        </ObjectDataProvider.MethodParameters>
+                                    </ObjectDataProvider>
                                     <Style TargetType="HeaderedContentControl">
                                         <Setter Property="Margin" Value="5" />
                                     </Style>
@@ -883,13 +890,22 @@
                                     </Style>
                                 </StackPanel.Resources>
 
+                                <TextBlock Margin="5">
+                                    <Run Text="ID:" />
+                                    <Run Text="{Binding Id, UpdateSourceTrigger=PropertyChanged}"/>
+                                </TextBlock>
                                 <HeaderedContentControl Header="Name">
                                     <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
                                 </HeaderedContentControl>
                                 <HeaderedContentControl Header="Parameter">
                                     <ComboBox ItemsSource="{Binding ElementName=ParamList, Path=Items}" DisplayMemberPath="Name" SelectedItem="{Binding ParameterObject}" />
                                 </HeaderedContentControl>
-
+                                <HeaderedContentControl Header="Wert">
+                                    <TextBox Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}"/>
+                                </HeaderedContentControl>
+                                <HeaderedContentControl Header="Zugriff">
+                                    <ComboBox ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding Access, Mode=TwoWay}" />
+                                </HeaderedContentControl>
                             </StackPanel>
                         </Grid>
                     </TabItem>
@@ -961,11 +977,13 @@
                                     </HeaderedContentControl>
 
                                     <HeaderedContentControl Header="DataPointType">
-                                        <ComboBox Name="InComType" ItemsSource="{Binding DPTs, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" SelectedValue="{Binding TypeParentValue}" SelectedValuePath="Name" DisplayMemberPath="Name" />
+                                        <ComboBox Name="InComType" ItemsSource="{Binding DPTs, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" SelectedValue="{Binding TypeParentValue}" SelectedValuePath="Number" DisplayMemberPath="Name" />
                                     </HeaderedContentControl>
 
-                                    <HeaderedContentControl Header="DataPointSubType">
-                                        <ComboBox ItemsSource="{Binding ElementName=InComType, Path=SelectedItem.SubTypes}" SelectedItem="{Binding Type, Mode=OneWayToSource}" SelectedValue="{Binding TypeValue}" SelectedValuePath="Name" DisplayMemberPath="Name" />
+                                    <CheckBox IsChecked="{Binding HasSub}" Content="KO hat ein DatapointSubType" />
+
+                                    <HeaderedContentControl Header="DataPointSubType" IsEnabled="{Binding HasSub}">
+                                        <ComboBox ItemsSource="{Binding ElementName=InComType, Path=SelectedItem.SubTypes}" SelectedItem="{Binding Type, Mode=OneWayToSource}" SelectedValue="{Binding TypeValue}" SelectedValuePath="Number" DisplayMemberPath="Name" />
                                     </HeaderedContentControl>
 
 

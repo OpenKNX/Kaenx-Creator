@@ -22,6 +22,13 @@ namespace Kaenx.Creator.Models
             Name = (sender as Parameter).Name;
         }
 
+        private int _id = 0;
+        public int Id
+        {
+            get { return _id; }
+            set { _id = value; Changed("Id"); }
+        }
+
 
         private string _name = "Kurze Beschreibung";
         public string Name
@@ -47,6 +54,8 @@ namespace Kaenx.Creator.Models
             get { return ParameterObject?.Name; }
             set { _parameter = value; }
         }
+
+
 
 
         public ParamAccess Access { get; set; } = ParamAccess.Default;

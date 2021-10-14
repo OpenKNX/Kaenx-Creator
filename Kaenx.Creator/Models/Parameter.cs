@@ -10,7 +10,15 @@ using Newtonsoft.Json;
 namespace Kaenx.Creator.Models
 {
     public class Parameter : INotifyPropertyChanged
-    {
+    {   
+        private int _id = 0;
+        public int Id
+        {
+            get { return _id; }
+            set { _id = value; Changed("Id"); }
+        }
+
+
         private string _name = "dummy";
         public string Name
         {
