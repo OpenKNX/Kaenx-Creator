@@ -35,11 +35,13 @@ namespace Kaenx.Creator.Classes
         public void Start(Models.ModelGeneral general) {
             _general = general;
             Archive = ZipFile.OpenRead(_path);
+            string manuHex = "";
 
             foreach (ZipArchiveEntry entryTemp in Archive.Entries)
             {
                 if(entryTemp.FullName.Contains("M-")) {
-                    int manuId = int.Parse(entryTemp.FullName.Substring(2,4), System.Globalization.NumberStyles.HexNumber);
+                    manuHex = entryTemp.FullName.Substring(2,4);
+                    int manuId = int.Parse(manuHex, System.Globalization.NumberStyles.HexNumber);
                     if(_general.ManufacturerId == -1) {
                         _general.ManufacturerId = manuId;
                     } else if(_general.ManufacturerId != manuId) {
@@ -58,16 +60,23 @@ namespace Kaenx.Creator.Classes
                 {
                     using (Stream entryStream = entryTemp.Open())
                     {
-                        XDocument xdoc = XDocument.Load(entryStream);
-                        _namespace = xdoc.Root.Attribute("xmlns").Value;
-                        XElement xapp = xdoc.Root.Element(GetXName("ManufacturerData")).Element(GetXName("Manufacturer")).Element(GetXName("ApplicationPrograms")).Element(GetXName("ApplicationProgram"));
+                        XElement xapp = XDocument.Load(entryStream).Root;
+                        _namespace = xapp.Attribute("xmlns").Value;
+                        xapp = xapp.Element(GetXName("ManufacturerData")).Element(GetXName("Manufacturer")).Element(GetXName("ApplicationPrograms")).Element(GetXName("ApplicationProgram"));
                         ImportApplication(xapp);
                     }
                 }
             }
+
+            ZipArchiveEntry entry = Archive.GetEntry($"M-{manuHex}/Hardware.xml");
+            XElement xhard = XDocument.Load(entry.Open()).Root;
+            _namespace = xhard.Attribute("xmlns").Value;
+            xhard = xhard.Element(GetXName("ManufacturerData")).Element(GetXName("Manufacturer")).Element(GetXName("Hardware"));
+            ImportHardware(xhard);
         }
 
         public void ImportApplication(XElement xapp) {
+
 #region "Create/Get Application and Version"
             currentApp = null;
             currentVers = null;
@@ -317,6 +326,55 @@ namespace Kaenx.Creator.Classes
             }
         }
 
+        public void ImportHardware(XElement xhards) {
+            foreach(XElement xhard in xhards.Elements()) {
+                Models.Hardware hardware;
+
+                string snumb = xhard.Attribute("SerialNumber").Value;
+                int vers = int.Parse(xhard.Attribute("VersionNumber").Value);
+
+                if(_general.Hardware.Any(h => h.SerialNumber == snumb && h.Version == vers)) {
+                    hardware = _general.Hardware.Single(h => h.SerialNumber == snumb && h.Version == vers);
+                } else {
+                    hardware = new Hardware() {
+                        SerialNumber = snumb,
+                        Version = vers,
+                        Name = xhard.Attribute("Name").Value
+                    };
+                    hardware.HasApplicationProgram = xhard.Attribute("HasApplicationProgram")?.Value == "true";
+                    hardware.HasIndividualAddress = xhard.Attribute("HasIndividualAddress")?.Value == "true";
+                    hardware.BusCurrent = (int)StringToFloat(xhard.Attribute("BusCurrent")?.Value, 10);
+                    _general.Hardware.Add(hardware);
+                }
+
+                foreach(XElement xapp in xhard.Descendants(GetXName("ApplicationProgramRef"))) {
+                    string[] appId = xapp.Attribute("RefId").Value.Split('-');
+                    int number = int.Parse(appId[2], System.Globalization.NumberStyles.HexNumber);
+                    int version = int.Parse(appId[3], System.Globalization.NumberStyles.HexNumber);
+
+                    hardware.Apps.Add(_general.Applications.Single(a => a.Number == number));
+                }
+
+                foreach(XElement xprod in xhard.Descendants(GetXName("Product"))) {
+                    Models.Device device;
+                    string ordernumb = xprod.Attribute("OrderNumber").Value;
+
+                    if(_general.Devices.Any(d => d.OrderNumber == ordernumb)) {
+                        device = _general.Devices.Single(d => d.OrderNumber == ordernumb);
+                    } else {
+                        device = new Models.Device() {
+                            OrderNumber = ordernumb,
+                            Text = xprod.Attribute("Text").Value,
+                            IsRailMounted = xprod.Attribute("IsRailMounted")?.Value == "true",
+                            Description = xprod.Attribute("VisibleDescription")?.Value ?? ""
+                        };
+                        device.Name = device.Text;
+                        hardware.Devices.Add(device);
+                    }
+                }
+            }
+        }
+
         public FlagType ParseFlagType(string type) {
             return type switch {
                     "Enabled" => FlagType.Enabled,
@@ -324,6 +382,30 @@ namespace Kaenx.Creator.Classes
                     null => FlagType.Default,
                     _ => throw new Exception("Unbekannter FlagTyp: " + type)
                 };
+        }
+
+        public static float StringToFloat(string input, float def = 0)
+        {
+            if (input == null) return def;
+
+            if (input.ToLower().Contains("e+"))
+            {
+                float numb = float.Parse(input.Substring(0, 5).Replace('.', ','));
+                int expo = int.Parse(input.Substring(input.IndexOf('+') + 1));
+                if (expo == 0)
+                    return int.Parse(numb.ToString());
+                float res = numb * (10 * expo);
+                return res;
+            }
+
+            try
+            {
+                return float.Parse(input);
+            }
+            catch
+            {
+                return def;
+            }
         }
 
         public string Unescape(string input) {
