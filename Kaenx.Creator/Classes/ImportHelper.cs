@@ -69,10 +69,16 @@ namespace Kaenx.Creator.Classes
             }
 
             ZipArchiveEntry entry = Archive.GetEntry($"M-{manuHex}/Hardware.xml");
-            XElement xhard = XDocument.Load(entry.Open()).Root;
-            _namespace = xhard.Attribute("xmlns").Value;
-            xhard = xhard.Element(GetXName("ManufacturerData")).Element(GetXName("Manufacturer")).Element(GetXName("Hardware"));
-            ImportHardware(xhard);
+            XElement xele = XDocument.Load(entry.Open()).Root;
+            _namespace = xele.Attribute("xmlns").Value;
+            xele = xele.Element(GetXName("ManufacturerData")).Element(GetXName("Manufacturer")).Element(GetXName("Hardware"));
+            ImportHardware(xele);
+
+            entry = Archive.GetEntry($"M-{manuHex}/Catalog.xml");
+            xele = XDocument.Load(entry.Open()).Root;
+            _namespace = xele.Attribute("xmlns").Value;
+            xele = xele.Element(GetXName("ManufacturerData")).Element(GetXName("Manufacturer")).Element(GetXName("Catalog"));
+            ImportCatalog(xele);
         }
 
         public void ImportApplication(XElement xapp) {
@@ -287,6 +293,9 @@ namespace Kaenx.Creator.Classes
         }
 
         public void ImportComObjects(XElement xcoms) {
+            string jsonPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "datapoints.json");
+            List<Models.DataPointType> DPTs = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Models.DataPointType>>(System.IO.File.ReadAllText(jsonPath));
+
             foreach(XElement xcom in xcoms.Elements()) {
                 Models.ComObject com = new Models.ComObject() {
                     Name = xcom.Attribute("Name")?.Value ?? "",
@@ -311,6 +320,8 @@ namespace Kaenx.Creator.Classes
                         com.TypeParentValue = xtype[1];
                         com.TypeValue = xtype[2];
                         com.HasSub = true;
+                        Models.DataPointType dpt = DPTs.Single(d => d.Number == com.TypeParentValue);
+                        com.Type = dpt.SubTypes.Single(s => s.Number == com.TypeValue);
                     } else if(type.StartsWith("DPT-")) {
                         string[] xtype = type.Split("-");
                         com.TypeParentValue = xtype[1];
@@ -373,6 +384,38 @@ namespace Kaenx.Creator.Classes
                     }
                 }
             }
+        }
+
+        public void ImportCatalog(XElement xcat) {
+            foreach(XElement xitem in xcat.Elements()) {
+                ParseCatalogItem(xitem, _general.Catalog[0]);
+            }
+        }
+
+        private void ParseCatalogItem(XElement xitem, CatalogItem parent) {
+            CatalogItem item = new CatalogItem() {
+                Parent = parent,
+                Name = xitem.Attribute("Name").Value
+            };
+
+
+            switch(xitem.Name.LocalName) {
+                case "CatalogSection":
+                    item.IsSection = true;
+                    foreach(XElement xele in xitem.Elements())
+                        ParseCatalogItem(xele, item);
+                    break;
+
+                case "CatalogItem":
+                    item.IsSection = false;
+                    item.VisibleDescription = xitem.Attribute("VisibleDescription")?.Value ?? "";
+                    string[] hard2ref = xitem.Attribute("Hardware2ProgramRefId").Value.Split('-');
+                    string serialNr = hard2ref[2];
+                    item.Hardware = _general.Hardware.Single(h => h.SerialNumber == serialNr);
+                    break;
+            }
+
+            parent.Items.Add(item);
         }
 
         public FlagType ParseFlagType(string type) {

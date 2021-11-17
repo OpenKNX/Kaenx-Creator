@@ -510,7 +510,6 @@ namespace Kaenx.Creator
         {
             MenuSave.IsEnabled = enable;
             MenuClose.IsEnabled = enable;
-            MenuPublish.IsEnabled = enable;
             MenuImport.IsEnabled = enable;
             TabsEdit.IsEnabled = enable;
         }
@@ -531,13 +530,6 @@ namespace Kaenx.Creator
             
         }
 
-        private void ClickExportEts(object sender, RoutedEventArgs e)
-        {
-            ExportHelper helper = new ExportHelper();
-            helper.ExportEts(General);
-            helper.SignOutput();
-        }
-
         private void ClickGenerateRefAuto(object sender, RoutedEventArgs e)
         {
             Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
@@ -550,12 +542,6 @@ namespace Kaenx.Creator
                 pref.ParameterObject = para;
                 ver.ParameterRefs.Add(pref);
             }
-        }
-
-        private void ClickExportSign(object sender, RoutedEventArgs e)
-        {
-            ExportHelper helper = new ExportHelper();
-            helper.SignOutput();
         }
 
         private void ClickCatalogContext(object sender, RoutedEventArgs e)
@@ -635,6 +621,12 @@ namespace Kaenx.Creator
         {
             Models.Dynamic.IDynItems main = (sender as MenuItem).DataContext as Models.Dynamic.IDynItems;
             main.Items.Add(new Models.Dynamic.DynChannelIndependet() { Parent = main });
+        }
+
+        private void ClickAddDynChannel(object sender, RoutedEventArgs e)
+        {
+            Models.Dynamic.IDynItems main = (sender as MenuItem).DataContext as Models.Dynamic.IDynItems;
+            main.Items.Add(new Models.Dynamic.DynChannel() { Parent = main });
         }
 
         private void ClickAddDynBlock(object sender, RoutedEventArgs e)
@@ -814,6 +806,162 @@ namespace Kaenx.Creator
                 foreach (var group in check5)
                     PublishActions.Add(new Models.PublishAction() { Text = "Applikation '" + app.Name + "' verwendet Version " + group.Key + " (" + Math.Floor(group.Key / 16.0) + "." + (group.Key % 16) + ") " + group.Count() + " mal", State = Models.PublishState.Fail });
             }
+
+            foreach(Models.AppVersion vers in versions) {
+                Models.Application app = apps.Single(a => a.Versions.Contains(vers));
+                PublishActions.Add(new Models.PublishAction() { Text = $"Prüfe Applikation '{app.Name}' Version '{vers.NameText}'" });
+
+                foreach(Models.ParameterType ptype in vers.ParameterTypes) {
+                    int maxsize = (int)Math.Pow(2, ptype.SizeInBit);
+        
+                    switch(ptype.Type) {
+                        case Models.ParameterTypes.Text:
+                            if(ptype.SizeInBit % 8 != 0)
+                                PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterType Text {ptype.Name}: ist kein vielfaches von 8", State = Models.PublishState.Warning });
+                            break;
+
+                        case Models.ParameterTypes.Enum:
+                            var x = ptype.Enums.GroupBy(e => e.Value);
+                            foreach(var group in x.Where(g => g.Count() > 1))
+                                PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterType Enum {ptype.Name}: Wert ({group.Key}) wird öfters verwendet", State = Models.PublishState.Fail });
+                            
+                            foreach(Models.ParameterTypeEnum penum in ptype.Enums){
+                                if(penum.Value >= maxsize)
+                                    PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterType Enum {ptype.Name}: Wert ({penum.Value}) ist größer als maximaler Wert ({maxsize-1})", State = Models.PublishState.Fail });
+                            }
+                            break;
+
+                        case Models.ParameterTypes.NumberUInt:
+                            if(ptype.Min < 0) PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterType UInt {ptype.Name}: Min kann nicht kleiner als 0 sein", State = Models.PublishState.Fail });
+                            if(ptype.Min > ptype.Max) PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterType UInt {ptype.Name}: Min ({ptype.Min}) ist größer als Max ({ptype.Max})", State = Models.PublishState.Fail });
+                            if(ptype.Max >= maxsize) PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterType UInt {ptype.Name}: Max ({ptype.Max}) kann nicht größer als das Maximum ({maxsize-1}) sein", State = Models.PublishState.Fail });
+                            break;
+
+                        case Models.ParameterTypes.NumberInt:
+                            if(ptype.Min > ptype.Max) PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterType Int {ptype.Name}: Min ({ptype.Min}) ist größer als Max ({ptype.Max})", State = Models.PublishState.Fail });
+                            if(ptype.Max > ((maxsize/2)-1)) PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterType Int {ptype.Name}: Max ({ptype.Max}) kann nicht größer als das Maximum ({(maxsize/2)-1}) sein", State = Models.PublishState.Fail });
+                            if(ptype.Min < ((maxsize/2)*(-1))) PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterType Int {ptype.Name}: Min ({ptype.Min}) kann nicht kleiner als das Minimum ({(maxsize/2)*(-1)}) sein", State = Models.PublishState.Fail });
+                            break;
+
+                        case Models.ParameterTypes.Float9:
+                            break;
+
+                        case Models.ParameterTypes.Picture:
+                            break;
+
+                        case Models.ParameterTypes.None:
+                            break;
+
+                        case Models.ParameterTypes.IpAddress:
+                            break;
+
+                        default:
+                            PublishActions.Add(new Models.PublishAction() { Text = "    Unbekannter ParameterTyp für: " + ptype.Name, State = Models.PublishState.Fail });
+                            break;
+                    }
+                }
+
+                foreach(Models.Parameter para in vers.Parameters) {
+                    if(para.ParameterTypeObject == null) PublishActions.Add(new Models.PublishAction() { Text = $"    Parameter {para.Name}: Kein ParameterTyp ausgewählt", State = Models.PublishState.Fail });
+                    else {
+                        switch(para.ParameterTypeObject.Type) {
+                            case Models.ParameterTypes.Text:
+                                if((para.Value.Length*8) > para.ParameterTypeObject.SizeInBit) PublishActions.Add(new Models.PublishAction() { Text = $"    Parameter {para.Name}: Wert benötigt mehr Speicher ({(para.Value.Length*8)}) als verfügbar ({para.ParameterTypeObject.SizeInBit}) ist", State = Models.PublishState.Fail });
+                                break;
+
+                            case Models.ParameterTypes.Enum:
+                                int paraval2;
+                                if(!int.TryParse(para.Value, out paraval2)) PublishActions.Add(new Models.PublishAction() { Text = $"    Parameter {para.Name}: Wert ({para.Value}) ist keine gültige Zahl", State = Models.PublishState.Fail });
+                                else {
+                                    if(!para.ParameterTypeObject.Enums.Any(e => e.Value == paraval2))
+                                        PublishActions.Add(new Models.PublishAction() { Text = $"    Parameter {para.Name}: Wert ({para.Value}) ist nicht als option in Enum vorhanden", State = Models.PublishState.Fail });
+                                }
+                                break;
+
+                            case Models.ParameterTypes.NumberUInt:
+                            case Models.ParameterTypes.NumberInt:
+                                int paraval;
+                                if(!int.TryParse(para.Value, out paraval)) PublishActions.Add(new Models.PublishAction() { Text = $"    Parameter {para.Name}: Wert ({para.Value}) ist keine gültige Zahl", State = Models.PublishState.Fail });
+                                else {
+                                    if(paraval > para.ParameterTypeObject.Max || paraval < para.ParameterTypeObject.Min)
+                                        PublishActions.Add(new Models.PublishAction() { Text = $"    Parameter {para.Name}: Wert ({para.Value}) fällt nicht in Bereich {para.ParameterTypeObject.Min}-{para.ParameterTypeObject.Max}", State = Models.PublishState.Fail });
+                                }
+                                break;
+
+                            case Models.ParameterTypes.Float9:
+
+
+                            case Models.ParameterTypes.Picture:
+                            case Models.ParameterTypes.None:
+                            case Models.ParameterTypes.IpAddress:
+                                break;
+                        }
+                    }
+                    
+                    
+                    if(para.IsInMemory) {
+                        if(para.MemoryObject == null) PublishActions.Add(new Models.PublishAction() { Text = $"    Parameter {para.Name}: Kein Speichersegment ausgewählt", State = Models.PublishState.Fail });
+                        else {
+                            if(!para.MemoryObject.IsAutoPara && para.Offset == -1) PublishActions.Add(new Models.PublishAction() { Text = $"    Parameter {para.Name}: Kein Offset angegeben", State = Models.PublishState.Fail });
+                            if(!para.MemoryObject.IsAutoPara && para.OffsetBit == -1) PublishActions.Add(new Models.PublishAction() { Text = $"    Parameter {para.Name}: Kein Bit Offset angegeben", State = Models.PublishState.Fail });
+
+                        }
+                        if(para.OffsetBit > 7) PublishActions.Add(new Models.PublishAction() { Text = $"    Parameter {para.Name}: BitOffset größer als 7 und somit obsolet", State = Models.PublishState.Fail });
+                    }
+                
+                    
+                }
+            
+                foreach(Models.ParameterRef para in vers.ParameterRefs) {
+                    if(para.ParameterObject == null) PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterRef {para.Name}: Kein Parameter ausgewählt", State = Models.PublishState.Fail });
+                    else {
+                        if(para.ParameterObject.ParameterTypeObject == null || string.IsNullOrEmpty(para.Value))
+                            continue;
+                        
+                        Models.ParameterType ptype = para.ParameterObject.ParameterTypeObject;
+
+                        switch(ptype.Type) {
+                            case Models.ParameterTypes.Text:
+                                if((para.Value.Length*8) > ptype.SizeInBit) PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterRef {para.Name}: Wert benötigt mehr Speicher ({(para.Value.Length*8)}) als verfügbar ({ptype.SizeInBit}) ist", State = Models.PublishState.Fail });
+                                break;
+
+                            case Models.ParameterTypes.Enum:
+                                int paraval2;
+                                if(!int.TryParse(para.Value, out paraval2)) PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterRef {para.Name}: Wert ({para.Value}) ist keine gültige Zahl", State = Models.PublishState.Fail });
+                                else {
+                                    if(!ptype.Enums.Any(e => e.Value == paraval2))
+                                        PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterRef {para.Name}: Wert ({para.Value}) ist nicht als option in Enum vorhanden", State = Models.PublishState.Fail });
+                                }
+                                break;
+
+                            case Models.ParameterTypes.NumberUInt:
+                            case Models.ParameterTypes.NumberInt:
+                                int paraval;
+                                if(!int.TryParse(para.Value, out paraval)) PublishActions.Add(new Models.PublishAction() { Text = $"    Parameter {para.Name}: Wert ({para.Value}) ist keine gültige Zahl", State = Models.PublishState.Fail });
+                                else {
+                                    if(paraval > ptype.Max || paraval < ptype.Min)
+                                        PublishActions.Add(new Models.PublishAction() { Text = $"    Parameter {para.Name}: Wert ({para.Value}) fällt nicht in Bereich {ptype.Min}-{ptype.Max}", State = Models.PublishState.Fail });
+                                }
+                                break;
+
+                            case Models.ParameterTypes.Float9:
+
+
+                            case Models.ParameterTypes.Picture:
+                            case Models.ParameterTypes.None:
+                            case Models.ParameterTypes.IpAddress:
+                                break;
+                        }
+                    }
+                }
+            
+                foreach(Models.ComObject com in vers.ComObjects) {
+                    if(string.IsNullOrEmpty(com.Text)) PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {com.Name}: Kein Text angegeben", State = Models.PublishState.Fail });
+                    if(string.IsNullOrEmpty(com.TypeParentValue) && com.Name.ToLower() != "dummy") PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {com.Name}: Kein DataPointType angegeben", State = Models.PublishState.Fail });
+                    if(com.HasSub && com.Type == null && com.Name.ToLower() != "dummy") PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {com.Name}: Kein DataPointSubType angegeben", State = Models.PublishState.Fail });
+                }
+            
+            }
             #endregion
 
 
@@ -825,8 +973,53 @@ namespace Kaenx.Creator
             else
                 PublishActions.Add(new Models.PublishAction() { Text = "Überprüfung bestanden", State = Models.PublishState.Success });
 
-            PublishActions.Add(new Models.PublishAction() { Text = "Erstellen abgebrochen. Es traten Fehler bei der Überprüfung auf.", State = Models.PublishState.Fail });
+            ExportHelper helper = new ExportHelper();
+            foreach(Models.ExportItem item in Exports.Where(ex => ex.Selected).ToList())
+            {
+                switch(InPublishTarget.SelectedValue) {
+                    case "ets":
+                        helper.ExportEts(General.ManufacturerId, item.Hardware, item.Device, item.App, item.Version);
+                        break;
 
+                    case "kaenx":
+                        throw new NotImplementedException("Dieses Feature wurde noch nicht implementiert");
+                }
+            }
+
+            if(InPublishTarget.SelectedValue.ToString() == "ets") {
+                switch(InPublishType.SelectedValue) {
+                    case "combined":
+                        List<string> files = new List<string>();
+                        foreach(Models.AppVersion vers in versions) {
+                            Models.Application app = apps.Single(a => a.Versions.Contains(vers));
+
+                            string filename = app.Name;
+                            int main = (int)Math.Floor((double)vers.Number / 16);
+                            int sub = vers.Number - (main * 16);
+                            filename += "V" + main + "_" + sub;
+                            
+                            files.Add(helper.GetRelPath($"{filename}.xml"));
+                        }
+                        helper.SignOutput(files.ToArray());
+                        break;
+
+                    case "device":
+                        break;
+
+                    case "single":
+                        foreach(Models.AppVersion vers in versions) {
+                            Models.Application app = apps.Single(a => a.Versions.Contains(vers));
+
+                            string filename = app.Name;
+                            int main = (int)Math.Floor((double)vers.Number / 16);
+                            int sub = vers.Number - (main * 16);
+                            filename += "V" + main + "_" + sub;
+                            
+                            helper.SignOutput(new string[] { helper.GetRelPath($"{filename}.xml") });
+                        }
+                        break;
+                }
+            }
         }
 
     }

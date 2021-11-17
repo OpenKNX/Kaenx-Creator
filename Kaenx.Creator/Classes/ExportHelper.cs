@@ -13,10 +13,9 @@ namespace Kaenx.Creator.Classes
 {
     public class ExportHelper
     {
-
-        public void ExportEts(ModelGeneral general)
+        public void ExportEts(int manuId, Models.Hardware hardware, Models.Device device, Models.Application app, Models.AppVersion ver)
         {
-            string Manu = "M-" + general.ManufacturerId.ToString("X4");
+            string Manu = "M-" + manuId.ToString("X4");
 
             if (!System.IO.Directory.Exists(GetRelPath("")))
                 System.IO.Directory.CreateDirectory(GetRelPath(""));
@@ -37,260 +36,270 @@ namespace Kaenx.Creator.Classes
             XElement xapps = new XElement(Get("ApplicationPrograms"));
             xmanu.Add(xapps);
 
-            foreach (Application app in general.Applications)
+            string appName = Manu + "_A-" + app.Number.ToString("X4");
+
+            string appVersion = appName + "-" + ver.Number.ToString("X2");
+            string hash = "0000";
+            appVersion += "-" + hash;
+
+
+            XElement xunderapp = new XElement(Get("Static"));
+            XElement xapp = new XElement(Get("ApplicationProgram"), xunderapp);
+            xapps.Add(xapp);
+            xapp.SetAttributeValue("Id", appVersion);
+            xapp.SetAttributeValue("ApplicationNumber", app.Number.ToString());
+            xapp.SetAttributeValue("ApplicationVersion", ver.Number.ToString());
+            xapp.SetAttributeValue("ProgramType", "ApplicationProgram");
+            xapp.SetAttributeValue("MaskVersion", "MV-07B0");
+            xapp.SetAttributeValue("Name", app.Name);
+            xapp.SetAttributeValue("DefaultLanguage", "de-DE");
+            xapp.SetAttributeValue("LoadProcedureStyle", "MergedProcedure");
+            xapp.SetAttributeValue("PeiType", "0");
+            xapp.SetAttributeValue("MinEtsVersion", "5.0");
+
+            Dictionary<string, string> MemIds = new Dictionary<string, string>();
+            Dictionary<string, string> ParamTypeIds = new Dictionary<string, string>();
+            Dictionary<string, string> ParamIds = new Dictionary<string, string>();
+            XElement temp;
+
+            #region Segmente
+            temp = new XElement(Get("Code"));
+            xunderapp.Add(temp);
+            foreach(Memory mem in ver.Memories)
             {
-                string appName = Manu + "_A-" + app.Number.ToString("X4");
+                if(ver.IsMemSizeAuto && mem.IsAutoSize)
+                    AutoHelper.GetMemorySize(ver, mem);
 
-                foreach(AppVersion ver in app.Versions)
+
+                XElement xmem = null;
+                string id = "";
+                switch (mem.Type)
                 {
-                    string appVersion = appName + "-" + ver.Number.ToString("X2");
-                    string hash = "0000";
-                    appVersion += "-" + hash;
+                    case MemoryTypes.Absolute:
+                        xmem = new XElement(Get("AbsoluteSegment"));
+                        id = appVersion + "_AS-" + mem.Address.ToString("X4");
+                        xmem.SetAttributeValue("Id", id);
+                        xmem.SetAttributeValue("Address", mem.Address);
+                        //xmem.Add(new XElement(Get("Data"), "Hier kommt toller Base64 String hin"));
+                        break;
 
-
-                    XElement xunderapp = new XElement(Get("Static"));
-                    XElement xapp = new XElement(Get("ApplicationProgram"), xunderapp);
-                    xapps.Add(xapp);
-                    xapp.SetAttributeValue("Id", appVersion);
-                    xapp.SetAttributeValue("ApplicationNumber", app.Number.ToString());
-                    xapp.SetAttributeValue("ApplicationVersion", ver.Number.ToString());
-                    xapp.SetAttributeValue("ProgramType", "ApplicationProgram");
-                    xapp.SetAttributeValue("MaskVersion", "MV-07B0");
-                    xapp.SetAttributeValue("Name", app.Name);
-                    xapp.SetAttributeValue("DefaultLanguage", "de-DE");
-                    xapp.SetAttributeValue("LoadProcedureStyle", "MergedProcedure");
-                    xapp.SetAttributeValue("PeiType", "0");
-                    xapp.SetAttributeValue("MinEtsVersion", "5.0");
-
-                    Dictionary<string, string> MemIds = new Dictionary<string, string>();
-                    Dictionary<string, string> ParamTypeIds = new Dictionary<string, string>();
-                    Dictionary<string, string> ParamIds = new Dictionary<string, string>();
-                    XElement temp;
-
-                    #region Segmente
-                    temp = new XElement(Get("Code"));
-                    xunderapp.Add(temp);
-                    foreach(Memory mem in ver.Memories)
-                    {
-                        if(ver.IsMemSizeAuto && mem.IsAutoSize)
-                            AutoHelper.GetMemorySize(ver, mem);
-
-
-                        XElement xmem = null;
-                        string id = "";
-                        switch (mem.Type)
-                        {
-                            case MemoryTypes.Absolute:
-                                xmem = new XElement(Get("AbsoluteSegment"));
-                                id = appVersion + "_AS-" + mem.Address.ToString("X4");
-                                xmem.SetAttributeValue("Id", id);
-                                xmem.SetAttributeValue("Address", mem.Address);
-                                //xmem.Add(new XElement(Get("Data"), "Hier kommt toller Base64 String hin"));
-                                break;
-
-                            case MemoryTypes.Relative:
-                                xmem = new XElement(Get("RelativeSegment"));
-                                id = appVersion + "_RS-04-0000"; //TODO LoadStateMachine angeben
-                                xmem.SetAttributeValue("Id", id);
-                                xmem.SetAttributeValue("Name", mem.Name);
-                                xmem.SetAttributeValue("Offset", 0);
-                                xmem.SetAttributeValue("LoadStateMachine", "4");
-                                break;
-                        }
-
-                        if (xmem == null) continue;
-                        xmem.SetAttributeValue("Size", mem.Size);
-                        temp.Add(xmem);
-                        MemIds.Add(mem.Name, id);
-                    }
-                    #endregion
-
-                    #region ParamTypes
-                    temp = new XElement(Get("ParameterTypes"));
-                    foreach(ParameterType type in ver.ParameterTypes)
-                    {
-                        string id = appVersion + "_PT-" + GetEncoded(type.Name);
-                        ParamTypeIds.Add(type.Name, id);
-                        XElement xtype = new XElement(Get("ParameterType"));
-                        xtype.SetAttributeValue("Id", id);
-                        xtype.SetAttributeValue("Name", type.Name);
-                        XElement xcontent = null;
-
-                        switch (type.Type)
-                        {
-                            case ParameterTypes.None:
-                                xcontent = new XElement(Get("TypeNone"));
-                                break;
-
-                            case ParameterTypes.Text:
-                                xcontent = new XElement(Get("TypeText"));
-                                break;
-
-                            case ParameterTypes.NumberInt:
-                            case ParameterTypes.NumberUInt:
-                                xcontent = new XElement(Get("TypeNumber"));
-                                xcontent.SetAttributeValue("minInclusive", type.Min);
-                                xcontent.SetAttributeValue("maxInclusive", type.Max);
-                                xcontent.SetAttributeValue("Type", type.Type == ParameterTypes.NumberUInt ? "unsignedInt" : "signedInt");
-                                break;
-
-                            case ParameterTypes.Enum:
-                                xcontent = new XElement(Get("TypeRestriction"));
-                                xcontent.SetAttributeValue("Base", "Value");
-                                int c = 0;
-                                foreach(ParameterTypeEnum enu in type.Enums)
-                                {
-                                    XElement xenu = new XElement(Get("Enumeration"));
-                                    xenu.SetAttributeValue("Id", id + "_EN-" + c);
-                                    xenu.SetAttributeValue("DisplayOrder", c.ToString());
-                                    xenu.SetAttributeValue("Text", enu.Name);
-                                    xenu.SetAttributeValue("Value", enu.Value);
-                                    xcontent.Add(xenu);
-                                    c++;
-                                }
-                                break;
-
-                            default:
-                                throw new Exception("Unbekannter Parametertyp: " + type.Type);
-                        }
-
-                        if(xcontent != null && xcontent.Name.LocalName != "TypeNone")
-                            xcontent.SetAttributeValue("SizeInBit", type.SizeInBit);
-                        if (xcontent != null)
-                            xtype.Add(xcontent);
-                        temp.Add(xtype);
-                    }
-                    xunderapp.Add(temp);
-                    #endregion
-
-                    #region Parameter
-                    temp = new XElement(Get("Parameters"));
-
-                    StringBuilder headers = new StringBuilder();
-
-                    int counter = 1;
-                    foreach(Parameter para in ver.Parameters)
-                    {
-                        headers.AppendLine("#define PARAM_" + para.Name + " " + para.Offset);
-
-                        XElement xpara = new XElement(Get("Parameter"));
-                        string id = appVersion + "_P-" + counter++;
-                        ParamIds.Add(para.Name, id);
-                        xpara.SetAttributeValue("Id", id);
-                        xpara.SetAttributeValue("Name", para.Name);
-                        xpara.SetAttributeValue("ParameterType", ParamTypeIds[para.ParameterType]);
-                        xpara.SetAttributeValue("Text", para.Text);
-                        if (para.Access != ParamAccess.Default) xpara.SetAttributeValue("Access", para.Access);
-                        if (!string.IsNullOrWhiteSpace(para.Suffix)) xpara.SetAttributeValue("SuffixText", para.Suffix);
-                        xpara.SetAttributeValue("Value", para.Value);
-
-                        if (para.IsInMemory)
-                        {
-                            XElement xparamem = new XElement(Get("Memory"));
-                            xparamem.SetAttributeValue("CodeSegment", MemIds[para.Memory]);
-                            xparamem.SetAttributeValue("Offset", para.Offset);
-                            xparamem.SetAttributeValue("BitOffset", para.OffsetBit);
-                            xpara.Add(xparamem);
-                        }
-
-                        temp.Add(xpara);
-                    }
-                    System.IO.File.WriteAllText(GetRelPath(appVersion + ".h"), headers.ToString());
-                    headers = null;
-
-                    xunderapp.Add(temp);
-                    #endregion
-
-                    //Todo add Unions
-
-                    #region ParameterRefs
-                    temp = new XElement(Get("ParameterRefs"));
-
-                    counter = 1;
-                    foreach(ParameterRef pref in ver.ParameterRefs)
-                    {
-                        if (pref.ParameterObject == null) continue;
-                        XElement xpref = new XElement(Get("ParameterRef"));
-                        string refid = ParamIds[pref.ParameterObject.Name];
-                        xpref.SetAttributeValue("Id", refid + "_R-" + counter);
-                        xpref.SetAttributeValue("RefId", refid);
-                        pref.RefId = refid + "_R-" + counter;
-                        temp.Add(xpref);
-                        counter++;
-                    }
-
-                    xunderapp.Add(temp);
-                    #endregion
-
-                    #region ConObjects
-                    temp = new XElement(Get("ComObjectTable"));
-                    counter = 1;
-
-                    foreach(ComObject com in ver.ComObjects)
-                    {
-                        XElement xcom = new XElement(Get("ComObject"));
-                        string id = appVersion + "_O-" + counter++;
-                        com.RefId = id;
-                        xcom.SetAttributeValue("Id", id);
-                        xcom.SetAttributeValue("Name", com.Name);
-                        xcom.SetAttributeValue("Text", com.Text);
-                        xcom.SetAttributeValue("Number", com.Number);
-                        xcom.SetAttributeValue("FunctionText", com.FunctionText);
-                        xcom.SetAttributeValue("VisibleDescription", com.Description);
-                        int size = com.Type.Size;
-                        if (size > 7)
-                            xcom.SetAttributeValue("ObjectSize", (size / 8) + " Byte");
-                        else
-                            xcom.SetAttributeValue("ObjectSize", size + " Bit");
-
-                        if (com.FlagComm != FlagType.Default) xcom.SetAttributeValue("CommunicationFlag", com.FlagComm.ToString());
-                        if (com.FlagRead != FlagType.Default) xcom.SetAttributeValue("ReadFlag", com.FlagRead.ToString());
-                        if (com.FlagWrite != FlagType.Default) xcom.SetAttributeValue("WriteFlag", com.FlagWrite.ToString());
-                        if (com.FlagTrans != FlagType.Default) xcom.SetAttributeValue("TransmitFlag", com.FlagTrans.ToString());
-                        if (com.FlagUpdate != FlagType.Default) xcom.SetAttributeValue("UpdateFlag", com.FlagUpdate.ToString());
-                        if (com.FlagOnInit != FlagType.Default) xcom.SetAttributeValue("ReadOnInitFlag", com.FlagOnInit.ToString());
-
-                        xcom.SetAttributeValue("DatapointType", "DPST-" + com.Type.ParentNumber + "-" + com.Type.Number);
-                        temp.Add(xcom);
-                    }
-
-                    xunderapp.Add(temp);
-                    #endregion
-
-                    #region ComObjectRefs
-                    temp = new XElement(Get("ComObjectRefs"));
-                    counter = 1;
-
-                    foreach(ComObjectRef cref in ver.ComObjectRefs)
-                    {
-                        XElement xcref = new XElement(Get("ComObjectRef"));
-                        string id = cref.ComObjectObject.RefId + "_R-" + counter++;
-                        cref.RefId = id;
-                        xcref.SetAttributeValue("Id", id);
-                        xcref.SetAttributeValue("RefId", cref.ComObjectObject.RefId);
-                        temp.Add(xcref);
-                    }
-
-                    xunderapp.Add(temp);
-                    #endregion
-
-                    #region Tables
-                    temp = new XElement(Get("AddressTable"));
-                    temp.SetAttributeValue("MaxEntries", "65535");
-                    xunderapp.Add(temp);
-                    temp = new XElement(Get("AssociationTable"));
-                    temp.SetAttributeValue("MaxEntries", "65535");
-                    xunderapp.Add(temp);
-                    temp = XDocument.Parse("<LoadProcedures xmlns=\"http://knx.org/xml/project/14\"><LoadProcedure MergeId=\"2\"><LdCtrlRelSegment LsmIdx=\"4\" Size=\"1\" Mode=\"0\" Fill=\"0\" AppliesTo=\"full\" /></LoadProcedure><LoadProcedure MergeId=\"4\"><LdCtrlWriteRelMem ObjIdx=\"4\" Offset=\"0\" Size=\"1\" Verify=\"true\" /></LoadProcedure></LoadProcedures>").Root;
-                    xunderapp.Add(temp);
-                    #endregion
-
-                    xunderapp = new XElement(Get("Dynamic"));
-                    xapp.Add(xunderapp);
-
-                    HandleSubItems(ver.Dynamics[0], xunderapp);
+                    case MemoryTypes.Relative:
+                        xmem = new XElement(Get("RelativeSegment"));
+                        id = appVersion + "_RS-04-0000"; //TODO LoadStateMachine angeben
+                        xmem.SetAttributeValue("Id", id);
+                        xmem.SetAttributeValue("Name", mem.Name);
+                        xmem.SetAttributeValue("Offset", 0);
+                        xmem.SetAttributeValue("LoadStateMachine", "4");
+                        break;
                 }
+
+                if (xmem == null) continue;
+                xmem.SetAttributeValue("Size", mem.Size);
+                temp.Add(xmem);
+                MemIds.Add(mem.Name, id);
             }
+            #endregion
+
+            #region ParamTypes
+            temp = new XElement(Get("ParameterTypes"));
+            foreach(ParameterType type in ver.ParameterTypes)
+            {
+                string id = appVersion + "_PT-" + GetEncoded(type.Name);
+                ParamTypeIds.Add(type.Name, id);
+                XElement xtype = new XElement(Get("ParameterType"));
+                xtype.SetAttributeValue("Id", id);
+                xtype.SetAttributeValue("Name", type.Name);
+                XElement xcontent = null;
+
+                switch (type.Type)
+                {
+                    case ParameterTypes.None:
+                        xcontent = new XElement(Get("TypeNone"));
+                        break;
+
+                    case ParameterTypes.Text:
+                        xcontent = new XElement(Get("TypeText"));
+                        break;
+
+                    case ParameterTypes.NumberInt:
+                    case ParameterTypes.NumberUInt:
+                        xcontent = new XElement(Get("TypeNumber"));
+                        xcontent.SetAttributeValue("minInclusive", type.Min);
+                        xcontent.SetAttributeValue("maxInclusive", type.Max);
+                        xcontent.SetAttributeValue("Type", type.Type == ParameterTypes.NumberUInt ? "unsignedInt" : "signedInt");
+                        break;
+
+                    case ParameterTypes.Enum:
+                        xcontent = new XElement(Get("TypeRestriction"));
+                        xcontent.SetAttributeValue("Base", "Value");
+                        int c = 0;
+                        foreach(ParameterTypeEnum enu in type.Enums)
+                        {
+                            XElement xenu = new XElement(Get("Enumeration"));
+                            xenu.SetAttributeValue("Id", id + "_EN-" + c);
+                            xenu.SetAttributeValue("DisplayOrder", c.ToString());
+                            xenu.SetAttributeValue("Text", enu.Name);
+                            xenu.SetAttributeValue("Value", enu.Value);
+                            xcontent.Add(xenu);
+                            c++;
+                        }
+                        break;
+
+                    default:
+                        throw new Exception("Unbekannter Parametertyp: " + type.Type);
+                }
+
+                if(xcontent != null && xcontent.Name.LocalName != "TypeNone")
+                    xcontent.SetAttributeValue("SizeInBit", type.SizeInBit);
+                if (xcontent != null)
+                    xtype.Add(xcontent);
+                temp.Add(xtype);
+            }
+            xunderapp.Add(temp);
+            #endregion
+
+            #region Parameter
+            temp = new XElement(Get("Parameters"));
+
+            StringBuilder headers = new StringBuilder();
+
+            int counter = 1;
+            foreach(Parameter para in ver.Parameters)
+            {
+                string line = "#define PARAM_" + para.Name + " " + para.Offset + " //Size: " + para.ParameterTypeObject.SizeInBit;
+                if(para.ParameterTypeObject.SizeInBit % 8 == 0) line += " (" + (para.ParameterTypeObject.SizeInBit / 8) + " Byte)";
+                if(para.OffsetBit > 0) line += " | Bit Offset: " + para.OffsetBit;
+                headers.AppendLine(line);
+
+                XElement xpara = new XElement(Get("Parameter"));
+                para.Id = counter;
+                string id = appVersion + "_P-" + counter;
+                ParamIds.Add(para.Name, id);
+                xpara.SetAttributeValue("Id", id);
+                xpara.SetAttributeValue("Name", para.Name);
+                xpara.SetAttributeValue("ParameterType", ParamTypeIds[para.ParameterType]);
+                xpara.SetAttributeValue("Text", para.Text);
+                if (para.Access != ParamAccess.Default) xpara.SetAttributeValue("Access", para.Access);
+                if (!string.IsNullOrWhiteSpace(para.Suffix)) xpara.SetAttributeValue("SuffixText", para.Suffix);
+                xpara.SetAttributeValue("Value", para.Value);
+
+                if (para.IsInMemory)
+                {
+                    XElement xparamem = new XElement(Get("Memory"));
+                    xparamem.SetAttributeValue("CodeSegment", MemIds[para.Memory]);
+                    xparamem.SetAttributeValue("Offset", para.Offset);
+                    xparamem.SetAttributeValue("BitOffset", para.OffsetBit);
+                    xpara.Add(xparamem);
+                }
+
+                temp.Add(xpara);
+                counter++;
+            }
+            System.IO.File.WriteAllText(GetRelPath(appVersion + ".h"), headers.ToString());
+            headers = null;
+
+            xunderapp.Add(temp);
+            #endregion
+
+            //Todo add Unions
+
+            #region ParameterRefs
+            temp = new XElement(Get("ParameterRefs"));
+
+            counter = 1;
+            foreach(ParameterRef pref in ver.ParameterRefs)
+            {
+                if (pref.ParameterObject == null) continue;
+                XElement xpref = new XElement(Get("ParameterRef"));
+                string refid = ParamIds[pref.ParameterObject.Name];
+                xpref.SetAttributeValue("Id", refid + "_R-" + counter);
+                xpref.SetAttributeValue("RefId", refid);
+                pref.RefId = refid + "_R-" + counter;
+                pref.Id = counter;
+                temp.Add(xpref);
+                counter++;
+            }
+
+            xunderapp.Add(temp);
+            #endregion
+
+            #region ComObjects
+            temp = new XElement(Get("ComObjectTable"));
+            counter = 1;
+
+            foreach(ComObject com in ver.ComObjects)
+            {
+                XElement xcom = new XElement(Get("ComObject"));
+                string id = appVersion + "_O-" + counter++;
+                com.RefId = id;
+                xcom.SetAttributeValue("Id", id);
+                xcom.SetAttributeValue("Name", com.Name);
+                xcom.SetAttributeValue("Text", com.Text);
+                xcom.SetAttributeValue("Number", com.Number);
+                xcom.SetAttributeValue("FunctionText", com.FunctionText);
+                xcom.SetAttributeValue("VisibleDescription", com.Description);
+
+                int size;
+                if(com.HasSub)
+                    size = com.Type.Size;
+                else
+                    size = 1; //TODO get correct size for main DPT
+
+
+                if (size > 7)
+                    xcom.SetAttributeValue("ObjectSize", (size / 8) + " Byte");
+                else
+                    xcom.SetAttributeValue("ObjectSize", size + " Bit");
+
+                if (com.FlagComm != FlagType.Default) xcom.SetAttributeValue("CommunicationFlag", com.FlagComm.ToString());
+                if (com.FlagRead != FlagType.Default) xcom.SetAttributeValue("ReadFlag", com.FlagRead.ToString());
+                if (com.FlagWrite != FlagType.Default) xcom.SetAttributeValue("WriteFlag", com.FlagWrite.ToString());
+                if (com.FlagTrans != FlagType.Default) xcom.SetAttributeValue("TransmitFlag", com.FlagTrans.ToString());
+                if (com.FlagUpdate != FlagType.Default) xcom.SetAttributeValue("UpdateFlag", com.FlagUpdate.ToString());
+                if (com.FlagOnInit != FlagType.Default) xcom.SetAttributeValue("ReadOnInitFlag", com.FlagOnInit.ToString());
+
+                if(com.HasSub)
+                    xcom.SetAttributeValue("DatapointType", "DPST-" + com.Type.ParentNumber + "-" + com.Type.Number);
+                else
+                    xcom.SetAttributeValue("DatapointType", "DPT-" + com.TypeParentValue);
+                temp.Add(xcom);
+            }
+
+            xunderapp.Add(temp);
+            #endregion
+
+            #region ComObjectRefs
+            temp = new XElement(Get("ComObjectRefs"));
+            counter = 1;
+
+            foreach(ComObjectRef cref in ver.ComObjectRefs)
+            {
+                XElement xcref = new XElement(Get("ComObjectRef"));
+                string id = cref.ComObjectObject.RefId + "_R-" + counter++;
+                cref.RefId = id;
+                xcref.SetAttributeValue("Id", id);
+                xcref.SetAttributeValue("RefId", cref.ComObjectObject.RefId);
+                temp.Add(xcref);
+            }
+
+            xunderapp.Add(temp);
+            #endregion
+
+            #region Tables
+            temp = new XElement(Get("AddressTable"));
+            temp.SetAttributeValue("MaxEntries", "65535");
+            xunderapp.Add(temp);
+            temp = new XElement(Get("AssociationTable"));
+            temp.SetAttributeValue("MaxEntries", "65535");
+            xunderapp.Add(temp);
+            temp = XDocument.Parse("<LoadProcedures xmlns=\"http://knx.org/xml/project/14\"><LoadProcedure MergeId=\"2\"><LdCtrlRelSegment LsmIdx=\"4\" Size=\"1\" Mode=\"0\" Fill=\"0\" AppliesTo=\"full\" /></LoadProcedure><LoadProcedure MergeId=\"4\"><LdCtrlWriteRelMem ObjIdx=\"4\" Offset=\"0\" Size=\"1\" Verify=\"true\" /></LoadProcedure></LoadProcedures>").Root;
+            xunderapp.Add(temp);
+            #endregion
+
+            xunderapp = new XElement(Get("Dynamic"));
+            xapp.Add(xunderapp);
+
+            HandleSubItems(ver.Dynamics[0], xunderapp);
 
 
             #endregion
@@ -301,30 +310,29 @@ namespace Kaenx.Creator.Classes
 
 
             int hardCount = 1;
-            foreach (Hardware hard in general.Hardware)
             {
-                string hid = Manu + "_H-" + GetEncoded(hard.SerialNumber) + "-" + hardCount++;
+                string hid = Manu + "_H-" + GetEncoded(hardware.SerialNumber) + "-" + hardCount++;
                 XElement xhard = new XElement(Get("Hardware"));
                 xhard.SetAttributeValue("Id", hid);
-                xhard.SetAttributeValue("Name", hard.Name);
-                xhard.SetAttributeValue("SerialNumber", hard.SerialNumber);
-                xhard.SetAttributeValue("VersionNumber", hard.Version.ToString());
-                xhard.SetAttributeValue("BusCurrent", hard.BusCurrent);
-                if(hard.HasIndividualAddress) xhard.SetAttributeValue("HasIndividualAddress", "1");
-                if(hard.HasApplicationProgram) xhard.SetAttributeValue("HasApplicationProgram", "1");
-                if(hard.HasApplicationProgram2) xhard.SetAttributeValue("HasApplicationProgram2", "1");
-                if(hard.IsPowerSupply) xhard.SetAttributeValue("IsPowerSupply", "1");
+                xhard.SetAttributeValue("Name", hardware.Name);
+                xhard.SetAttributeValue("SerialNumber", hardware.SerialNumber);
+                xhard.SetAttributeValue("VersionNumber", hardware.Version.ToString());
+                xhard.SetAttributeValue("BusCurrent", hardware.BusCurrent);
+                if(hardware.HasIndividualAddress) xhard.SetAttributeValue("HasIndividualAddress", "1");
+                if(hardware.HasApplicationProgram) xhard.SetAttributeValue("HasApplicationProgram", "1");
+                if(hardware.HasApplicationProgram2) xhard.SetAttributeValue("HasApplicationProgram2", "1");
+                if(hardware.IsPowerSupply) xhard.SetAttributeValue("IsPowerSupply", "1");
                 xhard.SetAttributeValue("IsChocke", "0"); //Todo check what this is
-                if(hard.IsCoppler) xhard.SetAttributeValue("IsCoupler", "1");
+                if(hardware.IsCoppler) xhard.SetAttributeValue("IsCoupler", "1");
                 xhard.SetAttributeValue("IsPowerLineRepeater", "0");
                 xhard.SetAttributeValue("IsPowerLineSignalFilter", "0");
-                if(hard.IsPowerSupply) xhard.SetAttributeValue("IsPowerSupply", "1");
+                if(hardware.IsPowerSupply) xhard.SetAttributeValue("IsPowerSupply", "1");
                 xhard.SetAttributeValue("IsCable", "0"); //Todo check if means PoweLine Cable
-                if(hard.IsIpEnabled) xhard.SetAttributeValue("IsIPEnabled", "1");
+                if(hardware.IsIpEnabled) xhard.SetAttributeValue("IsIPEnabled", "1");
 
                 XElement xprods = new XElement(Get("Products"));
                 xhard.Add(xprods);
-                foreach(Device dev in hard.Devices){
+                foreach(Device dev in hardware.Devices){
                     XElement xprod = new XElement(Get("Product"));
                     string pid = hid + "_P-" + GetEncoded(dev.OrderNumber);
                     ProductIds.Add(dev.Name, pid);
@@ -341,25 +349,21 @@ namespace Kaenx.Creator.Classes
                 XElement xasso = new XElement(Get("Hardware2Programs"));
                 xhard.Add(xasso);
 
-                foreach(Application app in hard.Apps){
-                    foreach(AppVersion ver in app.Versions){
-                        string appidx = app.Number.ToString("X4") + "-" + ver.Number.ToString("X2") + "-0000"; //Todo check hash
+                string appidx = app.Number.ToString("X4") + "-" + ver.Number.ToString("X2") + "-0000"; //Todo check hash
 
-                        XElement xh2p = new XElement(Get("Hardware2Program"));
-                        xh2p.SetAttributeValue("Id", hid + "_HP-" + appidx);
-                        xh2p.SetAttributeValue("MediumTypes", "MT-0");
+                XElement xh2p = new XElement(Get("Hardware2Program"));
+                xh2p.SetAttributeValue("Id", hid + "_HP-" + appidx);
+                xh2p.SetAttributeValue("MediumTypes", "MT-0");
 
-                        HardwareIds.Add(hard.Version + "-" + app.Number + "-" + ver.Number, hid + "_HP-" + appidx);
+                HardwareIds.Add(hardware.Version + "-" + app.Number + "-" + ver.Number, hid + "_HP-" + appidx);
 
-                        xh2p.Add(new XElement(Get("ApplicationProgramRef"), new XAttribute("RefId", Manu + "_A-" + appidx)));
+                xh2p.Add(new XElement(Get("ApplicationProgramRef"), new XAttribute("RefId", Manu + "_A-" + appidx)));
 
-                        XElement xreginfo = new XElement(Get("RegistrationInfo"));
-                        xreginfo.SetAttributeValue("RegistrationStatus", "Registered");
-                        xreginfo.SetAttributeValue("RegistrationNumber", "0001/" + hard.Version + ver.Number);
-                        xh2p.Add(xreginfo);
-                        xasso.Add(xh2p);
-                    }
-                }
+                XElement xreginfo = new XElement(Get("RegistrationInfo"));
+                xreginfo.SetAttributeValue("RegistrationStatus", "Registered");
+                xreginfo.SetAttributeValue("RegistrationNumber", "0001/" + hardware.Version + ver.Number);
+                xh2p.Add(xreginfo);
+                xasso.Add(xh2p);
 
                 xhards.Add(xhard);
             }
@@ -368,14 +372,20 @@ namespace Kaenx.Creator.Classes
             #region XML Catalog
 
             XElement cat = new XElement(Get("Catalog"));
-            foreach (CatalogItem item in general.Catalog[0].Items)
-            {
-                GetCatalogItems(item, cat, ProductIds, HardwareIds);
-            }
+            //foreach (CatalogItem item in general.Catalog[0].Items)
+            //{
+            //    GetCatalogItems(item, cat, ProductIds, HardwareIds);
+            //}
             xmanu.Add(cat);
             #endregion
 
-            doc.Save(GetRelPath("temp.xml"));
+            string filename = app.Name;
+
+            int main = (int)Math.Floor((double)ver.Number / 16);
+            int sub = ver.Number - (main * 16);
+            filename += "V" + main + "_" + sub;
+
+            doc.Save(GetRelPath($"{filename}.xml"));
 
 
 
@@ -531,12 +541,14 @@ namespace Kaenx.Creator.Classes
 
         }
 
-        public void SignOutput()
+        public void SignOutput(string[] files)
         {
             string etsPath = @"C:\Program Files (x86)\ETS5\CV\5.6.241.33672";
-            string inputFile = GetRelPath("temp.xml");
             string outputFile = GetRelPath("output.knxprod");
             var asmPath = System.IO.Path.Combine(etsPath, "Knx.Ets.Converter.ConverterEngine.dll");
+            if(!System.IO.File.Exists(asmPath)) {
+                return;
+            }
             var asm = Assembly.LoadFrom(asmPath);
             var eng = asm.GetType("Knx.Ets.Converter.ConverterEngine.ConverterEngine");
             var bas = asm.GetType("Knx.Ets.Converter.ConverterEngine.ConvertBase");
@@ -545,7 +557,7 @@ namespace Kaenx.Creator.Classes
             InvokeMethod(bas, "Uninitialize", null);
 
             //var dset = ConverterEngine.BuildUpRawDocumentSet( files );
-            var dset = InvokeMethod(eng, "BuildUpRawDocumentSet", new object[] { new string[] { inputFile } });
+            var dset = InvokeMethod(eng, "BuildUpRawDocumentSet", new object[] { files });
 
             //ConverterEngine.CheckOutputFileName(outputFile, ".knxprod");
             InvokeMethod(eng, "CheckOutputFileName", new object[] { outputFile, ".knxprod" });
@@ -586,7 +598,7 @@ namespace Kaenx.Creator.Classes
             return sb.ToString();
         }
 
-        private string GetRelPath(string path)
+        public string GetRelPath(string path)
         {
             return System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Output", path);
         }

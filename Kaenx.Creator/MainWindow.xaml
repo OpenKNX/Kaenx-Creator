@@ -243,6 +243,22 @@
                 </HeaderedContentControl>
             </StackPanel>
         </DataTemplate>
+        <DataTemplate x:Key="TempDynChannel">
+            <StackPanel>
+                <HeaderedContentControl Header="Name">
+                    <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
+                </HeaderedContentControl>
+                <HeaderedContentControl Header="Text">
+                    <TextBox Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                </HeaderedContentControl>
+                <HeaderedContentControl Header="Paremeter Ref" Visibility="{Binding ElementName=VersionList, Path=SelectedItem.IsParameterRefAuto, Converter={StaticResource BoolToVis}, ConverterParameter=true}">
+                    <ComboBox ItemsSource="{Binding ElementName=VersionList, Path=SelectedItem.ParameterRefs}" SelectedItem="{Binding ParameterRefObject}" DisplayMemberPath="Name" />
+                </HeaderedContentControl>
+                <HeaderedContentControl Header="Parameter" Visibility="{Binding ElementName=VersionList, Path=SelectedItem.IsParameterRefAuto, Converter={StaticResource BoolToVis}}">
+                    <ComboBox ItemsSource="{Binding ElementName=VersionList, Path=SelectedItem.Parameters}" SelectedItem="{Binding ParameterRefObject.ParameterObject, Mode=TwoWay}" DisplayMemberPath="Name" />
+                </HeaderedContentControl>
+            </StackPanel>
+        </DataTemplate>
         <DataTemplate x:Key="TempDynChoose">
             <StackPanel>
                 <HeaderedContentControl Header="Name">
@@ -297,6 +313,7 @@
             DWhen="{StaticResource TempDynWhen}"
             DMain="{StaticResource TempDynMain}"
             DIndependent="{StaticResource TempDynIndependent}"
+            DChannel="{StaticResource TempDynChannel}"
             DCom="{StaticResource TempDynComObject}"
                             />
     </Window.Resources>
@@ -317,10 +334,6 @@
             <MenuItem x:Name="MenuImport" IsEnabled="False" Header="Import">
                 <MenuItem Header="ETS Produktdatenbank" Click="ClickImport" />
                 <MenuItem Header="Kaenx Produkt" IsEnabled="False" />
-            </MenuItem>
-            <MenuItem x:Name="MenuPublish" IsEnabled="False" Header="Veröffentlichen">
-                <MenuItem Header="Für ETS" Click="ClickExportEts" />
-                <MenuItem Header="Nur signieren" Click="ClickExportSign" />
             </MenuItem>
         </Menu>
 
@@ -1043,10 +1056,24 @@
                                             <TextBlock.ContextMenu>
                                                 <ContextMenu>
                                                     <MenuItem Header="Independent Channel hinzufügen" Click="ClickAddDynIndep" />
-                                                    <MenuItem Header="Channel hinzufügen" />
+                                                    <MenuItem Header="Channel hinzufügen" Click="ClickAddDynChannel" />
                                                     <MenuItem Header="Abzweigung hinzufügen" Click="ClickAddDynChoose" />
                                                 </ContextMenu>
                                             </TextBlock.ContextMenu>
+                                        </TextBlock>
+                                    </HierarchicalDataTemplate>
+                                    <HierarchicalDataTemplate DataType="{x:Type dyn:DynChannel}" ItemsSource="{Binding Items}">
+                                        <TextBlock>
+                                            <TextBlock.ContextMenu>
+                                                <ContextMenu>
+                                                    <MenuItem Header="Block hinzufügen" Click="ClickAddDynBlock" />
+                                                    <MenuItem Header="Abzweigung hinzufügen" Click="ClickAddDynChoose" />
+                                                    <Separator />
+                                                    <MenuItem Header="Entfernen" Click="ClickRemoveDyn" />
+                                                </ContextMenu>
+                                            </TextBlock.ContextMenu>
+                                            <Run Text="Channel" />
+                                            <Run Text="{Binding Name}" />
                                         </TextBlock>
                                     </HierarchicalDataTemplate>
                                     <HierarchicalDataTemplate DataType="{x:Type dyn:DynChannelIndependet}" ItemsSource="{Binding Items}">
@@ -1226,10 +1253,15 @@
 
                         <CheckBox x:Name="InPublishOnlyLatest" Content="Nur neueste Applikationversion exportieren" Checked="ChangedPublishOnlyLatest" Unchecked="ChangedPublishOnlyLatest" />
 
-                        <ComboBox SelectedIndex="0">
+                        <ComboBox x:Name="InPublishType" SelectedIndex="0" SelectedValuePath="Tag">
                             <ComboBoxItem Content="Eine Knxprod Datei für alle" Tag="combined" />
                             <ComboBoxItem Content="Für jedes Gerät eine Datei" Tag="device" />
                             <ComboBoxItem Content="Jede Version in eigene Datei" Tag="single" />
+                        </ComboBox>
+                        
+                        <ComboBox x:Name="InPublishTarget" SelectedIndex="0" SelectedValuePath="Tag">
+                            <ComboBoxItem Content="ETS" Tag="ets" />
+                            <ComboBoxItem Content="Kaenx" Tag="kaenx" IsEnabled="False" />
                         </ComboBox>
                         
                         <Button Content="Veröffentlichen" Click="Button_Click" />
