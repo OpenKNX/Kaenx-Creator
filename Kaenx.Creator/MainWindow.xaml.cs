@@ -973,54 +973,41 @@ namespace Kaenx.Creator
             else
                 PublishActions.Add(new Models.PublishAction() { Text = "Überprüfung bestanden", State = Models.PublishState.Success });
 
-            ExportHelper helper = new ExportHelper();
-            foreach(Models.ExportItem item in Exports.Where(ex => ex.Selected).ToList())
-            {
-                switch(InPublishTarget.SelectedValue) {
-                    case "ets":
-                        helper.ExportEts(General.ManufacturerId, item.Hardware, item.Device, item.App, item.Version);
-                        break;
 
-                    case "kaenx":
-                        throw new NotImplementedException("Dieses Feature wurde noch nicht implementiert");
-                }
-            }
+            ExportHelper helper;
+            switch(InPublishType.SelectedValue) {
+                case "combined":
+                    helper = new ExportHelper(General, hardware, devices, apps, versions);
+                    switch(InPublishTarget.SelectedValue) {
+                        case "ets":
+                            helper.ExportEts();
+                            helper.SignOutput();
+                            break;
 
-            if(InPublishTarget.SelectedValue.ToString() == "ets") {
-                switch(InPublishType.SelectedValue) {
-                    case "combined":
-                        List<string> files = new List<string>();
-                        foreach(Models.AppVersion vers in versions) {
-                            Models.Application app = apps.Single(a => a.Versions.Contains(vers));
+                        case "kaenx":
+                            throw new NotImplementedException("Dieses Feature wurde noch nicht implementiert");
+                    }
+                    break;
 
-                            string filename = app.Name;
-                            int main = (int)Math.Floor((double)vers.Number / 16);
-                            int sub = vers.Number - (main * 16);
-                            filename += "V" + main + "_" + sub;
-                            
-                            files.Add(helper.GetRelPath($"{filename}.xml"));
+                case "device":
+                    break;
+
+                case "single":
+                    foreach(Models.ExportItem item in Exports.Where(ex => ex.Selected).ToList())
+                    {
+                        helper = new ExportHelper(General, new List<Models.Hardware>() { item.Hardware }, new List<Models.Device>() { item.Device }, new List<Models.Application>() { item.App }, new List<Models.AppVersion>() { item.Version });
+                        switch(InPublishTarget.SelectedValue) {
+                            case "ets":
+                                helper.ExportEts();
+                                helper.SignOutput();
+                                break;
+
+                            case "kaenx":
+                                throw new NotImplementedException("Dieses Feature wurde noch nicht implementiert");
                         }
-                        helper.SignOutput(files.ToArray());
-                        break;
-
-                    case "device":
-                        break;
-
-                    case "single":
-                        foreach(Models.AppVersion vers in versions) {
-                            Models.Application app = apps.Single(a => a.Versions.Contains(vers));
-
-                            string filename = app.Name;
-                            int main = (int)Math.Floor((double)vers.Number / 16);
-                            int sub = vers.Number - (main * 16);
-                            filename += "V" + main + "_" + sub;
-                            
-                            helper.SignOutput(new string[] { helper.GetRelPath($"{filename}.xml") });
-                        }
-                        break;
-                }
+                    }
+                    break;
             }
         }
-
     }
 }

@@ -9,6 +9,7 @@ namespace Kaenx.Creator.Models
     public class CatalogItem
     {
         public string Name { get; set; }
+        public string Number { get; set; }
         public string VisibleDescription { get; set; }
 
         public bool IsSection { get; set; } = true;

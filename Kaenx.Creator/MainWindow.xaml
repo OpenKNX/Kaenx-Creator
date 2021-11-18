@@ -392,6 +392,9 @@
                         <HeaderedContentControl Header="Name" IsEnabled="{Binding Parent, Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
                             <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
                         </HeaderedContentControl>
+                        <HeaderedContentControl Header="Number">
+                            <TextBox Text="{Binding Number, UpdateSourceTrigger=PropertyChanged}" />
+                        </HeaderedContentControl>
                         <CheckBox Name="InCatalogSection" IsChecked="{Binding IsSection}" Content="Element ist eine Kategorie" IsEnabled="{Binding Items.Count, Converter={StaticResource EmptyListToBool}}" />
                         <HeaderedContentControl Header="Beschreibung" IsEnabled="{Binding ElementName=InCatalogSection, Path=IsChecked, Converter={StaticResource BoolNegate}}">
                             <TextBox Text="{Binding VisibleDescription, UpdateSourceTrigger=PropertyChanged}" />
