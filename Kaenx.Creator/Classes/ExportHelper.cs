@@ -553,8 +553,14 @@ namespace Kaenx.Creator.Classes
                     GetCatalogItems(sub, xitem, productIds, hardwareIds);
             } else {
                 foreach(Device dev in item.Hardware.Devices) {
+                    if(!devices.Contains(dev)) continue;
+
                     foreach(Application app in item.Hardware.Apps){
+                        if(!apps.Contains(app)) continue;
+
                         foreach(AppVersion ver in app.Versions){
+                            if(!vers.Contains(ver)) continue;
+
                             XElement xitem = new XElement(Get("CatalogItem"));
 
                             //Id="M-0083_H-39-1_HP-0027-15-0BAC_CI-BE.2DTA55P2.2E01-1"
