@@ -575,9 +575,9 @@ namespace Kaenx.Creator.Classes
                             xitem.SetAttributeValue("Name", dev.Text);
                             xitem.SetAttributeValue("Number", item.Hardware.SerialNumber);
                             if (!string.IsNullOrWhiteSpace(dev.Description)) xitem.SetAttributeValue("VisibleDescription", dev.Description);
-                            //xitem.SetAttributeValue("ProductRefId", productIds[dev.Name]);
+                            xitem.SetAttributeValue("ProductRefId", productIds[dev.Name]);
                             string hardid = item.Hardware.Version + "-" + app.Number + "-" + ver.Number;
-                            //xitem.SetAttributeValue("Hardware2ProgramRefId", hardwareIds[hardid]);
+                            xitem.SetAttributeValue("Hardware2ProgramRefId", hardwareIds[hardid]);
                             xitem.SetAttributeValue("DefaultLanguage", "de-DE");
                             parent.Add(xitem);
                         }
