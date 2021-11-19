@@ -22,7 +22,7 @@ namespace Kaenx.Creator.Models
             Name = (sender as Parameter).Name;
         }
 
-        private int _id = 0;
+        private int _id = -1;
         public int Id
         {
             get { return _id; }
@@ -68,10 +68,5 @@ namespace Kaenx.Creator.Models
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
-
-
-        //Only used for export
-        [JsonIgnore]
-        public string RefId { get; set; }
     }
 }

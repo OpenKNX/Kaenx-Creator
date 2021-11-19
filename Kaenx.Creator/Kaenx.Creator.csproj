@@ -4,7 +4,7 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
-    <ApplicationIcon>FileLogo (1).ico</ApplicationIcon>
+    <ApplicationIcon>FileLogo.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,12 +13,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Data\knx_master.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Data\datapoints.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Data\maskversion.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Content Include="FileLogo.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

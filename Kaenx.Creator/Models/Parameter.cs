@@ -11,7 +11,7 @@ namespace Kaenx.Creator.Models
 {
     public class Parameter : INotifyPropertyChanged
     {   
-        private int _id = 0;
+        private int _id = -1;
         public int Id
         {
             get { return _id; }

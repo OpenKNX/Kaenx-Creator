@@ -10,6 +10,7 @@
         xmlns:System="clr-namespace:System;assembly=mscorlib"
         xmlns:select="clr-namespace:Kaenx.Creator.Selectors"
         mc:Ignorable="d"
+        Icon="FileLogo.ico"
         Title="Kaenx Creator" Height="700" Width="1000">
     <Window.Resources>
         <conv:BoolNegation x:Key="BoolNegate" />
@@ -19,6 +20,7 @@
         <conv:EnumToVisibility x:Key="EnumToVisNeg" Negate="True" />
         <conv:BoolToVisibility x:Key="BoolToVis" />
         <conv:TypeToBool x:Key="TypeToBool" />
+        <conv:StateToBrush x:Key="StateToBrush" />
 
         <Style x:Key="TopTabControl" TargetType="TabControl">
             <Setter Property="BorderThickness" Value="0" />
@@ -612,6 +614,17 @@
                                 <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
                             </HeaderedContentControl>
 
+                            <HeaderedContentControl Header="Namespace Version">
+                                <ComboBox SelectedValue="{Binding NamespaceVersion}" SelectedIndex="3" SelectedValuePath="Tag">
+                                    <ComboBoxItem Content="ETS4 (11)" Tag="11" />
+                                    <ComboBoxItem Content="ETS5 (12)" Tag="12" />
+                                    <ComboBoxItem Content="ETS5.5 (13)" Tag="13" />
+                                    <ComboBoxItem Content="ETS5.6 (14)" Tag="14" />
+                                    <ComboBoxItem Content="ETS6(20)" Tag="20" />
+                                </ComboBox>
+                            </HeaderedContentControl>
+
+
                             <CheckBox IsChecked="{Binding IsMemSizeAuto}" Content="Automatisch Speicher berechnen beim Veröffentlichen" />
                             <CheckBox IsChecked="{Binding IsParameterRefAuto}" Content="Parameter Refs automatisch berechnen" />
                             <CheckBox IsChecked="{Binding IsComObjectRefAuto}" Content="KO Refs automatisch berechnen" />
@@ -798,10 +811,14 @@
                                         </Style>
                                     </StackPanel.Resources>
 
-                                    <TextBlock Margin="5">
-                                        <Run Text="ID:" />
-                                        <Run Text="{Binding Id, UpdateSourceTrigger=PropertyChanged}"/>
-                                    </TextBlock>
+                                    <Grid Margin="5">
+                                        <TextBlock VerticalAlignment="Center">
+                                            <Run Text="ID:" />
+                                            <Run Text="{Binding Id, UpdateSourceTrigger=PropertyChanged}"/>
+                                        </TextBlock>
+                                        <Button Content="Zurücksetzen" HorizontalAlignment="Right" Click="ResetId" />
+                                    </Grid>
+                                    
                                     <HeaderedContentControl Header="Name">
                                         <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
                                     </HeaderedContentControl>
@@ -906,10 +923,13 @@
                                     </Style>
                                 </StackPanel.Resources>
 
-                                <TextBlock Margin="5">
-                                    <Run Text="ID:" />
-                                    <Run Text="{Binding Id, UpdateSourceTrigger=PropertyChanged}"/>
-                                </TextBlock>
+                                <Grid Margin="5">
+                                    <TextBlock VerticalAlignment="Center">
+                                        <Run Text="ID:" />
+                                        <Run Text="{Binding Id, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </TextBlock>
+                                    <Button Content="Zurücksetzen" HorizontalAlignment="Right" Click="ResetId" />
+                                </Grid>
                                 <HeaderedContentControl Header="Name">
                                     <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
                                 </HeaderedContentControl>
@@ -971,6 +991,14 @@
                                             <Setter Property="Margin" Value="5" />
                                         </Style>
                                     </StackPanel.Resources>
+
+                                    <Grid Margin="5">
+                                        <TextBlock VerticalAlignment="Center">
+                                            <Run Text="ID:" />
+                                            <Run Text="{Binding Id, UpdateSourceTrigger=PropertyChanged}"/>
+                                        </TextBlock>
+                                        <Button Content="Zurücksetzen" HorizontalAlignment="Right" Click="ResetId" />
+                                    </Grid>
 
                                     <HeaderedContentControl Header="Name">
                                         <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
@@ -1080,7 +1108,7 @@
                                         </TextBlock>
                                     </HierarchicalDataTemplate>
                                     <HierarchicalDataTemplate DataType="{x:Type dyn:DynChannelIndependet}" ItemsSource="{Binding Items}">
-                                        <TextBlock>
+                                        <TextBlock Text="Channel Independent">
                                             <TextBlock.ContextMenu>
                                                 <ContextMenu>
                                                     <MenuItem Header="Block hinzufügen" Click="ClickAddDynBlock" />
@@ -1089,8 +1117,6 @@
                                                     <MenuItem Header="Entfernen" Click="ClickRemoveDyn" />
                                                 </ContextMenu>
                                             </TextBlock.ContextMenu>
-                                            <Run Text="Channel Independent" />
-                                            <Run Text="{Binding Name}" />
                                         </TextBlock>
                                     </HierarchicalDataTemplate>
                                     <HierarchicalDataTemplate DataType="{x:Type dyn:DynParaBlock}" ItemsSource="{Binding Items}">
@@ -1256,12 +1282,6 @@
 
                         <CheckBox x:Name="InPublishOnlyLatest" Content="Nur neueste Applikationversion exportieren" Checked="ChangedPublishOnlyLatest" Unchecked="ChangedPublishOnlyLatest" />
 
-                        <ComboBox x:Name="InPublishType" SelectedIndex="0" SelectedValuePath="Tag">
-                            <ComboBoxItem Content="Eine Knxprod Datei für alle" Tag="combined" />
-                            <ComboBoxItem Content="Für jedes Gerät eine Datei" Tag="device" />
-                            <ComboBoxItem Content="Jede Version in eigene Datei" Tag="single" />
-                        </ComboBox>
-                        
                         <ComboBox x:Name="InPublishTarget" SelectedIndex="0" SelectedValuePath="Tag">
                             <ComboBoxItem Content="ETS" Tag="ets" />
                             <ComboBoxItem Content="Kaenx" Tag="kaenx" IsEnabled="False" />
@@ -1270,17 +1290,19 @@
                         <Button Content="Veröffentlichen" Click="Button_Click" />
                     </StackPanel>
 
-                    <ItemsControl Grid.Column="1" Grid.Row="1" ItemsSource="{Binding PublishActions}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Border BorderBrush="Gray" BorderThickness="0 1 0 0">
-                                    <StackPanel Margin="10 5">
-                                        <TextBlock Text="{Binding Text}" />
-                                    </StackPanel>
-                                </Border>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
+                    <ScrollViewer Grid.Column="1" Grid.Row="1">
+                        <ItemsControl ItemsSource="{Binding PublishActions}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BorderBrush="Gray" BorderThickness="0 1 0 0">
+                                        <StackPanel Margin="10 5">
+                                            <TextBlock Text="{Binding Text}" Foreground="{Binding State, Converter={StaticResource StateToBrush}}" />
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
                 </Grid>
             </TabItem>
         </TabControl>

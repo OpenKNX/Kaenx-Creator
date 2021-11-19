@@ -7,7 +7,7 @@ namespace Kaenx.Creator.Models
 {
     public class PublishAction : INotifyPropertyChanged
     {
-        private PublishState _state = PublishState.Waiting;
+        private PublishState _state = PublishState.Info;
         public PublishState State
         {
             get { return _state; }
@@ -31,7 +31,7 @@ namespace Kaenx.Creator.Models
 
     public enum PublishState
     {
-        Waiting,
+        Info,
         Success,
         Fail,
         Warning

@@ -735,7 +735,20 @@ namespace Kaenx.Creator
             ExportList.ItemsSource = Exports.Where(i => i.Version.NameText.Contains(ExportInFilter.Text) || i.App.NameText.Contains(ExportInFilter.Text) || i.Hardware.Name.Contains(ExportInFilter.Text) || i.Device.Name.Contains(ExportInFilter.Text)).ToList();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void ResetId(object sender, RoutedEventArgs e)
+        {
+            if((sender as Button).DataContext is Models.Parameter) {
+                ((sender as Button).DataContext as Models.Parameter).Id = -1;
+            } else if((sender as Button).DataContext is Models.ParameterRef) {
+                ((sender as Button).DataContext as Models.ParameterRef).Id = -1;
+            } else if((sender as Button).DataContext is Models.ComObject) {
+                ((sender as Button).DataContext as Models.ComObject).Id = -1;
+            } else if((sender as Button).DataContext is Models.ComObjectRef) {
+                ((sender as Button).DataContext as Models.ComObjectRef).Id = -1;
+            }
+        }
+
+        private async void Button_Click(object sender, RoutedEventArgs e)
         {
             PublishActions.Clear();
             List<Models.Hardware> hardware = new List<Models.Hardware>();
@@ -973,41 +986,21 @@ namespace Kaenx.Creator
             else
                 PublishActions.Add(new Models.PublishAction() { Text = "Überprüfung bestanden", State = Models.PublishState.Success });
 
+            await Task.Delay(1000);
+            
+            PublishActions.Add(new Models.PublishAction() { Text = "Erstelle Produktdatenbank", State = Models.PublishState.Info });
 
-            ExportHelper helper;
-            switch(InPublishType.SelectedValue) {
-                case "combined":
-                    helper = new ExportHelper(General, hardware, devices, apps, versions);
-                    switch(InPublishTarget.SelectedValue) {
-                        case "ets":
-                            helper.ExportEts();
-                            helper.SignOutput();
-                            break;
-
-                        case "kaenx":
-                            throw new NotImplementedException("Dieses Feature wurde noch nicht implementiert");
-                    }
+            ExportHelper helper = new ExportHelper(General, hardware, devices, apps, versions);
+            switch(InPublishTarget.SelectedValue) {
+                case "ets":
+                    helper.ExportEts();
+                    helper.SignOutput();
                     break;
 
-                case "device":
-                    break;
-
-                case "single":
-                    foreach(Models.ExportItem item in Exports.Where(ex => ex.Selected).ToList())
-                    {
-                        helper = new ExportHelper(General, new List<Models.Hardware>() { item.Hardware }, new List<Models.Device>() { item.Device }, new List<Models.Application>() { item.App }, new List<Models.AppVersion>() { item.Version });
-                        switch(InPublishTarget.SelectedValue) {
-                            case "ets":
-                                helper.ExportEts();
-                                helper.SignOutput();
-                                break;
-
-                            case "kaenx":
-                                throw new NotImplementedException("Dieses Feature wurde noch nicht implementiert");
-                        }
-                    }
-                    break;
+                case "kaenx":
+                    throw new NotImplementedException("Dieses Feature wurde noch nicht implementiert");
             }
+            System.Windows.MessageBox.Show("Erfolgreich erstellt");
         }
     }
 }

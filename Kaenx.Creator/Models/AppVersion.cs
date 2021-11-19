@@ -40,6 +40,7 @@ namespace Kaenx.Creator.Models
             IsMemSizeAuto = ver.IsMemSizeAuto;
         }
 
+        public int NamespaceVersion { get; set; } = 14;
 
         private string _name = "";
         public string Name

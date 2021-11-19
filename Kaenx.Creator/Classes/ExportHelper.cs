@@ -19,6 +19,7 @@ namespace Kaenx.Creator.Classes
         List<Models.Application> apps;
         List<Models.AppVersion> vers;
         Models.ModelGeneral general;
+        string appVersion;
 
         public ExportHelper(Models.ModelGeneral g, List<Models.Hardware> h, List<Models.Device> d, List<Models.Application> a, List<Models.AppVersion> v) {
             hardware = h;
@@ -57,7 +58,7 @@ namespace Kaenx.Creator.Classes
                 Models.Application app = apps.Single(a => a.Versions.Contains(ver));
                 string appName = Manu + "_A-" + app.Number.ToString("X4");
 
-                string appVersion = appName + "-" + ver.Number.ToString("X2");
+                appVersion = appName + "-" + ver.Number.ToString("X2");
                 string hash = "0000";
                 appVersion += "-" + hash;
 
@@ -96,7 +97,7 @@ namespace Kaenx.Creator.Classes
                     {
                         case MemoryTypes.Absolute:
                             xmem = new XElement(Get("AbsoluteSegment"));
-                            id = appVersion + "_AS-" + mem.Address.ToString("X4");
+                            id = $"{appVersion}_AS-{mem.Address:X4}";
                             xmem.SetAttributeValue("Id", id);
                             xmem.SetAttributeValue("Address", mem.Address);
                             //xmem.Add(new XElement(Get("Data"), "Hier kommt toller Base64 String hin"));
@@ -104,10 +105,10 @@ namespace Kaenx.Creator.Classes
 
                         case MemoryTypes.Relative:
                             xmem = new XElement(Get("RelativeSegment"));
-                            id = appVersion + "_RS-04-0000"; //TODO LoadStateMachine angeben
+                            id = $"{appVersion}_RS-04-{mem.Offset:X4}"; //TODO LoadStateMachine angeben
                             xmem.SetAttributeValue("Id", id);
                             xmem.SetAttributeValue("Name", mem.Name);
-                            xmem.SetAttributeValue("Offset", 0);
+                            xmem.SetAttributeValue("Offset", mem.Offset);
                             xmem.SetAttributeValue("LoadStateMachine", "4");
                             break;
                     }
@@ -182,7 +183,6 @@ namespace Kaenx.Creator.Classes
 
                 StringBuilder headers = new StringBuilder();
 
-                int counter = 1;
                 foreach(Parameter para in ver.Parameters)
                 {
                     string line = "#define PARAM_" + para.Name + " " + para.Offset + " //Size: " + para.ParameterTypeObject.SizeInBit;
@@ -191,8 +191,11 @@ namespace Kaenx.Creator.Classes
                     headers.AppendLine(line);
 
                     XElement xpara = new XElement(Get("Parameter"));
-                    para.Id = counter;
-                    string id = appVersion + "_P-" + counter;
+                    
+                    if(para.Id == -1) {
+                        para.Id = GetNextFreeId(ver.Parameters);
+                    }
+                    string id = appVersion + "_P-" + para.Id;
                     ParamIds.Add(para.Name, id);
                     xpara.SetAttributeValue("Id", id);
                     xpara.SetAttributeValue("Name", para.Name);
@@ -212,7 +215,6 @@ namespace Kaenx.Creator.Classes
                     }
 
                     temp.Add(xpara);
-                    counter++;
                 }
                 System.IO.File.WriteAllText(GetRelPath(appVersion + ".h"), headers.ToString());
                 headers = null;
@@ -225,18 +227,18 @@ namespace Kaenx.Creator.Classes
                 #region ParameterRefs
                 temp = new XElement(Get("ParameterRefs"));
 
-                counter = 1;
                 foreach(ParameterRef pref in ver.ParameterRefs)
                 {
                     if (pref.ParameterObject == null) continue;
                     XElement xpref = new XElement(Get("ParameterRef"));
-                    string refid = ParamIds[pref.ParameterObject.Name];
-                    xpref.SetAttributeValue("Id", refid + "_R-" + counter);
-                    xpref.SetAttributeValue("RefId", refid);
-                    pref.RefId = refid + "_R-" + counter;
-                    pref.Id = counter;
+                    if(pref.Id == -1) {
+                        pref.Id = GetNextFreeId(ver.ParameterRefs);
+                    }
+                    string id = $"{appVersion}_P-{pref.ParameterObject.Id}";
+                    xpref.SetAttributeValue("RefId", id);
+                    id += $"_R-{pref.Id}";
+                    xpref.SetAttributeValue("Id", id);
                     temp.Add(xpref);
-                    counter++;
                 }
 
                 xunderapp.Add(temp);
@@ -244,14 +246,14 @@ namespace Kaenx.Creator.Classes
 
                 #region ComObjects
                 temp = new XElement(Get("ComObjectTable"));
-                counter = 1;
 
                 foreach(ComObject com in ver.ComObjects)
                 {
                     XElement xcom = new XElement(Get("ComObject"));
-                    string id = appVersion + "_O-" + counter++;
-                    com.RefId = id;
-                    xcom.SetAttributeValue("Id", id);
+                    if(com.Id == -1){
+                        com.Id = GetNextFreeId(ver.ComObjects, 0);
+                    }
+                    xcom.SetAttributeValue("Id", $"{appVersion}_O-{com.Id}");
                     xcom.SetAttributeValue("Name", com.Name);
                     xcom.SetAttributeValue("Text", com.Text);
                     xcom.SetAttributeValue("Number", com.Number);
@@ -289,15 +291,17 @@ namespace Kaenx.Creator.Classes
 
                 #region ComObjectRefs
                 temp = new XElement(Get("ComObjectRefs"));
-                counter = 1;
 
                 foreach(ComObjectRef cref in ver.ComObjectRefs)
                 {
                     XElement xcref = new XElement(Get("ComObjectRef"));
-                    string id = cref.ComObjectObject.RefId + "_R-" + counter++;
-                    cref.RefId = id;
+                    if(cref.Id == -1) {
+                        cref.Id = GetNextFreeId(ver.ComObjectRefs, 0);
+                    }
+                    string id = $"{appVersion}_O-{cref.ComObjectObject.Id}";
+                    xcref.SetAttributeValue("RefId", id);
+                    id += $"_R-{cref.Id}";
                     xcref.SetAttributeValue("Id", id);
-                    xcref.SetAttributeValue("RefId", cref.ComObjectObject.RefId);
                     temp.Add(xcref);
                 }
 
@@ -413,6 +417,28 @@ namespace Kaenx.Creator.Classes
         }
 
 
+
+        private int GetNextFreeId(object list, int start = 1) {
+            int id = start;
+
+            if(list is System.Collections.ObjectModel.ObservableCollection<Parameter>) {
+                while((list as System.Collections.ObjectModel.ObservableCollection<Parameter>).Any(i => i.Id == id))
+                    id++;
+            }else if(list is System.Collections.ObjectModel.ObservableCollection<ParameterRef>) {
+                while((list as System.Collections.ObjectModel.ObservableCollection<ParameterRef>).Any(i => i.Id == id))
+                    id++;
+            }else if(list is System.Collections.ObjectModel.ObservableCollection<ComObject>) {
+                while((list as System.Collections.ObjectModel.ObservableCollection<ComObject>).Any(i => i.Id == id))
+                    id++;
+            }else if(list is System.Collections.ObjectModel.ObservableCollection<ComObjectRef>) {
+                while((list as System.Collections.ObjectModel.ObservableCollection<ComObjectRef>).Any(i => i.Id == id))
+                    id++;
+            }
+            return id;
+        }
+
+
+
         #region Create Dyn Stuff
 
         private void HandleSubItems(IDynItems parent, XElement xparent)
@@ -464,7 +490,7 @@ namespace Kaenx.Creator.Classes
                 DynChannel dch = ch as DynChannel;
                 channel.Name = Get("Channel");
                 if(dch.ParameterRefObject != null)
-                    channel.SetAttributeValue("ParamRefId", dch.ParameterRefObject.RefId);
+                    channel.SetAttributeValue("ParamRefId", $"{appVersion}_P-{dch.ParameterRefObject.ParameterObject.Id}_R-{dch.ParameterRefObject.Id}");
             }
 
             channel.SetAttributeValue("Name", ch.Name);
@@ -476,7 +502,7 @@ namespace Kaenx.Creator.Classes
         private void HandleCom(DynComObject com, XElement parent)
         {
             XElement xcom = new XElement(Get("ComObjectRefRef"));
-            xcom.SetAttributeValue("RefId", com.ComObjectRefObject.RefId);
+            xcom.SetAttributeValue("RefId", $"{appVersion}_O-{com.ComObjectRefObject.ComObjectObject.Id}_R-{com.ComObjectRefObject.Id}");
             parent.Add(xcom);
         }
 
@@ -484,7 +510,7 @@ namespace Kaenx.Creator.Classes
         {
             XElement xcho = new XElement(Get("choose"));
             parent.Add(xcho);
-            xcho.SetAttributeValue("ParamRefId", cho.ParameterRefObject.RefId);
+            xcho.SetAttributeValue("ParamRefId", $"{appVersion}_O-{cho.ParameterRefObject.ParameterObject.Id}_R-{cho.ParameterRefObject.Id}");
             return xcho;
         }
 
@@ -514,7 +540,7 @@ namespace Kaenx.Creator.Classes
 
 
             if (bl.ParameterRefObject != null)
-                block.SetAttributeValue("ParamRefId", bl.ParameterRefObject.RefId);
+                block.SetAttributeValue("ParamRefId", $"{appVersion}_P-{bl.ParameterRefObject.ParameterObject.Id}_R-{bl.ParameterRefObject.Id}");
             else
                 block.SetAttributeValue("Text", bl.Text);
 
@@ -525,12 +551,10 @@ namespace Kaenx.Creator.Classes
         {
             XElement xpara = new XElement(Get("ParameterRefRef"));
             parent.Add(xpara);
-            xpara.SetAttributeValue("RefId", pa.ParameterRefObject.RefId);
+            xpara.SetAttributeValue("RefId", $"{appVersion}_P-{pa.ParameterRefObject.ParameterObject.Id}_R-{pa.ParameterRefObject.Id}");
         }
         #endregion
 
-
-        private int catalogCounter = 1;
         private void GetCatalogItems(CatalogItem item, XElement parent, Dictionary<string, string> productIds, Dictionary<string, string> hardwareIds)
         {
             if(item.IsSection){
@@ -560,10 +584,8 @@ namespace Kaenx.Creator.Classes
 
                         foreach(AppVersion ver in app.Versions){
                             if(!vers.Contains(ver)) continue;
-
                             XElement xitem = new XElement(Get("CatalogItem"));
 
-                            //Id="M-0083_H-39-1_HP-0027-15-0BAC_CI-BE.2DTA55P2.2E01-1"
                             string id = $"M-{general.ManufacturerId.ToString("X4")}";
                             id += $"_H-{GetEncoded(item.Hardware.SerialNumber)}-{item.Hardware.Version}";
                             id += $"_HP-{app.Number.ToString("X4")}-{ver.Number.ToString("X2")}-0000";
@@ -584,8 +606,6 @@ namespace Kaenx.Creator.Classes
                     }
                 }
             }
-
-
         }
 
         public void SignOutput()
@@ -608,7 +628,8 @@ namespace Kaenx.Creator.Classes
             InvokeMethod(bas, "Uninitialize", null);
 
             //var dset = ConverterEngine.BuildUpRawDocumentSet( files );
-            var dset = InvokeMethod(eng, "BuildUpRawDocumentSet", new object[] { new string[] { GetRelPath("temp.xml") } });
+            string[] files = new string[] { GetRelPath("temp.xml"), System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "knx_master.xml") } ;
+            var dset = InvokeMethod(eng, "BuildUpRawDocumentSet", new object[] { files });
 
             //ConverterEngine.CheckOutputFileName(outputFile, ".knxprod");
             InvokeMethod(eng, "CheckOutputFileName", new object[] { outputFile, ".knxprod" });

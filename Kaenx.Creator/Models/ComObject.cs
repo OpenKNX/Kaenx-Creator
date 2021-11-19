@@ -8,6 +8,13 @@ namespace Kaenx.Creator.Models
 {
     public class ComObject : INotifyPropertyChanged
     {
+        private int _id = -1;
+        public int Id
+        {
+            get { return _id; }
+            set { _id = value; Changed("Id"); }
+        }
+
         private string _name = "Kommunikationsobjekt";
         public string Name
         {
@@ -125,11 +132,6 @@ namespace Kaenx.Creator.Models
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
-
-
-        //Only used for export
-        [JsonIgnore]
-        public string RefId { get; set; }
     }
 
     public enum FlagType

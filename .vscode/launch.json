@@ -18,6 +18,19 @@
         "stopAtEntry": false
     },
     {
+        "name": ".NET Core Release (console)",
+        "type": "coreclr",
+        "request": "launch",
+        "preLaunchTask": "publish",
+        // If you have changed target frameworks, make sure to update the program path.
+        "program": "${workspaceFolder}/Kaenx.Creator/bin/Debug/netcoreapp3.1/Kaenx.Creator.dll",
+        "args": [],
+        "cwd": "${workspaceFolder}/Kaenx.Creator",
+        // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
+        "console": "internalConsole",
+        "stopAtEntry": false
+    },
+    {
         "name": ".NET Core Launch (console) x64",
         "type": "coreclr",
         "request": "launch",
