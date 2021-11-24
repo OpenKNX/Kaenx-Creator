@@ -304,9 +304,9 @@ namespace Kaenx.Creator.Classes
                     xcref.SetAttributeValue("RefId", id);
                     id += $"_R-{cref.Id}";
                     xcref.SetAttributeValue("Id", id);
-                    if(xcref.OverwriteFunctionText)
+                    if(cref.OverwriteFunctionText)
                         xcref.SetAttributeValue("FunctionText", cref.FunctionText);
-                    if(xcref.OverwriteDescription)
+                    if(cref.OverwriteDescription)
                         xcref.SetAttributeValue("VisibleDescription", cref.Description);
                     if(cref.OverwriteDpt) {
                         if(cref.OverwriteDpst) {

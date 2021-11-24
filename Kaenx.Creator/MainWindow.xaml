@@ -203,9 +203,6 @@
                 <HeaderedContentControl Header="Paremeter Ref">
                     <ComboBox ItemsSource="{Binding ElementName=VersionList, Path=SelectedItem.ParameterRefs}" SelectedItem="{Binding ParameterRefObject}" DisplayMemberPath="Name" />
                 </HeaderedContentControl>
-                <!--<HeaderedContentControl Header="Parameter" Visibility="{Binding ElementName=VersionList, Path=SelectedItem.IsParameterRefAuto, Converter={StaticResource BoolToVis}}">
-                    <ComboBox ItemsSource="{Binding ElementName=VersionList, Path=SelectedItem.Parameters}" SelectedItem="{Binding ParameterRefObject.ParameterObject, Mode=TwoWay}" DisplayMemberPath="Name" />
-                </HeaderedContentControl>-->
                 <TextBlock Margin="5" Visibility="{Binding ElementName=VersionList, Path=SelectedItem.IsParameterRefAuto, Converter={StaticResource BoolToVis}}">
                     <Run Text="ParameterRef Name:" />
                     <Run Text="{Binding ParameterRefObject.Name}" />
@@ -217,11 +214,8 @@
                 <HeaderedContentControl Header="Name">
                     <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
                 </HeaderedContentControl>
-                <HeaderedContentControl Header="Kommunikationsobjekt Ref" Visibility="{Binding ElementName=VersionList, Path=SelectedItem.IsComObjectRefAuto, Converter={StaticResource BoolToVis}, ConverterParameter=true}">
+                <HeaderedContentControl Header="Kommunikationsobjekt Ref">
                     <ComboBox ItemsSource="{Binding ElementName=VersionList, Path=SelectedItem.ComObjectRefs}" SelectedItem="{Binding ComObjectRefObject}" DisplayMemberPath="Name" />
-                </HeaderedContentControl>
-                <HeaderedContentControl Header="Kommunikationsobjekt" Visibility="{Binding ElementName=VersionList, Path=SelectedItem.IsComObjectRefAuto, Converter={StaticResource BoolToVis}}">
-                    <ComboBox ItemsSource="{Binding ElementName=VersionList, Path=SelectedItem.ComObjects}" SelectedItem="{Binding ComObjectRefObject.ComObjectObject, Mode=TwoWay}" DisplayMemberPath="Name" />
                 </HeaderedContentControl>
                 <TextBlock Margin="5" Visibility="{Binding ElementName=VersionList, Path=SelectedItem.IsComObjectRefAuto, Converter={StaticResource BoolToVis}}">
                     <Run Text="Kommunikationsobjekt Ref Name:" />

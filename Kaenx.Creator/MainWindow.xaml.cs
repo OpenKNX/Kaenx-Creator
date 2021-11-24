@@ -233,8 +233,7 @@ namespace Kaenx.Creator
                 Models.AppVersion ver = app.Versions.OrderByDescending(v => v.Number).ElementAt(0);
                 newVer.Number = ver.Number + 1;
             }
-
-            newVer.Dynamics.Add(new Models.Dynamic.DynamicMain());
+            
             app.Versions.Add(newVer);
         }
 
