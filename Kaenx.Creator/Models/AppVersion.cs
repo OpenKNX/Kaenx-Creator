@@ -16,7 +16,7 @@ namespace Kaenx.Creator.Models
         public ObservableCollection<ComObject> ComObjects { get; set; } = new ObservableCollection<ComObject>();
         public ObservableCollection<ComObjectRef> ComObjectRefs { get; set; } = new ObservableCollection<ComObjectRef>();
         public ObservableCollection<Memory> Memories { get; set; } = new ObservableCollection<Memory>();
-        public List<DynamicMain> Dynamics { get; set; } = new List<DynamicMain>();
+        public List<DynamicMain> Dynamics { get; set; } = new List<DynamicMain>() { new DynamicMain() };
 
 
 

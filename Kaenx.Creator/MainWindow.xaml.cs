@@ -538,9 +538,22 @@ namespace Kaenx.Creator
             foreach(Models.Parameter para in ver.Parameters)
             {
                 Models.ParameterRef pref = new Models.ParameterRef();
-                pref.Name = para.Name;
+                pref.Name = para.Id + " " + para.Name;
                 pref.ParameterObject = para;
                 ver.ParameterRefs.Add(pref);
+            }
+        }
+        private void ClickGenerateRefAuto2(object sender, RoutedEventArgs e)
+        {
+            Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
+            ver.ComObjectRefs.Clear();
+
+            foreach(Models.ComObject com in ver.ComObjects)
+            {
+                Models.ComObjectRef cref = new Models.ComObjectRef();
+                cref.Name = com.Id + " " + com.Name;
+                cref.ComObjectObject = com;
+                ver.ComObjectRefs.Add(cref);
             }
         }
 
@@ -931,6 +944,7 @@ namespace Kaenx.Creator
                         if(para.ParameterObject.ParameterTypeObject == null || string.IsNullOrEmpty(para.Value))
                             continue;
                         
+                        //TODO check value overwrite
                         Models.ParameterType ptype = para.ParameterObject.ParameterTypeObject;
 
                         switch(ptype.Type) {
@@ -973,6 +987,9 @@ namespace Kaenx.Creator
                     if(string.IsNullOrEmpty(com.TypeParentValue) && com.Name.ToLower() != "dummy") PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {com.Name}: Kein DataPointType angegeben", State = Models.PublishState.Fail });
                     if(com.HasSub && com.Type == null && com.Name.ToLower() != "dummy") PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {com.Name}: Kein DataPointSubType angegeben", State = Models.PublishState.Fail });
                 }
+
+                //TODO check ComObjectRefs for overwriting
+                // dpt, functiontext, description
             
             }
             #endregion

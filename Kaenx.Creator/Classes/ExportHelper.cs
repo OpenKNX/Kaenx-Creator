@@ -238,6 +238,8 @@ namespace Kaenx.Creator.Classes
                     xpref.SetAttributeValue("RefId", id);
                     id += $"_R-{pref.Id}";
                     xpref.SetAttributeValue("Id", id);
+                    if(pref.OverwriteAccess && pref.Access != ParamAccess.Default)
+                        xpref.SetAttributeValue("Access", pref.Access.ToString());
                     temp.Add(xpref);
                 }
 
@@ -266,7 +268,6 @@ namespace Kaenx.Creator.Classes
                     else
                         size = 1; //TODO get correct size for main DPT
 
-
                     if (size > 7)
                         xcom.SetAttributeValue("ObjectSize", (size / 8) + " Byte");
                     else
@@ -279,6 +280,7 @@ namespace Kaenx.Creator.Classes
                     if (com.FlagUpdate != FlagType.Default) xcom.SetAttributeValue("UpdateFlag", com.FlagUpdate.ToString());
                     if (com.FlagOnInit != FlagType.Default) xcom.SetAttributeValue("ReadOnInitFlag", com.FlagOnInit.ToString());
 
+                    //TODO als implement if com has no dpt
                     if(com.HasSub)
                         xcom.SetAttributeValue("DatapointType", "DPST-" + com.Type.ParentNumber + "-" + com.Type.Number);
                     else
@@ -302,6 +304,17 @@ namespace Kaenx.Creator.Classes
                     xcref.SetAttributeValue("RefId", id);
                     id += $"_R-{cref.Id}";
                     xcref.SetAttributeValue("Id", id);
+                    if(xcref.OverwriteFunctionText)
+                        xcref.SetAttributeValue("FunctionText", cref.FunctionText);
+                    if(xcref.OverwriteDescription)
+                        xcref.SetAttributeValue("VisibleDescription", cref.Description);
+                    if(cref.OverwriteDpt) {
+                        if(cref.OverwriteDpst) {
+                            xcref.SetAttributeValue("DatapointType", "DPST-" + cref.Type.ParentNumber + "-" + cref.Type.Number);
+                        } else {
+                            xcref.SetAttributeValue("DatapointType", "DPT-" + cref.TypeParentValue);
+                        }
+                    }
                     temp.Add(xcref);
                 }
 
@@ -315,7 +328,7 @@ namespace Kaenx.Creator.Classes
                 temp = new XElement(Get("AssociationTable"));
                 temp.SetAttributeValue("MaxEntries", "65535");
                 xunderapp.Add(temp);
-                temp = XDocument.Parse("<LoadProcedures xmlns=\"http://knx.org/xml/project/14\"><LoadProcedure MergeId=\"2\"><LdCtrlRelSegment LsmIdx=\"4\" Size=\"1\" Mode=\"0\" Fill=\"0\" AppliesTo=\"full\" /></LoadProcedure><LoadProcedure MergeId=\"4\"><LdCtrlWriteRelMem ObjIdx=\"4\" Offset=\"0\" Size=\"1\" Verify=\"true\" /></LoadProcedure></LoadProcedures>").Root;
+                temp = XDocument.Parse("<LoadProcedures><LoadProcedure MergeId=\"2\"><LdCtrlRelSegment LsmIdx=\"4\" Size=\"1\" Mode=\"0\" Fill=\"0\" AppliesTo=\"full\" /></LoadProcedure><LoadProcedure MergeId=\"4\"><LdCtrlWriteRelMem ObjIdx=\"4\" Offset=\"0\" Size=\"1\" Verify=\"true\" /></LoadProcedure></LoadProcedures>").Root;
                 xunderapp.Add(temp);
                 #endregion
 

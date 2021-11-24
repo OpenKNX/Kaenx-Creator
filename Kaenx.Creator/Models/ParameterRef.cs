@@ -56,6 +56,19 @@ namespace Kaenx.Creator.Models
         }
 
 
+        private bool _overValue = false;
+        public bool OverwriteValue
+        {
+            get { return _overValue; }
+            set { _overValue = value; Changed("OverwriteValue"); }
+        }
+
+        private bool _overAccess = false;
+        public bool OverwriteAccess
+        {
+            get { return _overAccess; }
+            set { _overAccess = value; Changed("OverwriteAccess"); }
+        }
 
 
         public ParamAccess Access { get; set; } = ParamAccess.Default;

@@ -129,6 +129,7 @@ namespace Kaenx.Creator.Classes
             ImportParameter(xstatic.Element(GetXName("Parameters")));
             ImportParameterRefs(xstatic.Element(GetXName("ParameterRefs")));
             ImportComObjects(xstatic.Element(GetXName("ComObjectTable")));
+            ImportComObjectRefs(xstatic.Element(GetXName("ComObjectRefs")));
         }
 
         public void ImportSegments(XElement xcodes) {
@@ -273,7 +274,9 @@ namespace Kaenx.Creator.Classes
 
                 pref.Id = int.Parse(GetLastSplit(xref.Attribute("Id").Value, 2));
                 
+                pref.OverwriteValue = xref.Attribute("Value") != null;
                 pref.Value = xref.Attribute("Value")?.Value ?? "";
+                pref.OverwriteAccess = xref.Attribute("Acces") != null;
                 pref.Access = xref.Attribute("Access")?.Value switch {
                     "None" => ParamAccess.None,
                     "Read" => ParamAccess.Read,
@@ -302,7 +305,8 @@ namespace Kaenx.Creator.Classes
                     Text = xcom.Attribute("Text")?.Value ?? "",
                     FunctionText = xcom.Attribute("FunctionText")?.Value ?? "",
                     Description = xcom.Attribute("VisibleDescription")?.Value ?? "",
-                    Number = int.Parse(xcom.Attribute("Number").Value)
+                    Number = int.Parse(xcom.Attribute("Number").Value),
+                    Id = int.Parse(GetLastSplit(xcom.Attribute("Id").Value, 2))
                 };
 
                 com.FlagRead = ParseFlagType(xcom.Attribute("ReadFlag")?.Value);
@@ -334,6 +338,57 @@ namespace Kaenx.Creator.Classes
                 }
 
                 currentVers.ComObjects.Add(com);
+            }
+        }
+
+        public void ImportComObjectRefs(XElement xrefs) {
+            string jsonPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "datapoints.json");
+            List<Models.DataPointType> DPTs = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Models.DataPointType>>(System.IO.File.ReadAllText(jsonPath));
+
+            foreach(XElement xref in xrefs.Elements()) {
+                //TODO also import DisplayOrder and Tag
+                Models.ComObjectRef cref = new Models.ComObjectRef();
+
+                cref.Id = int.Parse(GetLastSplit(xref.Attribute("Id").Value, 2));
+                
+                cref.OverwriteFunctionText = xref.Attribute("FunctionText") != null;
+                cref.FunctionText = xref.Attribute("FunctionText")?.Value ?? "";
+                cref.OverwriteDescription = xref.Attribute("VisibleDescription") != null;
+                cref.Description = xref.Attribute("VisibleDescription")?.Value ?? "";
+
+                string id = GetLastSplit(xref.Attribute("RefId").Value, 2);
+                if(id.StartsWith("-"))
+                    id = id.Substring(1);
+                int comId = int.Parse(id);
+                cref.ComObjectObject = currentVers.ComObjects.Single(c => c.Id == comId);
+                cref.Name = cref.Id + " " + cref.ComObjectObject.Name;
+
+                
+                cref.FlagRead = ParseFlagType(xref.Attribute("ReadFlag")?.Value);
+                cref.FlagWrite = ParseFlagType(xref.Attribute("WriteFlag")?.Value);
+                cref.FlagComm = ParseFlagType(xref.Attribute("CommunicationFlag")?.Value);
+                cref.FlagTrans = ParseFlagType(xref.Attribute("TransmitFlag")?.Value);
+                cref.FlagUpdate = ParseFlagType(xref.Attribute("UpdateFlag")?.Value);
+                cref.FlagOnInit = ParseFlagType(xref.Attribute("ReadOnInitFlag")?.Value);
+
+                if(!string.IsNullOrEmpty(xref.Attribute("DatapointType")?.Value)) {
+                    string[] dpts = xref.Attribute("DatapointType").Value.Split(' ');
+                    string[] dpt = dpts[0].Split('-');
+                    if(dpt[0] == "DPT") {
+                        cref.OverwriteDpt = true;
+                        cref.OverwriteDpst = false;
+                        cref.TypeParentValue = dpt[1];
+                    } else {
+                        cref.OverwriteDpt = true;
+                        cref.OverwriteDpst = true;
+                        cref.TypeParentValue = dpt[1];
+                        cref.TypeValue = dpt[2];
+                        Models.DataPointType mdpt = DPTs.Single(d => d.Number == cref.TypeParentValue);
+                        cref.Type = mdpt.SubTypes.Single(s => s.Number == cref.TypeValue);
+                    }
+                }
+
+                currentVers.ComObjectRefs.Add(cref);
             }
         }
 
