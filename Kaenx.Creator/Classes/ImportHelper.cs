@@ -321,15 +321,13 @@ namespace Kaenx.Creator.Classes
                 if(type != null) {
                     if(type.StartsWith("DPST-")) {
                         string[] xtype = type.Split("-");
-                        com.TypeParentValue = xtype[1];
-                        com.TypeValue = xtype[2];
                         com.HasSub = true;
-                        Models.DataPointType dpt = DPTs.Single(d => d.Number == com.TypeParentValue);
-                        com.Type = dpt.SubTypes.Single(s => s.Number == com.TypeValue);
+                        com.Type = DPTs.Single(d => d.Number == xtype[1]);
+                        com.SubType = com.Type.SubTypes.Single(s => s.Number == xtype[2]);
                     } else if(type.StartsWith("DPT-")) {
                         string[] xtype = type.Split("-");
-                        com.TypeParentValue = xtype[1];
                         com.HasSub = false;
+                        com.Type = DPTs.Single(d => d.Number == xtype[1]);
                     } else {
                         throw new Exception("Unbekanntes DPT Format für KO: " + type);
                     }
@@ -377,14 +375,12 @@ namespace Kaenx.Creator.Classes
                     if(dpt[0] == "DPT") {
                         cref.OverwriteDpt = true;
                         cref.OverwriteDpst = false;
-                        cref.TypeParentValue = dpt[1];
+                        cref.Type = DPTs.Single(d => d.Number == dpt[1]);
                     } else {
                         cref.OverwriteDpt = true;
                         cref.OverwriteDpst = true;
-                        cref.TypeParentValue = dpt[1];
-                        cref.TypeValue = dpt[2];
-                        Models.DataPointType mdpt = DPTs.Single(d => d.Number == cref.TypeParentValue);
-                        cref.Type = mdpt.SubTypes.Single(s => s.Number == cref.TypeValue);
+                        cref.Type = DPTs.Single(d => d.Number == dpt[1]);
+                        cref.SubType = cref.Type.SubTypes.Single(s => s.Number == dpt[2]);
                     }
                 }
 

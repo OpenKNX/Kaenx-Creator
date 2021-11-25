@@ -203,10 +203,9 @@
                 <HeaderedContentControl Header="Paremeter Ref">
                     <ComboBox ItemsSource="{Binding ElementName=VersionList, Path=SelectedItem.ParameterRefs}" SelectedItem="{Binding ParameterRefObject}" DisplayMemberPath="Name" />
                 </HeaderedContentControl>
-                <TextBlock Margin="5" Visibility="{Binding ElementName=VersionList, Path=SelectedItem.IsParameterRefAuto, Converter={StaticResource BoolToVis}}">
-                    <Run Text="ParameterRef Name:" />
-                    <Run Text="{Binding ParameterRefObject.Name}" />
-                </TextBlock>
+                <HeaderedContentControl Header="Parameter Name:">
+                    <TextBlock Text="{Binding ParameterRefObject.ParameterObject.Name}" />
+                </HeaderedContentControl>
             </StackPanel>
         </DataTemplate>
         <DataTemplate x:Key="TempDynComObject">
@@ -217,10 +216,9 @@
                 <HeaderedContentControl Header="Kommunikationsobjekt Ref">
                     <ComboBox ItemsSource="{Binding ElementName=VersionList, Path=SelectedItem.ComObjectRefs}" SelectedItem="{Binding ComObjectRefObject}" DisplayMemberPath="Name" />
                 </HeaderedContentControl>
-                <TextBlock Margin="5" Visibility="{Binding ElementName=VersionList, Path=SelectedItem.IsComObjectRefAuto, Converter={StaticResource BoolToVis}}">
-                    <Run Text="Kommunikationsobjekt Ref Name:" />
-                    <Run Text="{Binding ComObjectRefObject.Name}" />
-                </TextBlock>
+                <HeaderedContentControl Header="Kommunikationsobjekt Name:">
+                    <TextBlock Text="{Binding ComObjectRefObject.ComObjectObject.Name}" />
+                </HeaderedContentControl>
             </StackPanel>
         </DataTemplate>
         <DataTemplate x:Key="TempDynParaBlock">
@@ -231,11 +229,16 @@
                 <HeaderedContentControl Header="Text">
                     <TextBox Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
                 </HeaderedContentControl>
-                <HeaderedContentControl Header="Paremeter Ref" Visibility="{Binding ElementName=VersionList, Path=SelectedItem.IsParameterRefAuto, Converter={StaticResource BoolToVis}, ConverterParameter=true}">
-                    <ComboBox ItemsSource="{Binding ElementName=VersionList, Path=SelectedItem.ParameterRefs}" SelectedItem="{Binding ParameterRefObject}" DisplayMemberPath="Name" />
-                </HeaderedContentControl>
-                <HeaderedContentControl Header="Parameter" Visibility="{Binding ElementName=VersionList, Path=SelectedItem.IsParameterRefAuto, Converter={StaticResource BoolToVis}}">
-                    <ComboBox ItemsSource="{Binding ElementName=VersionList, Path=SelectedItem.Parameters}" SelectedItem="{Binding ParameterRefObject.ParameterObject, Mode=TwoWay}" DisplayMemberPath="Name" />
+                <HeaderedContentControl Header="Text Parameter">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <CheckBox IsChecked="{Binding UseTextParameter}" VerticalAlignment="Center" />
+                        <ComboBox Grid.Column="1" IsEnabled="{Binding UseTextParameter}" ItemsSource="{Binding ElementName=VersionList, Path=SelectedItem.ParameterRefs}" SelectedItem="{Binding ParameterRefObject, Mode=TwoWay}" DisplayMemberPath="Name" />
+                    </Grid>
                 </HeaderedContentControl>
             </StackPanel>
         </DataTemplate>
@@ -338,7 +341,7 @@
             <TabItem Header="Allgemein" Style="{StaticResource TopTabItem}">
                 <StackPanel>
                     <HeaderedContentControl Header="Manufacturer ID">
-                        <TextBox Text="{Binding General.ManufacturerId}" MaxLength="4" />
+                        <TextBox Text="{Binding General.ManufacturerId, UpdateSourceTrigger=PropertyChanged}" />
                     </HeaderedContentControl>
                     <HeaderedContentControl Header="Projekt Name">
                         <TextBox Text="{Binding General.ProjectName, UpdateSourceTrigger=PropertyChanged}" />
@@ -805,10 +808,15 @@
                                         </Style>
                                     </StackPanel.Resources>
 
-                                    <Grid Margin="5">
+                                    <TextBlock Margin="5 0" VerticalAlignment="Center">
+                                        <Run Text="UID:" />
+                                        <Run Text="{Binding UId}"/>
+                                    </TextBlock>
+
+                                    <Grid Margin="5 0">
                                         <TextBlock VerticalAlignment="Center">
                                             <Run Text="ID:" />
-                                            <Run Text="{Binding Id, UpdateSourceTrigger=PropertyChanged}"/>
+                                            <Run Text="{Binding Id}"/>
                                         </TextBlock>
                                         <Button Content="Zurücksetzen" HorizontalAlignment="Right" Click="ResetId" />
                                     </Grid>
@@ -918,9 +926,19 @@
                                     <Style TargetType="CheckBox">
                                         <Setter Property="Margin" Value="5" />
                                     </Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Margin" Value="5" />
+                                    </Style>
                                 </StackPanel.Resources>
 
-                                <Grid Margin="5">
+                                
+                                <TextBlock Margin="5 0" VerticalAlignment="Center">
+                                    <Run Text="UID:" />
+                                    <Run Text="{Binding UId}"/>
+                                </TextBlock>
+
+
+                                <Grid Margin="5 0">
                                     <TextBlock VerticalAlignment="Center">
                                         <Run Text="ID:" />
                                         <Run Text="{Binding Id, UpdateSourceTrigger=PropertyChanged}"/>
@@ -1005,10 +1023,17 @@
                                         </Style>
                                     </StackPanel.Resources>
 
-                                    <Grid Margin="5">
+                                        
+                                    <TextBlock Margin="5 0" VerticalAlignment="Center">
+                                        <Run Text="UID:" />
+                                        <Run Text="{Binding UId}"/>
+                                    </TextBlock>
+
+
+                                    <Grid Margin="5 0">
                                         <TextBlock VerticalAlignment="Center">
                                             <Run Text="ID:" />
-                                            <Run Text="{Binding Id, UpdateSourceTrigger=PropertyChanged}"/>
+                                            <Run Text="{Binding Id}"/>
                                         </TextBlock>
                                         <Button Content="Zurücksetzen" HorizontalAlignment="Right" Click="ResetId" />
                                     </Grid>
@@ -1034,7 +1059,7 @@
                                     </HeaderedContentControl>
 
                                     <HeaderedContentControl Header="DataPointType">
-                                        <ComboBox Name="InComType" ItemsSource="{Binding DPTs, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" SelectedValue="{Binding TypeParentValue}" SelectedValuePath="Number" DisplayMemberPath="Name" />
+                                        <ComboBox Name="InComType" ItemsSource="{Binding DPTs, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" SelectedItem="{Binding Type}" DisplayMemberPath="Name" />
                                     </HeaderedContentControl>
 
                                     <HeaderedContentControl Header="DataPointSubType">
@@ -1045,7 +1070,7 @@
                                             </Grid.ColumnDefinitions>
 
                                             <CheckBox IsChecked="{Binding HasSub}" VerticalAlignment="Center" />
-                                            <ComboBox Grid.Column="1" ItemsSource="{Binding ElementName=InComType, Path=SelectedItem.SubTypes}" SelectedItem="{Binding Type, Mode=OneWayToSource}" SelectedValue="{Binding TypeValue}" SelectedValuePath="Number" DisplayMemberPath="Name" />
+                                            <ComboBox Grid.Column="1" IsEnabled="{Binding HasSub}" ItemsSource="{Binding ElementName=InComType, Path=SelectedItem.SubTypes}" SelectedItem="{Binding SubType}" DisplayMemberPath="Name" />
                                         </Grid>
                                     </HeaderedContentControl>
 
@@ -1086,8 +1111,8 @@
                                 <ColumnDefinition Width="150" />
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
-                            <Button Content="Hinzufügen" Margin="0 0 1 2" Click="ClickAddCom" />
-                            <Button Grid.Column="1" Content="Löschen" Click="ClickRemoveCom" Margin="1 0 0 2" IsEnabled="{Binding ElementName=ComobjectRefList, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
+                            <Button Content="Hinzufügen" Margin="0 0 1 2" Click="ClickAddComRef" />
+                            <Button Grid.Column="1" Content="Löschen" Click="ClickRemoveComRef" Margin="1 0 0 2" IsEnabled="{Binding ElementName=ComobjectRefList, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
                             <Button Grid.Row="1" Grid.ColumnSpan="2" Content="Auto generieren" Click="ClickGenerateRefAuto2" Margin="0 0 0 2" />
 
                             <ListView x:Name="ComobjectRefList" Grid.Row="2" Grid.ColumnSpan="2" ItemsSource="{Binding ComObjectRefs}" DisplayMemberPath="Name" />
@@ -1117,10 +1142,16 @@
                                         </Style>
                                     </StackPanel.Resources>
 
-                                    <Grid Margin="5">
+                                    
+                                    <TextBlock Margin="5 0" VerticalAlignment="Center">
+                                        <Run Text="UID:" />
+                                        <Run Text="{Binding UId}"/>
+                                    </TextBlock>
+
+                                    <Grid Margin="5 0">
                                         <TextBlock VerticalAlignment="Center">
                                             <Run Text="ID:" />
-                                            <Run Text="{Binding Id, UpdateSourceTrigger=PropertyChanged}"/>
+                                            <Run Text="{Binding Id}"/>
                                         </TextBlock>
                                         <Button Content="Zurücksetzen" HorizontalAlignment="Right" Click="ResetId" />
                                     </Grid>
@@ -1129,8 +1160,20 @@
                                         <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
                                     </HeaderedContentControl>
 
+                                    <HeaderedContentControl Header="Kommunikationsobjekt">
+                                        <ComboBox ItemsSource="{Binding ElementName=ComobjectList, Path=Items}" DisplayMemberPath="Name" SelectedItem="{Binding ComObjectObject}" />
+                                    </HeaderedContentControl>
+
                                     <HeaderedContentControl Header="Text">
-                                        <TextBox Text="{Binding Text}" />
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="auto" />
+                                                <ColumnDefinition />
+                                            </Grid.ColumnDefinitions>
+
+                                            <CheckBox IsChecked="{Binding OverwriteText}" VerticalAlignment="Center" />
+                                            <TextBox Grid.Column="2" Text="{Binding Text}" IsEnabled="{Binding OverwriteText}" VerticalAlignment="Center" />
+                                        </Grid>
                                     </HeaderedContentControl>
 
                                     <HeaderedContentControl Header="Funktionstext">
@@ -1157,10 +1200,6 @@
                                         </Grid>
                                     </HeaderedContentControl>
 
-                                    <HeaderedContentControl Header="Nummer">
-                                        <TextBox Text="{Binding Number}" />
-                                    </HeaderedContentControl>
-
                                     <HeaderedContentControl Header="DataPointType">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
@@ -1169,7 +1208,7 @@
                                             </Grid.ColumnDefinitions>
 
                                             <CheckBox IsChecked="{Binding OverwriteDpt}" VerticalAlignment="Center" />
-                                            <ComboBox Grid.Column="1" IsEnabled="{Binding OverwriteDpt}" Name="InComRefType" ItemsSource="{Binding DPTs, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" SelectedValue="{Binding TypeParentValue}" SelectedValuePath="Number" DisplayMemberPath="Name" />
+                                            <ComboBox Grid.Column="1" IsEnabled="{Binding OverwriteDpt}" Name="InComRefType" ItemsSource="{Binding DPTs, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" SelectedItem="{Binding Type}" DisplayMemberPath="Name" />
                                         </Grid>
                                     </HeaderedContentControl>
 
@@ -1182,7 +1221,7 @@
                                             </Grid.ColumnDefinitions>
 
                                             <CheckBox IsChecked="{Binding OverwriteDpst}" VerticalAlignment="Center" />
-                                            <ComboBox Grid.Column="1" IsEnabled="{Binding OverwriteDpst}" ItemsSource="{Binding ElementName=InComRefType, Path=SelectedItem.SubTypes}" SelectedItem="{Binding Type, Mode=OneWayToSource}" SelectedValue="{Binding TypeValue}" SelectedValuePath="Number" DisplayMemberPath="Name" />
+                                            <ComboBox Grid.Column="1" IsEnabled="{Binding OverwriteDpst}" ItemsSource="{Binding ElementName=InComRefType, Path=SelectedItem.SubTypes}" SelectedItem="{Binding SubType}" DisplayMemberPath="Name" />
                                         </Grid>
                                     </HeaderedContentControl>
 
@@ -1343,11 +1382,11 @@
                                             <TextBlock>
                                                 <Run Text="KO" />
                                                 <Run Text="{Binding Name}" />
-                                                <Run Text="{Binding ComObjectRefObject.ComObjectObject.Name}" />
-                                            </TextBlock>
-                                            <TextBlock Margin="10 0 0 0" Visibility="{Binding ElementName=VersionList, Path=SelectedItem.IsComObjectRefAuto, Converter={StaticResource BoolToVis}}">
-                                                <Run Text="[" />
                                                 <Run Text="{Binding ComObjectRefObject.Name}" />
+                                            </TextBlock>
+                                            <TextBlock Margin="10 0 0 0">
+                                                <Run Text="[" />
+                                                <Run Text="{Binding ComObjectRefObject.ComObjectObject.Name}" />
                                                 <Run Text="]" />
                                             </TextBlock>
                                         </StackPanel>

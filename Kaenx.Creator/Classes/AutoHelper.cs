@@ -82,5 +82,42 @@ namespace Kaenx.Creator.Classes
             return data.ToArray();
         }
 
+        public static int GetNextFreeUId(object list, int start = 1) {
+            int id = start;
+
+            if(list is System.Collections.ObjectModel.ObservableCollection<Parameter>) {
+                while((list as System.Collections.ObjectModel.ObservableCollection<Parameter>).Any(i => i.UId == id))
+                    id++;
+            }else if(list is System.Collections.ObjectModel.ObservableCollection<ParameterRef>) {
+                while((list as System.Collections.ObjectModel.ObservableCollection<ParameterRef>).Any(i => i.UId == id))
+                    id++;
+            }else if(list is System.Collections.ObjectModel.ObservableCollection<ComObject>) {
+                while((list as System.Collections.ObjectModel.ObservableCollection<ComObject>).Any(i => i.UId == id))
+                    id++;
+            }else if(list is System.Collections.ObjectModel.ObservableCollection<ComObjectRef>) {
+                while((list as System.Collections.ObjectModel.ObservableCollection<ComObjectRef>).Any(i => i.UId == id))
+                    id++;
+            }
+            return id;
+        }
+
+        public static int GetNextFreeId(object list, int start = 1) {
+            int id = start;
+
+            if(list is System.Collections.ObjectModel.ObservableCollection<Parameter>) {
+                while((list as System.Collections.ObjectModel.ObservableCollection<Parameter>).Any(i => i.Id == id))
+                    id++;
+            }else if(list is System.Collections.ObjectModel.ObservableCollection<ParameterRef>) {
+                while((list as System.Collections.ObjectModel.ObservableCollection<ParameterRef>).Any(i => i.Id == id))
+                    id++;
+            }else if(list is System.Collections.ObjectModel.ObservableCollection<ComObject>) {
+                while((list as System.Collections.ObjectModel.ObservableCollection<ComObject>).Any(i => i.Id == id))
+                    id++;
+            }else if(list is System.Collections.ObjectModel.ObservableCollection<ComObjectRef>) {
+                while((list as System.Collections.ObjectModel.ObservableCollection<ComObjectRef>).Any(i => i.Id == id))
+                    id++;
+            }
+            return id;
+        }
     }
 }

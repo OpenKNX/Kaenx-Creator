@@ -152,7 +152,7 @@ namespace Kaenx.Creator
                     Models.DataPointType dpt = new Models.DataPointType();
                     dpt.Name = xdpt.Attribute("Name").Value + " " + xdpt.Attribute("Text").Value;
                     dpt.Number = xdpt.Attribute("Number").Value;
-                    int size = int.Parse(xdpt.Attribute("SizeInBit").Value);
+                    dpt.Size = int.Parse(xdpt.Attribute("SizeInBit").Value);
 
                     IEnumerable<XElement> xsubs = xdpt.Descendants(XName.Get("DatapointSubtype"));
 
@@ -160,7 +160,6 @@ namespace Kaenx.Creator
                     {
                         Models.DataPointSubType dpst = new Models.DataPointSubType();
                         dpst.Name = dpt.Number + "." + Fill(xsub.Attribute("Number").Value, 3, "0") + " " + xsub.Attribute("Text").Value;
-                        dpst.Size = size;
                         dpst.Number = xsub.Attribute("Number").Value;
                         dpst.ParentNumber = dpt.Number;
                         dpt.SubTypes.Add(dpst);
@@ -213,7 +212,7 @@ namespace Kaenx.Creator
         private void ClickAddParamRef(object sender, RoutedEventArgs e)
         {
             Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
-            ver.ParameterRefs.Add(new Models.ParameterRef());
+            ver.ParameterRefs.Add(new Models.ParameterRef() { UId = AutoHelper.GetNextFreeUId(ver.ParameterRefs) });
         }
 
         private void ClickRemoveParamRef(object sender, RoutedEventArgs e)
@@ -228,6 +227,7 @@ namespace Kaenx.Creator
         {
             Models.Application app = AppList.SelectedItem as Models.Application;
             Models.AppVersion newVer = new Models.AppVersion() { Name = app.Name };
+            newVer.Dynamics.Add(new Models.Dynamic.DynamicMain());
 
             if(app.Versions.Count > 0){
                 Models.AppVersion ver = app.Versions.OrderByDescending(v => v.Number).ElementAt(0);
@@ -307,11 +307,11 @@ namespace Kaenx.Creator
         private void ClickAddParam(object sender, RoutedEventArgs e)
         {
             Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
-            Models.Parameter para = new Models.Parameter();
+            Models.Parameter para = new Models.Parameter() { UId = AutoHelper.GetNextFreeUId(ver.Parameters)};
             ver.Parameters.Add(para);
 
             if(ver.IsParameterRefAuto){
-                ver.ParameterRefs.Add(new Models.ParameterRef(para));
+                ver.ParameterRefs.Add(new Models.ParameterRef(para) { UId = AutoHelper.GetNextFreeUId(ver.ParameterRefs) });
             }
         }
 
@@ -340,18 +340,29 @@ namespace Kaenx.Creator
 
         private void ClickAddCom(object sender, RoutedEventArgs e)
         {
-            Models.ComObject com = new Models.ComObject();
             Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
+            Models.ComObject com = new Models.ComObject() { UId = AutoHelper.GetNextFreeUId(ver.ComObjects) };
             ver.ComObjects.Add(com);
 
             if(ver.IsComObjectRefAuto){
-                ver.ComObjectRefs.Add(new Models.ComObjectRef(com));
+                ver.ComObjectRefs.Add(new Models.ComObjectRef(com) { UId = AutoHelper.GetNextFreeUId(ver.ComObjectRefs) });
             }
+        }
+
+        private void ClickAddComRef(object sender, RoutedEventArgs e)
+        {
+            Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
+            ver.ComObjectRefs.Add(new Models.ComObjectRef() { UId = AutoHelper.GetNextFreeUId(ver.ComObjectRefs) });
         }
 
         private void ClickRemoveCom(object sender, RoutedEventArgs e)
         {
             (VersionList.SelectedItem as Models.AppVersion).ComObjects.Remove(ComobjectList.SelectedItem as Models.ComObject);
+        }
+
+        private void ClickRemoveComRef(object sender, RoutedEventArgs e)
+        {
+            (VersionList.SelectedItem as Models.AppVersion).ComObjectRefs.Remove(ComobjectRefList.SelectedItem as Models.ComObjectRef);
         }
 
         #endregion
@@ -395,33 +406,37 @@ namespace Kaenx.Creator
                         foreach(Models.Parameter para in ver.Parameters)
                         {
                             if (!string.IsNullOrEmpty(para._memory))
-                            {
-                                Models.Memory mem = ver.Memories.Single(m => m.Name == para._memory);
-                                para.MemoryObject = mem;
-                            }
+                                para.MemoryObject = ver.Memories.Single(m => m.Name == para._memory);
+                                
                             if (!string.IsNullOrEmpty(para._parameterType))
-                            {
-                                Models.ParameterType pt = ver.ParameterTypes.Single(p => p.Name == para._parameterType);
-                                para.ParameterTypeObject = pt;
-                            }
+                                para.ParameterTypeObject = ver.ParameterTypes.Single(p => p.Name == para._parameterType);
                         }
 
                         foreach(Models.ParameterRef pref in ver.ParameterRefs)
                         {
-                            if (!string.IsNullOrEmpty(pref._parameter))
-                            {
-                                Models.Parameter para = ver.Parameters.Single(p => p.Name == pref._parameter);
-                                pref.ParameterObject = para;
-                            }
+                            if (pref._parameter != -1)
+                                pref.ParameterObject = ver.Parameters.Single(p => p.UId == pref._parameter);
+                        }
+
+                        foreach(Models.ComObject com in ver.ComObjects)
+                        {
+                            if (!string.IsNullOrEmpty(com._typeNumber))
+                                com.Type = DPTs.Single(d => d.Number == com._typeNumber);
+                                
+                            if(!string.IsNullOrEmpty(com._subTypeNumber) && com.Type != null)
+                                com.SubType = com.Type.SubTypes.Single(d => d.Number == com._subTypeNumber);
                         }
 
                         foreach(Models.ComObjectRef cref in ver.ComObjectRefs)
                         {
-                            if (!string.IsNullOrEmpty(cref._comObject))
-                            {
-                                Models.ComObject com = ver.ComObjects.Single(c => c.Name == cref._comObject);
-                                cref.ComObjectObject = com;
-                            }
+                            if (cref._comObject != -1)
+                                cref.ComObjectObject = ver.ComObjects.Single(c => c.UId == cref._comObject);
+
+                            if (!string.IsNullOrEmpty(cref._typeNumber))
+                                cref.Type = DPTs.Single(d => d.Number == cref._typeNumber);
+                                
+                            if(!string.IsNullOrEmpty(cref._subTypeNumber) && cref.Type != null)
+                                cref.SubType = cref.Type.SubTypes.Single(d => d.Number == cref._subTypeNumber);
                         }
 
                         LoadSubDyn(ver.Dynamics[0], ver.ParameterRefs.ToList(), ver.ComObjectRefs.ToList());
@@ -458,30 +473,21 @@ namespace Kaenx.Creator
             {
                 item.Parent = dyn;
 
-                if (item is Models.Dynamic.DynParameter)
+                if (item is Models.Dynamic.DynParameter dp)
                 {
-                    Models.Dynamic.DynParameter para = item as Models.Dynamic.DynParameter;
-                    if (!string.IsNullOrEmpty(para._parameter))
-                    {
-                        Models.ParameterRef pr = paras.Single(p => p.Name == para._parameter);
-                        para.ParameterRefObject = pr;
-                    }
-                } else if(item is Models.Dynamic.DynChoose)
+                    if (dp._parameter != -1)
+                        dp.ParameterRefObject = paras.Single(p => p.UId == dp._parameter);
+                } else if(item is Models.Dynamic.DynChoose dc)
                 {
-                    Models.Dynamic.DynChoose ch = item as Models.Dynamic.DynChoose;
-                    if (!string.IsNullOrEmpty(ch._parameterRef))
-                    {
-                        Models.ParameterRef pr = paras.Single(p => p.Name == ch._parameterRef);
-                        ch.ParameterRefObject = pr;
-                    }
-                } else if(item is Models.Dynamic.DynComObject)
+                    if (dc._parameterRef != -1)
+                        dc.ParameterRefObject = paras.Single(p => p.UId == dc._parameterRef);
+                } else if(item is Models.Dynamic.DynComObject dco)
                 {
-                    Models.Dynamic.DynComObject dc = item as Models.Dynamic.DynComObject;
-                    if (!string.IsNullOrEmpty(dc._comObjectRef))
-                    {
-                        Models.ComObjectRef cr = coms.Single(c => c.Name == dc._comObjectRef);
-                        dc.ComObjectRefObject = cr;
-                    }
+                    if (dco._comObjectRef != -1)
+                        dco.ComObjectRefObject = coms.Single(c => c.UId == dco._comObjectRef);
+                } else if(item is Models.Dynamic.DynParaBlock dpb) {
+                    if(dpb._parameter != -1)
+                        dpb.ParameterRefObject = paras.Single(p => p.UId == dpb._parameter);
                 }
 
                 if (!(item is Models.Dynamic.DynParameter) && item.Items != null)
@@ -537,7 +543,8 @@ namespace Kaenx.Creator
             foreach(Models.Parameter para in ver.Parameters)
             {
                 Models.ParameterRef pref = new Models.ParameterRef();
-                pref.Name = para.Id + " " + para.Name;
+                pref.UId = AutoHelper.GetNextFreeUId(ver.ParameterRefs);
+                pref.Name = para.Name;
                 pref.ParameterObject = para;
                 ver.ParameterRefs.Add(pref);
             }
@@ -550,7 +557,8 @@ namespace Kaenx.Creator
             foreach(Models.ComObject com in ver.ComObjects)
             {
                 Models.ComObjectRef cref = new Models.ComObjectRef();
-                cref.Name = com.Id + " " + com.Name;
+                cref.UId = AutoHelper.GetNextFreeUId(ver.ComObjectRefs);
+                cref.Name = com.Name;
                 cref.ComObjectObject = com;
                 ver.ComObjectRefs.Add(cref);
             }
@@ -780,6 +788,9 @@ namespace Kaenx.Creator
             PublishActions.Add(new Models.PublishAction() { Text = $"{devices.Count} Geräte - {hardware.Count} Hardware - {apps.Count} Applikationen - {versions.Count} Versionen" });
 
 
+            //if(General.ManufacturerId <= 0 || General.ManufacturerId > 0xFFFF)
+            //    PublishActions.Add(new Models.PublishAction() { Text = $"Ungültige HerstellerId angegeben: {General.ManufacturerId:X4}", State = Models.PublishState.Fail });
+
             #region Hardware Check
             PublishActions.Add(new Models.PublishAction() { Text = "Überprüfe Hardware" });
             Regex reg = new Regex("^([0-9a-zA-Z_-]|\\s)+$");
@@ -983,8 +994,13 @@ namespace Kaenx.Creator
             
                 foreach(Models.ComObject com in vers.ComObjects) {
                     if(string.IsNullOrEmpty(com.Text)) PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {com.Name}: Kein Text angegeben", State = Models.PublishState.Fail });
-                    if(string.IsNullOrEmpty(com.TypeParentValue) && com.Name.ToLower() != "dummy") PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {com.Name}: Kein DataPointType angegeben", State = Models.PublishState.Fail });
+                    //if(string.IsNullOrEmpty(com.TypeParentValue) && com.Name.ToLower() != "dummy") PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {com.Name}: Kein DataPointType angegeben", State = Models.PublishState.Fail });
                     if(com.HasSub && com.Type == null && com.Name.ToLower() != "dummy") PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {com.Name}: Kein DataPointSubType angegeben", State = Models.PublishState.Fail });
+                }
+
+                foreach(Models.ComObjectRef rcom in vers.ComObjectRefs) {
+                    if(rcom.ComObjectObject == null) PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {rcom.Name}: Kein KO-Ref angegeben", State = Models.PublishState.Fail });
+                    //if(rcom.HasSub && rcom.Type == null && rcom.Name.ToLower() != "dummy") PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {rcom.Name}: Kein DataPointSubType angegeben", State = Models.PublishState.Fail });
                 }
 
                 //TODO check ComObjectRefs for overwriting
@@ -1002,10 +1018,10 @@ namespace Kaenx.Creator
             else
                 PublishActions.Add(new Models.PublishAction() { Text = "Überprüfung bestanden", State = Models.PublishState.Success });
 
-            await Task.Delay(1000);
-            
             PublishActions.Add(new Models.PublishAction() { Text = "Erstelle Produktdatenbank", State = Models.PublishState.Info });
 
+            await Task.Delay(1000);
+            
             ExportHelper helper = new ExportHelper(General, hardware, devices, apps, versions);
             switch(InPublishTarget.SelectedValue) {
                 case "ets":

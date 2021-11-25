@@ -8,6 +8,8 @@ namespace Kaenx.Creator.Models
 {
     public class Memory : INotifyPropertyChanged
     {
+        //TODO add UId
+        
         private string _name = "dummy";
         public string Name
         {

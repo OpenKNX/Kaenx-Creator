@@ -28,10 +28,10 @@ namespace Kaenx.Creator.Models.Dynamic
         }
 
         [JsonIgnore]
-        public string _parameterRef;
-        public string ParameterRef
+        public int _parameterRef;
+        public int ParameterRef
         {
-            get { return ParameterRefObject?.Name; }
+            get { return ParameterRefObject?.UId ?? -1; }
             set { _parameterRef = value; }
         }
 

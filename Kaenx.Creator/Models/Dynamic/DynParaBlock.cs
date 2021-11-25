@@ -26,6 +26,13 @@ namespace Kaenx.Creator.Models.Dynamic
             set { _text = value; Changed("Text"); }
         }
 
+        private bool _useTextParam = false;
+        public bool UseTextParameter
+        {
+            get { return _useTextParam; }
+            set { _useTextParam = value; Changed("UseTextParameter"); }
+        }
+
 
         private ParameterRef _parameterRefObject;
         [JsonIgnore]
@@ -36,10 +43,10 @@ namespace Kaenx.Creator.Models.Dynamic
         }
 
         [JsonIgnore]
-        public string _parameter;
-        public string ParameterRef
+        public int _parameter;
+        public int ParameterRef
         {
-            get { return ParameterRefObject?.Name; }
+            get { return ParameterRefObject?.UId ?? -1; }
             set { _parameter = value; }
         }
 

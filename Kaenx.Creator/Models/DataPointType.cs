@@ -9,6 +9,7 @@ namespace Kaenx.Creator.Models
     {
         public string Name { get; set; }
         public string Number { get; set; }
+        public int Size { get; set; }
 
         public ObservableCollection<DataPointSubType> SubTypes { get; set; } = new ObservableCollection<DataPointSubType>();
     }

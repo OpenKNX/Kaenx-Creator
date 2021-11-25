@@ -28,10 +28,10 @@ namespace Kaenx.Creator.Models.Dynamic
         }
 
         [JsonIgnore]
-        public string _comObjectRef;
-        public string ComObjectRef
+        public int _comObjectRef;
+        public int ComObjectRef
         {
-            get { return ComObjectRefObject?.Name; }
+            get { return ComObjectRefObject?.UId ?? -1; }
             set { _comObjectRef = value; }
         }
 

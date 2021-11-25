@@ -193,7 +193,7 @@ namespace Kaenx.Creator.Classes
                     XElement xpara = new XElement(Get("Parameter"));
                     
                     if(para.Id == -1) {
-                        para.Id = GetNextFreeId(ver.Parameters);
+                        para.Id = AutoHelper.GetNextFreeId(ver.Parameters);
                     }
                     string id = appVersion + "_P-" + para.Id;
                     ParamIds.Add(para.Name, id);
@@ -232,7 +232,7 @@ namespace Kaenx.Creator.Classes
                     if (pref.ParameterObject == null) continue;
                     XElement xpref = new XElement(Get("ParameterRef"));
                     if(pref.Id == -1) {
-                        pref.Id = GetNextFreeId(ver.ParameterRefs);
+                        pref.Id = AutoHelper.GetNextFreeId(ver.ParameterRefs);
                     }
                     string id = $"{appVersion}_P-{pref.ParameterObject.Id}";
                     xpref.SetAttributeValue("RefId", id);
@@ -253,7 +253,7 @@ namespace Kaenx.Creator.Classes
                 {
                     XElement xcom = new XElement(Get("ComObject"));
                     if(com.Id == -1){
-                        com.Id = GetNextFreeId(ver.ComObjects, 0);
+                        com.Id = AutoHelper.GetNextFreeId(ver.ComObjects, 0);
                     }
                     xcom.SetAttributeValue("Id", $"{appVersion}_O-{com.Id}");
                     xcom.SetAttributeValue("Name", com.Name);
@@ -262,12 +262,7 @@ namespace Kaenx.Creator.Classes
                     xcom.SetAttributeValue("FunctionText", com.FunctionText);
                     xcom.SetAttributeValue("VisibleDescription", com.Description);
 
-                    int size;
-                    if(com.HasSub)
-                        size = com.Type.Size;
-                    else
-                        size = 1; //TODO get correct size for main DPT
-
+                    int size = com.Type.Size;
                     if (size > 7)
                         xcom.SetAttributeValue("ObjectSize", (size / 8) + " Byte");
                     else
@@ -282,9 +277,9 @@ namespace Kaenx.Creator.Classes
 
                     //TODO als implement if com has no dpt
                     if(com.HasSub)
-                        xcom.SetAttributeValue("DatapointType", "DPST-" + com.Type.ParentNumber + "-" + com.Type.Number);
+                        xcom.SetAttributeValue("DatapointType", "DPST-" + com.Type.Number + "-" + com.SubType.Number);
                     else
-                        xcom.SetAttributeValue("DatapointType", "DPT-" + com.TypeParentValue);
+                        xcom.SetAttributeValue("DatapointType", "DPT-" + com.Type.Number);
                     temp.Add(xcom);
                 }
 
@@ -298,22 +293,29 @@ namespace Kaenx.Creator.Classes
                 {
                     XElement xcref = new XElement(Get("ComObjectRef"));
                     if(cref.Id == -1) {
-                        cref.Id = GetNextFreeId(ver.ComObjectRefs, 0);
+                        cref.Id = AutoHelper.GetNextFreeId(ver.ComObjectRefs, 0);
                     }
                     string id = $"{appVersion}_O-{cref.ComObjectObject.Id}";
                     xcref.SetAttributeValue("RefId", id);
                     id += $"_R-{cref.Id}";
                     xcref.SetAttributeValue("Id", id);
+                    if(cref.OverwriteText)
+                        xcref.SetAttributeValue("Text", cref.Text);
                     if(cref.OverwriteFunctionText)
                         xcref.SetAttributeValue("FunctionText", cref.FunctionText);
                     if(cref.OverwriteDescription)
                         xcref.SetAttributeValue("VisibleDescription", cref.Description);
                     if(cref.OverwriteDpt) {
+                        int size = cref.Type.Size;
                         if(cref.OverwriteDpst) {
-                            xcref.SetAttributeValue("DatapointType", "DPST-" + cref.Type.ParentNumber + "-" + cref.Type.Number);
+                            xcref.SetAttributeValue("DatapointType", "DPST-" + cref.Type.Number + "-" + cref.SubType.Number);
                         } else {
-                            xcref.SetAttributeValue("DatapointType", "DPT-" + cref.TypeParentValue);
+                            xcref.SetAttributeValue("DatapointType", "DPT-" + cref.Type.Number);
                         }
+                        if (size > 7)
+                            xcref.SetAttributeValue("ObjectSize", (size / 8) + " Byte");
+                        else
+                            xcref.SetAttributeValue("ObjectSize", size + " Bit");
                     }
                     temp.Add(xcref);
                 }
@@ -431,24 +433,7 @@ namespace Kaenx.Creator.Classes
 
 
 
-        private int GetNextFreeId(object list, int start = 1) {
-            int id = start;
-
-            if(list is System.Collections.ObjectModel.ObservableCollection<Parameter>) {
-                while((list as System.Collections.ObjectModel.ObservableCollection<Parameter>).Any(i => i.Id == id))
-                    id++;
-            }else if(list is System.Collections.ObjectModel.ObservableCollection<ParameterRef>) {
-                while((list as System.Collections.ObjectModel.ObservableCollection<ParameterRef>).Any(i => i.Id == id))
-                    id++;
-            }else if(list is System.Collections.ObjectModel.ObservableCollection<ComObject>) {
-                while((list as System.Collections.ObjectModel.ObservableCollection<ComObject>).Any(i => i.Id == id))
-                    id++;
-            }else if(list is System.Collections.ObjectModel.ObservableCollection<ComObjectRef>) {
-                while((list as System.Collections.ObjectModel.ObservableCollection<ComObjectRef>).Any(i => i.Id == id))
-                    id++;
-            }
-            return id;
-        }
+        
 
 
 
@@ -507,7 +492,7 @@ namespace Kaenx.Creator.Classes
             }
 
             channel.SetAttributeValue("Name", ch.Name);
-            channel.SetAttributeValue("Text", ""); //Todo einfügen
+            //channel.SetAttributeValue("Text", ""); //Todo einfügen
 
             return channel;
         }

@@ -8,6 +8,13 @@ namespace Kaenx.Creator.Models
 {
     public class ComObject : INotifyPropertyChanged
     {
+        private int _uid = -1;
+        public int UId
+        {
+            get { return _uid; }
+            set { _uid = value; Changed("UId"); }
+        }
+
         private int _id = -1;
         public int Id
         {
@@ -112,19 +119,39 @@ namespace Kaenx.Creator.Models
             set { _hasSub = value; Changed("HasSub"); }
         }
 
-        private string _typeParentValue;
-        public string TypeParentValue
+
+
+        
+        [JsonIgnore]
+        public string _subTypeNumber;
+        public string SubTypeNumber
         {
-            get { return _typeParentValue; }
-            set { _typeParentValue = value; Changed("TypeParentValue"); }
+            get { return SubType?.Number; }
+            set { _subTypeNumber = value; Changed("SubTypeNumber"); }
         }
 
-        private DataPointSubType _type;
-        public DataPointSubType Type
+        private DataPointSubType _subType;
+        public DataPointSubType SubType
+        {
+            get { return _subType; }
+            set { if (value == null) return; _subType = value; Changed("SubType"); }
+        }
+
+        [JsonIgnore]
+        public string _typeNumber;
+        public string TypeNumber
+        {
+            get { return Type?.Number; }
+            set { if (value == null) return;  _typeNumber = value; Changed("TypeNumber"); }
+        }
+
+        private DataPointType _type;
+        public DataPointType Type
         {
             get { return _type; }
             set { if (value == null) return; _type = value; Changed("Type"); }
         }
+
 
 
         public event PropertyChangedEventHandler PropertyChanged;

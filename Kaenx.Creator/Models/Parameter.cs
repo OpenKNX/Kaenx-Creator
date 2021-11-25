@@ -11,6 +11,13 @@ namespace Kaenx.Creator.Models
 {
     public class Parameter : INotifyPropertyChanged
     {   
+        private int _uid = -1;
+        public int UId
+        {
+            get { return _uid; }
+            set { _uid = value; Changed("UId"); }
+        }
+
         private int _id = -1;
         public int Id
         {
@@ -34,6 +41,7 @@ namespace Kaenx.Creator.Models
             set { _isInMemory = value; Changed("IsInMemory"); }
         }
 
+        //TODO use UId from Memory Object
         private Memory _memoryObject;
         [JsonIgnore]
         public Memory MemoryObject

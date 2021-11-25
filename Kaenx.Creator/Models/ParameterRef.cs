@@ -22,6 +22,13 @@ namespace Kaenx.Creator.Models
             Name = (sender as Parameter).Name;
         }
 
+        private int _uid = -1;
+        public int UId
+        {
+            get { return _uid; }
+            set { _uid = value; Changed("UId"); }
+        }
+
         private int _id = -1;
         public int Id
         {
@@ -48,10 +55,10 @@ namespace Kaenx.Creator.Models
         }
 
         [JsonIgnore]
-        public string _parameter;
-        public string Parameter
+        public int _parameter;
+        public int Parameter
         {
-            get { return ParameterObject?.Name; }
+            get { return ParameterObject?.UId ?? -1; }
             set { _parameter = value; }
         }
 
