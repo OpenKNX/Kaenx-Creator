@@ -529,7 +529,7 @@ namespace Kaenx.Creator
             if (result == true)
             {
                 ImportHelper helper = new ImportHelper(dialog.FileName, bcus);
-                helper.Start(_general);
+                helper.Start(_general, DPTs);
             }
 
             
@@ -995,12 +995,13 @@ namespace Kaenx.Creator
                 foreach(Models.ComObject com in vers.ComObjects) {
                     if(string.IsNullOrEmpty(com.Text)) PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {com.Name}: Kein Text angegeben", State = Models.PublishState.Fail });
                     //if(string.IsNullOrEmpty(com.TypeParentValue) && com.Name.ToLower() != "dummy") PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {com.Name}: Kein DataPointType angegeben", State = Models.PublishState.Fail });
-                    if(com.HasSub && com.Type == null && com.Name.ToLower() != "dummy") PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {com.Name}: Kein DataPointSubType angegeben", State = Models.PublishState.Fail });
+                    if(com.HasDpt && com.Type == null) PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {com.Name}: Kein DataPointType angegeben", State = Models.PublishState.Fail });
+                    if(com.HasDpt && com.HasDpts && com.SubType == null) PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {com.Name}: Kein DataPointSubType angegeben", State = Models.PublishState.Fail });
                 }
 
                 foreach(Models.ComObjectRef rcom in vers.ComObjectRefs) {
                     if(rcom.ComObjectObject == null) PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {rcom.Name}: Kein KO-Ref angegeben", State = Models.PublishState.Fail });
-                    //if(rcom.HasSub && rcom.Type == null && rcom.Name.ToLower() != "dummy") PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {rcom.Name}: Kein DataPointSubType angegeben", State = Models.PublishState.Fail });
+                    //if(rcom.HasDpts && rcom.Type == null && rcom.Name.ToLower() != "dummy") PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {rcom.Name}: Kein DataPointSubType angegeben", State = Models.PublishState.Fail });
                 }
 
                 //TODO check ComObjectRefs for overwriting

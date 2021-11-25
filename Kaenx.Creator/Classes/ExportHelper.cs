@@ -262,12 +262,6 @@ namespace Kaenx.Creator.Classes
                     xcom.SetAttributeValue("FunctionText", com.FunctionText);
                     xcom.SetAttributeValue("VisibleDescription", com.Description);
 
-                    int size = com.Type.Size;
-                    if (size > 7)
-                        xcom.SetAttributeValue("ObjectSize", (size / 8) + " Byte");
-                    else
-                        xcom.SetAttributeValue("ObjectSize", size + " Bit");
-
                     if (com.FlagComm != FlagType.Default) xcom.SetAttributeValue("CommunicationFlag", com.FlagComm.ToString());
                     if (com.FlagRead != FlagType.Default) xcom.SetAttributeValue("ReadFlag", com.FlagRead.ToString());
                     if (com.FlagWrite != FlagType.Default) xcom.SetAttributeValue("WriteFlag", com.FlagWrite.ToString());
@@ -275,11 +269,19 @@ namespace Kaenx.Creator.Classes
                     if (com.FlagUpdate != FlagType.Default) xcom.SetAttributeValue("UpdateFlag", com.FlagUpdate.ToString());
                     if (com.FlagOnInit != FlagType.Default) xcom.SetAttributeValue("ReadOnInitFlag", com.FlagOnInit.ToString());
 
-                    //TODO als implement if com has no dpt
-                    if(com.HasSub)
-                        xcom.SetAttributeValue("DatapointType", "DPST-" + com.Type.Number + "-" + com.SubType.Number);
-                    else
-                        xcom.SetAttributeValue("DatapointType", "DPT-" + com.Type.Number);
+                    if(com.HasDpt) {
+                        int size = com.Type.Size;
+                        if (size > 7)
+                            xcom.SetAttributeValue("ObjectSize", (size / 8) + " Byte");
+                        else
+                            xcom.SetAttributeValue("ObjectSize", size + " Bit");
+
+                        if(com.HasDpts)
+                            xcom.SetAttributeValue("DatapointType", "DPST-" + com.Type.Number + "-" + com.SubType.Number);
+                        else
+                            xcom.SetAttributeValue("DatapointType", "DPT-" + com.Type.Number);
+                    }
+                    
                     temp.Add(xcom);
                 }
 

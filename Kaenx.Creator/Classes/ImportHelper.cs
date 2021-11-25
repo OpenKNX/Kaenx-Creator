@@ -23,6 +23,7 @@ namespace Kaenx.Creator.Classes
         private ZipArchive Archive { get; set; }
         private Models.ModelGeneral _general;
         private string _path;
+        private ObservableCollection<Models.DataPointType> DPTs;
         
         private Models.Application currentApp = null;
         private Models.AppVersion currentVers = null;
@@ -32,8 +33,9 @@ namespace Kaenx.Creator.Classes
             _bcus = bcus;
         }
 
-        public void Start(Models.ModelGeneral general) {
+        public void Start(Models.ModelGeneral general, ObservableCollection<Models.DataPointType> dpts) {
             _general = general;
+            DPTs = dpts;
             Archive = ZipFile.OpenRead(_path);
             string manuHex = "";
 
@@ -276,7 +278,7 @@ namespace Kaenx.Creator.Classes
                 
                 pref.OverwriteValue = xref.Attribute("Value") != null;
                 pref.Value = xref.Attribute("Value")?.Value ?? "";
-                pref.OverwriteAccess = xref.Attribute("Acces") != null;
+                pref.OverwriteAccess = xref.Attribute("Access") != null;
                 pref.Access = xref.Attribute("Access")?.Value switch {
                     "None" => ParamAccess.None,
                     "Read" => ParamAccess.Read,
@@ -296,9 +298,6 @@ namespace Kaenx.Creator.Classes
         }
 
         public void ImportComObjects(XElement xcoms) {
-            string jsonPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "datapoints.json");
-            List<Models.DataPointType> DPTs = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Models.DataPointType>>(System.IO.File.ReadAllText(jsonPath));
-
             foreach(XElement xcom in xcoms.Elements()) {
                 Models.ComObject com = new Models.ComObject() {
                     Name = xcom.Attribute("Name")?.Value ?? "",
@@ -319,14 +318,15 @@ namespace Kaenx.Creator.Classes
                 string type = xcom.Attribute("DatapointType")?.Value;
 
                 if(type != null) {
+                    com.HasDpt = true;
                     if(type.StartsWith("DPST-")) {
                         string[] xtype = type.Split("-");
-                        com.HasSub = true;
+                        com.HasDpts = true;
                         com.Type = DPTs.Single(d => d.Number == xtype[1]);
                         com.SubType = com.Type.SubTypes.Single(s => s.Number == xtype[2]);
                     } else if(type.StartsWith("DPT-")) {
                         string[] xtype = type.Split("-");
-                        com.HasSub = false;
+                        com.HasDpts = false;
                         com.Type = DPTs.Single(d => d.Number == xtype[1]);
                     } else {
                         throw new Exception("Unbekanntes DPT Format für KO: " + type);
@@ -340,9 +340,6 @@ namespace Kaenx.Creator.Classes
         }
 
         public void ImportComObjectRefs(XElement xrefs) {
-            string jsonPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "datapoints.json");
-            List<Models.DataPointType> DPTs = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Models.DataPointType>>(System.IO.File.ReadAllText(jsonPath));
-
             foreach(XElement xref in xrefs.Elements()) {
                 //TODO also import DisplayOrder and Tag
                 Models.ComObjectRef cref = new Models.ComObjectRef();

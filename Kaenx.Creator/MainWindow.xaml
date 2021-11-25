@@ -1059,18 +1059,26 @@
                                     </HeaderedContentControl>
 
                                     <HeaderedContentControl Header="DataPointType">
-                                        <ComboBox Name="InComType" ItemsSource="{Binding DPTs, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" SelectedItem="{Binding Type}" DisplayMemberPath="Name" />
-                                    </HeaderedContentControl>
-
-                                    <HeaderedContentControl Header="DataPointSubType">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="auto" />
                                                 <ColumnDefinition />
                                             </Grid.ColumnDefinitions>
 
-                                            <CheckBox IsChecked="{Binding HasSub}" VerticalAlignment="Center" />
-                                            <ComboBox Grid.Column="1" IsEnabled="{Binding HasSub}" ItemsSource="{Binding ElementName=InComType, Path=SelectedItem.SubTypes}" SelectedItem="{Binding SubType}" DisplayMemberPath="Name" />
+                                            <CheckBox IsChecked="{Binding HasDpt}" VerticalAlignment="Center" />
+                                            <ComboBox Grid.Column="1" IsEnabled="{Binding HasDpt}" Name="InComType" ItemsSource="{Binding DPTs, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" SelectedItem="{Binding Type}" DisplayMemberPath="Name" />
+                                        </Grid>
+                                    </HeaderedContentControl>
+
+                                    <HeaderedContentControl Header="DataPointSubType" IsEnabled="{Binding HasDpt}">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="auto" />
+                                                <ColumnDefinition />
+                                            </Grid.ColumnDefinitions>
+
+                                            <CheckBox IsChecked="{Binding HasDpts}" VerticalAlignment="Center" />
+                                            <ComboBox Grid.Column="1" IsEnabled="{Binding HasDpts}" ItemsSource="{Binding ElementName=InComType, Path=SelectedItem.SubTypes}" SelectedItem="{Binding SubType}" DisplayMemberPath="Name" />
                                         </Grid>
                                     </HeaderedContentControl>
 

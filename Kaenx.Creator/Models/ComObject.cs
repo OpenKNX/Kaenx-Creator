@@ -112,11 +112,18 @@ namespace Kaenx.Creator.Models
             set { if (value == null) return;  _typeValue = value; Changed("TypeValue"); }
         }
 
-        private bool _hasSub = false;
-        public bool HasSub
+        private bool _hasDpt = false;
+        public bool HasDpt
         {
-            get { return _hasSub; }
-            set { _hasSub = value; Changed("HasSub"); }
+            get { return _hasDpt; }
+            set { _hasDpt = value; Changed("HasDpt"); }
+        }
+
+        private bool _hasDpts = false;
+        public bool HasDpts
+        {
+            get { return _hasDpts; }
+            set { _hasDpts = value; Changed("HasDpts"); }
         }
 
 
