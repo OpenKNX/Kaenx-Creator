@@ -24,6 +24,7 @@ namespace Kaenx.Creator.Classes
         private Models.ModelGeneral _general;
         private string _path;
         private ObservableCollection<Models.DataPointType> DPTs;
+        private int _uidCounter = 1;
         
         private Models.Application currentApp = null;
         private Models.AppVersion currentVers = null;
@@ -124,6 +125,9 @@ namespace Kaenx.Creator.Classes
                 };
                 currentApp.Versions.Add(currentVers);
             }
+            string ns = xapp.Name.NamespaceName;
+            ns = ns.Substring(ns.LastIndexOf('/')+1);
+            currentVers.NamespaceVersion = int.Parse(ns);
 #endregion
             XElement xstatic = xapp.Element(GetXName("Static"));
             ImportSegments(xstatic.Element(GetXName("Code")));
@@ -132,12 +136,15 @@ namespace Kaenx.Creator.Classes
             ImportParameterRefs(xstatic.Element(GetXName("ParameterRefs")));
             ImportComObjects(xstatic.Element(GetXName("ComObjectTable")));
             ImportComObjectRefs(xstatic.Element(GetXName("ComObjectRefs")));
+            ImportDynamic(xapp.Element(GetXName("Dynamic")));
         }
 
         public void ImportSegments(XElement xcodes) {
+            _uidCounter = 1;
             foreach(XElement xcode in xcodes.Elements()) {
                 if(xcode.Name.LocalName == "AbsoluteSegment") {
                     currentVers.Memories.Add(new Models.Memory() {
+                        UId = _uidCounter++,
                         Address = int.Parse(xcode.Attribute("Address").Value),
                         Size = int.Parse(xcode.Attribute("Size").Value),
                         Name = GetLastSplit(xcode.Attribute("Id").Value) +  " " + (xcode.Attribute("Name")?.Value ?? "Unnamed"),
@@ -147,6 +154,7 @@ namespace Kaenx.Creator.Classes
                     });
                 } else if(xcode.Name.LocalName == "RelativeSegment") {
                     currentVers.Memories.Add(new Models.Memory() {
+                        UId = _uidCounter++,
                         Size = int.Parse(xcode.Attribute("Size").Value),
                         Offset = int.Parse(xcode.Attribute("Offset")?.Value ?? "0"),
                         Name = GetLastSplit(xcode.Attribute("Id").Value) + (xcode.Attribute("Name").Value ?? ""),
@@ -161,10 +169,13 @@ namespace Kaenx.Creator.Classes
         }
 
         public void ImportParameterTypes(XElement xparatypes) {
+            _uidCounter = 1;
+
             foreach(XElement xparatype in xparatypes.Elements()) {
                 Models.ParameterType ptype = new Models.ParameterType() {
                     Name = xparatype.Attribute("Name").Value,
-                    IsSizeAuto = false
+                    IsSizeAuto = false,
+                    UId = _uidCounter++
                 };
 
                 XElement xsub = xparatype.Elements().ElementAt(0);
@@ -215,38 +226,62 @@ namespace Kaenx.Creator.Classes
         }
 
         public void ImportParameter(XElement xparas) {
+            _uidCounter = 1;
             //TODO also import unions!
             foreach(XElement xpara in xparas.Elements(GetXName("Parameter"))) {
-                ParseParameter(xpara, null);
+                ParseParameter(xpara);
             }
 
-            int unionId = 1;
+            int unionCounter = 1;
             foreach(XElement xunion in xparas.Elements(GetXName("Union"))) {
+                Union union = new Union() {
+                    Name = $"Union {unionCounter}",
+                    UId = unionCounter++,
+                    SizeInBit = int.Parse(xunion.Attribute("SizeInBit").Value)
+                };
                 XElement xmem = xunion.Elements().ElementAt(0);
+
+                switch(xmem.Name.LocalName) {
+                    case "Memory":
+                        union.SavePath = ParamSave.Memory;
+                        string memName = GetLastSplit(xmem.Attribute("CodeSegment").Value);
+                        union.MemoryObject = currentVers.Memories.Single(m => m.Name.StartsWith(memName));
+                        union.Offset = int.Parse(xmem.Attribute("Offset").Value);
+                        union.OffsetBit = int.Parse(xmem.Attribute("BitOffset").Value);
+                        break;
+                }
+                currentVers.Unions.Add(union);
+
+
+
+
                 foreach(XElement xpara in xunion.Elements(GetXName("Parameter"))) {
-                    ParseParameter(xpara, xmem);
+                    ParseParameter(xpara, union, xmem);
                 }
             }
         }
 
-        public void ParseParameter(XElement xpara, XElement xmemory) {
+        public void ParseParameter(XElement xpara, Union union = null, XElement xmemory = null) {
             Models.Parameter para = new Models.Parameter() {
                 Name = xpara.Attribute("Name").Value,
                 Text = xpara.Attribute("Text").Value,
                 Value = xpara.Attribute("Value").Value,
                 IsOffsetAuto = false,
                 Suffix = xpara.Attribute("SuffixText")?.Value ?? "",
-                IsInMemory = false
+                UId = _uidCounter++,
+                IsInUnion = (xmemory != null),
+                UnionObject = union
             };
             string id = GetLastSplit(xpara.Attribute("Id").Value, 2);
             if(id.StartsWith("-"))
                 id = id.Substring(1);
             para.Id = int.Parse(id);
 
-            para.Access = (xpara.Attribute("Access")?.Value ?? "ReadWrite") switch {
+            para.Access = (xpara.Attribute("Access")?.Value) switch {
                 "None" => ParamAccess.None,
                 "Read" => ParamAccess.Read,
                 "ReadWrite" => ParamAccess.ReadWrite,
+                null => ParamAccess.Default,
                 _ => throw new Exception("Unbekannter AccesType für Parameter: " + xpara.Attribute("Access").Value)
             };
 
@@ -255,12 +290,17 @@ namespace Kaenx.Creator.Classes
 
             if(xmemory != null || xpara.Elements().Count() > 0) {
                 XElement xmem = xmemory ?? xpara.Elements().ElementAt(0);
-                para.IsInMemory = true;
                 if(xmem.Name.LocalName == "Memory") {
+                    para.SavePath = ParamSave.Memory;
                     string memName = GetLastSplit(xmem.Attribute("CodeSegment").Value);
                     para.MemoryObject = currentVers.Memories.Single(m => m.Name.StartsWith(memName));
-                    para.Offset = int.Parse(xmem.Attribute("Offset").Value);
-                    para.OffsetBit = int.Parse(xmem.Attribute("BitOffset").Value);
+                    if(para.IsInUnion) {
+                        para.Offset = int.Parse(xpara.Attribute("Offset").Value);
+                        para.OffsetBit = int.Parse(xpara.Attribute("BitOffset").Value);
+                    } else {
+                        para.Offset = int.Parse(xmem.Attribute("Offset").Value);
+                        para.OffsetBit = int.Parse(xmem.Attribute("BitOffset").Value);
+                    }
                 } else {
                     throw new Exception("Unbekannter MemoryTyp für Parameter: " + xmem.Name.LocalName);
                 }
@@ -270,10 +310,13 @@ namespace Kaenx.Creator.Classes
         }
 
         public void ImportParameterRefs(XElement xrefs) {
+            _uidCounter = 1;
+
             foreach(XElement xref in xrefs.Elements()) {
                 //TODO also import DisplayOrder and Tag
                 Models.ParameterRef pref = new Models.ParameterRef();
 
+                pref.UId = _uidCounter++;
                 pref.Id = int.Parse(GetLastSplit(xref.Attribute("Id").Value, 2));
                 
                 pref.OverwriteValue = xref.Attribute("Value") != null;
@@ -298,6 +341,8 @@ namespace Kaenx.Creator.Classes
         }
 
         public void ImportComObjects(XElement xcoms) {
+            _uidCounter = 1;
+
             foreach(XElement xcom in xcoms.Elements()) {
                 Models.ComObject com = new Models.ComObject() {
                     Name = xcom.Attribute("Name")?.Value ?? "",
@@ -305,7 +350,8 @@ namespace Kaenx.Creator.Classes
                     FunctionText = xcom.Attribute("FunctionText")?.Value ?? "",
                     Description = xcom.Attribute("VisibleDescription")?.Value ?? "",
                     Number = int.Parse(xcom.Attribute("Number").Value),
-                    Id = int.Parse(GetLastSplit(xcom.Attribute("Id").Value, 2))
+                    Id = int.Parse(GetLastSplit(xcom.Attribute("Id").Value, 2)),
+                    UId = _uidCounter++
                 };
 
                 com.FlagRead = ParseFlagType(xcom.Attribute("ReadFlag")?.Value);
@@ -340,10 +386,13 @@ namespace Kaenx.Creator.Classes
         }
 
         public void ImportComObjectRefs(XElement xrefs) {
+            _uidCounter = 1;
+            
             foreach(XElement xref in xrefs.Elements()) {
                 //TODO also import DisplayOrder and Tag
                 Models.ComObjectRef cref = new Models.ComObjectRef();
 
+                cref.UId = _uidCounter++;
                 cref.Id = int.Parse(GetLastSplit(xref.Attribute("Id").Value, 2));
                 
                 cref.OverwriteFunctionText = xref.Attribute("FunctionText") != null;
@@ -366,19 +415,28 @@ namespace Kaenx.Creator.Classes
                 cref.FlagUpdate = ParseFlagType(xref.Attribute("UpdateFlag")?.Value);
                 cref.FlagOnInit = ParseFlagType(xref.Attribute("ReadOnInitFlag")?.Value);
 
-                if(!string.IsNullOrEmpty(xref.Attribute("DatapointType")?.Value)) {
-                    string[] dpts = xref.Attribute("DatapointType").Value.Split(' ');
-                    string[] dpt = dpts[0].Split('-');
-                    if(dpt[0] == "DPT") {
+                if(xref.Attribute("DatapointType") != null) {
+                    string dptstr = xref.Attribute("DatapointType").Value;
+
+                    if(string.IsNullOrEmpty(dptstr)) {
                         cref.OverwriteDpt = true;
                         cref.OverwriteDpst = false;
-                        cref.Type = DPTs.Single(d => d.Number == dpt[1]);
+                        cref.Type = DPTs[0];
                     } else {
-                        cref.OverwriteDpt = true;
-                        cref.OverwriteDpst = true;
-                        cref.Type = DPTs.Single(d => d.Number == dpt[1]);
-                        cref.SubType = cref.Type.SubTypes.Single(s => s.Number == dpt[2]);
+                        string[] dpts = dptstr.Split(' ');
+                        dpts = dpts[0].Split('-');
+                        if(dpts[0] == "DPT") {
+                            cref.OverwriteDpt = true;
+                            cref.OverwriteDpst = false;
+                            cref.Type = DPTs.Single(d => d.Number == dpts[1]);
+                        } else {
+                            cref.OverwriteDpt = true;
+                            cref.OverwriteDpst = true;
+                            cref.Type = DPTs.Single(d => d.Number == dpts[1]);
+                            cref.SubType = cref.Type.SubTypes.Single(s => s.Number == dpts[2]);
+                        }
                     }
+                    
                 }
 
                 currentVers.ComObjectRefs.Add(cref);
@@ -443,13 +501,15 @@ namespace Kaenx.Creator.Classes
         private void ParseCatalogItem(XElement xitem, CatalogItem parent) {
             CatalogItem item = new CatalogItem() {
                 Parent = parent,
-                Name = xitem.Attribute("Name").Value
+                Name = xitem.Attribute("Name").Value,
+                Number = xitem.Attribute("Number").Value
             };
 
 
             switch(xitem.Name.LocalName) {
                 case "CatalogSection":
                     item.IsSection = true;
+                    //TODO import visibledescription
                     foreach(XElement xele in xitem.Elements())
                         ParseCatalogItem(xele, item);
                     break;
@@ -465,6 +525,13 @@ namespace Kaenx.Creator.Classes
 
             parent.Items.Add(item);
         }
+
+        private void ImportDynamic(XElement xdyn) {
+            currentVers.Dynamics.Add(new DynamicMain());
+            //TODO import dynamics
+        }
+
+
 
         public FlagType ParseFlagType(string type) {
             return type switch {

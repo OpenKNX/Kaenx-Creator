@@ -17,6 +17,7 @@ namespace Kaenx.Creator.Models
         public ObservableCollection<ComObjectRef> ComObjectRefs { get; set; } = new ObservableCollection<ComObjectRef>();
         public ObservableCollection<Memory> Memories { get; set; } = new ObservableCollection<Memory>();
         public List<DynamicMain> Dynamics { get; set; } = new List<DynamicMain>();
+        public List<Union> Unions { get; set; } = new List<Union>();
 
 
 
@@ -40,7 +41,12 @@ namespace Kaenx.Creator.Models
             IsMemSizeAuto = ver.IsMemSizeAuto;
         }
 
-        public int NamespaceVersion { get; set; } = 14;
+        private int _namespace = 14;
+        public int NamespaceVersion
+        {
+            get { return _namespace; }
+            set { _namespace = value; Changed("NamespaceVersion"); }
+        }
 
         private string _name = "";
         public string Name

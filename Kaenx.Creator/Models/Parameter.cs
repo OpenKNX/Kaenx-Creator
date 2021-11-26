@@ -34,14 +34,15 @@ namespace Kaenx.Creator.Models
         }
 
 
-        private bool _isInMemory = true;
-        public bool IsInMemory
+        private ParamSave _savePath = ParamSave.Nowhere;
+        public ParamSave SavePath
         {
-            get { return _isInMemory; }
-            set { _isInMemory = value; Changed("IsInMemory"); }
+            get { return _savePath; }
+            set { _savePath = value; Changed("SavePath"); }
         }
 
-        //TODO use UId from Memory Object
+
+
         private Memory _memoryObject;
         [JsonIgnore]
         public Memory MemoryObject
@@ -51,12 +52,32 @@ namespace Kaenx.Creator.Models
         }
 
         [JsonIgnore]
-        public string _memory;
-        public string Memory
+        public int _memoryId;
+        public int MemoryId
         {
-            get { return MemoryObject?.Name; }
-            set { _memory = value; }
+            get { return MemoryObject?.UId ?? -1; }
+            set { _memoryId = value; }
         }
+
+
+
+        private Union _unionObject;
+        [JsonIgnore]
+        public Union UnionObject
+        {
+            get { return _unionObject; }
+            set { _unionObject = value; Changed("UnionObject"); }
+        }
+
+        [JsonIgnore]
+        public int _unionId;
+        public int UnionId
+        {
+            get { return UnionObject?.UId ?? -1; }
+            set { _unionId = value; }
+        }
+
+
 
         private ParameterType _parameterTypeObject;
         [JsonIgnore]
@@ -67,12 +88,14 @@ namespace Kaenx.Creator.Models
         }
 
         [JsonIgnore]
-        public string _parameterType;
-        public string ParameterType
+        public int _parameterType;
+        public int ParameterType
         {
-            get { return ParameterTypeObject?.Name; }
+            get { return ParameterTypeObject?.UId ?? -1; }
             set { _parameterType = value; }
         }
+
+
 
         public string Text { get; set; } = "Dummy";
         public string Value { get; set; } = "1";
@@ -82,6 +105,13 @@ namespace Kaenx.Creator.Models
         {
             get { return _isOffsetAuto; }
             set { _isOffsetAuto = value; Changed("IsOffsetAuto"); }
+        }
+
+        private bool _inUnion = false;
+        public bool IsInUnion
+        {
+            get { return _inUnion; }
+            set { _inUnion = value; Changed("IsInUnion"); }
         }
 
         private int _offset = -1;
@@ -115,5 +145,12 @@ namespace Kaenx.Creator.Models
         None,
         Read,
         ReadWrite
+    }
+
+    //TODO change name so union can also use it
+    public enum ParamSave {
+        Nowhere,
+        Memory,
+        Property
     }
 }

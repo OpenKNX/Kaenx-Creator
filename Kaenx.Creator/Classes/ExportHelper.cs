@@ -78,8 +78,6 @@ namespace Kaenx.Creator.Classes
                 xapp.SetAttributeValue("MinEtsVersion", "5.0");
 
                 Dictionary<string, string> MemIds = new Dictionary<string, string>();
-                Dictionary<string, string> ParamTypeIds = new Dictionary<string, string>();
-                Dictionary<string, string> ParamIds = new Dictionary<string, string>();
                 XElement temp;
 
                 #region Segmente
@@ -125,7 +123,6 @@ namespace Kaenx.Creator.Classes
                 foreach(ParameterType type in ver.ParameterTypes)
                 {
                     string id = appVersion + "_PT-" + GetEncoded(type.Name);
-                    ParamTypeIds.Add(type.Name, id);
                     XElement xtype = new XElement(Get("ParameterType"));
                     xtype.SetAttributeValue("Id", id);
                     xtype.SetAttributeValue("Name", type.Name);
@@ -196,24 +193,29 @@ namespace Kaenx.Creator.Classes
                         para.Id = AutoHelper.GetNextFreeId(ver.Parameters);
                     }
                     string id = appVersion + "_P-" + para.Id;
-                    ParamIds.Add(para.Name, id);
+                    //ParamIds.Add(para.UId, id);
                     xpara.SetAttributeValue("Id", id);
                     xpara.SetAttributeValue("Name", para.Name);
-                    xpara.SetAttributeValue("ParameterType", ParamTypeIds[para.ParameterType]);
+                    xpara.SetAttributeValue("ParameterType", $"{appVersion}_PT-{GetEncoded(para.ParameterTypeObject.Name)}");
                     xpara.SetAttributeValue("Text", para.Text);
-                    if (para.Access != ParamAccess.Default) xpara.SetAttributeValue("Access", para.Access);
+                    if (para.Access != ParamAccess.Default && para.Access != ParamAccess.ReadWrite) xpara.SetAttributeValue("Access", para.Access);
                     if (!string.IsNullOrWhiteSpace(para.Suffix)) xpara.SetAttributeValue("SuffixText", para.Suffix);
                     xpara.SetAttributeValue("Value", para.Value);
 
-                    if (para.IsInMemory)
-                    {
-                        XElement xparamem = new XElement(Get("Memory"));
-                        xparamem.SetAttributeValue("CodeSegment", MemIds[para.Memory]);
-                        xparamem.SetAttributeValue("Offset", para.Offset);
-                        xparamem.SetAttributeValue("BitOffset", para.OffsetBit);
-                        xpara.Add(xparamem);
+                    switch(para.SavePath) {
+                        case ParamSave.Memory:
+                            XElement xparamem = new XElement(Get("Memory"));
+                            string memid = $"{appVersion}_";
+                            if(para.MemoryObject.Type == MemoryTypes.Absolute)
+                                memid += $"AS-{para.MemoryObject.Address:X4}";
+                            else
+                                memid += $"RS-{para.MemoryObject.Offset:X4}";
+                            xparamem.SetAttributeValue("CodeSegment", memid);
+                            xparamem.SetAttributeValue("Offset", para.Offset);
+                            xparamem.SetAttributeValue("BitOffset", para.OffsetBit);
+                            xpara.Add(xparamem);
+                            break;
                     }
-
                     temp.Add(xpara);
                 }
                 System.IO.File.WriteAllText(GetRelPath(appVersion + ".h"), headers.ToString());
@@ -240,6 +242,8 @@ namespace Kaenx.Creator.Classes
                     xpref.SetAttributeValue("Id", id);
                     if(pref.OverwriteAccess && pref.Access != ParamAccess.Default)
                         xpref.SetAttributeValue("Access", pref.Access.ToString());
+                    if(pref.OverwriteValue)
+                        xpref.SetAttributeValue("Value", pref.Value);
                     temp.Add(xpref);
                 }
 
@@ -269,7 +273,7 @@ namespace Kaenx.Creator.Classes
                     if (com.FlagUpdate != FlagType.Default) xcom.SetAttributeValue("UpdateFlag", com.FlagUpdate.ToString());
                     if (com.FlagOnInit != FlagType.Default) xcom.SetAttributeValue("ReadOnInitFlag", com.FlagOnInit.ToString());
 
-                    if(com.HasDpt) {
+                    if(com.HasDpt && com.Type.Number != "0") {
                         int size = com.Type.Size;
                         if (size > 7)
                             xcom.SetAttributeValue("ObjectSize", (size / 8) + " Byte");
@@ -307,17 +311,23 @@ namespace Kaenx.Creator.Classes
                         xcref.SetAttributeValue("FunctionText", cref.FunctionText);
                     if(cref.OverwriteDescription)
                         xcref.SetAttributeValue("VisibleDescription", cref.Description);
+
                     if(cref.OverwriteDpt) {
                         int size = cref.Type.Size;
-                        if(cref.OverwriteDpst) {
-                            xcref.SetAttributeValue("DatapointType", "DPST-" + cref.Type.Number + "-" + cref.SubType.Number);
+
+                        if(cref.Type.Number == "0") {
+                            xcref.SetAttributeValue("DatapointType", "");
                         } else {
-                            xcref.SetAttributeValue("DatapointType", "DPT-" + cref.Type.Number);
+                            if(cref.OverwriteDpst) {
+                                xcref.SetAttributeValue("DatapointType", "DPST-" + cref.Type.Number + "-" + cref.SubType.Number);
+                            } else {
+                                xcref.SetAttributeValue("DatapointType", "DPT-" + cref.Type.Number);
+                            }
+                            if (size > 7)
+                                xcref.SetAttributeValue("ObjectSize", (size / 8) + " Byte");
+                            else
+                                xcref.SetAttributeValue("ObjectSize", size + " Bit");
                         }
-                        if (size > 7)
-                            xcref.SetAttributeValue("ObjectSize", (size / 8) + " Byte");
-                        else
-                            xcref.SetAttributeValue("ObjectSize", size + " Bit");
                     }
                     temp.Add(xcref);
                 }
@@ -332,8 +342,22 @@ namespace Kaenx.Creator.Classes
                 temp = new XElement(Get("AssociationTable"));
                 temp.SetAttributeValue("MaxEntries", "65535");
                 xunderapp.Add(temp);
-                temp = XDocument.Parse("<LoadProcedures><LoadProcedure MergeId=\"2\"><LdCtrlRelSegment LsmIdx=\"4\" Size=\"1\" Mode=\"0\" Fill=\"0\" AppliesTo=\"full\" /></LoadProcedure><LoadProcedure MergeId=\"4\"><LdCtrlWriteRelMem ObjIdx=\"4\" Offset=\"0\" Size=\"1\" Verify=\"true\" /></LoadProcedure></LoadProcedures>").Root;
-                xunderapp.Add(temp);
+
+                //TODO use correct type
+                switch(app.Mask.Procedure) {
+                    case ProcedureTypes.Application:
+                        temp = XDocument.Parse("<LoadProcedures xmlns=\"http://knx.org/xml/project/14\"><LoadProcedure><LdCtrlConnect /><LdCtrlDisconnect /></LoadProcedure></LoadProcedures>").Root;
+                        xunderapp.Add(temp);
+                        break;
+                        
+                    case ProcedureTypes.Merge:
+                        temp = XDocument.Parse("<LoadProcedures xmlns=\"http://knx.org/xml/project/14\"><LoadProcedure MergeId=\"2\"><LdCtrlRelSegment LsmIdx=\"4\" Size=\"1\" Mode=\"0\" Fill=\"0\" AppliesTo=\"full\" /></LoadProcedure><LoadProcedure MergeId=\"4\"><LdCtrlWriteRelMem ObjIdx=\"4\" Offset=\"0\" Size=\"1\" Verify=\"true\" /></LoadProcedure></LoadProcedures>").Root;
+                        xunderapp.Add(temp);
+                        break;
+                }
+
+
+                
                 #endregion
 
                 xunderapp = new XElement(Get("Dynamic"));
@@ -560,6 +584,8 @@ namespace Kaenx.Creator.Classes
             if(item.IsSection){
                 XElement xitem = new XElement(Get("CatalogSection"));
 
+                //TODO check if section contains exported item
+
                 if(item.Parent.Parent == null) {
                     string id = $"M-{general.ManufacturerId.ToString("X4")}_CS-" + GetEncoded(item.Number);
                     xitem.SetAttributeValue("Id", id);
@@ -595,7 +621,7 @@ namespace Kaenx.Creator.Classes
 
                             xitem.SetAttributeValue("Id", id);
                             xitem.SetAttributeValue("Name", dev.Text);
-                            xitem.SetAttributeValue("Number", item.Hardware.SerialNumber);
+                            xitem.SetAttributeValue("Number", item.Number); //TODO check if correct  (item.Hardware.SerialNumber);
                             if (!string.IsNullOrWhiteSpace(dev.Description)) xitem.SetAttributeValue("VisibleDescription", dev.Description);
                             xitem.SetAttributeValue("ProductRefId", productIds[dev.Name]);
                             string hardid = item.Hardware.Version + "-" + app.Number + "-" + ver.Number;

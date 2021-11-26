@@ -18,7 +18,7 @@ namespace Kaenx.Creator.Classes
             else
                 data = new List<byte>(new byte[mem.Size]);
 
-            foreach (Models.Parameter para in ver.Parameters.Where(p => p.Memory == mem.Name))
+            foreach (Models.Parameter para in ver.Parameters.Where(p => p.MemoryId == mem.UId))
             {
                 if (para.ParameterTypeObject.SizeInBit > 7)
                 {
@@ -97,6 +97,14 @@ namespace Kaenx.Creator.Classes
             }else if(list is System.Collections.ObjectModel.ObservableCollection<ComObjectRef>) {
                 while((list as System.Collections.ObjectModel.ObservableCollection<ComObjectRef>).Any(i => i.UId == id))
                     id++;
+            }else if(list is System.Collections.ObjectModel.ObservableCollection<Memory>) {
+                while((list as System.Collections.ObjectModel.ObservableCollection<Memory>).Any(i => i.UId == id))
+                    id++;
+            }else if(list is System.Collections.ObjectModel.ObservableCollection<ParameterType>) {
+                while((list as System.Collections.ObjectModel.ObservableCollection<ParameterType>).Any(i => i.UId == id))
+                    id++;
+            } else {
+                throw new Exception("Can't get NextFreeUId. Type not implemented.");
             }
             return id;
         }

@@ -146,6 +146,12 @@ namespace Kaenx.Creator
                 DPTs = new ObservableCollection<Models.DataPointType>();
                 XDocument xdoc = XDocument.Load(xmlPath);
                 IEnumerable<XElement> xdpts = xdoc.Descendants(XName.Get("DatapointType"));
+                
+                DPTs.Add(new Models.DataPointType() {
+                    Name = "Leeren Datentyp angeben (Nur bei ComRefs)",
+                    Number = "0",
+                    Size = 0
+                });
 
                 foreach(XElement xdpt in xdpts)
                 {
@@ -405,11 +411,12 @@ namespace Kaenx.Creator
                     {
                         foreach(Models.Parameter para in ver.Parameters)
                         {
-                            if (!string.IsNullOrEmpty(para._memory))
-                                para.MemoryObject = ver.Memories.Single(m => m.Name == para._memory);
+                            //TODO load Union
+                            if (para._memoryId != -1)
+                                para.MemoryObject = ver.Memories.Single(m => m.UId == para._memoryId);
                                 
-                            if (!string.IsNullOrEmpty(para._parameterType))
-                                para.ParameterTypeObject = ver.ParameterTypes.Single(p => p.Name == para._parameterType);
+                            if (para._parameterType != -1)
+                                para.ParameterTypeObject = ver.ParameterTypes.Single(p => p.UId == para._parameterType);
                         }
 
                         foreach(Models.ParameterRef pref in ver.ParameterRefs)
@@ -853,30 +860,30 @@ namespace Kaenx.Creator
                     switch(ptype.Type) {
                         case Models.ParameterTypes.Text:
                             if(ptype.SizeInBit % 8 != 0)
-                                PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterType Text {ptype.Name}: ist kein vielfaches von 8", State = Models.PublishState.Warning });
+                                PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterType Text {ptype.Name} ({ptype.UId}): ist kein vielfaches von 8", State = Models.PublishState.Warning });
                             break;
 
                         case Models.ParameterTypes.Enum:
                             var x = ptype.Enums.GroupBy(e => e.Value);
                             foreach(var group in x.Where(g => g.Count() > 1))
-                                PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterType Enum {ptype.Name}: Wert ({group.Key}) wird öfters verwendet", State = Models.PublishState.Fail });
+                                PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterType Enum {ptype.Name} ({ptype.UId}): Wert ({group.Key}) wird öfters verwendet", State = Models.PublishState.Fail });
                             
                             foreach(Models.ParameterTypeEnum penum in ptype.Enums){
                                 if(penum.Value >= maxsize)
-                                    PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterType Enum {ptype.Name}: Wert ({penum.Value}) ist größer als maximaler Wert ({maxsize-1})", State = Models.PublishState.Fail });
+                                    PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterType Enum {ptype.Name} ({ptype.UId}): Wert ({penum.Value}) ist größer als maximaler Wert ({maxsize-1})", State = Models.PublishState.Fail });
                             }
                             break;
 
                         case Models.ParameterTypes.NumberUInt:
-                            if(ptype.Min < 0) PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterType UInt {ptype.Name}: Min kann nicht kleiner als 0 sein", State = Models.PublishState.Fail });
-                            if(ptype.Min > ptype.Max) PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterType UInt {ptype.Name}: Min ({ptype.Min}) ist größer als Max ({ptype.Max})", State = Models.PublishState.Fail });
-                            if(ptype.Max >= maxsize) PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterType UInt {ptype.Name}: Max ({ptype.Max}) kann nicht größer als das Maximum ({maxsize-1}) sein", State = Models.PublishState.Fail });
+                            if(ptype.Min < 0) PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Min kann nicht kleiner als 0 sein", State = Models.PublishState.Fail });
+                            if(ptype.Min > ptype.Max) PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Min ({ptype.Min}) ist größer als Max ({ptype.Max})", State = Models.PublishState.Fail });
+                            if(ptype.Max >= maxsize) PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Max ({ptype.Max}) kann nicht größer als das Maximum ({maxsize-1}) sein", State = Models.PublishState.Fail });
                             break;
 
                         case Models.ParameterTypes.NumberInt:
-                            if(ptype.Min > ptype.Max) PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterType Int {ptype.Name}: Min ({ptype.Min}) ist größer als Max ({ptype.Max})", State = Models.PublishState.Fail });
-                            if(ptype.Max > ((maxsize/2)-1)) PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterType Int {ptype.Name}: Max ({ptype.Max}) kann nicht größer als das Maximum ({(maxsize/2)-1}) sein", State = Models.PublishState.Fail });
-                            if(ptype.Min < ((maxsize/2)*(-1))) PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterType Int {ptype.Name}: Min ({ptype.Min}) kann nicht kleiner als das Minimum ({(maxsize/2)*(-1)}) sein", State = Models.PublishState.Fail });
+                            if(ptype.Min > ptype.Max) PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Min ({ptype.Min}) ist größer als Max ({ptype.Max})", State = Models.PublishState.Fail });
+                            if(ptype.Max > ((maxsize/2)-1)) PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Max ({ptype.Max}) kann nicht größer als das Maximum ({(maxsize/2)-1}) sein", State = Models.PublishState.Fail });
+                            if(ptype.Min < ((maxsize/2)*(-1))) PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Min ({ptype.Min}) kann nicht kleiner als das Minimum ({(maxsize/2)*(-1)}) sein", State = Models.PublishState.Fail });
                             break;
 
                         case Models.ParameterTypes.Float9:
@@ -892,35 +899,37 @@ namespace Kaenx.Creator
                             break;
 
                         default:
-                            PublishActions.Add(new Models.PublishAction() { Text = "    Unbekannter ParameterTyp für: " + ptype.Name, State = Models.PublishState.Fail });
+                            PublishActions.Add(new Models.PublishAction() { Text = $"    Unbekannter ParameterTyp für {ptype.Name} ({ptype.UId})", State = Models.PublishState.Fail });
                             break;
                     }
                 }
 
+                //TODO check unions
+
                 foreach(Models.Parameter para in vers.Parameters) {
-                    if(para.ParameterTypeObject == null) PublishActions.Add(new Models.PublishAction() { Text = $"    Parameter {para.Name}: Kein ParameterTyp ausgewählt", State = Models.PublishState.Fail });
+                    if(para.ParameterTypeObject == null) PublishActions.Add(new Models.PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Kein ParameterTyp ausgewählt", State = Models.PublishState.Fail });
                     else {
                         switch(para.ParameterTypeObject.Type) {
                             case Models.ParameterTypes.Text:
-                                if((para.Value.Length*8) > para.ParameterTypeObject.SizeInBit) PublishActions.Add(new Models.PublishAction() { Text = $"    Parameter {para.Name}: Wert benötigt mehr Speicher ({(para.Value.Length*8)}) als verfügbar ({para.ParameterTypeObject.SizeInBit}) ist", State = Models.PublishState.Fail });
+                                if((para.Value.Length*8) > para.ParameterTypeObject.SizeInBit) PublishActions.Add(new Models.PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert benötigt mehr Speicher ({(para.Value.Length*8)}) als verfügbar ({para.ParameterTypeObject.SizeInBit}) ist", State = Models.PublishState.Fail });
                                 break;
 
                             case Models.ParameterTypes.Enum:
                                 int paraval2;
-                                if(!int.TryParse(para.Value, out paraval2)) PublishActions.Add(new Models.PublishAction() { Text = $"    Parameter {para.Name}: Wert ({para.Value}) ist keine gültige Zahl", State = Models.PublishState.Fail });
+                                if(!int.TryParse(para.Value, out paraval2)) PublishActions.Add(new Models.PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) ist keine gültige Zahl", State = Models.PublishState.Fail });
                                 else {
                                     if(!para.ParameterTypeObject.Enums.Any(e => e.Value == paraval2))
-                                        PublishActions.Add(new Models.PublishAction() { Text = $"    Parameter {para.Name}: Wert ({para.Value}) ist nicht als option in Enum vorhanden", State = Models.PublishState.Fail });
+                                        PublishActions.Add(new Models.PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) ist nicht als option in Enum vorhanden", State = Models.PublishState.Fail });
                                 }
                                 break;
 
                             case Models.ParameterTypes.NumberUInt:
                             case Models.ParameterTypes.NumberInt:
                                 int paraval;
-                                if(!int.TryParse(para.Value, out paraval)) PublishActions.Add(new Models.PublishAction() { Text = $"    Parameter {para.Name}: Wert ({para.Value}) ist keine gültige Zahl", State = Models.PublishState.Fail });
+                                if(!int.TryParse(para.Value, out paraval)) PublishActions.Add(new Models.PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) ist keine gültige Zahl", State = Models.PublishState.Fail });
                                 else {
                                     if(paraval > para.ParameterTypeObject.Max || paraval < para.ParameterTypeObject.Min)
-                                        PublishActions.Add(new Models.PublishAction() { Text = $"    Parameter {para.Name}: Wert ({para.Value}) fällt nicht in Bereich {para.ParameterTypeObject.Min}-{para.ParameterTypeObject.Max}", State = Models.PublishState.Fail });
+                                        PublishActions.Add(new Models.PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) fällt nicht in Bereich {para.ParameterTypeObject.Min}-{para.ParameterTypeObject.Max}", State = Models.PublishState.Fail });
                                 }
                                 break;
 
@@ -934,22 +943,26 @@ namespace Kaenx.Creator
                         }
                     }
                     
-                    
-                    if(para.IsInMemory) {
-                        if(para.MemoryObject == null) PublishActions.Add(new Models.PublishAction() { Text = $"    Parameter {para.Name}: Kein Speichersegment ausgewählt", State = Models.PublishState.Fail });
-                        else {
-                            if(!para.MemoryObject.IsAutoPara && para.Offset == -1) PublishActions.Add(new Models.PublishAction() { Text = $"    Parameter {para.Name}: Kein Offset angegeben", State = Models.PublishState.Fail });
-                            if(!para.MemoryObject.IsAutoPara && para.OffsetBit == -1) PublishActions.Add(new Models.PublishAction() { Text = $"    Parameter {para.Name}: Kein Bit Offset angegeben", State = Models.PublishState.Fail });
+                    //TODO check unions
 
+                    if(!para.IsInUnion) {
+                        switch(para.SavePath) {
+                            case Models.ParamSave.Memory:
+                                if(para.MemoryObject == null)
+                                    PublishActions.Add(new Models.PublishAction() { Text = $"    Parameter {para.Name}: Kein Speichersegment ausgewählt", State = Models.PublishState.Fail });
+                                else {
+                                    if(!para.MemoryObject.IsAutoPara && para.Offset == -1) PublishActions.Add(new Models.PublishAction() { Text = $"    Parameter {para.Name}: Kein Offset angegeben", State = Models.PublishState.Fail });
+                                    if(!para.MemoryObject.IsAutoPara && para.OffsetBit == -1) PublishActions.Add(new Models.PublishAction() { Text = $"    Parameter {para.Name}: Kein Bit Offset angegeben", State = Models.PublishState.Fail });
+
+                                }
+                                if(para.OffsetBit > 7) PublishActions.Add(new Models.PublishAction() { Text = $"    Parameter {para.Name}: BitOffset größer als 7 und somit obsolet", State = Models.PublishState.Fail });
+                                    break;
                         }
-                        if(para.OffsetBit > 7) PublishActions.Add(new Models.PublishAction() { Text = $"    Parameter {para.Name}: BitOffset größer als 7 und somit obsolet", State = Models.PublishState.Fail });
                     }
-                
-                    
                 }
             
                 foreach(Models.ParameterRef para in vers.ParameterRefs) {
-                    if(para.ParameterObject == null) PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterRef {para.Name}: Kein Parameter ausgewählt", State = Models.PublishState.Fail });
+                    if(para.ParameterObject == null) PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterRef {para.Name} ({para.UId}): Kein Parameter ausgewählt", State = Models.PublishState.Fail });
                     else {
                         if(para.ParameterObject.ParameterTypeObject == null || string.IsNullOrEmpty(para.Value))
                             continue;
@@ -959,25 +972,25 @@ namespace Kaenx.Creator
 
                         switch(ptype.Type) {
                             case Models.ParameterTypes.Text:
-                                if((para.Value.Length*8) > ptype.SizeInBit) PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterRef {para.Name}: Wert benötigt mehr Speicher ({(para.Value.Length*8)}) als verfügbar ({ptype.SizeInBit}) ist", State = Models.PublishState.Fail });
+                                if((para.Value.Length*8) > ptype.SizeInBit) PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterRef {para.Name} ({para.UId}): Wert benötigt mehr Speicher ({(para.Value.Length*8)}) als verfügbar ({ptype.SizeInBit}) ist", State = Models.PublishState.Fail });
                                 break;
 
                             case Models.ParameterTypes.Enum:
                                 int paraval2;
-                                if(!int.TryParse(para.Value, out paraval2)) PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterRef {para.Name}: Wert ({para.Value}) ist keine gültige Zahl", State = Models.PublishState.Fail });
+                                if(!int.TryParse(para.Value, out paraval2)) PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterRef {para.Name} ({para.UId}): Wert ({para.Value}) ist keine gültige Zahl", State = Models.PublishState.Fail });
                                 else {
                                     if(!ptype.Enums.Any(e => e.Value == paraval2))
-                                        PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterRef {para.Name}: Wert ({para.Value}) ist nicht als option in Enum vorhanden", State = Models.PublishState.Fail });
+                                        PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterRef {para.Name} ({para.UId}): Wert ({para.Value}) ist nicht als option in Enum vorhanden", State = Models.PublishState.Fail });
                                 }
                                 break;
 
                             case Models.ParameterTypes.NumberUInt:
                             case Models.ParameterTypes.NumberInt:
                                 int paraval;
-                                if(!int.TryParse(para.Value, out paraval)) PublishActions.Add(new Models.PublishAction() { Text = $"    Parameter {para.Name}: Wert ({para.Value}) ist keine gültige Zahl", State = Models.PublishState.Fail });
+                                if(!int.TryParse(para.Value, out paraval)) PublishActions.Add(new Models.PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) ist keine gültige Zahl", State = Models.PublishState.Fail });
                                 else {
                                     if(paraval > ptype.Max || paraval < ptype.Min)
-                                        PublishActions.Add(new Models.PublishAction() { Text = $"    Parameter {para.Name}: Wert ({para.Value}) fällt nicht in Bereich {ptype.Min}-{ptype.Max}", State = Models.PublishState.Fail });
+                                        PublishActions.Add(new Models.PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) fällt nicht in Bereich {ptype.Min}-{ptype.Max}", State = Models.PublishState.Fail });
                                 }
                                 break;
 
@@ -993,14 +1006,15 @@ namespace Kaenx.Creator
                 }
             
                 foreach(Models.ComObject com in vers.ComObjects) {
-                    if(string.IsNullOrEmpty(com.Text)) PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {com.Name}: Kein Text angegeben", State = Models.PublishState.Fail });
+                    if(string.IsNullOrEmpty(com.Text)) PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Kein Text angegeben", State = Models.PublishState.Fail });
                     //if(string.IsNullOrEmpty(com.TypeParentValue) && com.Name.ToLower() != "dummy") PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {com.Name}: Kein DataPointType angegeben", State = Models.PublishState.Fail });
-                    if(com.HasDpt && com.Type == null) PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {com.Name}: Kein DataPointType angegeben", State = Models.PublishState.Fail });
-                    if(com.HasDpt && com.HasDpts && com.SubType == null) PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {com.Name}: Kein DataPointSubType angegeben", State = Models.PublishState.Fail });
+                    if(com.HasDpt && com.Type == null) PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Kein DataPointType angegeben", State = Models.PublishState.Fail });
+                    if(com.HasDpt && com.Type != null && com.Type.Number == "0") PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Keine Angabe des DPT nur bei Refs", State = Models.PublishState.Fail });
+                    if(com.HasDpt && com.HasDpts && com.SubType == null) PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Kein DataPointSubType angegeben", State = Models.PublishState.Fail });
                 }
 
                 foreach(Models.ComObjectRef rcom in vers.ComObjectRefs) {
-                    if(rcom.ComObjectObject == null) PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {rcom.Name}: Kein KO-Ref angegeben", State = Models.PublishState.Fail });
+                    if(rcom.ComObjectObject == null) PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {rcom.Name} ({rcom.UId}): Kein KO-Ref angegeben", State = Models.PublishState.Fail });
                     //if(rcom.HasDpts && rcom.Type == null && rcom.Name.ToLower() != "dummy") PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {rcom.Name}: Kein DataPointSubType angegeben", State = Models.PublishState.Fail });
                 }
 

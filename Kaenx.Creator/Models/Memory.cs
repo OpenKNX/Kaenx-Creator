@@ -8,7 +8,13 @@ namespace Kaenx.Creator.Models
 {
     public class Memory : INotifyPropertyChanged
     {
-        //TODO add UId
+        private int _uid = -1;
+        public int UId
+        {
+            get { return _uid; }
+            set { _uid = value; Changed("UId"); }
+        }
+
         
         private string _name = "dummy";
         public string Name
