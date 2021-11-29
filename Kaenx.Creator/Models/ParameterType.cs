@@ -14,13 +14,31 @@ namespace Kaenx.Creator.Models
             get { return _uid; }
             set { _uid = value; Changed("UId"); }
         }
+        
+        private string _name = "Dummy PT";
+        public string Name
+        {
+            get { return _name; }
+            set { _name = value; Changed("Name"); }
+        }
 
-        public string Name { get; set; } = "Dummy PT";
+        private bool _isSizeAuto = false;
+        public bool IsSizeAuto
+        {
+            get { return _isSizeAuto; }
+            set { _isSizeAuto = value; Changed("IsSizeAuto"); }
+        }
+
+        private ParameterTypes _type = ParameterTypes.Text;
+        public ParameterTypes Type
+        {
+            get { return _type; }
+            set { _type = value; Changed("Type"); }
+        }
+
         public int Min { get; set; } = 0;
         public int Max { get; set; } = 255;
         public int SizeInBit { get; set; } = 8;
-        public bool IsSizeAuto { get; set; } = false;
-        public ParameterTypes Type { get; set; } = ParameterTypes.Text;
 
         public ObservableCollection<ParameterTypeEnum> Enums {get;set;} = new ObservableCollection<ParameterTypeEnum>();
 

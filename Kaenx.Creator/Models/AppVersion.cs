@@ -16,8 +16,8 @@ namespace Kaenx.Creator.Models
         public ObservableCollection<ComObject> ComObjects { get; set; } = new ObservableCollection<ComObject>();
         public ObservableCollection<ComObjectRef> ComObjectRefs { get; set; } = new ObservableCollection<ComObjectRef>();
         public ObservableCollection<Memory> Memories { get; set; } = new ObservableCollection<Memory>();
+        public ObservableCollection<Union> Unions { get; set; } = new ObservableCollection<Union>();
         public List<DynamicMain> Dynamics { get; set; } = new List<DynamicMain>();
-        public List<Union> Unions { get; set; } = new List<Union>();
 
 
 

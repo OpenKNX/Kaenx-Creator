@@ -103,6 +103,9 @@ namespace Kaenx.Creator.Classes
             }else if(list is System.Collections.ObjectModel.ObservableCollection<ParameterType>) {
                 while((list as System.Collections.ObjectModel.ObservableCollection<ParameterType>).Any(i => i.UId == id))
                     id++;
+            }else if(list is System.Collections.ObjectModel.ObservableCollection<Union>) {
+                while((list as System.Collections.ObjectModel.ObservableCollection<Union>).Any(i => i.UId == id))
+                    id++;
             } else {
                 throw new Exception("Can't get NextFreeUId. Type not implemented.");
             }

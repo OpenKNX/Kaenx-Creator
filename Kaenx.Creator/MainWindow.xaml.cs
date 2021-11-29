@@ -246,14 +246,14 @@ namespace Kaenx.Creator
         private void ClickAddParamType(object sender, RoutedEventArgs e)
         {
             Models.AppVersion version = (sender as Button).DataContext as Models.AppVersion;
-            version.ParameterTypes.Add(new Models.ParameterType());
+            version.ParameterTypes.Add(new Models.ParameterType() { UId = AutoHelper.GetNextFreeUId(version.ParameterTypes) });
         }
 
         private void ClickAddMemory(object sender, RoutedEventArgs e)
         {
             Models.Application app = AppList.SelectedItem as Models.Application;
             Models.AppVersion version = (sender as Button).DataContext as Models.AppVersion;
-            version.Memories.Add(new Models.Memory() { Type = app.Mask.Memory });
+            version.Memories.Add(new Models.Memory() { Type = app.Mask.Memory, UId = AutoHelper.GetNextFreeUId(version.Memories) });
         }
 
         private void ClickRemoveParamType(object sender, RoutedEventArgs e)
@@ -327,7 +327,18 @@ namespace Kaenx.Creator
             Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
             ver.Parameters.Remove(ParamList.SelectedItem as Models.Parameter);
         }
-
+        
+        private void ClickAddUnion(object sender, RoutedEventArgs e)
+        {
+            Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
+            ver.Unions.Add(new Models.Union() { UId = AutoHelper.GetNextFreeUId(ver.Unions)});
+        }
+        
+        private void ClickRemoveUnion(object sender, RoutedEventArgs e)
+        {
+            Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
+            ver.Unions.Remove(UnionList.SelectedItem as Models.Union);
+        }
 
         private void ClickAddHardware(object sender, RoutedEventArgs e)
         {
@@ -417,6 +428,15 @@ namespace Kaenx.Creator
                                 
                             if (para._parameterType != -1)
                                 para.ParameterTypeObject = ver.ParameterTypes.Single(p => p.UId == para._parameterType);
+
+                            if(para.IsInUnion && para._unionId != -1)
+                                para.UnionObject = ver.Unions.Single(u => u.UId == para._unionId);
+                        }
+
+                        foreach(Models.Union union in ver.Unions)
+                        {
+                            if (union._memoryId != -1)
+                                union.MemoryObject = ver.Memories.Single(u => u.UId == union._memoryId);
                         }
 
                         foreach(Models.ParameterRef pref in ver.ParameterRefs)

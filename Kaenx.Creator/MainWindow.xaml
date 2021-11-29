@@ -441,6 +441,9 @@
                                 <HeaderedContentControl Header="Seriennummer">
                                     <TextBox Text="{Binding SerialNumber, UpdateSourceTrigger=PropertyChanged}" />
                                 </HeaderedContentControl>
+                                <HeaderedContentControl Header="Version">
+                                    <TextBox Text="{Binding Version, UpdateSourceTrigger=PropertyChanged}" />
+                                </HeaderedContentControl>
                                 <HeaderedContentControl Header="Busstrom">
                                     <TextBox Text="{Binding BusCurrent, UpdateSourceTrigger=PropertyChanged}" />
                                 </HeaderedContentControl>
@@ -782,8 +785,8 @@
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
                             <!-- //TODO change add remove-->
-                            <Button Content="Hinzufügen" Click="ClickAddParam" Margin="0 0 1 2" />
-                            <Button Grid.Column="1" Content="Löschen" Click="ClickRemoveParam" Margin="1 0 0 2" />
+                            <Button Content="Hinzufügen" Click="ClickAddUnion" Margin="0 0 1 2" />
+                            <Button Grid.Column="1" Content="Löschen" Click="ClickRemoveUnion" Margin="1 0 0 2" />
 
                             <ListView x:Name="UnionList" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding Unions}" DisplayMemberPath="Name" />
 
@@ -835,8 +838,8 @@
                                     </HeaderedContentControl>
 
                                     <StackPanel Visibility="{Binding SavePath, Converter={StaticResource EnumToVis}, ConverterParameter=Memory}">
-                                        <HeaderedContentControl Header="Speicherort">
-                                            <ComboBox IsEnabled="{Binding IsInUnion, Converter={StaticResource BoolNegate}}" ItemsSource="{Binding ElementName=VersionList, Path=SelectedItem.Memories}" SelectedItem="{Binding MemoryObject, Mode=TwoWay}" DisplayMemberPath="Name" />
+                                        <HeaderedContentControl Header="Speicher auswählen">
+                                            <ComboBox ItemsSource="{Binding ElementName=VersionList, Path=SelectedItem.Memories}" SelectedItem="{Binding MemoryObject, Mode=TwoWay}" DisplayMemberPath="Name" />
                                         </HeaderedContentControl>
                                         <HeaderedContentControl Header="Offset">
                                             <TextBox Text="{Binding Offset, UpdateSourceTrigger=PropertyChanged}"/>
@@ -962,7 +965,7 @@
                                     </HeaderedContentControl>
 
                                     <StackPanel Visibility="{Binding IsInUnion, Converter={StaticResource BoolToVis}}">
-                                        <HeaderedContentControl Header="Speicherort">
+                                        <HeaderedContentControl Header="Union Speicher">
                                             <TextBlock Text="{Binding UnionObject.MemoryObject.Name}" />
                                         </HeaderedContentControl>
                                         <HeaderedContentControl Header="Offset">
@@ -975,11 +978,11 @@
 
                                     <Grid Visibility="{Binding IsInUnion, Converter={StaticResource BoolToVis}, ConverterParameter=true}">
                                         <StackPanel Visibility="{Binding SavePath, Converter={StaticResource EnumToVis}, ConverterParameter=Memory}">
-                                            <HeaderedContentControl Header="Speicherort">
-                                                <ComboBox IsEnabled="{Binding IsInUnion, Converter={StaticResource BoolNegate}}" ItemsSource="{Binding ElementName=VersionList, Path=SelectedItem.Memories}" SelectedItem="{Binding MemoryObject, Mode=TwoWay}" DisplayMemberPath="Name" />
+                                            <HeaderedContentControl Header="Speicher auswählen">
+                                                <ComboBox ItemsSource="{Binding ElementName=VersionList, Path=SelectedItem.Memories}" SelectedItem="{Binding MemoryObject, Mode=TwoWay}" DisplayMemberPath="Name" />
                                             </HeaderedContentControl>
 
-                                            <StackPanel>
+                                            <StackPanel Visibility="{Binding MemoryObject.IsAutoPara, Converter={StaticResource BoolToVis}, ConverterParameter=true}">
                                                 <CheckBox IsChecked="{Binding IsOffsetAuto}" Content="Automatisch im Speicher anordnen" />
 
                                                 <StackPanel IsEnabled="{Binding IsOffsetAuto, Converter={StaticResource BoolNegate}}">

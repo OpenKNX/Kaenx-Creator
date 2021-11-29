@@ -20,6 +20,15 @@ namespace Kaenx.Creator.Classes
         List<Models.AppVersion> vers;
         Models.ModelGeneral general;
         string appVersion;
+        string currentNamespace;
+
+        private Dictionary<string, string> EtsVersions = new Dictionary<string, string>() {
+            {"http://knx.org/xml/project/11", "4.0.1997.50261" },
+            {"http://knx.org/xml/project/12", "5.0.204.12971" },
+            {"http://knx.org/xml/project/13", "5.1.84.17602" },
+            {"http://knx.org/xml/project/14", "5.6.241.33672" },
+            {"http://knx.org/xml/project/20", "6.0.0.14588" } //TODO check ETS 6 Path
+        };
 
         public ExportHelper(Models.ModelGeneral g, List<Models.Hardware> h, List<Models.Device> d, List<Models.Application> a, List<Models.AppVersion> v) {
             hardware = h;
@@ -36,6 +45,13 @@ namespace Kaenx.Creator.Classes
 
             if (!System.IO.Directory.Exists(GetRelPath("")))
                 System.IO.Directory.CreateDirectory(GetRelPath(""));
+
+            int highestNS = 0;
+            foreach(Models.AppVersion ver in vers) {
+                if(ver.NamespaceVersion > highestNS)
+                    highestNS = ver.NamespaceVersion;
+            }
+            currentNamespace = $"http://knx.org/xml/project/{highestNS}";
 
             FileVersionInfo fileVersion = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location);
             string toolVersion = fileVersion.FileVersion;
@@ -75,7 +91,24 @@ namespace Kaenx.Creator.Classes
                 xapp.SetAttributeValue("DefaultLanguage", "de-DE");
                 xapp.SetAttributeValue("LoadProcedureStyle", "MergedProcedure");
                 xapp.SetAttributeValue("PeiType", "0");
-                xapp.SetAttributeValue("MinEtsVersion", "5.0");
+
+                switch(currentNamespace) {
+                    case "http://knx.org/xml/project/11":
+                        xapp.SetAttributeValue("MinEtsVersion", "4.0");
+                        break;
+                    case "http://knx.org/xml/project/12":
+                        xapp.SetAttributeValue("MinEtsVersion", "5.0");
+                        break;
+                    case "http://knx.org/xml/project/13":
+                        xapp.SetAttributeValue("MinEtsVersion", "5.5");
+                        break;
+                    case "http://knx.org/xml/project/14":
+                        xapp.SetAttributeValue("MinEtsVersion", "5.6");
+                        break;
+                    case "http://knx.org/xml/project/20":
+                        xapp.SetAttributeValue("MinEtsVersion", "6.0");
+                        break;
+                }
 
                 Dictionary<string, string> MemIds = new Dictionary<string, string>();
                 XElement temp;
@@ -180,43 +213,39 @@ namespace Kaenx.Creator.Classes
 
                 StringBuilder headers = new StringBuilder();
 
-                foreach(Parameter para in ver.Parameters)
+                foreach(Parameter para in ver.Parameters.Where(p => !p.IsInUnion))
                 {
-                    string line = "#define PARAM_" + para.Name + " " + para.Offset + " //Size: " + para.ParameterTypeObject.SizeInBit;
-                    if(para.ParameterTypeObject.SizeInBit % 8 == 0) line += " (" + (para.ParameterTypeObject.SizeInBit / 8) + " Byte)";
-                    if(para.OffsetBit > 0) line += " | Bit Offset: " + para.OffsetBit;
-                    headers.AppendLine(line);
+                    ParseParameter(para, temp, ver, headers);
+                }
 
-                    XElement xpara = new XElement(Get("Parameter"));
-                    
-                    if(para.Id == -1) {
-                        para.Id = AutoHelper.GetNextFreeId(ver.Parameters);
-                    }
-                    string id = appVersion + "_P-" + para.Id;
-                    //ParamIds.Add(para.UId, id);
-                    xpara.SetAttributeValue("Id", id);
-                    xpara.SetAttributeValue("Name", para.Name);
-                    xpara.SetAttributeValue("ParameterType", $"{appVersion}_PT-{GetEncoded(para.ParameterTypeObject.Name)}");
-                    xpara.SetAttributeValue("Text", para.Text);
-                    if (para.Access != ParamAccess.Default && para.Access != ParamAccess.ReadWrite) xpara.SetAttributeValue("Access", para.Access);
-                    if (!string.IsNullOrWhiteSpace(para.Suffix)) xpara.SetAttributeValue("SuffixText", para.Suffix);
-                    xpara.SetAttributeValue("Value", para.Value);
+                foreach(var paras in ver.Parameters.Where(p => p.IsInUnion).GroupBy(p => p.UnionObject))
+                {
+                    XElement xunion = new XElement(Get("Union"));
+                    xunion.SetAttributeValue("SizeInBit", paras.Key.SizeInBit);
 
-                    switch(para.SavePath) {
+                    switch(paras.Key.SavePath) {
                         case ParamSave.Memory:
-                            XElement xparamem = new XElement(Get("Memory"));
+                            XElement xmem = new XElement(Get("Memory"));
                             string memid = $"{appVersion}_";
-                            if(para.MemoryObject.Type == MemoryTypes.Absolute)
-                                memid += $"AS-{para.MemoryObject.Address:X4}";
+                            if(paras.Key.MemoryObject.Type == MemoryTypes.Absolute)
+                                memid += $"AS-{paras.Key.MemoryObject.Address:X4}";
                             else
-                                memid += $"RS-{para.MemoryObject.Offset:X4}";
-                            xparamem.SetAttributeValue("CodeSegment", memid);
-                            xparamem.SetAttributeValue("Offset", para.Offset);
-                            xparamem.SetAttributeValue("BitOffset", para.OffsetBit);
-                            xpara.Add(xparamem);
+                                memid += $"RS-04-{paras.Key.MemoryObject.Offset:X4}";
+                            xmem.SetAttributeValue("CodeSegment", memid);
+                            xmem.SetAttributeValue("Offset", paras.Key.Offset);
+                            xmem.SetAttributeValue("BitOffset", paras.Key.OffsetBit);
+                            xunion.Add(xmem);
                             break;
+
+                        default:
+                            throw new Exception("Not supportet SavePath for Union (" + paras.Key.Name + ")!");
                     }
-                    temp.Add(xpara);
+
+                    foreach(Parameter para in paras) {
+                        ParseParameter(para, xunion, ver, headers);
+                    }
+
+                    temp.Add(xunion);
                 }
                 System.IO.File.WriteAllText(GetRelPath(appVersion + ".h"), headers.ToString());
                 headers = null;
@@ -343,19 +372,20 @@ namespace Kaenx.Creator.Classes
                 temp.SetAttributeValue("MaxEntries", "65535");
                 xunderapp.Add(temp);
 
+                /*
                 //TODO use correct type
                 switch(app.Mask.Procedure) {
                     case ProcedureTypes.Application:
-                        temp = XDocument.Parse("<LoadProcedures xmlns=\"http://knx.org/xml/project/14\"><LoadProcedure><LdCtrlConnect /><LdCtrlDisconnect /></LoadProcedure></LoadProcedures>").Root;
+                        temp = XDocument.Parse($"<LoadProcedures xmlns=\"{currentNamespace}\"><LoadProcedure><LdCtrlConnect /><LdCtrlDisconnect /></LoadProcedure></LoadProcedures>").Root;
                         xunderapp.Add(temp);
                         break;
                         
                     case ProcedureTypes.Merge:
-                        temp = XDocument.Parse("<LoadProcedures xmlns=\"http://knx.org/xml/project/14\"><LoadProcedure MergeId=\"2\"><LdCtrlRelSegment LsmIdx=\"4\" Size=\"1\" Mode=\"0\" Fill=\"0\" AppliesTo=\"full\" /></LoadProcedure><LoadProcedure MergeId=\"4\"><LdCtrlWriteRelMem ObjIdx=\"4\" Offset=\"0\" Size=\"1\" Verify=\"true\" /></LoadProcedure></LoadProcedures>").Root;
+                        temp = XDocument.Parse($"<LoadProcedures xmlns=\"{currentNamespace}\"><LoadProcedure MergeId=\"2\"><LdCtrlRelSegment LsmIdx=\"4\" Size=\"1\" Mode=\"0\" Fill=\"0\" AppliesTo=\"full\" /></LoadProcedure><LoadProcedure MergeId=\"4\"><LdCtrlWriteRelMem ObjIdx=\"4\" Offset=\"0\" Size=\"1\" Verify=\"true\" /></LoadProcedure></LoadProcedures>").Root;
                         xunderapp.Add(temp);
                         break;
                 }
-
+                */
 
                 
                 #endregion
@@ -372,9 +402,8 @@ namespace Kaenx.Creator.Classes
             xmanu.Add(xhards);
 
 
-            int hardCount = 1;
             foreach(Models.Hardware hard in hardware) {
-                string hid = Manu + "_H-" + GetEncoded(hard.SerialNumber) + "-" + hardCount++;
+                string hid = Manu + "_H-" + GetEncoded(hard.SerialNumber) + "-" + hard.Version;
                 XElement xhard = new XElement(Get("Hardware"));
                 xhard.SetAttributeValue("Id", hid);
                 xhard.SetAttributeValue("Name", hard.Name);
@@ -457,7 +486,44 @@ namespace Kaenx.Creator.Classes
             doc.Save(GetRelPath("temp.xml"));
         }
 
+        private void ParseParameter(Parameter para, XElement parent, AppVersion ver, StringBuilder headers) {
+            string line = "#define PARAM_" + para.Name + " " + para.Offset + " //Size: " + para.ParameterTypeObject.SizeInBit;
+            if(para.ParameterTypeObject.SizeInBit % 8 == 0) line += " (" + (para.ParameterTypeObject.SizeInBit / 8) + " Byte)";
+            if(para.OffsetBit > 0) line += " | Bit Offset: " + para.OffsetBit;
+            headers.AppendLine(line);
 
+            XElement xpara = new XElement(Get("Parameter"));
+            
+            if(para.Id == -1) {
+                para.Id = AutoHelper.GetNextFreeId(ver.Parameters);
+            }
+            string id = appVersion + "_P-" + para.Id;
+            xpara.SetAttributeValue("Id", id);
+            xpara.SetAttributeValue("Name", para.Name);
+            xpara.SetAttributeValue("ParameterType", $"{appVersion}_PT-{GetEncoded(para.ParameterTypeObject.Name)}");
+            xpara.SetAttributeValue("Text", para.Text);
+            if (para.Access != ParamAccess.Default && para.Access != ParamAccess.ReadWrite) xpara.SetAttributeValue("Access", para.Access);
+            if (!string.IsNullOrWhiteSpace(para.Suffix)) xpara.SetAttributeValue("SuffixText", para.Suffix);
+            xpara.SetAttributeValue("Value", para.Value);
+
+            if(!para.IsInUnion) {
+                switch(para.SavePath) {
+                    case ParamSave.Memory:
+                        XElement xparamem = new XElement(Get("Memory"));
+                        string memid = $"{appVersion}_";
+                        if(para.MemoryObject.Type == MemoryTypes.Absolute)
+                            memid += $"AS-{para.MemoryObject.Address:X4}";
+                        else
+                            memid += $"RS-{para.MemoryObject.Offset:X4}";
+                        xparamem.SetAttributeValue("CodeSegment", memid);
+                        xparamem.SetAttributeValue("Offset", para.Offset);
+                        xparamem.SetAttributeValue("BitOffset", para.OffsetBit);
+                        xpara.Add(xparamem);
+                        break;
+                }
+            }
+            parent.Add(xpara);
+        }
 
         
 
@@ -579,26 +645,40 @@ namespace Kaenx.Creator.Classes
         }
         #endregion
 
+        private bool CheckSections(CatalogItem parent) {
+            bool flag = false;
+
+            foreach(CatalogItem item in parent.Items) {
+                if(item.IsSection) {
+                    if(CheckSections(item)) flag = true;
+                } else {
+                    if(item.Hardware.Devices.Any(d => devices.Contains(d))) flag = true;
+                }
+            }
+            return flag;
+        }
+
         private void GetCatalogItems(CatalogItem item, XElement parent, Dictionary<string, string> productIds, Dictionary<string, string> hardwareIds)
         {
             if(item.IsSection){
                 XElement xitem = new XElement(Get("CatalogSection"));
 
-                //TODO check if section contains exported item
+                if(CheckSections(item)) {
+                    if(item.Parent.Parent == null) {
+                        string id = $"M-{general.ManufacturerId.ToString("X4")}_CS-" + GetEncoded(item.Number);
+                        xitem.SetAttributeValue("Id", id);
+                    } else {
+                        string id = parent.Attribute("Id").Value;
+                        id += "-" + GetEncoded(item.Number);
+                        xitem.SetAttributeValue("Id", id);
+                    }
 
-                if(item.Parent.Parent == null) {
-                    string id = $"M-{general.ManufacturerId.ToString("X4")}_CS-" + GetEncoded(item.Number);
-                    xitem.SetAttributeValue("Id", id);
-                } else {
-                    string id = parent.Attribute("Id").Value;
-                    id += "-" + GetEncoded(item.Number);
-                    xitem.SetAttributeValue("Id", id);
+                    xitem.SetAttributeValue("Name", item.Name);
+                    xitem.SetAttributeValue("Number", item.Number);
+                    xitem.SetAttributeValue("DefaultLanguage", "de-DE");
+                    parent.Add(xitem);
                 }
-
-                xitem.SetAttributeValue("Name", item.Name);
-                xitem.SetAttributeValue("Number", item.Number);
-                xitem.SetAttributeValue("DefaultLanguage", "de-DE");
-                parent.Add(xitem);
+                
                 foreach (CatalogItem sub in item.Items)
                     GetCatalogItems(sub, xitem, productIds, hardwareIds);
             } else {
@@ -636,8 +716,11 @@ namespace Kaenx.Creator.Classes
 
         public void SignOutput()
         {
-            string etsPath = @"C:\Program Files (x86)\ETS5\CV\5.6.241.33672";
-            string fakePath = GetRelCVPath("5.6.241.33672");
+            string engineVersion = EtsVersions[currentNamespace];
+
+            //TODO change to latest engineversion!
+            string etsPath = @"C:\Program Files (x86)\ETS5\CV\" + engineVersion;
+            string fakePath = GetRelCVPath(engineVersion);
             string outputFile = GetRelPath("output.knxprod");
             var asmPath = System.IO.Path.Combine(fakePath, "Knx.Ets.Converter.ConverterEngine.dll");
             if(!System.IO.File.Exists(asmPath)) {
@@ -723,9 +806,9 @@ namespace Kaenx.Creator.Classes
             return System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CV", path);
         }
 
-        private XName Get(string name, string ns = "http://knx.org/xml/project/14")
+        private XName Get(string name)
         {
-            return XName.Get(name, ns);
+            return XName.Get(name, currentNamespace);
         }
     }
 }
