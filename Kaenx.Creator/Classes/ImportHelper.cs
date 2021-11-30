@@ -527,10 +527,86 @@ namespace Kaenx.Creator.Classes
         }
 
         private void ImportDynamic(XElement xdyn) {
-            currentVers.Dynamics.Add(new DynamicMain());
+            DynamicMain main = new DynamicMain();
             //TODO import dynamics
+
+            ParseDynamic(main, xdyn);
+            
+            currentVers.Dynamics.Add(main);
         }
 
+        private void ParseDynamic(IDynItems parent, XElement xeles) {
+            foreach(XElement xele in xeles.Elements()) {
+                int paraId = 0;
+
+                switch(xele.Name.LocalName) {
+                    case "Channel":
+                        DynChannel dc = new DynChannel() {
+                            Name = xele.Attribute("Name")?.Value ?? "",
+                            Text = xele.Attribute("Text")?.Value ?? ""
+                        };
+                        if(xele.Attribute("ParamRefId") != null) {
+                            dc.UseTextParameter = true;
+                            paraId = int.Parse(GetLastSplit(xele.Attribute("ParamRefId").Value, 2));
+                            dc.ParameterRefObject = currentVers.ParameterRefs.Single(p => p.Id == paraId);
+                        }
+                        parent.Items.Add(dc);
+                        ParseDynamic(dc, xele);
+                        break;
+
+                    case "IndependentChannel":
+                        break;
+
+                    case "ParameterBlock":
+                        DynParaBlock dpb = new DynParaBlock() {
+                            Name = xele.Attribute("Name")?.Value ?? "",
+                            Text = xele.Attribute("Text")?.Value ?? ""
+                        };
+                        if(xele.Attribute("ParamRefId") != null) {
+                            dpb.UseTextParameter = true;
+                            paraId = int.Parse(GetLastSplit(xele.Attribute("ParamRefId").Value, 2));
+                            dpb.ParameterRefObject = currentVers.ParameterRefs.Single(p => p.Id == paraId);
+                        }
+                        parent.Items.Add(dpb);
+                        ParseDynamic(dpb, xele);
+                        break;
+
+                    case "choose":
+                        DynChoose dch = new DynChoose();
+                        paraId = int.Parse(GetLastSplit(xele.Attribute("ParamRefId").Value, 2));
+                        dch.ParameterRefObject = currentVers.ParameterRefs.Single(p => p.Id == paraId);
+                        parent.Items.Add(dch);
+                        ParseDynamic(dch, xele);
+                        break;
+
+                    case "when":
+                        DynWhen dw = new DynWhen() {
+                            Condition = xele.Attribute("test")?.Value ?? "",
+                            IsDefault = xele.Attribute("default")?.Value == "true"
+                        };
+                        parent.Items.Add(dw);
+                        ParseDynamic(dw, xele);
+                        break;
+
+                    case "ParameterRefRef":
+                        DynParameter dp = new DynParameter();
+                        paraId = int.Parse(GetLastSplit(xele.Attribute("RefId").Value, 2));
+                        dp.ParameterRefObject = currentVers.ParameterRefs.Single(p => p.Id == paraId);
+                        parent.Items.Add(dp);
+                        break;
+
+                    case "ComObjectRefRef":
+                        DynComObject dco = new DynComObject();
+                        paraId = int.Parse(GetLastSplit(xele.Attribute("RefId").Value, 2));
+                        dco.ComObjectRefObject = currentVers.ComObjectRefs.Single(p => p.Id == paraId);
+                        parent.Items.Add(dco);
+                        break;
+
+                    default:
+                        throw new Exception("Unbekanntes Element in Dynamic: " + xele.Name.LocalName);
+                }
+            }
+        }
 
 
         public FlagType ParseFlagType(string type) {

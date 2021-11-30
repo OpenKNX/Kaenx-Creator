@@ -544,6 +544,9 @@ namespace Kaenx.Creator
             MenuClose.IsEnabled = enable;
             MenuImport.IsEnabled = enable;
             TabsEdit.IsEnabled = enable;
+            
+            if(TabsEdit.SelectedIndex == 4)
+                TabsEdit.SelectedIndex = 3;
         }
 
         private void ClickImport(object sender, RoutedEventArgs e)

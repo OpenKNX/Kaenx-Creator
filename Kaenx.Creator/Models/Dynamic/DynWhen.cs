@@ -36,6 +36,7 @@ namespace Kaenx.Creator.Models.Dynamic
 
         private bool CheckForPara(IDynItems item)
         {
+            if(item == null) return false;
             if (item is DynParaBlock) return true;
             if (item.Parent == null) return false;
             return CheckForPara(item.Parent);
@@ -43,6 +44,7 @@ namespace Kaenx.Creator.Models.Dynamic
 
         private bool CheckForIndependent(IDynItems item)
         {
+            if(item == null) return false;
             if (item is IDynChannel)
                 return false;
             if (item.Parent == null) return true;
@@ -51,6 +53,7 @@ namespace Kaenx.Creator.Models.Dynamic
 
         private bool CheckForBlock(IDynItems item)
         {
+            if(item == null) return false;
             if (item is DynChannelIndependet || item is DynChannel)
                 return true;
             if (item.Parent == null || item is DynParaBlock) return false;

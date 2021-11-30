@@ -26,6 +26,13 @@ namespace Kaenx.Creator.Models.Dynamic
             set { _text = value; Changed("Text"); }
         }
 
+        private bool _useTextParam = false;
+        public bool UseTextParameter
+        {
+            get { return _useTextParam; }
+            set { _useTextParam = value; Changed("UseTextParameter"); }
+        }
+
         private ParameterRef _parameterRefObject;
         [JsonIgnore]
         public ParameterRef ParameterRefObject

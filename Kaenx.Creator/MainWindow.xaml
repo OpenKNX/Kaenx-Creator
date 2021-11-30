@@ -227,7 +227,7 @@
                     <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
                 </HeaderedContentControl>
                 <HeaderedContentControl Header="Text">
-                    <TextBox Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBox IsEnabled="{Binding UseTextParameter, Converter={StaticResource BoolNegate}}" Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
                 </HeaderedContentControl>
                 <HeaderedContentControl Header="Text Parameter">
                     <Grid>
@@ -248,13 +248,18 @@
                     <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
                 </HeaderedContentControl>
                 <HeaderedContentControl Header="Text">
-                    <TextBox Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBox IsEnabled="{Binding UseTextParameter, Converter={StaticResource BoolNegate}}" Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
                 </HeaderedContentControl>
-                <HeaderedContentControl Header="Paremeter Ref" Visibility="{Binding ElementName=VersionList, Path=SelectedItem.IsParameterRefAuto, Converter={StaticResource BoolToVis}, ConverterParameter=true}">
-                    <ComboBox ItemsSource="{Binding ElementName=VersionList, Path=SelectedItem.ParameterRefs}" SelectedItem="{Binding ParameterRefObject}" DisplayMemberPath="Name" />
-                </HeaderedContentControl>
-                <HeaderedContentControl Header="Parameter" Visibility="{Binding ElementName=VersionList, Path=SelectedItem.IsParameterRefAuto, Converter={StaticResource BoolToVis}}">
-                    <ComboBox ItemsSource="{Binding ElementName=VersionList, Path=SelectedItem.Parameters}" SelectedItem="{Binding ParameterRefObject.ParameterObject, Mode=TwoWay}" DisplayMemberPath="Name" />
+                <HeaderedContentControl Header="Text Parameter">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <CheckBox IsChecked="{Binding UseTextParameter}" VerticalAlignment="Center" />
+                        <ComboBox Grid.Column="1" IsEnabled="{Binding UseTextParameter}" ItemsSource="{Binding ElementName=VersionList, Path=SelectedItem.ParameterRefs}" SelectedItem="{Binding ParameterRefObject, Mode=TwoWay}" DisplayMemberPath="Name" />
+                    </Grid>
                 </HeaderedContentControl>
             </StackPanel>
         </DataTemplate>
