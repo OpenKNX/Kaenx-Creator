@@ -53,9 +53,6 @@ namespace Kaenx.Creator.Classes
             }
             currentNamespace = $"http://knx.org/xml/project/{highestNS}";
 
-            FileVersionInfo fileVersion = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location);
-            string toolVersion = fileVersion.FileVersion;
-
             Dictionary<string, string> ProductIds = new Dictionary<string, string>();
             Dictionary<string, string> HardwareIds = new Dictionary<string, string>();
 
@@ -749,9 +746,10 @@ namespace Kaenx.Creator.Classes
             //dset = ConverterEngine.ReOrganizeDocumentSet(dset);
             dset = InvokeMethod(eng, "ReOrganizeDocumentSet", new object[] { dset });
 
+            string toolVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
             //ConverterEngine.PersistDocumentSetAsXmlOutput(dset, outputFile, null, string.Empty, true, _toolName, _toolVersion);
             InvokeMethod(eng, "PersistDocumentSetAsXmlOutput", new object[] { dset, outputFile, null,
-                            "", true, "Kaenx.Creator", "0.0.1" });
+                            "", true, "Kaenx.Creator", toolVersion });
         }
 
         private object InvokeMethod(Type type, string methodName, object[] args)
