@@ -1,8 +1,10 @@
 ﻿using Kaenx.Creator.Models;
 using Kaenx.Creator.Models.Dynamic;
+using Kaenx.Creator.Signing;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -19,6 +21,7 @@ namespace Kaenx.Creator.Classes
         List<Models.Application> apps;
         List<Models.AppVersion> vers;
         Models.ModelGeneral general;
+        XDocument doc;
         string appVersion;
         string currentNamespace;
 
@@ -45,6 +48,9 @@ namespace Kaenx.Creator.Classes
 
             if (!System.IO.Directory.Exists(GetRelPath("")))
                 System.IO.Directory.CreateDirectory(GetRelPath(""));
+                
+            if (!System.IO.Directory.Exists(GetRelPath(Manu)))
+                System.IO.Directory.CreateDirectory(GetRelPath(Manu));
 
             int highestNS = 0;
             foreach(Models.AppVersion ver in vers) {
@@ -56,18 +62,12 @@ namespace Kaenx.Creator.Classes
             Dictionary<string, string> ProductIds = new Dictionary<string, string>();
             Dictionary<string, string> HardwareIds = new Dictionary<string, string>();
 
-            XElement xmanu = new XElement(Get("Manufacturer"));
-            xmanu.SetAttributeValue("RefId", Manu);
-
-            XDocument doc = new XDocument(new XElement(Get("KNX")));
-            doc.Root.Add(new XElement(Get("ManufacturerData"), xmanu));
-
             #region XML Applications
-            XElement xapps = new XElement(Get("ApplicationPrograms"));
-            xmanu.Add(xapps);
-
-
+            XElement xmanu = null;
             foreach(Models.AppVersion ver in vers) {
+                xmanu = CreateNewXML(Manu);
+                XElement xapps = new XElement(Get("ApplicationPrograms"));
+                xmanu.Add(xapps);
                 Models.Application app = apps.Single(a => a.Versions.Contains(ver));
                 string appName = Manu + "_A-" + app.Number.ToString("X4");
 
@@ -244,7 +244,8 @@ namespace Kaenx.Creator.Classes
 
                     temp.Add(xunion);
                 }
-                System.IO.File.WriteAllText(GetRelPath(appVersion + ".h"), headers.ToString());
+                //TODO wieder aufnhemen
+                //System.IO.File.WriteAllText(GetRelPath(appVersion + ".h"), headers.ToString());
                 headers = null;
 
                 xunderapp.Add(temp);
@@ -262,7 +263,7 @@ namespace Kaenx.Creator.Classes
                     if(pref.Id == -1) {
                         pref.Id = AutoHelper.GetNextFreeId(ver.ParameterRefs);
                     }
-                    string id = $"{appVersion}_P-{pref.ParameterObject.Id}";
+                    string id = appVersion + (pref.ParameterObject.IsInUnion ? "_UP-":"_P-") + pref.ParameterObject.Id;
                     xpref.SetAttributeValue("RefId", id);
                     id += $"_R-{pref.Id}";
                     xpref.SetAttributeValue("Id", id);
@@ -391,14 +392,14 @@ namespace Kaenx.Creator.Classes
                 xapp.Add(xunderapp);
 
                 HandleSubItems(ver.Dynamics[0], xunderapp);
+                doc.Save(GetRelPath(Manu, appVersion + ".xml"));
             }
             #endregion
 
             #region XML Hardware
+            xmanu = CreateNewXML(Manu);
             XElement xhards = new XElement(Get("Hardware"));
             xmanu.Add(xhards);
-
-
             foreach(Models.Hardware hard in hardware) {
                 string hid = Manu + "_H-" + GetEncoded(hard.SerialNumber) + "-" + hard.Version;
                 XElement xhard = new XElement(Get("Hardware"));
@@ -466,10 +467,12 @@ namespace Kaenx.Creator.Classes
                 }
                 xhards.Add(xhard);
             }
+            doc.Save(GetRelPath(Manu, "Hardware.xml"));
             #endregion
 
             #region XML Catalog
 
+            xmanu = CreateNewXML(Manu);
             XElement cat = new XElement(Get("Catalog"));
 
             foreach (CatalogItem item in general.Catalog[0].Items)
@@ -477,10 +480,11 @@ namespace Kaenx.Creator.Classes
                 GetCatalogItems(item, cat, ProductIds, HardwareIds);
             }
             xmanu.Add(cat);
+            doc.Save(GetRelPath(Manu, "Catalog.xml"));
             #endregion
 
 
-            doc.Save(GetRelPath("temp.xml"));
+            //doc.Save(GetRelPath("temp.xml"));
         }
 
         private void ParseParameter(Parameter para, XElement parent, AppVersion ver, StringBuilder headers) {
@@ -494,14 +498,10 @@ namespace Kaenx.Creator.Classes
             if(para.Id == -1) {
                 para.Id = AutoHelper.GetNextFreeId(ver.Parameters);
             }
-            string id = appVersion + "_P-" + para.Id;
+            string id = appVersion + (para.IsInUnion ? "_UP-" : "_P-") + para.Id;
             xpara.SetAttributeValue("Id", id);
             xpara.SetAttributeValue("Name", para.Name);
             xpara.SetAttributeValue("ParameterType", $"{appVersion}_PT-{GetEncoded(para.ParameterTypeObject.Name)}");
-            xpara.SetAttributeValue("Text", para.Text);
-            if (para.Access != ParamAccess.Default && para.Access != ParamAccess.ReadWrite) xpara.SetAttributeValue("Access", para.Access);
-            if (!string.IsNullOrWhiteSpace(para.Suffix)) xpara.SetAttributeValue("SuffixText", para.Suffix);
-            xpara.SetAttributeValue("Value", para.Value);
 
             if(!para.IsInUnion) {
                 switch(para.SavePath) {
@@ -518,7 +518,18 @@ namespace Kaenx.Creator.Classes
                         xpara.Add(xparamem);
                         break;
                 }
+            } else {
+                xpara.SetAttributeValue("Offset", para.Offset);
+                xpara.SetAttributeValue("BitOffset", para.OffsetBit);
+                if(para.IsUnionDefault)
+                    xpara.SetAttributeValue("DefaultUnionParameter", "true");
             }
+            
+            xpara.SetAttributeValue("Text", para.Text);
+            if (para.Access != ParamAccess.Default && para.Access != ParamAccess.ReadWrite) xpara.SetAttributeValue("Access", para.Access);
+            if (!string.IsNullOrWhiteSpace(para.Suffix)) xpara.SetAttributeValue("SuffixText", para.Suffix);
+            xpara.SetAttributeValue("Value", para.Value);
+
             parent.Add(xpara);
         }
 
@@ -536,8 +547,9 @@ namespace Kaenx.Creator.Classes
 
                 switch (item)
                 {
+                    case DynChannel dc:
                     case DynChannelIndependet dci:
-                        xitem = Handle(dci, xparent);
+                        xitem = Handle(item, xparent);
                         break;
 
                     case DynParaBlock dpb:
@@ -577,11 +589,14 @@ namespace Kaenx.Creator.Classes
                 DynChannel dch = ch as DynChannel;
                 channel.Name = Get("Channel");
                 if(dch.ParameterRefObject != null)
-                    channel.SetAttributeValue("ParamRefId", $"{appVersion}_P-{dch.ParameterRefObject.ParameterObject.Id}_R-{dch.ParameterRefObject.Id}");
+                    channel.SetAttributeValue("ParamRefId", appVersion + (dch.ParameterRefObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{dch.ParameterRefObject.ParameterObject.Id}_R-{dch.ParameterRefObject.Id}");
+                else
+                    channel.SetAttributeValue("Text", ""); //TODO implement
+                channel.SetAttributeValue("Number", dch.Number);
+                channel.SetAttributeValue("Id", $"{appVersion}_CH-{dch.Number}");
             }
 
             channel.SetAttributeValue("Name", ch.Name);
-            //channel.SetAttributeValue("Text", ""); //Todo einfügen
 
             return channel;
         }
@@ -597,7 +612,7 @@ namespace Kaenx.Creator.Classes
         {
             XElement xcho = new XElement(Get("choose"));
             parent.Add(xcho);
-            xcho.SetAttributeValue("ParamRefId", $"{appVersion}_O-{cho.ParameterRefObject.ParameterObject.Id}_R-{cho.ParameterRefObject.Id}");
+            xcho.SetAttributeValue("ParamRefId", appVersion + (cho.ParameterRefObject.ParameterObject.IsInUnion ? "_UP-":"_P-") + $"{cho.ParameterRefObject.ParameterObject.Id}_R-{cho.ParameterRefObject.Id}");
             return xcho;
         }
 
@@ -626,10 +641,16 @@ namespace Kaenx.Creator.Classes
             block.SetAttributeValue("Name", bl.Name);
 
 
-            if (bl.ParameterRefObject != null)
-                block.SetAttributeValue("ParamRefId", $"{appVersion}_P-{bl.ParameterRefObject.ParameterObject.Id}_R-{bl.ParameterRefObject.Id}");
-            else
+            if (bl.ParameterRefObject != null){
+                block.SetAttributeValue("Id", $"{appVersion}_PB-{bl.ParameterRefObject.Id}");
+                block.SetAttributeValue("ParamRefId", appVersion + (bl.ParameterRefObject.ParameterObject.IsInUnion ? "_UP-":"_P-") + $"{bl.ParameterRefObject.ParameterObject.Id}_R-{bl.ParameterRefObject.Id}");
+            } else {
+                if(bl.Id == -1) {
+                    bl.Id = 1; //TODO get real next free Id
+                }
+                block.SetAttributeValue("Id", $"{appVersion}_PB-{bl.Id}");
                 block.SetAttributeValue("Text", bl.Text);
+            }
 
             return block;
         }
@@ -638,7 +659,7 @@ namespace Kaenx.Creator.Classes
         {
             XElement xpara = new XElement(Get("ParameterRefRef"));
             parent.Add(xpara);
-            xpara.SetAttributeValue("RefId", $"{appVersion}_P-{pa.ParameterRefObject.ParameterObject.Id}_R-{pa.ParameterRefObject.Id}");
+            xpara.SetAttributeValue("RefId", appVersion + (pa.ParameterRefObject.ParameterObject.IsInUnion ? "_UP-":"_P-") + $"{pa.ParameterRefObject.ParameterObject.Id}_R-{pa.ParameterRefObject.Id}");
         }
         #endregion
 
@@ -713,49 +734,39 @@ namespace Kaenx.Creator.Classes
 
         public void SignOutput()
         {
-            string engineVersion = EtsVersions[currentNamespace];
+            string manu = $"M-{general.ManufacturerId:X4}";
+            
+            IDictionary<string, string> applProgIdMappings = new Dictionary<string, string>();
+            IDictionary<string, string> applProgHashes = new Dictionary<string, string>();
+            IDictionary<string, string> mapBaggageIdToFileIntegrity = new Dictionary<string, string>(50);
 
-            //TODO change to latest engineversion!
-            string etsPath = @"C:\Program Files (x86)\ETS5\CV\" + engineVersion;
-            string fakePath = GetRelCVPath(engineVersion);
-            string outputFile = GetRelPath("output.knxprod");
-            var asmPath = System.IO.Path.Combine(fakePath, "Knx.Ets.Converter.ConverterEngine.dll");
-            if(!System.IO.File.Exists(asmPath)) {
-                asmPath = System.IO.Path.Combine(etsPath, "Knx.Ets.Converter.ConverterEngine.dll");
-                if(!System.IO.File.Exists(asmPath))
-                    return;
+            FileInfo hwFileInfo = new FileInfo(GetRelPath(manu, "Hardware.xml"));
+            FileInfo catalogFileInfo = new FileInfo(GetRelPath(manu, "Catalog.xml"));
+
+            foreach(string file in Directory.GetFiles(GetRelPath(manu))) {
+                if(!file.Contains("M-") || !file.Contains("_A-")) continue;
+
+                FileInfo info = new FileInfo(file);
+                ApplicationProgramHasher aph = new ApplicationProgramHasher(info, mapBaggageIdToFileIntegrity, true);
+                aph.HashFile();
+
+                string oldApplProgId = aph.OldApplProgId;
+                string newApplProgId = aph.NewApplProgId;
+                string genHashString = aph.GeneratedHashString;
+
+                applProgIdMappings.Add(oldApplProgId, newApplProgId);
+                if (!applProgHashes.ContainsKey(newApplProgId))
+                    applProgHashes.Add(newApplProgId, genHashString);
             }
 
-            var asm = Assembly.LoadFrom(asmPath);
-            var eng = asm.GetType("Knx.Ets.Converter.ConverterEngine.ConverterEngine");
-            var bas = asm.GetType("Knx.Ets.Converter.ConverterEngine.ConvertBase");
+            HardwareSigner hws = new HardwareSigner(hwFileInfo, applProgIdMappings, applProgHashes, true);
+            hws.SignFile();
+            IDictionary<string, string> hardware2ProgramIdMapping = hws.OldNewIdMappings;
 
-            //ConvertBase.Uninitialize();
-            InvokeMethod(bas, "Uninitialize", null);
+            CatalogIdPatcher cip = new CatalogIdPatcher(catalogFileInfo, hardware2ProgramIdMapping);
+            cip.Patch();
 
-            //var dset = ConverterEngine.BuildUpRawDocumentSet( files );
-            string[] files = new string[] { GetRelPath("temp.xml"), System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "knx_master.xml") } ;
-            var dset = InvokeMethod(eng, "BuildUpRawDocumentSet", new object[] { files });
-
-            //ConverterEngine.CheckOutputFileName(outputFile, ".knxprod");
-            InvokeMethod(eng, "CheckOutputFileName", new object[] { outputFile, ".knxprod" });
-
-            //ConvertBase.CleanUnregistered = false;
-            //SetProperty(bas, "CleanUnregistered", false);
-
-            //dset = ConverterEngine.ReOrganizeDocumentSet(dset);
-            dset = InvokeMethod(eng, "ReOrganizeDocumentSet", new object[] { dset });
-
-            string toolVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
-            //ConverterEngine.PersistDocumentSetAsXmlOutput(dset, outputFile, null, string.Empty, true, _toolName, _toolVersion);
-            InvokeMethod(eng, "PersistDocumentSetAsXmlOutput", new object[] { dset, outputFile, null,
-                            "", true, "Kaenx.Creator", toolVersion });
-        }
-
-        private object InvokeMethod(Type type, string methodName, object[] args)
-        {
-            var mi = type.GetMethod(methodName, BindingFlags.Static | BindingFlags.NonPublic);
-            return mi.Invoke(null, args);
+            XmlSigning.SignDirectory(GetRelPath(manu));
         }
 
         private string GetEncoded(string input)
@@ -794,6 +805,11 @@ namespace Kaenx.Creator.Classes
             return input;
         }
 
+        public string GetRelPath(string path, string path2)
+        {
+            return System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Output", path, path2);
+        }
+
         public string GetRelPath(string path)
         {
             return System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Output", path);
@@ -806,7 +822,16 @@ namespace Kaenx.Creator.Classes
 
         private XName Get(string name)
         {
-            return XName.Get(name, currentNamespace);
+            return XName.Get(name); //, currentNamespace);
+        }
+
+        private XElement CreateNewXML(string manu) {
+            XElement xmanu = new XElement(Get("Manufacturer"));
+            xmanu.SetAttributeValue("RefId", manu);
+
+            doc = new XDocument(new XElement(Get("KNX")));
+            doc.Root.Add(new XElement(Get("ManufacturerData"), xmanu));
+            return xmanu;
         }
     }
 }

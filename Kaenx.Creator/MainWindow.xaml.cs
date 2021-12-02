@@ -795,6 +795,10 @@ namespace Kaenx.Creator
                 ((sender as Button).DataContext as Models.ComObject).Id = -1;
             } else if((sender as Button).DataContext is Models.ComObjectRef) {
                 ((sender as Button).DataContext as Models.ComObjectRef).Id = -1;
+            } else if((sender as Button).DataContext is Models.Dynamic.DynParaBlock) {
+                ((sender as Button).DataContext as Models.Dynamic.DynParaBlock).Id = -1;
+            } else {
+                throw new Exception("Unbekannter Typ zum ID löschen: " + sender.GetType().ToString());
             }
         }
 

@@ -114,6 +114,13 @@ namespace Kaenx.Creator.Models
             set { _inUnion = value; Changed("IsInUnion"); }
         }
 
+        private bool _unionDefault = false;
+        public bool IsUnionDefault
+        {
+            get { return _unionDefault; }
+            set { _unionDefault = value; Changed("IsUnionDefault"); }
+        }
+
         private int _offset = -1;
         public int Offset
         {
