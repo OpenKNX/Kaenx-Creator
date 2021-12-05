@@ -19,6 +19,13 @@ namespace Kaenx.Creator.Models.Dynamic
             set { _name = value; Changed("Name"); }
         }
 
+        private string _number = "0";
+        public string Number
+        {
+            get { return _number; }
+            set { _number = value; Changed("Number"); }
+        }
+
         private string _text = "Channel";
         public string Text
         {

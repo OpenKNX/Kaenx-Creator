@@ -12,6 +12,13 @@ namespace Kaenx.Creator.Models.Dynamic
         [JsonIgnore]
         public IDynItems Parent { get; set; }
 
+        private int _id = -1;
+        public int Id
+        {
+            get { return _id; }
+            set { _id = value; Changed("Id"); }
+        }
+
         private string _name = "Unbenannt";
         public string Name
         {

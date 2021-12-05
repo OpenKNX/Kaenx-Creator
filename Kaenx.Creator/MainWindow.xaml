@@ -229,6 +229,13 @@
                 <HeaderedContentControl Header="Text">
                     <TextBox IsEnabled="{Binding UseTextParameter, Converter={StaticResource BoolNegate}}" Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
                 </HeaderedContentControl>
+                <Grid Visibility="{Binding UseTextParameter, Converter={StaticResource BoolToVis}, ConverterParameter=true}" Margin="5 0">
+                    <TextBlock VerticalAlignment="Center">
+                        <Run Text="ID:" />
+                        <Run Text="{Binding Id}"/>
+                    </TextBlock>
+                    <Button Content="Zurücksetzen" HorizontalAlignment="Right" Click="ResetId" />
+                </Grid>      
                 <HeaderedContentControl Header="Text Parameter">
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -246,6 +253,9 @@
             <StackPanel>
                 <HeaderedContentControl Header="Name">
                     <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
+                </HeaderedContentControl>
+                <HeaderedContentControl Header="Nummer">
+                    <TextBox Text="{Binding Number, UpdateSourceTrigger=PropertyChanged}" />
                 </HeaderedContentControl>
                 <HeaderedContentControl Header="Text">
                     <TextBox IsEnabled="{Binding UseTextParameter, Converter={StaticResource BoolNegate}}" Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />

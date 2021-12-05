@@ -270,7 +270,8 @@ namespace Kaenx.Creator.Classes
                 Suffix = xpara.Attribute("SuffixText")?.Value ?? "",
                 UId = _uidCounter++,
                 IsInUnion = (xmemory != null),
-                UnionObject = union
+                UnionObject = union,
+                IsUnionDefault = xpara.Attribute("DefaultUnionParameter")?.Value == "true"
             };
             string id = GetLastSplit(xpara.Attribute("Id").Value, 2);
             if(id.StartsWith("-"))
@@ -543,7 +544,8 @@ namespace Kaenx.Creator.Classes
                     case "Channel":
                         DynChannel dc = new DynChannel() {
                             Name = xele.Attribute("Name")?.Value ?? "",
-                            Text = xele.Attribute("Text")?.Value ?? ""
+                            Text = xele.Attribute("Text")?.Value ?? "",
+                            Number = xele.Attribute("Number")?.Value ?? ""
                         };
                         if(xele.Attribute("ParamRefId") != null) {
                             dc.UseTextParameter = true;
@@ -566,6 +568,8 @@ namespace Kaenx.Creator.Classes
                             dpb.UseTextParameter = true;
                             paraId = int.Parse(GetLastSplit(xele.Attribute("ParamRefId").Value, 2));
                             dpb.ParameterRefObject = currentVers.ParameterRefs.Single(p => p.Id == paraId);
+                        } else {
+                            dpb.Id = int.Parse(GetLastSplit(xele.Attribute("Id").Value, 2));
                         }
                         parent.Items.Add(dpb);
                         ParseDynamic(dpb, xele);
