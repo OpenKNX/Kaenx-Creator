@@ -42,6 +42,7 @@ namespace Kaenx.Creator.Classes
         }
 
 
+        string currentLang = "";
         Dictionary<string, Dictionary<string, Dictionary<string, string>>> languages;
 
         private void AddTranslation(string lang, string id, string attr, string value) {
@@ -84,6 +85,8 @@ namespace Kaenx.Creator.Classes
                 string hash = "0000";
                 appVersion += "-" + hash;
 
+                //TODO implement check to check if a default language is set and exists
+                currentLang = ver.DefaultLanguage;
                 foreach(Models.Translation trans in ver.Text) {
                     AddTranslation(trans.Language.CultureCode, appVersion, "Name", trans.Text);
                 }
@@ -98,7 +101,7 @@ namespace Kaenx.Creator.Classes
                 xapp.SetAttributeValue("ProgramType", "ApplicationProgram");
                 xapp.SetAttributeValue("MaskVersion", "MV-07B0");
                 xapp.SetAttributeValue("Name", app.Name);
-                xapp.SetAttributeValue("DefaultLanguage", "de-DE");
+                xapp.SetAttributeValue("DefaultLanguage", currentLang);
                 xapp.SetAttributeValue("LoadProcedureStyle", "MergedProcedure");
                 xapp.SetAttributeValue("PeiType", "0");
 
@@ -300,15 +303,15 @@ namespace Kaenx.Creator.Classes
                     }
                     xcom.SetAttributeValue("Id", $"{appVersion}_O-{com.Id}");
                     xcom.SetAttributeValue("Name", com.Name);
-                    xcom.SetAttributeValue("Text", com.Text);
+                    xcom.SetAttributeValue("Text", com.Text.Single(c => c.Language.CultureCode == currentLang).Text);
                     xcom.SetAttributeValue("Number", com.Number);
-                    xcom.SetAttributeValue("FunctionText", com.FunctionText);
-                    xcom.SetAttributeValue("VisibleDescription", com.Description);
+                    xcom.SetAttributeValue("FunctionText", com.FunctionText.Single(c => c.Language.CultureCode == currentLang).Text);
+                    xcom.SetAttributeValue("VisibleDescription", com.Description.Single(c => c.Language.CultureCode == currentLang).Text);
 
                     //TODO check if translation is not empty
                     foreach(Models.Translation trans in com.Text) AddTranslation(trans.Language.CultureCode, $"{appVersion}_O-{com.Id}", "Text", trans.Text);
                     foreach(Models.Translation trans in com.FunctionText) AddTranslation(trans.Language.CultureCode, $"{appVersion}_O-{com.Id}", "FunctionText", trans.Text);
-                    foreach(Models.Translation trans in com.Description) AddTranslation(trans.Language.CultureCode, $"{appVersion}_O-{com.Id}", "Text", trans.Description);
+                    foreach(Models.Translation trans in com.Description) AddTranslation(trans.Language.CultureCode, $"{appVersion}_O-{com.Id}", "VisibleDescription", trans.Text);
 
                     if (com.FlagComm != FlagType.Default) xcom.SetAttributeValue("CommunicationFlag", com.FlagComm.ToString());
                     if (com.FlagRead != FlagType.Default) xcom.SetAttributeValue("ReadFlag", com.FlagRead.ToString());
