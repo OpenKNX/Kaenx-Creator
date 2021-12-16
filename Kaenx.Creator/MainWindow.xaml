@@ -129,7 +129,7 @@
             </Setter>
         </Style>
         <Style x:Key="LeftTabItem" TargetType="TabItem">
-            <Setter Property="BorderThickness" Value="0 0 4 0" />
+            <Setter Property="BorderThickness" Value="0" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type TabItem}">
@@ -147,6 +147,66 @@
                                         <Storyboard>
                                             <ColorAnimationUsingKeyFrames Duration="0:0:0.5" Storyboard.TargetName="Backx" Storyboard.TargetProperty="Color">
                                                 <EasingColorKeyFrame KeyTime="0:0:0.5" Value="Green" />
+                                            </ColorAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal">
+                                        <Storyboard>
+                                            <DoubleAnimationUsingKeyFrames Duration="0:0:1" Storyboard.TargetName="Head" Storyboard.TargetProperty="Opacity">
+                                                <LinearDoubleKeyFrame KeyTime="0:0:1" Value="1" />
+                                            </DoubleAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="MouseOver" />
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <DoubleAnimationUsingKeyFrames Duration="0:0:1" Storyboard.TargetName="Head" Storyboard.TargetProperty="Opacity">
+                                                <LinearDoubleKeyFrame KeyTime="0:0:1" Value="0.5" />
+                                            </DoubleAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Border.Resources>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="FontSize" Value="20" />
+                                </Style>
+                            </Border.Resources>
+
+                            <Grid>
+                                <Border Name="Border" BorderBrush="Transparent" BorderThickness="{TemplateBinding BorderThickness}" Padding="5" Opacity="0.5" >
+                                    <Border.Background>
+                                        <SolidColorBrush x:Name="Backx" Color="Transparent" />
+                                    </Border.Background>
+                                </Border>
+                                <ContentPresenter Name="Head" ContentSource="Header" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10" />
+                            </Grid>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="LeftTabItem2" TargetType="TabItem">
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TabItem}">
+                        <Border Padding="0 0 0 7" Background="Transparent">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="SelectionStates">
+                                    <VisualState x:Name="Unselected">
+                                        <Storyboard>
+                                            <ColorAnimationUsingKeyFrames Duration="0:0:0.5" Storyboard.TargetName="Backx" Storyboard.TargetProperty="Color">
+                                                <EasingColorKeyFrame KeyTime="0:0:0.5" Value="Transparent" />
+                                            </ColorAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Selected">
+                                        <Storyboard>
+                                            <ColorAnimationUsingKeyFrames Duration="0:0:0.5" Storyboard.TargetName="Backx" Storyboard.TargetProperty="Color">
+                                                <EasingColorKeyFrame KeyTime="0:0:0.5" Value="Red" />
                                             </ColorAnimationUsingKeyFrames>
                                         </Storyboard>
                                     </VisualState>
@@ -629,14 +689,22 @@
                             <HeaderedContentControl Header="Name">
                                 <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
                             </HeaderedContentControl>
-
+                            <HeaderedContentControl Header="Text">
+                                <DataGrid ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                                        <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </HeaderedContentControl>
                             <HeaderedContentControl Header="Namespace Version">
                                 <ComboBox SelectedValue="{Binding NamespaceVersion}" SelectedIndex="3" SelectedValuePath="Tag">
                                     <ComboBoxItem Content="ETS4&#x09;(11)" Tag="11" />
                                     <ComboBoxItem Content="ETS5&#x09;(12)" Tag="12" />
                                     <ComboBoxItem Content="ETS5.5&#x09;(13)" Tag="13" />
                                     <ComboBoxItem Content="ETS5.6&#x09;(14)" Tag="14" />
-                                    <ComboBoxItem Content="ETS6&#x09;(20)" Tag="20" />
+                                    <ComboBoxItem Content="ETS5.7&#x09;(20)" Tag="20" />
+                                    <ComboBoxItem Content="ETS6&#x09;(21)" Tag="20" />
                                 </ComboBox>
                             </HeaderedContentControl>
 
@@ -644,6 +712,36 @@
                             <CheckBox IsChecked="{Binding IsMemSizeAuto}" Content="Automatisch Speicher berechnen beim Veröffentlichen" />
                             <CheckBox IsChecked="{Binding IsParameterRefAuto}" Content="Parameter Refs automatisch berechnen" />
                             <CheckBox IsChecked="{Binding IsComObjectRefAuto}" Content="KO Refs automatisch berechnen" />
+
+
+                            <HeaderedContentControl Header="Sprachen">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition MaxWidth="300" />
+                                    </Grid.ColumnDefinitions>
+                                    
+                                    <ListBox x:Name="SupportedLanguages" ItemsSource="{Binding Languages}" DisplayMemberPath="Text" />
+                                    
+                                    <StackPanel Grid.Column="1">
+                                        <HeaderedContentControl Header="Bearbeiten">
+                                            <StackPanel>
+                                                <ComboBox x:Name="LanguagesList" DisplayMemberPath="Text">
+                                                    <models:Language Text="Deutsch" CultureCode="de-DE" />
+                                                    <models:Language Text="Englisch" CultureCode="en-US" />
+                                                    <models:Language Text="Franszösisch" CultureCode="fr-FR" />
+                                                    <models:Language Text="Schwedisch" CultureCode="sv-SE" />
+                                                </ComboBox>
+                                                <Button Content="Hinzufügen" Click="ClickAddLanguage" />
+                                                <Button  Content="Entfernen" Click="ClickRemoveLanguage" />
+                                            </StackPanel>
+                                        </HeaderedContentControl>
+                                        <HeaderedContentControl Header="Standard Sprache">
+                                            <ComboBox ItemsSource="{Binding Languages}" SelectedValue="{Binding DefaultLanguage}" SelectedValuePath="CultureCode" DisplayMemberPath="Text"></ComboBox>
+                                        </HeaderedContentControl>
+                                    </StackPanel>
+                                </Grid>
+                            </HeaderedContentControl>
                         </StackPanel>
                     </TabItem>
 
@@ -872,6 +970,93 @@
                         </Grid>
                     </TabItem>
 
+                    <TabItem Header="Module" Style="{StaticResource LeftTabItem}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto" />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150" />
+                                <ColumnDefinition Width="150" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Button Content="Hinzufügen" Click="ClickAddModule" Margin="0 0 1 2" />
+                            <Button Grid.Column="1" Content="Löschen" Click="ClickRemoveModule" Margin="1 0 0 2" />
+
+                            <ListView x:Name="ModuleList" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding Modules}" DisplayMemberPath="Name" />
+
+                            <TabControl Grid.RowSpan="2" Grid.Column="3" TabStripPlacement="Left" Style="{StaticResource LeftTabControl}"  DataContext="{Binding ElementName=ModuleList, Path=SelectedItem}" IsEnabled="{Binding Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
+                                <TabItem Header="Allgemein" Style="{StaticResource LeftTabItem2}"> 
+                                    <ScrollViewer>
+                                        <StackPanel Margin="5">
+                                            <StackPanel.Resources>
+                                                <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+                                                    <ObjectDataProvider.MethodParameters>
+                                                        <x:Type TypeName="models:ParamAccess"/>
+                                                    </ObjectDataProvider.MethodParameters>
+                                                </ObjectDataProvider>
+                                                <ObjectDataProvider x:Key="dataSave" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+                                                    <ObjectDataProvider.MethodParameters>
+                                                        <x:Type TypeName="models:ParamSave"/>
+                                                    </ObjectDataProvider.MethodParameters>
+                                                </ObjectDataProvider>
+                                                <Style TargetType="HeaderedContentControl">
+                                                    <Setter Property="Margin" Value="5" />
+                                                    <Setter Property="IsTabStop" Value="false" />
+                                                </Style>
+                                                <Style TargetType="CheckBox">
+                                                    <Setter Property="Margin" Value="5" />
+                                                </Style>
+                                                <Style TargetType="ComboBox">
+                                                    <Setter Property="Margin" Value="0 5" />
+                                                </Style>
+                                                <Style TargetType="Button">
+                                                    <Setter Property="Margin" Value="5" />
+                                                </Style>
+                                                <Style TargetType="ListView">
+                                                    <Setter Property="Margin" Value="5" />
+                                                </Style>
+                                            </StackPanel.Resources>
+
+                                            <TextBlock Margin="5 0" VerticalAlignment="Center">
+                                                <Run Text="UID:" />
+                                                <Run Text="{Binding UId}"/>
+                                            </TextBlock>
+
+                                            <Grid Margin="5 0">
+                                                <TextBlock VerticalAlignment="Center">
+                                                    <Run Text="ID:" />
+                                                    <Run Text="{Binding Id}"/>
+                                                </TextBlock>
+                                                <Button Content="Zurücksetzen" HorizontalAlignment="Right" Click="ResetId" />
+                                            </Grid>
+                                            
+                                            <HeaderedContentControl Header="Name">
+                                                <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+                                            </HeaderedContentControl>
+                                        </StackPanel>
+                                    </ScrollViewer>
+                                </TabItem>
+                                <TabItem Header="Argumente" Style="{StaticResource LeftTabItem2}"> 
+
+                                </TabItem>
+                                <TabItem Header="Parameter" Style="{StaticResource LeftTabItem2}">
+
+                                </TabItem>
+                                <TabItem Header="Parameter Refs" Style="{StaticResource LeftTabItem2}">
+
+                                </TabItem>
+                                <TabItem Header="ComObjekte" Style="{StaticResource LeftTabItem2}">
+
+                                </TabItem>
+                                <TabItem Header="ComObjekte Refs" Style="{StaticResource LeftTabItem2}">
+
+                                </TabItem>
+                            </TabControl>
+                        </Grid>
+                    </TabItem>
+
                     <TabItem Header="Parameter" Style="{StaticResource LeftTabItem}">
                         <Grid>
                             <Grid.RowDefinitions>
@@ -936,7 +1121,12 @@
                                         <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
                                     </HeaderedContentControl>
                                     <HeaderedContentControl Header="Text">
-                                        <TextBox Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}"/>
+                                        <DataGrid ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
+                                            <DataGrid.Columns>
+                                                <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                                                <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                                            </DataGrid.Columns>
+                                        </DataGrid>
                                     </HeaderedContentControl>
                                     <HeaderedContentControl Header="Wert">
                                         <TextBox Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}"/>
@@ -1187,15 +1377,30 @@
                                     </HeaderedContentControl>
 
                                     <HeaderedContentControl Header="Text">
-                                        <TextBox Text="{Binding Text}" />
+                                        <DataGrid ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
+                                            <DataGrid.Columns>
+                                                <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                                                <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                                            </DataGrid.Columns>
+                                        </DataGrid>
                                     </HeaderedContentControl>
 
                                     <HeaderedContentControl Header="Funktionstext">
-                                        <TextBox Text="{Binding FunctionText}" />
+                                        <DataGrid ItemsSource="{Binding FunctionText}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
+                                            <DataGrid.Columns>
+                                                <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                                                <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                                            </DataGrid.Columns>
+                                        </DataGrid>
                                     </HeaderedContentControl>
 
                                     <HeaderedContentControl Header="Beschreibung">
-                                        <TextBox Text="{Binding Description}" />
+                                        <DataGrid ItemsSource="{Binding Description}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
+                                            <DataGrid.Columns>
+                                                <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                                                <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                                            </DataGrid.Columns>
+                                        </DataGrid>
                                     </HeaderedContentControl>
 
                                     <HeaderedContentControl Header="Nummer">

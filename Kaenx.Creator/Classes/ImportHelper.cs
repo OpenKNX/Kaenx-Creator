@@ -264,7 +264,8 @@ namespace Kaenx.Creator.Classes
         public void ParseParameter(XElement xpara, Union union = null, XElement xmemory = null) {
             Models.Parameter para = new Models.Parameter() {
                 Name = xpara.Attribute("Name").Value,
-                Text = xpara.Attribute("Text").Value,
+                //TODO implement text import with translations
+                //Text = xpara.Attribute("Text").Value,
                 Value = xpara.Attribute("Value").Value,
                 IsOffsetAuto = false,
                 Suffix = xpara.Attribute("SuffixText")?.Value ?? "",
@@ -347,9 +348,10 @@ namespace Kaenx.Creator.Classes
             foreach(XElement xcom in xcoms.Elements()) {
                 Models.ComObject com = new Models.ComObject() {
                     Name = xcom.Attribute("Name")?.Value ?? "",
-                    Text = xcom.Attribute("Text")?.Value ?? "",
-                    FunctionText = xcom.Attribute("FunctionText")?.Value ?? "",
-                    Description = xcom.Attribute("VisibleDescription")?.Value ?? "",
+                    //TODO import default lang and all translations
+                    //Text = xcom.Attribute("Text")?.Value ?? "",
+                    //FunctionText = xcom.Attribute("FunctionText")?.Value ?? "",
+                    //Description = xcom.Attribute("VisibleDescription")?.Value ?? "",
                     Number = int.Parse(xcom.Attribute("Number").Value),
                     Id = int.Parse(GetLastSplit(xcom.Attribute("Id").Value, 2)),
                     UId = _uidCounter++

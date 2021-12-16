@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Text;
 
@@ -29,26 +30,9 @@ namespace Kaenx.Creator.Models
             set { _name = value; Changed("Name"); }
         }
 
-        private string _text = "Taste n";
-        public string Text
-        {
-            get { return _text; }
-            set { _text = value; Changed("Text"); }
-        }
-
-        private string _funcText = "Kurze Tastenbetätigung";
-        public string FunctionText
-        {
-            get { return _funcText; }
-            set { _funcText = value; Changed("FunctionText"); }
-        }
-
-        private string _desc = "";
-        public string Description
-        {
-            get { return _desc; }
-            set { _desc = value; Changed("Description"); }
-        }
+        public ObservableCollection<Translation> Text {get;set;} = new ObservableCollection<Translation>();
+        public ObservableCollection<Translation> FunctionText {get;set;} = new ObservableCollection<Translation>();
+        public ObservableCollection<Translation> Description {get;set;} = new ObservableCollection<Translation>();
 
         private int _numb = 0;
         public int Number

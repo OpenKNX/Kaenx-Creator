@@ -16,9 +16,13 @@ namespace Kaenx.Creator.Models
         public ObservableCollection<ComObject> ComObjects { get; set; } = new ObservableCollection<ComObject>();
         public ObservableCollection<ComObjectRef> ComObjectRefs { get; set; } = new ObservableCollection<ComObjectRef>();
         public ObservableCollection<Memory> Memories { get; set; } = new ObservableCollection<Memory>();
+        public ObservableCollection<Module> Modules { get; set; } = new ObservableCollection<Module>();
         public ObservableCollection<Union> Unions { get; set; } = new ObservableCollection<Union>();
+        public ObservableCollection<Language> Languages { get; set; } = new ObservableCollection<Language>();
         public List<DynamicMain> Dynamics { get; set; } = new List<DynamicMain>();
 
+
+        //TODO set defaultLanguage
 
 
         public AppVersion() { }
@@ -39,6 +43,7 @@ namespace Kaenx.Creator.Models
             IsComObjectRefAuto = ver.IsComObjectRefAuto;
             IsParameterRefAuto = ver.IsParameterRefAuto;
             IsMemSizeAuto = ver.IsMemSizeAuto;
+            Languages = ver.Languages;
         }
 
         private int _namespace = 14;
@@ -46,6 +51,13 @@ namespace Kaenx.Creator.Models
         {
             get { return _namespace; }
             set { _namespace = value; Changed("NamespaceVersion"); }
+        }
+
+        private string _defLang = null;
+        public string DefaultLanguage
+        {
+            get { return _defLang; }
+            set { _defLang = value; Changed("DefaultLanguage"); }
         }
 
         private string _name = "";
@@ -64,6 +76,8 @@ namespace Kaenx.Creator.Models
                 return "V " + main + "." + sub + " " + Name;
             }
         }
+
+        public ObservableCollection<Translation> Text {get;set;} = new ObservableCollection<Translation>();
 
         private int _number = 16;
         public int Number

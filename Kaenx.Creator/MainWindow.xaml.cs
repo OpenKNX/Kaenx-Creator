@@ -233,6 +233,10 @@ namespace Kaenx.Creator
         {
             Models.Application app = AppList.SelectedItem as Models.Application;
             Models.AppVersion newVer = new Models.AppVersion() { Name = app.Name };
+            Models.Language lang = new Models.Language() { Text = "Deutsch", CultureCode = "de-DE" };
+            newVer.Languages.Add(lang);
+            newVer.DefaultLanguage = lang.CultureCode;
+            newVer.Text.Add(new Models.Translation(lang, "Dummy"));
             newVer.Dynamics.Add(new Models.Dynamic.DynamicMain());
 
             if(app.Versions.Count > 0){
@@ -310,10 +314,58 @@ namespace Kaenx.Creator
             type.Enums.Add(new Models.ParameterTypeEnum() { Name = "Name", Value = 0 });
         }
 
+        private void ClickAddLanguage(object sender, RoutedEventArgs e)
+        {
+            if(LanguagesList.SelectedItem == null){
+                MessageBox.Show("Bitte wählen Sie erst eine Sprache aus.");
+                return;
+            }
+            Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
+            Models.Language lang = LanguagesList.SelectedItem as Models.Language;
+            
+            if(ver.Languages.Any(l => l.CultureCode == lang.CultureCode))
+                MessageBox.Show("Die Sprache wird bereits unterstützt.");
+            else {
+                ver.Languages.Add(lang);
+                //TODO add lang to every paratypeenum/para/ko/etc
+                ver.Text.Add(new Models.Translation(lang, ""));
+                foreach(Models.Parameter para in ver.Parameters) para.Text.Add(new Models.Translation(lang, ""));
+                foreach(Models.ComObject com in ver.ComObjects) {
+                    com.Text.Add(new Models.Translation(lang, ""));
+                    com.FunctionText.Add(new Models.Translation(lang, ""));
+                    com.Description.Add(new Models.Translation(lang, ""));
+                }
+            }
+        }
+
+        private void ClickRemoveLanguage(object sender, RoutedEventArgs e) {
+            if(SupportedLanguages.SelectedItem == null){
+                MessageBox.Show("Bitte wählen Sie erst links eine Sprache aus.");
+                return;
+            }
+            Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
+            Models.Language lang = SupportedLanguages.SelectedItem as Models.Language;
+
+            ver.Text.Remove(ver.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
+            ver.Languages.Remove(ver.Languages.Single(l => l.CultureCode == lang.CultureCode));
+            //TODO remove lang to every paratypeenum/para/ko/etc
+            foreach(Models.Parameter para in ver.Parameters) {
+                para.Text.Remove(para.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
+            } 
+            foreach(Models.ComObject com in ver.ComObjects) {
+                com.Text.Remove(com.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
+                com.FunctionText.Remove(com.FunctionText.Single(l => l.Language.CultureCode == lang.CultureCode));
+                com.Description.Remove(com.Description.Single(l => l.Language.CultureCode == lang.CultureCode));
+            }
+        }
+
         private void ClickAddParam(object sender, RoutedEventArgs e)
         {
             Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
             Models.Parameter para = new Models.Parameter() { UId = AutoHelper.GetNextFreeUId(ver.Parameters)};
+            foreach(Models.Language lang in ver.Languages) {
+                para.Text.Add(new Models.Translation(lang, "Dummy"));
+            }
             ver.Parameters.Add(para);
 
             if(ver.IsParameterRefAuto){
@@ -321,13 +373,25 @@ namespace Kaenx.Creator
             }
         }
 
-
         private void ClickRemoveParam(object sender, RoutedEventArgs e)
         {
             Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
             ver.Parameters.Remove(ParamList.SelectedItem as Models.Parameter);
         }
         
+        private void ClickAddModule(object sender, RoutedEventArgs e)
+        {
+            Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
+            Models.Module mod = new Models.Module() { UId = AutoHelper.GetNextFreeUId(ver.Modules)};
+            ver.Modules.Add(mod);
+        }
+
+        private void ClickRemoveModule(object sender, RoutedEventArgs e)
+        {
+            Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
+            ver.Modules.Remove(ModuleList.SelectedItem as Models.Module);
+        }
+
         private void ClickAddUnion(object sender, RoutedEventArgs e)
         {
             Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
@@ -359,6 +423,11 @@ namespace Kaenx.Creator
         {
             Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
             Models.ComObject com = new Models.ComObject() { UId = AutoHelper.GetNextFreeUId(ver.ComObjects) };
+            foreach(Models.Language lang in ver.Languages) {
+                com.Text.Add(new Models.Translation(lang, "Dummy"));
+                com.FunctionText.Add(new Models.Translation(lang, "Dummy"));
+                com.Description.Add(new Models.Translation(lang, "Dummy"));
+            }
             ver.ComObjects.Add(com);
 
             if(ver.IsComObjectRefAuto){
@@ -374,7 +443,13 @@ namespace Kaenx.Creator
 
         private void ClickRemoveCom(object sender, RoutedEventArgs e)
         {
-            (VersionList.SelectedItem as Models.AppVersion).ComObjects.Remove(ComobjectList.SelectedItem as Models.ComObject);
+            Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
+            Models.ComObject com = ComobjectList.SelectedItem as Models.ComObject;
+            ver.ComObjects.Remove(com);
+
+            if(ver.IsComObjectRefAuto){
+                ver.ComObjectRefs.Remove(ver.ComObjectRefs.Single(c => c.ComObjectObject == com));
+            }
         }
 
         private void ClickRemoveComRef(object sender, RoutedEventArgs e)
@@ -457,7 +532,7 @@ namespace Kaenx.Creator
                         foreach(Models.ComObjectRef cref in ver.ComObjectRefs)
                         {
                             if (cref._comObject != -1)
-                                cref.ComObjectObject = ver.ComObjects.Single(c => c.UId == cref._comObject);
+                                cref.ComObjectObject = ver.ComObjects.SingleOrDefault(c => c.UId == cref._comObject);
 
                             if (!string.IsNullOrEmpty(cref._typeNumber))
                                 cref.Type = DPTs.Single(d => d.Number == cref._typeNumber);
@@ -1033,7 +1108,8 @@ namespace Kaenx.Creator
                 }
             
                 foreach(Models.ComObject com in vers.ComObjects) {
-                    if(string.IsNullOrEmpty(com.Text)) PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Kein Text angegeben", State = Models.PublishState.Fail });
+                    //TODO check all languages if empty
+                    //if(string.IsNullOrEmpty(com.Text)) PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Kein Text angegeben", State = Models.PublishState.Fail });
                     //if(string.IsNullOrEmpty(com.TypeParentValue) && com.Name.ToLower() != "dummy") PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {com.Name}: Kein DataPointType angegeben", State = Models.PublishState.Fail });
                     if(com.HasDpt && com.Type == null) PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Kein DataPointType angegeben", State = Models.PublishState.Fail });
                     if(com.HasDpt && com.Type != null && com.Type.Number == "0") PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Keine Angabe des DPT nur bei Refs", State = Models.PublishState.Fail });

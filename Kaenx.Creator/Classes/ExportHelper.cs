@@ -42,6 +42,14 @@ namespace Kaenx.Creator.Classes
         }
 
 
+        Dictionary<string, Dictionary<string, Dictionary<string, string>>> languages;
+
+        private void AddTranslation(string lang, string id, string attr, string value) {
+            if(!languages.ContainsKey(lang)) languages.Add(lang, new Dictionary<string, Dictionary<string, string>>());
+            if(!languages[lang].ContainsKey(id)) languages[lang].Add(id, new Dictionary<string, string>());
+            if(!languages[lang][id].ContainsKey(attr)) languages[lang][id].Add(attr, value);
+        }
+
         public void ExportEts()
         {
             string Manu = "M-" + general.ManufacturerId.ToString("X4");
@@ -65,6 +73,7 @@ namespace Kaenx.Creator.Classes
             #region XML Applications
             XElement xmanu = null;
             foreach(Models.AppVersion ver in vers) {
+                languages = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>();
                 xmanu = CreateNewXML(Manu);
                 XElement xapps = new XElement(Get("ApplicationPrograms"));
                 xmanu.Add(xapps);
@@ -74,6 +83,10 @@ namespace Kaenx.Creator.Classes
                 appVersion = appName + "-" + ver.Number.ToString("X2");
                 string hash = "0000";
                 appVersion += "-" + hash;
+
+                foreach(Models.Translation trans in ver.Text) {
+                    AddTranslation(trans.Language.CultureCode, appVersion, "Name", trans.Text);
+                }
 
 
                 XElement xunderapp = new XElement(Get("Static"));
@@ -251,8 +264,6 @@ namespace Kaenx.Creator.Classes
                 xunderapp.Add(temp);
                 #endregion
 
-                //Todo add Unions
-
                 #region ParameterRefs
                 temp = new XElement(Get("ParameterRefs"));
 
@@ -267,6 +278,7 @@ namespace Kaenx.Creator.Classes
                     xpref.SetAttributeValue("RefId", id);
                     id += $"_R-{pref.Id}";
                     xpref.SetAttributeValue("Id", id);
+                    //TODO add translation
                     if(pref.OverwriteAccess && pref.Access != ParamAccess.Default)
                         xpref.SetAttributeValue("Access", pref.Access.ToString());
                     if(pref.OverwriteValue)
@@ -292,6 +304,11 @@ namespace Kaenx.Creator.Classes
                     xcom.SetAttributeValue("Number", com.Number);
                     xcom.SetAttributeValue("FunctionText", com.FunctionText);
                     xcom.SetAttributeValue("VisibleDescription", com.Description);
+
+                    //TODO check if translation is not empty
+                    foreach(Models.Translation trans in com.Text) AddTranslation(trans.Language.CultureCode, $"{appVersion}_O-{com.Id}", "Text", trans.Text);
+                    foreach(Models.Translation trans in com.FunctionText) AddTranslation(trans.Language.CultureCode, $"{appVersion}_O-{com.Id}", "FunctionText", trans.Text);
+                    foreach(Models.Translation trans in com.Description) AddTranslation(trans.Language.CultureCode, $"{appVersion}_O-{com.Id}", "Text", trans.Description);
 
                     if (com.FlagComm != FlagType.Default) xcom.SetAttributeValue("CommunicationFlag", com.FlagComm.ToString());
                     if (com.FlagRead != FlagType.Default) xcom.SetAttributeValue("ReadFlag", com.FlagRead.ToString());
@@ -502,6 +519,10 @@ namespace Kaenx.Creator.Classes
             xpara.SetAttributeValue("Id", id);
             xpara.SetAttributeValue("Name", para.Name);
             xpara.SetAttributeValue("ParameterType", $"{appVersion}_PT-{GetEncoded(para.ParameterTypeObject.Name)}");
+
+            foreach(Models.Translation trans in para.Text) {
+                AddTranslation(trans.Language.CultureCode, id, "Text", trans.Text);
+            }
 
             if(!para.IsInUnion) {
                 switch(para.SavePath) {

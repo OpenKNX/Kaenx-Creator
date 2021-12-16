@@ -97,7 +97,6 @@ namespace Kaenx.Creator.Models
 
 
 
-        public string Text { get; set; } = "Dummy";
         public string Value { get; set; } = "1";
 
         private bool _isOffsetAuto = false;
@@ -134,6 +133,8 @@ namespace Kaenx.Creator.Models
             get { return _offsetBit; }
             set { _offsetBit = value; Changed("OffsetBit"); }
         }
+
+        public ObservableCollection<Translation> Text {get;set;} = new ObservableCollection<Translation>();
 
         public string Suffix { get; set; }
         public ParamAccess Access { get; set; } = ParamAccess.Default;
