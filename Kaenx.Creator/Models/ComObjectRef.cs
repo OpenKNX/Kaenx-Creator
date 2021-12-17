@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Text;
 
@@ -44,13 +45,7 @@ namespace Kaenx.Creator.Models
             set { _name = value; Changed("Name"); }
         }
 
-        private string _text = "";
-        public string Text
-        {
-            get { return _text; }
-            set { _text = value; Changed("Text"); }
-        }
-
+        public ObservableCollection<Translation> Text {get;set;} = new ObservableCollection<Translation>();
         private bool _overText = false;
         public bool OverwriteText
         {
@@ -58,13 +53,7 @@ namespace Kaenx.Creator.Models
             set { _overText = value; Changed("OverwriteText"); }
         }
 
-        private string _func = "";
-        public string FunctionText
-        {
-            get { return _func; }
-            set { _func = value; Changed("FunctionText"); }
-        }
-
+        public ObservableCollection<Translation> FunctionText {get;set;} = new ObservableCollection<Translation>();
         private bool _overFunc = false;
         public bool OverwriteFunctionText
         {
@@ -72,13 +61,7 @@ namespace Kaenx.Creator.Models
             set { _overFunc = value; Changed("OverwriteFunctionText"); }
         }
 
-        private string _desc = "";
-        public string Description
-        {
-            get { return _desc; }
-            set { _desc = value; Changed("Description"); }
-        }
-
+        public ObservableCollection<Translation> Description {get;set;} = new ObservableCollection<Translation>();
         private bool _overDesc = false;
         public bool OverwriteDescription
         {

@@ -352,12 +352,20 @@ namespace Kaenx.Creator.Classes
                     xcref.SetAttributeValue("RefId", id);
                     id += $"_R-{cref.Id}";
                     xcref.SetAttributeValue("Id", id);
-                    if(cref.OverwriteText)
-                        xcref.SetAttributeValue("Text", cref.Text);
-                    if(cref.OverwriteFunctionText)
-                        xcref.SetAttributeValue("FunctionText", cref.FunctionText);
-                    if(cref.OverwriteDescription)
-                        xcref.SetAttributeValue("VisibleDescription", cref.Description);
+
+
+                    if(cref.OverwriteText) {
+                        foreach(Models.Translation trans in cref.Text) AddTranslation(trans.Language.CultureCode, id, "Text", trans.Text);
+                        xcref.SetAttributeValue("Text", cref.Text.Single(c => c.Language.CultureCode == currentLang).Text);
+                    }
+                    if(cref.OverwriteFunctionText) {
+                        foreach(Models.Translation trans in cref.FunctionText) AddTranslation(trans.Language.CultureCode, id, "FunctionText", trans.Text);
+                        xcref.SetAttributeValue("FunctionText", cref.FunctionText.Single(c => c.Language.CultureCode == currentLang).Text);
+                    }
+                    if(cref.OverwriteDescription) {
+                        foreach(Models.Translation trans in cref.Description) AddTranslation(trans.Language.CultureCode, id, "Description", trans.Text);
+                        xcref.SetAttributeValue("VisibleDescription", cref.Description.Single(c => c.Language.CultureCode == currentLang).Text);
+                    }
 
                     if(cref.OverwriteDpt) {
                         int size = cref.Type.Size;
@@ -853,7 +861,10 @@ namespace Kaenx.Creator.Classes
             XElement xmanu = new XElement(Get("Manufacturer"));
             xmanu.SetAttributeValue("RefId", manu);
 
-            doc = new XDocument(new XElement(Get("KNX")));
+            XElement knx = new XElement(Get("KNX"));
+            knx.SetAttributeValue("CreatedBy", "Kaenx.Creator");
+            knx.SetAttributeValue("ToolVersion", "0.1.0");
+            doc = new XDocument(knx);
             doc.Root.Add(new XElement(Get("ManufacturerData"), xmanu));
             return xmanu;
         }

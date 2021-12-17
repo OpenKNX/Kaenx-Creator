@@ -233,7 +233,7 @@ namespace Kaenx.Creator
         {
             Models.Application app = AppList.SelectedItem as Models.Application;
             Models.AppVersion newVer = new Models.AppVersion() { Name = app.Name };
-            Models.Language lang = new Models.Language() { Text = "Deutsch", CultureCode = "de-DE" };
+            Models.Language lang = new Models.Language("Deutsch", "de-DE");
             newVer.Languages.Add(lang);
             newVer.DefaultLanguage = lang.CultureCode;
             newVer.Text.Add(new Models.Translation(lang, "Dummy"));
@@ -431,14 +431,26 @@ namespace Kaenx.Creator
             ver.ComObjects.Add(com);
 
             if(ver.IsComObjectRefAuto){
-                ver.ComObjectRefs.Add(new Models.ComObjectRef(com) { UId = AutoHelper.GetNextFreeUId(ver.ComObjectRefs) });
+                Models.ComObjectRef cref = new Models.ComObjectRef(com) { UId = AutoHelper.GetNextFreeUId(ver.ComObjectRefs) };
+                foreach(Models.Language lang in ver.Languages) {
+                    cref.Text.Add(new Models.Translation(lang, ""));
+                    cref.FunctionText.Add(new Models.Translation(lang, ""));
+                    cref.Description.Add(new Models.Translation(lang, ""));
+                }
+                ver.ComObjectRefs.Add(cref);
             }
         }
 
         private void ClickAddComRef(object sender, RoutedEventArgs e)
         {
             Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
-            ver.ComObjectRefs.Add(new Models.ComObjectRef() { UId = AutoHelper.GetNextFreeUId(ver.ComObjectRefs) });
+            Models.ComObjectRef cref = new Models.ComObjectRef() { UId = AutoHelper.GetNextFreeUId(ver.ComObjectRefs) };
+            foreach(Models.Language lang in ver.Languages) {
+                cref.Text.Add(new Models.Translation(lang, ""));
+                cref.FunctionText.Add(new Models.Translation(lang, ""));
+                cref.Description.Add(new Models.Translation(lang, ""));
+            }
+            ver.ComObjectRefs.Add(cref);
         }
 
         private void ClickRemoveCom(object sender, RoutedEventArgs e)

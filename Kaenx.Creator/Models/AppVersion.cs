@@ -101,6 +101,20 @@ namespace Kaenx.Creator.Models
             set { _isAutoCR = value; Changed("IsComObjectRefAuto"); }
         }
 
+        private bool _isUnionActive = false;
+        public bool IsUnionActive
+        {
+            get { return _isUnionActive; }
+            set { _isUnionActive = value; Changed("IsUnionActive"); }
+        }
+
+        private bool _isModulesActive = false;
+        public bool IsModulesActive
+        {
+            get { return _isModulesActive; }
+            set { _isModulesActive = value; Changed("IsModulesActive"); }
+        }
+
         private bool _isMemSizeAuto = true;
         public bool IsMemSizeAuto
         {

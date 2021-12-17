@@ -29,6 +29,34 @@ namespace Kaenx.Creator.Classes
         private Models.Application currentApp = null;
         private Models.AppVersion currentVers = null;
 
+        private Dictionary<string, string> _langTexts = new Dictionary<string, string>() {
+            {"cs-CZ", "Tschechisch"},
+            {"da-DK", "Dänisch"},
+            {"de-DE", "Deutsch"},
+            {"el-GR", "Griechisch"},
+            {"en-US", "Englisch"},
+            {"es-ES", "Spanisch"},
+            {"fi-FI", "Finnisch"},
+            {"fr-FR", "Französisch"},
+            {"hu-HU", "Ungarisch"},
+            {"is-IS", "Isländisch"},
+            {"it-IT", "Italienisch"},
+            {"ja-JP", "Japanisch"},
+            {"nb-NO", "Norwegisch"},
+            {"nl-NL", "Niederländisch"},
+            {"pl-PL", "Polnisch"},
+            {"pt-PT", "Portugisisch"},
+            {"ro-RO", "Rumänisch"},
+            {"ru-RU", "Russisch"},
+            {"sk-SK", "Slovakisch"},
+            {"sl-SI", "Slovenisch"},
+            {"sv-SE", "Schwedisch"},
+            {"tr-TR", "Türkisch"},
+            {"zh-CN", "Chinesisch"}
+        };
+        private Dictionary<string, Dictionary<string, Dictionary<string, string>>> _translations = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>();
+        private bool _defaultLangIsInTrans = false;
+
         public ImportHelper(string path, ObservableCollection<Models.MaskVersion> bcus) {
             _path = path;
             _bcus = bcus;
@@ -86,7 +114,7 @@ namespace Kaenx.Creator.Classes
 
         public void ImportApplication(XElement xapp) {
 
-#region "Create/Get Application and Version"
+            #region "Create/Get Application and Version"
             currentApp = null;
             currentVers = null;
             int appNumber = int.Parse(xapp.Attribute("ApplicationNumber").Value);
@@ -128,7 +156,11 @@ namespace Kaenx.Creator.Classes
             string ns = xapp.Name.NamespaceName;
             ns = ns.Substring(ns.LastIndexOf('/')+1);
             currentVers.NamespaceVersion = int.Parse(ns);
+            currentVers.DefaultLanguage = xapp.Attribute("DefaultLanguage").Value;
+            currentVers.Languages.Add(new Language(_langTexts[currentVers.DefaultLanguage], currentVers.DefaultLanguage));
 #endregion
+            ImportLanguages(xapp.Parent.Parent.Element(GetXName("Languages")));
+            currentVers.Text = GetTranslation(xapp.Attribute("Id").Value, "Name", xapp);
             XElement xstatic = xapp.Element(GetXName("Static"));
             ImportSegments(xstatic.Element(GetXName("Code")));
             ImportParameterTypes(xstatic.Element(GetXName("ParameterTypes")));
@@ -137,6 +169,49 @@ namespace Kaenx.Creator.Classes
             ImportComObjects(xstatic.Element(GetXName("ComObjectTable")));
             ImportComObjectRefs(xstatic.Element(GetXName("ComObjectRefs")));
             ImportDynamic(xapp.Element(GetXName("Dynamic")));
+        }
+
+        public void ImportLanguages(XElement xlangs) {
+            foreach(XElement xlang in xlangs.Elements()) {
+                string cultureCode = xlang.Attribute("Identifier").Value;
+                if(!currentVers.Languages.Any(l => l.CultureCode == cultureCode))
+                    currentVers.Languages.Add(new Language(_langTexts[cultureCode], cultureCode));
+
+                foreach(XElement xtele in xlang.Descendants(GetXName("TranslationElement"))) {
+                    foreach(XElement xattr in xtele.Elements()) {
+                        AddTranslation(xtele.Attribute("RefId").Value,
+                            xattr.Attribute("AttributeName").Value,
+                            cultureCode,
+                            xattr.Attribute("Text").Value);
+                    }
+                }
+            }
+
+            _defaultLangIsInTrans = xlangs.Elements().Any(x => x.Attribute("Identifier").Value == currentVers.DefaultLanguage);
+        }
+
+        public void AddTranslation(string id, string attr, string lang, string value) {
+            if(!_translations.ContainsKey(id)) _translations.Add(id, new Dictionary<string, Dictionary<string, string>>());
+            if(!_translations[id].ContainsKey(attr)) _translations[id].Add(attr, new Dictionary<string, string>());
+            if(!_translations[id][attr].ContainsKey(lang)) _translations[id][attr].Add(lang, value);
+        }
+
+        public ObservableCollection<Translation> GetTranslation(string id, string attr, XElement xele) {
+            ObservableCollection<Translation> translations = new ObservableCollection<Translation>();
+
+            if(_translations.ContainsKey(id) && _translations[id].ContainsKey(attr)) {
+                foreach(KeyValuePair<string, string> trans in _translations[id][attr]) {
+                    translations.Add(new Translation(new Language(_langTexts[trans.Key], trans.Key), trans.Value));
+                }
+            } else {
+                foreach(Language lang in currentVers.Languages) {
+                    if(lang.CultureCode == currentVers.DefaultLanguage)
+                        translations.Add(new Translation(lang, xele.Attribute(attr)?.Value ?? ""));
+                    else
+                        translations.Add(new Translation(lang, ""));
+                }
+            }
+            return translations;
         }
 
         public void ImportSegments(XElement xcodes) {
@@ -202,8 +277,11 @@ namespace Kaenx.Creator.Classes
                         foreach(XElement xenum in xsub.Elements()) {
                             ptype.Enums.Add(new Models.ParameterTypeEnum() {
                                 Name = xenum.Attribute("Text").Value,
+                                Text = GetTranslation(xenum.Attribute("Id").Value, "Text", xenum),
                                 Value = int.Parse(xenum.Attribute("Value").Value)
                             });
+                            if(ptype.Enums.Any(e => e.Text.Any(l => !string.IsNullOrEmpty(l.Text))))
+                                ptype.TranslateEnums = true;
                         }
                         break;
 
@@ -259,13 +337,12 @@ namespace Kaenx.Creator.Classes
                     ParseParameter(xpara, union, xmem);
                 }
             }
+            currentVers.IsUnionActive = unionCounter > 1;
         }
 
         public void ParseParameter(XElement xpara, Union union = null, XElement xmemory = null) {
             Models.Parameter para = new Models.Parameter() {
                 Name = xpara.Attribute("Name").Value,
-                //TODO implement text import with translations
-                //Text = xpara.Attribute("Text").Value,
                 Value = xpara.Attribute("Value").Value,
                 IsOffsetAuto = false,
                 Suffix = xpara.Attribute("SuffixText")?.Value ?? "",
@@ -278,6 +355,8 @@ namespace Kaenx.Creator.Classes
             if(id.StartsWith("-"))
                 id = id.Substring(1);
             para.Id = int.Parse(id);
+
+            para.Text = GetTranslation(xpara.Attribute("Id").Value, "Text", xpara);
 
             para.Access = (xpara.Attribute("Access")?.Value) switch {
                 "None" => ParamAccess.None,
@@ -348,14 +427,14 @@ namespace Kaenx.Creator.Classes
             foreach(XElement xcom in xcoms.Elements()) {
                 Models.ComObject com = new Models.ComObject() {
                     Name = xcom.Attribute("Name")?.Value ?? "",
-                    //TODO import default lang and all translations
-                    //Text = xcom.Attribute("Text")?.Value ?? "",
-                    //FunctionText = xcom.Attribute("FunctionText")?.Value ?? "",
-                    //Description = xcom.Attribute("VisibleDescription")?.Value ?? "",
                     Number = int.Parse(xcom.Attribute("Number").Value),
                     Id = int.Parse(GetLastSplit(xcom.Attribute("Id").Value, 2)),
                     UId = _uidCounter++
                 };
+
+                com.Text = GetTranslation(xcom.Attribute("Id").Value, "Text", xcom);
+                com.FunctionText = GetTranslation(xcom.Attribute("Id").Value, "FunctionText", xcom);
+                com.Description = GetTranslation(xcom.Attribute("Id").Value, "VisibleDescription", xcom);
 
                 com.FlagRead = ParseFlagType(xcom.Attribute("ReadFlag")?.Value);
                 com.FlagWrite = ParseFlagType(xcom.Attribute("WriteFlag")?.Value);
@@ -398,10 +477,14 @@ namespace Kaenx.Creator.Classes
                 cref.UId = _uidCounter++;
                 cref.Id = int.Parse(GetLastSplit(xref.Attribute("Id").Value, 2));
                 
+                cref.OverwriteText = xref.Attribute("Text") != null;
                 cref.OverwriteFunctionText = xref.Attribute("FunctionText") != null;
-                cref.FunctionText = xref.Attribute("FunctionText")?.Value ?? "";
                 cref.OverwriteDescription = xref.Attribute("VisibleDescription") != null;
-                cref.Description = xref.Attribute("VisibleDescription")?.Value ?? "";
+
+                cref.Text = GetTranslation(xref.Attribute("Id").Value, "Text", xref);
+                cref.FunctionText = GetTranslation(xref.Attribute("Id").Value, "FunctionText", xref);
+                cref.Description = GetTranslation(xref.Attribute("Id").Value, "VisibleDescription", xref);
+
 
                 string id = GetLastSplit(xref.Attribute("RefId").Value, 2);
                 if(id.StartsWith("-"))

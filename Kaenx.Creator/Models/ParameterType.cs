@@ -29,6 +29,13 @@ namespace Kaenx.Creator.Models
             set { _isSizeAuto = value; Changed("IsSizeAuto"); }
         }
 
+        private bool _translateEnums = false;
+        public bool TranslateEnums
+        {
+            get { return _translateEnums; }
+            set { _translateEnums = value; Changed("TranslateEnums"); }
+        }
+
         private ParameterTypes _type = ParameterTypes.Text;
         public ParameterTypes Type
         {

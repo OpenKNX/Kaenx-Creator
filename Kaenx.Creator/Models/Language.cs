@@ -8,6 +8,13 @@ namespace Kaenx.Creator.Models
 {
     public class Language : INotifyPropertyChanged
     {
+
+        public Language() {}
+        public Language(string text, string culture) {
+            Text = text;
+            CultureCode = culture;
+        }
+
         private string _cultureCode = "de-de";
         public string CultureCode
         {

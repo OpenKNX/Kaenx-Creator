@@ -709,10 +709,6 @@
                             </HeaderedContentControl>
 
 
-                            <CheckBox IsChecked="{Binding IsMemSizeAuto}" Content="Automatisch Speicher berechnen beim Veröffentlichen" />
-                            <CheckBox IsChecked="{Binding IsParameterRefAuto}" Content="Parameter Refs automatisch berechnen" />
-                            <CheckBox IsChecked="{Binding IsComObjectRefAuto}" Content="KO Refs automatisch berechnen" />
-
 
                             <HeaderedContentControl Header="Sprachen">
                                 <Grid>
@@ -727,10 +723,29 @@
                                         <HeaderedContentControl Header="Bearbeiten">
                                             <StackPanel>
                                                 <ComboBox x:Name="LanguagesList" DisplayMemberPath="Text">
+                                                    <models:Language Text="Tschechisch" CultureCode="cs-CZ" />
+                                                    <models:Language Text="Dänisch" CultureCode="da-DK" />
                                                     <models:Language Text="Deutsch" CultureCode="de-DE" />
+                                                    <models:Language Text="Griechisch" CultureCode="el-GR" />
                                                     <models:Language Text="Englisch" CultureCode="en-US" />
-                                                    <models:Language Text="Franszösisch" CultureCode="fr-FR" />
+                                                    <models:Language Text="Spanisch" CultureCode="es-ES" />
+                                                    <models:Language Text="Finnisch" CultureCode="fi-FI" />
+                                                    <models:Language Text="Französisch" CultureCode="fr-FR" />
+                                                    <models:Language Text="Ungarisch" CultureCode="hu-HU" />
+                                                    <models:Language Text="Isländisch" CultureCode="is-IS" />
+                                                    <models:Language Text="Italienisch" CultureCode="it-IT" />
+                                                    <models:Language Text="Japanisch" CultureCode="ja-JP" />
+                                                    <models:Language Text="Norwegisch" CultureCode=" nb-NO" />
+                                                    <models:Language Text="Niederländisch" CultureCode="nl-NL" />
+                                                    <models:Language Text="Polnisch" CultureCode="pl-PL" />
+                                                    <models:Language Text="Portugisisch" CultureCode="pt-PT" />
+                                                    <models:Language Text="Rumänisch" CultureCode="ro-RO" />
+                                                    <models:Language Text="Russisch" CultureCode="ru-RU" />
+                                                    <models:Language Text="Slovakisch" CultureCode="sk-SK" />
+                                                    <models:Language Text="Slovenisch" CultureCode="sl-SI" />
                                                     <models:Language Text="Schwedisch" CultureCode="sv-SE" />
+                                                    <models:Language Text="Türkisch" CultureCode="tr-TR" />
+                                                    <models:Language Text="Chinesisch" CultureCode="zh-CN" />
                                                 </ComboBox>
                                                 <Button Content="Hinzufügen" Click="ClickAddLanguage" />
                                                 <Button  Content="Entfernen" Click="ClickRemoveLanguage" />
@@ -742,6 +757,14 @@
                                     </StackPanel>
                                 </Grid>
                             </HeaderedContentControl>
+
+                            
+                            <CheckBox IsChecked="{Binding IsMemSizeAuto}" Content="Automatisch Speicher berechnen beim Veröffentlichen" />
+                            <CheckBox IsChecked="{Binding IsParameterRefAuto}" Content="Parameter Refs automatisch berechnen" />
+                            <CheckBox IsChecked="{Binding IsComObjectRefAuto}" Content="KO Refs automatisch berechnen" />
+                            <CheckBox IsChecked="{Binding IsUnionActive}" Content="Unions aktivieren" />
+                            <CheckBox IsChecked="{Binding IsModulesActive}" Content="ModuleDefines aktivieren" />
+
                         </StackPanel>
                     </TabItem>
 
@@ -867,10 +890,19 @@
                                 </StackPanel>
 
 
-                                <DataGrid Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding Enums}" AutoGenerateColumns="False" Margin="5 20 5 5" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Enum}">
+                                <DataGrid x:Name="ptypeList" ItemsSource="{Binding Enums}" AutoGenerateColumns="False" Margin="5 20 5 5" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Enum}">
                                     <DataGrid.Columns>
                                         <DataGridTextColumn Header="Text" Binding="{Binding Name}" Width="*" />
                                         <DataGridTextColumn Header="Wert" Binding="{Binding Value}" MinWidth="50" />
+                                    </DataGrid.Columns>
+                                </DataGrid>
+
+                                <CheckBox IsChecked="{Binding TranslateEnums}" Content="Enumtexte übersetzen" />
+
+                                <DataGrid IsEnabled="{Binding TranslateEnums}" ItemsSource="{Binding SelectedItem.Text, ElementName=ptypeList}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Enum}">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                                        <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
                                     </DataGrid.Columns>
                                 </DataGrid>
 
@@ -886,7 +918,7 @@
                         </Grid>
                     </TabItem>
 
-                    <TabItem Header="Unions" Style="{StaticResource LeftTabItem}">
+                    <TabItem Header="Unions" Visibility="{Binding IsUnionActive, Converter={StaticResource BoolToVis}}" Style="{StaticResource LeftTabItem}">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="auto" />
@@ -970,7 +1002,7 @@
                         </Grid>
                     </TabItem>
 
-                    <TabItem Header="Module" Style="{StaticResource LeftTabItem}">
+                    <TabItem Header="Module" Visibility="{Binding IsModulesActive, Converter={StaticResource BoolToVis}}" Style="{StaticResource LeftTabItem}">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="auto" />
@@ -1520,7 +1552,7 @@
                                     <HeaderedContentControl Header="Kommunikationsobjekt">
                                         <ComboBox ItemsSource="{Binding ElementName=ComobjectList, Path=Items}" DisplayMemberPath="Name" SelectedItem="{Binding ComObjectObject}" />
                                     </HeaderedContentControl>
-
+                                    
                                     <HeaderedContentControl Header="Text">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
@@ -1529,7 +1561,12 @@
                                             </Grid.ColumnDefinitions>
 
                                             <CheckBox IsChecked="{Binding OverwriteText}" VerticalAlignment="Center" />
-                                            <TextBox Grid.Column="2" Text="{Binding Text}" IsEnabled="{Binding OverwriteText}" VerticalAlignment="Center" />
+                                            <DataGrid Grid.Column="1" IsEnabled="{Binding OverwriteText}" ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
+                                                <DataGrid.Columns>
+                                                    <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                                                    <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                                                </DataGrid.Columns>
+                                            </DataGrid>
                                         </Grid>
                                     </HeaderedContentControl>
 
@@ -1541,7 +1578,12 @@
                                             </Grid.ColumnDefinitions>
 
                                             <CheckBox IsChecked="{Binding OverwriteFunctionText}" VerticalAlignment="Center" />
-                                            <TextBox Grid.Column="2" Text="{Binding FunctionText}" IsEnabled="{Binding OverwriteFunctionText}" VerticalAlignment="Center" />
+                                            <DataGrid Grid.Column="1" IsEnabled="{Binding OverwriteFunctionText}" ItemsSource="{Binding FunctionText}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
+                                                <DataGrid.Columns>
+                                                    <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                                                    <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                                                </DataGrid.Columns>
+                                            </DataGrid>
                                         </Grid>
                                     </HeaderedContentControl>
 
@@ -1553,7 +1595,12 @@
                                             </Grid.ColumnDefinitions>
 
                                             <CheckBox IsChecked="{Binding OverwriteDescription}" VerticalAlignment="Center" />
-                                            <TextBox Grid.Column="2" Text="{Binding Description}" IsEnabled="{Binding OverwriteDescription}" VerticalAlignment="Center" />
+                                            <DataGrid Grid.Column="1" IsEnabled="{Binding OverwriteDescription}" ItemsSource="{Binding Description}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
+                                                <DataGrid.Columns>
+                                                    <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                                                    <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                                                </DataGrid.Columns>
+                                            </DataGrid>
                                         </Grid>
                                     </HeaderedContentControl>
 
