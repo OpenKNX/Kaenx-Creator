@@ -253,6 +253,18 @@ namespace Kaenx.Creator
             version.ParameterTypes.Add(new Models.ParameterType() { UId = AutoHelper.GetNextFreeUId(version.ParameterTypes) });
         }
 
+        private void ClickAddParamEnum(object sender, RoutedEventArgs e)
+        {
+            Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
+            Models.ParameterType ptype = (sender as Button).DataContext as Models.ParameterType;
+            Models.ParameterTypeEnum penum = new Models.ParameterTypeEnum();
+            foreach(Models.Language lang in ver.Languages)
+                penum.Text.Add(new Models.Translation(lang, ""));
+            if(ptype.Enums.Count > 0)
+                penum.Value = ptype.Enums.OrderByDescending(e => e.Value).First().Value + 1;
+            ptype.Enums.Add(penum);
+        }
+
         private void ClickAddMemory(object sender, RoutedEventArgs e)
         {
             Models.Application app = AppList.SelectedItem as Models.Application;
@@ -304,14 +316,6 @@ namespace Kaenx.Creator
 
             Models.Application app = AppList.SelectedItem as Models.Application;
             General.Applications.Remove(app);
-        }
-
-
-        private void ClickAddParamEnum(object sender, RoutedEventArgs e)
-        {
-            Models.ParameterType type = ListParamTypes.SelectedItem as Models.ParameterType;
-
-            type.Enums.Add(new Models.ParameterTypeEnum() { Name = "Name", Value = 0 });
         }
 
         private void ClickAddLanguage(object sender, RoutedEventArgs e)
@@ -762,14 +766,22 @@ namespace Kaenx.Creator
 
         private void ClickAddDynChannel(object sender, RoutedEventArgs e)
         {
+            Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
             Models.Dynamic.IDynItems main = (sender as MenuItem).DataContext as Models.Dynamic.IDynItems;
-            main.Items.Add(new Models.Dynamic.DynChannel() { Parent = main });
+            Models.Dynamic.DynChannel channel = new Models.Dynamic.DynChannel() { Parent = main };
+            foreach(Models.Language lang in ver.Languages)
+                channel.Text.Add(new Models.Translation(lang, ""));
+            main.Items.Add(channel);
         }
 
         private void ClickAddDynBlock(object sender, RoutedEventArgs e)
         {
+            Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
             Models.Dynamic.IDynItems main = (sender as MenuItem).DataContext as Models.Dynamic.IDynItems;
-            main.Items.Add(new Models.Dynamic.DynParaBlock() { Parent = main });
+            Models.Dynamic.DynParaBlock block = new Models.Dynamic.DynParaBlock() { Parent = main };
+            foreach(Models.Language lang in ver.Languages)
+                block.Text.Add(new Models.Translation(lang, ""));
+            main.Items.Add(block);
         }
 
         private void ClickAddDynPara(object sender, RoutedEventArgs e)
@@ -985,6 +997,16 @@ namespace Kaenx.Creator
                             foreach(Models.ParameterTypeEnum penum in ptype.Enums){
                                 if(penum.Value >= maxsize)
                                     PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterType Enum {ptype.Name} ({ptype.UId}): Wert ({penum.Value}) ist größer als maximaler Wert ({maxsize-1})", State = Models.PublishState.Fail });
+
+                                if(!penum.Translate) {
+                                    Models.Translation trans = penum.Text.Single(t => t.Language.CultureCode == vers.DefaultLanguage);
+                                    if(string.IsNullOrEmpty(trans.Text))
+                                        PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterType Enum {penum.Name}/{ptype.Name} ({ptype.UId}): Keine Übersetzung vorhanden ({trans.Language.Text})", State = Models.PublishState.Fail });
+                                } else {
+                                    foreach(Models.Translation trans in penum.Text)
+                                        if(string.IsNullOrEmpty(trans.Text))
+                                            PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterType Enum {penum.Name}/{ptype.Name} ({ptype.UId}): Keine Übersetzung vorhanden ({trans.Language.Text})", State = Models.PublishState.Warning });
+                                }
                             }
                             break;
 
@@ -1057,19 +1079,30 @@ namespace Kaenx.Creator
                         }
                     }
                     
+
+                    //TODO auslagern in Funktion
+                    if(para.TranslationText) {
+                        Models.Translation trans = para.Text.Single(t => t.Language.CultureCode == vers.DefaultLanguage);
+                        if(string.IsNullOrEmpty(trans.Text))
+                            PublishActions.Add(new Models.PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Keine Übersetzung vorhanden ({trans.Language.Text})", State = Models.PublishState.Fail });
+                    } else {
+                        foreach(Models.Translation trans in para.Text)
+                            if(string.IsNullOrEmpty(trans.Text))
+                                PublishActions.Add(new Models.PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Keine Übersetzung vorhanden ({trans.Language.Text})", State = Models.PublishState.Warning });
+                    }
                     //TODO check unions
 
                     if(!para.IsInUnion) {
                         switch(para.SavePath) {
                             case Models.ParamSave.Memory:
                                 if(para.MemoryObject == null)
-                                    PublishActions.Add(new Models.PublishAction() { Text = $"    Parameter {para.Name}: Kein Speichersegment ausgewählt", State = Models.PublishState.Fail });
+                                    PublishActions.Add(new Models.PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Kein Speichersegment ausgewählt", State = Models.PublishState.Fail });
                                 else {
                                     if(!para.MemoryObject.IsAutoPara && para.Offset == -1) PublishActions.Add(new Models.PublishAction() { Text = $"    Parameter {para.Name}: Kein Offset angegeben", State = Models.PublishState.Fail });
                                     if(!para.MemoryObject.IsAutoPara && para.OffsetBit == -1) PublishActions.Add(new Models.PublishAction() { Text = $"    Parameter {para.Name}: Kein Bit Offset angegeben", State = Models.PublishState.Fail });
 
                                 }
-                                if(para.OffsetBit > 7) PublishActions.Add(new Models.PublishAction() { Text = $"    Parameter {para.Name}: BitOffset größer als 7 und somit obsolet", State = Models.PublishState.Fail });
+                                if(para.OffsetBit > 7) PublishActions.Add(new Models.PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): BitOffset größer als 7 und somit obsolet", State = Models.PublishState.Fail });
                                     break;
                         }
                     }
@@ -1126,6 +1159,37 @@ namespace Kaenx.Creator
                     if(com.HasDpt && com.Type == null) PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Kein DataPointType angegeben", State = Models.PublishState.Fail });
                     if(com.HasDpt && com.Type != null && com.Type.Number == "0") PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Keine Angabe des DPT nur bei Refs", State = Models.PublishState.Fail });
                     if(com.HasDpt && com.HasDpts && com.SubType == null) PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Kein DataPointSubType angegeben", State = Models.PublishState.Fail });
+                
+                    //TODO auslagern in Funktion
+                    if(com.TranslationText) {
+                        Models.Translation trans = com.Text.Single(t => t.Language.CultureCode == vers.DefaultLanguage);
+                        if(string.IsNullOrEmpty(trans.Text))
+                            PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Keine Übersetzung für Text vorhanden ({trans.Language.Text})", State = Models.PublishState.Fail });
+                    } else {
+                        foreach(Models.Translation trans in com.Text)
+                            if(string.IsNullOrEmpty(trans.Text))
+                                PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Keine Übersetzung für Text vorhanden ({trans.Language.Text})", State = Models.PublishState.Warning });
+                    }
+
+                    if(com.TranslationFunctionText) {
+                        Models.Translation trans = com.FunctionText.Single(t => t.Language.CultureCode == vers.DefaultLanguage);
+                        if(string.IsNullOrEmpty(trans.Text))
+                            PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Keine Übersetzung für FunktionsText vorhanden ({trans.Language.Text})", State = Models.PublishState.Fail });
+                    } else {
+                        foreach(Models.Translation trans in com.FunctionText)
+                            if(string.IsNullOrEmpty(trans.Text))
+                                PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Keine Übersetzung für FunktionsText vorhanden ({trans.Language.Text})", State = Models.PublishState.Warning });
+                    }
+
+                    if(com.TranslationDescription) {
+                        Models.Translation trans = com.Description.Single(t => t.Language.CultureCode == vers.DefaultLanguage);
+                        if(string.IsNullOrEmpty(trans.Text))
+                            PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Keine Übersetzung für Beschreibung vorhanden ({trans.Language.Text})", State = Models.PublishState.Fail });
+                    } else {
+                        foreach(Models.Translation trans in com.Description)
+                            if(string.IsNullOrEmpty(trans.Text))
+                                PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Keine Übersetzung für Beschreibung vorhanden ({trans.Language.Text})", State = Models.PublishState.Warning });
+                    }
                 }
 
                 foreach(Models.ComObjectRef rcom in vers.ComObjectRefs) {

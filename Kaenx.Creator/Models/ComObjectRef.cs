@@ -46,6 +46,12 @@ namespace Kaenx.Creator.Models
         }
 
         public ObservableCollection<Translation> Text {get;set;} = new ObservableCollection<Translation>();
+        private bool _transText = false;
+        public bool TranslationText
+        {
+            get { return _transText; }
+            set { _transText = value; Changed("TranslationText"); }
+        }
         private bool _overText = false;
         public bool OverwriteText
         {
@@ -54,6 +60,12 @@ namespace Kaenx.Creator.Models
         }
 
         public ObservableCollection<Translation> FunctionText {get;set;} = new ObservableCollection<Translation>();
+        private bool _transFuncText = false;
+        public bool TranslationFunctionText
+        {
+            get { return _transFuncText; }
+            set { _transFuncText = value; Changed("TranslationFunctionText"); }
+        }
         private bool _overFunc = false;
         public bool OverwriteFunctionText
         {
@@ -62,6 +74,12 @@ namespace Kaenx.Creator.Models
         }
 
         public ObservableCollection<Translation> Description {get;set;} = new ObservableCollection<Translation>();
+        private bool _transDesc = false;
+        public bool TranslationDescription
+        {
+            get { return _transDesc; }
+            set { _transDesc = value; Changed("TranslationDescription"); }
+        }
         private bool _overDesc = false;
         public bool OverwriteDescription
         {

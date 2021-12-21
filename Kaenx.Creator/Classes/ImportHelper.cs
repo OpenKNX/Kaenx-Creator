@@ -629,7 +629,7 @@ namespace Kaenx.Creator.Classes
                     case "Channel":
                         DynChannel dc = new DynChannel() {
                             Name = xele.Attribute("Name")?.Value ?? "",
-                            Text = xele.Attribute("Text")?.Value ?? "",
+                            Text = GetTranslation(xele.Attribute("Text")?.Value ?? "", "Text", xele),
                             Number = xele.Attribute("Number")?.Value ?? ""
                         };
                         if(xele.Attribute("ParamRefId") != null) {
@@ -646,9 +646,9 @@ namespace Kaenx.Creator.Classes
 
                     case "ParameterBlock":
                         DynParaBlock dpb = new DynParaBlock() {
-                            Name = xele.Attribute("Name")?.Value ?? "",
-                            Text = xele.Attribute("Text")?.Value ?? ""
+                            Name = xele.Attribute("Name")?.Value ?? ""
                         };
+                        dpb.Text = GetTranslation(xele.Attribute("Id")?.Value ?? "", "Text", xele);
                         if(xele.Attribute("ParamRefId") != null) {
                             dpb.UseTextParameter = true;
                             paraId = int.Parse(GetLastSplit(xele.Attribute("ParamRefId").Value, 2));

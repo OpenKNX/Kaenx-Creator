@@ -26,11 +26,13 @@ namespace Kaenx.Creator.Models.Dynamic
             set { _name = value; Changed("Name"); }
         }
 
-        private string _text = "Block";
-        public string Text
+        public ObservableCollection<Translation> Text {get;set;} = new ObservableCollection<Translation>();
+
+        private bool _transText = false;
+        public bool TranslationText
         {
-            get { return _text; }
-            set { _text = value; Changed("Text"); }
+            get { return _transText; }
+            set { _transText = value; Changed("TranslationText"); }
         }
 
         private bool _useTextParam = false;

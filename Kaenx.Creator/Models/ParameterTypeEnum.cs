@@ -9,6 +9,7 @@ namespace Kaenx.Creator.Models
     {
         public string Name {get;set;}
         public int Value {get;set;}
+        public bool Translate {get;set;} = true;
         public ObservableCollection<Translation> Text {get;set;} = new ObservableCollection<Translation>();
     }
 }

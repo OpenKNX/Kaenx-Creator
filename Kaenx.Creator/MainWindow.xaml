@@ -286,16 +286,6 @@
                 <HeaderedContentControl Header="Name">
                     <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
                 </HeaderedContentControl>
-                <HeaderedContentControl Header="Text">
-                    <TextBox IsEnabled="{Binding UseTextParameter, Converter={StaticResource BoolNegate}}" Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
-                </HeaderedContentControl>
-                <Grid Visibility="{Binding UseTextParameter, Converter={StaticResource BoolToVis}, ConverterParameter=true}" Margin="5 0">
-                    <TextBlock VerticalAlignment="Center">
-                        <Run Text="ID:" />
-                        <Run Text="{Binding Id}"/>
-                    </TextBlock>
-                    <Button Content="Zurücksetzen" HorizontalAlignment="Right" Click="ResetId" />
-                </Grid>      
                 <HeaderedContentControl Header="Text Parameter">
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -307,6 +297,25 @@
                         <ComboBox Grid.Column="1" IsEnabled="{Binding UseTextParameter}" ItemsSource="{Binding ElementName=VersionList, Path=SelectedItem.ParameterRefs}" SelectedItem="{Binding ParameterRefObject, Mode=TwoWay}" DisplayMemberPath="Name" />
                     </Grid>
                 </HeaderedContentControl>
+                <Grid Visibility="{Binding UseTextParameter, Converter={StaticResource BoolToVis}, ConverterParameter=true}" Margin="5 0">
+                    <TextBlock VerticalAlignment="Center">
+                        <Run Text="ID:" />
+                        <Run Text="{Binding Id}"/>
+                    </TextBlock>
+                    <Button Content="Zurücksetzen" HorizontalAlignment="Right" Click="ResetId" />
+                </Grid>      
+                <HeaderedContentControl Header="Text">
+                    <StackPanel>
+                        <CheckBox IsChecked="{Binding TranslationText}" Content="Übersetzung nicht exportieren" />
+                        <DataGrid IsEnabled="{Binding UseTextParameter, Converter={StaticResource BoolNegate}}"  ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                                <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </StackPanel>
+                </HeaderedContentControl>
+                
             </StackPanel>
         </DataTemplate>
         <DataTemplate x:Key="TempDynChannel">
@@ -317,9 +326,6 @@
                 <HeaderedContentControl Header="Nummer">
                     <TextBox Text="{Binding Number, UpdateSourceTrigger=PropertyChanged}" />
                 </HeaderedContentControl>
-                <HeaderedContentControl Header="Text">
-                    <TextBox IsEnabled="{Binding UseTextParameter, Converter={StaticResource BoolNegate}}" Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
-                </HeaderedContentControl>
                 <HeaderedContentControl Header="Text Parameter">
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -330,6 +336,17 @@
                         <CheckBox IsChecked="{Binding UseTextParameter}" VerticalAlignment="Center" />
                         <ComboBox Grid.Column="1" IsEnabled="{Binding UseTextParameter}" ItemsSource="{Binding ElementName=VersionList, Path=SelectedItem.ParameterRefs}" SelectedItem="{Binding ParameterRefObject, Mode=TwoWay}" DisplayMemberPath="Name" />
                     </Grid>
+                </HeaderedContentControl>
+                <HeaderedContentControl Header="Text">
+                    <StackPanel>
+                        <CheckBox IsChecked="{Binding TranslationText}" Content="Übersetzung nicht exportieren" />
+                        <DataGrid IsEnabled="{Binding UseTextParameter, Converter={StaticResource BoolNegate}}"  ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                                <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </StackPanel>
                 </HeaderedContentControl>
             </StackPanel>
         </DataTemplate>
@@ -890,22 +907,31 @@
                                 </StackPanel>
 
 
-                                <DataGrid x:Name="ptypeList" ItemsSource="{Binding Enums}" AutoGenerateColumns="False" Margin="5 20 5 5" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Enum}">
-                                    <DataGrid.Columns>
-                                        <DataGridTextColumn Header="Text" Binding="{Binding Name}" Width="*" />
-                                        <DataGridTextColumn Header="Wert" Binding="{Binding Value}" MinWidth="50" />
-                                    </DataGrid.Columns>
-                                </DataGrid>
+                                
 
-                                <CheckBox IsChecked="{Binding TranslateEnums}" Content="Enumtexte übersetzen" />
+                                <Grid Margin="5 20 5 5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition Width="auto" />
+                                    </Grid.ColumnDefinitions>
 
-                                <DataGrid IsEnabled="{Binding TranslateEnums}" ItemsSource="{Binding SelectedItem.Text, ElementName=ptypeList}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Enum}">
+                                    <DataGrid x:Name="ptypeList" ItemsSource="{Binding Enums}" MaxHeight="100" AutoGenerateColumns="False" CanUserAddRows="False" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Enum}">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*" />
+                                            <DataGridTextColumn Header="Wert" Binding="{Binding Value}" MinWidth="50" />
+                                            <DataGridCheckBoxColumn Header="Übersetzen" Binding="{Binding Translate}" MinWidth="50" />
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                    <Button Grid.Column="1" Content="+" Width="30" Click="ClickAddParamEnum" />
+                                </Grid>
+
+                                <DataGrid ItemsSource="{Binding SelectedItem.Text, ElementName=ptypeList}" Margin="5" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Enum}">
                                     <DataGrid.Columns>
                                         <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
                                         <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
                                     </DataGrid.Columns>
                                 </DataGrid>
-
+                                    
                                 <StackPanel Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=NumberUInt-NumberInt-Float9}">
                                     <HeaderedContentControl Header="Min">
                                         <TextBox Text="{Binding Min, UpdateSourceTrigger=PropertyChanged}"/>
@@ -1153,12 +1179,15 @@
                                         <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
                                     </HeaderedContentControl>
                                     <HeaderedContentControl Header="Text">
-                                        <DataGrid ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
-                                            <DataGrid.Columns>
-                                                <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
-                                                <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
-                                            </DataGrid.Columns>
-                                        </DataGrid>
+                                        <StackPanel>
+                                            <CheckBox IsChecked="{Binding TranslationText}" Content="Übersetzung nicht exportieren" />
+                                            <DataGrid ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
+                                                <DataGrid.Columns>
+                                                    <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                                                    <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                                                </DataGrid.Columns>
+                                            </DataGrid>
+                                        </StackPanel>
                                     </HeaderedContentControl>
                                     <HeaderedContentControl Header="Wert">
                                         <TextBox Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}"/>
@@ -1409,30 +1438,39 @@
                                     </HeaderedContentControl>
 
                                     <HeaderedContentControl Header="Text">
-                                        <DataGrid ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
-                                            <DataGrid.Columns>
-                                                <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
-                                                <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
-                                            </DataGrid.Columns>
-                                        </DataGrid>
+                                        <StackPanel>
+                                            <CheckBox IsChecked="{Binding TranslationText}" Content="Übersetzung nicht exportieren" />
+                                            <DataGrid ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
+                                                <DataGrid.Columns>
+                                                    <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                                                    <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                                                </DataGrid.Columns>
+                                            </DataGrid>
+                                        </StackPanel>
                                     </HeaderedContentControl>
 
                                     <HeaderedContentControl Header="Funktionstext">
-                                        <DataGrid ItemsSource="{Binding FunctionText}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
-                                            <DataGrid.Columns>
-                                                <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
-                                                <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
-                                            </DataGrid.Columns>
-                                        </DataGrid>
+                                        <StackPanel>
+                                            <CheckBox IsChecked="{Binding TranslationFunctionText}" Content="Übersetzung nicht exportieren" />
+                                            <DataGrid ItemsSource="{Binding FunctionText}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
+                                                <DataGrid.Columns>
+                                                    <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                                                    <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                                                </DataGrid.Columns>
+                                            </DataGrid>
+                                        </StackPanel>
                                     </HeaderedContentControl>
 
                                     <HeaderedContentControl Header="Beschreibung">
-                                        <DataGrid ItemsSource="{Binding Description}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
-                                            <DataGrid.Columns>
-                                                <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
-                                                <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
-                                            </DataGrid.Columns>
-                                        </DataGrid>
+                                        <StackPanel>
+                                            <CheckBox IsChecked="{Binding TranslationDescription}" Content="Übersetzung nicht exportieren" />
+                                            <DataGrid ItemsSource="{Binding Description}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
+                                                <DataGrid.Columns>
+                                                    <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                                                    <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                                                </DataGrid.Columns>
+                                            </DataGrid>
+                                        </StackPanel>
                                     </HeaderedContentControl>
 
                                     <HeaderedContentControl Header="Nummer">
@@ -1561,12 +1599,15 @@
                                             </Grid.ColumnDefinitions>
 
                                             <CheckBox IsChecked="{Binding OverwriteText}" VerticalAlignment="Center" />
-                                            <DataGrid Grid.Column="1" IsEnabled="{Binding OverwriteText}" ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
-                                                <DataGrid.Columns>
-                                                    <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
-                                                    <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
-                                                </DataGrid.Columns>
-                                            </DataGrid>
+                                            <StackPanel Grid.Column="1">
+                                                <CheckBox IsEnabled="{Binding OverwriteText}" IsChecked="{Binding TranslationText}" Content="Übersetzung nicht exportieren" />
+                                                <DataGrid IsEnabled="{Binding OverwriteText}" ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
+                                                    <DataGrid.Columns>
+                                                        <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                                                        <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                                                    </DataGrid.Columns>
+                                                </DataGrid>
+                                            </StackPanel>
                                         </Grid>
                                     </HeaderedContentControl>
 
@@ -1578,12 +1619,15 @@
                                             </Grid.ColumnDefinitions>
 
                                             <CheckBox IsChecked="{Binding OverwriteFunctionText}" VerticalAlignment="Center" />
-                                            <DataGrid Grid.Column="1" IsEnabled="{Binding OverwriteFunctionText}" ItemsSource="{Binding FunctionText}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
-                                                <DataGrid.Columns>
-                                                    <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
-                                                    <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
-                                                </DataGrid.Columns>
-                                            </DataGrid>
+                                            <StackPanel Grid.Column="1">
+                                                <CheckBox IsEnabled="{Binding OverwriteFunctionText}" IsChecked="{Binding TranslationFunctionText}" Content="Übersetzung nicht exportieren" />
+                                                <DataGrid IsEnabled="{Binding OverwriteFunctionText}" ItemsSource="{Binding FunctionText}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
+                                                    <DataGrid.Columns>
+                                                        <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                                                        <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                                                    </DataGrid.Columns>
+                                                </DataGrid>
+                                            </StackPanel>
                                         </Grid>
                                     </HeaderedContentControl>
 
@@ -1595,12 +1639,15 @@
                                             </Grid.ColumnDefinitions>
 
                                             <CheckBox IsChecked="{Binding OverwriteDescription}" VerticalAlignment="Center" />
-                                            <DataGrid Grid.Column="1" IsEnabled="{Binding OverwriteDescription}" ItemsSource="{Binding Description}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
-                                                <DataGrid.Columns>
-                                                    <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
-                                                    <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
-                                                </DataGrid.Columns>
-                                            </DataGrid>
+                                            <StackPanel Grid.Column="1">
+                                                <CheckBox IsEnabled="{Binding OverwriteDescription}" IsChecked="{Binding TranslationDescription}" Content="Übersetzung nicht exportieren" />
+                                                <DataGrid IsEnabled="{Binding OverwriteDescription}" ItemsSource="{Binding Description}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
+                                                    <DataGrid.Columns>
+                                                        <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                                                        <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                                                    </DataGrid.Columns>
+                                                </DataGrid>
+                                            </StackPanel>
                                         </Grid>
                                     </HeaderedContentControl>
 

@@ -309,9 +309,12 @@ namespace Kaenx.Creator.Classes
                     xcom.SetAttributeValue("VisibleDescription", com.Description.Single(c => c.Language.CultureCode == currentLang).Text);
 
                     //TODO check if translation is not empty
-                    foreach(Models.Translation trans in com.Text) AddTranslation(trans.Language.CultureCode, $"{appVersion}_O-{com.Id}", "Text", trans.Text);
-                    foreach(Models.Translation trans in com.FunctionText) AddTranslation(trans.Language.CultureCode, $"{appVersion}_O-{com.Id}", "FunctionText", trans.Text);
-                    foreach(Models.Translation trans in com.Description) AddTranslation(trans.Language.CultureCode, $"{appVersion}_O-{com.Id}", "VisibleDescription", trans.Text);
+                    if(!com.TranslationText)
+                        foreach(Models.Translation trans in com.Text) AddTranslation(trans.Language.CultureCode, $"{appVersion}_O-{com.Id}", "Text", trans.Text);
+                    if(!com.TranslationFunctionText)
+                        foreach(Models.Translation trans in com.FunctionText) AddTranslation(trans.Language.CultureCode, $"{appVersion}_O-{com.Id}", "FunctionText", trans.Text);
+                    if(!com.TranslationDescription)
+                        foreach(Models.Translation trans in com.Description) AddTranslation(trans.Language.CultureCode, $"{appVersion}_O-{com.Id}", "VisibleDescription", trans.Text);
 
                     if (com.FlagComm != FlagType.Default) xcom.SetAttributeValue("CommunicationFlag", com.FlagComm.ToString());
                     if (com.FlagRead != FlagType.Default) xcom.SetAttributeValue("ReadFlag", com.FlagRead.ToString());
@@ -355,15 +358,18 @@ namespace Kaenx.Creator.Classes
 
 
                     if(cref.OverwriteText) {
-                        foreach(Models.Translation trans in cref.Text) AddTranslation(trans.Language.CultureCode, id, "Text", trans.Text);
+                        if(!cref.TranslationText)
+                            foreach(Models.Translation trans in cref.Text) AddTranslation(trans.Language.CultureCode, id, "Text", trans.Text);
                         xcref.SetAttributeValue("Text", cref.Text.Single(c => c.Language.CultureCode == currentLang).Text);
                     }
                     if(cref.OverwriteFunctionText) {
-                        foreach(Models.Translation trans in cref.FunctionText) AddTranslation(trans.Language.CultureCode, id, "FunctionText", trans.Text);
+                        if(!cref.TranslationFunctionText)
+                            foreach(Models.Translation trans in cref.FunctionText) AddTranslation(trans.Language.CultureCode, id, "FunctionText", trans.Text);
                         xcref.SetAttributeValue("FunctionText", cref.FunctionText.Single(c => c.Language.CultureCode == currentLang).Text);
                     }
                     if(cref.OverwriteDescription) {
-                        foreach(Models.Translation trans in cref.Description) AddTranslation(trans.Language.CultureCode, id, "Description", trans.Text);
+                        if(!cref.TranslationDescription)
+                            foreach(Models.Translation trans in cref.Description) AddTranslation(trans.Language.CultureCode, id, "Description", trans.Text);
                         xcref.SetAttributeValue("VisibleDescription", cref.Description.Single(c => c.Language.CultureCode == currentLang).Text);
                     }
 
@@ -531,9 +537,8 @@ namespace Kaenx.Creator.Classes
             xpara.SetAttributeValue("Name", para.Name);
             xpara.SetAttributeValue("ParameterType", $"{appVersion}_PT-{GetEncoded(para.ParameterTypeObject.Name)}");
 
-            foreach(Models.Translation trans in para.Text) {
-                AddTranslation(trans.Language.CultureCode, id, "Text", trans.Text);
-            }
+            if(!para.TranslationText)
+                foreach(Models.Translation trans in para.Text) AddTranslation(trans.Language.CultureCode, id, "Text", trans.Text);
 
             if(!para.IsInUnion) {
                 switch(para.SavePath) {
