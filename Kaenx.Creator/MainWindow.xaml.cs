@@ -127,6 +127,23 @@ namespace Kaenx.Creator
                         }
                     }
 
+
+                    if(xmask.Descendants(XName.Get("Procedures")).Count() > 0) {
+                        foreach(XElement xproc in xmask.Element(XName.Get("HawkConfigurationData")).Element(XName.Get("Procedures")).Elements()) {
+                            Models.Procedure proc = new Models.Procedure();
+                            proc.Type = xproc.Attribute("ProcedureType").Value;
+                            proc.SubType = xproc.Attribute("ProcedureSubType").Value;
+
+                            StringBuilder sb = new StringBuilder();
+
+                            foreach (XNode node in xproc.Nodes())
+                                sb.Append(node.ToString() + "\r\n");
+
+                            proc.Controls = sb.ToString();
+                            mask.Procedures.Add(proc);
+                        }
+                    }
+
                     BCUs.Add(mask);
                 }
 
@@ -904,6 +921,7 @@ namespace Kaenx.Creator
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
             PublishActions.Clear();
+            await Task.Delay(1000);
             List<Models.Hardware> hardware = new List<Models.Hardware>();
             List<Models.Device> devices = new List<Models.Device>();
             List<Models.Application> apps = new List<Models.Application>();
@@ -1193,8 +1211,44 @@ namespace Kaenx.Creator
                 }
 
                 foreach(Models.ComObjectRef rcom in vers.ComObjectRefs) {
-                    if(rcom.ComObjectObject == null) PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {rcom.Name} ({rcom.UId}): Kein KO-Ref angegeben", State = Models.PublishState.Fail });
+                    if(rcom.ComObjectObject == null) PublishActions.Add(new Models.PublishAction() { Text = $"    ComObjectRef {rcom.Name} ({rcom.UId}): Kein KO-Ref angegeben", State = Models.PublishState.Fail });
                     //if(rcom.HasDpts && rcom.Type == null && rcom.Name.ToLower() != "dummy") PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {rcom.Name}: Kein DataPointSubType angegeben", State = Models.PublishState.Fail });
+
+                    if(rcom.OverwriteText) {
+                        if(rcom.TranslationText) {
+                            Models.Translation trans = rcom.Text.Single(t => t.Language.CultureCode == vers.DefaultLanguage);
+                            if(string.IsNullOrEmpty(trans.Text))
+                                PublishActions.Add(new Models.PublishAction() { Text = $"    ComObjectRef {rcom.Name} ({rcom.UId}): Keine Übersetzung für Text vorhanden ({trans.Language.Text})", State = Models.PublishState.Fail });
+                        } else {
+                            foreach(Models.Translation trans in rcom.Text)
+                                if(string.IsNullOrEmpty(trans.Text))
+                                    PublishActions.Add(new Models.PublishAction() { Text = $"    ComObjectRef {rcom.Name} ({rcom.UId}): Keine Übersetzung für Text vorhanden ({trans.Language.Text})", State = Models.PublishState.Warning });
+                        }
+                    }
+
+                    if(rcom.OverwriteFunctionText) {
+                        if(rcom.TranslationFunctionText) {
+                            Models.Translation trans = rcom.FunctionText.Single(t => t.Language.CultureCode == vers.DefaultLanguage);
+                            if(string.IsNullOrEmpty(trans.Text))
+                                PublishActions.Add(new Models.PublishAction() { Text = $"    ComObjectRef {rcom.Name} ({rcom.UId}): Keine Übersetzung für FunktionsText vorhanden ({trans.Language.Text})", State = Models.PublishState.Fail });
+                        } else {
+                            foreach(Models.Translation trans in rcom.FunctionText)
+                                if(string.IsNullOrEmpty(trans.Text))
+                                    PublishActions.Add(new Models.PublishAction() { Text = $"    ComObjectRef {rcom.Name} ({rcom.UId}): Keine Übersetzung für FunktionsText vorhanden ({trans.Language.Text})", State = Models.PublishState.Warning });
+                        }
+                    }
+
+                    if(rcom.OverwriteDescription) {
+                        if(rcom.TranslationDescription) {
+                            Models.Translation trans = rcom.Description.Single(t => t.Language.CultureCode == vers.DefaultLanguage);
+                            if(string.IsNullOrEmpty(trans.Text))
+                                PublishActions.Add(new Models.PublishAction() { Text = $"    ComObjectRef {rcom.Name} ({rcom.UId}): Keine Übersetzung für Beschreibung vorhanden ({trans.Language.Text})", State = Models.PublishState.Fail });
+                        } else {
+                            foreach(Models.Translation trans in rcom.Description)
+                                if(string.IsNullOrEmpty(trans.Text))
+                                    PublishActions.Add(new Models.PublishAction() { Text = $"    ComObjectRef {rcom.Name} ({rcom.UId}): Keine Übersetzung für Beschreibung vorhanden ({trans.Language.Text})", State = Models.PublishState.Warning });
+                        }
+                    }
                 }
 
                 //TODO check ComObjectRefs for overwriting
@@ -1211,6 +1265,8 @@ namespace Kaenx.Creator
             }
             else
                 PublishActions.Add(new Models.PublishAction() { Text = "Überprüfung bestanden", State = Models.PublishState.Success });
+
+            await Task.Delay(1000);
 
             PublishActions.Add(new Models.PublishAction() { Text = "Erstelle Produktdatenbank", State = Models.PublishState.Info });
 

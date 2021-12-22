@@ -43,8 +43,8 @@ namespace Kaenx.Creator.Classes
 
 
         string currentLang = "";
-        Dictionary<string, Dictionary<string, Dictionary<string, string>>> languages;
-
+        private Dictionary<string, Dictionary<string, Dictionary<string, string>>> languages {get;set;} = null;
+ 
         private void AddTranslation(string lang, string id, string attr, string value) {
             if(!languages.ContainsKey(lang)) languages.Add(lang, new Dictionary<string, Dictionary<string, string>>());
             if(!languages[lang].ContainsKey(id)) languages[lang].Add(id, new Dictionary<string, string>());
@@ -82,14 +82,12 @@ namespace Kaenx.Creator.Classes
                 string appName = Manu + "_A-" + app.Number.ToString("X4");
 
                 appVersion = appName + "-" + ver.Number.ToString("X2");
-                string hash = "0000";
-                appVersion += "-" + hash;
+                appVersion += "-0000";
 
                 //TODO implement check to check if a default language is set and exists
                 currentLang = ver.DefaultLanguage;
-                foreach(Models.Translation trans in ver.Text) {
+                foreach(Models.Translation trans in ver.Text)
                     AddTranslation(trans.Language.CultureCode, appVersion, "Name", trans.Text);
-                }
 
 
                 XElement xunderapp = new XElement(Get("Static"));
@@ -199,11 +197,13 @@ namespace Kaenx.Creator.Classes
                             foreach(ParameterTypeEnum enu in type.Enums)
                             {
                                 XElement xenu = new XElement(Get("Enumeration"));
-                                xenu.SetAttributeValue("Id", id + "_EN-" + c);
+                                xenu.SetAttributeValue("Id", $"{id}_EN-{c}");
                                 xenu.SetAttributeValue("DisplayOrder", c.ToString());
-                                xenu.SetAttributeValue("Text", enu.Name);
+                                xenu.SetAttributeValue("Text", enu.Text.Single(e => e.Language.CultureCode == currentLang).Text);
                                 xenu.SetAttributeValue("Value", enu.Value);
                                 xcontent.Add(xenu);
+                                if(enu.Translate)
+                                    foreach(Models.Translation trans in enu.Text) AddTranslation(trans.Language.CultureCode, $"{id}_EN-{c}", "Text", trans.Text);
                                 c++;
                             }
                             break;
@@ -426,6 +426,38 @@ namespace Kaenx.Creator.Classes
                 xapp.Add(xunderapp);
 
                 HandleSubItems(ver.Dynamics[0], xunderapp);
+
+
+                #region Translations
+
+                XElement xlanguages = new XElement(Get("Languages"));
+                foreach(KeyValuePair<string, Dictionary<string, Dictionary<string, string>>> lang in languages) {
+                    XElement xunit = new XElement(Get("TranslationUnit"));
+                    xunit.SetAttributeValue("RefId", appVersion);
+                    XElement xlang = new XElement(Get("Language"), xunit);
+                    xlang.SetAttributeValue("Identifier", lang.Key);
+
+                    foreach(KeyValuePair<string, Dictionary<string, string>> langitem in lang.Value) {
+                        XElement xele = new XElement(Get("TranslationElement"));
+                        xele.SetAttributeValue("RefId", langitem.Key);
+
+                        foreach(KeyValuePair<string, string> langval in langitem.Value) {
+                            XElement xtrans = new XElement(Get("Translation"));
+                            xtrans.SetAttributeValue("AttributeName", langval.Key);
+                            xtrans.SetAttributeValue("Text", langval.Value);
+                            xele.Add(xtrans);
+                        }
+
+                        xunit.Add(xele);
+                    }
+                    xlanguages.Add(xlang);
+                }
+                xmanu.Add(xlanguages);
+
+                //xmanu.Add(new XElement(Get("Languages"), ));
+                #endregion
+
+
                 doc.Save(GetRelPath(Manu, appVersion + ".xml"));
             }
             #endregion
@@ -562,7 +594,7 @@ namespace Kaenx.Creator.Classes
                     xpara.SetAttributeValue("DefaultUnionParameter", "true");
             }
             
-            xpara.SetAttributeValue("Text", para.Text);
+            xpara.SetAttributeValue("Text", para.Text.Single(p => p.Language.CultureCode == currentLang).Text);
             if (para.Access != ParamAccess.Default && para.Access != ParamAccess.ReadWrite) xpara.SetAttributeValue("Access", para.Access);
             if (!string.IsNullOrWhiteSpace(para.Suffix)) xpara.SetAttributeValue("SuffixText", para.Suffix);
             xpara.SetAttributeValue("Value", para.Value);
