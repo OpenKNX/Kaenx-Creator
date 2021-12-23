@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Kaenx.Creator.Models
 {
-    public class AppVersion : INotifyPropertyChanged
+    public class AppVersion : INotifyPropertyChanged, IVersionBase
     {
 
         public ObservableCollection<ParameterType> ParameterTypes { get; set; } = new ObservableCollection<ParameterType>();

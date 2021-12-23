@@ -1,4 +1,5 @@
-﻿using Kaenx.Creator.Classes;
+﻿using ICSharpCode.AvalonEdit.CodeCompletion;
+using Kaenx.Creator.Classes;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -62,6 +63,8 @@ namespace Kaenx.Creator
             this.DataContext = this;
             LoadBcus();
             LoadDpts();
+            editor.TextArea.TextEntered += EditorEntered;
+            editor.TextArea.TextEntering += EditorEntering;
         }
 
         private void ClickNew(object sender, RoutedEventArgs e)
@@ -206,6 +209,63 @@ namespace Kaenx.Creator
         }
 
         #region Clicks
+
+        CompletionWindow completionWindow;
+        private void EditorEntered(object sender, TextCompositionEventArgs e)
+        {
+            if (e.Text == " ") {
+                // Open code completion after the user has pressed dot:
+                completionWindow = new CompletionWindow(editor.TextArea);
+                IList<ICompletionData> data = completionWindow.CompletionList.CompletionData;
+                data.Add(new Models.CompletionData("LsmIdx"));
+                data.Add(new Models.CompletionData("ObjIdx"));
+                data.Add(new Models.CompletionData("Address"));
+                data.Add(new Models.CompletionData("Size"));
+                completionWindow.Show();
+                completionWindow.Closed += delegate {
+                    completionWindow = null;
+                };
+            }
+            if(e.Text == "<") {
+                completionWindow = new CompletionWindow(editor.TextArea);
+                IList<ICompletionData> data = completionWindow.CompletionList.CompletionData;
+                data.Add(new Models.CompletionData("LdCtrlConnect", false));
+                data.Add(new Models.CompletionData("LcCtrlDisconnect", false));
+                data.Add(new Models.CompletionData("LcCtrlWriteMemory", false));
+                completionWindow.Show();
+                completionWindow.Closed += delegate {
+                    completionWindow = null;
+                };
+            }
+        }
+
+        private void EditorEntering(object sender, TextCompositionEventArgs e)
+		{
+            if(e.Text == "/") {
+                //editor.Text += "/>";
+                editor.Document.Insert(editor.SelectionStart, "/>");
+                if(completionWindow != null) completionWindow.Close();
+                e.Handled = true;
+                return;
+            } 
+            if(e.Text == "<") {
+                int selected = editor.SelectionStart;
+                editor.Document.Insert(editor.SelectionStart, "< />");
+                editor.SelectionStart = selected + 1;
+                e.Handled = true;
+                EditorEntered(sender, e);
+                return;
+            }
+			if (e.Text.Length > 0 && completionWindow != null) {
+                
+				if (!char.IsLetter(e.Text[0])) {
+					// Whenever a non-letter is typed while the completion window is open,
+					// insert the currently selected element.
+					completionWindow.CompletionList.RequestInsertion(e);
+				}
+			}
+			// do not set e.Handled=true - we still want to insert the character that was typed
+		}
 
         #region Clicks Add/Remove
 
@@ -806,6 +866,16 @@ namespace Kaenx.Creator
             Models.Dynamic.IDynItems block = (sender as MenuItem).DataContext as Models.Dynamic.IDynItems;
             Models.Dynamic.DynParameter para = new Models.Dynamic.DynParameter() { Parent = block };
             block.Items.Add(para);
+        }
+
+        private void ClickAddDynSep(object sender, RoutedEventArgs e)
+        {
+            Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
+            Models.Dynamic.IDynItems main = (sender as MenuItem).DataContext as Models.Dynamic.IDynItems;
+            Models.Dynamic.DynSeparator separator = new Models.Dynamic.DynSeparator() { Parent = main };
+            foreach(Models.Language lang in ver.Languages)
+                separator.Text.Add(new Models.Translation(lang, ""));
+            main.Items.Add(separator);
         }
 
         private void ClickAddDynChoose(object sender, RoutedEventArgs e)

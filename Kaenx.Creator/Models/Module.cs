@@ -1,12 +1,15 @@
+using Kaenx.Creator.Models;
+using Kaenx.Creator.Models.Dynamic;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Collections.ObjectModel;
 using System.Text;
 
 namespace Kaenx.Creator.Models
 {
-    public class Module : INotifyPropertyChanged
+    public class Module : INotifyPropertyChanged, IVersionBase
     {
         private int _uid = -1;
         public int UId
@@ -31,6 +34,12 @@ namespace Kaenx.Creator.Models
         }
 
     
+        public ObservableCollection<Parameter> Parameters { get; set; } = new ObservableCollection<Parameter>();
+        public ObservableCollection<ParameterRef> ParameterRefs { get; set; } = new ObservableCollection<ParameterRef>();
+        public ObservableCollection<ComObject> ComObjects { get; set; } = new ObservableCollection<ComObject>();
+        public ObservableCollection<ComObjectRef> ComObjectRefs { get; set; } = new ObservableCollection<ComObjectRef>();
+        public ObservableCollection<Union> Unions { get; set; } = new ObservableCollection<Union>();
+        public List<DynamicMain> Dynamics { get; set; } = new List<DynamicMain>();
 
 
         public event PropertyChangedEventHandler PropertyChanged;

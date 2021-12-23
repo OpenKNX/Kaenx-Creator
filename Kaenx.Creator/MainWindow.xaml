@@ -9,6 +9,7 @@
         xmlns:dyn="clr-namespace:Kaenx.Creator.Models.Dynamic"
         xmlns:System="clr-namespace:System;assembly=mscorlib"
         xmlns:select="clr-namespace:Kaenx.Creator.Selectors"
+        xmlns:avalonedit="http://icsharpcode.net/sharpdevelop/avalonedit"
         mc:Ignorable="d"
         Icon="FileLogo.ico"
         Title="Kaenx Creator" Height="700" Width="1000">
@@ -1705,14 +1706,33 @@
                         <Grid>  
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition />
-                                <ColumnDefinition Width="200" />
+                                <ColumnDefinition Width="5" />
+                                <ColumnDefinition MaxWidth="600" />
                             </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto" MaxHeight="250" />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
 
-                            <TextBlock Text="{Binding SelectedItem.Controls, ElementName=MaskList}" />
+                            <!--<TextBox Grid.RowSpan="2" Text="{Binding Mask.OwnProcedure}" />-->
+                            <avalonedit:TextEditor x:Name="editor" ShowLineNumbers="True" Grid.RowSpan="2" SyntaxHighlighting="XML" />
                             
-                            <ListBox x:Name="MaskList" Grid.Column="1" ItemsSource="{Binding Mask.Procedures}">
+                            <GridSplitter Grid.RowSpan="2" Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
 
+                            <ListBox x:Name="MaskList" Grid.Column="2" ItemsSource="{Binding Mask.Procedures}">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock>
+                                            <Run Text="{Binding Type}" />
+                                            <Run Text="-" />
+                                            <Run Text="{Binding SubType}" />
+                                        </TextBlock>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
                             </ListBox>
+                            <ScrollViewer Grid.Row="1" Grid.Column="2">
+                                <TextBlock Text="{Binding SelectedItem.Controls, ElementName=MaskList}" Margin="5" />
+                            </ScrollViewer>
                         </Grid>
                     </TabItem>
 
@@ -1769,6 +1789,7 @@
                                                 <ContextMenu>
                                                     <MenuItem Header="Parameter hinzufügen" Click="ClickAddDynPara" />
                                                     <MenuItem Header="KO hinzufügen" Click="ClickAddDynCom" />
+                                                    <MenuItem Header="Separator hinzufügen" Click="ClickAddDynSep" />
                                                     <MenuItem Header="Abzweigung hinzufügen" Click="ClickAddDynChoose" />
                                                     <Separator />
                                                     <MenuItem Header="Entfernen" Click="ClickRemoveDyn" />
@@ -1801,6 +1822,7 @@
                                                     <Separator />
                                                     <MenuItem Header="Parameter hinzufügen" Click="ClickAddDynPara" />
                                                     <MenuItem Header="KO hinzufügen" Click="ClickAddDynCom" />
+                                                    <MenuItem Header="Separator hinzufügen" Click="ClickAddDynSep" />
                                                     <MenuItem Header="Entfernen" Click="ClickRemoveDyn" />
                                                 </ContextMenu>
                                             </TextBlock.ContextMenu>

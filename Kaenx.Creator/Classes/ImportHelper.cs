@@ -164,10 +164,11 @@ namespace Kaenx.Creator.Classes
             XElement xstatic = xapp.Element(GetXName("Static"));
             ImportSegments(xstatic.Element(GetXName("Code")));
             ImportParameterTypes(xstatic.Element(GetXName("ParameterTypes")));
-            ImportParameter(xstatic.Element(GetXName("Parameters")));
+            ImportParameter(xstatic.Element(GetXName("Parameters")), currentVers);
             ImportParameterRefs(xstatic.Element(GetXName("ParameterRefs")));
             ImportComObjects(xstatic.Element(GetXName("ComObjectTable")));
             ImportComObjectRefs(xstatic.Element(GetXName("ComObjectRefs")));
+            ImportModules(xapp.Element(GetXName("ModuleDefs")));
             ImportDynamic(xapp.Element(GetXName("Dynamic")));
         }
 
@@ -211,6 +212,11 @@ namespace Kaenx.Creator.Classes
                         translations.Add(new Translation(lang, ""));
                 }
             }
+            if(!translations.Any(t => t.Language.CultureCode == currentVers.DefaultLanguage)) {
+                translations.Add(new Translation(new Language(_langTexts[currentVers.DefaultLanguage], currentVers.DefaultLanguage), xele.Attribute(attr).Value));
+            }
+
+
             return translations;
         }
 
@@ -232,7 +238,7 @@ namespace Kaenx.Creator.Classes
                         UId = _uidCounter++,
                         Size = int.Parse(xcode.Attribute("Size").Value),
                         Offset = int.Parse(xcode.Attribute("Offset")?.Value ?? "0"),
-                        Name = GetLastSplit(xcode.Attribute("Id").Value) + (xcode.Attribute("Name").Value ?? ""),
+                        Name = GetLastSplit(xcode.Attribute("Id").Value) + (xcode.Attribute("Name")?.Value ?? ""),
                         Type = MemoryTypes.Relative,
                         IsAutoSize = false,
                         IsAutoPara = false
@@ -303,11 +309,12 @@ namespace Kaenx.Creator.Classes
             }
         }
 
-        public void ImportParameter(XElement xparas) {
+        public void ImportParameter(XElement xparas, IVersionBase vbase) {
+            if(xparas == null) return;
             _uidCounter = 1;
-            //TODO also import unions!
+            
             foreach(XElement xpara in xparas.Elements(GetXName("Parameter"))) {
-                ParseParameter(xpara);
+                ParseParameter(xpara, vbase);
             }
 
             int unionCounter = 1;
@@ -328,19 +335,19 @@ namespace Kaenx.Creator.Classes
                         union.OffsetBit = int.Parse(xmem.Attribute("BitOffset").Value);
                         break;
                 }
-                currentVers.Unions.Add(union);
+                vbase.Unions.Add(union);
 
 
 
 
                 foreach(XElement xpara in xunion.Elements(GetXName("Parameter"))) {
-                    ParseParameter(xpara, union, xmem);
+                    ParseParameter(xpara, vbase, union, xmem);
                 }
             }
             currentVers.IsUnionActive = unionCounter > 1;
         }
 
-        public void ParseParameter(XElement xpara, Union union = null, XElement xmemory = null) {
+        public void ParseParameter(XElement xpara, IVersionBase vbase, Union union = null, XElement xmemory = null) {
             Models.Parameter para = new Models.Parameter() {
                 Name = xpara.Attribute("Name").Value,
                 Value = xpara.Attribute("Value").Value,
@@ -387,10 +394,11 @@ namespace Kaenx.Creator.Classes
                 }
             }
 
-            currentVers.Parameters.Add(para);
+            vbase.Parameters.Add(para);
         }
 
         public void ImportParameterRefs(XElement xrefs) {
+            if(xrefs == null) return;
             _uidCounter = 1;
 
             foreach(XElement xref in xrefs.Elements()) {
@@ -468,6 +476,7 @@ namespace Kaenx.Creator.Classes
         }
 
         public void ImportComObjectRefs(XElement xrefs) {
+            if(xrefs == null) return;
             _uidCounter = 1;
             
             foreach(XElement xref in xrefs.Elements()) {
@@ -526,6 +535,26 @@ namespace Kaenx.Creator.Classes
                 }
 
                 currentVers.ComObjectRefs.Add(cref);
+            }
+        }
+
+        public void ImportModules(XElement xmods) {
+            if(xmods == null) return;
+            _uidCounter = 1;
+            currentVers.IsModulesActive = true;
+
+            foreach(XElement xmod in xmods.Elements()) {
+                //TODO also import DisplayOrder and Tag
+                Models.Module mod = new Models.Module() {
+                    Name = xmod.Attribute("Name")?.Value ?? "Unbenannt",
+                    UId = _uidCounter++,
+                    Id = int.Parse(GetLastSplit(xmod.Attribute("Id").Value, 3))
+                };
+
+                XElement xstatic = xmod.Element(GetXName("Static"));
+                ImportParameter(xstatic.Element(GetXName("Parameters")), mod);
+
+                currentVers.Modules.Add(mod);
             }
         }
 
@@ -629,7 +658,7 @@ namespace Kaenx.Creator.Classes
                     case "Channel":
                         DynChannel dc = new DynChannel() {
                             Name = xele.Attribute("Name")?.Value ?? "",
-                            Text = GetTranslation(xele.Attribute("Text")?.Value ?? "", "Text", xele),
+                            Text = GetTranslation(xele.Attribute("Id")?.Value ?? "", "Text", xele),
                             Number = xele.Attribute("Number")?.Value ?? ""
                         };
                         if(xele.Attribute("ParamRefId") != null) {
@@ -654,7 +683,7 @@ namespace Kaenx.Creator.Classes
                             paraId = int.Parse(GetLastSplit(xele.Attribute("ParamRefId").Value, 2));
                             dpb.ParameterRefObject = currentVers.ParameterRefs.Single(p => p.Id == paraId);
                         } else {
-                            dpb.Id = int.Parse(GetLastSplit(xele.Attribute("Id").Value, 2));
+                            dpb.Id = int.Parse(GetLastSplit(xele.Attribute("Id").Value, 3));
                         }
                         parent.Items.Add(dpb);
                         ParseDynamic(dpb, xele);
@@ -684,11 +713,23 @@ namespace Kaenx.Creator.Classes
                         parent.Items.Add(dp);
                         break;
 
+                    case "ParameterSeparator":
+                        DynSeparator ds = new DynSeparator();
+                        paraId = int.Parse(GetLastSplit(xele.Attribute("Id").Value, 3));
+                        ds.Id = paraId;
+                        ds.Text = GetTranslation(xele.Attribute("Id")?.Value ?? "", "Text", xele);
+                        parent.Items.Add(ds);
+                        break;
+
                     case "ComObjectRefRef":
                         DynComObject dco = new DynComObject();
                         paraId = int.Parse(GetLastSplit(xele.Attribute("RefId").Value, 2));
                         dco.ComObjectRefObject = currentVers.ComObjectRefs.Single(p => p.Id == paraId);
                         parent.Items.Add(dco);
+                        break;
+
+                    case "Module":
+                        //TODO import modules
                         break;
 
                     default:

@@ -185,9 +185,9 @@ namespace Kaenx.Creator.Classes
                         case ParameterTypes.NumberInt:
                         case ParameterTypes.NumberUInt:
                             xcontent = new XElement(Get("TypeNumber"));
+                            xcontent.SetAttributeValue("Type", type.Type == ParameterTypes.NumberUInt ? "unsignedInt" : "signedInt");
                             xcontent.SetAttributeValue("minInclusive", type.Min);
                             xcontent.SetAttributeValue("maxInclusive", type.Max);
-                            xcontent.SetAttributeValue("Type", type.Type == ParameterTypes.NumberUInt ? "unsignedInt" : "signedInt");
                             break;
 
                         case ParameterTypes.Enum:
@@ -197,10 +197,10 @@ namespace Kaenx.Creator.Classes
                             foreach(ParameterTypeEnum enu in type.Enums)
                             {
                                 XElement xenu = new XElement(Get("Enumeration"));
-                                xenu.SetAttributeValue("Id", $"{id}_EN-{c}");
-                                xenu.SetAttributeValue("DisplayOrder", c.ToString());
                                 xenu.SetAttributeValue("Text", enu.Text.Single(e => e.Language.CultureCode == currentLang).Text);
                                 xenu.SetAttributeValue("Value", enu.Value);
+                                xenu.SetAttributeValue("Id", $"{id}_EN-{c}");
+                                xenu.SetAttributeValue("DisplayOrder", c.ToString());
                                 xcontent.Add(xenu);
                                 if(enu.Translate)
                                     foreach(Models.Translation trans in enu.Text) AddTranslation(trans.Language.CultureCode, $"{id}_EN-{c}", "Text", trans.Text);
@@ -640,6 +640,13 @@ namespace Kaenx.Creator.Classes
                     case DynComObject dc:
                         HandleCom(dc, xparent);
                         break;
+
+                    case DynSeparator ds:
+                        HandleSep(ds, xparent);
+                        break;
+
+                    default:
+                        throw new Exception("Nicht behandeltes dynamisches Element: " + item.ToString());
                 }
 
                 if (item.Items != null && xitem != null)
@@ -659,8 +666,12 @@ namespace Kaenx.Creator.Classes
                 channel.Name = Get("Channel");
                 if(dch.ParameterRefObject != null)
                     channel.SetAttributeValue("ParamRefId", appVersion + (dch.ParameterRefObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{dch.ParameterRefObject.ParameterObject.Id}_R-{dch.ParameterRefObject.Id}");
-                else
+                else {
                     channel.SetAttributeValue("Text", ""); //TODO implement
+                    channel.SetAttributeValue("Text", dch.Text.Single(p => p.Language.CultureCode == currentLang).Text);
+                    if(!dch.TranslationText)
+                        foreach(Models.Translation trans in dch.Text) AddTranslation(trans.Language.CultureCode, $"{appVersion}_CH-{dch.Number}", "Text", trans.Text);
+                }
                 channel.SetAttributeValue("Number", dch.Number);
                 channel.SetAttributeValue("Id", $"{appVersion}_CH-{dch.Number}");
             }
@@ -675,6 +686,16 @@ namespace Kaenx.Creator.Classes
             XElement xcom = new XElement(Get("ComObjectRefRef"));
             xcom.SetAttributeValue("RefId", $"{appVersion}_O-{com.ComObjectRefObject.ComObjectObject.Id}_R-{com.ComObjectRefObject.Id}");
             parent.Add(xcom);
+        }
+
+        private void HandleSep(DynSeparator sep, XElement parent)
+        {
+            XElement xsep = new XElement(Get("ParameterSeparator"));
+            if(sep.Id == -1) {
+                sep.Id = 1; //TODO get real next free Id
+            }
+            xsep.SetAttributeValue("Id", $"{appVersion}_PS-{sep.Id}"); //TODO get real ID
+            parent.Add(xsep);
         }
 
         private XElement HandleChoose(DynChoose cho, XElement parent)
@@ -718,7 +739,9 @@ namespace Kaenx.Creator.Classes
                     bl.Id = 1; //TODO get real next free Id
                 }
                 block.SetAttributeValue("Id", $"{appVersion}_PB-{bl.Id}");
-                block.SetAttributeValue("Text", bl.Text);
+                block.SetAttributeValue("Text", bl.Text.Single(p => p.Language.CultureCode == currentLang).Text);
+                if(!bl.TranslationText)
+                    foreach(Models.Translation trans in bl.Text) AddTranslation(trans.Language.CultureCode, $"{appVersion}_PB-{bl.Id}", "Text", trans.Text);
             }
 
             return block;
