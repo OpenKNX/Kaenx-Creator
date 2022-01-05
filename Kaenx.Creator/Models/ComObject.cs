@@ -58,21 +58,21 @@ namespace Kaenx.Creator.Models
         }
 
 
-        private FlagType _flagRead = FlagType.Default;
+        private FlagType _flagRead = FlagType.Disabled;
         public FlagType FlagRead
         {
             get { return _flagRead; }
             set { _flagRead = value; Changed("FlagRead"); }
         }
 
-        private FlagType _flagWrite =  FlagType.Default;
+        private FlagType _flagWrite = FlagType.Disabled;
         public FlagType FlagWrite
         {
             get { return _flagWrite; }
             set { _flagWrite = value; Changed("FlagWrite"); }
         }
 
-        private FlagType _flagTrans = FlagType.Default;
+        private FlagType _flagTrans = FlagType.Disabled;
         public FlagType FlagTrans
         {
             get { return _flagTrans; }
@@ -86,14 +86,14 @@ namespace Kaenx.Creator.Models
             set { _flagComm = value; Changed("FlagComm"); }
         }
 
-        private FlagType _flagUpdate = FlagType.Default;
+        private FlagType _flagUpdate = FlagType.Disabled;
         public FlagType FlagUpdate
         {
             get { return _flagUpdate; }
             set { _flagUpdate = value; Changed("FlagUpdate"); }
         }
 
-        private FlagType _flagOnInit = FlagType.Default;
+        private FlagType _flagOnInit = FlagType.Disabled;
         public FlagType FlagOnInit
         {
             get { return _flagOnInit; }
@@ -109,7 +109,7 @@ namespace Kaenx.Creator.Models
         public string TypeValue
         {
             get { return _typeValue; }
-            set { if (value == null) return;  _typeValue = value; Changed("TypeValue"); }
+            set { if (value == null) return; _typeValue = value; Changed("TypeValue"); }
         }
 
         private bool _hasDpt = false;
@@ -128,7 +128,7 @@ namespace Kaenx.Creator.Models
 
 
 
-        
+
         [JsonIgnore]
         public string _subTypeNumber;
         public string SubTypeNumber
@@ -149,7 +149,7 @@ namespace Kaenx.Creator.Models
         public string TypeNumber
         {
             get { return Type?.Number; }
-            set { if (value == null) return;  _typeNumber = value; Changed("TypeNumber"); }
+            set { if (value == null) return; _typeNumber = value; Changed("TypeNumber"); }
         }
 
         private DataPointType _type;
@@ -170,8 +170,8 @@ namespace Kaenx.Creator.Models
 
     public enum FlagType
     {
-        Default,
         Enabled,
-        Disabled
+        Disabled,
+        Undefined
     }
 }
