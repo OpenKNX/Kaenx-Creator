@@ -59,12 +59,28 @@ namespace Kaenx.Creator
 
         public MainWindow()
         {
+            string lang = Properties.Settings.Default.language;
+            if(lang != "def")
+                System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo(lang);
             InitializeComponent();
             this.DataContext = this;
             LoadBcus();
             LoadDpts();
             editor.TextArea.TextEntered += EditorEntered;
             editor.TextArea.TextEntering += EditorEntering;
+            CheckLangs();
+        }
+
+        private void CheckLangs()
+        {
+            string lang = Properties.Settings.Default.language;
+            foreach(UIElement ele in MenuLang.Items)
+            {
+                if(ele is MenuItem item)
+                {
+                    item.IsChecked = item.Tag.ToString() == lang;
+                }
+            }
         }
 
         private void ClickNew(object sender, RoutedEventArgs e)
@@ -1353,6 +1369,17 @@ namespace Kaenx.Creator
                     throw new NotImplementedException("Dieses Feature wurde noch nicht implementiert");
             }
             System.Windows.MessageBox.Show("Erfolgreich erstellt");
+        }
+
+        private void ChangeLang(object sender, RoutedEventArgs e)
+        {
+            if(sender is MenuItem)
+            {
+                string tag = (sender as MenuItem).Tag.ToString();
+                Properties.Settings.Default.language = tag;
+                Properties.Settings.Default.Save();
+                CheckLangs();
+            }
         }
     }
 }
