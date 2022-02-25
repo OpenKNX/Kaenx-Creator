@@ -839,6 +839,10 @@ namespace Kaenx.Creator
                         pixelByteArray[i] = 180;
                         break;
 
+                    case 255:
+                        pixelByteArray[i] = 100;
+                        break;
+
                     default:
                         pixelByteArray[i] = 0;
                         break;

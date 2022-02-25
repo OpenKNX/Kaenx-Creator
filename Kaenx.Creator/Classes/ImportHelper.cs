@@ -215,20 +215,26 @@ namespace Kaenx.Creator.Classes
         public ObservableCollection<Translation> GetTranslation(string id, string attr, XElement xele) {
             ObservableCollection<Translation> translations = new ObservableCollection<Translation>();
 
+            if(id == "M-0083_A-0024-15-6E79_O-42_R-12008") {
+
+            }
+
             if(_translations.ContainsKey(id) && _translations[id].ContainsKey(attr)) {
                 foreach(KeyValuePair<string, string> trans in _translations[id][attr]) {
                     translations.Add(new Translation(new Language(_langTexts[trans.Key], trans.Key), trans.Value));
                 }
-            } else {
-                foreach(Language lang in currentVers.Languages) {
+            }
+            if(xele.Attribute(attr) != null && !translations.Any(t => t.Language.CultureCode == currentVers.DefaultLanguage)) {
+                translations.Add(new Translation(new Language(_langTexts[currentVers.DefaultLanguage], currentVers.DefaultLanguage), xele.Attribute(attr).Value));
+            }
+
+            foreach(Language lang in currentVers.Languages) {
+                if(!translations.Any(t => t.Language.CultureCode == lang.CultureCode)) {
                     if(lang.CultureCode == currentVers.DefaultLanguage)
                         translations.Add(new Translation(lang, xele.Attribute(attr)?.Value ?? ""));
                     else
                         translations.Add(new Translation(lang, ""));
                 }
-            }
-            if(!translations.Any(t => t.Language.CultureCode == currentVers.DefaultLanguage)) {
-                translations.Add(new Translation(new Language(_langTexts[currentVers.DefaultLanguage], currentVers.DefaultLanguage), xele.Attribute(attr).Value));
             }
 
 
@@ -539,8 +545,8 @@ namespace Kaenx.Creator.Classes
 
                 cref.UId = _uidCounter++;
                 cref.Id = int.Parse(GetLastSplit(xref.Attribute("Id").Value, 2));
-                
-                cref.OverwriteText = xref.Attribute("Text") != null;
+              
+                //cref.OverwriteText = xref.Attribute("Text") != null;
                 cref.OverwriteFunctionText = xref.Attribute("FunctionText") != null;
                 cref.OverwriteDescription = xref.Attribute("VisibleDescription") != null;
 
@@ -548,6 +554,7 @@ namespace Kaenx.Creator.Classes
                 cref.FunctionText = GetTranslation(xref.Attribute("Id").Value, "FunctionText", xref);
                 cref.Description = GetTranslation(xref.Attribute("Id").Value, "VisibleDescription", xref);
 
+                cref.OverwriteText = cref.Text.Any(t => !string.IsNullOrEmpty(t.Text));
 
                 string id = GetLastSplit(xref.Attribute("RefId").Value, 2);
                 if (id.StartsWith("-"))

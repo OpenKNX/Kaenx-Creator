@@ -18,7 +18,7 @@ namespace Kaenx.Creator.Classes
             else
                 data = new List<byte>(new byte[mem.Size]);
 
-            foreach (Models.Parameter para in ver.Parameters.Where(p => p.MemoryId == mem.UId))
+            foreach (Models.Parameter para in ver.Parameters.Where(p => p.MemoryId == mem.UId && p.IsInUnion == false))
             {
                 if (para.ParameterTypeObject.SizeInBit > 7)
                 {
@@ -29,7 +29,6 @@ namespace Kaenx.Creator.Classes
                     }
                     for (int i = 0; i < (para.ParameterTypeObject.SizeInBit / 8); i++)
                     {
-
                         if (mem.IsAutoSize)
                         {
                             if(para.Offset == -1)
@@ -70,6 +69,24 @@ namespace Kaenx.Creator.Classes
                     {
                         data[para.Offset] += Convert.ToByte(para.ParameterTypeObject.SizeInBit);
                     }
+                }
+            }
+
+            foreach (Models.Union union in ver.Unions.Where(u => u.MemoryId == mem.UId))
+            {
+                for (int i = 0; i < (union.SizeInBit / 8); i++)
+                {
+                    if (mem.IsAutoSize)
+                    {
+                        if(union.Offset == -1)
+                        {
+                            union.Offset = data.Count;
+                            union.OffsetBit = 0;
+                        }
+                        data.Add(8);
+                    }
+                    else
+                        data[union.Offset + i] = 255;
                 }
             }
 

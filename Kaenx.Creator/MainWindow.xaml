@@ -10,6 +10,7 @@
         xmlns:System="clr-namespace:System;assembly=mscorlib"
         xmlns:select="clr-namespace:Kaenx.Creator.Selectors"
         xmlns:p="clr-namespace:Kaenx.Creator.Properties"
+        xmlns:avalonedit="http://icsharpcode.net/sharpdevelop/avalonedit"
         mc:Ignorable="d"
         Icon="FileLogo.ico"
         Title="Kaenx Creator" Height="700" Width="1000">
