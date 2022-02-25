@@ -56,11 +56,14 @@ namespace Kaenx.Creator.Classes
         {
             string Manu = "M-" + general.ManufacturerId.ToString("X4");
 
-            if (!System.IO.Directory.Exists(GetRelPath("")))
-                System.IO.Directory.CreateDirectory(GetRelPath(""));
+            if (System.IO.Directory.Exists(GetRelPath("")))
+                System.IO.Directory.Delete(GetRelPath(""), true);
 
-            if (!System.IO.Directory.Exists(GetRelPath(Manu)))
-                System.IO.Directory.CreateDirectory(GetRelPath(Manu));
+            //if (!System.IO.Directory.Exists(GetRelPath("")))
+            System.IO.Directory.CreateDirectory(GetRelPath(""));
+
+            //if (!System.IO.Directory.Exists(GetRelPath(Manu)))
+            System.IO.Directory.CreateDirectory(GetRelPath(Manu));
 
             int highestNS = 0;
             foreach (Models.AppVersion ver in vers)
@@ -74,8 +77,10 @@ namespace Kaenx.Creator.Classes
             Dictionary<string, string> HardwareIds = new Dictionary<string, string>();
 
             #region XML Applications
+            Debug.WriteLine($"Exportiere Applikationen: {vers.Count}x");
             XElement xmanu = null;
             foreach(Models.AppVersion ver in vers) {
+                Debug.WriteLine($"Exportiere AppVersion: {ver.Name} {ver.NameText}");
                 languages = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>();
                 xmanu = CreateNewXML(Manu);
                 XElement xapps = new XElement(Get("ApplicationPrograms"));
@@ -131,10 +136,12 @@ namespace Kaenx.Creator.Classes
                 XElement temp;
 
                 #region Segmente
+                Debug.WriteLine($"Exportiere Segmente: {ver.Memories.Count}x");
                 temp = new XElement(Get("Code"));
                 xunderapp.Add(temp);
                 foreach (Memory mem in ver.Memories)
                 {
+                    //Debug.WriteLine($"    - Segment {mem.Name}");
                     if (ver.IsMemSizeAuto && mem.IsAutoSize)
                         AutoHelper.GetMemorySize(ver, mem);
 
@@ -170,9 +177,11 @@ namespace Kaenx.Creator.Classes
                 #endregion
 
                 #region ParamTypes
+                Debug.WriteLine($"Exportiere ParameterTypes: {ver.ParameterTypes.Count}x");
                 temp = new XElement(Get("ParameterTypes"));
                 foreach (ParameterType type in ver.ParameterTypes)
                 {
+                    //Debug.WriteLine($"    - ParameterType {type.Name}x");
                     string id = appVersion + "_PT-" + GetEncoded(type.Name);
                     XElement xtype = new XElement(Get("ParameterType"));
                     xtype.SetAttributeValue("Id", id);
@@ -229,15 +238,18 @@ namespace Kaenx.Creator.Classes
                 #endregion
 
                 #region Parameter
+                Debug.WriteLine($"Exportiere Parameter: {ver.Parameters.Count}x");
                 temp = new XElement(Get("Parameters"));
 
                 StringBuilder headers = new StringBuilder();
 
                 foreach (Parameter para in ver.Parameters.Where(p => !p.IsInUnion))
                 {
+                    //Debug.WriteLine($"    - Parameter {para.UId} {para.Name}");
                     ParseParameter(para, temp, ver, headers);
                 }
 
+                Debug.WriteLine($"Exportiere Unions: {ver.Parameters.Where(p => p.IsInUnion).GroupBy(p => p.UnionObject).Count()}x");
                 foreach (var paras in ver.Parameters.Where(p => p.IsInUnion).GroupBy(p => p.UnionObject))
                 {
                     XElement xunion = new XElement(Get("Union"));
@@ -264,6 +276,7 @@ namespace Kaenx.Creator.Classes
 
                     foreach (Parameter para in paras)
                     {
+                        //Debug.WriteLine($"        - Parameter {para.UId} {para.Name}");
                         ParseParameter(para, xunion, ver, headers);
                     }
 
@@ -277,10 +290,12 @@ namespace Kaenx.Creator.Classes
                 #endregion
 
                 #region ParameterRefs
+                Debug.WriteLine($"Exportiere ParameterRefs: {ver.ParameterRefs.Count}x");
                 temp = new XElement(Get("ParameterRefs"));
 
                 foreach (ParameterRef pref in ver.ParameterRefs)
                 {
+                    //Debug.WriteLine($"    - ParameterRef {pref.UId} {pref.Name}");
                     if (pref.ParameterObject == null) continue;
                     XElement xpref = new XElement(Get("ParameterRef"));
                     if (pref.Id == -1)
@@ -304,10 +319,12 @@ namespace Kaenx.Creator.Classes
                 #endregion
 
                 #region ComObjects
+                Debug.WriteLine($"Exportiere ComObjects: {ver.ComObjects.Count}x");
                 temp = new XElement(Get("ComObjectTable"));
 
                 foreach (ComObject com in ver.ComObjects)
                 {
+                    //Debug.WriteLine($"    - ComObject {com.UId} {com.Name}");
                     XElement xcom = new XElement(Get("ComObject"));
                     if (com.Id == -1)
                     {
@@ -361,10 +378,12 @@ namespace Kaenx.Creator.Classes
                 #endregion
 
                 #region ComObjectRefs
+                Debug.WriteLine($"Exportiere ComObjectRefs: {ver.ComObjectRefs.Count}x");
                 temp = new XElement(Get("ComObjectRefs"));
 
                 foreach (ComObjectRef cref in ver.ComObjectRefs)
                 {
+                    //Debug.WriteLine($"    - ComObjectRef {cref.UId} {cref.Name}");
                     XElement xcref = new XElement(Get("ComObjectRef"));
                     if (cref.Id == -1)
                     {
@@ -458,6 +477,7 @@ namespace Kaenx.Creator.Classes
 
                 #region Translations
 
+                Debug.WriteLine($"Exportiere Translations: {languages.Count} Sprachen");
                 XElement xlanguages = new XElement(Get("Languages"));
                 foreach(KeyValuePair<string, Dictionary<string, Dictionary<string, string>>> lang in languages) {
                     XElement xunit = new XElement(Get("TranslationUnit"));
@@ -486,11 +506,14 @@ namespace Kaenx.Creator.Classes
                 #endregion
 
 
+                Debug.WriteLine($"Speichere App: {GetRelPath(Manu, appVersion + ".xml")}");
                 doc.Save(GetRelPath(Manu, appVersion + ".xml"));
+                Debug.WriteLine($"Speichern beendet");
             }
             #endregion
 
             #region XML Hardware
+            Debug.WriteLine($"Exportiere Hardware: {hardware.Count}x");
             xmanu = CreateNewXML(Manu);
             XElement xhards = new XElement(Get("Hardware"));
             xmanu.Add(xhards);
@@ -565,11 +588,13 @@ namespace Kaenx.Creator.Classes
                 }
                 xhards.Add(xhard);
             }
+            Debug.WriteLine($"Speichere Hardware: {GetRelPath(Manu, "Hardware.xml")}");
             doc.Save(GetRelPath(Manu, "Hardware.xml"));
             #endregion
 
             #region XML Catalog
 
+            Debug.WriteLine($"Exportiere Catalog");
             xmanu = CreateNewXML(Manu);
             XElement cat = new XElement(Get("Catalog"));
 
@@ -578,6 +603,7 @@ namespace Kaenx.Creator.Classes
                 GetCatalogItems(item, cat, ProductIds, HardwareIds);
             }
             xmanu.Add(cat);
+            Debug.WriteLine($"Speichere Catalog: {GetRelPath(Manu, "Catalog.xml")}");
             doc.Save(GetRelPath(Manu, "Catalog.xml"));
             #endregion
 
