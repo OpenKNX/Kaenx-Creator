@@ -64,8 +64,8 @@ namespace Kaenx.Creator
             new Models.EtsVersion(12, "ETS 5.0 (12)", "5.0.204.12971"),
             new Models.EtsVersion(13, "ETS 5.1 (13)", "5.1.84.17602"),
             new Models.EtsVersion(14, "ETS 5.6 (14)", "5.6.241.33672"),
-            new Models.EtsVersion(20, "ETS 5.7 (20)", "5.7.5.xxxx"),
-            new Models.EtsVersion(21, "ETS 6.0 (21)", "6.0.0.xxxx")
+            new Models.EtsVersion(20, "ETS 5.7 (20)", "5.7.293.38537"),
+            new Models.EtsVersion(21, "ETS 6.0 (21)", "6.0.4351.0")
         };
 
 
@@ -87,26 +87,48 @@ namespace Kaenx.Creator
         }
 
         private void CheckEtsPath() {
-            //check local path
-            string path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CV");
-            if(Directory.Exists(path)) {
-                etsPath = path;
+            if(Directory.Exists(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CV"))) {
+                if(CheckEtsPath(AppDomain.CurrentDomain.BaseDirectory)) {
+                    etsPath = AppDomain.CurrentDomain.BaseDirectory; 
+                    return;
+                }
+            }
+            if(CheckEtsPath(@"C:\Program Files (x86)\ETS6")) { 
+                etsPath = @"C:\Program Files (x86)\ETS6"; 
                 return;
             }
+            if(CheckEtsPath(@"C:\Program Files (x86)\ETS5")) { 
+                etsPath = @"C:\Program Files (x86)\ETS5"; 
+                return;
+            }
+            if(CheckEtsPath(@"C:\Program Files (x86)\ETS4")) { 
+                etsPath = @"C:\Program Files (x86)\ETS4"; 
+                return;
+            }
+        }
 
-            //check ETS5
-            path = @"C:\Program Files (x86)\ETS5\CV";
-            if(Directory.Exists(path)) {
-                etsPath = path;
-                return;
+        private bool CheckEtsPath(string path)
+        {
+            if(!Directory.Exists(path)) return false;
+
+            if(!File.Exists(System.IO.Path.Combine(path, "Knx.Ets.XmlSigning.dll"))) return true;
+            FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(System.IO.Path.Combine(path, "Knx.Ets.XmlSigning.dll"));
+            if(Directory.Exists(System.IO.Path.Combine(path, "CV", versionInfo.FileVersion)))
+                return true;
+
+            string newVersion = versionInfo.FileVersion;
+            if(newVersion.Split('.').Length != 4) newVersion += ".0";
+            try {
+                Directory.CreateDirectory(System.IO.Path.Combine(path, "CV", newVersion));
+            } catch{
+                MessageBox.Show("Es wurde eine ETS installation erkannt. Um auch die aktuell Installierte Version bauen zu können, führen Sie die Anwendung einmalig als Admin aus.", "ETS Versionen", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return true;
             }
-            
-            //check ETS6
-            path = @"C:\Program Files (x86)\ETS6\CV";
-            if(Directory.Exists(path)) {
-                etsPath = path;
-                return;
-            }
+            File.Copy(System.IO.Path.Combine(path, "Knx.Ets.Xml.ObjectModel.dll"), System.IO.Path.Combine(path, "CV", newVersion, "Knx.Ets.Xml.ObjectModel.dll"));
+            File.Copy(System.IO.Path.Combine(path, "Knx.Ets.Xml.ObjectModel.XmlSerializers.dll"), System.IO.Path.Combine(path, "CV", newVersion, "Knx.Ets.Xml.ObjectModel.XmlSerializers.dll"));
+            File.Copy(System.IO.Path.Combine(path, "Knx.Ets.XmlSigning.dll"), System.IO.Path.Combine(path, "CV", newVersion, "Knx.Ets.XmlSigning.dll"));
+            MessageBox.Show("Es wurde eine neue ETS installation erkannt und hinzugefügt.", "ETS Versionen", MessageBoxButton.OK, MessageBoxImage.Information);
+            return true;
         }
 
         private void CheckEtsVersions() {
@@ -115,7 +137,9 @@ namespace Kaenx.Creator
                     v.IsEnabled = false;
             } else {
                 foreach(Models.EtsVersion v in EtsVersions)
-                    v.IsEnabled = Directory.Exists(System.IO.Path.Combine(etsPath, v.FolderPath));
+                {
+                    v.IsEnabled = Directory.Exists(System.IO.Path.Combine(etsPath, "CV", v.FolderPath));
+                }
             }
 
 
