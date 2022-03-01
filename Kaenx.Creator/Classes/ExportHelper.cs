@@ -24,22 +24,16 @@ namespace Kaenx.Creator.Classes
         XDocument doc;
         string appVersion;
         string currentNamespace;
+        string convPath;
 
-        private Dictionary<string, string> EtsVersions = new Dictionary<string, string>() {
-            {"http://knx.org/xml/project/11", "4.0.1997.50261" },
-            {"http://knx.org/xml/project/12", "5.0.204.12971" },
-            {"http://knx.org/xml/project/13", "5.1.84.17602" },
-            {"http://knx.org/xml/project/14", "5.6.241.33672" },
-            {"http://knx.org/xml/project/20", "6.0.0.14588" } //TODO check ETS 6 Path
-        };
-
-        public ExportHelper(Models.ModelGeneral g, List<Models.Hardware> h, List<Models.Device> d, List<Models.Application> a, List<Models.AppVersion> v)
+        public ExportHelper(Models.ModelGeneral g, List<Models.Hardware> h, List<Models.Device> d, List<Models.Application> a, List<Models.AppVersion> v, string cp)
         {
             hardware = h;
             devices = d;
             apps = a;
             vers = v;
             general = g;
+            convPath = cp;
         }
 
 
@@ -91,7 +85,6 @@ namespace Kaenx.Creator.Classes
                 appVersion = appName + "-" + ver.Number.ToString("X2");
                 appVersion += "-0000";
 
-                //TODO implement check to check if a default language is set and exists
                 currentLang = ver.DefaultLanguage;
                 foreach(Models.Translation trans in ver.Text)
                     AddTranslation(trans.Language.CultureCode, appVersion, "Name", trans.Text);
@@ -105,7 +98,7 @@ namespace Kaenx.Creator.Classes
                 xapp.SetAttributeValue("ApplicationVersion", ver.Number.ToString());
                 xapp.SetAttributeValue("ProgramType", "ApplicationProgram");
                 xapp.SetAttributeValue("MaskVersion", "MV-07B0");
-                xapp.SetAttributeValue("Name", app.Name);
+                xapp.SetAttributeValue("Name", ver.Text.Single(e => e.Language.CultureCode == currentLang).Text); //TODO richtigen übersetzten Namen verwenden und nicht internen
                 xapp.SetAttributeValue("DefaultLanguage", currentLang);
                 xapp.SetAttributeValue("LoadProcedureStyle", "MergedProcedure");
                 xapp.SetAttributeValue("PeiType", "0");
@@ -128,6 +121,9 @@ namespace Kaenx.Creator.Classes
                         xapp.SetAttributeValue("MinEtsVersion", "5.6");
                         break;
                     case "http://knx.org/xml/project/20":
+                        xapp.SetAttributeValue("MinEtsVersion", "5.7");
+                        break;
+                    case "http://knx.org/xml/project/21":
                         xapp.SetAttributeValue("MinEtsVersion", "6.0");
                         break;
                 }
@@ -307,7 +303,6 @@ namespace Kaenx.Creator.Classes
                     xpref.SetAttributeValue("RefId", id);
                     id += $"_R-{pref.Id}";
                     xpref.SetAttributeValue("Id", id);
-                    //TODO add translation
                     if(pref.OverwriteAccess && pref.Access != ParamAccess.Default)
                         xpref.SetAttributeValue("Access", pref.Access.ToString());
                     if (pref.OverwriteValue)
@@ -337,7 +332,6 @@ namespace Kaenx.Creator.Classes
                     xcom.SetAttributeValue("FunctionText", com.FunctionText.Single(c => c.Language.CultureCode == currentLang).Text);
                     xcom.SetAttributeValue("VisibleDescription", com.Description.Single(c => c.Language.CultureCode == currentLang).Text);
 
-                    //TODO check if translation is not empty
                     if(!com.TranslationText)
                         foreach(Models.Translation trans in com.Text) AddTranslation(trans.Language.CultureCode, $"{appVersion}_O-{com.Id}", "Text", trans.Text);
                     if(!com.TranslationFunctionText)
@@ -451,7 +445,6 @@ namespace Kaenx.Creator.Classes
                 xunderapp.Add(temp);
 
 
-                //TODO use correct type
                 switch (app.Mask.Procedure)
                 {
                     case ProcedureTypes.Application:
@@ -568,7 +561,7 @@ namespace Kaenx.Creator.Classes
                     {
                         if (!vers.Contains(ver)) continue;
 
-                        string appidx = app.Number.ToString("X4") + "-" + ver.Number.ToString("X2") + "-0000"; //Todo check hash
+                        string appidx = app.Number.ToString("X4") + "-" + ver.Number.ToString("X2") + "-0000";
 
                         XElement xh2p = new XElement(Get("Hardware2Program"));
                         xh2p.SetAttributeValue("Id", hid + "_HP-" + appidx);
@@ -606,9 +599,6 @@ namespace Kaenx.Creator.Classes
             Debug.WriteLine($"Speichere Catalog: {GetRelPath(Manu, "Catalog.xml")}");
             doc.Save(GetRelPath(Manu, "Catalog.xml"));
             #endregion
-
-
-            //doc.Save(GetRelPath("temp.xml"));
         }
 
         private void ParseParameter(Parameter para, XElement parent, AppVersion ver, StringBuilder headers)
@@ -729,7 +719,6 @@ namespace Kaenx.Creator.Classes
                 if (dch.ParameterRefObject != null)
                     channel.SetAttributeValue("ParamRefId", appVersion + (dch.ParameterRefObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{dch.ParameterRefObject.ParameterObject.Id}_R-{dch.ParameterRefObject.Id}");
                 else {
-                    channel.SetAttributeValue("Text", ""); //TODO implement
                     channel.SetAttributeValue("Text", dch.Text.Single(p => p.Language.CultureCode == currentLang).Text);
                     if(!dch.TranslationText)
                         foreach(Models.Translation trans in dch.Text) AddTranslation(trans.Language.CultureCode, $"{appVersion}_CH-{dch.Number}", "Text", trans.Text);
@@ -756,7 +745,7 @@ namespace Kaenx.Creator.Classes
             if(sep.Id == -1) {
                 sep.Id = 1; //TODO get real next free Id
             }
-            xsep.SetAttributeValue("Id", $"{appVersion}_PS-{sep.Id}"); //TODO get real ID
+            xsep.SetAttributeValue("Id", $"{appVersion}_PS-{sep.Id}");
             parent.Add(xsep);
         }
 
@@ -921,7 +910,7 @@ namespace Kaenx.Creator.Classes
                 if (!file.Contains("M-") || !file.Contains("_A-")) continue;
 
                 FileInfo info = new FileInfo(file);
-                ApplicationProgramHasher aph = new ApplicationProgramHasher(info, mapBaggageIdToFileIntegrity, true);
+                ApplicationProgramHasher aph = new ApplicationProgramHasher(info, mapBaggageIdToFileIntegrity, convPath, true);
                 aph.HashFile();
 
                 string oldApplProgId = aph.OldApplProgId;
@@ -933,14 +922,14 @@ namespace Kaenx.Creator.Classes
                     applProgHashes.Add(newApplProgId, genHashString);
             }
 
-            HardwareSigner hws = new HardwareSigner(hwFileInfo, applProgIdMappings, applProgHashes, true);
+            HardwareSigner hws = new HardwareSigner(hwFileInfo, applProgIdMappings, applProgHashes, convPath, true);
             hws.SignFile();
             IDictionary<string, string> hardware2ProgramIdMapping = hws.OldNewIdMappings;
 
-            CatalogIdPatcher cip = new CatalogIdPatcher(catalogFileInfo, hardware2ProgramIdMapping);
+            CatalogIdPatcher cip = new CatalogIdPatcher(catalogFileInfo, hardware2ProgramIdMapping, convPath);
             cip.Patch();
 
-            XmlSigning.SignDirectory(GetRelPath(manu));
+            XmlSigning.SignDirectory(GetRelPath(manu), convPath);
         }
 
         private string GetEncoded(string input)

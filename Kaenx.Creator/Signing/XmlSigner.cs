@@ -8,10 +8,11 @@ namespace Kaenx.Creator.Signing
     {
         public static void SignDirectory(
             string path,
+            string basePath,
             bool useCasingOfBaggagesXml = false,
             string[] excludeFileEndings = null)
         {
-            Assembly asm = Assembly.LoadFrom(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Knx.Ets.XmlSigning.dll"));
+            Assembly asm = Assembly.LoadFrom(Path.Combine(basePath, "Knx.Ets.XmlSigning.dll"));
 
             Type ds = asm.GetType("Knx.Ets.XmlSigning.XmlSigning");
 

@@ -10,9 +10,10 @@ namespace Kaenx.Creator.Signing
         public ApplicationProgramHasher(
                     FileInfo applProgFile,
                     IDictionary<string, string> mapBaggageIdToFileIntegrity,
+                    string basePath,
                     bool patchIds = true)
         {
-            Assembly asm = Assembly.LoadFrom(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Knx.Ets.XmlSigning.dll"));
+            Assembly asm = Assembly.LoadFrom(Path.Combine(basePath, "Knx.Ets.XmlSigning.dll"));
             _instance = Activator.CreateInstance(asm.GetType("Knx.Ets.XmlSigning.ApplicationProgramHasher"), applProgFile, mapBaggageIdToFileIntegrity, patchIds);
             _type = asm.GetType("Knx.Ets.XmlSigning.ApplicationProgramHasher");
         }

@@ -419,9 +419,16 @@
 
         <Menu>
             <MenuItem Header="{x:Static p:Resources.menu_proj}">
-                <MenuItem Header="{x:Static p:Resources.menu_proj_new}" Click="ClickNew"/>
+                <MenuItem x:Name="MenuLoad" Header="{x:Static p:Resources.menu_proj_new}">
+                    <MenuItem Header="Leer" Click="ClickNew" />
+                    <Separator />
+                </MenuItem>
                 <MenuItem Header="{x:Static p:Resources.menu_proj_open}" Click="ClickOpen" />
-                <MenuItem x:Name="MenuSave" IsEnabled="False" Header="{x:Static p:Resources.menu_proj_save}" Click="ClickSave" />
+                <MenuItem x:Name="MenuSave" IsEnabled="False" Header="{x:Static p:Resources.menu_proj_save}">
+                    <MenuItem x:Name="MenuSaveBtn" Header="Speichern" Click="ClickSave" IsEnabled="false" />
+                    <MenuItem Header="Speichern unter" Click="ClickSaveAs" />
+                    <MenuItem Header="Speichern als Template" />
+                </MenuItem>
                 <MenuItem x:Name="MenuClose" IsEnabled="False" Header="{x:Static p:Resources.menu_proj_close}" />
             </MenuItem>
             <MenuItem x:Name="MenuImport" IsEnabled="False" Header="{x:Static p:Resources.menu_impo}">
@@ -681,7 +688,7 @@
             <TabItem DataContext="{Binding ElementName=VersionList, Path=SelectedItem}" Style="{StaticResource TopTabItem}" IsEnabled="{Binding ElementName=VersionList, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock FontSize="18" Text="{Binding ElementName=AppList, Path=SelectedItem.Name}" Margin="0 0 5 0" />
+                        <!--<TextBlock FontSize="18" Text="{Binding ElementName=AppList, Path=SelectedItem.Name}" Margin="0 0 5 0" />-->
                         <TextBlock FontSize="18" Text="{Binding NameText}" />
                     </StackPanel>
                 </TabItem.Header>
@@ -724,13 +731,17 @@
                                 </DataGrid>
                             </HeaderedContentControl>
                             <HeaderedContentControl Header="Namespace Version">
-                                <ComboBox SelectedValue="{Binding NamespaceVersion}" SelectedIndex="3" SelectedValuePath="Tag">
-                                    <ComboBoxItem Content="ETS4&#x09;(11)" Tag="11" />
-                                    <ComboBoxItem Content="ETS5&#x09;(12)" Tag="12" />
-                                    <ComboBoxItem Content="ETS5.5&#x09;(13)" Tag="13" />
-                                    <ComboBoxItem Content="ETS5.6&#x09;(14)" Tag="14" />
-                                    <ComboBoxItem Content="ETS5.7&#x09;(20)" Tag="20" />
-                                    <ComboBoxItem Content="ETS6&#x09;(21)" Tag="20" />
+                                <ComboBox x:Name="NamespaceSelection" DisplayMemberPath="DisplayName" SelectedValue="{Binding NamespaceVersion}" SelectedIndex="3" SelectedValuePath="Number">
+                                    <!--<ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding DisplayName}" IsEnabled="{Binding IsEnabled}" />
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>-->
+                                    <ComboBox.ItemContainerStyle>
+                                        <Style TargetType="{x:Type ComboBoxItem}">
+                                            <Setter Property="IsEnabled" Value="{Binding IsEnabled}"/>
+                                        </Style>
+                                    </ComboBox.ItemContainerStyle>
                                 </ComboBox>
                             </HeaderedContentControl>
 
@@ -964,7 +975,6 @@
                                 <ColumnDefinition Width="150" />
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
-                            <!-- //TODO change add remove-->
                             <Button Content="Hinzufügen" Click="ClickAddUnion" Margin="0 0 1 2" />
                             <Button Grid.Column="1" Content="Löschen" Click="ClickRemoveUnion" Margin="1 0 0 2" />
 
@@ -1823,7 +1833,7 @@
                                         <TextBlock>
                                             <TextBlock.ContextMenu>
                                                 <ContextMenu Loaded="LoadingContextDynWhen">
-                                                    <MenuItem Header="Independent Channel hinzufügen" Click="ClickAddDynIndep" /> <!-- //Todo prüfen ob hinzugefügt werden darf -->
+                                                    <MenuItem Header="Independent Channel hinzufügen" Click="ClickAddDynIndep" />
                                                     <MenuItem Header="Channel hinzufügen" />
                                                     <MenuItem Header="Block hinzufügen" Click="ClickAddDynBlock" />
                                                     <MenuItem Header="Abzweigung hinzufügen" Click="ClickAddDynChoose" />

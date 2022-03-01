@@ -16,6 +16,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Templates\Minimal.temp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Data\knx_master.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

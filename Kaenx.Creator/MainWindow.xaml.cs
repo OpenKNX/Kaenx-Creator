@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -28,6 +29,7 @@ namespace Kaenx.Creator
     /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
+
         private Models.ModelGeneral _general;
         private string filePath = "";
 
@@ -56,6 +58,16 @@ namespace Kaenx.Creator
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        private string etsPath {get;set;} = "";
+        private List<Models.EtsVersion> EtsVersions = new List<Models.EtsVersion>() {
+            new Models.EtsVersion(11, "ETS 4.0 (11)", "4.0.1997.50261"),
+            new Models.EtsVersion(12, "ETS 5.0 (12)", "5.0.204.12971"),
+            new Models.EtsVersion(13, "ETS 5.1 (13)", "5.1.84.17602"),
+            new Models.EtsVersion(14, "ETS 5.6 (14)", "5.6.241.33672"),
+            new Models.EtsVersion(20, "ETS 5.7 (20)", "5.7.5.xxxx"),
+            new Models.EtsVersion(21, "ETS 6.0 (21)", "6.0.0.xxxx")
+        };
+
 
         public MainWindow()
         {
@@ -69,6 +81,57 @@ namespace Kaenx.Creator
             editor.TextArea.TextEntered += EditorEntered;
             editor.TextArea.TextEntering += EditorEntering;
             CheckLangs();
+            CheckEtsPath();
+            CheckEtsVersions();
+            LoadTemplates();
+        }
+
+        private void CheckEtsPath() {
+            //check local path
+            string path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CV");
+            if(Directory.Exists(path)) {
+                etsPath = path;
+                return;
+            }
+
+            //check ETS5
+            path = @"C:\Program Files (x86)\ETS5\CV";
+            if(Directory.Exists(path)) {
+                etsPath = path;
+                return;
+            }
+            
+            //check ETS6
+            path = @"C:\Program Files (x86)\ETS6\CV";
+            if(Directory.Exists(path)) {
+                etsPath = path;
+                return;
+            }
+        }
+
+        private void CheckEtsVersions() {
+            if(string.IsNullOrEmpty(etsPath)) {
+                foreach(Models.EtsVersion v in EtsVersions)
+                    v.IsEnabled = false;
+            } else {
+                foreach(Models.EtsVersion v in EtsVersions)
+                    v.IsEnabled = Directory.Exists(System.IO.Path.Combine(etsPath, v.FolderPath));
+            }
+
+
+            NamespaceSelection.ItemsSource = EtsVersions;
+        }
+
+        private void LoadTemplates() {
+            foreach(string path in Directory.GetFiles(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Templates")))
+            {
+                string name = path.Substring(path.LastIndexOf('\\')+1);
+                name = name.Substring(0, name.IndexOf('.'));
+                MenuItem item = new MenuItem() { Header = name};
+                item.Tag = path;
+                item.Click += ClickOpenTemplate;
+                MenuLoad.Items.Add(item);
+            }
         }
 
         private void CheckLangs()
@@ -424,7 +487,6 @@ namespace Kaenx.Creator
                 MessageBox.Show("Die Sprache wird bereits unterstützt.");
             else {
                 ver.Languages.Add(lang);
-                //TODO add lang to every paratypeenum/para/ko/etc
                 ver.Text.Add(new Models.Translation(lang, ""));
                 foreach(Models.Parameter para in ver.Parameters) para.Text.Add(new Models.Translation(lang, ""));
                 foreach(Models.ComObject com in ver.ComObjects) {
@@ -445,7 +507,6 @@ namespace Kaenx.Creator
 
             ver.Text.Remove(ver.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
             ver.Languages.Remove(ver.Languages.Single(l => l.CultureCode == lang.CultureCode));
-            //TODO remove lang to every paratypeenum/para/ko/etc
             foreach(Models.Parameter para in ver.Parameters) {
                 para.Text.Remove(para.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
             } 
@@ -571,11 +632,12 @@ namespace Kaenx.Creator
         private void ClickSave(object sender, RoutedEventArgs e)
         {
             string general = Newtonsoft.Json.JsonConvert.SerializeObject(General, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Auto });
+            System.IO.File.WriteAllText(filePath, general);
+        }
 
-            if(filePath != "") {
-                System.IO.File.WriteAllText(filePath, general);
-                return;
-            }
+        private void ClickSaveAs(object sender, RoutedEventArgs e)
+        {
+            string general = Newtonsoft.Json.JsonConvert.SerializeObject(General, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Auto });
 
             SaveFileDialog diag = new SaveFileDialog();
             diag.FileName = General.ProjectName;
@@ -586,7 +648,15 @@ namespace Kaenx.Creator
             {
                 System.IO.File.WriteAllText(diag.FileName, general);
                 filePath = diag.FileName;
+                MenuSaveBtn.IsEnabled = true;
             }
+        }
+
+
+        private void ClickOpenTemplate(object sender, RoutedEventArgs e)
+        {
+            MenuItem item = sender as MenuItem;
+            DoOpen(item.Tag.ToString());
         }
 
         private void ClickOpen(object sender, RoutedEventArgs e)
@@ -596,86 +666,91 @@ namespace Kaenx.Creator
             diag.Filter = "Kaenx Hersteller Projekt (*.ae-manu)|*.ae-manu";
             if(diag.ShowDialog() == true)
             {
-                string general = System.IO.File.ReadAllText(diag.FileName);
-                General = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.ModelGeneral>(general, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Auto });
-                filePath = diag.FileName;
-
-                foreach(Models.Application app in General.Applications)
-                {
-                    foreach(Models.AppVersion ver in app.Versions)
-                    {
-                        foreach(Models.Parameter para in ver.Parameters)
-                        {
-                            //TODO load Union
-                            if (para._memoryId != -1)
-                                para.MemoryObject = ver.Memories.Single(m => m.UId == para._memoryId);
-                                
-                            if (para._parameterType != -1)
-                                para.ParameterTypeObject = ver.ParameterTypes.Single(p => p.UId == para._parameterType);
-
-                            if(para.IsInUnion && para._unionId != -1)
-                                para.UnionObject = ver.Unions.Single(u => u.UId == para._unionId);
-                        }
-
-                        foreach(Models.Union union in ver.Unions)
-                        {
-                            if (union._memoryId != -1)
-                                union.MemoryObject = ver.Memories.Single(u => u.UId == union._memoryId);
-                        }
-
-                        foreach(Models.ParameterRef pref in ver.ParameterRefs)
-                        {
-                            if (pref._parameter != -1)
-                                pref.ParameterObject = ver.Parameters.Single(p => p.UId == pref._parameter);
-                        }
-
-                        foreach(Models.ComObject com in ver.ComObjects)
-                        {
-                            if (!string.IsNullOrEmpty(com._typeNumber))
-                                com.Type = DPTs.Single(d => d.Number == com._typeNumber);
-                                
-                            if(!string.IsNullOrEmpty(com._subTypeNumber) && com.Type != null)
-                                com.SubType = com.Type.SubTypes.Single(d => d.Number == com._subTypeNumber);
-                        }
-
-                        foreach(Models.ComObjectRef cref in ver.ComObjectRefs)
-                        {
-                            if (cref._comObject != -1)
-                                cref.ComObjectObject = ver.ComObjects.SingleOrDefault(c => c.UId == cref._comObject);
-
-                            if (!string.IsNullOrEmpty(cref._typeNumber))
-                                cref.Type = DPTs.Single(d => d.Number == cref._typeNumber);
-                                
-                            if(!string.IsNullOrEmpty(cref._subTypeNumber) && cref.Type != null)
-                                cref.SubType = cref.Type.SubTypes.Single(d => d.Number == cref._subTypeNumber);
-                        }
-
-                        LoadSubDyn(ver.Dynamics[0], ver.ParameterRefs.ToList(), ver.ComObjectRefs.ToList());
-                    }
-
-
-                    string mid = app._maskId;
-                    if (string.IsNullOrEmpty(mid)) continue;
-
-                    Models.MaskVersion mask = BCUs.Single(bcu => bcu.Id == mid);
-                    app.Mask = mask;
-                }
-
-
-                foreach(Models.Hardware hard in General.Hardware){
-                    if(string.IsNullOrEmpty(hard._appsString)) continue;
-                    
-                    foreach(string name in hard._appsString.Split(',')){
-                        try{
-                            hard.Apps.Add(General.Applications.Single(app => app.Name == name));
-                        } catch{}
-                    }
-                }
-
-                SetSubCatalogItems(General.Catalog[0]);
-
-                SetButtons(true);
+                DoOpen(diag.FileName);
             }
+        }
+
+        private void DoOpen(string path)
+        {
+            string general = System.IO.File.ReadAllText(path);
+            General = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.ModelGeneral>(general, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Auto });
+            filePath = path;
+
+            foreach(Models.Application app in General.Applications)
+            {
+                foreach(Models.AppVersion ver in app.Versions)
+                {
+                    foreach(Models.Parameter para in ver.Parameters)
+                    {
+                        if (para._memoryId != -1)
+                            para.MemoryObject = ver.Memories.SingleOrDefault(m => m.UId == para._memoryId);
+                            
+                        if (para._parameterType != -1)
+                            para.ParameterTypeObject = ver.ParameterTypes.SingleOrDefault(p => p.UId == para._parameterType);
+
+                        if(para.IsInUnion && para._unionId != -1)
+                            para.UnionObject = ver.Unions.SingleOrDefault(u => u.UId == para._unionId);
+                    }
+
+                    foreach(Models.Union union in ver.Unions)
+                    {
+                        if (union._memoryId != -1)
+                            union.MemoryObject = ver.Memories.SingleOrDefault(u => u.UId == union._memoryId);
+                    }
+
+                    foreach(Models.ParameterRef pref in ver.ParameterRefs)
+                    {
+                        if (pref._parameter != -1)
+                            pref.ParameterObject = ver.Parameters.SingleOrDefault(p => p.UId == pref._parameter);
+                    }
+
+                    foreach(Models.ComObject com in ver.ComObjects)
+                    {
+                        if (!string.IsNullOrEmpty(com._typeNumber))
+                            com.Type = DPTs.Single(d => d.Number == com._typeNumber);
+                            
+                        if(!string.IsNullOrEmpty(com._subTypeNumber) && com.Type != null)
+                            com.SubType = com.Type.SubTypes.Single(d => d.Number == com._subTypeNumber);
+                    }
+
+                    foreach(Models.ComObjectRef cref in ver.ComObjectRefs)
+                    {
+                        if (cref._comObject != -1)
+                            cref.ComObjectObject = ver.ComObjects.SingleOrDefault(c => c.UId == cref._comObject);
+
+                        if (!string.IsNullOrEmpty(cref._typeNumber))
+                            cref.Type = DPTs.Single(d => d.Number == cref._typeNumber);
+                            
+                        if(!string.IsNullOrEmpty(cref._subTypeNumber) && cref.Type != null)
+                            cref.SubType = cref.Type.SubTypes.Single(d => d.Number == cref._subTypeNumber);
+                    }
+
+                    LoadSubDyn(ver.Dynamics[0], ver.ParameterRefs.ToList(), ver.ComObjectRefs.ToList());
+                }
+
+
+                string mid = app._maskId;
+                if (string.IsNullOrEmpty(mid)) continue;
+
+                Models.MaskVersion mask = BCUs.Single(bcu => bcu.Id == mid);
+                app.Mask = mask;
+            }
+
+
+            foreach(Models.Hardware hard in General.Hardware){
+                if(string.IsNullOrEmpty(hard._appsString)) continue;
+                
+                foreach(string name in hard._appsString.Split(',')){
+                    try{
+                        hard.Apps.Add(General.Applications.Single(app => app.Name == name));
+                    } catch{}
+                }
+            }
+
+            SetSubCatalogItems(General.Catalog[0]);
+
+            SetButtons(true);
+            MenuSave.IsEnabled = true;
         }
 
         private void LoadSubDyn(Models.Dynamic.IDynItems dyn, List<Models.ParameterRef> paras, List<Models.ComObjectRef> coms)
@@ -1028,9 +1103,11 @@ namespace Kaenx.Creator
             PublishActions.Add(new Models.PublishAction() { Text = "Starte Check" });
             PublishActions.Add(new Models.PublishAction() { Text = $"{devices.Count} Geräte - {hardware.Count} Hardware - {apps.Count} Applikationen - {versions.Count} Versionen" });
 
+            if(General.Catalog[0].Items.Any(c => !c.IsSection ))
+                PublishActions.Add(new Models.PublishAction() { Text = "Katalog muss mindestens eine Unterkategorie haben.", State = Models.PublishState.Fail });
 
-            //if(General.ManufacturerId <= 0 || General.ManufacturerId > 0xFFFF)
-            //    PublishActions.Add(new Models.PublishAction() { Text = $"Ungültige HerstellerId angegeben: {General.ManufacturerId:X4}", State = Models.PublishState.Fail });
+            if(General.ManufacturerId <= 0 || General.ManufacturerId > 0xFFFF)
+                PublishActions.Add(new Models.PublishAction() { Text = $"Ungültige HerstellerId angegeben: {General.ManufacturerId:X4}", State = Models.PublishState.Fail });
 
             #region Hardware Check
             PublishActions.Add(new Models.PublishAction() { Text = "Überprüfe Hardware" });
@@ -1084,9 +1161,13 @@ namespace Kaenx.Creator
                     PublishActions.Add(new Models.PublishAction() { Text = "Applikation '" + app.Name + "' verwendet Version " + group.Key + " (" + Math.Floor(group.Key / 16.0) + "." + (group.Key % 16) + ") " + group.Count() + " mal", State = Models.PublishState.Fail });
             }
 
+            int highestNS = 0;
             foreach(Models.AppVersion vers in versions) {
                 Models.Application app = apps.Single(a => a.Versions.Contains(vers));
                 PublishActions.Add(new Models.PublishAction() { Text = $"Prüfe Applikation '{app.Name}' Version '{vers.NameText}'" });
+                
+                if (vers.NamespaceVersion > highestNS)
+                    highestNS = vers.NamespaceVersion;
 
                 foreach(Models.ParameterType ptype in vers.ParameterTypes) {
                     int maxsize = (int)Math.Pow(2, ptype.SizeInBit);
@@ -1148,8 +1229,6 @@ namespace Kaenx.Creator
                     }
                 }
 
-                //TODO check unions
-
                 foreach(Models.Parameter para in vers.Parameters) {
                     if(para.ParameterTypeObject == null) PublishActions.Add(new Models.PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Kein ParameterTyp ausgewählt", State = Models.PublishState.Fail });
                     else {
@@ -1198,7 +1277,6 @@ namespace Kaenx.Creator
                             if(string.IsNullOrEmpty(trans.Text))
                                 PublishActions.Add(new Models.PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Keine Übersetzung vorhanden ({trans.Language.Text})", State = Models.PublishState.Warning });
                     }
-                    //TODO check unions
 
                     if(!para.IsInUnion) {
                         switch(para.SavePath) {
@@ -1261,9 +1339,6 @@ namespace Kaenx.Creator
                 }
             
                 foreach(Models.ComObject com in vers.ComObjects) {
-                    //TODO check all languages if empty
-                    //if(string.IsNullOrEmpty(com.Text)) PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Kein Text angegeben", State = Models.PublishState.Fail });
-                    //if(string.IsNullOrEmpty(com.TypeParentValue) && com.Name.ToLower() != "dummy") PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {com.Name}: Kein DataPointType angegeben", State = Models.PublishState.Fail });
                     if(com.HasDpt && com.Type == null) PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Kein DataPointType angegeben", State = Models.PublishState.Fail });
                     if(com.HasDpt && com.Type != null && com.Type.Number == "0") PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Keine Angabe des DPT nur bei Refs", State = Models.PublishState.Fail });
                     if(com.HasDpt && com.HasDpts && com.SubType == null) PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Kein DataPointSubType angegeben", State = Models.PublishState.Fail });
@@ -1345,6 +1420,10 @@ namespace Kaenx.Creator
                 // dpt, functiontext, description
             
             }
+
+            if(EtsVersions.Single(v => v.Number == highestNS).IsEnabled == false)
+                    PublishActions.Add(new Models.PublishAction() { Text = $"Mindestens eine Applikation verwendet einen Namespace ({highestNS}), der auf diesem Rechner nicht erstellt werden kann.", State = Models.PublishState.Fail });
+
             #endregion
 
 
@@ -1362,7 +1441,11 @@ namespace Kaenx.Creator
 
             await Task.Delay(1000);
             
-            ExportHelper helper = new ExportHelper(General, hardware, devices, apps, versions);
+            string convPath = etsPath;
+            Models.EtsVersion etsVersion = EtsVersions.Single(v => v.Number == highestNS);
+            convPath = System.IO.Path.Combine(convPath, etsVersion.FolderPath);
+
+            ExportHelper helper = new ExportHelper(General, hardware, devices, apps, versions, convPath);
             switch(InPublishTarget.SelectedValue) {
                 case "ets":
                     helper.ExportEts();

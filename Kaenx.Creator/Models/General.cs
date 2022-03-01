@@ -7,7 +7,7 @@ namespace Kaenx.Creator.Models
 {
     public class ModelGeneral
     {
-        public int ManufacturerId { get; set; } = -1;
+        public int ManufacturerId { get; set; } = 250;
         public string ProjectName { get; set; } = "Meine erste Applikation";
 
 
