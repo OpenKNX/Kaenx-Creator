@@ -127,6 +127,7 @@ namespace Kaenx.Creator
             }
             File.Copy(System.IO.Path.Combine(path, "Knx.Ets.Xml.ObjectModel.dll"), System.IO.Path.Combine(path, "CV", newVersion, "Knx.Ets.Xml.ObjectModel.dll"));
             File.Copy(System.IO.Path.Combine(path, "Knx.Ets.Xml.ObjectModel.XmlSerializers.dll"), System.IO.Path.Combine(path, "CV", newVersion, "Knx.Ets.Xml.ObjectModel.XmlSerializers.dll"));
+            File.Copy(System.IO.Path.Combine(path, "Knx.Ets.Xml.RegistrationRelevanceInformation.dll"), System.IO.Path.Combine(path, "CV", newVersion, "Knx.Ets.Xml.RegistrationRelevanceInformation.dll"));
             File.Copy(System.IO.Path.Combine(path, "Knx.Ets.XmlSigning.dll"), System.IO.Path.Combine(path, "CV", newVersion, "Knx.Ets.XmlSigning.dll"));
             MessageBox.Show("Es wurde eine neue ETS installation erkannt und hinzugefügt.", "ETS Versionen", MessageBoxButton.OK, MessageBoxImage.Information);
             return true;
