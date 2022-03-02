@@ -448,11 +448,73 @@
 
             <TabItem Header="{x:Static p:Resources.tabs_gen}" Style="{StaticResource TopTabItem}">
                 <StackPanel>
+                    <StackPanel.Resources>
+                        <Style TargetType="HeaderedContentControl">
+                            <Setter Property="Margin" Value="5" />
+                        </Style>
+                        <Style TargetType="CheckBox">
+                            <Setter Property="Margin" Value="5" />
+                        </Style>
+                        <Style TargetType="ComboBox">
+                            <Setter Property="Margin" Value="5" />
+                        </Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Margin" Value="5" />
+                        </Style>
+                    </StackPanel.Resources>
                     <HeaderedContentControl Header="Manufacturer ID">
                         <TextBox Text="{Binding General.ManufacturerId, UpdateSourceTrigger=PropertyChanged}" />
                     </HeaderedContentControl>
                     <HeaderedContentControl Header="Projekt Name">
                         <TextBox Text="{Binding General.ProjectName, UpdateSourceTrigger=PropertyChanged}" />
+                    </HeaderedContentControl>
+
+                    <HeaderedContentControl Header="Sprachen für Katalog und Hardware">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition MaxWidth="300" />
+                            </Grid.ColumnDefinitions>
+                            
+                            <ListBox x:Name="SupportedLanguagesGen" ItemsSource="{Binding General.Languages}" DisplayMemberPath="Text" />
+                            
+                            <StackPanel Grid.Column="1">
+                                <HeaderedContentControl Header="Bearbeiten">
+                                    <StackPanel>
+                                        <ComboBox x:Name="LanguagesListGen" DisplayMemberPath="Text">
+                                            <models:Language Text="Tschechisch" CultureCode="cs-CZ" />
+                                            <models:Language Text="Dänisch" CultureCode="da-DK" />
+                                            <models:Language Text="Deutsch" CultureCode="de-DE" />
+                                            <models:Language Text="Griechisch" CultureCode="el-GR" />
+                                            <models:Language Text="Englisch" CultureCode="en-US" />
+                                            <models:Language Text="Spanisch" CultureCode="es-ES" />
+                                            <models:Language Text="Finnisch" CultureCode="fi-FI" />
+                                            <models:Language Text="Französisch" CultureCode="fr-FR" />
+                                            <models:Language Text="Ungarisch" CultureCode="hu-HU" />
+                                            <models:Language Text="Isländisch" CultureCode="is-IS" />
+                                            <models:Language Text="Italienisch" CultureCode="it-IT" />
+                                            <models:Language Text="Japanisch" CultureCode="ja-JP" />
+                                            <models:Language Text="Norwegisch" CultureCode=" nb-NO" />
+                                            <models:Language Text="Niederländisch" CultureCode="nl-NL" />
+                                            <models:Language Text="Polnisch" CultureCode="pl-PL" />
+                                            <models:Language Text="Portugisisch" CultureCode="pt-PT" />
+                                            <models:Language Text="Rumänisch" CultureCode="ro-RO" />
+                                            <models:Language Text="Russisch" CultureCode="ru-RU" />
+                                            <models:Language Text="Slovakisch" CultureCode="sk-SK" />
+                                            <models:Language Text="Slovenisch" CultureCode="sl-SI" />
+                                            <models:Language Text="Schwedisch" CultureCode="sv-SE" />
+                                            <models:Language Text="Türkisch" CultureCode="tr-TR" />
+                                            <models:Language Text="Chinesisch" CultureCode="zh-CN" />
+                                        </ComboBox>
+                                        <Button Content="Hinzufügen" Click="ClickAddLanguageGen" />
+                                        <Button Content="Entfernen" Click="ClickRemoveLanguageGen" />
+                                    </StackPanel>
+                                </HeaderedContentControl>
+                                <HeaderedContentControl Header="Standard Sprache">
+                                    <ComboBox ItemsSource="{Binding General.Languages}" SelectedValue="{Binding General.DefaultLanguage}" SelectedValuePath="CultureCode" DisplayMemberPath="Text"></ComboBox>
+                                </HeaderedContentControl>
+                            </StackPanel>
+                        </Grid>
                     </HeaderedContentControl>
                 </StackPanel>
             </TabItem>
@@ -484,7 +546,7 @@
                         </TreeView.Resources>
                     </TreeView>
 
-                    <StackPanel Grid.Column="1" DataContext="{Binding ElementName=CatalogTree, Path=SelectedItem}" IsEnabled="{Binding ElementName=CatalogTree, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
+                    <StackPanel Grid.Column="1" DataContext="{Binding ElementName=CatalogTree, Path=SelectedItem}" IsEnabled="{Binding ElementName=CatalogTree, Path=SelectedItem.Parent, Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
                         <StackPanel.Resources>
                             <Style TargetType="HeaderedContentControl">
                                 <Setter Property="Margin" Value="5" />
@@ -496,17 +558,23 @@
                                 <Setter Property="Margin" Value="5" />
                             </Style>
                         </StackPanel.Resources>
-                        <HeaderedContentControl Header="Name" IsEnabled="{Binding Parent, Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
+                        <HeaderedContentControl Header="Name">
                             <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
                         </HeaderedContentControl>
                         <HeaderedContentControl Header="Number">
                             <TextBox Text="{Binding Number, UpdateSourceTrigger=PropertyChanged}" />
                         </HeaderedContentControl>
                         <CheckBox Name="InCatalogSection" IsChecked="{Binding IsSection}" Content="Element ist eine Kategorie" IsEnabled="{Binding Items.Count, Converter={StaticResource EmptyListToBool}}" />
-                        <HeaderedContentControl Header="Beschreibung" IsEnabled="{Binding ElementName=InCatalogSection, Path=IsChecked, Converter={StaticResource BoolNegate}}">
-                            <TextBox Text="{Binding VisibleDescription, UpdateSourceTrigger=PropertyChanged}" />
+                        
+                        <HeaderedContentControl Header="Text" Visibility="{Binding ElementName=InCatalogSection, Path=IsChecked, Converter={StaticResource BoolToVis}}">
+                            <DataGrid ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                                    <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                                </DataGrid.Columns>
+                            </DataGrid>
                         </HeaderedContentControl>
-                        <HeaderedContentControl Header="Hardware" IsEnabled="{Binding ElementName=InCatalogSection, Path=IsChecked, Converter={StaticResource BoolNegate}}">
+                        <HeaderedContentControl Header="Hardware" Visibility="{Binding ElementName=InCatalogSection, Path=IsChecked, Converter={StaticResource BoolToVis}, ConverterParameter=true}">
                             <ComboBox Name="InCatalogHardware" Margin="0" ItemsSource="{Binding General.Hardware, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" SelectedItem="{Binding Hardware, Mode=TwoWay}" DisplayMemberPath="Name"/>
                         </HeaderedContentControl>
                     </StackPanel>
@@ -566,14 +634,45 @@
                         </TabItem>
 
                         <TabItem Header="Geräte" Style="{StaticResource TopTabItem}">
-                            <DataGrid Grid.Row="1" ItemsSource="{Binding Devices}" AutoGenerateColumns="False">
+                            <DataGrid Grid.Row="1" ItemsSource="{Binding Devices}" AddingNewItem="OnAddingNewDevice" AutoGenerateColumns="False">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
-                                    <DataGridTextColumn Header="Text" Binding="{Binding Text}" />
-                                    <DataGridTextColumn Header="Beschreibung" Binding="{Binding Description}" />
                                     <DataGridTextColumn Header="Bestellnummer" Binding="{Binding OrderNumber}" />
                                     <DataGridCheckBoxColumn Header="Ist REG" Binding="{Binding IsRailMounted}" />
                                 </DataGrid.Columns>
+                                <DataGrid.RowDetailsTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="auto" />
+                                                <RowDefinition />
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition />
+                                                <ColumnDefinition />
+                                                <ColumnDefinition />
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBlock Text="Hier stehen dinge drin" />
+
+                                            <TextBlock Grid.Column="1" Text="Geräte-Text" Margin="0 10 0 0" />
+                                            <DataGrid Grid.Row="1" Grid.Column="1" Margin="5 5 5 10" ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
+                                                <DataGrid.Columns>
+                                                    <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                                                    <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                                                </DataGrid.Columns>
+                                            </DataGrid>
+
+                                            <TextBlock Grid.Column="2" Text="Geräte-Beschreibung" Margin="0 10 0 0" />
+                                            <DataGrid Grid.Row="1" Grid.Column="2" Margin="5 5 5 10" ItemsSource="{Binding Description}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
+                                                <DataGrid.Columns>
+                                                    <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                                                    <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                                                </DataGrid.Columns>
+                                            </DataGrid>
+                                        </Grid>
+                                    </DataTemplate>
+                                </DataGrid.RowDetailsTemplate>
                             </DataGrid>
                         </TabItem>
 
@@ -754,12 +853,12 @@
                                         <ColumnDefinition MaxWidth="300" />
                                     </Grid.ColumnDefinitions>
                                     
-                                    <ListBox x:Name="SupportedLanguages" ItemsSource="{Binding Languages}" DisplayMemberPath="Text" />
+                                    <ListBox x:Name="SupportedLanguagesVers" ItemsSource="{Binding Languages}" DisplayMemberPath="Text" />
                                     
                                     <StackPanel Grid.Column="1">
                                         <HeaderedContentControl Header="Bearbeiten">
                                             <StackPanel>
-                                                <ComboBox x:Name="LanguagesList" DisplayMemberPath="Text">
+                                                <ComboBox x:Name="LanguagesListVers" DisplayMemberPath="Text">
                                                     <models:Language Text="Tschechisch" CultureCode="cs-CZ" />
                                                     <models:Language Text="Dänisch" CultureCode="da-DK" />
                                                     <models:Language Text="Deutsch" CultureCode="de-DE" />
@@ -784,8 +883,8 @@
                                                     <models:Language Text="Türkisch" CultureCode="tr-TR" />
                                                     <models:Language Text="Chinesisch" CultureCode="zh-CN" />
                                                 </ComboBox>
-                                                <Button Content="Hinzufügen" Click="ClickAddLanguage" />
-                                                <Button  Content="Entfernen" Click="ClickRemoveLanguage" />
+                                                <Button Content="Hinzufügen" Click="ClickAddLanguageVers" />
+                                                <Button  Content="Entfernen" Click="ClickRemoveLanguageVers" />
                                             </StackPanel>
                                         </HeaderedContentControl>
                                         <HeaderedContentControl Header="Standard Sprache">

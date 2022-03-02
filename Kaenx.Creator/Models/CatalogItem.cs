@@ -10,12 +10,12 @@ namespace Kaenx.Creator.Models
     {
         public string Name { get; set; }
         public string Number { get; set; }
-        public string VisibleDescription { get; set; }
 
         public bool IsSection { get; set; } = true;
         [JsonIgnore]
         public CatalogItem Parent { get; set; }
 
+        public ObservableCollection<Translation> Text {get;set;} = new ObservableCollection<Translation>();
         public ObservableCollection<CatalogItem> Items { get; set; } = new ObservableCollection<CatalogItem>();
 
 

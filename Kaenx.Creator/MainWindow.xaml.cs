@@ -64,7 +64,8 @@ namespace Kaenx.Creator
             new Models.EtsVersion(12, "ETS 5.0 (12)", "5.0.204.12971"),
             new Models.EtsVersion(13, "ETS 5.1 (13)", "5.1.84.17602"),
             new Models.EtsVersion(14, "ETS 5.6 (14)", "5.6.241.33672"),
-            new Models.EtsVersion(20, "ETS 5.7 (20)", "5.7.293.38537"),
+            //new Models.EtsVersion(20, "ETS 5.7 (20)", "5.7.293.38537"),
+            new Models.EtsVersion(20, "ETS 5.7 (20)", "5.7.298.38537"),
             new Models.EtsVersion(21, "ETS 6.0 (21)", "6.0.4351.0")
         };
 
@@ -173,6 +174,8 @@ namespace Kaenx.Creator
         private void ClickNew(object sender, RoutedEventArgs e)
         {
             General = new Models.ModelGeneral();
+            General.Languages.Add(new Models.Language("Deutsch", "de-DE"));
+            General.DefaultLanguage = "de-DE";
             General.Catalog.Add(new Models.CatalogItem() { Name = "Hauptkategorie (wird nicht exportiert)" });
             SetButtons(true);
         }
@@ -481,7 +484,11 @@ namespace Kaenx.Creator
             Models.Application app = AppList.SelectedItem as Models.Application;
             Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
 
-            Models.AppVersion copy = new Models.AppVersion(ver);
+            string json = Newtonsoft.Json.JsonConvert.SerializeObject(ver, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Auto });
+
+            Models.AppVersion copy = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.AppVersion>(json, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Auto });
+            copy.Number += 1;
+            copy.Name += " Kopie";
             app.Versions.Add(copy);
         }
 
@@ -498,14 +505,14 @@ namespace Kaenx.Creator
             General.Applications.Remove(app);
         }
 
-        private void ClickAddLanguage(object sender, RoutedEventArgs e)
+        private void ClickAddLanguageVers(object sender, RoutedEventArgs e)
         {
-            if(LanguagesList.SelectedItem == null){
+            if(LanguagesListVers.SelectedItem == null){
                 MessageBox.Show("Bitte wählen Sie erst eine Sprache aus.");
                 return;
             }
             Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
-            Models.Language lang = LanguagesList.SelectedItem as Models.Language;
+            Models.Language lang = LanguagesListVers.SelectedItem as Models.Language;
             
             if(ver.Languages.Any(l => l.CultureCode == lang.CultureCode))
                 MessageBox.Show("Die Sprache wird bereits unterstützt.");
@@ -518,16 +525,23 @@ namespace Kaenx.Creator
                     com.FunctionText.Add(new Models.Translation(lang, ""));
                     com.Description.Add(new Models.Translation(lang, ""));
                 }
+                foreach(Models.ParameterType type in ver.ParameterTypes) {
+                    if(type.Type != Models.ParameterTypes.Enum) continue;
+
+                    foreach(Models.ParameterTypeEnum enu in type.Enums) {
+                        enu.Text.Add(new Models.Translation(lang, ""));
+                    }
+                }
             }
         }
 
-        private void ClickRemoveLanguage(object sender, RoutedEventArgs e) {
-            if(SupportedLanguages.SelectedItem == null){
+        private void ClickRemoveLanguageVers(object sender, RoutedEventArgs e) {
+            if(SupportedLanguagesVers.SelectedItem == null){
                 MessageBox.Show("Bitte wählen Sie erst links eine Sprache aus.");
                 return;
             }
             Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
-            Models.Language lang = SupportedLanguages.SelectedItem as Models.Language;
+            Models.Language lang = SupportedLanguagesVers.SelectedItem as Models.Language;
 
             ver.Text.Remove(ver.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
             ver.Languages.Remove(ver.Languages.Single(l => l.CultureCode == lang.CultureCode));
@@ -538,6 +552,72 @@ namespace Kaenx.Creator
                 com.Text.Remove(com.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
                 com.FunctionText.Remove(com.FunctionText.Single(l => l.Language.CultureCode == lang.CultureCode));
                 com.Description.Remove(com.Description.Single(l => l.Language.CultureCode == lang.CultureCode));
+            }
+            foreach(Models.ParameterType type in ver.ParameterTypes) {
+                if(type.Type != Models.ParameterTypes.Enum) continue;
+
+                foreach(Models.ParameterTypeEnum enu in type.Enums) {
+                    enu.Text.Remove(enu.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
+                }
+            }
+        }
+
+
+        private void ClickAddLanguageGen(object sender, RoutedEventArgs e)
+        {
+            if(LanguagesListGen.SelectedItem == null){
+                MessageBox.Show("Bitte wählen Sie erst eine Sprache aus.");
+                return;
+            }
+            Models.Language lang = LanguagesListGen.SelectedItem as Models.Language;
+            
+            if(_general.Languages.Any(l => l.CultureCode == lang.CultureCode))
+                MessageBox.Show("Die Sprache wird bereits unterstützt.");
+            else {
+                _general.Languages.Add(lang);
+                LanguageCatalogItemAdd(_general.Catalog[0], lang);
+                foreach(Models.Hardware hard in _general.Hardware) {
+                    foreach(Models.Device dev in hard.Devices) {
+                        dev.Text.Add(new Models.Translation(lang, ""));
+                        dev.Description.Add(new Models.Translation(lang, ""));
+                    }
+                }
+            }
+        }
+
+        private void LanguageCatalogItemAdd(Models.CatalogItem parent, Models.Language lang)
+        {
+            foreach(Models.CatalogItem item in parent.Items) {
+                item.Text.Add(new Models.Translation(lang, ""));
+
+                LanguageCatalogItemAdd(item, lang);
+            }
+        }
+
+        private void LanguageCatalogItemRemove(Models.CatalogItem parent, Models.Language lang)
+        {
+            foreach(Models.CatalogItem item in parent.Items) {
+                item.Text.Remove(item.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
+
+                LanguageCatalogItemRemove(item, lang);
+            }
+        }
+
+        private void ClickRemoveLanguageGen(object sender, RoutedEventArgs e) {
+            if(SupportedLanguagesGen.SelectedItem == null){
+                MessageBox.Show("Bitte wählen Sie erst links eine Sprache aus.");
+                return;
+            }
+            Models.Language lang = SupportedLanguagesGen.SelectedItem as Models.Language;
+
+
+            _general.Languages.Remove(_general.Languages.Single(l => l.CultureCode == lang.CultureCode));
+            LanguageCatalogItemRemove(_general.Catalog[0], lang);
+            foreach(Models.Hardware hard in _general.Hardware) {
+                foreach(Models.Device dev in hard.Devices) {
+                    dev.Text.Remove(dev.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
+                    dev.Description.Remove(dev.Description.Single(l => l.Language.CultureCode == lang.CultureCode));
+                } 
             }
         }
 
@@ -591,11 +671,22 @@ namespace Kaenx.Creator
             General.Hardware.Add(new Models.Hardware());
         }
 
-
         private void ClickRemoveHardware(object sender, RoutedEventArgs e)
         {
             General.Hardware.Remove(HardwareList.SelectedItem as Models.Hardware);
         }
+
+        private void OnAddingNewDevice(object sender, AddingNewItemEventArgs e)
+        {
+            Models.Hardware hard = (sender as DataGrid).DataContext as Models.Hardware;
+            Models.Device device = new Models.Device();
+            foreach(Models.Language lang in _general.Languages) {
+                device.Text.Add(new Models.Translation(lang, ""));
+                device.Description.Add(new Models.Translation(lang, ""));
+            }
+            e.NewItem = device;
+        }
+
         private void ClickRemoveDeviceApp(object sender, RoutedEventArgs e)
         {
             (HardwareList.SelectedItem as Models.Hardware).Apps.Remove(DeviceAppList.SelectedItem as Models.Application);
@@ -691,6 +782,7 @@ namespace Kaenx.Creator
             if(diag.ShowDialog() == true)
             {
                 DoOpen(diag.FileName);
+                MenuSaveBtn.IsEnabled = true;
             }
         }
 
@@ -879,8 +971,12 @@ namespace Kaenx.Creator
 
         private void ClickCatalogContext(object sender, RoutedEventArgs e)
         {
-            Models.CatalogItem item = (sender as MenuItem).DataContext as Models.CatalogItem;
-            item.Items.Add(new Models.CatalogItem() { Name = "Neue Kategorie", Parent = item });
+            Models.CatalogItem parent = (sender as MenuItem).DataContext as Models.CatalogItem;
+            Models.CatalogItem item = new Models.CatalogItem() { Name = "Neue Kategorie", Parent = parent };
+            foreach(Models.Language lang in _general.Languages) {
+                item.Text.Add(new Models.Translation(lang, ""));
+            }
+            parent.Items.Add(item);
         }
 
         private void ClickCatalogContextRemove(object sender, RoutedEventArgs e)
@@ -1467,7 +1563,7 @@ namespace Kaenx.Creator
             
             string convPath = etsPath;
             Models.EtsVersion etsVersion = EtsVersions.Single(v => v.Number == highestNS);
-            convPath = System.IO.Path.Combine(convPath, etsVersion.FolderPath);
+            convPath = System.IO.Path.Combine(convPath, "CV", etsVersion.FolderPath);
 
             ExportHelper helper = new ExportHelper(General, hardware, devices, apps, versions, convPath);
             switch(InPublishTarget.SelectedValue) {

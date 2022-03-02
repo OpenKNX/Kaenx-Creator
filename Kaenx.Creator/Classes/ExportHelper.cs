@@ -50,14 +50,12 @@ namespace Kaenx.Creator.Classes
         {
             string Manu = "M-" + general.ManufacturerId.ToString("X4");
 
-            if (System.IO.Directory.Exists(GetRelPath("")))
-                System.IO.Directory.Delete(GetRelPath(""), true);
+            if (System.IO.Directory.Exists(GetRelPath()))
+                System.IO.Directory.Delete(GetRelPath(), true);
 
-            //if (!System.IO.Directory.Exists(GetRelPath("")))
-            System.IO.Directory.CreateDirectory(GetRelPath(""));
-
-            //if (!System.IO.Directory.Exists(GetRelPath(Manu)))
-            System.IO.Directory.CreateDirectory(GetRelPath(Manu));
+            System.IO.Directory.CreateDirectory(GetRelPath());
+            System.IO.Directory.CreateDirectory(GetRelPath("Temp"));
+            System.IO.Directory.CreateDirectory(GetRelPath("Temp", Manu));
 
             int highestNS = 0;
             foreach (Models.AppVersion ver in vers)
@@ -73,6 +71,7 @@ namespace Kaenx.Creator.Classes
             #region XML Applications
             Debug.WriteLine($"Exportiere Applikationen: {vers.Count}x");
             XElement xmanu = null;
+            XElement xlanguages = null;
             foreach(Models.AppVersion ver in vers) {
                 Debug.WriteLine($"Exportiere AppVersion: {ver.Name} {ver.NameText}");
                 languages = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>();
@@ -102,7 +101,6 @@ namespace Kaenx.Creator.Classes
                 xapp.SetAttributeValue("DefaultLanguage", currentLang);
                 xapp.SetAttributeValue("LoadProcedureStyle", "MergedProcedure");
                 xapp.SetAttributeValue("PeiType", "0");
-                xapp.SetAttributeValue("DefaultLanguage", "de-DE");
                 xapp.SetAttributeValue("DynamicTableManagement", "false"); //TODO check when to add
                 xapp.SetAttributeValue("Linkable", "false"); //TODO check when to add
 
@@ -278,8 +276,7 @@ namespace Kaenx.Creator.Classes
 
                     temp.Add(xunion);
                 }
-                //TODO wieder aufnhemen
-                //System.IO.File.WriteAllText(GetRelPath(appVersion + ".h"), headers.ToString());
+                System.IO.File.WriteAllText(GetRelPath(appVersion + ".h"), headers.ToString());
                 headers = null;
 
                 xunderapp.Add(temp);
@@ -469,9 +466,8 @@ namespace Kaenx.Creator.Classes
 
 
                 #region Translations
-
                 Debug.WriteLine($"Exportiere Translations: {languages.Count} Sprachen");
-                XElement xlanguages = new XElement(Get("Languages"));
+                xlanguages = new XElement(Get("Languages"));
                 foreach(KeyValuePair<string, Dictionary<string, Dictionary<string, string>>> lang in languages) {
                     XElement xunit = new XElement(Get("TranslationUnit"));
                     xunit.SetAttributeValue("RefId", appVersion);
@@ -494,22 +490,21 @@ namespace Kaenx.Creator.Classes
                     xlanguages.Add(xlang);
                 }
                 xmanu.Add(xlanguages);
-
-                //xmanu.Add(new XElement(Get("Languages"), ));
                 #endregion
 
-
-                Debug.WriteLine($"Speichere App: {GetRelPath(Manu, appVersion + ".xml")}");
-                doc.Save(GetRelPath(Manu, appVersion + ".xml"));
+                Debug.WriteLine($"Speichere App: {GetRelPath("Temp", Manu, appVersion + ".xml")}");
+                doc.Save(GetRelPath("Temp", Manu, appVersion + ".xml"));
                 Debug.WriteLine($"Speichern beendet");
             }
             #endregion
 
             #region XML Hardware
+            languages.Clear();
             Debug.WriteLine($"Exportiere Hardware: {hardware.Count}x");
             xmanu = CreateNewXML(Manu);
             XElement xhards = new XElement(Get("Hardware"));
             xmanu.Add(xhards);
+            currentLang = general.DefaultLanguage;
             foreach (Models.Hardware hard in hardware)
             {
                 string hid = Manu + "_H-" + GetEncoded(hard.SerialNumber) + "-" + hard.Version;
@@ -541,12 +536,14 @@ namespace Kaenx.Creator.Classes
                     string pid = hid + "_P-" + GetEncoded(dev.OrderNumber);
                     ProductIds.Add(dev.Name, pid);
                     xprod.SetAttributeValue("Id", pid);
-                    xprod.SetAttributeValue("Text", dev.Text);
+                    xprod.SetAttributeValue("Text", dev.Text.Single(e => e.Language.CultureCode == currentLang).Text);
                     xprod.SetAttributeValue("OrderNumber", dev.OrderNumber);
                     xprod.SetAttributeValue("IsRailMounted", dev.IsRailMounted ? "1" : "0");
-                    xprod.SetAttributeValue("DefaultLanguage", "de-DE");
+                    xprod.SetAttributeValue("DefaultLanguage", currentLang);
                     xprod.Add(new XElement(Get("RegistrationInfo"), new XAttribute("RegistrationStatus", "Registered")));
                     xprods.Add(xprod);
+
+                    foreach(Models.Translation trans in dev.Text) AddTranslation(trans.Language.CultureCode, pid, "Text", trans.Text);
                 }
 
 
@@ -581,8 +578,34 @@ namespace Kaenx.Creator.Classes
                 }
                 xhards.Add(xhard);
             }
-            Debug.WriteLine($"Speichere Hardware: {GetRelPath(Manu, "Hardware.xml")}");
-            doc.Save(GetRelPath(Manu, "Hardware.xml"));
+
+            Debug.WriteLine($"Exportiere Translations: {languages.Count} Sprachen");
+            xlanguages = new XElement(Get("Languages"));
+            foreach(KeyValuePair<string, Dictionary<string, Dictionary<string, string>>> lang in languages) {
+                XElement xunit = new XElement(Get("TranslationUnit"));
+                xunit.SetAttributeValue("RefId", appVersion);
+                XElement xlang = new XElement(Get("Language"), xunit);
+                xlang.SetAttributeValue("Identifier", lang.Key);
+
+                foreach(KeyValuePair<string, Dictionary<string, string>> langitem in lang.Value) {
+                    XElement xele = new XElement(Get("TranslationElement"));
+                    xele.SetAttributeValue("RefId", langitem.Key);
+
+                    foreach(KeyValuePair<string, string> langval in langitem.Value) {
+                        XElement xtrans = new XElement(Get("Translation"));
+                        xtrans.SetAttributeValue("AttributeName", langval.Key);
+                        xtrans.SetAttributeValue("Text", langval.Value);
+                        xele.Add(xtrans);
+                    }
+
+                    xunit.Add(xele);
+                }
+                xlanguages.Add(xlang);
+            }
+            xmanu.Add(xlanguages);
+
+            Debug.WriteLine($"Speichere Hardware: {GetRelPath("Temp", Manu, "Hardware.xml")}");
+            doc.Save(GetRelPath("Temp", Manu, "Hardware.xml"));
             #endregion
 
             #region XML Catalog
@@ -596,8 +619,8 @@ namespace Kaenx.Creator.Classes
                 GetCatalogItems(item, cat, ProductIds, HardwareIds);
             }
             xmanu.Add(cat);
-            Debug.WriteLine($"Speichere Catalog: {GetRelPath(Manu, "Catalog.xml")}");
-            doc.Save(GetRelPath(Manu, "Catalog.xml"));
+            Debug.WriteLine($"Speichere Catalog: {GetRelPath("Temp", Manu, "Catalog.xml")}");
+            doc.Save(GetRelPath("Temp", Manu, "Catalog.xml"));
             #endregion
         }
 
@@ -850,7 +873,7 @@ namespace Kaenx.Creator.Classes
 
                     xitem.SetAttributeValue("Name", item.Name);
                     xitem.SetAttributeValue("Number", item.Number);
-                    xitem.SetAttributeValue("DefaultLanguage", "de-DE");
+                    xitem.SetAttributeValue("DefaultLanguage", currentLang);
                     parent.Add(xitem);
                 }
 
@@ -882,11 +905,11 @@ namespace Kaenx.Creator.Classes
                             xitem.SetAttributeValue("Id", id);
                             xitem.SetAttributeValue("Name", dev.Text);
                             xitem.SetAttributeValue("Number", item.Number); //TODO check if correct  (item.Hardware.SerialNumber);
-                            if (!string.IsNullOrWhiteSpace(dev.Description)) xitem.SetAttributeValue("VisibleDescription", dev.Description);
+                            if (!string.IsNullOrWhiteSpace(dev.Description.Single(e => e.Language.CultureCode == currentLang).Text)) xitem.SetAttributeValue("VisibleDescription", dev.Description);
                             xitem.SetAttributeValue("ProductRefId", productIds[dev.Name]);
                             string hardid = item.Hardware.Version + "-" + app.Number + "-" + ver.Number;
                             xitem.SetAttributeValue("Hardware2ProgramRefId", hardwareIds[hardid]);
-                            xitem.SetAttributeValue("DefaultLanguage", "de-DE");
+                            xitem.SetAttributeValue("DefaultLanguage", currentLang);
                             parent.Add(xitem);
                         }
                     }
@@ -902,10 +925,10 @@ namespace Kaenx.Creator.Classes
             IDictionary<string, string> applProgHashes = new Dictionary<string, string>();
             IDictionary<string, string> mapBaggageIdToFileIntegrity = new Dictionary<string, string>(50);
 
-            FileInfo hwFileInfo = new FileInfo(GetRelPath(manu, "Hardware.xml"));
-            FileInfo catalogFileInfo = new FileInfo(GetRelPath(manu, "Catalog.xml"));
+            FileInfo hwFileInfo = new FileInfo(GetRelPath("Temp", manu, "Hardware.xml"));
+            FileInfo catalogFileInfo = new FileInfo(GetRelPath("Temp", manu, "Catalog.xml"));
 
-            foreach (string file in Directory.GetFiles(GetRelPath(manu)))
+            foreach (string file in Directory.GetFiles(GetRelPath("Temp", manu)))
             {
                 if (!file.Contains("M-") || !file.Contains("_A-")) continue;
 
@@ -929,7 +952,15 @@ namespace Kaenx.Creator.Classes
             CatalogIdPatcher cip = new CatalogIdPatcher(catalogFileInfo, hardware2ProgramIdMapping, convPath);
             cip.Patch();
 
-            XmlSigning.SignDirectory(GetRelPath(manu), convPath);
+            File.Copy(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "knx_master.xml"), GetRelPath("Temp", "knx_master.xml"));
+
+            XmlSigning.SignDirectory(GetRelPath("Temp", manu), convPath);
+
+            System.IO.Compression.ZipFile.CreateFromDirectory(GetRelPath("Temp"), GetRelPath("output.knxprod"));
+
+            #if (!DEBUG)
+            System.IO.Directory.Delete(GetRelPath("Temp"), true);
+            #endif
         }
 
         private string GetEncoded(string input)
@@ -968,19 +999,16 @@ namespace Kaenx.Creator.Classes
             return input;
         }
 
-        public string GetRelPath(string path, string path2)
+        public string GetRelPath(params string[] path)
         {
-            return System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Output", path, path2);
+            List<string> paths = new List<string>() { AppDomain.CurrentDomain.BaseDirectory, "Output" };
+            paths.AddRange(path);
+            return System.IO.Path.Combine(paths.ToArray());
         }
 
-        public string GetRelPath(string path)
+        public string GetRelPath()
         {
-            return System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Output", path);
-        }
-
-        public string GetRelCVPath(string path)
-        {
-            return System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CV", path);
+            return System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Output");
         }
 
         private XName Get(string name)

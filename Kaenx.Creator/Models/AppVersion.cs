@@ -27,25 +27,6 @@ namespace Kaenx.Creator.Models
 
         public AppVersion() { }
 
-        public AppVersion(AppVersion ver)
-        {
-            ParameterRefs = ver.ParameterRefs;
-            Parameters = ver.Parameters;
-            ParameterTypes = ver.ParameterTypes;
-            ComObjects = ver.ComObjects;
-            ComObjectRefs = ver.ComObjectRefs;
-            Memories = ver.Memories;
-            Dynamics = ver.Dynamics;
-
-            Name = ver.Name + " (Kopie)";
-            Number = ver.Number;
-            Number++;
-            IsComObjectRefAuto = ver.IsComObjectRefAuto;
-            IsParameterRefAuto = ver.IsParameterRefAuto;
-            IsMemSizeAuto = ver.IsMemSizeAuto;
-            Languages = ver.Languages;
-        }
-
         private int _namespace = 14;
         public int NamespaceVersion
         {

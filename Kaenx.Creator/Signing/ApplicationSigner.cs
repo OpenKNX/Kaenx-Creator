@@ -13,6 +13,8 @@ namespace Kaenx.Creator.Signing
                     string basePath,
                     bool patchIds = true)
         {
+            //if ets6 use ApplicationProgramStoreHasher
+            //with HashStore Method
             Assembly asm = Assembly.LoadFrom(Path.Combine(basePath, "Knx.Ets.XmlSigning.dll"));
             _instance = Activator.CreateInstance(asm.GetType("Knx.Ets.XmlSigning.ApplicationProgramHasher"), applProgFile, mapBaggageIdToFileIntegrity, patchIds);
             _type = asm.GetType("Knx.Ets.XmlSigning.ApplicationProgramHasher");

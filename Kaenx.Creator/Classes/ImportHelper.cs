@@ -683,14 +683,15 @@ namespace Kaenx.Creator.Classes
                     }
                     else
                     {
+                        //TODO import translation
                         device = new Models.Device()
                         {
                             OrderNumber = ordernumb,
-                            Text = xprod.Attribute("Text").Value,
+                            //Text = xprod.Attribute("Text").Value,
                             IsRailMounted = xprod.Attribute("IsRailMounted")?.Value == "true",
-                            Description = xprod.Attribute("VisibleDescription")?.Value ?? ""
+                            //Description = xprod.Attribute("VisibleDescription")?.Value ?? ""
                         };
-                        device.Name = device.Text;
+                        //device.Name = device.Text;
                         hardware.Devices.Add(device);
                     }
                 }
@@ -726,10 +727,11 @@ namespace Kaenx.Creator.Classes
 
                 case "CatalogItem":
                     item.IsSection = false;
-                    item.VisibleDescription = xitem.Attribute("VisibleDescription")?.Value ?? "";
                     string[] hard2ref = xitem.Attribute("Hardware2ProgramRefId").Value.Split('-');
                     string serialNr = hard2ref[2];
                     item.Hardware = _general.Hardware.Single(h => h.SerialNumber == serialNr);
+                    //item.Hardware.Description = GetTranslation("VisibleDescription");
+                    //TODO add import translation
                     break;
             }
 

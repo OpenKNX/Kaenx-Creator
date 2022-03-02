@@ -30,6 +30,7 @@ namespace Kaenx.Creator.Models
         public bool IsPowerSupply { get; set; } = false;
         public bool IsCoppler { get; set; } = false;
         public bool IsIpEnabled { get; set; } = false;
+
         public ObservableCollection<Device> Devices { get; set; } = new ObservableCollection<Device>();
         [JsonIgnore]
         public ObservableCollection<Application> Apps { get; set; } = new ObservableCollection<Application>();
