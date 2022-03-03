@@ -129,6 +129,7 @@ namespace Kaenx.Creator
             File.Copy(System.IO.Path.Combine(path, "Knx.Ets.Xml.ObjectModel.XmlSerializers.dll"), System.IO.Path.Combine(path, "CV", newVersion, "Knx.Ets.Xml.ObjectModel.XmlSerializers.dll"));
             File.Copy(System.IO.Path.Combine(path, "Knx.Ets.Xml.RegistrationRelevanceInformation.dll"), System.IO.Path.Combine(path, "CV", newVersion, "Knx.Ets.Xml.RegistrationRelevanceInformation.dll"));
             File.Copy(System.IO.Path.Combine(path, "Knx.Ets.XmlSigning.dll"), System.IO.Path.Combine(path, "CV", newVersion, "Knx.Ets.XmlSigning.dll"));
+            File.Copy(System.IO.Path.Combine(path, "log4net.dll"), System.IO.Path.Combine(path, "CV", newVersion, "log4net.dll"));
             MessageBox.Show("Es wurde eine neue ETS installation erkannt und hinzugefügt.", "ETS Versionen", MessageBoxButton.OK, MessageBoxImage.Information);
             return true;
         }
@@ -1221,6 +1222,11 @@ namespace Kaenx.Creator
                 if (!versions.Contains(item.Version)) versions.Add(item.Version);
             }
 
+            if(apps.Count == 0) {
+                PublishActions.Add(new Models.PublishAction() { Text = $"Es wurden keine Applikationen ausgewählt.", State = Models.PublishState.Fail });
+                return;
+            }
+
             PublishActions.Add(new Models.PublishAction() { Text = "Starte Check" });
             PublishActions.Add(new Models.PublishAction() { Text = $"{devices.Count} Geräte - {hardware.Count} Hardware - {apps.Count} Applikationen - {versions.Count} Versionen" });
 
@@ -1542,6 +1548,7 @@ namespace Kaenx.Creator
             
             }
 
+            
             if(EtsVersions.Single(v => v.Number == highestNS).IsEnabled == false)
                     PublishActions.Add(new Models.PublishAction() { Text = $"Mindestens eine Applikation verwendet einen Namespace ({highestNS}), der auf diesem Rechner nicht erstellt werden kann.", State = Models.PublishState.Fail });
 

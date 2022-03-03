@@ -558,7 +558,7 @@
                                 <Setter Property="Margin" Value="5" />
                             </Style>
                         </StackPanel.Resources>
-                        <HeaderedContentControl Header="Name">
+                        <HeaderedContentControl Header="Name (intern)">
                             <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
                         </HeaderedContentControl>
                         <HeaderedContentControl Header="Number">
@@ -744,7 +744,7 @@
                                     <Setter Property="Margin" Value="5" />
                                 </Style>
                             </StackPanel.Resources>
-                            <HeaderedContentControl Header="Name">
+                            <HeaderedContentControl Header="Name (intern)">
                                 <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
                             </HeaderedContentControl>
                             <HeaderedContentControl Header="Nummer">
@@ -818,7 +818,7 @@
                                 <TextBox Text="{Binding Number, UpdateSourceTrigger=PropertyChanged}" />
                             </HeaderedContentControl>
 
-                            <HeaderedContentControl Header="Name">
+                            <HeaderedContentControl Header="Name (intern)">
                                 <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
                             </HeaderedContentControl>
                             <HeaderedContentControl Header="Text">

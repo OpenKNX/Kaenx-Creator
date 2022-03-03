@@ -109,12 +109,14 @@ namespace Kaenx.Creator.Classes
             XElement xele = XDocument.Load(entry.Open()).Root;
             _namespace = xele.Attribute("xmlns").Value;
             xele = xele.Element(GetXName("ManufacturerData")).Element(GetXName("Manufacturer")).Element(GetXName("Hardware"));
+            ImportLanguages(xele.Parent.Element(GetXName("Languages")));
             ImportHardware(xele);
 
             entry = Archive.GetEntry($"M-{manuHex}/Catalog.xml");
             xele = XDocument.Load(entry.Open()).Root;
             _namespace = xele.Attribute("xmlns").Value;
             xele = xele.Element(GetXName("ManufacturerData")).Element(GetXName("Manufacturer")).Element(GetXName("Catalog"));
+            ImportLanguages(xele.Parent.Element(GetXName("Languages")));
             ImportCatalog(xele);
         }
 
@@ -188,6 +190,7 @@ namespace Kaenx.Creator.Classes
         }
 
         public void ImportLanguages(XElement xlangs) {
+            _translations.Clear();
             foreach(XElement xlang in xlangs.Elements()) {
                 string cultureCode = xlang.Attribute("Identifier").Value;
                 if(!currentVers.Languages.Any(l => l.CultureCode == cultureCode))
@@ -687,7 +690,7 @@ namespace Kaenx.Creator.Classes
                         device = new Models.Device()
                         {
                             OrderNumber = ordernumb,
-                            //Text = xprod.Attribute("Text").Value,
+                            Name = xprod.Parent.Parent.Attribute("Name").Value,
                             IsRailMounted = xprod.Attribute("IsRailMounted")?.Value == "true",
                             //Description = xprod.Attribute("VisibleDescription")?.Value ?? ""
                         };
@@ -720,7 +723,7 @@ namespace Kaenx.Creator.Classes
             {
                 case "CatalogSection":
                     item.IsSection = true;
-                    //TODO import visibledescription
+                    item.Text = GetTranslation(xitem.Attribute("Id").Value, "Name", xitem);
                     foreach (XElement xele in xitem.Elements())
                         ParseCatalogItem(xele, item);
                     break;
@@ -732,6 +735,13 @@ namespace Kaenx.Creator.Classes
                     item.Hardware = _general.Hardware.Single(h => h.SerialNumber == serialNr);
                     //item.Hardware.Description = GetTranslation("VisibleDescription");
                     //TODO add import translation
+                    item.Text = GetTranslation(xitem.Attribute("Id")?.Value ?? "", "Text", xitem);
+                    string prodId = xitem.Attribute("ProductRefId").Value;
+                    prodId = prodId.Substring(prodId.LastIndexOf('-')+1);
+                    prodId = Unescape(prodId);
+                    Models.Device device = item.Hardware.Devices.Single(d => d.OrderNumber == prodId);
+                    device.Text = GetTranslation(xitem.Attribute("Id")?.Value ?? "", "Name", xitem);
+                    device.Description = GetTranslation(xitem.Attribute("Id")?.Value ?? "", "VisibleDescription", xitem);
                     break;
             }
 
@@ -741,10 +751,7 @@ namespace Kaenx.Creator.Classes
         private void ImportDynamic(XElement xdyn)
         {
             DynamicMain main = new DynamicMain();
-            //TODO import dynamics
-
             ParseDynamic(main, xdyn);
-
             currentVers.Dynamics.Add(main);
         }
 

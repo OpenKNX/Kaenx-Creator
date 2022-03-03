@@ -582,12 +582,13 @@ namespace Kaenx.Creator.Classes
             Debug.WriteLine($"Exportiere Translations: {languages.Count} Sprachen");
             xlanguages = new XElement(Get("Languages"));
             foreach(KeyValuePair<string, Dictionary<string, Dictionary<string, string>>> lang in languages) {
-                XElement xunit = new XElement(Get("TranslationUnit"));
-                xunit.SetAttributeValue("RefId", appVersion);
-                XElement xlang = new XElement(Get("Language"), xunit);
+                XElement xlang = new XElement(Get("Language"));
                 xlang.SetAttributeValue("Identifier", lang.Key);
 
                 foreach(KeyValuePair<string, Dictionary<string, string>> langitem in lang.Value) {
+                    XElement xunit = new XElement(Get("TranslationUnit"));
+                    xunit.SetAttributeValue("RefId", langitem.Key);
+                    xlang.Add(xunit);
                     XElement xele = new XElement(Get("TranslationElement"));
                     xele.SetAttributeValue("RefId", langitem.Key);
 
@@ -611,6 +612,7 @@ namespace Kaenx.Creator.Classes
             #region XML Catalog
 
             Debug.WriteLine($"Exportiere Catalog");
+            languages.Clear();
             xmanu = CreateNewXML(Manu);
             XElement cat = new XElement(Get("Catalog"));
 
@@ -619,6 +621,35 @@ namespace Kaenx.Creator.Classes
                 GetCatalogItems(item, cat, ProductIds, HardwareIds);
             }
             xmanu.Add(cat);
+
+            Debug.WriteLine($"Exportiere Translations: {languages.Count} Sprachen");
+            xlanguages = new XElement(Get("Languages"));
+            foreach(KeyValuePair<string, Dictionary<string, Dictionary<string, string>>> lang in languages) {
+                
+                XElement xlang = new XElement(Get("Language"));
+                xlang.SetAttributeValue("Identifier", lang.Key);
+
+                foreach(KeyValuePair<string, Dictionary<string, string>> langitem in lang.Value) {
+                    XElement xunit = new XElement(Get("TranslationUnit"));
+                    xunit.SetAttributeValue("RefId", langitem.Key);
+                    xlang.Add(xunit);
+
+                    XElement xele = new XElement(Get("TranslationElement"));
+                    xele.SetAttributeValue("RefId", langitem.Key);
+
+                    foreach(KeyValuePair<string, string> langval in langitem.Value) {
+                        XElement xtrans = new XElement(Get("Translation"));
+                        xtrans.SetAttributeValue("AttributeName", langval.Key);
+                        xtrans.SetAttributeValue("Text", langval.Value);
+                        xele.Add(xtrans);
+                    }
+
+                    xunit.Add(xele);
+                }
+                xlanguages.Add(xlang);
+            }
+            xmanu.Add(xlanguages);
+
             Debug.WriteLine($"Speichere Catalog: {GetRelPath("Temp", Manu, "Catalog.xml")}");
             doc.Save(GetRelPath("Temp", Manu, "Catalog.xml"));
             #endregion
@@ -856,25 +887,28 @@ namespace Kaenx.Creator.Classes
             if (item.IsSection)
             {
                 XElement xitem = new XElement(Get("CatalogSection"));
-
+                string id;
+                
                 if (CheckSections(item))
                 {
                     if (item.Parent.Parent == null)
                     {
-                        string id = $"M-{general.ManufacturerId.ToString("X4")}_CS-" + GetEncoded(item.Number);
+                        id = $"M-{general.ManufacturerId.ToString("X4")}_CS-" + GetEncoded(item.Number);
                         xitem.SetAttributeValue("Id", id);
                     }
                     else
                     {
-                        string id = parent.Attribute("Id").Value;
+                        id = parent.Attribute("Id").Value;
                         id += "-" + GetEncoded(item.Number);
                         xitem.SetAttributeValue("Id", id);
                     }
 
-                    xitem.SetAttributeValue("Name", item.Name);
+                    xitem.SetAttributeValue("Name", item.Text.Single(e => e.Language.CultureCode == currentLang).Text);
                     xitem.SetAttributeValue("Number", item.Number);
                     xitem.SetAttributeValue("DefaultLanguage", currentLang);
                     parent.Add(xitem);
+
+                    foreach(Translation trans in item.Text) AddTranslation(trans.Language.CultureCode, id, "Name", trans.Text);
                 }
 
                 foreach (CatalogItem sub in item.Items)
@@ -903,14 +937,17 @@ namespace Kaenx.Creator.Classes
                             id += $"_CI-{GetEncoded(dev.OrderNumber)}-{GetEncoded(item.Number)}";
 
                             xitem.SetAttributeValue("Id", id);
-                            xitem.SetAttributeValue("Name", dev.Text);
+                            xitem.SetAttributeValue("Name", dev.Text.Single(e => e.Language.CultureCode == currentLang).Text);
                             xitem.SetAttributeValue("Number", item.Number); //TODO check if correct  (item.Hardware.SerialNumber);
-                            if (!string.IsNullOrWhiteSpace(dev.Description.Single(e => e.Language.CultureCode == currentLang).Text)) xitem.SetAttributeValue("VisibleDescription", dev.Description);
+                            xitem.SetAttributeValue("VisibleDescription", dev.Description.Single(e => e.Language.CultureCode == currentLang).Text);
                             xitem.SetAttributeValue("ProductRefId", productIds[dev.Name]);
                             string hardid = item.Hardware.Version + "-" + app.Number + "-" + ver.Number;
                             xitem.SetAttributeValue("Hardware2ProgramRefId", hardwareIds[hardid]);
                             xitem.SetAttributeValue("DefaultLanguage", currentLang);
                             parent.Add(xitem);
+
+                            foreach(Translation trans in dev.Text) AddTranslation(trans.Language.CultureCode, id, "Name", trans.Text);
+                            foreach(Translation trans in dev.Description) AddTranslation(trans.Language.CultureCode, id, "VisibleDescription", trans.Text);
                         }
                     }
                 }
