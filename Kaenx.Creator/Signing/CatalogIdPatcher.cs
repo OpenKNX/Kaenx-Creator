@@ -10,11 +10,20 @@ namespace Kaenx.Creator.Signing
         public CatalogIdPatcher(
             FileInfo catalogFile,
             IDictionary<string, string> hardware2ProgramIdMapping,
-            string basePath)
+            string basePath,
+            int nsVersion)
         {
             Assembly asm = Assembly.LoadFrom(Path.Combine(basePath, "Knx.Ets.XmlSigning.dll"));
-            _instance = Activator.CreateInstance(asm.GetType("Knx.Ets.XmlSigning.CatalogIdPatcher"), catalogFile, hardware2ProgramIdMapping);
-            _type = asm.GetType("Knx.Ets.XmlSigning.CatalogIdPatcher");
+            
+            if(asm.GetName().Version.ToString().StartsWith("6.0")) {
+                Assembly objm = Assembly.LoadFrom(Path.Combine(basePath, "Knx.Ets.Xml.ObjectModel.dll"));
+                object knxSchemaVersion = Enum.ToObject(objm.GetType("Knx.Ets.Xml.ObjectModel.KnxXmlSchemaVersion"), nsVersion);
+                _instance = Activator.CreateInstance(asm.GetType("Knx.Ets.XmlSigning.CatalogIdPatcher"), catalogFile, hardware2ProgramIdMapping, knxSchemaVersion);
+                _type = asm.GetType("Knx.Ets.XmlSigning.CatalogIdPatcher");
+            } else {
+                _instance = Activator.CreateInstance(asm.GetType("Knx.Ets.XmlSigning.CatalogIdPatcher"), catalogFile, hardware2ProgramIdMapping);
+                _type = asm.GetType("Knx.Ets.XmlSigning.CatalogIdPatcher");
+            }
         }
 
         public void Patch()
