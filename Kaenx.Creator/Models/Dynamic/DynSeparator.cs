@@ -19,7 +19,7 @@ namespace Kaenx.Creator.Models.Dynamic
             set { _id = value; Changed("Id"); }
         }
 
-        private string _name = "Unbenannt";
+        private string _name = "";
         public string Name
         {
             get { return _name; }

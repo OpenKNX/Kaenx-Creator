@@ -11,6 +11,7 @@
         xmlns:select="clr-namespace:Kaenx.Creator.Selectors"
         xmlns:p="clr-namespace:Kaenx.Creator.Properties"
         xmlns:avalonedit="http://icsharpcode.net/sharpdevelop/avalonedit"
+        xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
         mc:Ignorable="d"
         Icon="FileLogo.ico"
         Title="Kaenx Creator" Height="700" Width="1000">
@@ -420,11 +421,21 @@
         <Menu>
             <MenuItem Header="{x:Static p:Resources.menu_proj}">
                 <MenuItem x:Name="MenuLoad" Header="{x:Static p:Resources.menu_proj_new}">
+                    <MenuItem.Icon>
+                        <Image Source="{svgc:SvgImage Source=/Assets/Images/Menu/New.svg, AppName=Kaenx.Creator}" />
+                    </MenuItem.Icon>
                     <MenuItem Header="Leer" Click="ClickNew" />
                     <Separator />
                 </MenuItem>
-                <MenuItem Header="{x:Static p:Resources.menu_proj_open}" Click="ClickOpen" />
+                <MenuItem Header="{x:Static p:Resources.menu_proj_open}" Click="ClickOpen">
+                    <MenuItem.Icon>
+                        <Image Source="{svgc:SvgImage Source=/Assets/Images/Menu/Open.svg, AppName=Kaenx.Creator}" />
+                    </MenuItem.Icon>
+                </MenuItem>
                 <MenuItem x:Name="MenuSave" IsEnabled="False" Header="{x:Static p:Resources.menu_proj_save}">
+                    <MenuItem.Icon>
+                        <Image Source="{svgc:SvgImage Source=/Assets/Images/Menu/Save.svg, AppName=Kaenx.Creator}" />
+                    </MenuItem.Icon>
                     <MenuItem x:Name="MenuSaveBtn" Header="Speichern" Click="ClickSave" IsEnabled="false" />
                     <MenuItem Header="Speichern unter" Click="ClickSaveAs" />
                     <MenuItem Header="Speichern als Template" />
@@ -793,7 +804,7 @@
                 </TabItem.Header>
 
                 <TabControl TabStripPlacement="Left" Style="{StaticResource LeftTabControl}">
-                    <TabItem Header="Allgemein" BorderThickness="0 0 4 0" Style="{StaticResource LeftTabItem}">
+                    <TabItem Header="{x:Static p:Resources.tabs_gen}" BorderThickness="0 0 4 0" Style="{StaticResource LeftTabItem}">
                         <StackPanel>
                             <StackPanel.Resources>
                                 <Style TargetType="HeaderedContentControl">
@@ -809,91 +820,89 @@
                                 <Style TargetType="Button">
                                     <Setter Property="Margin" Value="5" />
                                 </Style>
-                                <Style TargetType="ListView">
+                                <Style TargetType="ListBox">
+                                    <Setter Property="Margin" Value="5" />
+                                </Style>
+                                <Style TargetType="TextBox">
+                                    <Setter Property="Margin" Value="5" />
+                                </Style>
+                                <Style TargetType="DataGrid">
                                     <Setter Property="Margin" Value="5" />
                                 </Style>
                             </StackPanel.Resources>
                             
-                            <HeaderedContentControl Header="Version">
-                                <TextBox Text="{Binding Number, UpdateSourceTrigger=PropertyChanged}" />
-                            </HeaderedContentControl>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition MaxWidth="300" />
+                                </Grid.ColumnDefinitions>
 
-                            <HeaderedContentControl Header="Name (intern)">
-                                <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
-                            </HeaderedContentControl>
-                            <HeaderedContentControl Header="Text">
-                                <DataGrid ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
-                                    <DataGrid.Columns>
-                                        <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
-                                        <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
-                                    </DataGrid.Columns>
-                                </DataGrid>
-                            </HeaderedContentControl>
-                            <HeaderedContentControl Header="Namespace Version">
-                                <ComboBox x:Name="NamespaceSelection" DisplayMemberPath="DisplayName" SelectedValue="{Binding NamespaceVersion}" SelectedIndex="3" SelectedValuePath="Number">
-                                    <!--<ComboBox.ItemTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding DisplayName}" IsEnabled="{Binding IsEnabled}" />
-                                        </DataTemplate>
-                                    </ComboBox.ItemTemplate>-->
-                                    <ComboBox.ItemContainerStyle>
-                                        <Style TargetType="{x:Type ComboBoxItem}">
-                                            <Setter Property="IsEnabled" Value="{Binding IsEnabled}"/>
-                                        </Style>
-                                    </ComboBox.ItemContainerStyle>
-                                </ComboBox>
-                            </HeaderedContentControl>
+                                <StackPanel>
+                                    <HeaderedContentControl Header="Name (intern)">
+                                        <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
+                                    </HeaderedContentControl>
+                                    <HeaderedContentControl Header="Text">
+                                        <DataGrid ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
+                                            <DataGrid.Columns>
+                                                <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                                                <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                                            </DataGrid.Columns>
+                                        </DataGrid>
+                                    </HeaderedContentControl>
+                                    <HeaderedContentControl Grid.Row="1" Header="Sprachen" VerticalAlignment="Stretch">
+                                        <ListBox x:Name="SupportedLanguagesVers" ItemsSource="{Binding Languages}" DisplayMemberPath="Text" />                                    
+                                    </HeaderedContentControl>
+                                </StackPanel>
 
-
-
-                            <HeaderedContentControl Header="Sprachen">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition />
-                                        <ColumnDefinition MaxWidth="300" />
-                                    </Grid.ColumnDefinitions>
-                                    
-                                    <ListBox x:Name="SupportedLanguagesVers" ItemsSource="{Binding Languages}" DisplayMemberPath="Text" />
-                                    
-                                    <StackPanel Grid.Column="1">
-                                        <HeaderedContentControl Header="Bearbeiten">
-                                            <StackPanel>
-                                                <ComboBox x:Name="LanguagesListVers" DisplayMemberPath="Text">
-                                                    <models:Language Text="Tschechisch" CultureCode="cs-CZ" />
-                                                    <models:Language Text="Dänisch" CultureCode="da-DK" />
-                                                    <models:Language Text="Deutsch" CultureCode="de-DE" />
-                                                    <models:Language Text="Griechisch" CultureCode="el-GR" />
-                                                    <models:Language Text="Englisch" CultureCode="en-US" />
-                                                    <models:Language Text="Spanisch" CultureCode="es-ES" />
-                                                    <models:Language Text="Finnisch" CultureCode="fi-FI" />
-                                                    <models:Language Text="Französisch" CultureCode="fr-FR" />
-                                                    <models:Language Text="Ungarisch" CultureCode="hu-HU" />
-                                                    <models:Language Text="Isländisch" CultureCode="is-IS" />
-                                                    <models:Language Text="Italienisch" CultureCode="it-IT" />
-                                                    <models:Language Text="Japanisch" CultureCode="ja-JP" />
-                                                    <models:Language Text="Norwegisch" CultureCode=" nb-NO" />
-                                                    <models:Language Text="Niederländisch" CultureCode="nl-NL" />
-                                                    <models:Language Text="Polnisch" CultureCode="pl-PL" />
-                                                    <models:Language Text="Portugisisch" CultureCode="pt-PT" />
-                                                    <models:Language Text="Rumänisch" CultureCode="ro-RO" />
-                                                    <models:Language Text="Russisch" CultureCode="ru-RU" />
-                                                    <models:Language Text="Slovakisch" CultureCode="sk-SK" />
-                                                    <models:Language Text="Slovenisch" CultureCode="sl-SI" />
-                                                    <models:Language Text="Schwedisch" CultureCode="sv-SE" />
-                                                    <models:Language Text="Türkisch" CultureCode="tr-TR" />
-                                                    <models:Language Text="Chinesisch" CultureCode="zh-CN" />
-                                                </ComboBox>
-                                                <Button Content="Hinzufügen" Click="ClickAddLanguageVers" />
-                                                <Button  Content="Entfernen" Click="ClickRemoveLanguageVers" />
-                                            </StackPanel>
-                                        </HeaderedContentControl>
-                                        <HeaderedContentControl Header="Standard Sprache">
-                                            <ComboBox ItemsSource="{Binding Languages}" SelectedValue="{Binding DefaultLanguage}" SelectedValuePath="CultureCode" DisplayMemberPath="Text"></ComboBox>
-                                        </HeaderedContentControl>
-                                    </StackPanel>
-                                </Grid>
-                            </HeaderedContentControl>
-
+                                <StackPanel Grid.Column="1">
+                                    <HeaderedContentControl Header="Version">
+                                        <TextBox Text="{Binding Number, UpdateSourceTrigger=PropertyChanged}" />
+                                    </HeaderedContentControl>
+                                    <HeaderedContentControl Header="Namespace Version">
+                                        <ComboBox x:Name="NamespaceSelection" DisplayMemberPath="DisplayName" SelectedValue="{Binding NamespaceVersion}" SelectedIndex="3" SelectedValuePath="Number">
+                                            <ComboBox.ItemContainerStyle>
+                                                <Style TargetType="{x:Type ComboBoxItem}">
+                                                    <Setter Property="IsEnabled" Value="{Binding IsEnabled}"/>
+                                                </Style>
+                                            </ComboBox.ItemContainerStyle>
+                                        </ComboBox>
+                                    </HeaderedContentControl>
+                                    <HeaderedContentControl Header="Bearbeiten">
+                                        <StackPanel>
+                                            <ComboBox x:Name="LanguagesListVers" DisplayMemberPath="Text">
+                                                <models:Language Text="Tschechisch" CultureCode="cs-CZ" />
+                                                <models:Language Text="Dänisch" CultureCode="da-DK" />
+                                                <models:Language Text="Deutsch" CultureCode="de-DE" />
+                                                <models:Language Text="Griechisch" CultureCode="el-GR" />
+                                                <models:Language Text="Englisch" CultureCode="en-US" />
+                                                <models:Language Text="Spanisch" CultureCode="es-ES" />
+                                                <models:Language Text="Finnisch" CultureCode="fi-FI" />
+                                                <models:Language Text="Französisch" CultureCode="fr-FR" />
+                                                <models:Language Text="Ungarisch" CultureCode="hu-HU" />
+                                                <models:Language Text="Isländisch" CultureCode="is-IS" />
+                                                <models:Language Text="Italienisch" CultureCode="it-IT" />
+                                                <models:Language Text="Japanisch" CultureCode="ja-JP" />
+                                                <models:Language Text="Norwegisch" CultureCode=" nb-NO" />
+                                                <models:Language Text="Niederländisch" CultureCode="nl-NL" />
+                                                <models:Language Text="Polnisch" CultureCode="pl-PL" />
+                                                <models:Language Text="Portugisisch" CultureCode="pt-PT" />
+                                                <models:Language Text="Rumänisch" CultureCode="ro-RO" />
+                                                <models:Language Text="Russisch" CultureCode="ru-RU" />
+                                                <models:Language Text="Slovakisch" CultureCode="sk-SK" />
+                                                <models:Language Text="Slovenisch" CultureCode="sl-SI" />
+                                                <models:Language Text="Schwedisch" CultureCode="sv-SE" />
+                                                <models:Language Text="Türkisch" CultureCode="tr-TR" />
+                                                <models:Language Text="Chinesisch" CultureCode="zh-CN" />
+                                            </ComboBox>
+                                            <Button Content="Hinzufügen" Click="ClickAddLanguageVers" />
+                                            <Button  Content="Entfernen" Click="ClickRemoveLanguageVers" />
+                                        </StackPanel>
+                                    </HeaderedContentControl>
+                                    <HeaderedContentControl Header="Standard Sprache">
+                                        <ComboBox ItemsSource="{Binding Languages}" SelectedValue="{Binding DefaultLanguage}" SelectedValuePath="CultureCode" DisplayMemberPath="Text"></ComboBox>
+                                    </HeaderedContentControl>
+                                </StackPanel>
+                            </Grid>
                             
                             <CheckBox IsChecked="{Binding IsMemSizeAuto}" Content="Automatisch Speicher berechnen beim Veröffentlichen" />
                             <CheckBox IsChecked="{Binding IsParameterRefAuto}" Content="Parameter Refs automatisch berechnen" />
@@ -1875,77 +1884,92 @@
                                         </TextBlock>
                                     </HierarchicalDataTemplate>
                                     <HierarchicalDataTemplate DataType="{x:Type dyn:DynChannel}" ItemsSource="{Binding Items}">
-                                        <TextBlock>
-                                            <TextBlock.ContextMenu>
-                                                <ContextMenu>
-                                                    <MenuItem Header="Block hinzufügen" Click="ClickAddDynBlock" />
-                                                    <MenuItem Header="Abzweigung hinzufügen" Click="ClickAddDynChoose" />
-                                                    <Separator />
-                                                    <MenuItem Header="Entfernen" Click="ClickRemoveDyn" />
-                                                </ContextMenu>
-                                            </TextBlock.ContextMenu>
-                                            <Run Text="Channel" />
-                                            <Run Text="{Binding Name}" />
-                                        </TextBlock>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Image Source="{svgc:SvgImage Source=/Assets/Images/Dynamic/Block.svg, AppName=Kaenx.Creator}" Height="18" Width="18" Margin="4" />
+                                            <TextBlock VerticalAlignment="Center">
+                                                <TextBlock.ContextMenu>
+                                                    <ContextMenu>
+                                                        <MenuItem Header="Block hinzufügen" Click="ClickAddDynBlock" />
+                                                        <MenuItem Header="Abzweigung hinzufügen" Click="ClickAddDynChoose" />
+                                                        <Separator />
+                                                        <MenuItem Header="Entfernen" Click="ClickRemoveDyn" />
+                                                    </ContextMenu>
+                                                </TextBlock.ContextMenu>
+                                                <Run Text="Channel" />
+                                                <Run Text="{Binding Name}" />
+                                            </TextBlock>
+                                        </StackPanel>
                                     </HierarchicalDataTemplate>
                                     <HierarchicalDataTemplate DataType="{x:Type dyn:DynChannelIndependet}" ItemsSource="{Binding Items}">
-                                        <TextBlock Text="Channel Independent">
-                                            <TextBlock.ContextMenu>
-                                                <ContextMenu>
-                                                    <MenuItem Header="Block hinzufügen" Click="ClickAddDynBlock" />
-                                                    <MenuItem Header="Abzweigung hinzufügen" Click="ClickAddDynChoose" />
-                                                    <Separator />
-                                                    <MenuItem Header="Entfernen" Click="ClickRemoveDyn" />
-                                                </ContextMenu>
-                                            </TextBlock.ContextMenu>
-                                        </TextBlock>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Image Source="{svgc:SvgImage Source=/Assets/Images/Dynamic/Block.svg, AppName=Kaenx.Creator}" Height="18" Width="18" Margin="4" />
+                                            <TextBlock Text="Channel Independent" VerticalAlignment="Center">
+                                                <TextBlock.ContextMenu>
+                                                    <ContextMenu>
+                                                        <MenuItem Header="Block hinzufügen" Click="ClickAddDynBlock" />
+                                                        <MenuItem Header="Abzweigung hinzufügen" Click="ClickAddDynChoose" />
+                                                        <Separator />
+                                                        <MenuItem Header="Entfernen" Click="ClickRemoveDyn" />
+                                                    </ContextMenu>
+                                                </TextBlock.ContextMenu>
+                                            </TextBlock>
+                                        </StackPanel>
                                     </HierarchicalDataTemplate>
                                     <HierarchicalDataTemplate DataType="{x:Type dyn:DynParaBlock}" ItemsSource="{Binding Items}">
-                                        <TextBlock>
-                                            <TextBlock.ContextMenu>
-                                                <ContextMenu>
-                                                    <MenuItem Header="Parameter hinzufügen" Click="ClickAddDynPara" />
-                                                    <MenuItem Header="KO hinzufügen" Click="ClickAddDynCom" />
-                                                    <MenuItem Header="Separator hinzufügen" Click="ClickAddDynSep" />
-                                                    <MenuItem Header="Abzweigung hinzufügen" Click="ClickAddDynChoose" />
-                                                    <Separator />
-                                                    <MenuItem Header="Entfernen" Click="ClickRemoveDyn" />
-                                                </ContextMenu>
-                                            </TextBlock.ContextMenu>
-                                            <Run Text="Block" />
-                                            <Run Text="{Binding Name}" />
-                                        </TextBlock>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Image Source="{svgc:SvgImage Source=/Assets/Images/Dynamic/Block.svg, AppName=Kaenx.Creator}" Height="18" Width="18" Margin="4" />
+                                            <TextBlock VerticalAlignment="Center">
+                                                <TextBlock.ContextMenu>
+                                                    <ContextMenu>
+                                                        <MenuItem Header="Parameter hinzufügen" Click="ClickAddDynPara" />
+                                                        <MenuItem Header="KO hinzufügen" Click="ClickAddDynCom" />
+                                                        <MenuItem Header="Separator hinzufügen" Click="ClickAddDynSep" />
+                                                        <MenuItem Header="Abzweigung hinzufügen" Click="ClickAddDynChoose" />
+                                                        <Separator />
+                                                        <MenuItem Header="Entfernen" Click="ClickRemoveDyn" />
+                                                    </ContextMenu>
+                                                </TextBlock.ContextMenu>
+                                                <Run Text="Block" />
+                                                <Run Text="{Binding Name}" />
+                                            </TextBlock>
+                                        </StackPanel>
                                     </HierarchicalDataTemplate>
                                     <HierarchicalDataTemplate DataType="{x:Type dyn:DynChoose}" ItemsSource="{Binding Items}">
-                                        <TextBlock>
-                                            <TextBlock.ContextMenu>
-                                                <ContextMenu>
-                                                    <MenuItem Header="Bedingung hinzufügen" Click="ClickAddDynWhen" />
-                                                    <MenuItem Header="Entfernen" Click="ClickRemoveDyn" />
-                                                </ContextMenu>
-                                            </TextBlock.ContextMenu>
-                                            <Run Text="Auswahl" />
-                                            <Run Text="{Binding Name}" />
-                                        </TextBlock>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Image Source="{svgc:SvgImage Source=/Assets/Images/Dynamic/Choose.svg, AppName=Kaenx.Creator}" Height="18" Width="18" Margin="4" />
+                                            <TextBlock VerticalAlignment="Center">
+                                                <TextBlock.ContextMenu>
+                                                    <ContextMenu>
+                                                        <MenuItem Header="Bedingung hinzufügen" Click="ClickAddDynWhen" />
+                                                        <MenuItem Header="Entfernen" Click="ClickRemoveDyn" />
+                                                    </ContextMenu>
+                                                </TextBlock.ContextMenu>
+                                                <Run Text="Auswahl" />
+                                                <Run Text="{Binding Name}" />
+                                            </TextBlock>
+                                        </StackPanel>
                                     </HierarchicalDataTemplate>
                                     <HierarchicalDataTemplate DataType="{x:Type dyn:DynWhen}" ItemsSource="{Binding Items}">
-                                        <TextBlock>
-                                            <TextBlock.ContextMenu>
-                                                <ContextMenu Loaded="LoadingContextDynWhen">
-                                                    <MenuItem Header="Independent Channel hinzufügen" Click="ClickAddDynIndep" />
-                                                    <MenuItem Header="Channel hinzufügen" />
-                                                    <MenuItem Header="Block hinzufügen" Click="ClickAddDynBlock" />
-                                                    <MenuItem Header="Abzweigung hinzufügen" Click="ClickAddDynChoose" />
-                                                    <Separator />
-                                                    <MenuItem Header="Parameter hinzufügen" Click="ClickAddDynPara" />
-                                                    <MenuItem Header="KO hinzufügen" Click="ClickAddDynCom" />
-                                                    <MenuItem Header="Separator hinzufügen" Click="ClickAddDynSep" />
-                                                    <MenuItem Header="Entfernen" Click="ClickRemoveDyn" />
-                                                </ContextMenu>
-                                            </TextBlock.ContextMenu>
-                                            <Run Text="Bedingung" />
-                                            <Run Text="{Binding Name}" />
-                                        </TextBlock>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Image Source="{svgc:SvgImage Source=/Assets/Images/Dynamic/When.svg, AppName=Kaenx.Creator}" Height="18" Width="18" Margin="4" />
+                                            <TextBlock VerticalAlignment="Center">
+                                                <TextBlock.ContextMenu>
+                                                    <ContextMenu Loaded="LoadingContextDynWhen">
+                                                        <MenuItem Header="Independent Channel hinzufügen" Click="ClickAddDynIndep" />
+                                                        <MenuItem Header="Channel hinzufügen" />
+                                                        <MenuItem Header="Block hinzufügen" Click="ClickAddDynBlock" />
+                                                        <MenuItem Header="Abzweigung hinzufügen" Click="ClickAddDynChoose" />
+                                                        <Separator />
+                                                        <MenuItem Header="Parameter hinzufügen" Click="ClickAddDynPara" />
+                                                        <MenuItem Header="KO hinzufügen" Click="ClickAddDynCom" />
+                                                        <MenuItem Header="Separator hinzufügen" Click="ClickAddDynSep" />
+                                                        <MenuItem Header="Entfernen" Click="ClickRemoveDyn" />
+                                                    </ContextMenu>
+                                                </TextBlock.ContextMenu>
+                                                <Run Text="Bedingung" />
+                                                <Run Text="{Binding Name}" />
+                                            </TextBlock>
+                                        </StackPanel>
                                     </HierarchicalDataTemplate>
                                     <DataTemplate DataType="{x:Type dyn:DynParameter}">
                                         <StackPanel Orientation="Horizontal">
@@ -1954,13 +1978,14 @@
                                                     <MenuItem Header="Entfernen" Click="ClickRemoveDyn" />
                                                 </ContextMenu>
                                             </StackPanel.ContextMenu>
-                                            <TextBlock>
+                                            <Image Source="{svgc:SvgImage Source=/Assets/Images/Dynamic/Parameter.svg, AppName=Kaenx.Creator}" Height="18" Width="18" Margin="4" />
+                                            <TextBlock VerticalAlignment="Center">
                                                 <Run Text="Parameter" />
                                                 <Run Text="{Binding Name}" />
                                                 <Run Text="{Binding ParameterRefObject.Name}" />
                                             </TextBlock>
                                             <!-- Visibility="{Binding ElementName=VersionList, Path=SelectedItem.IsParameterRefAuto, Converter={StaticResource BoolToVis}}"-->
-                                            <TextBlock Margin="10 0 0 0">
+                                            <TextBlock Margin="10 0 0 0" VerticalAlignment="Center">
                                                 <Run Text="[" />
                                                 <Run Text="{Binding ParameterRefObject.ParameterObject.Name}" />
                                                 <Run Text="]" />
@@ -1974,12 +1999,13 @@
                                                     <MenuItem Header="Entfernen" Click="ClickRemoveDyn" />
                                                 </ContextMenu>
                                             </StackPanel.ContextMenu>
-                                            <TextBlock>
+                                            <Image Source="{svgc:SvgImage Source=/Assets/Images/Dynamic/ComObject.svg, AppName=Kaenx.Creator}" Height="18" Width="18" Margin="4" />
+                                            <TextBlock VerticalAlignment="Center">
                                                 <Run Text="KO" />
                                                 <Run Text="{Binding Name}" />
                                                 <Run Text="{Binding ComObjectRefObject.Name}" />
                                             </TextBlock>
-                                            <TextBlock Margin="10 0 0 0">
+                                            <TextBlock Margin="10 0 0 0" VerticalAlignment="Center">
                                                 <Run Text="[" />
                                                 <Run Text="{Binding ComObjectRefObject.ComObjectObject.Name}" />
                                                 <Run Text="]" />

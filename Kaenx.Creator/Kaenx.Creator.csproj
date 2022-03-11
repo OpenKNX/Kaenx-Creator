@@ -5,7 +5,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>FileLogo.ico</ApplicationIcon>
-  <Version>1.0.0.0</Version>
+    <Version>1.0.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,9 +13,18 @@
     <PackageReference Include="System.Text.Encoding.CodePages" Version="5.0.0" />
     <PackageReference Include="log4net" Version="2.0.13" />
     <PackageReference Include="AvalonEdit" Version="6.1.2.30" />
+    <PackageReference Include="SharpVectors" Version="1.7.7" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Assets\Images\Dynamic\Block.svg" />
+    <Resource Include="Assets\Images\Dynamic\Choose.svg" />
+    <Resource Include="Assets\Images\Dynamic\ComObject.svg" />
+    <Resource Include="Assets\Images\Dynamic\Parameter.svg" />
+    <Resource Include="Assets\Images\Dynamic\When.svg" />
+    <Resource Include="Assets\Images\Menu\New.svg" />
+    <Resource Include="Assets\Images\Menu\Open.svg" />
+    <Resource Include="Assets\Images\Menu\Save.svg" />
     <None Update="Templates\Minimal.temp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

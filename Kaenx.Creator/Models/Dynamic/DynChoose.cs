@@ -12,7 +12,7 @@ namespace Kaenx.Creator.Models.Dynamic
         [JsonIgnore]
         public IDynItems Parent { get; set; }
 
-        private string _name = "Unbenannt";
+        private string _name = "";
         public string Name
         {
             get { return _name; }
