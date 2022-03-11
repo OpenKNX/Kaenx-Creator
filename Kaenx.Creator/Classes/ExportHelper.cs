@@ -964,13 +964,14 @@ namespace Kaenx.Creator.Classes
 
             FileInfo hwFileInfo = new FileInfo(GetRelPath("Temp", manu, "Hardware.xml"));
             FileInfo catalogFileInfo = new FileInfo(GetRelPath("Temp", manu, "Catalog.xml"));
-
+            
+            int nsVersion = int.Parse(currentNamespace.Substring(currentNamespace.LastIndexOf('/')+1));;
             foreach (string file in Directory.GetFiles(GetRelPath("Temp", manu)))
             {
                 if (!file.Contains("M-") || !file.Contains("_A-")) continue;
 
                 FileInfo info = new FileInfo(file);
-                ApplicationProgramHasher aph = new ApplicationProgramHasher(info, mapBaggageIdToFileIntegrity, convPath, true);
+                ApplicationProgramHasher aph = new ApplicationProgramHasher(info, mapBaggageIdToFileIntegrity, convPath, nsVersion, true);
                 aph.HashFile();
 
                 string oldApplProgId = aph.OldApplProgId;
@@ -982,11 +983,11 @@ namespace Kaenx.Creator.Classes
                     applProgHashes.Add(newApplProgId, genHashString);
             }
 
-            HardwareSigner hws = new HardwareSigner(hwFileInfo, applProgIdMappings, applProgHashes, convPath, true);
+            HardwareSigner hws = new HardwareSigner(hwFileInfo, applProgIdMappings, applProgHashes, convPath, nsVersion, true);
             hws.SignFile();
             IDictionary<string, string> hardware2ProgramIdMapping = hws.OldNewIdMappings;
 
-            CatalogIdPatcher cip = new CatalogIdPatcher(catalogFileInfo, hardware2ProgramIdMapping, convPath);
+            CatalogIdPatcher cip = new CatalogIdPatcher(catalogFileInfo, hardware2ProgramIdMapping, convPath, nsVersion);
             cip.Patch();
 
             File.Copy(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "knx_master.xml"), GetRelPath("Temp", "knx_master.xml"));

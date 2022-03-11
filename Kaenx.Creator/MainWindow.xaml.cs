@@ -65,8 +65,8 @@ namespace Kaenx.Creator
             new Models.EtsVersion(13, "ETS 5.1 (13)", "5.1.84.17602"),
             new Models.EtsVersion(14, "ETS 5.6 (14)", "5.6.241.33672"),
             //new Models.EtsVersion(20, "ETS 5.7 (20)", "5.7.293.38537"),
-            new Models.EtsVersion(20, "ETS 5.7 (20)", "5.7.298.38537"),
-            new Models.EtsVersion(21, "ETS 6.0 (21)", "6.0.4351.0")
+            new Models.EtsVersion(20, "ETS 5.7 (20)", "5.7"),
+            new Models.EtsVersion(21, "ETS 6.0 (21)", "6.0")
         };
 
 
@@ -118,7 +118,7 @@ namespace Kaenx.Creator
                 return true;
 
             string newVersion = versionInfo.FileVersion;
-            if(newVersion.Split('.').Length != 4) newVersion += ".0";
+            if (versionInfo.FileVersion.Split('.').Length == 2) newVersion = string.Join('.', newVersion.Split('.').Take(2));
             try {
                 Directory.CreateDirectory(System.IO.Path.Combine(path, "CV", newVersion));
             } catch{
@@ -135,16 +135,31 @@ namespace Kaenx.Creator
         }
 
         private void CheckEtsVersions() {
-            if(string.IsNullOrEmpty(etsPath)) {
+            bool flag = false;
+            if(Directory.Exists(System.IO.Path.Combine(etsPath, "CV", "6.0"))) {
+                flag = true;
                 foreach(Models.EtsVersion v in EtsVersions)
-                    v.IsEnabled = false;
+                    v.IsEnabled = true;
             } else {
-                foreach(Models.EtsVersion v in EtsVersions)
-                {
-                    v.IsEnabled = Directory.Exists(System.IO.Path.Combine(etsPath, "CV", v.FolderPath));
+                if(File.Exists(System.IO.Path.Combine(etsPath, "Knx.Ets.XmlSigning.dll"))) {
+                    FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(System.IO.Path.Combine(etsPath, "Knx.Ets.XmlSigning.dll"));
+                    if(versionInfo.FileVersion.ToString().StartsWith("6.0")) {
+                        flag = true;
+                        foreach(Models.EtsVersion v in EtsVersions)
+                            v.IsEnabled = true;
+                    }
                 }
             }
 
+            if(!flag) {
+                if(string.IsNullOrEmpty(etsPath)) {
+                    foreach(Models.EtsVersion v in EtsVersions)
+                        v.IsEnabled = false;
+                } else {
+                    foreach(Models.EtsVersion v in EtsVersions)
+                        v.IsEnabled = Directory.Exists(System.IO.Path.Combine(etsPath, "CV", v.FolderPath));
+                }
+            }
 
             NamespaceSelection.ItemsSource = EtsVersions;
         }
