@@ -75,16 +75,16 @@ namespace Kaenx.Creator.Classes
                 {
                     manuHex = entryTemp.FullName.Substring(2, 4);
                     int manuId = int.Parse(manuHex, System.Globalization.NumberStyles.HexNumber);
-                    if (_general.ManufacturerId == -1)
+                    if (_general.ManufacturerId != manuId)
                     {
-                        _general.ManufacturerId = manuId;
-                    }
-                    else if (_general.ManufacturerId != manuId)
-                    {
-                        if (System.Windows.MessageBox.Show("Hersteller der Produktdatenbank stimmt nicht mit dem Hersteller des Projekts über ein.\r\nSoll trotzdem importiert werden?", "Question", System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Warning) == System.Windows.MessageBoxResult.No)
-                        {
-                            Archive.Dispose();
-                            return;
+                        var res = System.Windows.MessageBox.Show($"Hersteller der Produktdatenbank stimmt nicht mit dem Hersteller des Projekts über ein.\r\nWollen Sie ihre HerstellerId von {_general.ManufacturerId:X4} auf {manuId:X4} ändern?", "Question", System.Windows.MessageBoxButton.YesNoCancel, System.Windows.MessageBoxImage.Warning);
+                        switch(res) {
+                            case System.Windows.MessageBoxResult.Yes:
+                                _general.ManufacturerId = manuId;;
+                                break;
+                            case System.Windows.MessageBoxResult.Cancel:
+                                Archive.Dispose();
+                                return;
                         }
                         break;
                     }
@@ -182,9 +182,9 @@ namespace Kaenx.Creator.Classes
             ImportSegments(xstatic.Element(GetXName("Code")));
             ImportParameterTypes(xstatic.Element(GetXName("ParameterTypes")));
             ImportParameter(xstatic.Element(GetXName("Parameters")), currentVers);
-            ImportParameterRefs(xstatic.Element(GetXName("ParameterRefs")));
-            ImportComObjects(xstatic.Element(GetXName("ComObjectTable")));
-            ImportComObjectRefs(xstatic.Element(GetXName("ComObjectRefs")));
+            ImportParameterRefs(xstatic.Element(GetXName("ParameterRefs")), currentVers);
+            ImportComObjects(xstatic.Element(GetXName("ComObjectTable")), currentVers);
+            ImportComObjectRefs(xstatic.Element(GetXName("ComObjectRefs")), currentVers);
             ImportModules(xapp.Element(GetXName("ModuleDefs")));
             ImportDynamic(xapp.Element(GetXName("Dynamic")));
         }
@@ -386,6 +386,7 @@ namespace Kaenx.Creator.Classes
                     ParseParameter(xpara, vbase, union, xmem);
                 }
             }
+            //TODO check if module can also have unions
             currentVers.IsUnionActive = unionCounter > 1;
         }
 
@@ -446,7 +447,7 @@ namespace Kaenx.Creator.Classes
             vbase.Parameters.Add(para);
         }
 
-        public void ImportParameterRefs(XElement xrefs) {
+        public void ImportParameterRefs(XElement xrefs, Models.IVersionBase vbase) {
             if(xrefs == null) return;
             _uidCounter = 1;
 
@@ -473,26 +474,33 @@ namespace Kaenx.Creator.Classes
                 if (id.StartsWith("-"))
                     id = id.Substring(1);
                 int paraId = int.Parse(id);
-                pref.ParameterObject = currentVers.Parameters.Single(p => p.Id == paraId);
+                pref.ParameterObject = vbase.Parameters.Single(p => p.Id == paraId);
                 pref.Name = pref.Id + " " + pref.ParameterObject.Name;
 
-                currentVers.ParameterRefs.Add(pref);
+                vbase.ParameterRefs.Add(pref);
             }
         }
 
-        public void ImportComObjects(XElement xcoms)
+        public void ImportComObjects(XElement xcoms, Models.IVersionBase vbase)
         {
+            if(xcoms == null) return;
             _uidCounter = 1;
 
             foreach (XElement xcom in xcoms.Elements())
             {
                 Models.ComObject com = new Models.ComObject()
                 {
-                    Name = xcom.Attribute("Name")?.Value ?? "",
                     Number = int.Parse(xcom.Attribute("Number").Value),
-                    Id = int.Parse(GetLastSplit(xcom.Attribute("Id").Value, 2)),
                     UId = _uidCounter++
                 };
+
+                string id = GetLastSplit(xcom.Attribute("Id").Value, 2);
+                id = id.Substring(id.LastIndexOf('-') + 1); //Modules haben Id M-00FA_A-0207-23-E298_MD-1_O-2-0
+                com.Id = int.Parse(id);
+
+                com.Name = xcom.Attribute("Name")?.Value;
+                if(string.IsNullOrEmpty(com.Name))
+                    com.Name =  $"{com.Id} - {com.Number}";
 
                 com.Text = GetTranslation(xcom.Attribute("Id").Value, "Text", xcom);
                 com.FunctionText = GetTranslation(xcom.Attribute("Id").Value, "FunctionText", xcom);
@@ -530,14 +538,14 @@ namespace Kaenx.Creator.Classes
                 }
                 else
                 {
-
+                    //TODO muss ich hier was machen?
                 }
 
-                currentVers.ComObjects.Add(com);
+                vbase.ComObjects.Add(com);
             }
         }
 
-        public void ImportComObjectRefs(XElement xrefs) {
+        public void ImportComObjectRefs(XElement xrefs, Models.IVersionBase vbase) {
             if(xrefs == null) return;
             _uidCounter = 1;
 
@@ -560,10 +568,9 @@ namespace Kaenx.Creator.Classes
                 cref.OverwriteText = cref.Text.Any(t => !string.IsNullOrEmpty(t.Text));
 
                 string id = GetLastSplit(xref.Attribute("RefId").Value, 2);
-                if (id.StartsWith("-"))
-                    id = id.Substring(1);
+                id = id.Substring(id.LastIndexOf('-') + 1); //Modules haben Id M-00FA_A-0207-23-E298_MD-1_O-2-0
                 int comId = int.Parse(id);
-                cref.ComObjectObject = currentVers.ComObjects.Single(c => c.Id == comId);
+                cref.ComObjectObject = vbase.ComObjects.Single(c => c.Id == comId);
                 cref.Name = cref.Id + " " + cref.ComObjectObject.Name;
 
 
@@ -617,7 +624,7 @@ namespace Kaenx.Creator.Classes
 
                 }
 
-                currentVers.ComObjectRefs.Add(cref);
+                vbase.ComObjectRefs.Add(cref);
             }
         }
 
@@ -631,13 +638,35 @@ namespace Kaenx.Creator.Classes
                 Models.Module mod = new Models.Module() {
                     Name = xmod.Attribute("Name")?.Value ?? "Unbenannt",
                     UId = _uidCounter++,
-                    Id = int.Parse(GetLastSplit(xmod.Attribute("Id").Value, 3))
+                    Id = int.Parse(GetLastSplit(xmod.Attribute("Id").Value, 3)),
+                    IsParameterRefAuto = false,
+                    IsComObjectRefAuto = false
                 };
 
                 XElement xstatic = xmod.Element(GetXName("Static"));
+                ImportArguments(xmod.Element(GetXName("Arguments")), mod);
                 ImportParameter(xstatic.Element(GetXName("Parameters")), mod);
+                ImportParameterRefs(xstatic.Element(GetXName("ParameterRefs")), mod);
+                ImportComObjects(xstatic.Element(GetXName("ComObjects")), mod);
+                ImportComObjectRefs(xstatic.Element(GetXName("ComObjectRefs")), mod);
 
                 currentVers.Modules.Add(mod);
+            }
+        }
+
+        public void ImportArguments(XElement xargs, Models.Module vbase)
+        {
+            if(xargs == null) return;
+            _uidCounter = 1;
+
+            foreach(XElement xarg in xargs.Elements())
+            {
+                Models.Argument arg = new Models.Argument() {
+                    UId = _uidCounter++,
+                    Name = xarg.Attribute("Name").Value,
+                    Id = int.Parse(GetLastSplit(xarg.Attribute("Id").Value, 2))
+                };
+                vbase.Arguments.Add(arg);
             }
         }
 

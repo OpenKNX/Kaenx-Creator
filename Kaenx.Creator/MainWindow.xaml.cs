@@ -1,5 +1,4 @@
-﻿using ICSharpCode.AvalonEdit.CodeCompletion;
-using Kaenx.Creator.Classes;
+﻿using Kaenx.Creator.Classes;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -79,8 +78,6 @@ namespace Kaenx.Creator
             this.DataContext = this;
             LoadBcus();
             LoadDpts();
-            editor.TextArea.TextEntered += EditorEntered;
-            editor.TextArea.TextEntering += EditorEntering;
             CheckLangs();
             CheckEtsPath();
             CheckEtsVersions();
@@ -333,63 +330,6 @@ namespace Kaenx.Creator
 
         #region Clicks
 
-        CompletionWindow completionWindow;
-        private void EditorEntered(object sender, TextCompositionEventArgs e)
-        {
-            if (e.Text == " ") {
-                // Open code completion after the user has pressed dot:
-                completionWindow = new CompletionWindow(editor.TextArea);
-                IList<ICompletionData> data = completionWindow.CompletionList.CompletionData;
-                data.Add(new Models.CompletionData("LsmIdx"));
-                data.Add(new Models.CompletionData("ObjIdx"));
-                data.Add(new Models.CompletionData("Address"));
-                data.Add(new Models.CompletionData("Size"));
-                completionWindow.Show();
-                completionWindow.Closed += delegate {
-                    completionWindow = null;
-                };
-            }
-            if(e.Text == "<") {
-                completionWindow = new CompletionWindow(editor.TextArea);
-                IList<ICompletionData> data = completionWindow.CompletionList.CompletionData;
-                data.Add(new Models.CompletionData("LdCtrlConnect", false));
-                data.Add(new Models.CompletionData("LcCtrlDisconnect", false));
-                data.Add(new Models.CompletionData("LcCtrlWriteMemory", false));
-                completionWindow.Show();
-                completionWindow.Closed += delegate {
-                    completionWindow = null;
-                };
-            }
-        }
-
-        private void EditorEntering(object sender, TextCompositionEventArgs e)
-		{
-            if(e.Text == "/") {
-                //editor.Text += "/>";
-                editor.Document.Insert(editor.SelectionStart, "/>");
-                if(completionWindow != null) completionWindow.Close();
-                e.Handled = true;
-                return;
-            } 
-            if(e.Text == "<") {
-                int selected = editor.SelectionStart;
-                editor.Document.Insert(editor.SelectionStart, "< />");
-                editor.SelectionStart = selected + 1;
-                e.Handled = true;
-                EditorEntered(sender, e);
-                return;
-            }
-			if (e.Text.Length > 0 && completionWindow != null) {
-                
-				if (!char.IsLetter(e.Text[0])) {
-					// Whenever a non-letter is typed while the completion window is open,
-					// insert the currently selected element.
-					completionWindow.CompletionList.RequestInsertion(e);
-				}
-			}
-			// do not set e.Handled=true - we still want to insert the character that was typed
-		}
-
         #region Clicks Add/Remove
 
         private void ClickAddHardDevice(object sender, RoutedEventArgs e)
@@ -405,28 +345,6 @@ namespace Kaenx.Creator
                 hard.Apps.Add(InHardApp.SelectedItem as Models.Application);
             }
             InHardApp.SelectedItem = null;
-        }
-
-        /*private void ClickRemoveDevice(object sender, RoutedEventArgs e)
-        {
-            if(DeviceList.SelectedItem == null) return;
-
-            Models.Device dev = DeviceList.SelectedItem as Models.Device;
-            General.Devices.Remove(dev);
-        }*/
-
-        private void ClickAddParamRef(object sender, RoutedEventArgs e)
-        {
-            Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
-            ver.ParameterRefs.Add(new Models.ParameterRef() { UId = AutoHelper.GetNextFreeUId(ver.ParameterRefs) });
-        }
-
-        private void ClickRemoveParamRef(object sender, RoutedEventArgs e)
-        {
-            Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
-
-            Models.ParameterRef dev = ParamRefList.SelectedItem as Models.ParameterRef;
-            ver.ParameterRefs.Remove(dev);
         }
 
         private void ClickAddVersion(object sender, RoutedEventArgs e)
@@ -638,26 +556,6 @@ namespace Kaenx.Creator
             }
         }
 
-        private void ClickAddParam(object sender, RoutedEventArgs e)
-        {
-            Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
-            Models.Parameter para = new Models.Parameter() { UId = AutoHelper.GetNextFreeUId(ver.Parameters)};
-            foreach(Models.Language lang in ver.Languages) {
-                para.Text.Add(new Models.Translation(lang, "Dummy"));
-            }
-            ver.Parameters.Add(para);
-
-            if(ver.IsParameterRefAuto){
-                ver.ParameterRefs.Add(new Models.ParameterRef(para) { UId = AutoHelper.GetNextFreeUId(ver.ParameterRefs) });
-            }
-        }
-
-        private void ClickRemoveParam(object sender, RoutedEventArgs e)
-        {
-            Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
-            ver.Parameters.Remove(ParamList.SelectedItem as Models.Parameter);
-        }
-        
         private void ClickAddModule(object sender, RoutedEventArgs e)
         {
             Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
@@ -709,56 +607,6 @@ namespace Kaenx.Creator
             (HardwareList.SelectedItem as Models.Hardware).Apps.Remove(DeviceAppList.SelectedItem as Models.Application);
         }
 
-        private void ClickAddCom(object sender, RoutedEventArgs e)
-        {
-            Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
-            Models.ComObject com = new Models.ComObject() { UId = AutoHelper.GetNextFreeUId(ver.ComObjects) };
-            foreach(Models.Language lang in ver.Languages) {
-                com.Text.Add(new Models.Translation(lang, "Dummy"));
-                com.FunctionText.Add(new Models.Translation(lang, "Dummy"));
-                com.Description.Add(new Models.Translation(lang, "Dummy"));
-            }
-            ver.ComObjects.Add(com);
-
-            if(ver.IsComObjectRefAuto){
-                Models.ComObjectRef cref = new Models.ComObjectRef(com) { UId = AutoHelper.GetNextFreeUId(ver.ComObjectRefs) };
-                foreach(Models.Language lang in ver.Languages) {
-                    cref.Text.Add(new Models.Translation(lang, ""));
-                    cref.FunctionText.Add(new Models.Translation(lang, ""));
-                    cref.Description.Add(new Models.Translation(lang, ""));
-                }
-                ver.ComObjectRefs.Add(cref);
-            }
-        }
-
-        private void ClickAddComRef(object sender, RoutedEventArgs e)
-        {
-            Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
-            Models.ComObjectRef cref = new Models.ComObjectRef() { UId = AutoHelper.GetNextFreeUId(ver.ComObjectRefs) };
-            foreach(Models.Language lang in ver.Languages) {
-                cref.Text.Add(new Models.Translation(lang, ""));
-                cref.FunctionText.Add(new Models.Translation(lang, ""));
-                cref.Description.Add(new Models.Translation(lang, ""));
-            }
-            ver.ComObjectRefs.Add(cref);
-        }
-
-        private void ClickRemoveCom(object sender, RoutedEventArgs e)
-        {
-            Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
-            Models.ComObject com = ComobjectList.SelectedItem as Models.ComObject;
-            ver.ComObjects.Remove(com);
-
-            if(ver.IsComObjectRefAuto){
-                ver.ComObjectRefs.Remove(ver.ComObjectRefs.Single(c => c.ComObjectObject == com));
-            }
-        }
-
-        private void ClickRemoveComRef(object sender, RoutedEventArgs e)
-        {
-            (VersionList.SelectedItem as Models.AppVersion).ComObjectRefs.Remove(ComobjectRefList.SelectedItem as Models.ComObjectRef);
-        }
-
         #endregion
 
         private void ClickSave(object sender, RoutedEventArgs e)
@@ -781,6 +629,33 @@ namespace Kaenx.Creator
                 System.IO.File.WriteAllText(diag.FileName, general);
                 filePath = diag.FileName;
                 MenuSaveBtn.IsEnabled = true;
+            }
+        }
+
+        private void ClickSaveTemplate(object sender, RoutedEventArgs e)
+        {
+            while(true) {
+                Controls.PromptDialog diag = new Controls.PromptDialog("Name des Templates:", "Template speichern");
+                if(diag.ShowDialog() == false) {
+                    return;
+                }
+
+                if(string.IsNullOrEmpty(diag.Answer))
+                {
+                    System.Windows.MessageBox.Show($"Bitte geben Sie einen Namen für das Template ein.", "Template speichern", System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Error);
+                    continue;
+                }
+
+                if(System.IO.File.Exists("Templates\\" + diag.Answer + ".temp"))
+                {
+                    var res = System.Windows.MessageBox.Show($"Es existiert bereits ein Template mit dem Namen '{diag.Answer}'\r\nWollen Sie es überschreiben?", "Template überschreiben?", System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Warning);
+                    if(res == System.Windows.MessageBoxResult.No)
+                        continue;
+                }
+
+                string general = Newtonsoft.Json.JsonConvert.SerializeObject(General, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Auto });
+                System.IO.File.WriteAllText("Templates\\" + diag.Answer + ".temp", general);
+                return;
             }
         }
 
@@ -955,35 +830,6 @@ namespace Kaenx.Creator
             }
 
             
-        }
-
-        private void ClickGenerateRefAuto(object sender, RoutedEventArgs e)
-        {
-            Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
-            ver.ParameterRefs.Clear();
-
-            foreach(Models.Parameter para in ver.Parameters)
-            {
-                Models.ParameterRef pref = new Models.ParameterRef();
-                pref.UId = AutoHelper.GetNextFreeUId(ver.ParameterRefs);
-                pref.Name = para.Name;
-                pref.ParameterObject = para;
-                ver.ParameterRefs.Add(pref);
-            }
-        }
-        private void ClickGenerateRefAuto2(object sender, RoutedEventArgs e)
-        {
-            Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
-            ver.ComObjectRefs.Clear();
-
-            foreach(Models.ComObject com in ver.ComObjects)
-            {
-                Models.ComObjectRef cref = new Models.ComObjectRef();
-                cref.UId = AutoHelper.GetNextFreeUId(ver.ComObjectRefs);
-                cref.Name = com.Name;
-                cref.ComObjectObject = com;
-                ver.ComObjectRefs.Add(cref);
-            }
         }
 
         private void ClickCatalogContext(object sender, RoutedEventArgs e)
@@ -1560,6 +1406,9 @@ namespace Kaenx.Creator
 
                 //TODO check ComObjectRefs for overwriting
                 // dpt, functiontext, description
+
+                //TODO check Modules also
+                //check for Argument exist
             
             }
 

@@ -1,0 +1,103 @@
+<UserControl
+    x:Class="Kaenx.Creator.Controls.ParameterRefView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:System="clr-namespace:System;assembly=mscorlib"
+    xmlns:conv="clr-namespace:Kaenx.Creator.Converter"
+    xmlns:models="clr-namespace:Kaenx.Creator.Models"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400">
+    <UserControl.Resources>
+        <conv:EmptyToBool x:Key="EmptyToBool" />
+        <conv:BoolToVisibility x:Key="BoolToVis" />
+        <conv:EnumToVisibility x:Key="EnumToVis" />
+        <conv:BoolNegation x:Key="BoolNegate" />
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="150" />
+            <ColumnDefinition Width="150" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Button Content="Hinzufügen" Click="ClickAdd" Margin="0 0 1 2" />
+        <Button Grid.Column="1" Content="Löschen" Click="ClickRemove" Margin="1 0 0 2" />
+        <Button Grid.Row="1" Grid.ColumnSpan="2" Content="Auto generieren" Click="ClickGenerateRefAuto" Margin="0 0 0 2" />
+
+        <ListView x:Name="ParamRefList" Grid.Row="2" Grid.ColumnSpan="2" ItemsSource="{Binding ParameterRefs}" DisplayMemberPath="Name" />
+
+
+        <StackPanel Grid.Column="3" Grid.RowSpan="3" Margin="5" DataContext="{Binding ElementName=ParamRefList, Path=SelectedItem}" IsEnabled="{Binding Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
+            <StackPanel.Resources>
+                <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+                    <ObjectDataProvider.MethodParameters>
+                        <x:Type TypeName="models:ParamAccess"/>
+                    </ObjectDataProvider.MethodParameters>
+                </ObjectDataProvider>
+                <Style TargetType="HeaderedContentControl">
+                    <Setter Property="Margin" Value="5" />
+                    <Setter Property="IsTabStop" Value="false" />
+                </Style>
+                <Style TargetType="ComboBox">
+                    <Setter Property="Margin" Value="0 5" />
+                </Style>
+                <Style TargetType="CheckBox">
+                    <Setter Property="Margin" Value="5" />
+                </Style>
+                <Style TargetType="Button">
+                    <Setter Property="Margin" Value="5" />
+                </Style>
+            </StackPanel.Resources>
+
+            
+            <TextBlock Margin="5 0" VerticalAlignment="Center">
+                <Run Text="UID:" />
+                <Run Text="{Binding UId}"/>
+            </TextBlock>
+
+
+            <Grid Margin="5 0">
+                <TextBlock VerticalAlignment="Center">
+                    <Run Text="ID:" />
+                    <Run Text="{Binding Id, UpdateSourceTrigger=PropertyChanged}"/>
+                </TextBlock>
+                <Button Content="Zurücksetzen" HorizontalAlignment="Right" Click="ResetId" />
+            </Grid>
+            <HeaderedContentControl Header="Name">
+                <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+            </HeaderedContentControl>
+            <HeaderedContentControl Header="Parameter">
+                <ComboBox x:Name="InParameter" DisplayMemberPath="Name" SelectedItem="{Binding ParameterObject}" />
+            </HeaderedContentControl>
+            <HeaderedContentControl Header="Wert">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <CheckBox IsChecked="{Binding OverwriteValue}" VerticalAlignment="Center" />
+                    <TextBox Grid.Column="2" IsEnabled="{Binding OverwriteValue}" Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" />
+                </Grid>
+            </HeaderedContentControl>
+            <HeaderedContentControl Header="Zugriff">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <CheckBox IsChecked="{Binding OverwriteAccess}" VerticalAlignment="Center" />
+                    <ComboBox Grid.Column="2" IsEnabled="{Binding OverwriteAccess}" ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding Access, Mode=TwoWay}" />
+                </Grid>
+            </HeaderedContentControl>
+        </StackPanel>
+    </Grid>
+</UserControl>

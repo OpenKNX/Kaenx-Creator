@@ -14,5 +14,8 @@ namespace Kaenx.Creator.Models
         public ObservableCollection<ComObjectRef> ComObjectRefs { get; set; }
         public ObservableCollection<Union> Unions { get; set; }
         public List<DynamicMain> Dynamics { get; set; }
+
+        public bool IsParameterRefAuto { get; set; }
+        public bool IsComObjectRefAuto { get; set; }
     }
 }

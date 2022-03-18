@@ -1,0 +1,42 @@
+<UserControl
+    x:Class="Kaenx.Creator.Controls.LoadProcedures"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:avalonedit="http://icsharpcode.net/sharpdevelop/avalonedit"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400">
+
+    <Grid>  
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="5" />
+            <ColumnDefinition MaxWidth="600" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" MaxHeight="250" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <avalonedit:TextEditor x:Name="editor" ShowLineNumbers="True" Grid.RowSpan="2" SyntaxHighlighting="XML" />
+        
+        <GridSplitter Grid.RowSpan="2" Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
+
+        <ListBox x:Name="MaskList" Grid.Column="2" ItemsSource="{Binding Mask.Procedures}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock>
+                        <Run Text="{Binding Type}" />
+                        <Run Text="-" />
+                        <Run Text="{Binding SubType}" />
+                    </TextBlock>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <ScrollViewer Grid.Row="1" Grid.Column="2">
+            <TextBlock Text="{Binding SelectedItem.Controls, ElementName=MaskList}" Margin="5" />
+        </ScrollViewer>
+    </Grid>
+</UserControl>

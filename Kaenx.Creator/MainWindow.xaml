@@ -10,11 +10,11 @@
         xmlns:System="clr-namespace:System;assembly=mscorlib"
         xmlns:select="clr-namespace:Kaenx.Creator.Selectors"
         xmlns:p="clr-namespace:Kaenx.Creator.Properties"
-        xmlns:avalonedit="http://icsharpcode.net/sharpdevelop/avalonedit"
         xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
+        xmlns:ctrl="clr-namespace:Kaenx.Creator.Controls"
         mc:Ignorable="d"
         Icon="FileLogo.ico"
-        Title="Kaenx Creator" Height="700" Width="1000">
+        Title="Kaenx Creator" Height="700" Width="1300">
     <Window.Resources>
         <conv:BoolNegation x:Key="BoolNegate" />
         <conv:EmptyOListToBool x:Key="EmptyListToBool" />
@@ -438,7 +438,7 @@
                     </MenuItem.Icon>
                     <MenuItem x:Name="MenuSaveBtn" Header="Speichern" Click="ClickSave" IsEnabled="false" />
                     <MenuItem Header="Speichern unter" Click="ClickSaveAs" />
-                    <MenuItem Header="Speichern als Template" />
+                    <MenuItem Header="Speichern als Template" Click="ClickSaveTemplate" />
                 </MenuItem>
                 <MenuItem x:Name="MenuClose" IsEnabled="False" Header="{x:Static p:Resources.menu_proj_close}" />
             </MenuItem>
@@ -852,6 +852,12 @@
                                     <HeaderedContentControl Grid.Row="1" Header="Sprachen" VerticalAlignment="Stretch">
                                         <ListBox x:Name="SupportedLanguagesVers" ItemsSource="{Binding Languages}" DisplayMemberPath="Text" />                                    
                                     </HeaderedContentControl>
+                                    
+                                    <CheckBox IsChecked="{Binding IsMemSizeAuto}" Content="Automatisch Speicher berechnen beim Veröffentlichen" />
+                                    <CheckBox IsChecked="{Binding IsParameterRefAuto}" Content="Parameter Refs automatisch berechnen" />
+                                    <CheckBox IsChecked="{Binding IsComObjectRefAuto}" Content="KO Refs automatisch berechnen" />
+                                    <CheckBox IsChecked="{Binding IsUnionActive}" Content="Unions aktivieren" />
+                                    <CheckBox IsChecked="{Binding IsModulesActive}" Content="ModuleDefines aktivieren" />
                                 </StackPanel>
 
                                 <StackPanel Grid.Column="1">
@@ -903,13 +909,6 @@
                                     </HeaderedContentControl>
                                 </StackPanel>
                             </Grid>
-                            
-                            <CheckBox IsChecked="{Binding IsMemSizeAuto}" Content="Automatisch Speicher berechnen beim Veröffentlichen" />
-                            <CheckBox IsChecked="{Binding IsParameterRefAuto}" Content="Parameter Refs automatisch berechnen" />
-                            <CheckBox IsChecked="{Binding IsComObjectRefAuto}" Content="KO Refs automatisch berechnen" />
-                            <CheckBox IsChecked="{Binding IsUnionActive}" Content="Unions aktivieren" />
-                            <CheckBox IsChecked="{Binding IsModulesActive}" Content="ModuleDefines aktivieren" />
-
                         </StackPanel>
                     </TabItem>
 
@@ -1220,22 +1219,34 @@
                                             <HeaderedContentControl Header="Name">
                                                 <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
                                             </HeaderedContentControl>
+
+                                            <CheckBox IsChecked="{Binding IsParameterRefAuto}" Content="Parameter Refs automatisch berechnen" />
+                                            <CheckBox IsChecked="{Binding IsComObjectRefAuto}" Content="KO Refs automatisch berechnen" />
                                         </StackPanel>
                                     </ScrollViewer>
                                 </TabItem>
+
                                 <TabItem Header="Argumente" Style="{StaticResource LeftTabItem2}"> 
-
+                                    <ctrl:ArgumentView Module="{Binding ElementName=ModuleList, Path=SelectedItem}" />
                                 </TabItem>
+
                                 <TabItem Header="Parameter" Style="{StaticResource LeftTabItem2}">
-
+                                    <ctrl:ParameterView Version="{Binding ElementName=VersionList, Path=SelectedItem}" Module="{Binding ElementName=ModuleList, Path=SelectedItem}" />
                                 </TabItem>
-                                <TabItem Header="Parameter Refs" Style="{StaticResource LeftTabItem2}">
 
+                                <TabItem Header="Parameter Refs" Visibility="{Binding IsParameterRefAuto, Converter={StaticResource BoolToVis}, ConverterParameter=true}" Style="{StaticResource LeftTabItem2}">
+                                    <ctrl:ParameterRefView  Module="{Binding ElementName=ModuleList, Path=SelectedItem}" />
                                 </TabItem>
+
                                 <TabItem Header="ComObjekte" Style="{StaticResource LeftTabItem2}">
-
+                                    <ctrl:ComObjectView Version="{Binding ElementName=VersionList, Path=SelectedItem}" Module="{Binding ElementName=ModuleList, Path=SelectedItem}" />
                                 </TabItem>
-                                <TabItem Header="ComObjekte Refs" Style="{StaticResource LeftTabItem2}">
+
+                                <TabItem Header="ComObjekte Refs" Visibility="{Binding IsComObjectRefAuto, Converter={StaticResource BoolToVis}, ConverterParameter=true}" Style="{StaticResource LeftTabItem2}">
+                                    <ctrl:ComObjectRefView Version="{Binding ElementName=VersionList, Path=SelectedItem}" Module="{Binding ElementName=ModuleList, Path=SelectedItem}" />
+                                </TabItem>
+
+                                <TabItem Header="Dynamic" Style="{StaticResource LeftTabItem2}">
 
                                 </TabItem>
                             </TabControl>
@@ -1243,623 +1254,24 @@
                     </TabItem>
 
                     <TabItem Header="Parameter" Style="{StaticResource LeftTabItem}">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="auto" />
-                                <RowDefinition />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="150" />
-                                <ColumnDefinition Width="150" />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <Button Content="Hinzufügen" Click="ClickAddParam" Margin="0 0 1 2" />
-                            <Button Grid.Column="1" Content="Löschen" Click="ClickRemoveParam" Margin="1 0 0 2" />
-
-                            <ListView x:Name="ParamList" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding Parameters}" DisplayMemberPath="Name" />
-
-                            <ScrollViewer Grid.Column="3" Grid.RowSpan="2" DataContext="{Binding ElementName=ParamList, Path=SelectedItem}" IsEnabled="{Binding Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
-                                <StackPanel Margin="5">
-                                    <StackPanel.Resources>
-                                        <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
-                                            <ObjectDataProvider.MethodParameters>
-                                                <x:Type TypeName="models:ParamAccess"/>
-                                            </ObjectDataProvider.MethodParameters>
-                                        </ObjectDataProvider>
-                                        <ObjectDataProvider x:Key="dataSave" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
-                                            <ObjectDataProvider.MethodParameters>
-                                                <x:Type TypeName="models:ParamSave"/>
-                                            </ObjectDataProvider.MethodParameters>
-                                        </ObjectDataProvider>
-                                        <Style TargetType="HeaderedContentControl">
-                                            <Setter Property="Margin" Value="5" />
-                                            <Setter Property="IsTabStop" Value="false" />
-                                        </Style>
-                                        <Style TargetType="CheckBox">
-                                            <Setter Property="Margin" Value="5" />
-                                        </Style>
-                                        <Style TargetType="ComboBox">
-                                            <Setter Property="Margin" Value="0 5" />
-                                        </Style>
-                                        <Style TargetType="Button">
-                                            <Setter Property="Margin" Value="5" />
-                                        </Style>
-                                        <Style TargetType="ListView">
-                                            <Setter Property="Margin" Value="5" />
-                                        </Style>
-                                    </StackPanel.Resources>
-
-                                    <TextBlock Margin="5 0" VerticalAlignment="Center">
-                                        <Run Text="UID:" />
-                                        <Run Text="{Binding UId}"/>
-                                    </TextBlock>
-
-                                    <Grid Margin="5 0">
-                                        <TextBlock VerticalAlignment="Center">
-                                            <Run Text="ID:" />
-                                            <Run Text="{Binding Id}"/>
-                                        </TextBlock>
-                                        <Button Content="Zurücksetzen" HorizontalAlignment="Right" Click="ResetId" />
-                                    </Grid>
-                                    
-                                    <HeaderedContentControl Header="Name">
-                                        <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
-                                    </HeaderedContentControl>
-                                    <HeaderedContentControl Header="Text">
-                                        <StackPanel>
-                                            <CheckBox IsChecked="{Binding TranslationText}" Content="Übersetzung nicht exportieren" />
-                                            <DataGrid ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
-                                                <DataGrid.Columns>
-                                                    <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
-                                                    <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
-                                                </DataGrid.Columns>
-                                            </DataGrid>
-                                        </StackPanel>
-                                    </HeaderedContentControl>
-                                    <HeaderedContentControl Header="Wert">
-                                        <TextBox Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}"/>
-                                    </HeaderedContentControl>
-                                    <HeaderedContentControl Header="Zugriff">
-                                        <ComboBox ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding Access, Mode=TwoWay}" />
-                                    </HeaderedContentControl>
-                                    <HeaderedContentControl Header="Suffix">
-                                        <TextBox Text="{Binding Suffix, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                    </HeaderedContentControl>
-
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition />
-                                            <ColumnDefinition Width="auto" />
-                                        </Grid.ColumnDefinitions>
-                                        <HeaderedContentControl Header="Type">
-                                            <ComboBox ItemsSource="{Binding ElementName=VersionList, Path=SelectedItem.ParameterTypes}" DisplayMemberPath="Name" SelectedItem="{Binding ParameterTypeObject}" />
-                                        </HeaderedContentControl>
-
-                                        <TextBlock Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0 0 10 14">
-                                        <Run Text="{Binding ParameterTypeObject.SizeInBit}" />
-                                        <Run Text="Bit" />
-                                        </TextBlock>
-                                    </Grid>
-
-                                    <HeaderedContentControl Header="Union zugehörigkeit">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="auto" />
-                                                <ColumnDefinition />
-                                            </Grid.ColumnDefinitions>
-
-                                            <CheckBox IsChecked="{Binding IsInUnion}" VerticalAlignment="Center" />
-                                            <ComboBox Grid.Column="1" IsEnabled="{Binding IsInUnion}" ItemsSource="{Binding ElementName=VersionList, Path=SelectedItem.Unions}" SelectedItem="{Binding UnionObject}" DisplayMemberPath="Name" />
-                                        </Grid>
-                                    </HeaderedContentControl>
-
-                                    <HeaderedContentControl Header="Speicherort" Visibility="{Binding IsInUnion, Converter={StaticResource BoolToVis}, ConverterParameter=true}">
-                                        <ComboBox ItemsSource="{Binding Source={StaticResource dataSave}}" SelectedItem="{Binding SavePath, Mode=TwoWay}" />
-                                    </HeaderedContentControl>
-
-                                    <StackPanel Visibility="{Binding IsInUnion, Converter={StaticResource BoolToVis}}">
-                                        <HeaderedContentControl Header="Union Speicher">
-                                            <TextBlock Text="{Binding UnionObject.MemoryObject.Name}" />
-                                        </HeaderedContentControl>
-                                        <HeaderedContentControl Header="Offset">
-                                            <TextBox Text="{Binding Offset, UpdateSourceTrigger=PropertyChanged}"/>
-                                        </HeaderedContentControl>
-                                        <HeaderedContentControl Header="Bit Offset">
-                                            <TextBox Text="{Binding OffsetBit, UpdateSourceTrigger=PropertyChanged}"/>
-                                        </HeaderedContentControl>
-                                    </StackPanel>
-
-                                    <Grid Visibility="{Binding IsInUnion, Converter={StaticResource BoolToVis}, ConverterParameter=true}">
-                                        <StackPanel Visibility="{Binding SavePath, Converter={StaticResource EnumToVis}, ConverterParameter=Memory}">
-                                            <HeaderedContentControl Header="Speicher auswählen">
-                                                <ComboBox ItemsSource="{Binding ElementName=VersionList, Path=SelectedItem.Memories}" SelectedItem="{Binding MemoryObject, Mode=TwoWay}" DisplayMemberPath="Name" />
-                                            </HeaderedContentControl>
-
-                                            <StackPanel Visibility="{Binding MemoryObject.IsAutoPara, Converter={StaticResource BoolToVis}, ConverterParameter=true}">
-                                                <CheckBox IsChecked="{Binding IsOffsetAuto}" Content="Automatisch im Speicher anordnen" />
-
-                                                <StackPanel IsEnabled="{Binding IsOffsetAuto, Converter={StaticResource BoolNegate}}">
-                                                    <HeaderedContentControl Header="Offset">
-                                                        <TextBox Text="{Binding Offset, UpdateSourceTrigger=PropertyChanged}"/>
-                                                    </HeaderedContentControl>
-                                                    <HeaderedContentControl Header="Bit Offset">
-                                                        <TextBox Text="{Binding OffsetBit, UpdateSourceTrigger=PropertyChanged}"/>
-                                                    </HeaderedContentControl>
-                                                </StackPanel>
-                                            </StackPanel>
-
-                                            <TextBlock Text="Adresse wird automatisch festgelegt (Speicher)" Margin="5" Visibility="{Binding MemoryObject.IsAutoPara, Converter={StaticResource BoolToVis}}" />
-
-                                            <Border Visibility="{Binding MemoryObject.IsAutoPara, Converter={StaticResource BoolToVis}}">
-                                                <TextBlock Margin="5">
-                                                        <Run Text="Offset:" />
-                                                        <Run Text="{Binding Offset, Mode=OneWay}" />
-                                                        <LineBreak />
-                                                        <Run Text="Bit Offset:" />
-                                                        <Run Text="{Binding OffsetBit, Mode=OneWay}" />
-                                                </TextBlock>
-                                            </Border>
-                                        </StackPanel>
-
-                                        <StackPanel Visibility="{Binding SavePath, Converter={StaticResource EnumToVis}, ConverterParameter=Property}">
-                                            <TextBlock Text="Properties werden noch nicht unterstütz" />
-                                        </StackPanel>
-                                    </Grid>
-                                </StackPanel>
-                            </ScrollViewer>
-
-                            </Grid>
+                        <ctrl:ParameterView Version="{Binding ElementName=VersionList, Path=SelectedItem}" Module="{Binding ElementName=VersionList, Path=SelectedItem}" />
                     </TabItem>
 
                     <TabItem Header="ParameterRefs" Visibility="{Binding IsParameterRefAuto, Converter={StaticResource BoolToVis}, ConverterParameter=true}" Style="{StaticResource LeftTabItem}">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="auto" />
-                                <RowDefinition Height="auto" />
-                                <RowDefinition />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="150" />
-                                <ColumnDefinition Width="150" />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <Button Content="Hinzufügen" Click="ClickAddParamRef" Margin="0 0 1 2" />
-                            <Button Grid.Column="1" Content="Löschen" Click="ClickRemoveParamRef" Margin="1 0 0 2" />
-                            <Button Grid.Row="1" Grid.ColumnSpan="2" Content="Auto generieren" Click="ClickGenerateRefAuto" Margin="0 0 0 2" />
-
-                            <ListView x:Name="ParamRefList" Grid.Row="2" Grid.ColumnSpan="2" ItemsSource="{Binding ParameterRefs}" DisplayMemberPath="Name" />
-
-
-                            <StackPanel Grid.Column="3" Grid.RowSpan="3" Margin="5" DataContext="{Binding ElementName=ParamRefList, Path=SelectedItem}" IsEnabled="{Binding Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
-                                <StackPanel.Resources>
-                                    <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
-                                        <ObjectDataProvider.MethodParameters>
-                                            <x:Type TypeName="models:ParamAccess"/>
-                                        </ObjectDataProvider.MethodParameters>
-                                    </ObjectDataProvider>
-                                    <Style TargetType="HeaderedContentControl">
-                                        <Setter Property="Margin" Value="5" />
-                                        <Setter Property="IsTabStop" Value="false" />
-                                    </Style>
-                                    <Style TargetType="ComboBox">
-                                        <Setter Property="Margin" Value="0 5" />
-                                    </Style>
-                                    <Style TargetType="CheckBox">
-                                        <Setter Property="Margin" Value="5" />
-                                    </Style>
-                                    <Style TargetType="Button">
-                                        <Setter Property="Margin" Value="5" />
-                                    </Style>
-                                </StackPanel.Resources>
-
-                                
-                                <TextBlock Margin="5 0" VerticalAlignment="Center">
-                                    <Run Text="UID:" />
-                                    <Run Text="{Binding UId}"/>
-                                </TextBlock>
-
-
-                                <Grid Margin="5 0">
-                                    <TextBlock VerticalAlignment="Center">
-                                        <Run Text="ID:" />
-                                        <Run Text="{Binding Id, UpdateSourceTrigger=PropertyChanged}"/>
-                                    </TextBlock>
-                                    <Button Content="Zurücksetzen" HorizontalAlignment="Right" Click="ResetId" />
-                                </Grid>
-                                <HeaderedContentControl Header="Name">
-                                    <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
-                                </HeaderedContentControl>
-                                <HeaderedContentControl Header="Parameter">
-                                    <ComboBox ItemsSource="{Binding ElementName=ParamList, Path=Items}" DisplayMemberPath="Name" SelectedItem="{Binding ParameterObject}" />
-                                </HeaderedContentControl>
-                                <HeaderedContentControl Header="Wert">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="auto" />
-                                            <ColumnDefinition />
-                                        </Grid.ColumnDefinitions>
-
-                                        <CheckBox IsChecked="{Binding OverwriteValue}" VerticalAlignment="Center" />
-                                        <TextBox Grid.Column="2" IsEnabled="{Binding OverwriteValue}" Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" />
-                                    </Grid>
-                                </HeaderedContentControl>
-                                <HeaderedContentControl Header="Zugriff">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="auto" />
-                                            <ColumnDefinition />
-                                        </Grid.ColumnDefinitions>
-
-                                        <CheckBox IsChecked="{Binding OverwriteAccess}" VerticalAlignment="Center" />
-                                        <ComboBox Grid.Column="2" IsEnabled="{Binding OverwriteAccess}" ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding Access, Mode=TwoWay}" />
-                                    </Grid>
-                                </HeaderedContentControl>
-                            </StackPanel>
-                        </Grid>
+                        <ctrl:ParameterRefView Module="{Binding ElementName=VersionList, Path=SelectedItem}" />
                     </TabItem>
 
                     <TabItem Header="Comobjects" Style="{StaticResource LeftTabItem}">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="auto" />
-                                <RowDefinition />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="150" />
-                                <ColumnDefinition Width="150" />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <Button Content="Hinzufügen" Margin="0 0 1 2" Click="ClickAddCom" />
-                            <Button Grid.Column="1" Content="Löschen" Click="ClickRemoveCom" Margin="1 0 0 2" IsEnabled="{Binding ElementName=ComobjectList, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
-
-                            <ListView x:Name="ComobjectList" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding ComObjects}" DisplayMemberPath="Name" />
-
-                            <ScrollViewer Grid.Column="3" Grid.RowSpan="2" DataContext="{Binding ElementName=ComobjectList, Path=SelectedItem}" IsEnabled="{Binding Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
-                                <StackPanel Margin="5">
-                                    <StackPanel.Resources>
-                                        <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
-                                            <ObjectDataProvider.MethodParameters>
-                                                <x:Type TypeName="models:ParamAccess"/>
-                                            </ObjectDataProvider.MethodParameters>
-                                        </ObjectDataProvider>
-                                        <ObjectDataProvider x:Key="dataFromCom" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
-                                            <ObjectDataProvider.MethodParameters>
-                                                <x:Type TypeName="models:FlagType"/>
-                                            </ObjectDataProvider.MethodParameters>
-                                        </ObjectDataProvider>
-                                        <Style TargetType="HeaderedContentControl">
-                                            <Setter Property="Margin" Value="5" />
-                                            <Setter Property="IsTabStop" Value="false" />
-                                        </Style>
-                                        <Style TargetType="CheckBox">
-                                            <Setter Property="Margin" Value="5" />
-                                        </Style>
-                                        <Style TargetType="ComboBox">
-                                            <Setter Property="Margin" Value="0 5" />
-                                        </Style>
-                                        <Style TargetType="Button">
-                                            <Setter Property="Margin" Value="5" />
-                                        </Style>
-                                        <Style TargetType="ListView">
-                                            <Setter Property="Margin" Value="5" />
-                                        </Style>
-                                    </StackPanel.Resources>
-
-                                        
-                                    <TextBlock Margin="5 0" VerticalAlignment="Center">
-                                        <Run Text="UID:" />
-                                        <Run Text="{Binding UId}"/>
-                                    </TextBlock>
-
-
-                                    <Grid Margin="5 0">
-                                        <TextBlock VerticalAlignment="Center">
-                                            <Run Text="ID:" />
-                                            <Run Text="{Binding Id}"/>
-                                        </TextBlock>
-                                        <Button Content="Zurücksetzen" HorizontalAlignment="Right" Click="ResetId" />
-                                    </Grid>
-
-                                    <HeaderedContentControl Header="Name">
-                                        <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
-                                    </HeaderedContentControl>
-
-                                    <HeaderedContentControl Header="Text">
-                                        <StackPanel>
-                                            <CheckBox IsChecked="{Binding TranslationText}" Content="Übersetzung nicht exportieren" />
-                                            <DataGrid ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
-                                                <DataGrid.Columns>
-                                                    <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
-                                                    <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
-                                                </DataGrid.Columns>
-                                            </DataGrid>
-                                        </StackPanel>
-                                    </HeaderedContentControl>
-
-                                    <HeaderedContentControl Header="Funktionstext">
-                                        <StackPanel>
-                                            <CheckBox IsChecked="{Binding TranslationFunctionText}" Content="Übersetzung nicht exportieren" />
-                                            <DataGrid ItemsSource="{Binding FunctionText}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
-                                                <DataGrid.Columns>
-                                                    <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
-                                                    <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
-                                                </DataGrid.Columns>
-                                            </DataGrid>
-                                        </StackPanel>
-                                    </HeaderedContentControl>
-
-                                    <HeaderedContentControl Header="Beschreibung">
-                                        <StackPanel>
-                                            <CheckBox IsChecked="{Binding TranslationDescription}" Content="Übersetzung nicht exportieren" />
-                                            <DataGrid ItemsSource="{Binding Description}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
-                                                <DataGrid.Columns>
-                                                    <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
-                                                    <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
-                                                </DataGrid.Columns>
-                                            </DataGrid>
-                                        </StackPanel>
-                                    </HeaderedContentControl>
-
-                                    <HeaderedContentControl Header="Nummer">
-                                        <TextBox Text="{Binding Number}" />
-                                    </HeaderedContentControl>
-
-                                    <HeaderedContentControl Header="DataPointType">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="auto" />
-                                                <ColumnDefinition />
-                                            </Grid.ColumnDefinitions>
-
-                                            <CheckBox IsChecked="{Binding HasDpt}" VerticalAlignment="Center" />
-                                            <ComboBox Grid.Column="1" IsEnabled="{Binding HasDpt}" Name="InComType" ItemsSource="{Binding DPTs, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" SelectedItem="{Binding Type}" DisplayMemberPath="Name" />
-                                        </Grid>
-                                    </HeaderedContentControl>
-
-                                    <HeaderedContentControl Header="DataPointSubType" IsEnabled="{Binding HasDpt}">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="auto" />
-                                                <ColumnDefinition />
-                                            </Grid.ColumnDefinitions>
-
-                                            <CheckBox IsChecked="{Binding HasDpts}" VerticalAlignment="Center" />
-                                            <ComboBox Grid.Column="1" IsEnabled="{Binding HasDpts}" ItemsSource="{Binding ElementName=InComType, Path=SelectedItem.SubTypes}" SelectedItem="{Binding SubType}" DisplayMemberPath="Name" />
-                                        </Grid>
-                                    </HeaderedContentControl>
-
-
-                                    <HeaderedContentControl Header="Flag Kommunikation" Margin="5 30 5 5">
-                                        <ComboBox ItemsSource="{Binding Source={StaticResource dataFromCom}}" SelectedItem="{Binding FlagComm}" />
-                                    </HeaderedContentControl>
-                                    <HeaderedContentControl Header="Flag Lesen">
-                                        <ComboBox ItemsSource="{Binding Source={StaticResource dataFromCom}}" SelectedItem="{Binding FlagRead}" />
-                                    </HeaderedContentControl>
-                                    <HeaderedContentControl Header="Flag Schreiben">
-                                        <ComboBox ItemsSource="{Binding Source={StaticResource dataFromCom}}" SelectedItem="{Binding FlagWrite}" />
-                                    </HeaderedContentControl>
-                                    <HeaderedContentControl Header="Flag Übertragen">
-                                        <ComboBox ItemsSource="{Binding Source={StaticResource dataFromCom}}" SelectedItem="{Binding FlagTrans}" />
-                                    </HeaderedContentControl>
-                                    <HeaderedContentControl Header="Flag Aktualisieren">
-                                        <ComboBox ItemsSource="{Binding Source={StaticResource dataFromCom}}" SelectedItem="{Binding FlagUpdate}" />
-                                    </HeaderedContentControl>
-                                    <HeaderedContentControl Header="Flag Lesen bei Init">
-                                        <ComboBox ItemsSource="{Binding Source={StaticResource dataFromCom}}" SelectedItem="{Binding FlagOnInit}" />
-                                    </HeaderedContentControl>
-                                </StackPanel>
-                            </ScrollViewer>
-                        </Grid>
+                        <ctrl:ComObjectView Version="{Binding ElementName=VersionList, Path=SelectedItem}" Module="{Binding ElementName=VersionList, Path=SelectedItem}" />
                     </TabItem>
 
                     <TabItem Header="ComobjectRefs" Visibility="{Binding IsComObjectRefAuto, Converter={StaticResource BoolToVis}, ConverterParameter=true}" Style="{StaticResource LeftTabItem}">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="auto" />
-                                <RowDefinition Height="auto" />
-                                <RowDefinition />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="150" />
-                                <ColumnDefinition Width="150" />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <Button Content="Hinzufügen" Margin="0 0 1 2" Click="ClickAddComRef" />
-                            <Button Grid.Column="1" Content="Löschen" Click="ClickRemoveComRef" Margin="1 0 0 2" IsEnabled="{Binding ElementName=ComobjectRefList, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
-                            <Button Grid.Row="1" Grid.ColumnSpan="2" Content="Auto generieren" Click="ClickGenerateRefAuto2" Margin="0 0 0 2" />
-
-                            <ListView x:Name="ComobjectRefList" Grid.Row="2" Grid.ColumnSpan="2" ItemsSource="{Binding ComObjectRefs}" DisplayMemberPath="Name" />
-
-                            <ScrollViewer Grid.Column="3" Grid.RowSpan="3" DataContext="{Binding ElementName=ComobjectRefList, Path=SelectedItem}" IsEnabled="{Binding Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
-                                <StackPanel Margin="5">
-                                    <StackPanel.Resources>
-                                        <ObjectDataProvider x:Key="dataFromCom" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
-                                            <ObjectDataProvider.MethodParameters>
-                                                <x:Type TypeName="models:FlagType"/>
-                                            </ObjectDataProvider.MethodParameters>
-                                        </ObjectDataProvider>
-                                        <Style TargetType="HeaderedContentControl">
-                                            <Setter Property="Margin" Value="5" />
-                                            <Setter Property="IsTabStop" Value="false" />
-                                        </Style>
-                                        <Style TargetType="CheckBox">
-                                            <Setter Property="Margin" Value="5" />
-                                        </Style>
-                                        <Style TargetType="ComboBox">
-                                            <Setter Property="Margin" Value="0 5" />
-                                        </Style>
-                                        <Style TargetType="Button">
-                                            <Setter Property="Margin" Value="5" />
-                                        </Style>
-                                        <Style TargetType="ListView">
-                                            <Setter Property="Margin" Value="5" />
-                                        </Style>
-                                    </StackPanel.Resources>
-
-                                    
-                                    <TextBlock Margin="5 0" VerticalAlignment="Center">
-                                        <Run Text="UID:" />
-                                        <Run Text="{Binding UId}"/>
-                                    </TextBlock>
-
-                                    <Grid Margin="5 0">
-                                        <TextBlock VerticalAlignment="Center">
-                                            <Run Text="ID:" />
-                                            <Run Text="{Binding Id}"/>
-                                        </TextBlock>
-                                        <Button Content="Zurücksetzen" HorizontalAlignment="Right" Click="ResetId" />
-                                    </Grid>
-
-                                    <HeaderedContentControl Header="Name">
-                                        <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
-                                    </HeaderedContentControl>
-
-                                    <HeaderedContentControl Header="Kommunikationsobjekt">
-                                        <ComboBox ItemsSource="{Binding ElementName=ComobjectList, Path=Items}" DisplayMemberPath="Name" SelectedItem="{Binding ComObjectObject}" />
-                                    </HeaderedContentControl>
-                                    
-                                    <HeaderedContentControl Header="Text">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="auto" />
-                                                <ColumnDefinition />
-                                            </Grid.ColumnDefinitions>
-
-                                            <CheckBox IsChecked="{Binding OverwriteText}" VerticalAlignment="Center" />
-                                            <StackPanel Grid.Column="1">
-                                                <CheckBox IsEnabled="{Binding OverwriteText}" IsChecked="{Binding TranslationText}" Content="Übersetzung nicht exportieren" />
-                                                <DataGrid IsEnabled="{Binding OverwriteText}" ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
-                                                    <DataGrid.Columns>
-                                                        <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
-                                                        <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
-                                                    </DataGrid.Columns>
-                                                </DataGrid>
-                                            </StackPanel>
-                                        </Grid>
-                                    </HeaderedContentControl>
-
-                                    <HeaderedContentControl Header="Funktionstext">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="auto" />
-                                                <ColumnDefinition />
-                                            </Grid.ColumnDefinitions>
-
-                                            <CheckBox IsChecked="{Binding OverwriteFunctionText}" VerticalAlignment="Center" />
-                                            <StackPanel Grid.Column="1">
-                                                <CheckBox IsEnabled="{Binding OverwriteFunctionText}" IsChecked="{Binding TranslationFunctionText}" Content="Übersetzung nicht exportieren" />
-                                                <DataGrid IsEnabled="{Binding OverwriteFunctionText}" ItemsSource="{Binding FunctionText}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
-                                                    <DataGrid.Columns>
-                                                        <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
-                                                        <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
-                                                    </DataGrid.Columns>
-                                                </DataGrid>
-                                            </StackPanel>
-                                        </Grid>
-                                    </HeaderedContentControl>
-
-                                    <HeaderedContentControl Header="Beschreibung">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="auto" />
-                                                <ColumnDefinition />
-                                            </Grid.ColumnDefinitions>
-
-                                            <CheckBox IsChecked="{Binding OverwriteDescription}" VerticalAlignment="Center" />
-                                            <StackPanel Grid.Column="1">
-                                                <CheckBox IsEnabled="{Binding OverwriteDescription}" IsChecked="{Binding TranslationDescription}" Content="Übersetzung nicht exportieren" />
-                                                <DataGrid IsEnabled="{Binding OverwriteDescription}" ItemsSource="{Binding Description}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
-                                                    <DataGrid.Columns>
-                                                        <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
-                                                        <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
-                                                    </DataGrid.Columns>
-                                                </DataGrid>
-                                            </StackPanel>
-                                        </Grid>
-                                    </HeaderedContentControl>
-
-                                    <HeaderedContentControl Header="DataPointType">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="auto" />
-                                                <ColumnDefinition />
-                                            </Grid.ColumnDefinitions>
-
-                                            <CheckBox IsChecked="{Binding OverwriteDpt}" VerticalAlignment="Center" />
-                                            <ComboBox Grid.Column="1" IsEnabled="{Binding OverwriteDpt}" Name="InComRefType" ItemsSource="{Binding DPTs, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" SelectedItem="{Binding Type}" DisplayMemberPath="Name" />
-                                        </Grid>
-                                    </HeaderedContentControl>
-
-
-                                    <HeaderedContentControl Header="DataPointSubType" IsEnabled="{Binding OverwriteDpt}">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="auto" />
-                                                <ColumnDefinition />
-                                            </Grid.ColumnDefinitions>
-
-                                            <CheckBox IsChecked="{Binding OverwriteDpst}" VerticalAlignment="Center" />
-                                            <ComboBox Grid.Column="1" IsEnabled="{Binding OverwriteDpst}" ItemsSource="{Binding ElementName=InComRefType, Path=SelectedItem.SubTypes}" SelectedItem="{Binding SubType}" DisplayMemberPath="Name" />
-                                        </Grid>
-                                    </HeaderedContentControl>
-
-
-                                    <HeaderedContentControl Header="Flag Kommunikation" Margin="5 30 5 5">
-                                        <ComboBox ItemsSource="{Binding Source={StaticResource dataFromCom}}" SelectedItem="{Binding FlagComm}" />
-                                    </HeaderedContentControl>
-                                    <HeaderedContentControl Header="Flag Lesen">
-                                        <ComboBox ItemsSource="{Binding Source={StaticResource dataFromCom}}" SelectedItem="{Binding FlagRead}" />
-                                    </HeaderedContentControl>
-                                    <HeaderedContentControl Header="Flag Schreiben">
-                                        <ComboBox ItemsSource="{Binding Source={StaticResource dataFromCom}}" SelectedItem="{Binding FlagWrite}" />
-                                    </HeaderedContentControl>
-                                    <HeaderedContentControl Header="Flag Übertragen">
-                                        <ComboBox ItemsSource="{Binding Source={StaticResource dataFromCom}}" SelectedItem="{Binding FlagTrans}" />
-                                    </HeaderedContentControl>
-                                    <HeaderedContentControl Header="Flag Aktualisieren">
-                                        <ComboBox ItemsSource="{Binding Source={StaticResource dataFromCom}}" SelectedItem="{Binding FlagUpdate}" />
-                                    </HeaderedContentControl>
-                                    <HeaderedContentControl Header="Flag Lesen bei Init">
-                                        <ComboBox ItemsSource="{Binding Source={StaticResource dataFromCom}}" SelectedItem="{Binding FlagOnInit}" />
-                                    </HeaderedContentControl>
-                                </StackPanel>
-                            </ScrollViewer>
-                        </Grid>
+                        <ctrl:ComObjectRefView Version="{Binding ElementName=VersionList, Path=SelectedItem}" Module="{Binding ElementName=VersionList, Path=SelectedItem}" />
                     </TabItem>
 
 
                     <TabItem DataContext="{Binding SelectedItem, ElementName=AppList}" Header="Ladeprozedur" Style="{StaticResource LeftTabItem}">
-                        <Grid>  
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
-                                <ColumnDefinition Width="5" />
-                                <ColumnDefinition MaxWidth="600" />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="auto" MaxHeight="250" />
-                                <RowDefinition />
-                            </Grid.RowDefinitions>
-
-                            <!--<TextBox Grid.RowSpan="2" Text="{Binding Mask.OwnProcedure}" />-->
-                            <avalonedit:TextEditor x:Name="editor" ShowLineNumbers="True" Grid.RowSpan="2" SyntaxHighlighting="XML" />
-                            
-                            <GridSplitter Grid.RowSpan="2" Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
-
-                            <ListBox x:Name="MaskList" Grid.Column="2" ItemsSource="{Binding Mask.Procedures}">
-                                <ListBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <TextBlock>
-                                            <Run Text="{Binding Type}" />
-                                            <Run Text="-" />
-                                            <Run Text="{Binding SubType}" />
-                                        </TextBlock>
-                                    </DataTemplate>
-                                </ListBox.ItemTemplate>
-                            </ListBox>
-                            <ScrollViewer Grid.Row="1" Grid.Column="2">
-                                <TextBlock Text="{Binding SelectedItem.Controls, ElementName=MaskList}" Margin="5" />
-                            </ScrollViewer>
-                        </Grid>
+                        <ctrl:LoadProcedures />
                     </TabItem>
 
 

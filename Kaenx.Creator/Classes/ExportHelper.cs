@@ -1032,8 +1032,6 @@ namespace Kaenx.Creator.Classes
             input = input.Replace("{", ".7B");
             input = input.Replace("|", ".7C");
             input = input.Replace("}", ".7D");
-
-            input = input.Replace("%", ".");
             return input;
         }
 

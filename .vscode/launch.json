@@ -10,9 +10,9 @@
         "request": "launch",
         "preLaunchTask": "build",
         // If you have changed target frameworks, make sure to update the program path.
-        "program": "${workspaceFolder}/Kaenx.Creator/bin/Debug/netcoreapp3.1/Kaenx.Creator.dll",
+        "program": "${workspaceFolder}/Kaenx.Creator/bin/Debug/net6.0-windows/Kaenx.Creator.dll",
         "args": [],
-        "cwd": "${workspaceFolder}/Kaenx.Creator",
+        "cwd": "${workspaceFolder}/Kaenx.Creator/bin/Debug/net6.0-windows/",
         // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
         "console": "internalConsole",
         "stopAtEntry": false
@@ -23,8 +23,8 @@
         "request": "launch",
         "preLaunchTask": "publish",
         // If you have changed target frameworks, make sure to update the program path.
-        "program": "${workspaceFolder}/Kaenx.Creator/bin/Debug/netcoreapp3.1/Kaenx.Creator.dll",
-        "args": [],
+        "program": "${workspaceFolder}/Kaenx.Creator/bin/Debug/net6.0-windows/Kaenx.Creator.dll",
+        "args": ["-c", "Release", "--self-contained", "true"],
         "cwd": "${workspaceFolder}/Kaenx.Creator",
         // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
         "console": "internalConsole",
@@ -36,7 +36,7 @@
         "request": "launch",
         "preLaunchTask": "build64",
         // If you have changed target frameworks, make sure to update the program path.
-        "program": "${workspaceFolder}/Kaenx.Creator/bin/Debug/netcoreapp3.1/Kaenx.Creator.dll",
+        "program": "${workspaceFolder}/Kaenx.Creator/bin/Debug/net6.0-windows/Kaenx.Creator.dll",
         "args": [],
         "cwd": "${workspaceFolder}/Kaenx.Creator",
         // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console

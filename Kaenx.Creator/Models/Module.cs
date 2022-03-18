@@ -33,12 +33,26 @@ namespace Kaenx.Creator.Models
             set { _name = value; Changed("Name"); }
         }
 
+        private bool _isAutoPR = true;
+        public bool IsParameterRefAuto
+        {
+            get { return _isAutoPR; }
+            set { _isAutoPR = value; Changed("IsParameterRefAuto"); }
+        }
+        
+        private bool _isAutoCR= true;
+        public bool IsComObjectRefAuto
+        {
+            get { return _isAutoCR; }
+            set { _isAutoCR = value; Changed("IsComObjectRefAuto"); }
+        }
     
         public ObservableCollection<Parameter> Parameters { get; set; } = new ObservableCollection<Parameter>();
         public ObservableCollection<ParameterRef> ParameterRefs { get; set; } = new ObservableCollection<ParameterRef>();
         public ObservableCollection<ComObject> ComObjects { get; set; } = new ObservableCollection<ComObject>();
         public ObservableCollection<ComObjectRef> ComObjectRefs { get; set; } = new ObservableCollection<ComObjectRef>();
         public ObservableCollection<Union> Unions { get; set; } = new ObservableCollection<Union>();
+        public ObservableCollection<Argument> Arguments { get; set; } = new ObservableCollection<Argument>();
         public List<DynamicMain> Dynamics { get; set; } = new List<DynamicMain>();
 
 
