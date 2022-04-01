@@ -32,154 +32,166 @@
 
         <ListView x:Name="ParamList" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding Parameters}" DisplayMemberPath="Name" />
 
-        <ScrollViewer Grid.Column="3" Grid.RowSpan="2" DataContext="{Binding ElementName=ParamList, Path=SelectedItem}" IsEnabled="{Binding Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
-            <StackPanel Margin="5">
-                <StackPanel.Resources>
-                    <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
-                        <ObjectDataProvider.MethodParameters>
-                            <x:Type TypeName="models:ParamAccess"/>
-                        </ObjectDataProvider.MethodParameters>
-                    </ObjectDataProvider>
-                    <ObjectDataProvider x:Key="dataSave" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
-                        <ObjectDataProvider.MethodParameters>
-                            <x:Type TypeName="models:ParamSave"/>
-                        </ObjectDataProvider.MethodParameters>
-                    </ObjectDataProvider>
-                    <Style TargetType="HeaderedContentControl">
-                        <Setter Property="Margin" Value="5" />
-                        <Setter Property="IsTabStop" Value="false" />
-                    </Style>
-                    <Style TargetType="CheckBox">
-                        <Setter Property="Margin" Value="5" />
-                    </Style>
-                    <Style TargetType="ComboBox">
-                        <Setter Property="Margin" Value="0 5" />
-                    </Style>
-                    <Style TargetType="Button">
-                        <Setter Property="Margin" Value="5" />
-                    </Style>
-                    <Style TargetType="ListView">
-                        <Setter Property="Margin" Value="5" />
-                    </Style>
-                </StackPanel.Resources>
 
-                <TextBlock Margin="5 0" VerticalAlignment="Center">
-                    <Run Text="UID:" />
-                    <Run Text="{Binding UId}"/>
-                </TextBlock>
+        <Grid Grid.Column="2" Grid.RowSpan="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
 
-                <Grid Margin="5 0">
-                    <TextBlock VerticalAlignment="Center">
-                        <Run Text="ID:" />
-                        <Run Text="{Binding Id}"/>
+            <HeaderedContentControl x:Name="InBaseOffset" Header="BaseOffset (gilt für alle):" Margin="5" IsTabStop="false" Visibility="Collapsed">
+                <ComboBox ItemsSource="{Binding Arguments}" SelectedItem="{Binding ParameterBaseOffset, Mode=TwoWay}" DisplayMemberPath="Name" Margin="0 5" />
+            </HeaderedContentControl>
+
+            <ScrollViewer Grid.Row="2" DataContext="{Binding ElementName=ParamList, Path=SelectedItem}" IsEnabled="{Binding Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
+                <StackPanel Margin="5">
+                    <StackPanel.Resources>
+                        <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+                            <ObjectDataProvider.MethodParameters>
+                                <x:Type TypeName="models:ParamAccess"/>
+                            </ObjectDataProvider.MethodParameters>
+                        </ObjectDataProvider>
+                        <ObjectDataProvider x:Key="dataSave" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+                            <ObjectDataProvider.MethodParameters>
+                                <x:Type TypeName="models:ParamSave"/>
+                            </ObjectDataProvider.MethodParameters>
+                        </ObjectDataProvider>
+                        <Style TargetType="HeaderedContentControl">
+                            <Setter Property="Margin" Value="5" />
+                            <Setter Property="IsTabStop" Value="false" />
+                        </Style>
+                        <Style TargetType="CheckBox">
+                            <Setter Property="Margin" Value="5" />
+                        </Style>
+                        <Style TargetType="ComboBox">
+                            <Setter Property="Margin" Value="0 5" />
+                        </Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Margin" Value="5" />
+                        </Style>
+                        <Style TargetType="ListView">
+                            <Setter Property="Margin" Value="5" />
+                        </Style>
+                    </StackPanel.Resources>
+
+                    <TextBlock Margin="5 0" VerticalAlignment="Center">
+                        <Run Text="UID:" />
+                        <Run Text="{Binding UId}"/>
                     </TextBlock>
-                    <Button Content="Zurücksetzen" HorizontalAlignment="Right" Click="ResetId" />
-                </Grid>
-                
-                <HeaderedContentControl Header="Name">
-                    <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
-                </HeaderedContentControl>
-                <HeaderedContentControl Header="Text">
-                    <StackPanel>
-                        <CheckBox IsChecked="{Binding TranslationText}" Content="Übersetzung nicht exportieren" />
-                        <DataGrid ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
-                                <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
-                            </DataGrid.Columns>
-                        </DataGrid>
-                    </StackPanel>
-                </HeaderedContentControl>
-                <HeaderedContentControl Header="Wert">
-                    <TextBox Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}"/>
-                </HeaderedContentControl>
-                <HeaderedContentControl Header="Zugriff">
-                    <ComboBox ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding Access, Mode=TwoWay}" />
-                </HeaderedContentControl>
-                <HeaderedContentControl Header="Suffix">
-                    <TextBox Text="{Binding Suffix, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                </HeaderedContentControl>
 
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition Width="auto" />
-                    </Grid.ColumnDefinitions>
-                    <HeaderedContentControl Header="Type">
-                        <ComboBox x:Name="InType" DisplayMemberPath="Name" SelectedItem="{Binding ParameterTypeObject}" />
+                    <Grid Margin="5 0">
+                        <TextBlock VerticalAlignment="Center">
+                            <Run Text="ID:" />
+                            <Run Text="{Binding Id}"/>
+                        </TextBlock>
+                        <Button Content="Zurücksetzen" HorizontalAlignment="Right" Click="ResetId" />
+                    </Grid>
+                    
+                    <HeaderedContentControl Header="Name">
+                        <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+                    </HeaderedContentControl>
+                    <HeaderedContentControl Header="Text">
+                        <StackPanel>
+                            <CheckBox IsChecked="{Binding TranslationText}" Content="Übersetzung nicht exportieren" />
+                            <DataGrid ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                                    <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </StackPanel>
+                    </HeaderedContentControl>
+                    <HeaderedContentControl Header="Wert">
+                        <TextBox Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}"/>
+                    </HeaderedContentControl>
+                    <HeaderedContentControl Header="Zugriff">
+                        <ComboBox ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding Access, Mode=TwoWay}" />
+                    </HeaderedContentControl>
+                    <HeaderedContentControl Header="Suffix">
+                        <TextBox Text="{Binding Suffix, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </HeaderedContentControl>
 
-                    <TextBlock Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0 0 10 14">
-                    <Run Text="{Binding ParameterTypeObject.SizeInBit}" />
-                    <Run Text="Bit" />
-                    </TextBlock>
-                </Grid>
-
-                <HeaderedContentControl Header="Union zugehörigkeit">
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="auto" />
                             <ColumnDefinition />
+                            <ColumnDefinition Width="auto" />
                         </Grid.ColumnDefinitions>
-
-                        <CheckBox IsChecked="{Binding IsInUnion}" VerticalAlignment="Center" />
-                        <ComboBox x:Name="InUnion" Grid.Column="1" IsEnabled="{Binding IsInUnion}" SelectedItem="{Binding UnionObject}" DisplayMemberPath="Name" />
-                    </Grid>
-                </HeaderedContentControl>
-
-                <StackPanel Visibility="{Binding IsInUnion, Converter={StaticResource BoolToVis}}">
-                    <HeaderedContentControl Header="Union Speicher">
-                        <TextBlock Text="{Binding UnionObject.MemoryObject.Name}" />
-                    </HeaderedContentControl>
-                    <HeaderedContentControl Header="Offset">
-                        <TextBox Text="{Binding Offset, UpdateSourceTrigger=PropertyChanged}"/>
-                    </HeaderedContentControl>
-                    <HeaderedContentControl Header="Bit Offset">
-                        <TextBox Text="{Binding OffsetBit, UpdateSourceTrigger=PropertyChanged}"/>
-                    </HeaderedContentControl>
-                </StackPanel>
-
-                <HeaderedContentControl Header="Speicherort" Visibility="{Binding IsInUnion, Converter={StaticResource BoolToVis}, ConverterParameter=true}">
-                    <ComboBox ItemsSource="{Binding Source={StaticResource dataSave}}" SelectedItem="{Binding SavePath, Mode=TwoWay}" />
-                </HeaderedContentControl>
-
-                <Grid Visibility="{Binding IsInUnion, Converter={StaticResource BoolToVis}, ConverterParameter=true}">
-                    <StackPanel Visibility="{Binding SavePath, Converter={StaticResource EnumToVis}, ConverterParameter=Memory}">
-                        <HeaderedContentControl Header="Speicher auswählen">
-                            <ComboBox x:Name="InMemory" SelectedItem="{Binding MemoryObject, Mode=TwoWay}" DisplayMemberPath="Name" />
+                        <HeaderedContentControl Header="Type">
+                            <ComboBox x:Name="InType" DisplayMemberPath="Name" SelectedItem="{Binding ParameterTypeObject}" />
                         </HeaderedContentControl>
 
-                        <StackPanel Visibility="{Binding MemoryObject.IsAutoPara, Converter={StaticResource BoolToVis}, ConverterParameter=true}">
-                            <CheckBox IsChecked="{Binding IsOffsetAuto}" Content="Automatisch im Speicher anordnen" />
+                        <TextBlock Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0 0 10 14">
+                        <Run Text="{Binding ParameterTypeObject.SizeInBit}" />
+                        <Run Text="Bit" />
+                        </TextBlock>
+                    </Grid>
 
-                            <StackPanel IsEnabled="{Binding IsOffsetAuto, Converter={StaticResource BoolNegate}}">
-                                <HeaderedContentControl Header="Offset">
-                                    <TextBox Text="{Binding Offset, UpdateSourceTrigger=PropertyChanged}"/>
-                                </HeaderedContentControl>
-                                <HeaderedContentControl Header="Bit Offset">
-                                    <TextBox Text="{Binding OffsetBit, UpdateSourceTrigger=PropertyChanged}"/>
-                                </HeaderedContentControl>
+                    <HeaderedContentControl Header="Union zugehörigkeit">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+
+                            <CheckBox IsChecked="{Binding IsInUnion}" VerticalAlignment="Center" />
+                            <ComboBox x:Name="InUnion" Grid.Column="1" IsEnabled="{Binding IsInUnion}" SelectedItem="{Binding UnionObject}" DisplayMemberPath="Name" />
+                        </Grid>
+                    </HeaderedContentControl>
+
+                    <StackPanel Visibility="{Binding IsInUnion, Converter={StaticResource BoolToVis}}">
+                        <HeaderedContentControl Header="Union Speicher">
+                            <TextBlock Text="{Binding UnionObject.MemoryObject.Name}" />
+                        </HeaderedContentControl>
+                        <HeaderedContentControl Header="Offset">
+                            <TextBox Text="{Binding Offset, UpdateSourceTrigger=PropertyChanged}"/>
+                        </HeaderedContentControl>
+                        <HeaderedContentControl Header="Bit Offset">
+                            <TextBox Text="{Binding OffsetBit, UpdateSourceTrigger=PropertyChanged}"/>
+                        </HeaderedContentControl>
+                    </StackPanel>
+
+                    <HeaderedContentControl Header="Speicherort" Visibility="{Binding IsInUnion, Converter={StaticResource BoolToVis}, ConverterParameter=true}">
+                        <ComboBox ItemsSource="{Binding Source={StaticResource dataSave}}" SelectedItem="{Binding SavePath, Mode=TwoWay}" />
+                    </HeaderedContentControl>
+
+                    <Grid Visibility="{Binding IsInUnion, Converter={StaticResource BoolToVis}, ConverterParameter=true}">
+                        <StackPanel Visibility="{Binding SavePath, Converter={StaticResource EnumToVis}, ConverterParameter=Memory}">
+                            <HeaderedContentControl Header="Speicher auswählen">
+                                <ComboBox x:Name="InMemory" SelectedItem="{Binding MemoryObject, Mode=TwoWay}" DisplayMemberPath="Name" />
+                            </HeaderedContentControl>
+
+                            <StackPanel Visibility="{Binding MemoryObject.IsAutoPara, Converter={StaticResource BoolToVis}, ConverterParameter=true}">
+                                <CheckBox IsChecked="{Binding IsOffsetAuto}" Content="Automatisch im Speicher anordnen" />
+
+                                <StackPanel IsEnabled="{Binding IsOffsetAuto, Converter={StaticResource BoolNegate}}">
+                                    <HeaderedContentControl Header="Offset">
+                                        <TextBox Text="{Binding Offset, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </HeaderedContentControl>
+                                    <HeaderedContentControl Header="Bit Offset">
+                                        <TextBox Text="{Binding OffsetBit, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </HeaderedContentControl>
+                                </StackPanel>
                             </StackPanel>
+
+                            <TextBlock Text="Adresse wird automatisch festgelegt (Speicher)" Margin="5" Visibility="{Binding MemoryObject.IsAutoPara, Converter={StaticResource BoolToVis}}" />
+
+                            <Border Visibility="{Binding MemoryObject.IsAutoPara, Converter={StaticResource BoolToVis}}">
+                                <TextBlock Margin="5">
+                                        <Run Text="Offset:" />
+                                        <Run Text="{Binding Offset, Mode=OneWay}" />
+                                        <LineBreak />
+                                        <Run Text="Bit Offset:" />
+                                        <Run Text="{Binding OffsetBit, Mode=OneWay}" />
+                                </TextBlock>
+                            </Border>
                         </StackPanel>
 
-                        <TextBlock Text="Adresse wird automatisch festgelegt (Speicher)" Margin="5" Visibility="{Binding MemoryObject.IsAutoPara, Converter={StaticResource BoolToVis}}" />
-
-                        <Border Visibility="{Binding MemoryObject.IsAutoPara, Converter={StaticResource BoolToVis}}">
-                            <TextBlock Margin="5">
-                                    <Run Text="Offset:" />
-                                    <Run Text="{Binding Offset, Mode=OneWay}" />
-                                    <LineBreak />
-                                    <Run Text="Bit Offset:" />
-                                    <Run Text="{Binding OffsetBit, Mode=OneWay}" />
-                            </TextBlock>
-                        </Border>
-                    </StackPanel>
-
-                    <StackPanel Visibility="{Binding SavePath, Converter={StaticResource EnumToVis}, ConverterParameter=Property}">
-                        <TextBlock Text="Properties werden noch nicht unterstütz" />
-                    </StackPanel>
-                </Grid>
-            </StackPanel>
-        </ScrollViewer>
+                        <StackPanel Visibility="{Binding SavePath, Converter={StaticResource EnumToVis}, ConverterParameter=Property}">
+                            <TextBlock Text="Properties werden noch nicht unterstütz" />
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
     </Grid>
 </UserControl>

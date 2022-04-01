@@ -688,52 +688,10 @@ namespace Kaenx.Creator
             {
                 foreach(Models.AppVersion ver in app.Versions)
                 {
-                    foreach(Models.Parameter para in ver.Parameters)
-                    {
-                        if (para._memoryId != -1)
-                            para.MemoryObject = ver.Memories.SingleOrDefault(m => m.UId == para._memoryId);
-                            
-                        if (para._parameterType != -1)
-                            para.ParameterTypeObject = ver.ParameterTypes.SingleOrDefault(p => p.UId == para._parameterType);
+                    LoadVersion(ver, ver);
 
-                        if(para.IsInUnion && para._unionId != -1)
-                            para.UnionObject = ver.Unions.SingleOrDefault(u => u.UId == para._unionId);
-                    }
-
-                    foreach(Models.Union union in ver.Unions)
-                    {
-                        if (union._memoryId != -1)
-                            union.MemoryObject = ver.Memories.SingleOrDefault(u => u.UId == union._memoryId);
-                    }
-
-                    foreach(Models.ParameterRef pref in ver.ParameterRefs)
-                    {
-                        if (pref._parameter != -1)
-                            pref.ParameterObject = ver.Parameters.SingleOrDefault(p => p.UId == pref._parameter);
-                    }
-
-                    foreach(Models.ComObject com in ver.ComObjects)
-                    {
-                        if (!string.IsNullOrEmpty(com._typeNumber))
-                            com.Type = DPTs.Single(d => d.Number == com._typeNumber);
-                            
-                        if(!string.IsNullOrEmpty(com._subTypeNumber) && com.Type != null)
-                            com.SubType = com.Type.SubTypes.Single(d => d.Number == com._subTypeNumber);
-                    }
-
-                    foreach(Models.ComObjectRef cref in ver.ComObjectRefs)
-                    {
-                        if (cref._comObject != -1)
-                            cref.ComObjectObject = ver.ComObjects.SingleOrDefault(c => c.UId == cref._comObject);
-
-                        if (!string.IsNullOrEmpty(cref._typeNumber))
-                            cref.Type = DPTs.Single(d => d.Number == cref._typeNumber);
-                            
-                        if(!string.IsNullOrEmpty(cref._subTypeNumber) && cref.Type != null)
-                            cref.SubType = cref.Type.SubTypes.Single(d => d.Number == cref._subTypeNumber);
-                    }
-
-                    LoadSubDyn(ver.Dynamics[0], ver.ParameterRefs.ToList(), ver.ComObjectRefs.ToList());
+                    foreach(Models.Module mod in ver.Modules)
+                        LoadVersion(ver, mod);
                 }
 
 
@@ -759,6 +717,74 @@ namespace Kaenx.Creator
 
             SetButtons(true);
             MenuSave.IsEnabled = true;
+        }
+
+        private void LoadVersion(Models.AppVersion vbase, Models.IVersionBase mod)
+        {
+            if(vbase == mod) {
+                if(vbase._addressMemoryId != -1)
+                    vbase.AddressMemoryObject = vbase.Memories.SingleOrDefault(m => m.UId == vbase._addressMemoryId);
+
+                if(vbase._assocMemoryId != -1)
+                    vbase.AssociationMemoryObject = vbase.Memories.SingleOrDefault(m => m.UId == vbase._assocMemoryId);
+            }
+
+            foreach(Models.Parameter para in mod.Parameters)
+            {
+                if (para._memoryId != -1)
+                    para.MemoryObject = vbase.Memories.SingleOrDefault(m => m.UId == para._memoryId);
+                    
+                if (para._parameterType != -1)
+                    para.ParameterTypeObject = vbase.ParameterTypes.SingleOrDefault(p => p.UId == para._parameterType);
+
+                if(para.IsInUnion && para._unionId != -1)
+                    para.UnionObject = mod.Unions.SingleOrDefault(u => u.UId == para._unionId);
+            }
+
+            foreach(Models.Union union in mod.Unions)
+            {
+                if (union._memoryId != -1)
+                    union.MemoryObject = vbase.Memories.SingleOrDefault(u => u.UId == union._memoryId);
+            }
+
+            foreach(Models.ParameterRef pref in mod.ParameterRefs)
+            {
+                if (pref._parameter != -1)
+                    pref.ParameterObject = mod.Parameters.SingleOrDefault(p => p.UId == pref._parameter);
+            }
+
+            foreach(Models.ComObject com in mod.ComObjects)
+            {
+                if (!string.IsNullOrEmpty(com._typeNumber))
+                    com.Type = DPTs.Single(d => d.Number == com._typeNumber);
+                    
+                if(!string.IsNullOrEmpty(com._subTypeNumber) && com.Type != null)
+                    com.SubType = com.Type.SubTypes.Single(d => d.Number == com._subTypeNumber);
+            }
+
+            foreach(Models.ComObjectRef cref in mod.ComObjectRefs)
+            {
+                if (cref._comObject != -1)
+                    cref.ComObjectObject = mod.ComObjects.SingleOrDefault(c => c.UId == cref._comObject);
+
+                if (!string.IsNullOrEmpty(cref._typeNumber))
+                    cref.Type = DPTs.Single(d => d.Number == cref._typeNumber);
+                    
+                if(!string.IsNullOrEmpty(cref._subTypeNumber) && cref.Type != null)
+                    cref.SubType = cref.Type.SubTypes.Single(d => d.Number == cref._subTypeNumber);
+            }
+
+            if(mod is Models.Module mod2)
+            {
+                if(mod2._parameterBaseOffsetUId != -1)
+                    mod2.ParameterBaseOffset = mod2.Arguments.SingleOrDefault(a => a.UId == mod2._parameterBaseOffsetUId);
+
+                if(mod2._comObjectBaseNumberUId != -1)
+                    mod2.ComObjectBaseNumber = mod2.Arguments.SingleOrDefault(a => a.UId == mod2._comObjectBaseNumberUId);
+            }
+
+            if(mod.Dynamics.Count > 0)
+                LoadSubDyn(mod.Dynamics[0], mod.ParameterRefs.ToList(), mod.ComObjectRefs.ToList());
         }
 
         private void LoadSubDyn(Models.Dynamic.IDynItems dyn, List<Models.ParameterRef> paras, List<Models.ComObjectRef> coms)
@@ -857,59 +883,7 @@ namespace Kaenx.Creator
         {
             Models.Memory mem = (sender as Button).DataContext as Models.Memory;
             Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
-            byte[] data = AutoHelper.GetMemorySize(ver, mem);
-
-            int height = Convert.ToInt32(Math.Ceiling(data.Length / 16.0));
-            Debug.WriteLine("Höhe: " + height);
-
-            if(height == 0) return;
-
-            WriteableBitmap map = new WriteableBitmap(16, height, 1, 1, PixelFormats.Indexed8, BitmapPalettes.WebPalette);
-
-            int stride = (map.PixelWidth * map.Format.BitsPerPixel + 7) / 8;
-            byte[] pixelByteArray = new byte[map.PixelHeight * stride];
-
-            map.CopyPixels(pixelByteArray, stride, 0);
-
-            for(int i = 0; i < pixelByteArray.Length; i++)
-            {
-                int val = (i >= data.Length) ? 0 : data[i];
-                switch (val)
-                {
-                    case 0:
-                        pixelByteArray[i] = 18;
-                        break;
-
-                    case 1:
-                    case 2:
-                    case 3:
-                    case 4:
-                        pixelByteArray[i] = 205;
-                        break;
-
-                    case 5:
-                    case 6:
-                    case 7:
-                        pixelByteArray[i] = 193;
-                        break;
-
-                    case 8:
-                        pixelByteArray[i] = 180;
-                        break;
-
-                    case 255:
-                        pixelByteArray[i] = 100;
-                        break;
-
-                    default:
-                        pixelByteArray[i] = 0;
-                        break;
-                }
-                
-            }
-
-            map.WritePixels(new Int32Rect(0, 0, map.PixelWidth, map.PixelHeight), pixelByteArray, stride, 0);
-            OutHeatmap.Source = map;
+            AutoHelper.MemoryCalculation(ver, mem);
         }
 
         #region Clicks Dyn
@@ -1171,6 +1145,17 @@ namespace Kaenx.Creator
                             foreach(var group in x.Where(g => g.Count() > 1))
                                 PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterType Enum {ptype.Name} ({ptype.UId}): Wert ({group.Key}) wird öfters verwendet", State = Models.PublishState.Fail });
                             
+                            if(!ptype.IsSizeManual)
+                            {
+                                int maxValue = -1;
+                                foreach(Models.ParameterTypeEnum penum in ptype.Enums)
+                                    if(penum.Value > maxValue)
+                                        maxValue = penum.Value;
+                                string bin = Convert.ToString(maxValue, 2);
+                                ptype.SizeInBit = bin.Length;
+                                maxsize = (int)Math.Pow(2, ptype.SizeInBit);
+                            }
+
                             foreach(Models.ParameterTypeEnum penum in ptype.Enums){
                                 if(penum.Value >= maxsize)
                                     PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterType Enum {ptype.Name} ({ptype.UId}): Wert ({penum.Value}) ist größer als maximaler Wert ({maxsize-1})", State = Models.PublishState.Fail });
@@ -1188,12 +1173,28 @@ namespace Kaenx.Creator
                             break;
 
                         case Models.ParameterTypes.NumberUInt:
+                            if(!ptype.IsSizeManual)
+                            {
+                                string bin = Convert.ToString(ptype.Max, 2);
+                                ptype.SizeInBit = bin.Length;
+                                maxsize = (int)Math.Pow(2, ptype.SizeInBit);
+                            }
                             if(ptype.Min < 0) PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Min kann nicht kleiner als 0 sein", State = Models.PublishState.Fail });
                             if(ptype.Min > ptype.Max) PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Min ({ptype.Min}) ist größer als Max ({ptype.Max})", State = Models.PublishState.Fail });
                             if(ptype.Max >= maxsize) PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Max ({ptype.Max}) kann nicht größer als das Maximum ({maxsize-1}) sein", State = Models.PublishState.Fail });
                             break;
 
                         case Models.ParameterTypes.NumberInt:
+                            if(!ptype.IsSizeManual)
+                            {
+                                int z = ptype.Min * (-1);
+                                if(z < (ptype.Max - 1)) z = ptype.Max;
+                                string y = z.ToString().Replace("-", "");
+                                string bin = Convert.ToString(int.Parse(y), 2);
+                                if(z == (ptype.Min * (-1))) bin += "1";
+                                ptype.SizeInBit = bin.Length;
+                                maxsize = (int)Math.Pow(2, ptype.SizeInBit);
+                            }
                             if(ptype.Min > ptype.Max) PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Min ({ptype.Min}) ist größer als Max ({ptype.Max})", State = Models.PublishState.Fail });
                             if(ptype.Max > ((maxsize/2)-1)) PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Max ({ptype.Max}) kann nicht größer als das Maximum ({(maxsize/2)-1}) sein", State = Models.PublishState.Fail });
                             if(ptype.Min < ((maxsize/2)*(-1))) PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Min ({ptype.Min}) kann nicht kleiner als das Minimum ({(maxsize/2)*(-1)}) sein", State = Models.PublishState.Fail });
@@ -1409,6 +1410,8 @@ namespace Kaenx.Creator
 
                 //TODO check Modules also
                 //check for Argument exist
+
+                //TODO check union size fits parameter+offset
             
             }
 

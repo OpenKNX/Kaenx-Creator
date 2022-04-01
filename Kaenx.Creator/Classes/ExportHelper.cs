@@ -23,6 +23,7 @@ namespace Kaenx.Creator.Classes
         Models.ModelGeneral general;
         XDocument doc;
         string appVersion;
+        string appVersionMod;
         string currentNamespace;
         string convPath;
 
@@ -83,6 +84,7 @@ namespace Kaenx.Creator.Classes
 
                 appVersion = appName + "-" + ver.Number.ToString("X2");
                 appVersion += "-0000";
+                appVersionMod = appVersion;
 
                 currentLang = ver.DefaultLanguage;
                 foreach(Models.Translation trans in ver.Text)
@@ -97,7 +99,7 @@ namespace Kaenx.Creator.Classes
                 xapp.SetAttributeValue("ApplicationVersion", ver.Number.ToString());
                 xapp.SetAttributeValue("ProgramType", "ApplicationProgram");
                 xapp.SetAttributeValue("MaskVersion", "MV-07B0");
-                xapp.SetAttributeValue("Name", ver.Text.Single(e => e.Language.CultureCode == currentLang).Text); //TODO richtigen übersetzten Namen verwenden und nicht internen
+                xapp.SetAttributeValue("Name", ver.Text.Single(e => e.Language.CultureCode == currentLang).Text);
                 xapp.SetAttributeValue("DefaultLanguage", currentLang);
                 xapp.SetAttributeValue("LoadProcedureStyle", "MergedProcedure");
                 xapp.SetAttributeValue("PeiType", "0");
@@ -126,49 +128,8 @@ namespace Kaenx.Creator.Classes
                         break;
                 }
 
-                Dictionary<string, string> MemIds = new Dictionary<string, string>();
                 XElement temp;
-
-                #region Segmente
-                Debug.WriteLine($"Exportiere Segmente: {ver.Memories.Count}x");
-                temp = new XElement(Get("Code"));
-                xunderapp.Add(temp);
-                foreach (Memory mem in ver.Memories)
-                {
-                    //Debug.WriteLine($"    - Segment {mem.Name}");
-                    if (ver.IsMemSizeAuto && mem.IsAutoSize)
-                        AutoHelper.GetMemorySize(ver, mem);
-
-
-                    XElement xmem = null;
-                    string id = "";
-                    switch (mem.Type)
-                    {
-                        case MemoryTypes.Absolute:
-                            xmem = new XElement(Get("AbsoluteSegment"));
-                            id = $"{appVersion}_AS-{mem.Address:X4}";
-                            xmem.SetAttributeValue("Id", id);
-                            xmem.SetAttributeValue("Address", mem.Address);
-                            xmem.SetAttributeValue("Size", mem.Size);
-                            //xmem.Add(new XElement(Get("Data"), "Hier kommt toller Base64 String hin"));
-                            break;
-
-                        case MemoryTypes.Relative:
-                            xmem = new XElement(Get("RelativeSegment"));
-                            id = $"{appVersion}_RS-04-{mem.Offset:X4}"; //TODO LoadStateMachine angeben
-                            xmem.SetAttributeValue("Id", id);
-                            xmem.SetAttributeValue("Name", mem.Name);
-                            xmem.SetAttributeValue("Offset", mem.Offset);
-                            xmem.SetAttributeValue("Size", mem.Size);
-                            xmem.SetAttributeValue("LoadStateMachine", "4");
-                            break;
-                    }
-
-                    if (xmem == null) continue;
-                    temp.Add(xmem);
-                    MemIds.Add(mem.Name, id);
-                }
-                #endregion
+                ExportSegments(ver, xunderapp);
 
                 #region ParamTypes
                 Debug.WriteLine($"Exportiere ParameterTypes: {ver.ParameterTypes.Count}x");
@@ -222,8 +183,13 @@ namespace Kaenx.Creator.Classes
                             throw new Exception("Unbekannter Parametertyp: " + type.Type);
                     }
 
-                    if (xcontent != null && xcontent.Name.LocalName != "TypeNone")
+                    if (xcontent != null && 
+                        xcontent.Name.LocalName != "TypeNone" &&
+                        xcontent.Name.LocalName != "TypePicture" &&
+                        xcontent.Name.LocalName != "IpAddress")
+                    {
                         xcontent.SetAttributeValue("SizeInBit", type.SizeInBit);
+                    }
                     if (xcontent != null)
                         xtype.Add(xcontent);
                     temp.Add(xtype);
@@ -231,215 +197,19 @@ namespace Kaenx.Creator.Classes
                 xunderapp.Add(temp);
                 #endregion
 
-                #region Parameter
-                Debug.WriteLine($"Exportiere Parameter: {ver.Parameters.Count}x");
-                temp = new XElement(Get("Parameters"));
-
-                StringBuilder headers = new StringBuilder();
-
-                foreach (Parameter para in ver.Parameters.Where(p => !p.IsInUnion))
-                {
-                    //Debug.WriteLine($"    - Parameter {para.UId} {para.Name}");
-                    ParseParameter(para, temp, ver, headers);
-                }
-
-                Debug.WriteLine($"Exportiere Unions: {ver.Parameters.Where(p => p.IsInUnion).GroupBy(p => p.UnionObject).Count()}x");
-                foreach (var paras in ver.Parameters.Where(p => p.IsInUnion).GroupBy(p => p.UnionObject))
-                {
-                    XElement xunion = new XElement(Get("Union"));
-                    xunion.SetAttributeValue("SizeInBit", paras.Key.SizeInBit);
-
-                    switch (paras.Key.SavePath)
-                    {
-                        case ParamSave.Memory:
-                            XElement xmem = new XElement(Get("Memory"));
-                            string memid = $"{appVersion}_";
-                            if (paras.Key.MemoryObject.Type == MemoryTypes.Absolute)
-                                memid += $"AS-{paras.Key.MemoryObject.Address:X4}";
-                            else
-                                memid += $"RS-04-{paras.Key.MemoryObject.Offset:X4}";
-                            xmem.SetAttributeValue("CodeSegment", memid);
-                            xmem.SetAttributeValue("Offset", paras.Key.Offset);
-                            xmem.SetAttributeValue("BitOffset", paras.Key.OffsetBit);
-                            xunion.Add(xmem);
-                            break;
-
-                        default:
-                            throw new Exception("Not supportet SavePath for Union (" + paras.Key.Name + ")!");
-                    }
-
-                    foreach (Parameter para in paras)
-                    {
-                        //Debug.WriteLine($"        - Parameter {para.UId} {para.Name}");
-                        ParseParameter(para, xunion, ver, headers);
-                    }
-
-                    temp.Add(xunion);
-                }
-                System.IO.File.WriteAllText(GetRelPath(appVersion + ".h"), headers.ToString());
-                headers = null;
-
-                xunderapp.Add(temp);
-                #endregion
-
-                #region ParameterRefs
-                Debug.WriteLine($"Exportiere ParameterRefs: {ver.ParameterRefs.Count}x");
-                temp = new XElement(Get("ParameterRefs"));
-
-                foreach (ParameterRef pref in ver.ParameterRefs)
-                {
-                    //Debug.WriteLine($"    - ParameterRef {pref.UId} {pref.Name}");
-                    if (pref.ParameterObject == null) continue;
-                    XElement xpref = new XElement(Get("ParameterRef"));
-                    if (pref.Id == -1)
-                    {
-                        pref.Id = AutoHelper.GetNextFreeId(ver.ParameterRefs);
-                    }
-                    string id = appVersion + (pref.ParameterObject.IsInUnion ? "_UP-" : "_P-") + pref.ParameterObject.Id;
-                    xpref.SetAttributeValue("Id", $"{id}_R-{pref.Id}");
-                    xpref.SetAttributeValue("RefId", id);
-                    id += $"_R-{pref.Id}";
-                    xpref.SetAttributeValue("Id", id);
-                    if(pref.OverwriteAccess && pref.Access != ParamAccess.Default)
-                        xpref.SetAttributeValue("Access", pref.Access.ToString());
-                    if (pref.OverwriteValue)
-                        xpref.SetAttributeValue("Value", pref.Value);
-                    temp.Add(xpref);
-                }
-
-                xunderapp.Add(temp);
-                #endregion
-
-                #region ComObjects
-                Debug.WriteLine($"Exportiere ComObjects: {ver.ComObjects.Count}x");
-                temp = new XElement(Get("ComObjectTable"));
-
-                foreach (ComObject com in ver.ComObjects)
-                {
-                    //Debug.WriteLine($"    - ComObject {com.UId} {com.Name}");
-                    XElement xcom = new XElement(Get("ComObject"));
-                    if (com.Id == -1)
-                    {
-                        com.Id = AutoHelper.GetNextFreeId(ver.ComObjects, 0);
-                    }
-                    xcom.SetAttributeValue("Id", $"{appVersion}_O-{com.Id}");
-                    xcom.SetAttributeValue("Name", com.Name);
-                    xcom.SetAttributeValue("Text", com.Text.Single(c => c.Language.CultureCode == currentLang).Text);
-                    xcom.SetAttributeValue("Number", com.Number);
-                    xcom.SetAttributeValue("FunctionText", com.FunctionText.Single(c => c.Language.CultureCode == currentLang).Text);
-                    xcom.SetAttributeValue("VisibleDescription", com.Description.Single(c => c.Language.CultureCode == currentLang).Text);
-
-                    if(!com.TranslationText)
-                        foreach(Models.Translation trans in com.Text) AddTranslation(trans.Language.CultureCode, $"{appVersion}_O-{com.Id}", "Text", trans.Text);
-                    if(!com.TranslationFunctionText)
-                        foreach(Models.Translation trans in com.FunctionText) AddTranslation(trans.Language.CultureCode, $"{appVersion}_O-{com.Id}", "FunctionText", trans.Text);
-                    if(!com.TranslationDescription)
-                        foreach(Models.Translation trans in com.Description) AddTranslation(trans.Language.CultureCode, $"{appVersion}_O-{com.Id}", "VisibleDescription", trans.Text);
-
-                    if (com.HasDpt && com.Type.Number != "0")
-                    {
-                        int size = com.Type.Size;
-                        if (size > 7)
-                            xcom.SetAttributeValue("ObjectSize", (size / 8) + " Byte");
-                        else
-                            xcom.SetAttributeValue("ObjectSize", size + " Bit");
-                    }
-
-
-                    xcom.SetAttributeValue("ReadFlag", com.FlagRead.ToString());
-                    xcom.SetAttributeValue("WriteFlag", com.FlagWrite.ToString());
-                    xcom.SetAttributeValue("CommunicationFlag", com.FlagComm.ToString());
-                    xcom.SetAttributeValue("TransmitFlag", com.FlagTrans.ToString());
-                    xcom.SetAttributeValue("UpdateFlag", com.FlagUpdate.ToString());
-                    xcom.SetAttributeValue("ReadOnInitFlag", com.FlagOnInit.ToString());
-
-
-                    if (com.HasDpt && com.Type.Number != "0")
-                    {
-                        if (com.HasDpts)
-                            xcom.SetAttributeValue("DatapointType", "DPST-" + com.Type.Number + "-" + com.SubType.Number);
-                        else
-                            xcom.SetAttributeValue("DatapointType", "DPT-" + com.Type.Number);
-                    }
-
-                    temp.Add(xcom);
-                }
-
-                xunderapp.Add(temp);
-                #endregion
-
-                #region ComObjectRefs
-                Debug.WriteLine($"Exportiere ComObjectRefs: {ver.ComObjectRefs.Count}x");
-                temp = new XElement(Get("ComObjectRefs"));
-
-                foreach (ComObjectRef cref in ver.ComObjectRefs)
-                {
-                    //Debug.WriteLine($"    - ComObjectRef {cref.UId} {cref.Name}");
-                    XElement xcref = new XElement(Get("ComObjectRef"));
-                    if (cref.Id == -1)
-                    {
-                        cref.Id = AutoHelper.GetNextFreeId(ver.ComObjectRefs, 0);
-                    }
-                    string id = $"{appVersion}_O-{cref.ComObjectObject.Id}";
-                    xcref.SetAttributeValue("Id", $"{id}_R-{cref.Id}");
-                    xcref.SetAttributeValue("RefId", id);
-                    id += $"_R-{cref.Id}";
-                    xcref.SetAttributeValue("Id", id);
-
-
-                    if(cref.OverwriteText) {
-                        if(!cref.TranslationText)
-                            foreach(Models.Translation trans in cref.Text) AddTranslation(trans.Language.CultureCode, id, "Text", trans.Text);
-                        xcref.SetAttributeValue("Text", cref.Text.Single(c => c.Language.CultureCode == currentLang).Text);
-                    }
-                    if(cref.OverwriteFunctionText) {
-                        if(!cref.TranslationFunctionText)
-                            foreach(Models.Translation trans in cref.FunctionText) AddTranslation(trans.Language.CultureCode, id, "FunctionText", trans.Text);
-                        xcref.SetAttributeValue("FunctionText", cref.FunctionText.Single(c => c.Language.CultureCode == currentLang).Text);
-                    }
-                    if(cref.OverwriteDescription) {
-                        if(!cref.TranslationDescription)
-                            foreach(Models.Translation trans in cref.Description) AddTranslation(trans.Language.CultureCode, id, "Description", trans.Text);
-                        xcref.SetAttributeValue("VisibleDescription", cref.Description.Single(c => c.Language.CultureCode == currentLang).Text);
-                    }
-
-                    if (cref.OverwriteDpt)
-                    {
-                        int size = cref.Type.Size;
-
-                        if (cref.Type.Number == "0")
-                        {
-                            xcref.SetAttributeValue("DatapointType", "");
-                        }
-                        else
-                        {
-                            if (cref.OverwriteDpst)
-                            {
-                                xcref.SetAttributeValue("DatapointType", "DPST-" + cref.Type.Number + "-" + cref.SubType.Number);
-                            }
-                            else
-                            {
-                                xcref.SetAttributeValue("DatapointType", "DPT-" + cref.Type.Number);
-                            }
-                            if (size > 7)
-                                xcref.SetAttributeValue("ObjectSize", (size / 8) + " Byte");
-                            else
-                                xcref.SetAttributeValue("ObjectSize", size + " Bit");
-                        }
-                    }
-                    temp.Add(xcref);
-                }
-
-                xunderapp.Add(temp);
-                #endregion
+                ExportParameters(ver, xunderapp);
+                ExportParameterRefs(ver, xunderapp);
+                ExportComObjects(ver, xunderapp);
+                ExportComObjectRefs(ver, xunderapp);
 
                 #region Tables
                 temp = new XElement(Get("AddressTable"));
-                temp.SetAttributeValue("MaxEntries", "65535");
+                temp.SetAttributeValue("MaxEntries", ver.AddressTableMaxCount);
                 xunderapp.Add(temp);
                 temp = new XElement(Get("AssociationTable"));
-                temp.SetAttributeValue("MaxEntries", "65535");
+                temp.SetAttributeValue("MaxEntries", ver.AssociationTableMaxCount);
                 xunderapp.Add(temp);
+                //TODO export codesegment and offset of mask memory absolute
 
 
                 switch (app.Mask.Procedure)
@@ -458,6 +228,47 @@ namespace Kaenx.Creator.Classes
 
 
                 #endregion
+
+                #region ModuleDefines
+                xunderapp = new XElement(Get("ModuleDefs"));
+                xapp.Add(xunderapp);
+
+                foreach(Models.Module mod in ver.Modules)
+                {
+
+                    if(mod.Id == -1)
+                        mod.Id = AutoHelper.GetNextFreeId(ver.Modules);
+
+                    appVersionMod += $"_MD-{mod.Id}";
+
+                    temp = new XElement(Get("Arguments"));
+                    foreach(Models.Argument arg in mod.Arguments)
+                    {
+                        XElement xarg = new XElement(Get("Argument"));
+                        if(arg.Id == -1)
+                            arg.Id = AutoHelper.GetNextFreeId(mod.Arguments);
+                        xarg.SetAttributeValue("Id", $"{appVersionMod}_A-{arg.Id}");
+                        xarg.SetAttributeValue("Name", arg.Name);
+                        temp.Add(xarg);
+                    }
+                    XElement xmod = new XElement(Get("ModuleDef"), temp);
+                    XElement xunderstatic = new XElement(Get("Static"));
+                    xmod.Add(xunderstatic);
+                    xunderapp.Add(xmod);
+
+                    xmod.SetAttributeValue("Id", $"{appVersion}_MD-{mod.Id}");
+                    xmod.SetAttributeValue("Name", mod.Name);
+
+                    ExportParameters(mod, xunderstatic);
+                    ExportParameterRefs(mod, xunderstatic);
+                    ExportComObjects(mod, xunderstatic);
+                    ExportComObjectRefs(mod, xunderstatic);
+
+                    appVersionMod = appVersion;
+                }
+
+                #endregion
+
 
                 xunderapp = new XElement(Get("Dynamic"));
                 xapp.Add(xunderapp);
@@ -655,7 +466,268 @@ namespace Kaenx.Creator.Classes
             #endregion
         }
 
-        private void ParseParameter(Parameter para, XElement parent, AppVersion ver, StringBuilder headers)
+        private void ExportSegments(AppVersion ver, XElement xparent)
+        {
+            Debug.WriteLine($"Exportiere Segmente: {ver.Memories.Count}x");
+            XElement codes = new XElement(Get("Code"));
+            foreach (Memory mem in ver.Memories)
+            {
+                AutoHelper.MemoryCalculation(ver, mem);
+                    
+                XElement xmem = null;
+                string id = "";
+                switch (mem.Type)
+                {
+                    case MemoryTypes.Absolute:
+                        xmem = new XElement(Get("AbsoluteSegment"));
+                        id = $"{appVersion}_AS-{mem.Address:X4}";
+                        xmem.SetAttributeValue("Id", id);
+                        xmem.SetAttributeValue("Address", mem.Address);
+                        xmem.SetAttributeValue("Size", mem.Size);
+                        //xmem.Add(new XElement(Get("Data"), "Hier kommt toller Base64 String hin"));
+                        break;
+
+                    case MemoryTypes.Relative:
+                        xmem = new XElement(Get("RelativeSegment"));
+                        id = $"{appVersion}_RS-04-{mem.Offset:X4}"; //TODO LoadStateMachine angeben
+                        xmem.SetAttributeValue("Id", id);
+                        xmem.SetAttributeValue("Name", mem.Name);
+                        xmem.SetAttributeValue("Offset", mem.Offset);
+                        xmem.SetAttributeValue("Size", mem.Size);
+                        xmem.SetAttributeValue("LoadStateMachine", "4");
+                        break;
+                }
+
+                if (xmem == null) continue;
+                codes.Add(xmem);
+            }
+            xparent.Add(codes);
+        }
+
+        private void ExportParameters(IVersionBase vbase, XElement xparent)
+        {
+            Debug.WriteLine($"Exportiere Parameter: {vbase.Parameters.Count}x");
+            XElement xparas = new XElement(Get("Parameters"));
+
+            StringBuilder headers = new StringBuilder();
+
+            foreach (Parameter para in vbase.Parameters.Where(p => !p.IsInUnion))
+            {
+                //Debug.WriteLine($"    - Parameter {para.UId} {para.Name}");
+                ParseParameter(para, xparas, vbase, headers);
+            }
+
+            Debug.WriteLine($"Exportiere Unions: {vbase.Parameters.Where(p => p.IsInUnion).GroupBy(p => p.UnionObject).Count()}x");
+            foreach (var paras in vbase.Parameters.Where(p => p.IsInUnion).GroupBy(p => p.UnionObject))
+            {
+                XElement xunion = new XElement(Get("Union"));
+                xunion.SetAttributeValue("SizeInBit", paras.Key.SizeInBit);
+
+                switch (paras.Key.SavePath)
+                {
+                    case ParamSave.Memory:
+                        XElement xmem = new XElement(Get("Memory"));
+                        string memid = $"{appVersion}_";
+                        if (paras.Key.MemoryObject.Type == MemoryTypes.Absolute)
+                            memid += $"AS-{paras.Key.MemoryObject.Address:X4}";
+                        else
+                            memid += $"RS-04-{paras.Key.MemoryObject.Offset:X4}";
+                        xmem.SetAttributeValue("CodeSegment", memid);
+                        xmem.SetAttributeValue("Offset", paras.Key.Offset);
+                        xmem.SetAttributeValue("BitOffset", paras.Key.OffsetBit);
+                        xunion.Add(xmem);
+                        break;
+
+                    default:
+                        throw new Exception("Not supportet SavePath for Union (" + paras.Key.Name + ")!");
+                }
+
+                foreach (Parameter para in paras)
+                {
+                    //Debug.WriteLine($"        - Parameter {para.UId} {para.Name}");
+                    ParseParameter(para, xunion, vbase, headers);
+                }
+
+                xparas.Add(xunion);
+            }
+            System.IO.File.WriteAllText(GetRelPath(appVersion + ".h"), headers.ToString());
+            headers = null;
+
+            xparent.Add(xparas);
+        }
+
+        private void ExportParameterRefs(IVersionBase vbase, XElement xparent)
+        {
+            Debug.WriteLine($"Exportiere ParameterRefs: {vbase.ParameterRefs.Count}x");
+            XElement xrefs = new XElement(Get("ParameterRefs"));
+
+            foreach (ParameterRef pref in vbase.ParameterRefs)
+            {
+                //Debug.WriteLine($"    - ParameterRef {pref.UId} {pref.Name}");
+                if (pref.ParameterObject == null) continue;
+                XElement xpref = new XElement(Get("ParameterRef"));
+                if (pref.Id == -1)
+                {
+                    pref.Id = AutoHelper.GetNextFreeId(vbase.ParameterRefs);
+                }
+                string id = appVersionMod + (pref.ParameterObject.IsInUnion ? "_UP-" : "_P-") + pref.ParameterObject.Id;
+                xpref.SetAttributeValue("Id", $"{id}_R-{pref.Id}");
+                xpref.SetAttributeValue("RefId", id);
+                id += $"_R-{pref.Id}";
+                xpref.SetAttributeValue("Id", id);
+                if(pref.OverwriteAccess && pref.Access != ParamAccess.Default)
+                    xpref.SetAttributeValue("Access", pref.Access.ToString());
+                if (pref.OverwriteValue)
+                    xpref.SetAttributeValue("Value", pref.Value);
+                xrefs.Add(xpref);
+            }
+
+            xparent.Add(xrefs);
+        }
+
+        private void ExportComObjects(IVersionBase vbase, XElement xparent)
+        {
+            Debug.WriteLine($"Exportiere ComObjects: {vbase.ComObjects.Count}x");
+            XElement xcoms;
+            if(vbase is Models.AppVersion)
+                xcoms = new XElement(Get("ComObjectTable"));
+            else
+                xcoms = new XElement(Get("ComObjects"));
+
+            Models.Argument baseNumber = null;
+            if(vbase is Models.Module mod)
+            {
+                baseNumber = mod.ComObjectBaseNumber;
+            }
+
+            foreach (ComObject com in vbase.ComObjects)
+            {
+                //Debug.WriteLine($"    - ComObject {com.UId} {com.Name}");
+                XElement xcom = new XElement(Get("ComObject"));
+                if (com.Id == -1)
+                {
+                    com.Id = AutoHelper.GetNextFreeId(vbase.ComObjects, 0);
+                }
+                string id = $"{appVersionMod}_O-";
+                if(vbase is Models.Module) id += "2-";
+                id += com.Id;
+                xcom.SetAttributeValue("Id", id);
+                xcom.SetAttributeValue("Name", com.Name);
+                xcom.SetAttributeValue("Text", com.Text.Single(c => c.Language.CultureCode == currentLang).Text);
+                xcom.SetAttributeValue("Number", com.Number);
+                xcom.SetAttributeValue("FunctionText", com.FunctionText.Single(c => c.Language.CultureCode == currentLang).Text);
+                xcom.SetAttributeValue("VisibleDescription", com.Description.Single(c => c.Language.CultureCode == currentLang).Text);
+
+                if(!com.TranslationText)
+                    foreach(Models.Translation trans in com.Text) AddTranslation(trans.Language.CultureCode, id, "Text", trans.Text);
+                if(!com.TranslationFunctionText)
+                    foreach(Models.Translation trans in com.FunctionText) AddTranslation(trans.Language.CultureCode, id, "FunctionText", trans.Text);
+                if(!com.TranslationDescription)
+                    foreach(Models.Translation trans in com.Description) AddTranslation(trans.Language.CultureCode, id, "VisibleDescription", trans.Text);
+
+                if (com.HasDpt && com.Type.Number != "0")
+                {
+                    int size = com.Type.Size;
+                    if (size > 7)
+                        xcom.SetAttributeValue("ObjectSize", (size / 8) + " Byte");
+                    else
+                        xcom.SetAttributeValue("ObjectSize", size + " Bit");
+                }
+
+                xcom.SetAttributeValue("ReadFlag", com.FlagRead.ToString());
+                xcom.SetAttributeValue("WriteFlag", com.FlagWrite.ToString());
+                xcom.SetAttributeValue("CommunicationFlag", com.FlagComm.ToString());
+                xcom.SetAttributeValue("TransmitFlag", com.FlagTrans.ToString());
+                xcom.SetAttributeValue("UpdateFlag", com.FlagUpdate.ToString());
+                xcom.SetAttributeValue("ReadOnInitFlag", com.FlagOnInit.ToString());
+
+
+                if (com.HasDpt && com.Type.Number != "0")
+                {
+                    if (com.HasDpts)
+                        xcom.SetAttributeValue("DatapointType", "DPST-" + com.Type.Number + "-" + com.SubType.Number);
+                    else
+                        xcom.SetAttributeValue("DatapointType", "DPT-" + com.Type.Number);
+                }
+
+                if(baseNumber != null)
+                    xcom.SetAttributeValue("BaseNumber", $"{appVersionMod}_A-{baseNumber.Id}");
+
+                xcoms.Add(xcom);
+            }
+
+            xparent.Add(xcoms);
+        }
+
+        private void ExportComObjectRefs(IVersionBase vbase, XElement xparent)
+        {
+            Debug.WriteLine($"Exportiere ComObjectRefs: {vbase.ComObjectRefs.Count}x");
+            XElement xrefs = new XElement(Get("ComObjectRefs"));
+
+            foreach (ComObjectRef cref in vbase.ComObjectRefs)
+            {
+                //Debug.WriteLine($"    - ComObjectRef {cref.UId} {cref.Name}");
+                XElement xcref = new XElement(Get("ComObjectRef"));
+                if (cref.Id == -1)
+                {
+                    cref.Id = AutoHelper.GetNextFreeId(vbase.ComObjectRefs, 0);
+                }
+                string id = $"{appVersionMod}_O-";
+                if(vbase is Models.Module) id += "2-";
+                id += cref.ComObjectObject.Id;
+                xcref.SetAttributeValue("Id", $"{id}_R-{cref.Id}");
+                xcref.SetAttributeValue("RefId", id);
+                id += $"_R-{cref.Id}";
+                xcref.SetAttributeValue("Id", id);
+
+
+                if(cref.OverwriteText) {
+                    if(!cref.TranslationText)
+                        foreach(Models.Translation trans in cref.Text) AddTranslation(trans.Language.CultureCode, id, "Text", trans.Text);
+                    xcref.SetAttributeValue("Text", cref.Text.Single(c => c.Language.CultureCode == currentLang).Text);
+                }
+                if(cref.OverwriteFunctionText) {
+                    if(!cref.TranslationFunctionText)
+                        foreach(Models.Translation trans in cref.FunctionText) AddTranslation(trans.Language.CultureCode, id, "FunctionText", trans.Text);
+                    xcref.SetAttributeValue("FunctionText", cref.FunctionText.Single(c => c.Language.CultureCode == currentLang).Text);
+                }
+                if(cref.OverwriteDescription) {
+                    if(!cref.TranslationDescription)
+                        foreach(Models.Translation trans in cref.Description) AddTranslation(trans.Language.CultureCode, id, "Description", trans.Text);
+                    xcref.SetAttributeValue("VisibleDescription", cref.Description.Single(c => c.Language.CultureCode == currentLang).Text);
+                }
+
+                if (cref.OverwriteDpt)
+                {
+                    int size = cref.Type.Size;
+
+                    if (cref.Type.Number == "0")
+                    {
+                        xcref.SetAttributeValue("DatapointType", "");
+                    }
+                    else
+                    {
+                        if (cref.OverwriteDpst)
+                        {
+                            xcref.SetAttributeValue("DatapointType", "DPST-" + cref.Type.Number + "-" + cref.SubType.Number);
+                        }
+                        else
+                        {
+                            xcref.SetAttributeValue("DatapointType", "DPT-" + cref.Type.Number);
+                        }
+                        if (size > 7)
+                            xcref.SetAttributeValue("ObjectSize", (size / 8) + " Byte");
+                        else
+                            xcref.SetAttributeValue("ObjectSize", size + " Bit");
+                    }
+                }
+                xrefs.Add(xcref);
+            }
+
+            xparent.Add(xrefs);
+        }
+
+        private void ParseParameter(Parameter para, XElement parent, IVersionBase ver, StringBuilder headers)
         {
             string line = "#define PARAM_" + para.Name + " " + para.Offset + " //Size: " + para.ParameterTypeObject.SizeInBit;
             if (para.ParameterTypeObject.SizeInBit % 8 == 0) line += " (" + (para.ParameterTypeObject.SizeInBit / 8) + " Byte)";
@@ -668,7 +740,7 @@ namespace Kaenx.Creator.Classes
             {
                 para.Id = AutoHelper.GetNextFreeId(ver.Parameters);
             }
-            string id = appVersion + (para.IsInUnion ? "_UP-" : "_P-") + para.Id;
+            string id = appVersionMod + (para.IsInUnion ? "_UP-" : "_P-") + para.Id;
             xpara.SetAttributeValue("Id", id);
             xpara.SetAttributeValue("Name", para.Name);
             xpara.SetAttributeValue("ParameterType", $"{appVersion}_PT-{GetEncoded(para.ParameterTypeObject.Name)}");
@@ -688,6 +760,12 @@ namespace Kaenx.Creator.Classes
                         xparamem.SetAttributeValue("CodeSegment", memid);
                         xparamem.SetAttributeValue("Offset", para.Offset);
                         xparamem.SetAttributeValue("BitOffset", para.OffsetBit);
+
+                        if(ver is Models.Module mod)
+                        {
+                            xparamem.SetAttributeValue("BaseOffset", $"{appVersionMod}_A-{mod.ParameterBaseOffset.Id}");
+                        }
+
                         xpara.Add(xparamem);
                         break;
                 }
@@ -707,9 +785,6 @@ namespace Kaenx.Creator.Classes
 
             parent.Add(xpara);
         }
-
-
-
 
 
         #region Create Dyn Stuff
@@ -938,7 +1013,7 @@ namespace Kaenx.Creator.Classes
 
                             xitem.SetAttributeValue("Id", id);
                             xitem.SetAttributeValue("Name", dev.Text.Single(e => e.Language.CultureCode == currentLang).Text);
-                            xitem.SetAttributeValue("Number", item.Number); //TODO check if correct  (item.Hardware.SerialNumber);
+                            xitem.SetAttributeValue("Number", item.Number);
                             xitem.SetAttributeValue("VisibleDescription", dev.Description.Single(e => e.Language.CultureCode == currentLang).Text);
                             xitem.SetAttributeValue("ProductRefId", productIds[dev.Name]);
                             string hardid = item.Hardware.Version + "-" + app.Number + "-" + ver.Number;

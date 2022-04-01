@@ -99,7 +99,7 @@ namespace Kaenx.Creator.Classes
                     {
                         XElement xapp = XDocument.Load(entryStream).Root;
                         _namespace = xapp.Attribute("xmlns").Value;
-                        xapp = xapp.Element(GetXName("ManufacturerData")).Element(GetXName("Manufacturer")).Element(GetXName("ApplicationPrograms")).Element(GetXName("ApplicationProgram"));
+                        xapp = xapp.Element(Get("ManufacturerData")).Element(Get("Manufacturer")).Element(Get("ApplicationPrograms")).Element(Get("ApplicationProgram"));
                         ImportApplication(xapp);
                     }
                 }
@@ -108,15 +108,15 @@ namespace Kaenx.Creator.Classes
             ZipArchiveEntry entry = Archive.GetEntry($"M-{manuHex}/Hardware.xml");
             XElement xele = XDocument.Load(entry.Open()).Root;
             _namespace = xele.Attribute("xmlns").Value;
-            xele = xele.Element(GetXName("ManufacturerData")).Element(GetXName("Manufacturer")).Element(GetXName("Hardware"));
-            ImportLanguages(xele.Parent.Element(GetXName("Languages")));
+            xele = xele.Element(Get("ManufacturerData")).Element(Get("Manufacturer")).Element(Get("Hardware"));
+            ImportLanguages(xele.Parent.Element(Get("Languages")));
             ImportHardware(xele);
 
             entry = Archive.GetEntry($"M-{manuHex}/Catalog.xml");
             xele = XDocument.Load(entry.Open()).Root;
             _namespace = xele.Attribute("xmlns").Value;
-            xele = xele.Element(GetXName("ManufacturerData")).Element(GetXName("Manufacturer")).Element(GetXName("Catalog"));
-            ImportLanguages(xele.Parent.Element(GetXName("Languages")));
+            xele = xele.Element(Get("ManufacturerData")).Element(Get("Manufacturer")).Element(Get("Catalog"));
+            ImportLanguages(xele.Parent.Element(Get("Languages")));
             ImportCatalog(xele);
         }
 
@@ -176,17 +176,18 @@ namespace Kaenx.Creator.Classes
             currentVers.DefaultLanguage = xapp.Attribute("DefaultLanguage").Value;
             currentVers.Languages.Add(new Language(_langTexts[currentVers.DefaultLanguage], currentVers.DefaultLanguage));
 #endregion
-            ImportLanguages(xapp.Parent.Parent.Element(GetXName("Languages")));
+            ImportLanguages(xapp.Parent.Parent.Element(Get("Languages")));
             currentVers.Text = GetTranslation(xapp.Attribute("Id").Value, "Name", xapp);
-            XElement xstatic = xapp.Element(GetXName("Static"));
-            ImportSegments(xstatic.Element(GetXName("Code")));
-            ImportParameterTypes(xstatic.Element(GetXName("ParameterTypes")));
-            ImportParameter(xstatic.Element(GetXName("Parameters")), currentVers);
-            ImportParameterRefs(xstatic.Element(GetXName("ParameterRefs")), currentVers);
-            ImportComObjects(xstatic.Element(GetXName("ComObjectTable")), currentVers);
-            ImportComObjectRefs(xstatic.Element(GetXName("ComObjectRefs")), currentVers);
-            ImportModules(xapp.Element(GetXName("ModuleDefs")));
-            ImportDynamic(xapp.Element(GetXName("Dynamic")));
+            XElement xstatic = xapp.Element(Get("Static"));
+            ImportSegments(xstatic.Element(Get("Code")));
+            ImportParameterTypes(xstatic.Element(Get("ParameterTypes")));
+            ImportParameter(xstatic.Element(Get("Parameters")), currentVers);
+            ImportParameterRefs(xstatic.Element(Get("ParameterRefs")), currentVers);
+            ImportComObjects(xstatic.Element(Get("ComObjectTable")), currentVers);
+            ImportComObjectRefs(xstatic.Element(Get("ComObjectRefs")), currentVers);
+            ImportTables(xstatic);
+            ImportModules(xapp.Element(Get("ModuleDefs")));
+            ImportDynamic(xapp.Element(Get("Dynamic")));
         }
 
         public void ImportLanguages(XElement xlangs) {
@@ -196,7 +197,7 @@ namespace Kaenx.Creator.Classes
                 if(!currentVers.Languages.Any(l => l.CultureCode == cultureCode))
                     currentVers.Languages.Add(new Language(_langTexts[cultureCode], cultureCode));
 
-                foreach(XElement xtele in xlang.Descendants(GetXName("TranslationElement"))) {
+                foreach(XElement xtele in xlang.Descendants(Get("TranslationElement"))) {
                     foreach(XElement xattr in xtele.Elements()) {
                         AddTranslation(xtele.Attribute("RefId").Value,
                             xattr.Attribute("AttributeName").Value,
@@ -244,7 +245,8 @@ namespace Kaenx.Creator.Classes
             return translations;
         }
 
-        public void ImportSegments(XElement xcodes) {
+        public void ImportSegments(XElement xcodes)
+        {
             _uidCounter = 1;
             foreach (XElement xcode in xcodes.Elements())
             {
@@ -290,7 +292,7 @@ namespace Kaenx.Creator.Classes
                 Models.ParameterType ptype = new Models.ParameterType()
                 {
                     Name = xparatype.Attribute("Name").Value,
-                    IsSizeAuto = false,
+                    IsSizeManual = true,
                     UId = _uidCounter++
                 };
 
@@ -348,16 +350,17 @@ namespace Kaenx.Creator.Classes
             }
         }
 
-        public void ImportParameter(XElement xparas, IVersionBase vbase) {
+        public void ImportParameter(XElement xparas, IVersionBase vbase)
+        {
             if(xparas == null) return;
             _uidCounter = 1;
             
-            foreach(XElement xpara in xparas.Elements(GetXName("Parameter"))) {
+            foreach(XElement xpara in xparas.Elements(Get("Parameter"))) {
                 ParseParameter(xpara, vbase);
             }
 
             int unionCounter = 1;
-            foreach (XElement xunion in xparas.Elements(GetXName("Union")))
+            foreach (XElement xunion in xparas.Elements(Get("Union")))
             {
                 Union union = new Union()
                 {
@@ -382,7 +385,7 @@ namespace Kaenx.Creator.Classes
 
 
 
-                foreach(XElement xpara in xunion.Elements(GetXName("Parameter"))) {
+                foreach(XElement xpara in xunion.Elements(Get("Parameter"))) {
                     ParseParameter(xpara, vbase, union, xmem);
                 }
             }
@@ -390,7 +393,8 @@ namespace Kaenx.Creator.Classes
             currentVers.IsUnionActive = unionCounter > 1;
         }
 
-        public void ParseParameter(XElement xpara, IVersionBase vbase, Union union = null, XElement xmemory = null) {
+        public void ParseParameter(XElement xpara, IVersionBase vbase, Union union = null, XElement xmemory = null)
+        {
             Models.Parameter para = new Models.Parameter() {
                 Name = xpara.Attribute("Name").Value,
                 Value = xpara.Attribute("Value").Value,
@@ -437,6 +441,10 @@ namespace Kaenx.Creator.Classes
                         para.Offset = int.Parse(xmem.Attribute("Offset").Value);
                         para.OffsetBit = int.Parse(xmem.Attribute("BitOffset").Value);
                     }
+                    if(vbase is Models.Module mod && xmem.Attribute("BaseOffset") != null) {
+                        int argid = int.Parse(GetLastSplit(xmem.Attribute("BaseOffset").Value, 2));
+                        mod.ParameterBaseOffset = mod.Arguments.Single(a => a.Id == argid);
+                    }
                 }
                 else
                 {
@@ -447,7 +455,8 @@ namespace Kaenx.Creator.Classes
             vbase.Parameters.Add(para);
         }
 
-        public void ImportParameterRefs(XElement xrefs, Models.IVersionBase vbase) {
+        public void ImportParameterRefs(XElement xrefs, Models.IVersionBase vbase)
+        {
             if(xrefs == null) return;
             _uidCounter = 1;
 
@@ -541,11 +550,18 @@ namespace Kaenx.Creator.Classes
                     //TODO muss ich hier was machen?
                 }
 
+                if(vbase is Models.Module mod && xcom.Attribute("BaseNumber") != null)
+                {
+                    int argid = int.Parse(GetLastSplit(xcom.Attribute("BaseNumber").Value, 2));
+                    mod.ComObjectBaseNumber = mod.Arguments.Single(a => a.Id == argid);
+                }
+
                 vbase.ComObjects.Add(com);
             }
         }
 
-        public void ImportComObjectRefs(XElement xrefs, Models.IVersionBase vbase) {
+        public void ImportComObjectRefs(XElement xrefs, Models.IVersionBase vbase)
+        {
             if(xrefs == null) return;
             _uidCounter = 1;
 
@@ -628,13 +644,39 @@ namespace Kaenx.Creator.Classes
             }
         }
 
+        public void ImportTables(XElement xstatic)
+        {
+            if(xstatic.Element(Get("AddressTable")) != null)
+            {
+                XElement tadd = xstatic.Element(Get("AddressTable"));
+                if(tadd.Attribute("CodeSegment") != null)
+                {
+                    string segName = GetLastSplit(tadd.Attribute("CodeSegment").Value);
+                    currentVers.AddressMemoryObject = currentVers.Memories.SingleOrDefault(m => m.Name.StartsWith(segName + " "));
+                }
+                currentVers.AddressTableMaxCount = int.Parse(tadd.Attribute("MaxEntries")?.Value ?? "0");
+                currentVers.AddressTableOffset = int.Parse(tadd.Attribute("Offset")?.Value ?? "0");
+                //TODO import codesegment
+            }
+            if(xstatic.Element(Get("AssociationTable")) != null)
+            {
+                XElement tadd = xstatic.Element(Get("AssociationTable"));
+                if(tadd.Attribute("CodeSegment") != null)
+                {
+                    string segName = GetLastSplit(tadd.Attribute("CodeSegment").Value);
+                    currentVers.AssociationMemoryObject = currentVers.Memories.SingleOrDefault(m => m.Name.StartsWith(segName + " "));
+                }
+                currentVers.AssociationTableMaxCount = int.Parse(tadd.Attribute("MaxEntries")?.Value ?? "0");
+                currentVers.AssociationTableOffset = int.Parse(tadd.Attribute("Offset")?.Value ?? "0");
+            }
+        }
+
         public void ImportModules(XElement xmods) {
             if(xmods == null) return;
             _uidCounter = 1;
             currentVers.IsModulesActive = true;
 
             foreach(XElement xmod in xmods.Elements()) {
-                //TODO also import DisplayOrder and Tag
                 Models.Module mod = new Models.Module() {
                     Name = xmod.Attribute("Name")?.Value ?? "Unbenannt",
                     UId = _uidCounter++,
@@ -643,12 +685,12 @@ namespace Kaenx.Creator.Classes
                     IsComObjectRefAuto = false
                 };
 
-                XElement xstatic = xmod.Element(GetXName("Static"));
-                ImportArguments(xmod.Element(GetXName("Arguments")), mod);
-                ImportParameter(xstatic.Element(GetXName("Parameters")), mod);
-                ImportParameterRefs(xstatic.Element(GetXName("ParameterRefs")), mod);
-                ImportComObjects(xstatic.Element(GetXName("ComObjects")), mod);
-                ImportComObjectRefs(xstatic.Element(GetXName("ComObjectRefs")), mod);
+                XElement xstatic = xmod.Element(Get("Static"));
+                ImportArguments(xmod.Element(Get("Arguments")), mod);
+                ImportParameter(xstatic.Element(Get("Parameters")), mod);
+                ImportParameterRefs(xstatic.Element(Get("ParameterRefs")), mod);
+                ImportComObjects(xstatic.Element(Get("ComObjects")), mod);
+                ImportComObjectRefs(xstatic.Element(Get("ComObjectRefs")), mod);
 
                 currentVers.Modules.Add(mod);
             }
@@ -695,7 +737,7 @@ namespace Kaenx.Creator.Classes
                     _general.Hardware.Add(hardware);
                 }
 
-                foreach (XElement xapp in xhard.Descendants(GetXName("ApplicationProgramRef")))
+                foreach (XElement xapp in xhard.Descendants(Get("ApplicationProgramRef")))
                 {
                     string[] appId = xapp.Attribute("RefId").Value.Split('-');
                     int number = int.Parse(appId[2], System.Globalization.NumberStyles.HexNumber);
@@ -704,7 +746,7 @@ namespace Kaenx.Creator.Classes
                     hardware.Apps.Add(_general.Applications.Single(a => a.Number == number));
                 }
 
-                foreach (XElement xprod in xhard.Descendants(GetXName("Product")))
+                foreach (XElement xprod in xhard.Descendants(Get("Product")))
                 {
                     Models.Device device;
                     string ordernumb = xprod.Attribute("OrderNumber").Value;
@@ -953,7 +995,7 @@ namespace Kaenx.Creator.Classes
             return input.Substring(input.LastIndexOf('_') + 1 + offset);
         }
 
-        public XName GetXName(string name)
+        public XName Get(string name)
         {
             return XName.Get(name, _namespace);
         }

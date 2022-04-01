@@ -3,3 +3,10 @@ Liste was noch zu tun ist:
 - [x] Nur die ETS Versionen anzeigen, die auch installiert/unterstützt werden
 - [ ] Ladeprozeduren im-/exportieren
 - [ ] Parameter Union-Einstellungen nur anzeigen, wenn AppVerson UseUnion=true
+- [ ] Nicht verwendete Parameter/KOs anzeigen lassen und option zum Löschen
+- [x] Parameter BaseOffset anzeigen, wenn Module
+- [ ] KO BaseNumber anzeigen, wenn Module
+- [x] Beim Laden eines Projekts auch ModuleDefs initialisieren (checks einfügen)
+- [ ] automatische anordnung der Parameter in ModuleDefs
+- [ ] Check für Module: Argumente existieren
+- [ ] Reset or change manual: Offset für Parameter/Unions

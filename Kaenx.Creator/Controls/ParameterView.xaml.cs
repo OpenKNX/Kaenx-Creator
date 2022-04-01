@@ -45,11 +45,15 @@ namespace Kaenx.Creator.Controls
         
         protected virtual void OnModuleChanged() {
             InUnion.ItemsSource = Module?.Unions;
+            //InArgument.ItemsSource = (Module as Models.Module)?.Arguments;
+            InBaseOffset.Visibility = (Module is Models.Module) ? Visibility.Visible : Visibility.Collapsed;
         }
         
         private void ClickAdd(object sender, RoutedEventArgs e)
         {
-            Models.Parameter para = new Models.Parameter() { UId = AutoHelper.GetNextFreeUId(Module.Parameters)};
+            Models.Parameter para = new Models.Parameter() {
+                UId = AutoHelper.GetNextFreeUId(Module.Parameters)
+            };
             foreach(Models.Language lang in Version.Languages) {
                 para.Text.Add(new Models.Translation(lang, "Dummy"));
             }

@@ -849,15 +849,42 @@
                                             </DataGrid.Columns>
                                         </DataGrid>
                                     </HeaderedContentControl>
-                                    <HeaderedContentControl Grid.Row="1" Header="Sprachen" VerticalAlignment="Stretch">
-                                        <ListBox x:Name="SupportedLanguagesVers" ItemsSource="{Binding Languages}" DisplayMemberPath="Text" />                                    
-                                    </HeaderedContentControl>
                                     
-                                    <CheckBox IsChecked="{Binding IsMemSizeAuto}" Content="Automatisch Speicher berechnen beim Veröffentlichen" />
                                     <CheckBox IsChecked="{Binding IsParameterRefAuto}" Content="Parameter Refs automatisch berechnen" />
                                     <CheckBox IsChecked="{Binding IsComObjectRefAuto}" Content="KO Refs automatisch berechnen" />
                                     <CheckBox IsChecked="{Binding IsUnionActive}" Content="Unions aktivieren" />
                                     <CheckBox IsChecked="{Binding IsModulesActive}" Content="ModuleDefines aktivieren" />
+
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+
+                                        <StackPanel>
+                                            <HeaderedContentControl Header="Adresstabelle maximale Einträge:">
+                                                <TextBox Text="{Binding AddressTableMaxCount, UpdateSourceTrigger=PropertyChanged}" />
+                                            </HeaderedContentControl>
+                                            <HeaderedContentControl Header="Adresstabelle Speicher:" Visibility="{Binding SelectedItem.Mask.Memory, ElementName=AppList, Converter={StaticResource EnumToVis}, ConverterParameter=Absolute}">
+                                                <ComboBox ItemsSource="{Binding Memories}" SelectedItem="{Binding AddressMemoryObject}" DisplayMemberPath="Name" />
+                                            </HeaderedContentControl>
+                                            <HeaderedContentControl Header="Adresstabelle Offset:" Visibility="{Binding SelectedItem.Mask.Memory, ElementName=AppList, Converter={StaticResource EnumToVis}, ConverterParameter=Absolute}">
+                                                <TextBox Text="{Binding AddressTableOffset, UpdateSourceTrigger=PropertyChanged}" />
+                                            </HeaderedContentControl>
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Column="1">
+                                            <HeaderedContentControl Header="Assoziationstabelle maximale Einträge:">
+                                                <TextBox Text="{Binding AssociationTableMaxCount, UpdateSourceTrigger=PropertyChanged}" />
+                                            </HeaderedContentControl>
+                                            <HeaderedContentControl Header="Assoziationstabelle Speicher:" Visibility="{Binding SelectedItem.Mask.Memory, ElementName=AppList, Converter={StaticResource EnumToVis}, ConverterParameter=Absolute}">
+                                                <ComboBox ItemsSource="{Binding Memories}" SelectedItem="{Binding AssociationMemoryObject}" DisplayMemberPath="Name" />
+                                            </HeaderedContentControl>
+                                            <HeaderedContentControl Header="Assoziationstabelle Offset:" Visibility="{Binding SelectedItem.Mask.Memory, ElementName=AppList, Converter={StaticResource EnumToVis}, ConverterParameter=Absolute}">
+                                                <TextBox Text="{Binding AssociationTableOffset, UpdateSourceTrigger=PropertyChanged}" />
+                                            </HeaderedContentControl>
+                                        </StackPanel>
+                                    </Grid>
                                 </StackPanel>
 
                                 <StackPanel Grid.Column="1">
@@ -906,6 +933,9 @@
                                     </HeaderedContentControl>
                                     <HeaderedContentControl Header="Standard Sprache">
                                         <ComboBox ItemsSource="{Binding Languages}" SelectedValue="{Binding DefaultLanguage}" SelectedValuePath="CultureCode" DisplayMemberPath="Text"></ComboBox>
+                                    </HeaderedContentControl>
+                                    <HeaderedContentControl Header="Sprachen" VerticalAlignment="Stretch">
+                                        <ListBox x:Name="SupportedLanguagesVers" ItemsSource="{Binding Languages}" DisplayMemberPath="Text" />                                    
                                     </HeaderedContentControl>
                                 </StackPanel>
                             </Grid>
@@ -961,17 +991,37 @@
                                     <HeaderedContentControl Header="Adresse" Visibility="{Binding ElementName=AppList, Path=SelectedItem.Mask.Memory, Converter={StaticResource EnumToVis}, ConverterParameter=Absolute}">
                                         <TextBox Text="{Binding Address, UpdateSourceTrigger=PropertyChanged}"/>
                                     </HeaderedContentControl>
-                                    <CheckBox Content="Größe automatisch anordnen"  IsChecked="{Binding IsAutoSize}" />
+                                    <CheckBox Content="Größe automatisch berechnen"  IsChecked="{Binding IsAutoSize}" />
                                     <HeaderedContentControl Header="Größe" IsEnabled="{Binding IsAutoSize, Converter={StaticResource BoolNegate}}">
                                         <TextBox Text="{Binding Size, UpdateSourceTrigger=PropertyChanged}" />
                                     </HeaderedContentControl>
                                     <HeaderedContentControl Header="Offset" Visibility="{Binding ElementName=AppList, Path=SelectedItem.Mask.Memory, Converter={StaticResource EnumToVis}, ConverterParameter=Relative}">
                                         <TextBox Text="{Binding Offset, UpdateSourceTrigger=PropertyChanged}"/>
                                     </HeaderedContentControl>
-                                    <CheckBox Content="Parameter automatisch anordnen"  IsChecked="{Binding IsAutoPara}" />
+                                    <CheckBox Content="Parameter/Unions/Module automatisch anordnen"  IsChecked="{Binding IsAutoPara}" />
 
                                     <Button Content="Heatmap berechnen" Click="ClickCalcHeatmap" />
                                     <Image Name="OutHeatmap" MaxWidth="500" />
+
+                                    <DataGrid ItemsSource="{Binding Bytes}" AutoGenerateColumns="false"> 
+                                        <DataGrid.RowStyle>
+                                            <Style TargetType="{x:Type DataGridRow}">
+                                                <Setter Property="Header" Value="{Binding Name}" />
+                                            </Style>
+                                        </DataGrid.RowStyle>
+
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="Bit 7" Binding="{Binding Bits[0]}" />
+                                            <DataGridTextColumn Header="Bit 6" Binding="{Binding Bits[1]}" />
+                                            <DataGridTextColumn Header="Bit 5" Binding="{Binding Bits[2]}" />
+                                            <DataGridTextColumn Header="Bit 4" Binding="{Binding Bits[3]}" />
+                                            <DataGridTextColumn Header="Bit 3" Binding="{Binding Bits[4]}" />
+                                            <DataGridTextColumn Header="Bit 2" Binding="{Binding Bits[5]}" />
+                                            <DataGridTextColumn Header="Bit 1" Binding="{Binding Bits[6]}" />
+                                            <DataGridTextColumn Header="Bit 0" Binding="{Binding Bits[7]}" />
+                                        </DataGrid.Columns>
+
+                                    </DataGrid>
                                 </StackPanel>
                             </ScrollViewer>
                         </Grid>
@@ -1026,15 +1076,18 @@
                                     <ComboBox Margin="0 5" ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding Type, Mode=TwoWay}" />
                                 </HeaderedContentControl>
                                 
-                                <StackPanel Visibility="{Binding Type, Converter={StaticResource EnumToVisNeg}, ConverterParameter=None-IpAddress-Picture}">
-                                    <CheckBox IsChecked="{Binding IsSizeAuto}" Content="Größe automatisch" IsEnabled="False" />
-                                    <HeaderedContentControl Header="Größe in Bits" Visibility="{Binding IsSizeAuto, Converter={StaticResource BoolToVis}, ConverterParameter=true}">
-                                        <TextBox Text="{Binding SizeInBit, UpdateSourceTrigger=PropertyChanged}"/>
-                                    </HeaderedContentControl>
-                                </StackPanel>
+                                <HeaderedContentControl Header="Manuelle Größe in Bits" Visibility="{Binding Type, Converter={StaticResource EnumToVisNeg}, ConverterParameter=None-IpAddress-Picture}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="auto" />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
 
+                                        <CheckBox IsChecked="{Binding IsSizeManual}" VerticalAlignment="Center" />
+                                        <TextBox Grid.Column="1" Text="{Binding SizeInBit, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" IsEnabled="{Binding IsSizeManual}"/>
+                                    </Grid>
+                                </HeaderedContentControl>
 
-                                
 
                                 <Grid Margin="5 20 5 5"  Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Enum}">
                                     <Grid.ColumnDefinitions>
@@ -1138,12 +1191,27 @@
                                         <HeaderedContentControl Header="Speicher auswählen">
                                             <ComboBox ItemsSource="{Binding ElementName=VersionList, Path=SelectedItem.Memories}" SelectedItem="{Binding MemoryObject, Mode=TwoWay}" DisplayMemberPath="Name" />
                                         </HeaderedContentControl>
-                                        <HeaderedContentControl Header="Offset">
-                                            <TextBox Text="{Binding Offset, UpdateSourceTrigger=PropertyChanged}"/>
-                                        </HeaderedContentControl>
-                                        <HeaderedContentControl Header="Bit Offset">
-                                            <TextBox Text="{Binding OffsetBit, UpdateSourceTrigger=PropertyChanged}"/>
-                                        </HeaderedContentControl>
+
+                                        <StackPanel Visibility="{Binding MemoryObject.IsAutoPara, Converter={StaticResource BoolToVis}, ConverterParameter=true}">
+                                            <HeaderedContentControl Header="Offset">
+                                                <TextBox Text="{Binding Offset, UpdateSourceTrigger=PropertyChanged}" />
+                                            </HeaderedContentControl>
+                                            <HeaderedContentControl Header="Bit Offset">
+                                                <TextBox Text="{Binding OffsetBit, UpdateSourceTrigger=PropertyChanged}"/>
+                                            </HeaderedContentControl>
+                                        </StackPanel>
+
+                                        <StackPanel Visibility="{Binding MemoryObject.IsAutoPara, Converter={StaticResource BoolToVis}}">
+                                            <TextBlock Text="Adresse wird automatisch festgelegt (Speicher)" Margin="5" />
+
+                                            <TextBlock Margin="5">
+                                                    <Run Text="Offset:" />
+                                                    <Run Text="{Binding Offset, Mode=OneWay}" />
+                                                    <LineBreak />
+                                                    <Run Text="Bit Offset:" />
+                                                    <Run Text="{Binding OffsetBit, Mode=OneWay}" />
+                                            </TextBlock>
+                                        </StackPanel>
                                     </StackPanel>
 
                                     <StackPanel Visibility="{Binding SavePath, Converter={StaticResource EnumToVis}, ConverterParameter=Property}">
@@ -1222,6 +1290,33 @@
 
                                             <CheckBox IsChecked="{Binding IsParameterRefAuto}" Content="Parameter Refs automatisch berechnen" />
                                             <CheckBox IsChecked="{Binding IsComObjectRefAuto}" Content="KO Refs automatisch berechnen" />
+
+                                            <HeaderedContentControl Header="Benötigter Speicher">
+                                                <TextBlock>
+                                                    <Run Text="{Binding Memory.Bytes.Count, Mode=OneWay}" />
+                                                    <Run Text="Bytes" />
+                                                </TextBlock>
+                                            </HeaderedContentControl>
+
+                                            <DataGrid ItemsSource="{Binding Memory.Bytes}" AutoGenerateColumns="false"> 
+                                                <DataGrid.RowStyle>
+                                                    <Style TargetType="{x:Type DataGridRow}">
+                                                        <Setter Property="Header" Value="{Binding Name}" />
+                                                    </Style>
+                                                </DataGrid.RowStyle>
+
+                                                <DataGrid.Columns>
+                                                    <DataGridTextColumn Header="Bit 7" Binding="{Binding Bits[0]}" />
+                                                    <DataGridTextColumn Header="Bit 6" Binding="{Binding Bits[1]}" />
+                                                    <DataGridTextColumn Header="Bit 5" Binding="{Binding Bits[2]}" />
+                                                    <DataGridTextColumn Header="Bit 4" Binding="{Binding Bits[3]}" />
+                                                    <DataGridTextColumn Header="Bit 3" Binding="{Binding Bits[4]}" />
+                                                    <DataGridTextColumn Header="Bit 2" Binding="{Binding Bits[5]}" />
+                                                    <DataGridTextColumn Header="Bit 1" Binding="{Binding Bits[6]}" />
+                                                    <DataGridTextColumn Header="Bit 0" Binding="{Binding Bits[7]}" />
+                                                </DataGrid.Columns>
+
+                                            </DataGrid>
                                         </StackPanel>
                                     </ScrollViewer>
                                 </TabItem>
@@ -1358,6 +1453,7 @@
                                                 </TextBlock.ContextMenu>
                                                 <Run Text="Auswahl" />
                                                 <Run Text="{Binding Name}" />
+                                                <Run Text="{Binding ParameterRefObject.Name}" />
                                             </TextBlock>
                                         </StackPanel>
                                     </HierarchicalDataTemplate>
@@ -1380,6 +1476,9 @@
                                                 </TextBlock.ContextMenu>
                                                 <Run Text="Bedingung" />
                                                 <Run Text="{Binding Name}" />
+                                                <Run Text="[" />
+                                                <Run Text="{Binding Condition}" />
+                                                <Run Text="]" />
                                             </TextBlock>
                                         </StackPanel>
                                     </HierarchicalDataTemplate>

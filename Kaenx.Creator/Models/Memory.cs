@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
@@ -64,6 +66,10 @@ namespace Kaenx.Creator.Models
             get { return _type; }
             set { _type = value; Changed("Type"); }
         }
+
+        
+        [JsonIgnore]
+        public ObservableCollection<MemoryByte> Bytes {get;set;} = new ObservableCollection<MemoryByte>();
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void Changed(string name)

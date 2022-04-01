@@ -26,6 +26,12 @@ namespace Kaenx.Creator.Models.Dynamic
             set { _isDefault = value; Changed("IsDefault"); }
         }
 
+        private string _condition = "";
+        public string Condition
+        {
+            get { return _condition; }
+            set { _condition = value; Changed("Condition"); }
+        }
 
         public bool CanAddIndependent { get { return CheckForIndependent(Parent); } }
         public bool CanAddBlock { get { return CheckForBlock(Parent); } }
@@ -59,9 +65,6 @@ namespace Kaenx.Creator.Models.Dynamic
             if (item.Parent == null || item is DynParaBlock) return false;
             return CheckForBlock(item.Parent);
         }
-
-
-        public string Condition { get; set; } = "";
 
         public ObservableCollection<IDynItems> Items { get; set; } = new ObservableCollection<IDynItems>();
         public event PropertyChangedEventHandler PropertyChanged;

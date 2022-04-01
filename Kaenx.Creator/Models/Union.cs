@@ -29,14 +29,14 @@ namespace Kaenx.Creator.Models
             set { _sizeInBit = value; Changed("SizeInBit"); }
         }
 
-        private int _offset = 0;
+        private int _offset = -1;
         public int Offset
         {
             get { return _offset; }
             set { _offset = value; Changed("Offset"); }
         }
 
-        private int _offsetBit = 0;
+        private int _offsetBit = -1;
         public int OffsetBit
         {
             get { return _offsetBit; }

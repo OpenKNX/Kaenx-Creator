@@ -1,5 +1,6 @@
 using Kaenx.Creator.Models;
 using Kaenx.Creator.Models.Dynamic;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -25,6 +26,16 @@ namespace Kaenx.Creator.Models
             set { _id = value; Changed("Id"); }
         }
 
+        private int _sizeNeeded = 0;
+        public int SizeNeeded
+        {
+            get { return _sizeNeeded; }
+            set { _sizeNeeded = value; Changed("SizeNeeded"); }
+        }
+
+
+        [JsonIgnore]
+        public Memory Memory { get;set; } = new Memory();
         
         private string _name = "dummy";
         public string Name
@@ -46,6 +57,40 @@ namespace Kaenx.Creator.Models
             get { return _isAutoCR; }
             set { _isAutoCR = value; Changed("IsComObjectRefAuto"); }
         }
+
+        
+        private Argument _parameterBaseOffset;
+        [JsonIgnore]
+        public Argument ParameterBaseOffset
+        {
+            get { return _parameterBaseOffset; }
+            set { _parameterBaseOffset = value; Changed("ParameterBaseOffset"); }
+        }
+
+        [JsonIgnore]
+        public int _parameterBaseOffsetUId;
+        public int ParameterBaseOffsetUId
+        {
+            get { return ParameterBaseOffset?.UId ?? -1; }
+            set { _parameterBaseOffsetUId = value; }
+        }
+
+        private Argument _comObjectBaseNumber;
+        [JsonIgnore]
+        public Argument ComObjectBaseNumber
+        {
+            get { return _comObjectBaseNumber; }
+            set { _comObjectBaseNumber = value; Changed("ComObjectBaseNumber"); }
+        }
+
+        [JsonIgnore]
+        public int _comObjectBaseNumberUId;
+        public int ComObjectBaseNumberUId
+        {
+            get { return ComObjectBaseNumber?.UId ?? -1; }
+            set { _comObjectBaseNumberUId = value; }
+        }
+
     
         public ObservableCollection<Parameter> Parameters { get; set; } = new ObservableCollection<Parameter>();
         public ObservableCollection<ParameterRef> ParameterRefs { get; set; } = new ObservableCollection<ParameterRef>();

@@ -22,11 +22,11 @@ namespace Kaenx.Creator.Models
             set { _name = value; Changed("Name"); }
         }
 
-        private bool _isSizeAuto = false;
-        public bool IsSizeAuto
+        private bool _isSizeManual = false;
+        public bool IsSizeManual
         {
-            get { return _isSizeAuto; }
-            set { _isSizeAuto = value; Changed("IsSizeAuto"); }
+            get { return _isSizeManual; }
+            set { _isSizeManual = value; Changed("IsSizeManual"); }
         }
 
         private bool _translateEnums = false;
@@ -36,6 +36,13 @@ namespace Kaenx.Creator.Models
             set { _translateEnums = value; Changed("TranslateEnums"); }
         }
 
+        private int _sizeInBit = 8;
+        public int SizeInBit
+        {
+            get { return _sizeInBit; }
+            set { _sizeInBit = value; Changed("SizeInBit"); }
+        }
+        
         private ParameterTypes _type = ParameterTypes.Text;
         public ParameterTypes Type
         {
@@ -45,7 +52,6 @@ namespace Kaenx.Creator.Models
 
         public int Min { get; set; } = 0;
         public int Max { get; set; } = 255;
-        public int SizeInBit { get; set; } = 8;
 
         public ObservableCollection<ParameterTypeEnum> Enums {get;set;} = new ObservableCollection<ParameterTypeEnum>();
 

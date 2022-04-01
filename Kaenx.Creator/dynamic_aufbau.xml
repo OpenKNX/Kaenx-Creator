@@ -1,0 +1,14 @@
+module Dynamic
+      <xs:element name="ChannelIndependentBlock" type="knx:ChannelIndependentBlock_t"/>
+      <xs:element name="Channel" type="knx:ApplicationProgramChannel_t"/>
+      <xs:element name="choose" type="knx:DependentChannelChoose_t"/>
+      <xs:element name="Module" type="knx:Module_t"/>
+      <xs:element name="Repeat" type="knx:Repeat_t"/>
+      <xs:element name="ParameterBlock" type="knx:ComObjectParameterBlock_t"/>
+
+app Dynamic
+      <xs:element name="ChannelIndependentBlock" type="knx:ChannelIndependentBlock_t"/>
+      <xs:element name="Channel" type="knx:ApplicationProgramChannel_t"/>
+      <xs:element name="choose" type="knx:DependentChannelChoose_t"/>
+      <xs:element name="Module" type="knx:Module_t"/>
+      <xs:element name="Repeat" type="knx:Repeat_t"/>

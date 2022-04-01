@@ -1,4 +1,5 @@
 ﻿using Kaenx.Creator.Models.Dynamic;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -20,10 +21,6 @@ namespace Kaenx.Creator.Models
         public ObservableCollection<Union> Unions { get; set; } = new ObservableCollection<Union>();
         public ObservableCollection<Language> Languages { get; set; } = new ObservableCollection<Language>();
         public List<DynamicMain> Dynamics { get; set; } = new List<DynamicMain>();
-
-
-        //TODO set defaultLanguage
-
 
         public AppVersion() { }
 
@@ -66,6 +63,65 @@ namespace Kaenx.Creator.Models
             get { return _number; }
             set { _number = value; Changed("Number"); Changed("NameText"); }
         }
+
+
+
+        private int _addrTableMax = 65535;
+        public int AddressTableMaxCount
+        {
+            get { return _addrTableMax; }
+            set { _addrTableMax = value; Changed("AddressTableMaxCount"); }
+        }
+        private int _addrTableOffset = 0;
+        public int AddressTableOffset
+        {
+            get { return _addrTableOffset; }
+            set { _addrTableOffset = value; Changed("AddressTableOffset"); }
+        }
+        private Memory _addressMemoryObject;
+        [JsonIgnore]
+        public Memory AddressMemoryObject
+        {
+            get { return _addressMemoryObject; }
+            set { _addressMemoryObject = value; Changed("AddressMemoryObject"); }
+        }
+        [JsonIgnore]
+        public int _addressMemoryId;
+        public int AddressMemoryId
+        {
+            get { return AddressMemoryObject?.UId ?? -1; }
+            set { _addressMemoryId = value; }
+        }
+
+
+
+        private int _assocTableMax = 65535;
+        public int AssociationTableMaxCount
+        {
+            get { return _assocTableMax; }
+            set { _assocTableMax = value; Changed("AssociationTableMaxCount"); }
+        }
+        private int _assocTableOffset = 0;
+        public int AssociationTableOffset
+        {
+            get { return _assocTableOffset; }
+            set { _assocTableOffset = value; Changed("AssociationTableOffset"); }
+        }
+        private Memory _assocMemoryObject;
+        [JsonIgnore]
+        public Memory AssociationMemoryObject
+        {
+            get { return _assocMemoryObject; }
+            set { _assocMemoryObject = value; Changed("AssociationMemoryObject"); }
+        }
+        [JsonIgnore]
+        public int _assocMemoryId;
+        public int AssociationMemoryId
+        {
+            get { return AssociationMemoryObject?.UId ?? -1; }
+            set { _assocMemoryId = value; }
+        }
+
 
 
         private bool _isAutoPR = true;
