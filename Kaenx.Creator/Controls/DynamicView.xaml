@@ -142,7 +142,7 @@
                     <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
                 </HeaderedContentControl>
                 <HeaderedContentControl Header="Paremeter Ref">
-                    <ComboBox ItemsSource="{Binding ElementName=VersionList, Path=SelectedItem.ParameterRefs}" SelectedItem="{Binding ParameterRefObject}">
+                    <ComboBox ItemsSource="{Binding ParameterRefsList, ElementName=ViewControl}" SelectedItem="{Binding ParameterRefObject}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock>

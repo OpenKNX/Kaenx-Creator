@@ -187,7 +187,7 @@ namespace Kaenx.Creator.Classes
             ImportComObjectRefs(xstatic.Element(Get("ComObjectRefs")), currentVers);
             ImportTables(xstatic);
             ImportModules(xapp.Element(Get("ModuleDefs")));
-            ImportDynamic(xapp.Element(Get("Dynamic")));
+            ImportDynamic(xapp.Element(Get("Dynamic")), currentVers);
         }
 
         public void ImportLanguages(XElement xlangs) {
@@ -690,6 +690,7 @@ namespace Kaenx.Creator.Classes
                 ImportParameterRefs(xstatic.Element(Get("ParameterRefs")), mod);
                 ImportComObjects(xstatic.Element(Get("ComObjects")), mod);
                 ImportComObjectRefs(xstatic.Element(Get("ComObjectRefs")), mod);
+                ImportDynamic(xmod.Element(Get("Dynamic")), mod);
 
                 currentVers.Modules.Add(mod);
             }
@@ -818,14 +819,14 @@ namespace Kaenx.Creator.Classes
             parent.Items.Add(item);
         }
 
-        private void ImportDynamic(XElement xdyn)
+        private void ImportDynamic(XElement xdyn, IVersionBase vbase)
         {
             DynamicMain main = new DynamicMain();
-            ParseDynamic(main, xdyn);
-            currentVers.Dynamics.Add(main);
+            ParseDynamic(main, xdyn, vbase);
+            vbase.Dynamics.Add(main);
         }
 
-        private void ParseDynamic(IDynItems parent, XElement xeles)
+        private void ParseDynamic(IDynItems parent, XElement xeles, IVersionBase vbase)
         {
             foreach (XElement xele in xeles.Elements())
             {
@@ -844,17 +845,17 @@ namespace Kaenx.Creator.Classes
                         {
                             dc.UseTextParameter = true;
                             paraId = int.Parse(GetLastSplit(xele.Attribute("ParamRefId").Value, 2));
-                            dc.ParameterRefObject = currentVers.ParameterRefs.Single(p => p.Id == paraId);
+                            dc.ParameterRefObject = vbase.ParameterRefs.Single(p => p.Id == paraId);
                         }
                         parent.Items.Add(dc);
-                        ParseDynamic(dc, xele);
+                        ParseDynamic(dc, xele, vbase);
                         break;
 
                     case "ChannelIndependentBlock":
                     //case "IndependentChannel":
                         DynChannelIndependent dci = new DynChannelIndependent();
                         parent.Items.Add(dci);
-                        ParseDynamic(dci, xele);
+                        ParseDynamic(dci, xele, vbase);
                         break;
 
                     case "ParameterBlock":
@@ -865,20 +866,20 @@ namespace Kaenx.Creator.Classes
                         if(xele.Attribute("ParamRefId") != null) {
                             dpb.UseTextParameter = true;
                             paraId = int.Parse(GetLastSplit(xele.Attribute("ParamRefId").Value, 2));
-                            dpb.ParameterRefObject = currentVers.ParameterRefs.Single(p => p.Id == paraId);
+                            dpb.ParameterRefObject = vbase.ParameterRefs.Single(p => p.Id == paraId);
                         } else {
                             dpb.Id = int.Parse(GetLastSplit(xele.Attribute("Id").Value, 3));
                         }
                         parent.Items.Add(dpb);
-                        ParseDynamic(dpb, xele);
+                        ParseDynamic(dpb, xele, vbase);
                         break;
 
                     case "choose":
                         DynChoose dch = new DynChoose();
                         paraId = int.Parse(GetLastSplit(xele.Attribute("ParamRefId").Value, 2));
-                        dch.ParameterRefObject = currentVers.ParameterRefs.Single(p => p.Id == paraId);
+                        dch.ParameterRefObject = vbase.ParameterRefs.Single(p => p.Id == paraId);
                         parent.Items.Add(dch);
-                        ParseDynamic(dch, xele);
+                        ParseDynamic(dch, xele, vbase);
                         break;
 
                     case "when":
@@ -888,13 +889,13 @@ namespace Kaenx.Creator.Classes
                             IsDefault = xele.Attribute("default")?.Value == "true"
                         };
                         parent.Items.Add(dw);
-                        ParseDynamic(dw, xele);
+                        ParseDynamic(dw, xele, vbase);
                         break;
 
                     case "ParameterRefRef":
                         DynParameter dp = new DynParameter();
                         paraId = int.Parse(GetLastSplit(xele.Attribute("RefId").Value, 2));
-                        dp.ParameterRefObject = currentVers.ParameterRefs.Single(p => p.Id == paraId);
+                        dp.ParameterRefObject = vbase.ParameterRefs.Single(p => p.Id == paraId);
                         parent.Items.Add(dp);
                         break;
 
@@ -909,7 +910,7 @@ namespace Kaenx.Creator.Classes
                     case "ComObjectRefRef":
                         DynComObject dco = new DynComObject();
                         paraId = int.Parse(GetLastSplit(xele.Attribute("RefId").Value, 2));
-                        dco.ComObjectRefObject = currentVers.ComObjectRefs.Single(p => p.Id == paraId);
+                        dco.ComObjectRefObject = vbase.ComObjectRefs.Single(p => p.Id == paraId);
                         parent.Items.Add(dco);
                         break;
 

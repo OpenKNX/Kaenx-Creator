@@ -49,6 +49,8 @@ namespace Kaenx.Creator.Classes
             GetIDs(vbase.Dynamics[0], uids, true);
             foreach(ParameterRef pref in vbase.ParameterRefs)
                 pref.IsNotUsed = !uids.Contains(pref.UId);
+
+            //TODO also check for TextParemeterRefId
         }
         
         private static void CheckComObject(IVersionBase vbase)
@@ -64,6 +66,8 @@ namespace Kaenx.Creator.Classes
             GetIDs(vbase.Dynamics[0], uids, false);
             foreach(ComObjectRef rcom in vbase.ComObjectRefs)
                 rcom.IsNotUsed = !uids.Contains(rcom.UId);
+
+            //TODO also check for TextParemeterRefId
         }
 
         private static void GetIDs(IDynItems dyn, List<int> uids, bool isPara)
@@ -72,10 +76,10 @@ namespace Kaenx.Creator.Classes
             {
                 switch(item)
                 {
-                    case DynChannel:
+                    case DynChannel: //TODO return textparameterrefid
                     case DynChannelIndependent:
                     case DynChoose:
-                    case DynParaBlock:
+                    case DynParaBlock: //TODO return textparameterrefid
                     case DynWhen:
                         GetIDs(item, uids, isPara);
                         break;
