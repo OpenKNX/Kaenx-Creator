@@ -850,7 +850,8 @@ namespace Kaenx.Creator.Classes
                         ParseDynamic(dc, xele);
                         break;
 
-                    case "IndependentChannel":
+                    case "ChannelIndependentBlock":
+                    //case "IndependentChannel":
                         DynChannelIndependent dci = new DynChannelIndependent();
                         parent.Items.Add(dci);
                         ParseDynamic(dci, xele);
