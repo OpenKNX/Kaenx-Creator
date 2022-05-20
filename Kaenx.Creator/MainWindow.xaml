@@ -6,9 +6,7 @@
         xmlns:local="clr-namespace:Kaenx.Creator"
         xmlns:models="clr-namespace:Kaenx.Creator.Models"
         xmlns:conv="clr-namespace:Kaenx.Creator.Converter"
-        xmlns:dyn="clr-namespace:Kaenx.Creator.Models.Dynamic"
         xmlns:System="clr-namespace:System;assembly=mscorlib"
-        xmlns:select="clr-namespace:Kaenx.Creator.Selectors"
         xmlns:p="clr-namespace:Kaenx.Creator.Properties"
         xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
         xmlns:ctrl="clr-namespace:Kaenx.Creator.Controls"
@@ -24,6 +22,7 @@
         <conv:BoolToVisibility x:Key="BoolToVis" />
         <conv:TypeToBool x:Key="TypeToBool" />
         <conv:StateToBrush x:Key="StateToBrush" />
+        <conv:BoolToBrush x:Key="BoolToBrush" TrueValue="Red" FalseValue="Black" />
 
         <Style x:Key="TopTabControl" TargetType="TabControl">
             <Setter Property="BorderThickness" Value="0" />
@@ -251,165 +250,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
-        <DataTemplate x:Key="TempDynMain">
-            <TextBlock Margin="5" Text="Dieser Knotenpunkt wird nicht exportiert und kann somit nicht gelöscht oder geändert werden." />
-        </DataTemplate>
-        <DataTemplate x:Key="TempDynIndependent">
-            <TextBlock Margin="5" Text="Ein Independent Channel wird selbst nicht dargestellt. Die darunter liegenden Parameterblöcke werden direkt in der Ansicht angezeigt." TextWrapping="Wrap" />
-        </DataTemplate>
-        <DataTemplate x:Key="TempDynParameter">
-            <StackPanel>
-                <HeaderedContentControl Header="Name">
-                    <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
-                </HeaderedContentControl>
-                <HeaderedContentControl Header="Paremeter Ref">
-                    <ComboBox ItemsSource="{Binding ElementName=VersionList, Path=SelectedItem.ParameterRefs}" SelectedItem="{Binding ParameterRefObject}" DisplayMemberPath="Name" />
-                </HeaderedContentControl>
-                <HeaderedContentControl Header="Parameter Name:">
-                    <TextBlock Text="{Binding ParameterRefObject.ParameterObject.Name}" />
-                </HeaderedContentControl>
-            </StackPanel>
-        </DataTemplate>
-        <DataTemplate x:Key="TempDynComObject">
-            <StackPanel>
-                <HeaderedContentControl Header="Name">
-                    <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
-                </HeaderedContentControl>
-                <HeaderedContentControl Header="Kommunikationsobjekt Ref">
-                    <ComboBox ItemsSource="{Binding ElementName=VersionList, Path=SelectedItem.ComObjectRefs}" SelectedItem="{Binding ComObjectRefObject}" DisplayMemberPath="Name" />
-                </HeaderedContentControl>
-                <HeaderedContentControl Header="Kommunikationsobjekt Name:">
-                    <TextBlock Text="{Binding ComObjectRefObject.ComObjectObject.Name}" />
-                </HeaderedContentControl>
-            </StackPanel>
-        </DataTemplate>
-        <DataTemplate x:Key="TempDynParaBlock">
-            <StackPanel>
-                <HeaderedContentControl Header="Name">
-                    <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
-                </HeaderedContentControl>
-                <HeaderedContentControl Header="Text Parameter">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="auto" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-
-                        <CheckBox IsChecked="{Binding UseTextParameter}" VerticalAlignment="Center" />
-                        <ComboBox Grid.Column="1" IsEnabled="{Binding UseTextParameter}" ItemsSource="{Binding ElementName=VersionList, Path=SelectedItem.ParameterRefs}" SelectedItem="{Binding ParameterRefObject, Mode=TwoWay}" DisplayMemberPath="Name" />
-                    </Grid>
-                </HeaderedContentControl>
-                <Grid Visibility="{Binding UseTextParameter, Converter={StaticResource BoolToVis}, ConverterParameter=true}" Margin="5 0">
-                    <TextBlock VerticalAlignment="Center">
-                        <Run Text="ID:" />
-                        <Run Text="{Binding Id}"/>
-                    </TextBlock>
-                    <Button Content="Zurücksetzen" HorizontalAlignment="Right" Click="ResetId" />
-                </Grid>      
-                <HeaderedContentControl Header="Text">
-                    <StackPanel>
-                        <CheckBox IsChecked="{Binding TranslationText}" Content="Übersetzung nicht exportieren" />
-                        <DataGrid IsEnabled="{Binding UseTextParameter, Converter={StaticResource BoolNegate}}"  ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
-                                <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
-                            </DataGrid.Columns>
-                        </DataGrid>
-                    </StackPanel>
-                </HeaderedContentControl>
-                
-            </StackPanel>
-        </DataTemplate>
-        <DataTemplate x:Key="TempDynChannel">
-            <StackPanel>
-                <HeaderedContentControl Header="Name">
-                    <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
-                </HeaderedContentControl>
-                <HeaderedContentControl Header="Nummer">
-                    <TextBox Text="{Binding Number, UpdateSourceTrigger=PropertyChanged}" />
-                </HeaderedContentControl>
-                <HeaderedContentControl Header="Text Parameter">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="auto" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-
-                        <CheckBox IsChecked="{Binding UseTextParameter}" VerticalAlignment="Center" />
-                        <ComboBox Grid.Column="1" IsEnabled="{Binding UseTextParameter}" ItemsSource="{Binding ElementName=VersionList, Path=SelectedItem.ParameterRefs}" SelectedItem="{Binding ParameterRefObject, Mode=TwoWay}" DisplayMemberPath="Name" />
-                    </Grid>
-                </HeaderedContentControl>
-                <HeaderedContentControl Header="Text">
-                    <StackPanel>
-                        <CheckBox IsChecked="{Binding TranslationText}" Content="Übersetzung nicht exportieren" />
-                        <DataGrid IsEnabled="{Binding UseTextParameter, Converter={StaticResource BoolNegate}}"  ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
-                                <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
-                            </DataGrid.Columns>
-                        </DataGrid>
-                    </StackPanel>
-                </HeaderedContentControl>
-            </StackPanel>
-        </DataTemplate>
-        <DataTemplate x:Key="TempDynChoose">
-            <StackPanel>
-                <HeaderedContentControl Header="Name">
-                    <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
-                </HeaderedContentControl>
-                <HeaderedContentControl Header="Paremeter Ref">
-                    <ComboBox ItemsSource="{Binding ElementName=VersionList, Path=SelectedItem.ParameterRefs}" SelectedItem="{Binding ParameterRefObject}">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock>
-                                    <Run Text="{Binding Name}" />
-                                    <Run Text="{Binding ParameterObject.Name}" />
-                                </TextBlock>
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
-                </HeaderedContentControl>
-            </StackPanel>
-        </DataTemplate>
-        <DataTemplate x:Key="TempDynWhen">
-            <StackPanel>
-                <HeaderedContentControl Header="Name">
-                    <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
-                </HeaderedContentControl>
-                <HeaderedContentControl Header="Bedingung">
-                    <TextBox Text="{Binding Condition}" IsEnabled="{Binding IsDefault, Converter={StaticResource BoolNegate}}" />
-                </HeaderedContentControl>
-                <CheckBox IsChecked="{Binding IsDefault}" Content="Anzeigen, wenn alle anderen Bedingungen nicht erfüllt sind" />
-                <TextBlock Margin="5">
-                    <Run Text="Gleich: Wert mit Istgleichzeichen davor (Beispiel: =4)" />
-                    <LineBreak />
-                    <Run Text="Ungleich: Wert mit Istgleich- und Ausrufezeichen davor (Beispiel: !=4)" />
-                    <LineBreak />
-                    <Run Text="Liste: Werte durch Leerzeichen getrennt. (Beispiel: 1 2 3)" />
-                    <LineBreak />
-                    <Run Text="Größer als: > oder >= (Beispiel: >5)" />
-                    <LineBreak />
-                    <Run Text="Kleiner: &lt; oder &lt;= (Beispiel: &lt;=8)" />
-                    <LineBreak />
-                    <Run Text="" />
-                    <LineBreak />
-                </TextBlock>
-            </StackPanel>
-        </DataTemplate>
-        
-        
-        
-        <select:DynSelector x:Key="SelectorDyn"
-            DPara="{StaticResource TempDynParameter}"
-            DBlock="{StaticResource TempDynParaBlock}"
-            DChoose="{StaticResource TempDynChoose}" 
-            DWhen="{StaticResource TempDynWhen}"
-            DMain="{StaticResource TempDynMain}"
-            DIndependent="{StaticResource TempDynIndependent}"
-            DChannel="{StaticResource TempDynChannel}"
-            DCom="{StaticResource TempDynComObject}"
-                            />
     </Window.Resources>
     
     <Grid>
@@ -854,6 +694,7 @@
                                     <CheckBox IsChecked="{Binding IsComObjectRefAuto}" Content="KO Refs automatisch berechnen" />
                                     <CheckBox IsChecked="{Binding IsUnionActive}" Content="Unions aktivieren" />
                                     <CheckBox IsChecked="{Binding IsModulesActive}" Content="ModuleDefines aktivieren" />
+                                    <Button Content="Zeige nicht verwendete Elemente" Click="ClickShowClean" />
 
                                     <Grid>
                                         <Grid.ColumnDefinitions>
@@ -1042,7 +883,13 @@
                             <Button Content="Hinzufügen" Click="ClickAddParamType" Margin="0 0 1 2" />
                             <Button Grid.Column="1" Content="Löschen" Click="ClickRemoveParamType" Margin="1 0 0 2" />
 
-                            <ListView x:Name="ListParamTypes" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding ParameterTypes}" DisplayMemberPath="Name" />
+                            <ListView x:Name="ListParamTypes" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding ParameterTypes}">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Name}" Foreground="{Binding IsNotUsed, Converter={StaticResource BoolToBrush}}" />
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
 
                             <StackPanel Grid.Column="3" Grid.RowSpan="2" Margin="5" DataContext="{Binding ElementName=ListParamTypes, Path=SelectedItem}" IsEnabled="{Binding Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
                                 <StackPanel.Resources>
@@ -1069,6 +916,8 @@
                                     </Style>
                                 </StackPanel.Resources>
                                     
+                                <TextBlock Text="Dieser Parametertype wird von keinem Parameter verwendet." Foreground="Red" Visibility="{Binding IsNotUsed, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}" Margin="5" />
+
                                 <HeaderedContentControl Header="Name">
                                     <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
                                 </HeaderedContentControl>
@@ -1089,7 +938,7 @@
                                 </HeaderedContentControl>
 
 
-                                <Grid Margin="5 20 5 5"  Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Enum}">
+                                <Grid Margin="5 20 5 5"  Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Enum, FallbackValue=Collapsed}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition />
                                         <ColumnDefinition Width="auto" />
@@ -1105,14 +954,14 @@
                                     <Button Grid.Column="1" Content="+" Width="30" Click="ClickAddParamEnum" />
                                 </Grid>
 
-                                <DataGrid ItemsSource="{Binding SelectedItem.Text, ElementName=ptypeList}" Margin="5" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Enum}">
+                                <DataGrid ItemsSource="{Binding SelectedItem.Text, ElementName=ptypeList}" Margin="5" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Enum, FallbackValue=Collapsed}">
                                     <DataGrid.Columns>
                                         <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
                                         <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
                                     </DataGrid.Columns>
                                 </DataGrid>
                                     
-                                <StackPanel Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=NumberUInt-NumberInt-Float9}">
+                                <StackPanel Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=NumberUInt-NumberInt-Float9, FallbackValue=Collapsed}">
                                     <HeaderedContentControl Header="Min">
                                         <TextBox Text="{Binding Min, UpdateSourceTrigger=PropertyChanged}"/>
                                     </HeaderedContentControl>
@@ -1187,7 +1036,7 @@
                                         <ComboBox ItemsSource="{Binding Source={StaticResource dataSave}}" SelectedItem="{Binding SavePath, Mode=TwoWay}" />
                                     </HeaderedContentControl>
 
-                                    <StackPanel Visibility="{Binding SavePath, Converter={StaticResource EnumToVis}, ConverterParameter=Memory}">
+                                    <StackPanel Visibility="{Binding SavePath, Converter={StaticResource EnumToVis}, ConverterParameter=Memory, FallbackValue=Collapsed}">
                                         <HeaderedContentControl Header="Speicher auswählen">
                                             <ComboBox ItemsSource="{Binding ElementName=VersionList, Path=SelectedItem.Memories}" SelectedItem="{Binding MemoryObject, Mode=TwoWay}" DisplayMemberPath="Name" />
                                         </HeaderedContentControl>
@@ -1214,7 +1063,7 @@
                                         </StackPanel>
                                     </StackPanel>
 
-                                    <StackPanel Visibility="{Binding SavePath, Converter={StaticResource EnumToVis}, ConverterParameter=Property}">
+                                    <StackPanel Visibility="{Binding SavePath, Converter={StaticResource EnumToVis}, ConverterParameter=Property, FallbackValue=Collapsed}">
                                         <TextBlock Text="Properties werden noch nicht unterstütz" />
                                     </StackPanel>
                                 </StackPanel>
@@ -1329,7 +1178,7 @@
                                     <ctrl:ParameterView Version="{Binding ElementName=VersionList, Path=SelectedItem}" Module="{Binding ElementName=ModuleList, Path=SelectedItem}" />
                                 </TabItem>
 
-                                <TabItem Header="Parameter Refs" Visibility="{Binding IsParameterRefAuto, Converter={StaticResource BoolToVis}, ConverterParameter=true}" Style="{StaticResource LeftTabItem2}">
+                                <TabItem Header="Parameter Refs" Visibility="{Binding SelectedItem.IsParameterRefAuto, ElementName=VersionList, Converter={StaticResource BoolToVis}, ConverterParameter=true}" Style="{StaticResource LeftTabItem2}">
                                     <ctrl:ParameterRefView  Module="{Binding ElementName=ModuleList, Path=SelectedItem}" />
                                 </TabItem>
 
@@ -1337,12 +1186,12 @@
                                     <ctrl:ComObjectView Version="{Binding ElementName=VersionList, Path=SelectedItem}" Module="{Binding ElementName=ModuleList, Path=SelectedItem}" />
                                 </TabItem>
 
-                                <TabItem Header="ComObjekte Refs" Visibility="{Binding IsComObjectRefAuto, Converter={StaticResource BoolToVis}, ConverterParameter=true}" Style="{StaticResource LeftTabItem2}">
+                                <TabItem Header="ComObjekte Refs" Visibility="{Binding SelectedItem.IsComObjectRefAuto, ElementName=VersionList, Converter={StaticResource BoolToVis}, ConverterParameter=true}" Style="{StaticResource LeftTabItem2}">
                                     <ctrl:ComObjectRefView Version="{Binding ElementName=VersionList, Path=SelectedItem}" Module="{Binding ElementName=ModuleList, Path=SelectedItem}" />
                                 </TabItem>
 
                                 <TabItem Header="Dynamic" Style="{StaticResource LeftTabItem2}">
-
+                                    <ctrl:DynamicView Version="{Binding ElementName=VersionList, Path=SelectedItem}" Module="{Binding ElementName=ModuleList, Path=SelectedItem}" />
                                 </TabItem>
                             </TabControl>
                         </Grid>
@@ -1371,183 +1220,7 @@
 
 
                     <TabItem Header="Dynamic" Style="{StaticResource LeftTabItem}">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="auto" />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-
-                            <TreeView Name="DynamicList" ItemsSource="{Binding ElementName=VersionList, Path=SelectedItem.Dynamics}" MinWidth="300">
-                                <TreeView.Resources>
-                                    <HierarchicalDataTemplate DataType="{x:Type dyn:DynamicMain}" ItemsSource="{Binding Items}">
-                                        <TextBlock Text="{Binding Name}">
-                                            <TextBlock.ContextMenu>
-                                                <ContextMenu>
-                                                    <MenuItem Header="Independent Channel hinzufügen" Click="ClickAddDynIndep" />
-                                                    <MenuItem Header="Channel hinzufügen" Click="ClickAddDynChannel" />
-                                                    <MenuItem Header="Abzweigung hinzufügen" Click="ClickAddDynChoose" />
-                                                </ContextMenu>
-                                            </TextBlock.ContextMenu>
-                                        </TextBlock>
-                                    </HierarchicalDataTemplate>
-                                    <HierarchicalDataTemplate DataType="{x:Type dyn:DynChannel}" ItemsSource="{Binding Items}">
-                                        <StackPanel Orientation="Horizontal">
-                                            <Image Source="{svgc:SvgImage Source=/Assets/Images/Dynamic/Block.svg, AppName=Kaenx.Creator}" Height="18" Width="18" Margin="4" />
-                                            <TextBlock VerticalAlignment="Center">
-                                                <TextBlock.ContextMenu>
-                                                    <ContextMenu>
-                                                        <MenuItem Header="Block hinzufügen" Click="ClickAddDynBlock" />
-                                                        <MenuItem Header="Abzweigung hinzufügen" Click="ClickAddDynChoose" />
-                                                        <Separator />
-                                                        <MenuItem Header="Entfernen" Click="ClickRemoveDyn" />
-                                                    </ContextMenu>
-                                                </TextBlock.ContextMenu>
-                                                <Run Text="Channel" />
-                                                <Run Text="{Binding Name}" />
-                                            </TextBlock>
-                                        </StackPanel>
-                                    </HierarchicalDataTemplate>
-                                    <HierarchicalDataTemplate DataType="{x:Type dyn:DynChannelIndependet}" ItemsSource="{Binding Items}">
-                                        <StackPanel Orientation="Horizontal">
-                                            <Image Source="{svgc:SvgImage Source=/Assets/Images/Dynamic/Block.svg, AppName=Kaenx.Creator}" Height="18" Width="18" Margin="4" />
-                                            <TextBlock Text="Channel Independent" VerticalAlignment="Center">
-                                                <TextBlock.ContextMenu>
-                                                    <ContextMenu>
-                                                        <MenuItem Header="Block hinzufügen" Click="ClickAddDynBlock" />
-                                                        <MenuItem Header="Abzweigung hinzufügen" Click="ClickAddDynChoose" />
-                                                        <Separator />
-                                                        <MenuItem Header="Entfernen" Click="ClickRemoveDyn" />
-                                                    </ContextMenu>
-                                                </TextBlock.ContextMenu>
-                                            </TextBlock>
-                                        </StackPanel>
-                                    </HierarchicalDataTemplate>
-                                    <HierarchicalDataTemplate DataType="{x:Type dyn:DynParaBlock}" ItemsSource="{Binding Items}">
-                                        <StackPanel Orientation="Horizontal">
-                                            <Image Source="{svgc:SvgImage Source=/Assets/Images/Dynamic/Block.svg, AppName=Kaenx.Creator}" Height="18" Width="18" Margin="4" />
-                                            <TextBlock VerticalAlignment="Center">
-                                                <TextBlock.ContextMenu>
-                                                    <ContextMenu>
-                                                        <MenuItem Header="Parameter hinzufügen" Click="ClickAddDynPara" />
-                                                        <MenuItem Header="KO hinzufügen" Click="ClickAddDynCom" />
-                                                        <MenuItem Header="Separator hinzufügen" Click="ClickAddDynSep" />
-                                                        <MenuItem Header="Abzweigung hinzufügen" Click="ClickAddDynChoose" />
-                                                        <Separator />
-                                                        <MenuItem Header="Entfernen" Click="ClickRemoveDyn" />
-                                                    </ContextMenu>
-                                                </TextBlock.ContextMenu>
-                                                <Run Text="Block" />
-                                                <Run Text="{Binding Name}" />
-                                            </TextBlock>
-                                        </StackPanel>
-                                    </HierarchicalDataTemplate>
-                                    <HierarchicalDataTemplate DataType="{x:Type dyn:DynChoose}" ItemsSource="{Binding Items}">
-                                        <StackPanel Orientation="Horizontal">
-                                            <Image Source="{svgc:SvgImage Source=/Assets/Images/Dynamic/Choose.svg, AppName=Kaenx.Creator}" Height="18" Width="18" Margin="4" />
-                                            <TextBlock VerticalAlignment="Center">
-                                                <TextBlock.ContextMenu>
-                                                    <ContextMenu>
-                                                        <MenuItem Header="Bedingung hinzufügen" Click="ClickAddDynWhen" />
-                                                        <MenuItem Header="Entfernen" Click="ClickRemoveDyn" />
-                                                    </ContextMenu>
-                                                </TextBlock.ContextMenu>
-                                                <Run Text="Auswahl" />
-                                                <Run Text="{Binding Name}" />
-                                                <Run Text="{Binding ParameterRefObject.Name}" />
-                                            </TextBlock>
-                                        </StackPanel>
-                                    </HierarchicalDataTemplate>
-                                    <HierarchicalDataTemplate DataType="{x:Type dyn:DynWhen}" ItemsSource="{Binding Items}">
-                                        <StackPanel Orientation="Horizontal">
-                                            <Image Source="{svgc:SvgImage Source=/Assets/Images/Dynamic/When.svg, AppName=Kaenx.Creator}" Height="18" Width="18" Margin="4" />
-                                            <TextBlock VerticalAlignment="Center">
-                                                <TextBlock.ContextMenu>
-                                                    <ContextMenu Loaded="LoadingContextDynWhen">
-                                                        <MenuItem Header="Independent Channel hinzufügen" Click="ClickAddDynIndep" />
-                                                        <MenuItem Header="Channel hinzufügen" />
-                                                        <MenuItem Header="Block hinzufügen" Click="ClickAddDynBlock" />
-                                                        <MenuItem Header="Abzweigung hinzufügen" Click="ClickAddDynChoose" />
-                                                        <Separator />
-                                                        <MenuItem Header="Parameter hinzufügen" Click="ClickAddDynPara" />
-                                                        <MenuItem Header="KO hinzufügen" Click="ClickAddDynCom" />
-                                                        <MenuItem Header="Separator hinzufügen" Click="ClickAddDynSep" />
-                                                        <MenuItem Header="Entfernen" Click="ClickRemoveDyn" />
-                                                    </ContextMenu>
-                                                </TextBlock.ContextMenu>
-                                                <Run Text="Bedingung" />
-                                                <Run Text="{Binding Name}" />
-                                                <Run Text="[" />
-                                                <Run Text="{Binding Condition}" />
-                                                <Run Text="]" />
-                                            </TextBlock>
-                                        </StackPanel>
-                                    </HierarchicalDataTemplate>
-                                    <DataTemplate DataType="{x:Type dyn:DynParameter}">
-                                        <StackPanel Orientation="Horizontal">
-                                            <StackPanel.ContextMenu>
-                                                <ContextMenu>
-                                                    <MenuItem Header="Entfernen" Click="ClickRemoveDyn" />
-                                                </ContextMenu>
-                                            </StackPanel.ContextMenu>
-                                            <Image Source="{svgc:SvgImage Source=/Assets/Images/Dynamic/Parameter.svg, AppName=Kaenx.Creator}" Height="18" Width="18" Margin="4" />
-                                            <TextBlock VerticalAlignment="Center">
-                                                <Run Text="Parameter" />
-                                                <Run Text="{Binding Name}" />
-                                                <Run Text="{Binding ParameterRefObject.Name}" />
-                                            </TextBlock>
-                                            <!-- Visibility="{Binding ElementName=VersionList, Path=SelectedItem.IsParameterRefAuto, Converter={StaticResource BoolToVis}}"-->
-                                            <TextBlock Margin="10 0 0 0" VerticalAlignment="Center">
-                                                <Run Text="[" />
-                                                <Run Text="{Binding ParameterRefObject.ParameterObject.Name}" />
-                                                <Run Text="]" />
-                                            </TextBlock>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                    <DataTemplate DataType="{x:Type dyn:DynComObject}">
-                                        <StackPanel Orientation="Horizontal">
-                                            <StackPanel.ContextMenu>
-                                                <ContextMenu>
-                                                    <MenuItem Header="Entfernen" Click="ClickRemoveDyn" />
-                                                </ContextMenu>
-                                            </StackPanel.ContextMenu>
-                                            <Image Source="{svgc:SvgImage Source=/Assets/Images/Dynamic/ComObject.svg, AppName=Kaenx.Creator}" Height="18" Width="18" Margin="4" />
-                                            <TextBlock VerticalAlignment="Center">
-                                                <Run Text="KO" />
-                                                <Run Text="{Binding Name}" />
-                                                <Run Text="{Binding ComObjectRefObject.Name}" />
-                                            </TextBlock>
-                                            <TextBlock Margin="10 0 0 0" VerticalAlignment="Center">
-                                                <Run Text="[" />
-                                                <Run Text="{Binding ComObjectRefObject.ComObjectObject.Name}" />
-                                                <Run Text="]" />
-                                            </TextBlock>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </TreeView.Resources>
-                            </TreeView>
-
-                            <StackPanel Grid.Column="1" DataContext="{Binding ElementName=DynamicList, Path=SelectedItem}">
-                                <StackPanel.Resources>
-                                    <Style TargetType="HeaderedContentControl">
-                                        <Setter Property="Margin" Value="5" />
-                                    </Style>
-                                    <Style TargetType="CheckBox">
-                                        <Setter Property="Margin" Value="5" />
-                                    </Style>
-                                    <Style TargetType="ComboBox">
-                                        <Setter Property="Margin" Value="0" />
-                                    </Style>
-                                    <Style TargetType="Button">
-                                        <Setter Property="Margin" Value="5" />
-                                    </Style>
-                                    <Style TargetType="ListView">
-                                        <Setter Property="Margin" Value="5" />
-                                    </Style>
-                                </StackPanel.Resources>
-
-                                <ContentPresenter Content="{Binding ElementName=DynamicList, Path=SelectedItem}" ContentTemplateSelector="{StaticResource SelectorDyn}" />
-                            </StackPanel>
-                        </Grid>
+                        <ctrl:DynamicView Version="{Binding ElementName=VersionList, Path=SelectedItem}" Module="{Binding ElementName=VersionList, Path=SelectedItem}" />
                     </TabItem>
 
 

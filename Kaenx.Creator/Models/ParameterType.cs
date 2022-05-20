@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using Newtonsoft.Json;
 
 namespace Kaenx.Creator.Models
 {
@@ -48,6 +49,14 @@ namespace Kaenx.Creator.Models
         {
             get { return _type; }
             set { _type = value; Changed("Type"); }
+        }
+
+        private bool _isNotUsed = false;
+        [JsonIgnore]
+        public bool IsNotUsed
+        {
+            get { return _isNotUsed; }
+            set { _isNotUsed = value; Changed("IsNotUsed"); }
         }
 
         public int Min { get; set; } = 0;

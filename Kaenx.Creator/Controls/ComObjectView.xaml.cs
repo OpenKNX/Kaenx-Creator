@@ -60,7 +60,7 @@ namespace Kaenx.Creator.Controls
             }
             Module.ComObjects.Add(com);
 
-            if(Module.IsComObjectRefAuto){
+            if(Version.IsComObjectRefAuto){
                 Models.ComObjectRef cref = new Models.ComObjectRef(com) { UId = AutoHelper.GetNextFreeUId(Module.ComObjectRefs) };
                 foreach(Models.Language lang in Version.Languages) {
                     cref.Text.Add(new Models.Translation(lang, ""));

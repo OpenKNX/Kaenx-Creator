@@ -59,7 +59,7 @@ namespace Kaenx.Creator.Controls
             }
             Module.Parameters.Add(para);
 
-            if(Module.IsParameterRefAuto){
+            if(Version.IsParameterRefAuto){
                 Module.ParameterRefs.Add(new Models.ParameterRef(para) { UId = AutoHelper.GetNextFreeUId(Module.ParameterRefs) });
             }
         }

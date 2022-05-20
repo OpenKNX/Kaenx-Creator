@@ -15,6 +15,7 @@
         <conv:BoolToVisibility x:Key="BoolToVis" />
         <conv:EnumToVisibility x:Key="EnumToVis" />
         <conv:BoolNegation x:Key="BoolNegate" />
+        <conv:BoolToBrush x:Key="BoolToBrush" TrueValue="Red" FalseValue="Black" />
     </UserControl.Resources>
 
     <Grid>
@@ -30,8 +31,13 @@
         <Button Content="Hinzufügen" Click="ClickAdd" Margin="0 0 1 2" />
         <Button Grid.Column="1" Content="Löschen" Click="ClickRemove" Margin="1 0 0 2" />
 
-        <ListView x:Name="ParamList" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding Parameters}" DisplayMemberPath="Name" />
-
+        <ListView x:Name="ParamList" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding Parameters}">
+            <ListView.ItemTemplate>
+				<DataTemplate>
+					<TextBlock Text="{Binding Name}" Foreground="{Binding IsNotUsed, Converter={StaticResource BoolToBrush}}" />
+				</DataTemplate>
+			</ListView.ItemTemplate>
+        </ListView>
 
         <Grid Grid.Column="2" Grid.RowSpan="2">
             <Grid.RowDefinitions>
@@ -87,6 +93,8 @@
                         <Button Content="Zurücksetzen" HorizontalAlignment="Right" Click="ResetId" />
                     </Grid>
                     
+                    <TextBlock Text="Dieser Parameter wird von keinem ParameterRef verwendet." Foreground="Red" Visibility="{Binding IsNotUsed, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}" Margin="5" />
+
                     <HeaderedContentControl Header="Name">
                         <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
                     </HeaderedContentControl>
@@ -138,7 +146,7 @@
                         </Grid>
                     </HeaderedContentControl>
 
-                    <StackPanel Visibility="{Binding IsInUnion, Converter={StaticResource BoolToVis}}">
+                    <StackPanel Visibility="{Binding IsInUnion, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}">
                         <HeaderedContentControl Header="Union Speicher">
                             <TextBlock Text="{Binding UnionObject.MemoryObject.Name}" />
                         </HeaderedContentControl>
@@ -150,17 +158,17 @@
                         </HeaderedContentControl>
                     </StackPanel>
 
-                    <HeaderedContentControl Header="Speicherort" Visibility="{Binding IsInUnion, Converter={StaticResource BoolToVis}, ConverterParameter=true}">
+                    <HeaderedContentControl Header="Speicherort" Visibility="{Binding IsInUnion, Converter={StaticResource BoolToVis}, ConverterParameter=true, FallbackValue=Collapsed}">
                         <ComboBox ItemsSource="{Binding Source={StaticResource dataSave}}" SelectedItem="{Binding SavePath, Mode=TwoWay}" />
                     </HeaderedContentControl>
 
-                    <Grid Visibility="{Binding IsInUnion, Converter={StaticResource BoolToVis}, ConverterParameter=true}">
+                    <Grid Visibility="{Binding IsInUnion, Converter={StaticResource BoolToVis}, ConverterParameter=true, FallbackValue=Collapsed}">
                         <StackPanel Visibility="{Binding SavePath, Converter={StaticResource EnumToVis}, ConverterParameter=Memory}">
                             <HeaderedContentControl Header="Speicher auswählen">
                                 <ComboBox x:Name="InMemory" SelectedItem="{Binding MemoryObject, Mode=TwoWay}" DisplayMemberPath="Name" />
                             </HeaderedContentControl>
 
-                            <StackPanel Visibility="{Binding MemoryObject.IsAutoPara, Converter={StaticResource BoolToVis}, ConverterParameter=true}">
+                            <StackPanel Visibility="{Binding MemoryObject.IsAutoPara, Converter={StaticResource BoolToVis}, ConverterParameter=true, FallbackValue=Collapsed}">
                                 <CheckBox IsChecked="{Binding IsOffsetAuto}" Content="Automatisch im Speicher anordnen" />
 
                                 <StackPanel IsEnabled="{Binding IsOffsetAuto, Converter={StaticResource BoolNegate}}">
@@ -173,9 +181,9 @@
                                 </StackPanel>
                             </StackPanel>
 
-                            <TextBlock Text="Adresse wird automatisch festgelegt (Speicher)" Margin="5" Visibility="{Binding MemoryObject.IsAutoPara, Converter={StaticResource BoolToVis}}" />
+                            <TextBlock Text="Adresse wird automatisch festgelegt (Speicher)" Margin="5" Visibility="{Binding MemoryObject.IsAutoPara, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}" />
 
-                            <Border Visibility="{Binding MemoryObject.IsAutoPara, Converter={StaticResource BoolToVis}}">
+                            <Border Visibility="{Binding MemoryObject.IsAutoPara, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}">
                                 <TextBlock Margin="5">
                                         <Run Text="Offset:" />
                                         <Run Text="{Binding Offset, Mode=OneWay}" />

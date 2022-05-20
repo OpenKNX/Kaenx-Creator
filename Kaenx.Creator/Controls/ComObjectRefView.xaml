@@ -12,6 +12,8 @@
     d:DesignWidth="400">
     <UserControl.Resources>
         <conv:EmptyToBool x:Key="EmptyToBool" />
+        <conv:BoolToVisibility x:Key="BoolToVis" />
+        <conv:BoolToBrush x:Key="BoolToBrush" TrueValue="Red" FalseValue="Black" />
     </UserControl.Resources>
 
     <Grid>
@@ -29,7 +31,13 @@
         <Button Grid.Column="1" Content="Löschen" Click="ClickRemove" Margin="1 0 0 2" IsEnabled="{Binding ElementName=ComobjectRefList, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
         <Button Grid.Row="1" Grid.ColumnSpan="2" Content="Auto generieren" Click="ClickGenerateRefAuto" Margin="0 0 0 2" />
 
-        <ListView x:Name="ComobjectRefList" Grid.Row="2" Grid.ColumnSpan="2" ItemsSource="{Binding ComObjectRefs}" DisplayMemberPath="Name" />
+        <ListView x:Name="ComobjectRefList" Grid.Row="2" Grid.ColumnSpan="2" ItemsSource="{Binding ComObjectRefs}">
+            <ListView.ItemTemplate>
+				<DataTemplate>
+					<TextBlock Text="{Binding Name}" Foreground="{Binding IsNotUsed, Converter={StaticResource BoolToBrush}}" />
+				</DataTemplate>
+			</ListView.ItemTemplate>
+        </ListView>
 
         <ScrollViewer Grid.Column="3" Grid.RowSpan="3" DataContext="{Binding ElementName=ComobjectRefList, Path=SelectedItem}" IsEnabled="{Binding Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
             <StackPanel Margin="5">
@@ -70,6 +78,8 @@
                     </TextBlock>
                     <Button Content="Zurücksetzen" HorizontalAlignment="Right" Click="ResetId" />
                 </Grid>
+
+                <TextBlock Text="Dieses ComObjectRef wird nicht im Dynamischen Bereich angezeigt." Foreground="Red" Visibility="{Binding IsNotUsed, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}" Margin="5" />
 
                 <HeaderedContentControl Header="Name">
                     <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />

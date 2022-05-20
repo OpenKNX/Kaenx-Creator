@@ -237,6 +237,14 @@ namespace Kaenx.Creator.Models
             set { _overFOI = value; Changed("OverwriteFOI"); }
         }
 
+        private bool _isNotUsed = false;
+        [JsonIgnore]
+        public bool IsNotUsed
+        {
+            get { return _isNotUsed; }
+            set { _isNotUsed = value; Changed("IsNotUsed"); }
+        }
+
 
 
         public event PropertyChangedEventHandler PropertyChanged;

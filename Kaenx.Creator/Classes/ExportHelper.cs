@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Linq;
 using System.Xml.Linq;
+using System.Xml.Schema;
 
 namespace Kaenx.Creator.Classes
 {
@@ -302,6 +303,19 @@ namespace Kaenx.Creator.Classes
                 }
                 xmanu.Add(xlanguages);
                 #endregion
+
+                XmlSchemaSet schemas = new XmlSchemaSet();
+                schemas.Add(null, "Data\\knx_project_20.xsd");
+                doc.Validate(schemas, (o,e) => {
+                    Debug.WriteLine("Fehler beim Validieren! " + e.Message);
+                });
+
+                doc.Root.Attributes().Where((x) => x.IsNamespaceDeclaration).Remove();
+                doc.Root.Name = doc.Root.Name.LocalName;
+                foreach(XElement xele in doc.Descendants())
+                {
+                    xele.Name = xele.Name.LocalName;
+                }
 
                 Debug.WriteLine($"Speichere App: {GetRelPath("Temp", Manu, appVersion + ".xml")}");
                 doc.Save(GetRelPath("Temp", Manu, appVersion + ".xml"));
@@ -662,6 +676,7 @@ namespace Kaenx.Creator.Classes
         private void ExportComObjectRefs(IVersionBase vbase, XElement xparent)
         {
             Debug.WriteLine($"Exportiere ComObjectRefs: {vbase.ComObjectRefs.Count}x");
+            if(vbase.ComObjectRefs.Count == 0) return;
             XElement xrefs = new XElement(Get("ComObjectRefs"));
 
             foreach (ComObjectRef cref in vbase.ComObjectRefs)
@@ -798,7 +813,7 @@ namespace Kaenx.Creator.Classes
                 switch (item)
                 {
                     case DynChannel dc:
-                    case DynChannelIndependet dci:
+                    case DynChannelIndependent dci:
                         xitem = Handle(item, xparent);
                         break;
 
@@ -1124,7 +1139,7 @@ namespace Kaenx.Creator.Classes
 
         private XName Get(string name)
         {
-            return XName.Get(name); //, currentNamespace);
+            return XName.Get(name, currentNamespace);
         }
 
         private XElement CreateNewXML(string manu)

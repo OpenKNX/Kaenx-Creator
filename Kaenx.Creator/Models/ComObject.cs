@@ -165,6 +165,14 @@ namespace Kaenx.Creator.Models
             set { if (value == null) return; _type = value; Changed("Type"); }
         }
 
+        private bool _isNotUsed = false;
+        [JsonIgnore]
+        public bool IsNotUsed
+        {
+            get { return _isNotUsed; }
+            set { _isNotUsed = value; Changed("IsNotUsed"); }
+        }
+
 
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -12,6 +12,8 @@
     d:DesignWidth="400">
     <UserControl.Resources>
         <conv:EmptyToBool x:Key="EmptyToBool" />
+        <conv:BoolToVisibility x:Key="BoolToVis" />
+        <conv:BoolToBrush x:Key="BoolToBrush" TrueValue="Red" FalseValue="Black" />
     </UserControl.Resources>
 
     <Grid>
@@ -27,7 +29,13 @@
         <Button Content="Hinzufügen" Margin="0 0 1 2" Click="ClickAdd" />
         <Button Grid.Column="1" Content="Löschen" Click="ClickRemove" Margin="1 0 0 2" IsEnabled="{Binding ElementName=ComobjectList, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
 
-        <ListView x:Name="ComobjectList" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding ComObjects}" DisplayMemberPath="Name" />
+        <ListView x:Name="ComobjectList" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding ComObjects}">
+            <ListView.ItemTemplate>
+				<DataTemplate>
+					<TextBlock Text="{Binding Name}" Foreground="{Binding IsNotUsed, Converter={StaticResource BoolToBrush}}" />
+				</DataTemplate>
+			</ListView.ItemTemplate>
+        </ListView>
 
 
         <Grid Grid.Column="2" Grid.RowSpan="2">
@@ -85,6 +93,8 @@
                         </TextBlock>
                         <Button Content="Zurücksetzen" HorizontalAlignment="Right" Click="ResetId" />
                     </Grid>
+
+                    <TextBlock Text="Dieses KO wird von keinem Ref verwendet." Foreground="Red" Visibility="{Binding IsNotUsed, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}" Margin="5" />
 
                     <HeaderedContentControl Header="Name">
                         <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />

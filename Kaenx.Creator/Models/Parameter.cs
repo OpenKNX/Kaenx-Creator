@@ -134,6 +134,14 @@ namespace Kaenx.Creator.Models
             set { _offsetBit = value; Changed("OffsetBit"); }
         }
 
+        private bool _isNotUsed = false;
+        [JsonIgnore]
+        public bool IsNotUsed
+        {
+            get { return _isNotUsed; }
+            set { _isNotUsed = value; Changed("IsNotUsed"); }
+        }
+
         public ObservableCollection<Translation> Text {get;set;} = new ObservableCollection<Translation>();
 
         private bool _transText = false;

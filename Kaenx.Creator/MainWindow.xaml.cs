@@ -560,6 +560,7 @@ namespace Kaenx.Creator
         {
             Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
             Models.Module mod = new Models.Module() { UId = AutoHelper.GetNextFreeUId(ver.Modules)};
+            mod.Dynamics.Add(new Models.Dynamic.DynamicMain());
             ver.Modules.Add(mod);
         }
 
@@ -842,6 +843,16 @@ namespace Kaenx.Creator
                 TabsEdit.SelectedIndex = 3;
         }
 
+        
+        private void ClickShowClean(object sender, RoutedEventArgs e)
+        { 
+            Models.AppVersion vers = VersionList.SelectedItem as Models.AppVersion;
+
+            ClearHelper.ShowUnusedElements(vers);
+
+            MessageBox.Show("Um nicht verwendete ParameterRefs oder ComObjectRefs zu sehen, deaktivieren Sie bitte die Option 'Parameter/KOs Refs automatisch berechnen'.", "Fertig");  
+        }
+
         private void ClickImport(object sender, RoutedEventArgs e)
         {
             var dialog = new Microsoft.Win32.OpenFileDialog();
@@ -854,8 +865,6 @@ namespace Kaenx.Creator
                 ImportHelper helper = new ImportHelper(dialog.FileName, bcus);
                 helper.Start(_general, DPTs);
             }
-
-            
         }
 
         private void ClickCatalogContext(object sender, RoutedEventArgs e)
@@ -885,91 +894,6 @@ namespace Kaenx.Creator
             Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
             AutoHelper.MemoryCalculation(ver, mem);
         }
-
-        #region Clicks Dyn
-        private void ClickAddDynIndep(object sender, RoutedEventArgs e)
-        {
-            Models.Dynamic.IDynItems main = (sender as MenuItem).DataContext as Models.Dynamic.IDynItems;
-            main.Items.Add(new Models.Dynamic.DynChannelIndependet() { Parent = main });
-        }
-
-        private void ClickAddDynChannel(object sender, RoutedEventArgs e)
-        {
-            Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
-            Models.Dynamic.IDynItems main = (sender as MenuItem).DataContext as Models.Dynamic.IDynItems;
-            Models.Dynamic.DynChannel channel = new Models.Dynamic.DynChannel() { Parent = main };
-            foreach(Models.Language lang in ver.Languages)
-                channel.Text.Add(new Models.Translation(lang, ""));
-            main.Items.Add(channel);
-        }
-
-        private void ClickAddDynBlock(object sender, RoutedEventArgs e)
-        {
-            Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
-            Models.Dynamic.IDynItems main = (sender as MenuItem).DataContext as Models.Dynamic.IDynItems;
-            Models.Dynamic.DynParaBlock block = new Models.Dynamic.DynParaBlock() { Parent = main };
-            foreach(Models.Language lang in ver.Languages)
-                block.Text.Add(new Models.Translation(lang, ""));
-            main.Items.Add(block);
-        }
-
-        private void ClickAddDynPara(object sender, RoutedEventArgs e)
-        {
-            Models.Dynamic.IDynItems block = (sender as MenuItem).DataContext as Models.Dynamic.IDynItems;
-            Models.Dynamic.DynParameter para = new Models.Dynamic.DynParameter() { Parent = block };
-            block.Items.Add(para);
-        }
-
-        private void ClickAddDynSep(object sender, RoutedEventArgs e)
-        {
-            Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
-            Models.Dynamic.IDynItems main = (sender as MenuItem).DataContext as Models.Dynamic.IDynItems;
-            Models.Dynamic.DynSeparator separator = new Models.Dynamic.DynSeparator() { Parent = main };
-            foreach(Models.Language lang in ver.Languages)
-                separator.Text.Add(new Models.Translation(lang, ""));
-            main.Items.Add(separator);
-        }
-
-        private void ClickAddDynChoose(object sender, RoutedEventArgs e)
-        {
-            Models.Dynamic.IDynItems item = (sender as MenuItem).DataContext as Models.Dynamic.IDynItems;
-            item.Items.Add(new Models.Dynamic.DynChoose() { Parent = item });
-        }
-
-        private void ClickAddDynWhen(object sender, RoutedEventArgs e)
-        {
-            Models.Dynamic.IDynItems item = (sender as MenuItem).DataContext as Models.Dynamic.IDynItems;
-            item.Items.Add(new Models.Dynamic.DynWhen() { Parent = item });
-        }
-
-        private void ClickRemoveDyn(object sender, RoutedEventArgs e)
-        {
-            Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
-            Models.Dynamic.IDynItems item = (sender as MenuItem).DataContext as Models.Dynamic.IDynItems;
-            item.Parent.Items.Remove(item);
-        }
-
-        private void ClickAddDynCom(object sender, RoutedEventArgs e)
-        {
-            Models.Dynamic.IDynItems item = (sender as MenuItem).DataContext as Models.Dynamic.IDynItems;
-            Models.Dynamic.DynComObject para = new Models.Dynamic.DynComObject() { Parent = item };
-            item.Items.Add(para);
-        }
-
-        private void LoadingContextDynWhen(object sender, RoutedEventArgs e)
-        {
-            ContextMenu menu = sender as ContextMenu;
-            Models.Dynamic.DynWhen when = menu.DataContext as Models.Dynamic.DynWhen;
-            bool chann = when.CanAddIndependent;
-            (menu.Items[0] as MenuItem).IsEnabled = chann;
-            (menu.Items[1] as MenuItem).IsEnabled = chann;
-            (menu.Items[2] as MenuItem).IsEnabled = when.CanAddBlock;
-
-            bool subs = when.CanAddPara;
-            (menu.Items[5] as MenuItem).IsEnabled = subs;
-            (menu.Items[6] as MenuItem).IsEnabled = subs;
-        }
-        #endregion
 
         private void TabItem_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
@@ -1025,18 +949,10 @@ namespace Kaenx.Creator
 
         private void ResetId(object sender, RoutedEventArgs e)
         {
-            if((sender as Button).DataContext is Models.Parameter) {
-                ((sender as Button).DataContext as Models.Parameter).Id = -1;
-            } else if((sender as Button).DataContext is Models.ParameterRef) {
-                ((sender as Button).DataContext as Models.ParameterRef).Id = -1;
-            } else if((sender as Button).DataContext is Models.ComObject) {
-                ((sender as Button).DataContext as Models.ComObject).Id = -1;
-            } else if((sender as Button).DataContext is Models.ComObjectRef) {
-                ((sender as Button).DataContext as Models.ComObjectRef).Id = -1;
-            } else if((sender as Button).DataContext is Models.Dynamic.DynParaBlock) {
-                ((sender as Button).DataContext as Models.Dynamic.DynParaBlock).Id = -1;
+            if((sender as Button).DataContext is Models.Module) {
+                ((sender as Button).DataContext as Models.Module).Id = -1;
             } else {
-                throw new Exception("Unbekannter Typ zum ID löschen: " + sender.GetType().ToString());
+                throw new Exception("Unbekannter Typ zum ID löschen: " + (sender as Button).DataContext.GetType().ToString());
             }
         }
 

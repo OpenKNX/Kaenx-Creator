@@ -656,7 +656,6 @@ namespace Kaenx.Creator.Classes
                 }
                 currentVers.AddressTableMaxCount = int.Parse(tadd.Attribute("MaxEntries")?.Value ?? "0");
                 currentVers.AddressTableOffset = int.Parse(tadd.Attribute("Offset")?.Value ?? "0");
-                //TODO import codesegment
             }
             if(xstatic.Element(Get("AssociationTable")) != null)
             {
@@ -852,6 +851,9 @@ namespace Kaenx.Creator.Classes
                         break;
 
                     case "IndependentChannel":
+                        DynChannelIndependent dci = new DynChannelIndependent();
+                        parent.Items.Add(dci);
+                        ParseDynamic(dci, xele);
                         break;
 
                     case "ParameterBlock":
@@ -912,6 +914,11 @@ namespace Kaenx.Creator.Classes
 
                     case "Module":
                         //TODO import modules
+                        DynModule dmo = new DynModule();
+                        dmo.Id = int.Parse(GetLastSplit(xele.Attribute("Id").Value, 2));
+                        paraId = int.Parse(GetLastSplit(xele.Attribute("RefId").Value, 3));
+                        dmo.ModuleObject = currentVers.Modules.Single(m => m.Id == paraId);
+                        parent.Items.Add(dmo);
                         break;
 
                     default:

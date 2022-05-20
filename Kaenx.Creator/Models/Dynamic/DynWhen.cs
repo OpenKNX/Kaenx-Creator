@@ -60,7 +60,7 @@ namespace Kaenx.Creator.Models.Dynamic
         private bool CheckForBlock(IDynItems item)
         {
             if(item == null) return false;
-            if (item is DynChannelIndependet || item is DynChannel)
+            if (item is DynChannelIndependent || item is DynChannel)
                 return true;
             if (item.Parent == null || item is DynParaBlock) return false;
             return CheckForBlock(item.Parent);
