@@ -61,7 +61,11 @@ namespace Kaenx.Creator.Controls
         {
             if((sender as Button).DataContext is Models.Dynamic.DynParaBlock) {
                 ((sender as Button).DataContext as Models.Dynamic.DynParaBlock).Id = -1;
-            } else {
+            }
+            else if((sender as Button).DataContext is Models.Dynamic.DynSeparator) {
+                ((sender as Button).DataContext as Models.Dynamic.DynSeparator).Id = -1;
+            } else
+            {
                 throw new Exception("Unbekannter Typ zum ID löschen: " + sender.GetType().ToString());
             }
         }

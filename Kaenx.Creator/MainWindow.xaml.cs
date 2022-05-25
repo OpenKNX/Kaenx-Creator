@@ -1328,6 +1328,9 @@ namespace Kaenx.Creator
                 //check for Argument exist
 
                 //TODO check union size fits parameter+offset
+
+                //TODO check dynamic
+                // - separator Text required
             
             }
 

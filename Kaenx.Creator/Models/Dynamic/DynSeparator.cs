@@ -26,6 +26,13 @@ namespace Kaenx.Creator.Models.Dynamic
             set { _name = value; Changed("Name"); }
         }
 
+        private SeparatorHint _hint = SeparatorHint.None;
+        public SeparatorHint Hint
+        {
+            get { return _hint; }
+            set { _hint = value; Changed("Hint"); }
+        }
+
         public ObservableCollection<Translation> Text {get;set;} = new ObservableCollection<Translation>();
 
         private bool _transText = false;
@@ -42,5 +49,14 @@ namespace Kaenx.Creator.Models.Dynamic
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
+    }
+
+    public enum SeparatorHint
+    {
+        None,
+        HorizontalRuler,
+        Headline,
+        Information,
+        Error
     }
 }

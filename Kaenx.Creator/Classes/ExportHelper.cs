@@ -217,12 +217,12 @@ namespace Kaenx.Creator.Classes
                 {
                     case ProcedureTypes.Application:
                         temp = XDocument.Parse($"<LoadProcedures><LoadProcedure><LdCtrlConnect /><LdCtrlDisconnect /></LoadProcedure></LoadProcedures>").Root;
-                        xunderapp.Add(temp);
+                        //xunderapp.Add(temp);
                         break;
 
                     case ProcedureTypes.Merge:
                         temp = XDocument.Parse($"<LoadProcedures><LoadProcedure MergeId=\"2\"><LdCtrlRelSegment  AppliesTo=\"full\" LsmIdx=\"4\" Size=\"1\" Mode=\"0\" Fill=\"0\" /></LoadProcedure><LoadProcedure MergeId=\"4\"><LdCtrlWriteRelMem ObjIdx=\"4\" Offset=\"0\" Size=\"1\" Verify=\"true\" /></LoadProcedure></LoadProcedures>").Root;
-                        xunderapp.Add(temp);
+                        //xunderapp.Add(temp);
                         break;
                 }
 
@@ -231,41 +231,44 @@ namespace Kaenx.Creator.Classes
                 #endregion
 
                 #region ModuleDefines
-                xunderapp = new XElement(Get("ModuleDefs"));
-                xapp.Add(xunderapp);
-
-                foreach(Models.Module mod in ver.Modules)
+                if(ver.Modules.Count > 0)
                 {
+                    xunderapp = new XElement(Get("ModuleDefs"));
+                    xapp.Add(xunderapp);
 
-                    if(mod.Id == -1)
-                        mod.Id = AutoHelper.GetNextFreeId(ver.Modules);
-
-                    appVersionMod += $"_MD-{mod.Id}";
-
-                    temp = new XElement(Get("Arguments"));
-                    foreach(Models.Argument arg in mod.Arguments)
+                    foreach (Models.Module mod in ver.Modules)
                     {
-                        XElement xarg = new XElement(Get("Argument"));
-                        if(arg.Id == -1)
-                            arg.Id = AutoHelper.GetNextFreeId(mod.Arguments);
-                        xarg.SetAttributeValue("Id", $"{appVersionMod}_A-{arg.Id}");
-                        xarg.SetAttributeValue("Name", arg.Name);
-                        temp.Add(xarg);
+
+                        if (mod.Id == -1)
+                            mod.Id = AutoHelper.GetNextFreeId(ver.Modules);
+
+                        appVersionMod += $"_MD-{mod.Id}";
+
+                        temp = new XElement(Get("Arguments"));
+                        foreach (Models.Argument arg in mod.Arguments)
+                        {
+                            XElement xarg = new XElement(Get("Argument"));
+                            if (arg.Id == -1)
+                                arg.Id = AutoHelper.GetNextFreeId(mod.Arguments);
+                            xarg.SetAttributeValue("Id", $"{appVersionMod}_A-{arg.Id}");
+                            xarg.SetAttributeValue("Name", arg.Name);
+                            temp.Add(xarg);
+                        }
+                        XElement xmod = new XElement(Get("ModuleDef"), temp);
+                        XElement xunderstatic = new XElement(Get("Static"));
+                        xmod.Add(xunderstatic);
+                        xunderapp.Add(xmod);
+
+                        xmod.SetAttributeValue("Id", $"{appVersion}_MD-{mod.Id}");
+                        xmod.SetAttributeValue("Name", mod.Name);
+
+                        ExportParameters(mod, xunderstatic);
+                        ExportParameterRefs(mod, xunderstatic);
+                        ExportComObjects(mod, xunderstatic);
+                        ExportComObjectRefs(mod, xunderstatic);
+
+                        appVersionMod = appVersion;
                     }
-                    XElement xmod = new XElement(Get("ModuleDef"), temp);
-                    XElement xunderstatic = new XElement(Get("Static"));
-                    xmod.Add(xunderstatic);
-                    xunderapp.Add(xmod);
-
-                    xmod.SetAttributeValue("Id", $"{appVersion}_MD-{mod.Id}");
-                    xmod.SetAttributeValue("Name", mod.Name);
-
-                    ExportParameters(mod, xunderstatic);
-                    ExportParameterRefs(mod, xunderstatic);
-                    ExportComObjects(mod, xunderstatic);
-                    ExportComObjectRefs(mod, xunderstatic);
-
-                    appVersionMod = appVersion;
                 }
 
                 #endregion
@@ -305,9 +308,9 @@ namespace Kaenx.Creator.Classes
                 #endregion
 
                 XmlSchemaSet schemas = new XmlSchemaSet();
-                schemas.Add(null, "Data\\knx_project_20.xsd");
+                schemas.Add(null, "Data\\knx_project_14.xsd");
                 doc.Validate(schemas, (o,e) => {
-                    Debug.WriteLine("Fehler beim Validieren! " + e.Message);
+                    Debug.WriteLine($"Fehler beim Validieren! {e.Message} ({o})");
                 });
 
                 doc.Root.Attributes().Where((x) => x.IsNamespaceDeclaration).Remove();
@@ -883,13 +886,20 @@ namespace Kaenx.Creator.Classes
             parent.Add(xcom);
         }
 
+        private int separatorCounter = 1;
+
         private void HandleSep(DynSeparator sep, XElement parent)
         {
             XElement xsep = new XElement(Get("ParameterSeparator"));
             if(sep.Id == -1) {
-                sep.Id = 1; //TODO get real next free Id
+                sep.Id = separatorCounter++; //TODO get real next free Id
             }
             xsep.SetAttributeValue("Id", $"{appVersion}_PS-{sep.Id}");
+            xsep.SetAttributeValue("Text", sep.Text.Single(p => p.Language.CultureCode == currentLang).Text);
+            if(sep.Hint != SeparatorHint.None)
+            {
+                xsep.SetAttributeValue("UIHint", sep.Hint.ToString());
+            }
             parent.Add(xsep);
         }
 

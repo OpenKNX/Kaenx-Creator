@@ -104,6 +104,49 @@
                 
             </StackPanel>
         </DataTemplate>
+        <DataTemplate x:Key="TempDynSeparator">
+            <StackPanel>
+                <HeaderedContentControl Header="Text Parameter">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <CheckBox IsChecked="{Binding UseTextParameter}" VerticalAlignment="Center" />
+                        <ComboBox Grid.Column="1" IsEnabled="{Binding UseTextParameter}" ItemsSource="{Binding ElementName=VersionList, Path=SelectedItem.ParameterRefs}" SelectedItem="{Binding ParameterRefObject, Mode=TwoWay}" DisplayMemberPath="Name" />
+                    </Grid>
+                </HeaderedContentControl>
+                <Grid Visibility="{Binding UseTextParameter, Converter={StaticResource BoolToVis}, ConverterParameter=true}" Margin="5 0">
+                    <TextBlock VerticalAlignment="Center">
+                        <Run Text="ID:" />
+                        <Run Text="{Binding Id}"/>
+                    </TextBlock>
+                    <Button Content="Zurücksetzen" HorizontalAlignment="Right" Click="ResetId" />
+                </Grid>
+                <HeaderedContentControl Header="Text">
+                    <StackPanel>
+                        <CheckBox IsChecked="{Binding TranslationText}" Content="Übersetzung nicht exportieren" />
+                        <DataGrid IsEnabled="{Binding UseTextParameter, Converter={StaticResource BoolNegate}}"  ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                                <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </StackPanel>
+                </HeaderedContentControl>
+                <HeaderedContentControl Header="UIHint">
+                    <HeaderedContentControl.Resources>
+                        <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+                            <ObjectDataProvider.MethodParameters>
+                                <x:Type TypeName="dyn:SeparatorHint"/>
+                            </ObjectDataProvider.MethodParameters>
+                        </ObjectDataProvider>
+                    </HeaderedContentControl.Resources>
+                    <ComboBox ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding Hint}" />
+                </HeaderedContentControl>
+            </StackPanel>
+        </DataTemplate>
         <DataTemplate x:Key="TempDynChannel">
             <StackPanel>
                 <HeaderedContentControl Header="Name">
@@ -192,7 +235,8 @@
             DIndependent="{StaticResource TempDynIndependent}"
             DChannel="{StaticResource TempDynChannel}"
             DModule="{StaticResource TempDynModule}"
-            DCom="{StaticResource TempDynComObject}" />
+            DCom="{StaticResource TempDynComObject}"
+            DSeparator="{StaticResource TempDynSeparator}" />
     </UserControl.Resources>
 
     <Grid>
@@ -263,6 +307,12 @@
                             <Run Text="Block" />
                             <Run Text="{Binding Name}" />
                         </TextBlock>
+                    </StackPanel>
+                </HierarchicalDataTemplate>
+                <HierarchicalDataTemplate DataType="{x:Type dyn:DynSeparator}">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="{svgc:SvgImage Source=/Assets/Images/Dynamic/Separator.svg, AppName=Kaenx.Creator}" Height="18" Width="18" Margin="4" />
+                        <TextBlock Text="Seperator" VerticalAlignment="Center" />
                     </StackPanel>
                 </HierarchicalDataTemplate>
                 <HierarchicalDataTemplate DataType="{x:Type dyn:DynModule}" ItemsSource="{Binding Items}">
