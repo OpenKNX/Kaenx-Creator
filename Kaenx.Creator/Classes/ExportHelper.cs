@@ -307,11 +307,22 @@ namespace Kaenx.Creator.Classes
                 xmanu.Add(xlanguages);
                 #endregion
 
-                XmlSchemaSet schemas = new XmlSchemaSet();
-                schemas.Add(null, "Data\\knx_project_14.xsd");
-                doc.Validate(schemas, (o,e) => {
-                    Debug.WriteLine($"Fehler beim Validieren! {e.Message} ({o})");
-                });
+                string nsnumber = currentNamespace.Substring(currentNamespace.LastIndexOf('/') + 1);
+                string xsdFile = "Data\\knx_project_" + nsnumber + ".xsd";
+                if (File.Exists(xsdFile))
+                {
+                    Debug.WriteLine("XSD gefunden. Validierung wird ausgeführt");
+                    XmlSchemaSet schemas = new XmlSchemaSet();
+                    schemas.Add(null, xsdFile);
+                    doc.Validate(schemas, (o, e) => {
+                        Debug.WriteLine($"Fehler beim Validieren! {e.Message} ({o})");
+                    });
+                }
+                else
+                {
+                    Debug.WriteLine("XSD nicht gefunden. Validierung wird übersprungen");
+                }
+                
 
                 doc.Root.Attributes().Where((x) => x.IsNamespaceDeclaration).Remove();
                 doc.Root.Name = doc.Root.Name.LocalName;
