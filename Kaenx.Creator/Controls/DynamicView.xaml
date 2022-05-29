@@ -69,6 +69,13 @@
         </DataTemplate>
         <DataTemplate x:Key="TempDynParaBlock">
             <StackPanel>
+                <Grid Margin="5 0">
+                    <TextBlock VerticalAlignment="Center">
+                        <Run Text="ID:" />
+                        <Run Text="{Binding Id}"/>
+                    </TextBlock>
+                    <Button Content="Zurücksetzen" HorizontalAlignment="Right" Click="ResetId" />
+                </Grid>
                 <HeaderedContentControl Header="Name">
                     <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
                 </HeaderedContentControl>
@@ -80,20 +87,13 @@
                         </Grid.ColumnDefinitions>
 
                         <CheckBox IsChecked="{Binding UseTextParameter}" VerticalAlignment="Center" />
-                        <ComboBox Grid.Column="1" IsEnabled="{Binding UseTextParameter}" ItemsSource="{Binding ElementName=VersionList, Path=SelectedItem.ParameterRefs}" SelectedItem="{Binding ParameterRefObject, Mode=TwoWay}" DisplayMemberPath="Name" />
+                        <ComboBox Grid.Column="1" IsEnabled="{Binding UseTextParameter}" ItemsSource="{Binding ParameterRefsList, ElementName=ViewControl}" SelectedItem="{Binding ParameterRefObject, Mode=TwoWay}" DisplayMemberPath="Name" />
                     </Grid>
                 </HeaderedContentControl>
-                <Grid Visibility="{Binding UseTextParameter, Converter={StaticResource BoolToVis}, ConverterParameter=true}" Margin="5 0">
-                    <TextBlock VerticalAlignment="Center">
-                        <Run Text="ID:" />
-                        <Run Text="{Binding Id}"/>
-                    </TextBlock>
-                    <Button Content="Zurücksetzen" HorizontalAlignment="Right" Click="ResetId" />
-                </Grid>      
                 <HeaderedContentControl Header="Text">
                     <StackPanel>
                         <CheckBox IsChecked="{Binding TranslationText}" Content="Übersetzung nicht exportieren" />
-                        <DataGrid IsEnabled="{Binding UseTextParameter, Converter={StaticResource BoolNegate}}"  ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
+                        <DataGrid ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
                                 <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />

@@ -2,6 +2,8 @@ using Kaenx.Creator.Classes;
 using Kaenx.Creator.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -11,7 +13,7 @@ using System.Windows.Input;
 
 namespace Kaenx.Creator.Controls
 {
-    public partial class ComObjectRefView : UserControl
+    public partial class ComObjectRefView : UserControl, INotifyPropertyChanged
     {
         public static readonly DependencyProperty VersionProperty = DependencyProperty.Register("Version", typeof(AppVersion), typeof(ComObjectRefView), new PropertyMetadata(null));
         public static readonly DependencyProperty ModuleProperty = DependencyProperty.Register("Module", typeof(IVersionBase), typeof(ComObjectRefView), new PropertyMetadata(OnModuleChangedCallback));
@@ -23,7 +25,10 @@ namespace Kaenx.Creator.Controls
             get { return (IVersionBase)GetValue(ModuleProperty); }
             set { SetValue(ModuleProperty, value); }
         }
-        
+
+        public ObservableCollection<ParameterRef> ParameterRefsList { get { return Module?.ParameterRefs; } }
+        public ObservableCollection<ComObject> ComObjectsList { get { return Module?.ComObjects; } }
+
         public ComObjectRefView()
 		{
             InitializeComponent();
@@ -36,7 +41,8 @@ namespace Kaenx.Creator.Controls
 
         protected virtual void OnModuleChanged()
         {
-            InComObjects.ItemsSource = Module?.ComObjects;
+            Changed("ParameterRefsList");
+            Changed("ComObjectsList");
         }
         
         private void ClickAdd(object sender, RoutedEventArgs e)
@@ -45,7 +51,6 @@ namespace Kaenx.Creator.Controls
             foreach(Models.Language lang in Version.Languages) {
                 cref.Text.Add(new Models.Translation(lang, ""));
                 cref.FunctionText.Add(new Models.Translation(lang, ""));
-                cref.Description.Add(new Models.Translation(lang, ""));
             }
             Module.ComObjectRefs.Add(cref);
         }
@@ -72,6 +77,13 @@ namespace Kaenx.Creator.Controls
         private void ResetId(object sender, RoutedEventArgs e)
         {
             ((sender as Button).DataContext as Models.ComObjectRef).Id = -1;
+        }
+
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void Changed(string name)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
     }
 }

@@ -52,11 +52,11 @@ namespace Kaenx.Creator.Models.Dynamic
         }
 
         [JsonIgnore]
-        public int _parameter;
+        public int _parameterRef;
         public int ParameterRef
         {
             get { return ParameterRefObject?.UId ?? -1; }
-            set { _parameter = value; }
+            set { _parameterRef = value; }
         }
 
 

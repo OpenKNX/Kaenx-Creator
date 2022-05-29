@@ -56,7 +56,6 @@ namespace Kaenx.Creator.Controls
             foreach(Models.Language lang in Version.Languages) {
                 com.Text.Add(new Models.Translation(lang, "Dummy"));
                 com.FunctionText.Add(new Models.Translation(lang, "Dummy"));
-                com.Description.Add(new Models.Translation(lang, "Dummy"));
             }
             Module.ComObjects.Add(com);
 
@@ -65,7 +64,6 @@ namespace Kaenx.Creator.Controls
                 foreach(Models.Language lang in Version.Languages) {
                     cref.Text.Add(new Models.Translation(lang, ""));
                     cref.FunctionText.Add(new Models.Translation(lang, ""));
-                    cref.Description.Add(new Models.Translation(lang, ""));
                 }
                 Module.ComObjectRefs.Add(cref);
             }

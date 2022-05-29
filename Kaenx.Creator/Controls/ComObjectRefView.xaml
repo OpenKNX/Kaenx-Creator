@@ -9,7 +9,8 @@
     xmlns:models="clr-namespace:Kaenx.Creator.Models"
     mc:Ignorable="d"
     d:DesignHeight="300"
-    d:DesignWidth="400">
+    d:DesignWidth="400"
+    x:Name="ViewControl">
     <UserControl.Resources>
         <conv:EmptyToBool x:Key="EmptyToBool" />
         <conv:BoolToVisibility x:Key="BoolToVis" />
@@ -86,9 +87,20 @@
                 </HeaderedContentControl>
 
                 <HeaderedContentControl Header="Kommunikationsobjekt">
-                    <ComboBox x:Name="InComObjects" DisplayMemberPath="Name" SelectedItem="{Binding ComObjectObject}" />
+                    <ComboBox ItemsSource="{Binding ComObjectsList, ElementName=ViewControl}" DisplayMemberPath="Name" SelectedItem="{Binding ComObjectObject}" />
                 </HeaderedContentControl>
-                
+
+                <HeaderedContentControl Header="Text Parameter">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <CheckBox IsChecked="{Binding UseTextParameter}" VerticalAlignment="Center" />
+                        <ComboBox Grid.Column="1" IsEnabled="{Binding UseTextParameter}" ItemsSource="{Binding ParameterRefsList, ElementName=ViewControl}" SelectedItem="{Binding ParameterRefObject, Mode=TwoWay}" DisplayMemberPath="Name" />
+                    </Grid>
+                </HeaderedContentControl>
                 <HeaderedContentControl Header="Text">
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -120,26 +132,6 @@
                         <StackPanel Grid.Column="1">
                             <CheckBox IsEnabled="{Binding OverwriteFunctionText}" IsChecked="{Binding TranslationFunctionText}" Content="Übersetzung nicht exportieren" />
                             <DataGrid IsEnabled="{Binding OverwriteFunctionText}" ItemsSource="{Binding FunctionText}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
-                                <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
-                                    <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
-                                </DataGrid.Columns>
-                            </DataGrid>
-                        </StackPanel>
-                    </Grid>
-                </HeaderedContentControl>
-
-                <HeaderedContentControl Header="Beschreibung">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="auto" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-
-                        <CheckBox IsChecked="{Binding OverwriteDescription}" VerticalAlignment="Center" />
-                        <StackPanel Grid.Column="1">
-                            <CheckBox IsEnabled="{Binding OverwriteDescription}" IsChecked="{Binding TranslationDescription}" Content="Übersetzung nicht exportieren" />
-                            <DataGrid IsEnabled="{Binding OverwriteDescription}" ItemsSource="{Binding Description}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
                                     <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />

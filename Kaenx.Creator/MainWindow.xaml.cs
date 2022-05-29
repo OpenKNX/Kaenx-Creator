@@ -458,7 +458,6 @@ namespace Kaenx.Creator
                 foreach(Models.ComObject com in ver.ComObjects) {
                     com.Text.Add(new Models.Translation(lang, ""));
                     com.FunctionText.Add(new Models.Translation(lang, ""));
-                    com.Description.Add(new Models.Translation(lang, ""));
                 }
                 foreach(Models.ParameterType type in ver.ParameterTypes) {
                     if(type.Type != Models.ParameterTypes.Enum) continue;
@@ -486,7 +485,6 @@ namespace Kaenx.Creator
             foreach(Models.ComObject com in ver.ComObjects) {
                 com.Text.Remove(com.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
                 com.FunctionText.Remove(com.FunctionText.Single(l => l.Language.CultureCode == lang.CultureCode));
-                com.Description.Remove(com.Description.Single(l => l.Language.CultureCode == lang.CultureCode));
             }
             foreach(Models.ParameterType type in ver.ParameterTypes) {
                 if(type.Type != Models.ParameterTypes.Enum) continue;
@@ -807,8 +805,8 @@ namespace Kaenx.Creator
                     if (dco._comObjectRef != -1)
                         dco.ComObjectRefObject = coms.Single(c => c.UId == dco._comObjectRef);
                 } else if(item is Models.Dynamic.DynParaBlock dpb) {
-                    if(dpb._parameter != -1)
-                        dpb.ParameterRefObject = paras.Single(p => p.UId == dpb._parameter);
+                    if(dpb._parameterRef != -1)
+                        dpb.ParameterRefObject = paras.Single(p => p.UId == dpb._parameterRef);
                 }
 
                 if (!(item is Models.Dynamic.DynParameter) && item.Items != null)
@@ -1268,16 +1266,6 @@ namespace Kaenx.Creator
                             if(string.IsNullOrEmpty(trans.Text))
                                 PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Keine Übersetzung für FunktionsText vorhanden ({trans.Language.Text})", State = Models.PublishState.Warning });
                     }
-
-                    if(com.TranslationDescription) {
-                        Models.Translation trans = com.Description.Single(t => t.Language.CultureCode == vers.DefaultLanguage);
-                        if(string.IsNullOrEmpty(trans.Text))
-                            PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Keine Übersetzung für Beschreibung vorhanden ({trans.Language.Text})", State = Models.PublishState.Fail });
-                    } else {
-                        foreach(Models.Translation trans in com.Description)
-                            if(string.IsNullOrEmpty(trans.Text))
-                                PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Keine Übersetzung für Beschreibung vorhanden ({trans.Language.Text})", State = Models.PublishState.Warning });
-                    }
                 }
 
                 foreach(Models.ComObjectRef rcom in vers.ComObjectRefs) {
@@ -1308,17 +1296,8 @@ namespace Kaenx.Creator
                         }
                     }
 
-                    if(rcom.OverwriteDescription) {
-                        if(rcom.TranslationDescription) {
-                            Models.Translation trans = rcom.Description.Single(t => t.Language.CultureCode == vers.DefaultLanguage);
-                            if(string.IsNullOrEmpty(trans.Text))
-                                PublishActions.Add(new Models.PublishAction() { Text = $"    ComObjectRef {rcom.Name} ({rcom.UId}): Keine Übersetzung für Beschreibung vorhanden ({trans.Language.Text})", State = Models.PublishState.Fail });
-                        } else {
-                            foreach(Models.Translation trans in rcom.Description)
-                                if(string.IsNullOrEmpty(trans.Text))
-                                    PublishActions.Add(new Models.PublishAction() { Text = $"    ComObjectRef {rcom.Name} ({rcom.UId}): Keine Übersetzung für Beschreibung vorhanden ({trans.Language.Text})", State = Models.PublishState.Warning });
-                        }
-                    }
+                    if(rcom.UseTextParameter && rcom.ParameterRefObject == null)
+                        PublishActions.Add(new Models.PublishAction() { Text = $"    ComObjectRef {rcom.Name} ({rcom.UId}): Kein TextParameter angegeben", State = Models.PublishState.Fail });
                 }
 
                 //TODO check ComObjectRefs for overwriting
@@ -1356,8 +1335,13 @@ namespace Kaenx.Creator
             await Task.Delay(1000);
             
             string convPath = etsPath;
-            Models.EtsVersion etsVersion = EtsVersions.Single(v => v.Number == highestNS);
-            convPath = System.IO.Path.Combine(convPath, "CV", etsVersion.FolderPath);
+            if(System.IO.Directory.Exists(System.IO.Path.Combine(convPath, "CV", "6.0")))
+                convPath = System.IO.Path.Combine(convPath, "CV", "6.0");
+            else
+            {
+                Models.EtsVersion etsVersion = EtsVersions.Single(v => v.Number == highestNS);
+                convPath = System.IO.Path.Combine(convPath, "CV", etsVersion.FolderPath);
+            }
 
             ExportHelper helper = new ExportHelper(General, hardware, devices, apps, versions, convPath);
             switch(InPublishTarget.SelectedValue) {

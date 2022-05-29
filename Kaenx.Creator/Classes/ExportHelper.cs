@@ -644,15 +644,12 @@ namespace Kaenx.Creator.Classes
                 xcom.SetAttributeValue("Text", com.Text.Single(c => c.Language.CultureCode == currentLang).Text);
                 xcom.SetAttributeValue("Number", com.Number);
                 xcom.SetAttributeValue("FunctionText", com.FunctionText.Single(c => c.Language.CultureCode == currentLang).Text);
-                xcom.SetAttributeValue("VisibleDescription", com.Description.Single(c => c.Language.CultureCode == currentLang).Text);
-
+                
                 if(!com.TranslationText)
                     foreach(Models.Translation trans in com.Text) AddTranslation(trans.Language.CultureCode, id, "Text", trans.Text);
                 if(!com.TranslationFunctionText)
                     foreach(Models.Translation trans in com.FunctionText) AddTranslation(trans.Language.CultureCode, id, "FunctionText", trans.Text);
-                if(!com.TranslationDescription)
-                    foreach(Models.Translation trans in com.Description) AddTranslation(trans.Language.CultureCode, id, "VisibleDescription", trans.Text);
-
+                
                 if (com.HasDpt && com.Type.Number != "0")
                 {
                     int size = com.Type.Size;
@@ -720,11 +717,6 @@ namespace Kaenx.Creator.Classes
                         foreach(Models.Translation trans in cref.FunctionText) AddTranslation(trans.Language.CultureCode, id, "FunctionText", trans.Text);
                     xcref.SetAttributeValue("FunctionText", cref.FunctionText.Single(c => c.Language.CultureCode == currentLang).Text);
                 }
-                if(cref.OverwriteDescription) {
-                    if(!cref.TranslationDescription)
-                        foreach(Models.Translation trans in cref.Description) AddTranslation(trans.Language.CultureCode, id, "Description", trans.Text);
-                    xcref.SetAttributeValue("VisibleDescription", cref.Description.Single(c => c.Language.CultureCode == currentLang).Text);
-                }
 
                 if (cref.OverwriteDpt)
                 {
@@ -750,6 +742,12 @@ namespace Kaenx.Creator.Classes
                             xcref.SetAttributeValue("ObjectSize", size + " Bit");
                     }
                 }
+
+                if (cref.UseTextParameter)
+                {
+                    xcref.SetAttributeValue("TextParameterRefId", appVersion + (cref.ParameterRefObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{cref.ParameterRefObject.ParameterObject.Id}_R-{cref.ParameterRefObject.Id}");
+                }
+
                 xrefs.Add(xcref);
             }
 
@@ -874,13 +872,17 @@ namespace Kaenx.Creator.Classes
             {
                 DynChannel dch = ch as DynChannel;
                 channel.Name = Get("Channel");
-                if (dch.ParameterRefObject != null)
-                    channel.SetAttributeValue("ParamRefId", appVersion + (dch.ParameterRefObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{dch.ParameterRefObject.ParameterObject.Id}_R-{dch.ParameterRefObject.Id}");
-                else {
-                    channel.SetAttributeValue("Text", dch.Text.Single(p => p.Language.CultureCode == currentLang).Text);
-                    if(!dch.TranslationText)
-                        foreach(Models.Translation trans in dch.Text) AddTranslation(trans.Language.CultureCode, $"{appVersion}_CH-{dch.Number}", "Text", trans.Text);
+                if (dch.UseTextParameter)
+                    channel.SetAttributeValue("TextParameterRefId", appVersion + (dch.ParameterRefObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{dch.ParameterRefObject.ParameterObject.Id}_R-{dch.ParameterRefObject.Id}");
+
+                string dText = dch.Text.Single(p => p.Language.CultureCode == currentLang).Text;
+                if (!string.IsNullOrEmpty(dText))
+                {
+                    channel.SetAttributeValue("Text", dText);
+                    if (!dch.TranslationText)
+                        foreach (Models.Translation trans in dch.Text) AddTranslation(trans.Language.CultureCode, $"{appVersion}_CH-{dch.Number}", "Text", trans.Text);
                 }
+                
                 channel.SetAttributeValue("Number", dch.Number);
                 channel.SetAttributeValue("Id", $"{appVersion}_CH-{dch.Number}");
                 channel.SetAttributeValue("Name", ch.Name);
@@ -944,25 +946,27 @@ namespace Kaenx.Creator.Classes
             XElement block = new XElement(Get("ParameterBlock"));
             parent.Add(block);
 
-
-
-            if (bl.ParameterRefObject != null)
+            if (bl.Id == -1)
             {
-                block.SetAttributeValue("Id", $"{appVersion}_PB-{bl.ParameterRefObject.Id}");
+                bl.Id = 1; //TODO get real next free Id
+            }
+            block.SetAttributeValue("Id", $"{appVersion}_PB-{bl.ParameterRefObject.Id}");
+
+            string dText = bl.Text.Single(p => p.Language.CultureCode == currentLang).Text;
+            if (!string.IsNullOrEmpty(dText))
+            {
+                block.SetAttributeValue("Text", dText);
+                if (!bl.TranslationText)
+                    foreach (Models.Translation trans in bl.Text) AddTranslation(trans.Language.CultureCode, $"{appVersion}_PB-{bl.Id}", "Text", trans.Text);
+            }
+
+            if(!string.IsNullOrEmpty(bl.Name))
                 block.SetAttributeValue("Name", bl.Name);
-                block.SetAttributeValue("ParamRefId", appVersion + (bl.ParameterRefObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{bl.ParameterRefObject.ParameterObject.Id}_R-{bl.ParameterRefObject.Id}");
-            }
-            else
-            {
-                if (bl.Id == -1)
-                {
-                    bl.Id = 1; //TODO get real next free Id
-                }
-                block.SetAttributeValue("Id", $"{appVersion}_PB-{bl.Id}");
-                block.SetAttributeValue("Text", bl.Text.Single(p => p.Language.CultureCode == currentLang).Text);
-                if(!bl.TranslationText)
-                    foreach(Models.Translation trans in bl.Text) AddTranslation(trans.Language.CultureCode, $"{appVersion}_PB-{bl.Id}", "Text", trans.Text);
-            }
+
+
+
+            if (bl.UseTextParameter)
+                block.SetAttributeValue("TextParameterRefId", appVersion + (bl.ParameterRefObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{bl.ParameterRefObject.ParameterObject.Id}_R-{bl.ParameterRefObject.Id}");
 
             return block;
         }

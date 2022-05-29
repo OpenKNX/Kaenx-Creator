@@ -513,7 +513,6 @@ namespace Kaenx.Creator.Classes
 
                 com.Text = GetTranslation(xcom.Attribute("Id").Value, "Text", xcom);
                 com.FunctionText = GetTranslation(xcom.Attribute("Id").Value, "FunctionText", xcom);
-                com.Description = GetTranslation(xcom.Attribute("Id").Value, "VisibleDescription", xcom);
 
                 com.FlagRead = ParseFlagType(xcom.Attribute("ReadFlag")?.Value);
                 com.FlagWrite = ParseFlagType(xcom.Attribute("WriteFlag")?.Value);
@@ -575,11 +574,9 @@ namespace Kaenx.Creator.Classes
               
                 //cref.OverwriteText = xref.Attribute("Text") != null;
                 cref.OverwriteFunctionText = xref.Attribute("FunctionText") != null;
-                cref.OverwriteDescription = xref.Attribute("VisibleDescription") != null;
 
                 cref.Text = GetTranslation(xref.Attribute("Id").Value, "Text", xref);
                 cref.FunctionText = GetTranslation(xref.Attribute("Id").Value, "FunctionText", xref);
-                cref.Description = GetTranslation(xref.Attribute("Id").Value, "VisibleDescription", xref);
 
                 cref.OverwriteText = cref.Text.Any(t => !string.IsNullOrEmpty(t.Text));
 

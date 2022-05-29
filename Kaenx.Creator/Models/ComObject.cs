@@ -47,14 +47,6 @@ namespace Kaenx.Creator.Models
             set { _transFuncText = value; Changed("TranslationFunctionText"); }
         }
 
-        public ObservableCollection<Translation> Description {get;set;} = new ObservableCollection<Translation>();
-        private bool _transDesc = false;
-        public bool TranslationDescription
-        {
-            get { return _transDesc; }
-            set { _transDesc = value; Changed("TranslationDescription"); }
-        }
-
 
         private int _numb = 0;
         public int Number

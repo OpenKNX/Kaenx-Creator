@@ -75,20 +75,6 @@ namespace Kaenx.Creator.Models
             set { _overFunc = value; Changed("OverwriteFunctionText"); }
         }
 
-        public ObservableCollection<Translation> Description {get;set;} = new ObservableCollection<Translation>();
-        private bool _transDesc = false;
-        public bool TranslationDescription
-        {
-            get { return _transDesc; }
-            set { _transDesc = value; Changed("TranslationDescription"); }
-        }
-        private bool _overDesc = false;
-        public bool OverwriteDescription
-        {
-            get { return _overDesc; }
-            set { _overDesc = value; Changed("OverwriteDescription"); }
-        }
-
         private bool _overDpt = false;
         public bool OverwriteDpt
         {
@@ -243,6 +229,30 @@ namespace Kaenx.Creator.Models
         {
             get { return _isNotUsed; }
             set { _isNotUsed = value; Changed("IsNotUsed"); }
+        }
+
+
+        private bool _useTextParam = false;
+        public bool UseTextParameter
+        {
+            get { return _useTextParam; }
+            set { _useTextParam = value; Changed("UseTextParameter"); }
+        }
+
+        private ParameterRef _parameterRefObject;
+        [JsonIgnore]
+        public ParameterRef ParameterRefObject
+        {
+            get { return _parameterRefObject; }
+            set { _parameterRefObject = value; Changed("ParameterRefObject"); }
+        }
+
+        [JsonIgnore]
+        public int _parameterRef;
+        public int ParameterRef
+        {
+            get { return ParameterRefObject?.UId ?? -1; }
+            set { _parameterRef = value; }
         }
 
 
