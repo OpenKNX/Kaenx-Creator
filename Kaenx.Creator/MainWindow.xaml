@@ -1092,16 +1092,6 @@
                                     <ScrollViewer>
                                         <StackPanel Margin="5">
                                             <StackPanel.Resources>
-                                                <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
-                                                    <ObjectDataProvider.MethodParameters>
-                                                        <x:Type TypeName="models:ParamAccess"/>
-                                                    </ObjectDataProvider.MethodParameters>
-                                                </ObjectDataProvider>
-                                                <ObjectDataProvider x:Key="dataSave" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
-                                                    <ObjectDataProvider.MethodParameters>
-                                                        <x:Type TypeName="models:ParamSave"/>
-                                                    </ObjectDataProvider.MethodParameters>
-                                                </ObjectDataProvider>
                                                 <Style TargetType="HeaderedContentControl">
                                                     <Setter Property="Margin" Value="5" />
                                                     <Setter Property="IsTabStop" Value="false" />
@@ -1136,9 +1126,6 @@
                                             <HeaderedContentControl Header="Name">
                                                 <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
                                             </HeaderedContentControl>
-
-                                            <CheckBox IsChecked="{Binding IsParameterRefAuto}" Content="Parameter Refs automatisch berechnen" />
-                                            <CheckBox IsChecked="{Binding IsComObjectRefAuto}" Content="KO Refs automatisch berechnen" />
 
                                             <HeaderedContentControl Header="Benötigter Speicher">
                                                 <TextBlock>

@@ -9,7 +9,8 @@
     xmlns:models="clr-namespace:Kaenx.Creator.Models"
     mc:Ignorable="d"
     d:DesignHeight="300"
-    d:DesignWidth="400">
+    d:DesignWidth="400"
+    x:Name="ViewControl">
     <UserControl.Resources>
         <conv:EmptyToBool x:Key="EmptyToBool" />
         <conv:BoolToVisibility x:Key="BoolToVis" />
@@ -51,11 +52,6 @@
             <ScrollViewer Grid.Row="1" DataContext="{Binding ElementName=ComobjectList, Path=SelectedItem}" IsEnabled="{Binding Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
                 <StackPanel Margin="5">
                     <StackPanel.Resources>
-                        <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
-                            <ObjectDataProvider.MethodParameters>
-                                <x:Type TypeName="models:ParamAccess"/>
-                            </ObjectDataProvider.MethodParameters>
-                        </ObjectDataProvider>
                         <ObjectDataProvider x:Key="dataFromCom" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
                             <ObjectDataProvider.MethodParameters>
                                 <x:Type TypeName="models:FlagType"/>
@@ -79,7 +75,6 @@
                         </Style>
                     </StackPanel.Resources>
 
-                        
                     <TextBlock Margin="5 0" VerticalAlignment="Center">
                         <Run Text="UID:" />
                         <Run Text="{Binding UId}"/>
@@ -112,22 +107,22 @@
                         </StackPanel>
                     </HeaderedContentControl>
 
+                    <HeaderedContentControl Header="Text Parameter">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+
+                            <CheckBox IsChecked="{Binding UseTextParameter}" VerticalAlignment="Center" />
+                            <ComboBox Grid.Column="1" IsEnabled="{Binding UseTextParameter}" ItemsSource="{Binding ParameterRefsList, ElementName=ViewControl}" SelectedItem="{Binding ParameterRefObject, Mode=TwoWay}" DisplayMemberPath="Name" />
+                        </Grid>
+                    </HeaderedContentControl>
+
                     <HeaderedContentControl Header="Funktionstext">
                         <StackPanel>
                             <CheckBox IsChecked="{Binding TranslationFunctionText}" Content="Übersetzung nicht exportieren" />
                             <DataGrid ItemsSource="{Binding FunctionText}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
-                                <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
-                                    <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
-                                </DataGrid.Columns>
-                            </DataGrid>
-                        </StackPanel>
-                    </HeaderedContentControl>
-
-                    <HeaderedContentControl Header="Beschreibung">
-                        <StackPanel>
-                            <CheckBox IsChecked="{Binding TranslationDescription}" Content="Übersetzung nicht exportieren" />
-                            <DataGrid ItemsSource="{Binding Description}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
                                     <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />

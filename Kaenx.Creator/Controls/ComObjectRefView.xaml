@@ -90,17 +90,6 @@
                     <ComboBox ItemsSource="{Binding ComObjectsList, ElementName=ViewControl}" DisplayMemberPath="Name" SelectedItem="{Binding ComObjectObject}" />
                 </HeaderedContentControl>
 
-                <HeaderedContentControl Header="Text Parameter">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="auto" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-
-                        <CheckBox IsChecked="{Binding UseTextParameter}" VerticalAlignment="Center" />
-                        <ComboBox Grid.Column="1" IsEnabled="{Binding UseTextParameter}" ItemsSource="{Binding ParameterRefsList, ElementName=ViewControl}" SelectedItem="{Binding ParameterRefObject, Mode=TwoWay}" DisplayMemberPath="Name" />
-                    </Grid>
-                </HeaderedContentControl>
                 <HeaderedContentControl Header="Text">
                     <Grid>
                         <Grid.ColumnDefinitions>

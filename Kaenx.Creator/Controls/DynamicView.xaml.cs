@@ -135,18 +135,89 @@ namespace Kaenx.Creator.Controls
             item.Items.Add(para);
         }
 
+        private void ClickAddDynModule(object sender, RoutedEventArgs e)
+        {
+            Models.Dynamic.IDynItems item = (sender as MenuItem).DataContext as Models.Dynamic.IDynItems;
+            item.Items.Add(new Models.Dynamic.DynModule() { Parent = item });
+        }
+
         private void LoadingContextDynWhen(object sender, RoutedEventArgs e)
         {
             ContextMenu menu = sender as ContextMenu;
             Models.Dynamic.DynWhen when = menu.DataContext as Models.Dynamic.DynWhen;
-            bool chann = when.CanAddIndependent;
-            (menu.Items[0] as MenuItem).IsEnabled = chann;
-            (menu.Items[1] as MenuItem).IsEnabled = chann;
-            (menu.Items[2] as MenuItem).IsEnabled = when.CanAddBlock;
 
-            bool subs = when.CanAddPara;
-            (menu.Items[5] as MenuItem).IsEnabled = subs;
-            (menu.Items[6] as MenuItem).IsEnabled = subs;
+            switch(menu.DataContext)
+            {
+                case Models.Dynamic.DynamicMain:
+                    (menu.Items[0] as MenuItem).IsEnabled = true;
+                    (menu.Items[1] as MenuItem).IsEnabled = true;
+                    (menu.Items[2] as MenuItem).IsEnabled = (Version != Module);
+                    (menu.Items[3] as MenuItem).IsEnabled = (Version == Module);
+                    (menu.Items[4] as MenuItem).IsEnabled = true;
+                    (menu.Items[6] as MenuItem).IsEnabled = false;
+                    (menu.Items[7] as MenuItem).IsEnabled = false;
+                    (menu.Items[8] as MenuItem).IsEnabled = false;
+                    (menu.Items[9] as MenuItem).IsEnabled = false;
+                    (menu.Items[10] as MenuItem).IsEnabled = false;
+                    (menu.Items[12] as MenuItem).IsEnabled = false;
+                    break;
+
+                case Models.Dynamic.DynChannelIndependent:
+                    (menu.Items[0] as MenuItem).IsEnabled = false;
+                    (menu.Items[1] as MenuItem).IsEnabled = false;
+                    (menu.Items[2] as MenuItem).IsEnabled = true;
+                    (menu.Items[3] as MenuItem).IsEnabled = (Version == Module);
+                    (menu.Items[4] as MenuItem).IsEnabled = true;
+                    (menu.Items[6] as MenuItem).IsEnabled = false;
+                    (menu.Items[7] as MenuItem).IsEnabled = false;
+                    (menu.Items[8] as MenuItem).IsEnabled = false;
+                    (menu.Items[9] as MenuItem).IsEnabled = false;
+                    (menu.Items[10] as MenuItem).IsEnabled = false;
+                    (menu.Items[12] as MenuItem).IsEnabled = true;
+                    break;
+
+                case Models.Dynamic.DynChannel:
+                    (menu.Items[0] as MenuItem).IsEnabled = false;
+                    (menu.Items[1] as MenuItem).IsEnabled = false;
+                    (menu.Items[2] as MenuItem).IsEnabled = true;
+                    (menu.Items[3] as MenuItem).IsEnabled = (Version == Module);
+                    (menu.Items[4] as MenuItem).IsEnabled = true;
+                    (menu.Items[6] as MenuItem).IsEnabled = false;
+                    (menu.Items[7] as MenuItem).IsEnabled = true;
+                    (menu.Items[8] as MenuItem).IsEnabled = false;
+                    (menu.Items[9] as MenuItem).IsEnabled = false;
+                    (menu.Items[10] as MenuItem).IsEnabled = false;
+                    (menu.Items[12] as MenuItem).IsEnabled = true;
+                    break;
+                
+                case Models.Dynamic.DynParaBlock:
+                    (menu.Items[0] as MenuItem).IsEnabled = false;
+                    (menu.Items[1] as MenuItem).IsEnabled = true;
+                    (menu.Items[2] as MenuItem).IsEnabled = true;
+                    (menu.Items[3] as MenuItem).IsEnabled = (Version == Module);
+                    (menu.Items[4] as MenuItem).IsEnabled = true;
+                    (menu.Items[6] as MenuItem).IsEnabled = true;
+                    (menu.Items[7] as MenuItem).IsEnabled = true;
+                    (menu.Items[8] as MenuItem).IsEnabled = true;
+                    (menu.Items[9] as MenuItem).IsEnabled = false;
+                    (menu.Items[10] as MenuItem).IsEnabled = false;
+                    (menu.Items[12] as MenuItem).IsEnabled = true;
+                    break;
+                    
+                case Models.Dynamic.DynWhen:
+                    (menu.Items[0] as MenuItem).IsEnabled = false;
+                    (menu.Items[1] as MenuItem).IsEnabled = false;
+                    (menu.Items[2] as MenuItem).IsEnabled = true;
+                    (menu.Items[3] as MenuItem).IsEnabled = (Version == Module);
+                    (menu.Items[4] as MenuItem).IsEnabled = true;
+                    (menu.Items[6] as MenuItem).IsEnabled = true;
+                    (menu.Items[7] as MenuItem).IsEnabled = true;
+                    (menu.Items[8] as MenuItem).IsEnabled = true;
+                    (menu.Items[9] as MenuItem).IsEnabled = false;
+                    (menu.Items[10] as MenuItem).IsEnabled = false;
+                    (menu.Items[12] as MenuItem).IsEnabled = true;
+                    break;
+            }
         }
 
         

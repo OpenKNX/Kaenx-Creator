@@ -150,6 +150,7 @@ namespace Kaenx.Creator.Models
             set { if (value == null) return; _typeNumber = value; Changed("TypeNumber"); }
         }
 
+        //TODO dont save all subtypes in .ae-menu file
         private DataPointType _type;
         public DataPointType Type
         {
@@ -165,6 +166,30 @@ namespace Kaenx.Creator.Models
             set { _isNotUsed = value; Changed("IsNotUsed"); }
         }
 
+
+
+        private bool _useTextParam = false;
+        public bool UseTextParameter
+        {
+            get { return _useTextParam; }
+            set { _useTextParam = value; Changed("UseTextParameter"); }
+        }
+
+        private ParameterRef _parameterRefObject;
+        [JsonIgnore]
+        public ParameterRef ParameterRefObject
+        {
+            get { return _parameterRefObject; }
+            set { _parameterRefObject = value; Changed("ParameterRefObject"); }
+        }
+
+        [JsonIgnore]
+        public int _parameterRef;
+        public int ParameterRef
+        {
+            get { return ParameterRefObject?.UId ?? -1; }
+            set { _parameterRef = value; }
+        }
 
 
         public event PropertyChangedEventHandler PropertyChanged;

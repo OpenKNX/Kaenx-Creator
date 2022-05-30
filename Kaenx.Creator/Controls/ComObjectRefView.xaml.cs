@@ -26,7 +26,6 @@ namespace Kaenx.Creator.Controls
             set { SetValue(ModuleProperty, value); }
         }
 
-        public ObservableCollection<ParameterRef> ParameterRefsList { get { return Module?.ParameterRefs; } }
         public ObservableCollection<ComObject> ComObjectsList { get { return Module?.ComObjects; } }
 
         public ComObjectRefView()
@@ -41,7 +40,6 @@ namespace Kaenx.Creator.Controls
 
         protected virtual void OnModuleChanged()
         {
-            Changed("ParameterRefsList");
             Changed("ComObjectsList");
         }
         

@@ -186,8 +186,7 @@ namespace Kaenx.Creator.Classes
                 {
                     case Models.ParameterTypes.Text:
                         throw new Exception($"ParameterTyp Größe für Text wurde nicht implementiert: {ptype.Name} ({ptype.UId})");
-                        break;
-
+                    
                     case Models.ParameterTypes.Enum:
                     {
                         int maxValue = -1;
@@ -218,23 +217,18 @@ namespace Kaenx.Creator.Classes
 
                     case Models.ParameterTypes.Float9:
                         throw new Exception($"ParameterTyp Größe für Float9 wurde nicht implementiert: {ptype.Name} ({ptype.UId})");
-                        break;
-
+                    
                     case Models.ParameterTypes.Picture:
                         throw new Exception($"ParameterTyp Größe für Picture kann nicht berechnet werden: {ptype.Name} ({ptype.UId})");
-                        break;
-
+                    
                     case Models.ParameterTypes.None:
                         throw new Exception($"ParameterTyp Größe für None kann nicht berechnet werden: {ptype.Name} ({ptype.UId})");
-                        break;
-
+                    
                     case Models.ParameterTypes.IpAddress:
                         throw new Exception($"ParameterTyp Größe für IpAddress kann nicht berechnet werden: {ptype.Name} ({ptype.UId})");
-                        break;
-
+                    
                     default:
                         throw new Exception($"Unbekannter ParameterTyp zum Berechnen der Größe: {ptype.Name} ({ptype.UId})");
-                        break;
                 }
             }
         }

@@ -18,7 +18,7 @@ namespace Kaenx.Creator.Models
             com.PropertyChanged += Com_PropertyChanged;
         }
 
-        private async void Com_PropertyChanged(object sender, PropertyChangedEventArgs e = null)
+        private void Com_PropertyChanged(object sender, PropertyChangedEventArgs e = null)
         {
             if (e == null || e.PropertyName != "Name") return;
             Name = (sender as ComObject).Name;
@@ -230,31 +230,6 @@ namespace Kaenx.Creator.Models
             get { return _isNotUsed; }
             set { _isNotUsed = value; Changed("IsNotUsed"); }
         }
-
-
-        private bool _useTextParam = false;
-        public bool UseTextParameter
-        {
-            get { return _useTextParam; }
-            set { _useTextParam = value; Changed("UseTextParameter"); }
-        }
-
-        private ParameterRef _parameterRefObject;
-        [JsonIgnore]
-        public ParameterRef ParameterRefObject
-        {
-            get { return _parameterRefObject; }
-            set { _parameterRefObject = value; Changed("ParameterRefObject"); }
-        }
-
-        [JsonIgnore]
-        public int _parameterRef;
-        public int ParameterRef
-        {
-            get { return ParameterRefObject?.UId ?? -1; }
-            set { _parameterRef = value; }
-        }
-
 
 
         public event PropertyChangedEventHandler PropertyChanged;

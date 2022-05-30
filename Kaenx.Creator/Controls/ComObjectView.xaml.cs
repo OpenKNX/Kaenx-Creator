@@ -2,6 +2,8 @@ using Kaenx.Creator.Classes;
 using Kaenx.Creator.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -11,7 +13,7 @@ using System.Windows.Input;
 
 namespace Kaenx.Creator.Controls
 {
-    public partial class ComObjectView : UserControl
+    public partial class ComObjectView : UserControl, INotifyPropertyChanged
     {
         public static readonly DependencyProperty VersionProperty = DependencyProperty.Register("Version", typeof(AppVersion), typeof(ComObjectView), new PropertyMetadata(OnVersionChangedCallback));
         public static readonly DependencyProperty ModuleProperty = DependencyProperty.Register("Module", typeof(IVersionBase), typeof(ComObjectView), new PropertyMetadata(OnModuleChangedCallback));
@@ -24,6 +26,8 @@ namespace Kaenx.Creator.Controls
             set { SetValue(ModuleProperty, value); }
         }
         
+        public ObservableCollection<ParameterRef> ParameterRefsList { get { return Module?.ParameterRefs; } }
+
         public ComObjectView()
 		{
             InitializeComponent();
@@ -43,6 +47,7 @@ namespace Kaenx.Creator.Controls
         {
             //InParameter.ItemsSource = Module?.Parameters;
             InBaseNumber.Visibility = (Module is Models.Module) ? Visibility.Visible : Visibility.Collapsed;
+            Changed("ParameterRefsList");
         }
         
         protected virtual void OnVersionChanged() {
@@ -82,6 +87,12 @@ namespace Kaenx.Creator.Controls
         private void ResetId(object sender, RoutedEventArgs e)
         {
             ((sender as Button).DataContext as Models.ComObject).Id = -1;
+        }
+        
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void Changed(string name)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
     }
 }

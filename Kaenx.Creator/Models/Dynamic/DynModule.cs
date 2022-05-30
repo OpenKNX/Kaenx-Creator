@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Text;
+using System.Linq;
 
 namespace Kaenx.Creator.Models.Dynamic
 {
@@ -31,7 +32,19 @@ namespace Kaenx.Creator.Models.Dynamic
         public Module ModuleObject
         {
             get { return _moduleObject; }
-            set { _moduleObject = value; Changed("ModuleObject"); }
+            set { 
+                _moduleObject = value;
+                Changed("ModuleObject"); 
+                if(_moduleObject == null)
+                {
+                    Arguments.Clear();
+                } else
+                {
+                    foreach(Argument arg in _moduleObject.Arguments)
+                        if(!Arguments.Any(a => a._argId == arg.UId))
+                            Arguments.Add(new DynModuleArg(arg));
+                }
+            }
         }
 
         [JsonIgnore]
@@ -41,6 +54,8 @@ namespace Kaenx.Creator.Models.Dynamic
             get { return ModuleObject?.UId ?? -1; }
             set { _module = value; }
         }
+
+        public ObservableCollection<DynModuleArg> Arguments { get; set; } = new ObservableCollection<DynModuleArg>();
 
         public ObservableCollection<IDynItems> Items { get; set; } = new ObservableCollection<IDynItems>();
         public event PropertyChangedEventHandler PropertyChanged;

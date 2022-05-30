@@ -52,6 +52,28 @@
                 <HeaderedContentControl Header="Module">
                     <ComboBox ItemsSource="{Binding ModulesList, ElementName=ViewControl}" SelectedItem="{Binding ModuleObject}" DisplayMemberPath="Name" />
                 </HeaderedContentControl>
+                <HeaderedContentControl Header="Argumente">
+                    <HeaderedContentControl.Resources>
+                        <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+                            <ObjectDataProvider.MethodParameters>
+                                <x:Type TypeName="dyn:ArgumentTypes"/>
+                            </ObjectDataProvider.MethodParameters>
+                        </ObjectDataProvider>
+                    </HeaderedContentControl.Resources>
+                    <DataGrid ItemsSource="{Binding Arguments}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Name" Binding="{Binding Argument.Name}" IsReadOnly="True" />
+                            <DataGridTextColumn Header="Wert" Binding="{Binding Value}" />
+                            <DataGridTemplateColumn Header="Typ">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <ComboBox ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding Type}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </HeaderedContentControl>
             </StackPanel>
         </DataTemplate>
         <DataTemplate x:Key="TempDynComObject">
@@ -247,29 +269,28 @@
 
         <TreeView Name="DynamicList" ItemsSource="{Binding Dynamics}" MinWidth="300">
             <TreeView.Resources>
+                <ContextMenu x:Key="ContextMenu" Loaded="LoadingContextDynWhen">
+                    <MenuItem Header="Independent Channel hinzufügen" Click="ClickAddDynIndep" />
+                    <MenuItem Header="Channel hinzufügen" Click="ClickAddDynChannel" />
+                    <MenuItem Header="Block hinzufügen" Click="ClickAddDynBlock" />
+                    <MenuItem Header="Module hinzufügen" Click="ClickAddDynModule" />
+                    <MenuItem Header="Abzweigung hinzufügen" Click="ClickAddDynChoose" />
+                    <Separator />
+                    <MenuItem Header="Parameter hinzufügen" Click="ClickAddDynPara" />
+                    <MenuItem Header="KO hinzufügen" Click="ClickAddDynCom" />
+                    <MenuItem Header="Separator hinzufügen" Click="ClickAddDynSep" />
+                    <MenuItem Header="Assign hinzufügen" />
+                    <MenuItem Header="Button hinzufügen" />
+                    <Separator />
+                    <MenuItem Header="Entfernen" Click="ClickRemoveDyn" />
+                </ContextMenu>
                 <HierarchicalDataTemplate DataType="{x:Type dyn:DynamicMain}" ItemsSource="{Binding Items}">
-                    <TextBlock Text="{Binding Name}">
-                        <TextBlock.ContextMenu>
-                            <ContextMenu>
-                                <MenuItem Header="Independent Channel hinzufügen" Click="ClickAddDynIndep" />
-                                <MenuItem Header="Channel hinzufügen" Click="ClickAddDynChannel" />
-                                <MenuItem Header="Abzweigung hinzufügen" Click="ClickAddDynChoose" />
-                            </ContextMenu>
-                        </TextBlock.ContextMenu>
-                    </TextBlock>
+                    <TextBlock Text="{Binding Name}" ContextMenu="{StaticResource ContextMenu}" />
                 </HierarchicalDataTemplate>
                 <HierarchicalDataTemplate DataType="{x:Type dyn:DynChannel}" ItemsSource="{Binding Items}">
                     <StackPanel Orientation="Horizontal">
                         <Image Source="{svgc:SvgImage Source=/Assets/Images/Dynamic/Block.svg, AppName=Kaenx.Creator}" Height="18" Width="18" Margin="4" />
-                        <TextBlock VerticalAlignment="Center">
-                            <TextBlock.ContextMenu>
-                                <ContextMenu>
-                                    <MenuItem Header="Block hinzufügen" Click="ClickAddDynBlock" />
-                                    <MenuItem Header="Abzweigung hinzufügen" Click="ClickAddDynChoose" />
-                                    <Separator />
-                                    <MenuItem Header="Entfernen" Click="ClickRemoveDyn" />
-                                </ContextMenu>
-                            </TextBlock.ContextMenu>
+                        <TextBlock VerticalAlignment="Center" ContextMenu="{StaticResource ContextMenu}">
                             <Run Text="Channel" />
                             <Run Text="{Binding Name}" />
                         </TextBlock>
@@ -278,32 +299,13 @@
                 <HierarchicalDataTemplate DataType="{x:Type dyn:DynChannelIndependent}" ItemsSource="{Binding Items}">
                     <StackPanel Orientation="Horizontal">
                         <Image Source="{svgc:SvgImage Source=/Assets/Images/Dynamic/Block.svg, AppName=Kaenx.Creator}" Height="18" Width="18" Margin="4" />
-                        <TextBlock Text="Channel Independent" VerticalAlignment="Center">
-                            <TextBlock.ContextMenu>
-                                <ContextMenu>
-                                    <MenuItem Header="Block hinzufügen" Click="ClickAddDynBlock" />
-                                    <MenuItem Header="Abzweigung hinzufügen" Click="ClickAddDynChoose" />
-                                    <Separator />
-                                    <MenuItem Header="Entfernen" Click="ClickRemoveDyn" />
-                                </ContextMenu>
-                            </TextBlock.ContextMenu>
-                        </TextBlock>
+                        <TextBlock Text="Channel Independent" VerticalAlignment="Center" ContextMenu="{StaticResource ContextMenu}" />
                     </StackPanel>
                 </HierarchicalDataTemplate>
                 <HierarchicalDataTemplate DataType="{x:Type dyn:DynParaBlock}" ItemsSource="{Binding Items}">
                     <StackPanel Orientation="Horizontal">
                         <Image Source="{svgc:SvgImage Source=/Assets/Images/Dynamic/Block.svg, AppName=Kaenx.Creator}" Height="18" Width="18" Margin="4" />
-                        <TextBlock VerticalAlignment="Center">
-                            <TextBlock.ContextMenu>
-                                <ContextMenu>
-                                    <MenuItem Header="Parameter hinzufügen" Click="ClickAddDynPara" />
-                                    <MenuItem Header="KO hinzufügen" Click="ClickAddDynCom" />
-                                    <MenuItem Header="Separator hinzufügen" Click="ClickAddDynSep" />
-                                    <MenuItem Header="Abzweigung hinzufügen" Click="ClickAddDynChoose" />
-                                    <Separator />
-                                    <MenuItem Header="Entfernen" Click="ClickRemoveDyn" />
-                                </ContextMenu>
-                            </TextBlock.ContextMenu>
+                        <TextBlock VerticalAlignment="Center" ContextMenu="{StaticResource ContextMenu}">
                             <Run Text="Block" />
                             <Run Text="{Binding Name}" />
                         </TextBlock>
@@ -321,11 +323,6 @@
                         <TextBlock VerticalAlignment="Center">
                             <TextBlock.ContextMenu>
                                 <ContextMenu>
-                                    <MenuItem Header="Parameter hinzufügen" Click="ClickAddDynPara" />
-                                    <MenuItem Header="KO hinzufügen" Click="ClickAddDynCom" />
-                                    <MenuItem Header="Separator hinzufügen" Click="ClickAddDynSep" />
-                                    <MenuItem Header="Abzweigung hinzufügen" Click="ClickAddDynChoose" />
-                                    <Separator />
                                     <MenuItem Header="Entfernen" Click="ClickRemoveDyn" />
                                 </ContextMenu>
                             </TextBlock.ContextMenu>
@@ -353,20 +350,7 @@
                 <HierarchicalDataTemplate DataType="{x:Type dyn:DynWhen}" ItemsSource="{Binding Items}">
                     <StackPanel Orientation="Horizontal">
                         <Image Source="{svgc:SvgImage Source=/Assets/Images/Dynamic/When.svg, AppName=Kaenx.Creator}" Height="18" Width="18" Margin="4" />
-                        <TextBlock VerticalAlignment="Center">
-                            <TextBlock.ContextMenu>
-                                <ContextMenu Loaded="LoadingContextDynWhen">
-                                    <MenuItem Header="Independent Channel hinzufügen" Click="ClickAddDynIndep" />
-                                    <MenuItem Header="Channel hinzufügen" />
-                                    <MenuItem Header="Block hinzufügen" Click="ClickAddDynBlock" />
-                                    <MenuItem Header="Abzweigung hinzufügen" Click="ClickAddDynChoose" />
-                                    <Separator />
-                                    <MenuItem Header="Parameter hinzufügen" Click="ClickAddDynPara" />
-                                    <MenuItem Header="KO hinzufügen" Click="ClickAddDynCom" />
-                                    <MenuItem Header="Separator hinzufügen" Click="ClickAddDynSep" />
-                                    <MenuItem Header="Entfernen" Click="ClickRemoveDyn" />
-                                </ContextMenu>
-                            </TextBlock.ContextMenu>
+                        <TextBlock VerticalAlignment="Center" ContextMenu="{StaticResource ContextMenu}">
                             <Run Text="Bedingung" />
                             <Run Text="{Binding Name}" />
                             <Run Text="[" />
@@ -388,7 +372,6 @@
                             <Run Text="{Binding Name}" />
                             <Run Text="{Binding ParameterRefObject.Name}" />
                         </TextBlock>
-                        <!-- Visibility="{Binding ElementName=VersionList, Path=SelectedItem.IsParameterRefAuto, Converter={StaticResource BoolToVis}}"-->
                         <TextBlock Margin="10 0 0 0" VerticalAlignment="Center">
                             <Run Text="[" />
                             <Run Text="{Binding ParameterRefObject.ParameterObject.Name}" />

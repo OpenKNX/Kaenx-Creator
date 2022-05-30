@@ -783,34 +783,52 @@ namespace Kaenx.Creator
             }
 
             if(mod.Dynamics.Count > 0)
-                LoadSubDyn(mod.Dynamics[0], mod.ParameterRefs.ToList(), mod.ComObjectRefs.ToList());
+                LoadSubDyn(mod.Dynamics[0], mod.ParameterRefs.ToList(), mod.ComObjectRefs.ToList(), vbase.Modules.ToList());
         }
 
-        private void LoadSubDyn(Models.Dynamic.IDynItems dyn, List<Models.ParameterRef> paras, List<Models.ComObjectRef> coms)
+        private void LoadSubDyn(Models.Dynamic.IDynItems dyn, List<Models.ParameterRef> paras, List<Models.ComObjectRef> coms, List<Models.Module> mods)
         {
             foreach (Models.Dynamic.IDynItems item in dyn.Items)
             {
                 item.Parent = dyn;
 
-                if (item is Models.Dynamic.DynParameter dp)
+                switch(item)
                 {
-                    if (dp._parameter != -1)
-                        dp.ParameterRefObject = paras.Single(p => p.UId == dp._parameter);
-                } else if(item is Models.Dynamic.DynChoose dc)
-                {
-                    if (dc._parameterRef != -1)
-                        dc.ParameterRefObject = paras.Single(p => p.UId == dc._parameterRef);
-                } else if(item is Models.Dynamic.DynComObject dco)
-                {
-                    if (dco._comObjectRef != -1)
-                        dco.ComObjectRefObject = coms.Single(c => c.UId == dco._comObjectRef);
-                } else if(item is Models.Dynamic.DynParaBlock dpb) {
-                    if(dpb._parameterRef != -1)
-                        dpb.ParameterRefObject = paras.Single(p => p.UId == dpb._parameterRef);
+                    case Models.Dynamic.DynParameter dp:
+                        if (dp._parameter != -1)
+                            dp.ParameterRefObject = paras.Single(p => p.UId == dp._parameter);
+                        break;
+
+                    case Models.Dynamic.DynChoose dc:
+                        if (dc._parameterRef != -1)
+                            dc.ParameterRefObject = paras.Single(p => p.UId == dc._parameterRef);
+                        break;
+
+                    case Models.Dynamic.DynComObject dco:
+                        if (dco._comObjectRef != -1)
+                            dco.ComObjectRefObject = coms.Single(c => c.UId == dco._comObjectRef);
+                        break;
+
+                    case Models.Dynamic.DynParaBlock dpb:
+                        if(dpb._parameterRef != -1)
+                            dpb.ParameterRefObject = paras.Single(p => p.UId == dpb._parameterRef);
+                        break;
+
+                    case Models.Dynamic.DynModule dm:
+                        if(dm._module != -1)
+                        {
+                            dm.ModuleObject = mods.Single(m => m.UId == dm._module);
+                            foreach(Models.Dynamic.DynModuleArg arg in dm.Arguments)
+                            {
+                                if(arg._argId != -1)
+                                    arg.Argument = dm.ModuleObject.Arguments.Single(a => a.UId == arg._argId);
+                            }
+                        }
+                        break;
                 }
 
-                if (!(item is Models.Dynamic.DynParameter) && item.Items != null)
-                    LoadSubDyn(item, paras, coms);
+                if (item.Items != null)
+                    LoadSubDyn(item, paras, coms, mods);
             }
         }
 
@@ -1266,6 +1284,9 @@ namespace Kaenx.Creator
                             if(string.IsNullOrEmpty(trans.Text))
                                 PublishActions.Add(new Models.PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Keine Übersetzung für FunktionsText vorhanden ({trans.Language.Text})", State = Models.PublishState.Warning });
                     }
+
+                    if(com.UseTextParameter && com.ParameterRefObject == null)
+                        PublishActions.Add(new Models.PublishAction() { Text = $"    ComObjectRef {com.Name} ({com.UId}): Kein TextParameter angegeben", State = Models.PublishState.Fail });
                 }
 
                 foreach(Models.ComObjectRef rcom in vers.ComObjectRefs) {
@@ -1295,14 +1316,7 @@ namespace Kaenx.Creator
                                     PublishActions.Add(new Models.PublishAction() { Text = $"    ComObjectRef {rcom.Name} ({rcom.UId}): Keine Übersetzung für FunktionsText vorhanden ({trans.Language.Text})", State = Models.PublishState.Warning });
                         }
                     }
-
-                    if(rcom.UseTextParameter && rcom.ParameterRefObject == null)
-                        PublishActions.Add(new Models.PublishAction() { Text = $"    ComObjectRef {rcom.Name} ({rcom.UId}): Kein TextParameter angegeben", State = Models.PublishState.Fail });
                 }
-
-                //TODO check ComObjectRefs for overwriting
-                // dpt, functiontext, description
-
                 //TODO check Modules also
                 //check for Argument exist
 

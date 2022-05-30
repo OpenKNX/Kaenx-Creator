@@ -267,6 +267,12 @@ namespace Kaenx.Creator.Classes
                         ExportComObjects(mod, xunderstatic);
                         ExportComObjectRefs(mod, xunderstatic);
 
+                        
+                        XElement xmoddyn = new XElement(Get("Dynamic"));
+                        xmod.Add(xmoddyn);
+
+                        HandleSubItems(mod.Dynamics[0], xmoddyn);
+
                         appVersionMod = appVersion;
                     }
                 }
@@ -743,9 +749,9 @@ namespace Kaenx.Creator.Classes
                     }
                 }
 
-                if (cref.UseTextParameter)
+                if (cref.ComObjectObject.UseTextParameter)
                 {
-                    xcref.SetAttributeValue("TextParameterRefId", appVersion + (cref.ParameterRefObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{cref.ParameterRefObject.ParameterObject.Id}_R-{cref.ParameterRefObject.Id}");
+                    xcref.SetAttributeValue("TextParameterRefId", appVersion + (cref.ComObjectObject.ParameterRefObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{cref.ComObjectObject.ParameterRefObject.ParameterObject.Id}_R-{cref.ComObjectObject.ParameterRefObject.Id}");
                 }
 
                 xrefs.Add(xcref);
@@ -853,6 +859,10 @@ namespace Kaenx.Creator.Classes
                         HandleSep(ds, xparent);
                         break;
 
+                    case DynModule dm:
+                        HandleMod(dm, xparent);
+                        break;
+
                     default:
                         throw new Exception("Nicht behandeltes dynamisches Element: " + item.ToString());
                 }
@@ -873,18 +883,18 @@ namespace Kaenx.Creator.Classes
                 DynChannel dch = ch as DynChannel;
                 channel.Name = Get("Channel");
                 if (dch.UseTextParameter)
-                    channel.SetAttributeValue("TextParameterRefId", appVersion + (dch.ParameterRefObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{dch.ParameterRefObject.ParameterObject.Id}_R-{dch.ParameterRefObject.Id}");
+                    channel.SetAttributeValue("TextParameterRefId", appVersionMod + (dch.ParameterRefObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{dch.ParameterRefObject.ParameterObject.Id}_R-{dch.ParameterRefObject.Id}");
 
                 string dText = dch.Text.Single(p => p.Language.CultureCode == currentLang).Text;
                 if (!string.IsNullOrEmpty(dText))
                 {
                     channel.SetAttributeValue("Text", dText);
                     if (!dch.TranslationText)
-                        foreach (Models.Translation trans in dch.Text) AddTranslation(trans.Language.CultureCode, $"{appVersion}_CH-{dch.Number}", "Text", trans.Text);
+                        foreach (Models.Translation trans in dch.Text) AddTranslation(trans.Language.CultureCode, $"{appVersionMod}_CH-{dch.Number}", "Text", trans.Text);
                 }
                 
                 channel.SetAttributeValue("Number", dch.Number);
-                channel.SetAttributeValue("Id", $"{appVersion}_CH-{dch.Number}");
+                channel.SetAttributeValue("Id", $"{appVersionMod}_CH-{dch.Number}");
                 channel.SetAttributeValue("Name", ch.Name);
             }
 
@@ -895,11 +905,36 @@ namespace Kaenx.Creator.Classes
         private void HandleCom(DynComObject com, XElement parent)
         {
             XElement xcom = new XElement(Get("ComObjectRefRef"));
-            xcom.SetAttributeValue("RefId", $"{appVersion}_O-{com.ComObjectRefObject.ComObjectObject.Id}_R-{com.ComObjectRefObject.Id}");
+            string id = $"{appVersionMod}_O-";
+
+            if(appVersion != appVersionMod) id += "2-";
+            id += $"{com.ComObjectRefObject.ComObjectObject.Id}_R-{com.ComObjectRefObject.Id}";
+
+            xcom.SetAttributeValue("RefId", id);
             parent.Add(xcom);
         }
 
+        private void HandleMod(DynModule mod, XElement parent)
+        {
+            XElement xmod = new XElement(Get("Module"));
+            if(mod.Id == -1)
+                mod.Id = modCounter++;
+            xmod.SetAttributeValue("Id", $"{appVersion}_MD-{mod.ModuleObject.Id}_M-{mod.Id}");
+            xmod.SetAttributeValue("RefId", $"{appVersion}_MD-{mod.ModuleObject.Id}");
+
+            foreach(DynModuleArg arg in mod.Arguments)
+            {
+                XElement xarg = new XElement(Get(arg.Type.ToString() + "Arg"));
+                xarg.SetAttributeValue("RefId", $"{appVersion}_MD-{mod.ModuleObject.Id}_A-{arg.Argument.Id}");
+                xarg.SetAttributeValue("Value", arg.Value);
+                xmod.Add(xarg);
+            }
+
+            parent.Add(xmod);
+        }
+
         private int separatorCounter = 1;
+        private int modCounter = 1;
 
         private void HandleSep(DynSeparator sep, XElement parent)
         {
@@ -966,7 +1001,7 @@ namespace Kaenx.Creator.Classes
 
 
             if (bl.UseTextParameter)
-                block.SetAttributeValue("TextParameterRefId", appVersion + (bl.ParameterRefObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{bl.ParameterRefObject.ParameterObject.Id}_R-{bl.ParameterRefObject.Id}");
+                block.SetAttributeValue("TextParameterRefId", appVersionMod + (bl.ParameterRefObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{bl.ParameterRefObject.ParameterObject.Id}_R-{bl.ParameterRefObject.Id}");
 
             return block;
         }
@@ -975,7 +1010,7 @@ namespace Kaenx.Creator.Classes
         {
             XElement xpara = new XElement(Get("ParameterRefRef"));
             parent.Add(xpara);
-            xpara.SetAttributeValue("RefId", appVersion + (pa.ParameterRefObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{pa.ParameterRefObject.ParameterObject.Id}_R-{pa.ParameterRefObject.Id}");
+            xpara.SetAttributeValue("RefId", appVersionMod + (pa.ParameterRefObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{pa.ParameterRefObject.ParameterObject.Id}_R-{pa.ParameterRefObject.Id}");
         }
         #endregion
 

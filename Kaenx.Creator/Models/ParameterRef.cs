@@ -17,7 +17,7 @@ namespace Kaenx.Creator.Models
             para.PropertyChanged += Para_PropertyChanged;
         }
 
-        private async void Para_PropertyChanged(object sender, PropertyChangedEventArgs e = null) {
+        private void Para_PropertyChanged(object sender, PropertyChangedEventArgs e = null) {
             if (e == null || e.PropertyName != "Name") return;
             Name = (sender as Parameter).Name;
         }
