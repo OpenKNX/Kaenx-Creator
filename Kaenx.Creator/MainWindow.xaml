@@ -840,6 +840,7 @@
                                         <TextBox Text="{Binding Offset, UpdateSourceTrigger=PropertyChanged}"/>
                                     </HeaderedContentControl>
                                     <CheckBox Content="Parameter/Unions/Module automatisch anordnen"  IsChecked="{Binding IsAutoPara}" />
+                                    <CheckBox Content="Parameter/Unions/Module die bereits eine Adresse haben ebenfalls erneut anordnen" IsEnabled="{Binding IsAutoPara}" IsChecked="{Binding IsAutoOrder}" />
 
                                     <Button Content="Heatmap berechnen" Click="ClickCalcHeatmap" />
                                     <Image Name="OutHeatmap" MaxWidth="500" />

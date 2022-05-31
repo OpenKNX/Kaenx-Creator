@@ -53,6 +53,13 @@ namespace Kaenx.Creator.Models
             set { _isPAutoPara = value; Changed("IsAutoPara"); }
         }
 
+        private bool _isPAutoOrder = true;
+        public bool IsAutoOrder
+        {
+            get { return _isPAutoOrder; }
+            set { _isPAutoOrder = value; Changed("IsAutoOrder"); }
+        }
+
         private bool _isAutoSize = true;
         public bool IsAutoSize
         {
