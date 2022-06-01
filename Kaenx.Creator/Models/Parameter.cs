@@ -99,13 +99,6 @@ namespace Kaenx.Creator.Models
 
         public string Value { get; set; } = "1";
 
-        private bool _isOffsetAuto = false;
-        public bool IsOffsetAuto
-        {
-            get { return _isOffsetAuto; }
-            set { _isOffsetAuto = value; Changed("IsOffsetAuto"); }
-        }
-
         private bool _inUnion = false;
         public bool IsInUnion
         {

@@ -5,74 +5,122 @@ using System.Text;
 using System.Windows.Data;
 using System.Globalization;
 using System.ComponentModel;
+using System.Windows.Media;
 
 namespace Kaenx.Creator.Models
 {
     public class MemoryByte : INotifyPropertyChanged
     {   
-        private string _name = "dummy";
+        public MemoryByteUsage Usage { get; set; }
+        public int Address { get; set; }
+        public int Offset { get; set; }
+
         public string Name
         {
-            get { return _name; }
-            set { _name = value; Changed("Name"); }
+            get { return $"0x{Address:X4}"; }
         }
 
-        public MemoryByte(int address)
+        public MemoryByte(int address, int offset, MemoryByteUsage usage = MemoryByteUsage.Free)
         {
-            Name = $"0x{address:X4}";
+            Address = address;
+            Offset = offset;
+            Usage = usage;
         }
 
-        public MemoryByte(int address, int usedBits = 0)
+        public MemoryByte(int address, int offset, Parameter para, int usedBits, MemoryByteUsage usage = MemoryByteUsage.Free)
         {
-            Name = $"0x{address:X4}";
+            Address = address;
+            Offset = offset;
 
             for(int x = 0; x < usedBits; x++)
-                Bits[x] = "used";
+                Bits[x] = 'x';
+                
+            Usage = usage;
+            Parameters.Add(para);
         }
 
+        public Union UnionObject {get;set;}
 
-        public List<string> Bits {get;set;} = new List<string>() {
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null
+        public List<Parameter> Parameters { get; set; } = new List<Parameter>();
+
+        public List<char> Bits {get;set;} = new List<char>() {
+            'o',
+            'o',
+            'o',
+            'o',
+            'o',
+            'o',
+            'o',
+            'o'
         };
 
-        public int GetFreeBits()
+        public (int size, int offset) GetFreeBits()
         {
             int maxSize = 0;
+            int offset = 0;
             int currentSize = 0;
+            int currentOffset = -1;
 
             for(int i = 0; i < 8; i++)
             {
-                if(string.IsNullOrEmpty(Bits[i]))
-                    currentSize++;
-                else
+                if(Bits[i] == 'o')
                 {
-                    if(currentSize > maxSize) maxSize = currentSize;
+                    currentSize++;
+                    if(currentOffset == -1) currentOffset = i;
+                } else {
+                    if(currentSize > maxSize)
+                    {
+                        maxSize = currentSize;
+                        offset = currentOffset;
+                    }
                     currentSize = 0;
+                    currentOffset = -1;
                 }
             }
-            if(currentSize > maxSize) maxSize = currentSize;
-            return maxSize;
+            if(currentSize > maxSize)
+            {
+                maxSize = currentSize;
+                offset = currentOffset;
+            }
+            return (maxSize, offset);
         }
 
-        public void SetBytesUsed(int size, int offset)
+        public void SetByteUsed(MemoryByteUsage usage)
         {
-            for(int x = offset; x < size; x++)
+            Usage = usage;
+            for(int x = 0; x < 8; x++)
+                Bits[x] = 'x';
+        }
+
+        public void SetBitsUsed(Parameter para, int size, int offset)
+        {
+            for(int x = 0; x < size; x++)
             {
-                if(!string.IsNullOrEmpty(Bits[x]))
+                if(Bits[offset + x] != 'o')
                     throw new Exception("Kein freier Speicherplatz in Byte");
                 
-                Bits[x] = "used";
+                Bits[offset + x] = 'x';
             }
+            if(!Parameters.Contains(para))
+                Parameters.Add(para);
         }
 
-        public int SetBytesUsed(int size)
+        public void SetBitsUsed(Union union, List<Parameter> paras, int size, int offset)
+        {
+            Parameters.AddRange(paras);
+
+            for(int x = 0; x < size; x++)
+            {
+                if(Bits[offset + x] != 'o')
+                    throw new Exception("Kein freier Speicherplatz in Byte");
+                
+                Bits[offset + x] = 'x';
+            }
+
+            UnionObject = union;
+        }
+
+        public int SetBytesUsed(Parameter para, int size)
         {
             int offset = 0;
 
@@ -81,7 +129,7 @@ namespace Kaenx.Creator.Models
                 bool flag = true;
                 for(int x = 0; x < size; x++)
                 {
-                    if(!string.IsNullOrEmpty(Bits[i+x]))
+                    if(Bits[i+x] != 'o')
                     {
                         flag = false;
                         break;
@@ -94,15 +142,47 @@ namespace Kaenx.Creator.Models
             if((offset + size) > 8) throw new Exception("Kein freier Speicherplatz in Byte");
 
             for(int x = 0; x < size; x++)
-                Bits[offset+x] = "used";
+                Bits[offset+x] = 'x';
+
+            if(!Parameters.Contains(para))
+                Parameters.Add(para);
 
             return offset;
         }
+
+        
+        private List<SolidColorBrush> fillColor;
+        public List<SolidColorBrush> FillColor
+        {
+            get{
+                CalculateFillColors();
+                return fillColor;
+            }
+        }
+
+        private void CalculateFillColors()
+        {
+            if(fillColor != null) return;
+            fillColor = new List<SolidColorBrush>();
+            foreach(char c in Bits)
+            {
+                fillColor.Add(new SolidColorBrush(c == 'o' ? Colors.Green : Colors.Red));
+            }
+        }
+
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void Changed(string name)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
+    }
+
+    public enum MemoryByteUsage
+    {
+        Used,
+        Free,
+        GroupAddress,
+        Association
     }
 }
