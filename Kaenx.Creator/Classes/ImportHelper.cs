@@ -398,7 +398,6 @@ namespace Kaenx.Creator.Classes
             Models.Parameter para = new Models.Parameter() {
                 Name = xpara.Attribute("Name").Value,
                 Value = xpara.Attribute("Value").Value,
-                IsOffsetAuto = false,
                 Suffix = xpara.Attribute("SuffixText")?.Value ?? "",
                 UId = _uidCounter++,
                 IsInUnion = (xmemory != null),

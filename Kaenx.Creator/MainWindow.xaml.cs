@@ -1,5 +1,6 @@
 ﻿using Kaenx.Creator.Classes;
 using Microsoft.Win32;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -1368,6 +1369,17 @@ namespace Kaenx.Creator
                     throw new NotImplementedException("Dieses Feature wurde noch nicht implementiert");
             }
             System.Windows.MessageBox.Show("Erfolgreich erstellt");
+        }
+
+        private void CurrentCellChanged(object sender, EventArgs e)
+        {
+            Models.Memory mem = (sender as DataGrid).DataContext as Models.Memory;
+            if(mem == null) return;
+            DataGridCellInfo cell = (sender as DataGrid).CurrentCell;
+            Models.MemorySection sec = cell.Item as Models.MemorySection;
+            if(!cell.IsValid || (cell.Column.DisplayIndex > (sec.Bytes.Count - 1))) return;
+
+            mem.CurrentMemoryByte = sec.Bytes[cell.Column.DisplayIndex];
         }
 
         private void ChangeLang(object sender, RoutedEventArgs e)

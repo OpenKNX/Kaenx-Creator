@@ -169,9 +169,7 @@
                             </HeaderedContentControl>
 
                             <StackPanel Visibility="{Binding MemoryObject.IsAutoPara, Converter={StaticResource BoolToVis}, ConverterParameter=true, FallbackValue=Collapsed}">
-                                <CheckBox IsChecked="{Binding IsOffsetAuto}" Content="Automatisch im Speicher anordnen" />
-
-                                <StackPanel IsEnabled="{Binding IsOffsetAuto, Converter={StaticResource BoolNegate}}">
+                                <StackPanel>
                                     <HeaderedContentControl Header="Offset">
                                         <TextBox Text="{Binding Offset, UpdateSourceTrigger=PropertyChanged}"/>
                                     </HeaderedContentControl>

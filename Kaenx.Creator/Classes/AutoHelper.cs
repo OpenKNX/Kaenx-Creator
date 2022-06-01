@@ -14,94 +14,104 @@ namespace Kaenx.Creator.Classes
         {
             ParameterTypeCalculations(ver);
 
-            mem.Bytes.Clear();
+            mem.Sections.Clear();
 
-            int memOffset = 0;
-            if(mem.Type == MemoryTypes.Absolute) memOffset = mem.Address;
+            int memOffset = mem.Address;
+            mem.StartAddress = mem.Address - (mem.Address % 16);
 
-            if(!mem.IsAutoSize)
-                for(int i = 0; i < mem.Size; i++)
-                    mem.Bytes.Add(new MemoryByte(memOffset + i));
+            if(ver.AddressMemoryObject == mem)
+            {
+                MemoryCalculationGroups(ver, mem);
+            } else if(ver.AssociationMemoryObject == mem)
+            {
+                MemoryCalculationAssocs(ver, mem);
+            } else {
+                if(!mem.IsAutoSize)
+                    mem.AddBytes(mem.Size);
+                MemoryCalculationRegular(ver, mem);
+            }
+        }
 
-            //TODO add tables to memory
+        private static void MemoryCalculationGroups(AppVersion ver, Memory mem)
+        {
+            mem.AddBytes(mem.Size);
+            int maxSize = (ver.AddressTableMaxCount+2) * 2;
+            if(mem.Size < maxSize) maxSize = mem.Size;
+            mem.SetBytesUsed(MemoryByteUsage.GroupAddress, maxSize, ver.AddressTableOffset);
+        }
 
+        private static void MemoryCalculationAssocs(AppVersion ver, Memory mem)
+        {
+            mem.AddBytes(mem.Size);
+            int maxSize = (ver.AssociationTableMaxCount+1) * 2;
+            if(mem.Size < maxSize) maxSize = mem.Size;
+            mem.SetBytesUsed(MemoryByteUsage.Association, maxSize, ver.AssociationTableOffset);
+        }
+
+        private static void MemoryCalculationRegular(AppVersion ver, Memory mem)
+        {
             List<Parameter> paras = ver.Parameters.Where(p => p.MemoryId == mem.UId && p.IsInUnion == false).ToList();
 
             if(!mem.IsAutoPara || (mem.IsAutoPara && !mem.IsAutoOrder))
             {
                 foreach(Parameter para in paras.Where(p => p.Offset != -1))
                 {
-                    if(para.Offset >= mem.Bytes.Count)
+                    if(para.Offset >= mem.GetCount())
                     {
                         if(!mem.IsAutoSize) throw new Exception("Parameter liegt außerhalb des Speichers");
                         
-                        int toadd = (para.Offset - mem.Bytes.Count) + 1;
+                        int toadd = (para.Offset - mem.GetCount()) + 1;
                         if(para.ParameterTypeObject.SizeInBit > 8) toadd += (para.ParameterTypeObject.SizeInBit / 8) - 1;
-                        int reloffset = mem.Bytes.Count;
-                        for(int i = 0; i < toadd; i++)
-                            mem.Bytes.Add(new MemoryByte(memOffset + reloffset + i));
+                        mem.AddBytes(toadd);
                     }
 
-                    if(para.ParameterTypeObject.SizeInBit > 7)
-                    {
-                        int sizeInByte = (int)Math.Ceiling(para.ParameterTypeObject.SizeInBit / 8.0);
-                        for(int i = 0; i < sizeInByte;i++)
-                            mem.Bytes[para.Offset+i].SetBytesUsed(8,0);
-                    } else {
-                        mem.Bytes[para.Offset].SetBytesUsed(para.ParameterTypeObject.SizeInBit, para.OffsetBit);
-                    }
+                    mem.SetBytesUsed(para);
                 }
 
                 foreach (Union union in ver.Unions.Where(u => u.MemoryId == mem.UId && u.Offset != -1))
                 {
-                    if(union.Offset >= mem.Bytes.Count)
+                    if(union.Offset >= mem.GetCount())
                     {
                         if(!mem.IsAutoSize) throw new Exception("Parameter liegt außerhalb des Speichers");
 
                         int toadd = 1;
-                        if(union.SizeInBit > 8) toadd = (union.Offset - mem.Bytes.Count) + (union.SizeInBit / 8);
-                        for(int i = 0; i < toadd; i++)
-                            mem.Bytes.Add(new MemoryByte(memOffset + union.Offset + i));
+                        if(union.SizeInBit > 8) toadd = (union.Offset - mem.GetCount()) + (union.SizeInBit / 8);
+                        mem.AddBytes(toadd);
                     }
 
-                    if(union.SizeInBit > 7)
-                    {
-                        int sizeInByte = (int)Math.Ceiling(union.SizeInBit / 8.0);
-                        for(int i = 0; i < sizeInByte;i++)
-                            mem.Bytes[union.Offset+i].SetBytesUsed(8,0);
-                    } else {
-                        mem.Bytes[union.Offset].SetBytesUsed(union.SizeInBit, union.OffsetBit);
-                    }
+                    mem.SetBytesUsed(union, ver.Parameters.Where(p => p.UnionId == union.UId).ToList());
                 }
 
                 foreach(Module mod in ver.Modules)
                 {
-                    mod.Memory.Bytes.Clear();
+                    mod.Memory.Sections.Clear();
+                    //todo also check option isautoorder!
                     foreach(Parameter para in mod.Parameters.Where(p => p.MemoryId == mem.UId && p.Offset != -1))
                     {
-                        if(para.Offset >= mod.Memory.Bytes.Count)
+                        if(para.Offset >= mod.Memory.GetCount())
                         {
-                            int toadd = (para.Offset - mod.Memory.Bytes.Count) + 1;
+                            int toadd = (para.Offset - mod.Memory.GetCount()) + 1;
                             if(para.ParameterTypeObject.SizeInBit > 8) toadd += (para.ParameterTypeObject.SizeInBit / 8) - 1;
-                            int reloffset = mod.Memory.Bytes.Count;
-                            for(int i = 0; i < toadd; i++)
-                                mod.Memory.Bytes.Add(new MemoryByte(memOffset + reloffset + i));
+                            int reloffset = mod.Memory.GetCount();
+                            //for(int i = 0; i < toadd; i++)
+                            //    mod.Memory.Bytes.Add(new MemoryByte(memOffset + reloffset + i));
                         }
 
                         if(para.ParameterTypeObject.SizeInBit > 7)
                         {
                             int sizeInByte = (int)Math.Ceiling(para.ParameterTypeObject.SizeInBit / 8.0);
-                            for(int i = 0; i < sizeInByte;i++)
-                                mod.Memory.Bytes[para.Offset+i].SetBytesUsed(8,0);
+                            //for(int i = 0; i < sizeInByte;i++)
+                            //    mod.Memory.Bytes[para.Offset+i].SetBytesUsed(8,0);
                         } else {
-                            mod.Memory.Bytes[para.Offset].SetBytesUsed(para.ParameterTypeObject.SizeInBit, para.OffsetBit);
+                            //mod.Memory.Bytes[para.Offset].SetBytesUsed(para.ParameterTypeObject.SizeInBit, para.OffsetBit);
                         }
                     }
 
                     foreach(Parameter para in mod.Parameters.Where(p => p.MemoryId == mem.UId && p.Offset == -1))
                     {
-                        para.Offset = GetFreeOffset(mod.Memory, memOffset, para.ParameterTypeObject.SizeInBit);
-                        para.OffsetBit = SetBytes(mod.Memory, para.ParameterTypeObject.SizeInBit, para.Offset);
+                        (int offset, int offsetbit) result = mod.Memory.GetFreeOffset(para.ParameterTypeObject.SizeInBit);
+                        para.Offset = result.offset;
+                        para.OffsetBit = result.offsetbit;
                     }
                 }
             }
@@ -114,8 +124,10 @@ namespace Kaenx.Creator.Classes
                 else list1 = paras.Where(p => p.MemoryId == mem.UId && p.Offset == -1);
                 foreach(Parameter para in list1)
                 {
-                    para.Offset = GetFreeOffset(mem, memOffset, para.ParameterTypeObject.SizeInBit);
-                    para.OffsetBit = SetBytes(mem, para.ParameterTypeObject.SizeInBit, para.Offset);
+                    (int offset, int offsetbit) result = mem.GetFreeOffset(para.ParameterTypeObject.SizeInBit);
+                    para.Offset = result.offset;
+                    para.OffsetBit = result.offsetbit;
+                    mem.SetBytesUsed(para);
                 }
 
                 IEnumerable<Union> list2;
@@ -123,8 +135,10 @@ namespace Kaenx.Creator.Classes
                 else list2 = ver.Unions.Where(u => u.MemoryId == mem.UId && u.Offset == -1);
                 foreach (Union union in list2)
                 {
-                    union.Offset = GetFreeOffset(mem, memOffset, union.SizeInBit);
-                    union.OffsetBit = SetBytes(mem, union.SizeInBit, union.Offset);
+                    (int offset, int offsetbit) result = mem.GetFreeOffset(union.SizeInBit);
+                    union.Offset = result.offset;
+                    union.OffsetBit = result.offsetbit;
+                    mem.SetBytesUsed(union, ver.Parameters.Where(p => p.UnionId == union.UId).ToList());
                 }
             }
             
@@ -133,7 +147,7 @@ namespace Kaenx.Creator.Classes
 
 
             if (mem.IsAutoSize)
-                mem.Size = mem.Bytes.Count;
+                mem.Size = mem.GetCount();
         }
 
         private static int SetBytes(Memory mem, int size, int offset)
@@ -144,44 +158,13 @@ namespace Kaenx.Creator.Classes
             {
                 for(int i = 0; i < sizeInByte; i++)
                 {
-                    mem.Bytes[offset+i].SetBytesUsed(8);
+                    //mem.Bytes[offset+i].SetBytesUsed(8);
                 }
                 offsetbit = 0;
             } else {
-                offsetbit = mem.Bytes[offset].SetBytesUsed(size);
+                //offsetbit = mem.Bytes[offset].SetBytesUsed(size);
             }
             return offsetbit;
-        }
-
-        private static int GetFreeOffset(Memory mem, int memOffset, int size)
-        {
-            int offset = -1;
-            int sizeInByte = (int)Math.Ceiling(size / 8.0);
-
-            for(int i = 0; i < mem.Bytes.Count; i++)
-            {
-                int availibleSize = 0;
-                for(int x = 0; x < sizeInByte; x++)
-                {
-                    if((i+x) > (mem.Bytes.Count-1)) break;
-                    availibleSize += mem.Bytes[i+x].GetFreeBits();
-                }
-
-                if(availibleSize >= size)
-                {
-                    offset = i;
-                    break;
-                }
-            }
-
-            if(offset == -1)
-            {
-                offset = mem.Bytes.Count;
-                for(int i = 0; i < sizeInByte; i++)
-                    mem.Bytes.Add(new MemoryByte(memOffset + offset + i));
-            }
-
-            return offset;
         }
 
         public static void ParameterTypeCalculations(AppVersion ver)
