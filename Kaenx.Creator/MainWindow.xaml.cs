@@ -860,7 +860,6 @@ namespace Kaenx.Creator
             MenuSave.IsEnabled = enable;
             MenuClose.IsEnabled = enable;
             MenuImport.IsEnabled = enable;
-            MenuClean.IsEnabled = enable;
             TabsEdit.IsEnabled = enable;
             
             if(TabsEdit.SelectedIndex == 4)
