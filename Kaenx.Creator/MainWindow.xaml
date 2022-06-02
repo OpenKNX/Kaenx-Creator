@@ -700,29 +700,39 @@
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition />
                                             <ColumnDefinition />
+                                            <ColumnDefinition />
                                         </Grid.ColumnDefinitions>
 
                                         <StackPanel>
-                                            <HeaderedContentControl Header="Adresstabelle maximale Einträge:">
-                                                <TextBox Text="{Binding AddressTableMaxCount, UpdateSourceTrigger=PropertyChanged}" />
-                                            </HeaderedContentControl>
                                             <HeaderedContentControl Header="Adresstabelle Speicher:" Visibility="{Binding SelectedItem.Mask.Memory, ElementName=AppList, Converter={StaticResource EnumToVis}, ConverterParameter=Absolute}">
                                                 <ComboBox ItemsSource="{Binding Memories}" SelectedItem="{Binding AddressMemoryObject}" DisplayMemberPath="Name" />
                                             </HeaderedContentControl>
                                             <HeaderedContentControl Header="Adresstabelle Offset:" Visibility="{Binding SelectedItem.Mask.Memory, ElementName=AppList, Converter={StaticResource EnumToVis}, ConverterParameter=Absolute}">
                                                 <TextBox Text="{Binding AddressTableOffset, UpdateSourceTrigger=PropertyChanged}" />
                                             </HeaderedContentControl>
+                                            <HeaderedContentControl Header="Adresstabelle maximale Einträge:">
+                                                <TextBox Text="{Binding AddressTableMaxCount, UpdateSourceTrigger=PropertyChanged}" />
+                                            </HeaderedContentControl>
                                         </StackPanel>
 
                                         <StackPanel Grid.Column="1">
-                                            <HeaderedContentControl Header="Assoziationstabelle maximale Einträge:">
-                                                <TextBox Text="{Binding AssociationTableMaxCount, UpdateSourceTrigger=PropertyChanged}" />
-                                            </HeaderedContentControl>
                                             <HeaderedContentControl Header="Assoziationstabelle Speicher:" Visibility="{Binding SelectedItem.Mask.Memory, ElementName=AppList, Converter={StaticResource EnumToVis}, ConverterParameter=Absolute}">
                                                 <ComboBox ItemsSource="{Binding Memories}" SelectedItem="{Binding AssociationMemoryObject}" DisplayMemberPath="Name" />
                                             </HeaderedContentControl>
                                             <HeaderedContentControl Header="Assoziationstabelle Offset:" Visibility="{Binding SelectedItem.Mask.Memory, ElementName=AppList, Converter={StaticResource EnumToVis}, ConverterParameter=Absolute}">
                                                 <TextBox Text="{Binding AssociationTableOffset, UpdateSourceTrigger=PropertyChanged}" />
+                                            </HeaderedContentControl>
+                                            <HeaderedContentControl Header="Assoziationstabelle maximale Einträge:">
+                                                <TextBox Text="{Binding AssociationTableMaxCount, UpdateSourceTrigger=PropertyChanged}" />
+                                            </HeaderedContentControl>
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Column="2">
+                                            <HeaderedContentControl Header="Kommunikationsobjekttabelle Speicher:" Visibility="{Binding SelectedItem.Mask.Memory, ElementName=AppList, Converter={StaticResource EnumToVis}, ConverterParameter=Absolute}">
+                                                <ComboBox ItemsSource="{Binding Memories}" SelectedItem="{Binding ComObjectMemoryObject}" DisplayMemberPath="Name" />
+                                            </HeaderedContentControl>
+                                            <HeaderedContentControl Header="Kommunikationsobjekttabelle Offset:" Visibility="{Binding SelectedItem.Mask.Memory, ElementName=AppList, Converter={StaticResource EnumToVis}, ConverterParameter=Absolute}">
+                                                <TextBox Text="{Binding ComObjectTableOffset, UpdateSourceTrigger=PropertyChanged}" />
                                             </HeaderedContentControl>
                                         </StackPanel>
                                     </Grid>

@@ -21,7 +21,8 @@
         </Grid.RowDefinitions>
 
         <avalonedit:TextEditor x:Name="editor" ShowLineNumbers="True" Grid.RowSpan="2" SyntaxHighlighting="XML" />
-        
+        <TextBox />
+
         <GridSplitter Grid.RowSpan="2" Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
 
         <ListBox x:Name="MaskList" Grid.Column="2" ItemsSource="{Binding Mask.Procedures}">

@@ -248,7 +248,7 @@ namespace Kaenx.Creator.Models
         {
             int counter = 0;
             foreach(MemorySection sec in Sections)
-                counter += sec.Bytes.Count(b => b.Usage == MemoryByteUsage.Free);
+                counter += sec.Bytes.Count(b => b.Usage != MemoryByteUsage.Used);
             return counter;
         }
 

@@ -19,33 +19,46 @@ namespace Kaenx.Creator.Classes
             int memOffset = mem.Address;
             mem.StartAddress = mem.Address - (mem.Address % 16);
 
+            if(!mem.IsAutoSize)
+                mem.AddBytes(mem.Size);
+
             if(ver.AddressMemoryObject == mem)
-            {
                 MemoryCalculationGroups(ver, mem);
-            } else if(ver.AssociationMemoryObject == mem)
-            {
+            if(ver.AssociationMemoryObject == mem)
                 MemoryCalculationAssocs(ver, mem);
-            } else {
-                if(!mem.IsAutoSize)
-                    mem.AddBytes(mem.Size);
-                MemoryCalculationRegular(ver, mem);
-            }
+            if(ver.ComObjectMemoryObject == mem)
+                MemoryCalculationComs(ver, mem);
+            MemoryCalculationRegular(ver, mem);
         }
 
         private static void MemoryCalculationGroups(AppVersion ver, Memory mem)
         {
-            mem.AddBytes(mem.Size);
             int maxSize = (ver.AddressTableMaxCount+2) * 2;
-            if(mem.Size < maxSize) maxSize = mem.Size;
+            maxSize--; //TODO check why the heck it is smaller
+            if(mem.IsAutoSize && (maxSize + ver.AddressTableOffset) > mem.GetCount())
+                mem.AddBytes((maxSize + ver.AddressTableOffset) - mem.GetCount());
+            //if(mem.Size < maxSize) maxSize = mem.Size;
             mem.SetBytesUsed(MemoryByteUsage.GroupAddress, maxSize, ver.AddressTableOffset);
         }
 
         private static void MemoryCalculationAssocs(AppVersion ver, Memory mem)
         {
-            mem.AddBytes(mem.Size);
             int maxSize = (ver.AssociationTableMaxCount+1) * 2;
-            if(mem.Size < maxSize) maxSize = mem.Size;
+            maxSize--;
+            if(mem.IsAutoSize && (maxSize + ver.AssociationTableOffset) > mem.GetCount())
+                mem.AddBytes((maxSize + ver.AssociationTableOffset) - mem.GetCount());
+            //if(mem.Size < maxSize) maxSize = mem.Size;
             mem.SetBytesUsed(MemoryByteUsage.Association, maxSize, ver.AssociationTableOffset);
+        }
+
+        private static void MemoryCalculationComs(AppVersion ver, Memory mem)
+        {
+
+            int maxSize = (ver.ComObjects.Count * 3) + 2;
+            if(mem.IsAutoSize && (maxSize + ver.ComObjectTableOffset) > mem.GetCount())
+                mem.AddBytes((maxSize + ver.ComObjectTableOffset) - mem.GetCount());
+            //if(mem.Size < maxSize) maxSize = mem.Size;
+            mem.SetBytesUsed(MemoryByteUsage.Coms, maxSize, ver.ComObjectTableOffset);
         }
 
         private static void MemoryCalculationRegular(AppVersion ver, Memory mem)

@@ -23,8 +23,8 @@ namespace Kaenx.Creator.Models
     public enum ProcedureTypes
     {
         Default,
-        Application,
-        Merge
+        Product,
+        Merged
     }
 
     public enum MemoryTypes

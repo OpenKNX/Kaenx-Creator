@@ -125,9 +125,26 @@ namespace Kaenx.Creator.Models
         public DataPointType Type
         {
             get { return _type; }
-            set { if (value == null) return; _type = value; Changed("Type"); }
+            set { 
+                if (value == null) return; 
+                ObjectSize = value.Size;
+                _type = value; Changed("Type"); 
+            }
         }
 
+        private bool _overOS = false;
+        public bool OverwriteOS
+        {
+            get { return _overOS; }
+            set { _overOS = value; Changed("OverwriteOS"); }
+        }
+
+        private int _objSize = 1;
+        public int ObjectSize
+        {
+            get { return _objSize; }
+            set { _objSize = value; Changed("ObjectSize"); }
+        }
 
 
         [JsonIgnore]

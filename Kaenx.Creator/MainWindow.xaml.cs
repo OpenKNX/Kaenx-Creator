@@ -222,16 +222,16 @@ namespace Kaenx.Creator
                     {
                         XElement prodLoad = xmask.Descendants(XName.Get("Procedure")).First(p => p.Attribute("ProcedureType")?.Value == "Load");
                         if (prodLoad.ToString().Contains("<LdCtrlMerge"))
-                            mask.Procedure = Models.ProcedureTypes.Merge;
+                            mask.Procedure = Models.ProcedureTypes.Merged;
                         else
                             mask.Procedure = Models.ProcedureTypes.Default;
                     } else
                     {
-                        mask.Procedure = Models.ProcedureTypes.Application;
+                        mask.Procedure = Models.ProcedureTypes.Product;
                     }
 
 
-                    if(mask.Procedure != Models.ProcedureTypes.Application)
+                    if(mask.Procedure != Models.ProcedureTypes.Product)
                     {
                         if (eleStr.Contains("<LdCtrlAbsSegment"))
                         {
@@ -727,6 +727,9 @@ namespace Kaenx.Creator
 
                 if(vbase._assocMemoryId != -1)
                     vbase.AssociationMemoryObject = vbase.Memories.SingleOrDefault(m => m.UId == vbase._assocMemoryId);
+                    
+                if(vbase._comMemoryId != -1)
+                    vbase.ComObjectMemoryObject = vbase.Memories.SingleOrDefault(m => m.UId == vbase._comMemoryId);
             }
 
             foreach(Models.Parameter para in mod.Parameters)

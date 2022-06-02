@@ -124,6 +124,13 @@ namespace Kaenx.Creator.Models
             set { _hasDpts = value; Changed("HasDpts"); }
         }
 
+        private int _objectSize = 1;
+        public int ObjectSize
+        {
+            get { return _objectSize; }
+            set { _objectSize = value; Changed("ObjectSize"); }
+        }
+
 
 
 
@@ -155,7 +162,11 @@ namespace Kaenx.Creator.Models
         public DataPointType Type
         {
             get { return _type; }
-            set { if (value == null) return; _type = value; Changed("Type"); }
+            set { 
+                if (value == null) return;
+                ObjectSize = value.Size;
+                _type = value; Changed("Type"); 
+            }
         }
 
         private bool _isNotUsed = false;
@@ -180,7 +191,10 @@ namespace Kaenx.Creator.Models
         public ParameterRef ParameterRefObject
         {
             get { return _parameterRefObject; }
-            set { _parameterRefObject = value; Changed("ParameterRefObject"); }
+            set { 
+                _parameterRefObject = value; 
+                Changed("ParameterRefObject"); 
+                }
         }
 
         [JsonIgnore]

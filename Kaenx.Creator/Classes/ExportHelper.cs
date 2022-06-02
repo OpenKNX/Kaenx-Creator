@@ -43,6 +43,7 @@ namespace Kaenx.Creator.Classes
         private Dictionary<string, Dictionary<string, Dictionary<string, string>>> languages {get;set;} = null;
  
         private void AddTranslation(string lang, string id, string attr, string value) {
+            if(string.IsNullOrEmpty(value)) return;
             if(!languages.ContainsKey(lang)) languages.Add(lang, new Dictionary<string, Dictionary<string, string>>());
             if(!languages[lang].ContainsKey(id)) languages[lang].Add(id, new Dictionary<string, string>());
             if(!languages[lang][id].ContainsKey(attr)) languages[lang][id].Add(attr, value);
@@ -81,16 +82,14 @@ namespace Kaenx.Creator.Classes
                 XElement xapps = new XElement(Get("ApplicationPrograms"));
                 xmanu.Add(xapps);
                 Models.Application app = apps.Single(a => a.Versions.Contains(ver));
-                string appName = Manu + "_A-" + app.Number.ToString("X4");
 
-                appVersion = appName + "-" + ver.Number.ToString("X2");
+                appVersion = $"{Manu}_A-{app.Number:X4}-{ver.Number:X2}";
                 appVersion += "-0000";
                 appVersionMod = appVersion;
 
                 currentLang = ver.DefaultLanguage;
                 foreach(Models.Translation trans in ver.Text)
                     AddTranslation(trans.Language.CultureCode, appVersion, "Name", trans.Text);
-
 
                 XElement xunderapp = new XElement(Get("Static"));
                 XElement xapp = new XElement(Get("ApplicationProgram"), xunderapp);
@@ -99,10 +98,10 @@ namespace Kaenx.Creator.Classes
                 xapp.SetAttributeValue("ApplicationNumber", app.Number.ToString());
                 xapp.SetAttributeValue("ApplicationVersion", ver.Number.ToString());
                 xapp.SetAttributeValue("ProgramType", "ApplicationProgram");
-                xapp.SetAttributeValue("MaskVersion", "MV-07B0");
+                xapp.SetAttributeValue("MaskVersion", app.Mask.Id);
                 xapp.SetAttributeValue("Name", ver.Text.Single(e => e.Language.CultureCode == currentLang).Text);
                 xapp.SetAttributeValue("DefaultLanguage", currentLang);
-                xapp.SetAttributeValue("LoadProcedureStyle", "MergedProcedure");
+                xapp.SetAttributeValue("LoadProcedureStyle", $"{app.Mask.Procedure}Procedure");
                 xapp.SetAttributeValue("PeiType", "0");
                 xapp.SetAttributeValue("DynamicTableManagement", "false"); //TODO check when to add
                 xapp.SetAttributeValue("Linkable", "false"); //TODO check when to add
@@ -171,11 +170,11 @@ namespace Kaenx.Creator.Classes
                                 XElement xenu = new XElement(Get("Enumeration"));
                                 xenu.SetAttributeValue("Text", enu.Text.Single(e => e.Language.CultureCode == currentLang).Text);
                                 xenu.SetAttributeValue("Value", enu.Value);
-                                xenu.SetAttributeValue("Id", $"{id}_EN-{c}");
+                                xenu.SetAttributeValue("Id", $"{id}_EN-{enu.Value}");
                                 xenu.SetAttributeValue("DisplayOrder", c.ToString());
                                 xcontent.Add(xenu);
                                 if(enu.Translate)
-                                    foreach(Models.Translation trans in enu.Text) AddTranslation(trans.Language.CultureCode, $"{id}_EN-{c}", "Text", trans.Text);
+                                    foreach(Models.Translation trans in enu.Text) AddTranslation(trans.Language.CultureCode, $"{id}_EN-{enu.Value}", "Text", trans.Text);
                                 c++;
                             }
                             break;
@@ -205,9 +204,19 @@ namespace Kaenx.Creator.Classes
 
                 #region Tables
                 temp = new XElement(Get("AddressTable"));
+                if(app.Mask.Memory == MemoryTypes.Absolute)
+                {
+                    temp.SetAttributeValue("CodeSegment", $"{appVersion}_AS-{ver.AddressMemoryObject.Address:X4}");
+                    temp.SetAttributeValue("Offset", ver.AddressTableOffset);
+                }
                 temp.SetAttributeValue("MaxEntries", ver.AddressTableMaxCount);
                 xunderapp.Add(temp);
                 temp = new XElement(Get("AssociationTable"));
+                if(app.Mask.Memory == MemoryTypes.Absolute)
+                {
+                    temp.SetAttributeValue("CodeSegment", $"{appVersion}_AS-{ver.AssociationMemoryObject.Address:X4}");
+                    temp.SetAttributeValue("Offset", ver.AssociationTableOffset);
+                }
                 temp.SetAttributeValue("MaxEntries", ver.AssociationTableMaxCount);
                 xunderapp.Add(temp);
                 //TODO export codesegment and offset of mask memory absolute
@@ -215,14 +224,14 @@ namespace Kaenx.Creator.Classes
 
                 switch (app.Mask.Procedure)
                 {
-                    case ProcedureTypes.Application:
+                    case ProcedureTypes.Product:
                         temp = XDocument.Parse($"<LoadProcedures><LoadProcedure><LdCtrlConnect /><LdCtrlDisconnect /></LoadProcedure></LoadProcedures>").Root;
-                        //xunderapp.Add(temp);
+                        xunderapp.Add(temp);
                         break;
 
-                    case ProcedureTypes.Merge:
+                    case ProcedureTypes.Merged:
                         temp = XDocument.Parse($"<LoadProcedures><LoadProcedure MergeId=\"2\"><LdCtrlRelSegment  AppliesTo=\"full\" LsmIdx=\"4\" Size=\"1\" Mode=\"0\" Fill=\"0\" /></LoadProcedure><LoadProcedure MergeId=\"4\"><LdCtrlWriteRelMem ObjIdx=\"4\" Offset=\"0\" Size=\"1\" Verify=\"true\" /></LoadProcedure></LoadProcedures>").Root;
-                        //xunderapp.Add(temp);
+                        xunderapp.Add(temp);
                         break;
                 }
 
@@ -541,6 +550,7 @@ namespace Kaenx.Creator.Classes
         private void ExportParameters(IVersionBase vbase, XElement xparent)
         {
             Debug.WriteLine($"Exportiere Parameter: {vbase.Parameters.Count}x");
+            if(vbase.Parameters.Count == 0) return;
             XElement xparas = new XElement(Get("Parameters"));
 
             StringBuilder headers = new StringBuilder();
@@ -593,6 +603,7 @@ namespace Kaenx.Creator.Classes
         private void ExportParameterRefs(IVersionBase vbase, XElement xparent)
         {
             Debug.WriteLine($"Exportiere ParameterRefs: {vbase.ParameterRefs.Count}x");
+            if(vbase.ParameterRefs.Count == 0) return;
             XElement xrefs = new XElement(Get("ParameterRefs"));
 
             foreach (ParameterRef pref in vbase.ParameterRefs)
@@ -633,6 +644,14 @@ namespace Kaenx.Creator.Classes
             {
                 baseNumber = mod.ComObjectBaseNumber;
             }
+            if(vbase is Models.AppVersion ver)
+            {
+                if(ver.ComObjectMemoryObject != null)
+                {
+                    xcoms.SetAttributeValue("CodeSegment", $"{appVersion}_AS-{ver.ComObjectMemoryObject.Address:X4}");
+                    xcoms.SetAttributeValue("Offset", ver.ComObjectTableOffset);
+                }
+            }
 
             foreach (ComObject com in vbase.ComObjects)
             {
@@ -656,14 +675,10 @@ namespace Kaenx.Creator.Classes
                 if(!com.TranslationFunctionText)
                     foreach(Models.Translation trans in com.FunctionText) AddTranslation(trans.Language.CultureCode, id, "FunctionText", trans.Text);
                 
-                if (com.HasDpt && com.Type.Number != "0")
-                {
-                    int size = com.Type.Size;
-                    if (size > 7)
-                        xcom.SetAttributeValue("ObjectSize", (size / 8) + " Byte");
-                    else
-                        xcom.SetAttributeValue("ObjectSize", size + " Bit");
-                }
+                if (com.ObjectSize > 7)
+                    xcom.SetAttributeValue("ObjectSize", (com.ObjectSize / 8) + " Byte"+ ((com.ObjectSize > 15) ? "s":""));
+                else
+                    xcom.SetAttributeValue("ObjectSize", com.ObjectSize + " Bit");
 
                 xcom.SetAttributeValue("ReadFlag", com.FlagRead.ToString());
                 xcom.SetAttributeValue("WriteFlag", com.FlagWrite.ToString());
@@ -726,8 +741,6 @@ namespace Kaenx.Creator.Classes
 
                 if (cref.OverwriteDpt)
                 {
-                    int size = cref.Type.Size;
-
                     if (cref.Type.Number == "0")
                     {
                         xcref.SetAttributeValue("DatapointType", "");
@@ -735,23 +748,23 @@ namespace Kaenx.Creator.Classes
                     else
                     {
                         if (cref.OverwriteDpst)
-                        {
                             xcref.SetAttributeValue("DatapointType", "DPST-" + cref.Type.Number + "-" + cref.SubType.Number);
-                        }
                         else
-                        {
                             xcref.SetAttributeValue("DatapointType", "DPT-" + cref.Type.Number);
-                        }
-                        if (size > 7)
-                            xcref.SetAttributeValue("ObjectSize", (size / 8) + " Byte");
-                        else
-                            xcref.SetAttributeValue("ObjectSize", size + " Bit");
                     }
+                }
+
+                if(cref.OverwriteOS)
+                {
+                    if (cref.ObjectSize > 7)
+                        xcref.SetAttributeValue("ObjectSize", (cref.ObjectSize / 8) + " Byte" + ((cref.ObjectSize > 15) ? "s":""));
+                    else
+                        xcref.SetAttributeValue("ObjectSize", cref.ObjectSize + " Bit");
                 }
 
                 if (cref.ComObjectObject.UseTextParameter)
                 {
-                    xcref.SetAttributeValue("TextParameterRefId", appVersion + (cref.ComObjectObject.ParameterRefObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{cref.ComObjectObject.ParameterRefObject.ParameterObject.Id}_R-{cref.ComObjectObject.ParameterRefObject.Id}");
+                    xcref.SetAttributeValue("TextParameterRefId", appVersionMod + (cref.ComObjectObject.ParameterRefObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{cref.ComObjectObject.ParameterRefObject.ParameterObject.Id}_R-{cref.ComObjectObject.ParameterRefObject.Id}");
                 }
 
                 xrefs.Add(xcref);
@@ -885,13 +898,9 @@ namespace Kaenx.Creator.Classes
                 if (dch.UseTextParameter)
                     channel.SetAttributeValue("TextParameterRefId", appVersionMod + (dch.ParameterRefObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{dch.ParameterRefObject.ParameterObject.Id}_R-{dch.ParameterRefObject.Id}");
 
-                string dText = dch.Text.Single(p => p.Language.CultureCode == currentLang).Text;
-                if (!string.IsNullOrEmpty(dText))
-                {
-                    channel.SetAttributeValue("Text", dText);
+                channel.SetAttributeValue("Text", dch.Text.Single(p => p.Language.CultureCode == currentLang).Text);
                     if (!dch.TranslationText)
                         foreach (Models.Translation trans in dch.Text) AddTranslation(trans.Language.CultureCode, $"{appVersionMod}_CH-{dch.Number}", "Text", trans.Text);
-                }
                 
                 channel.SetAttributeValue("Number", dch.Number);
                 channel.SetAttributeValue("Id", $"{appVersionMod}_CH-{dch.Number}");
@@ -976,6 +985,7 @@ namespace Kaenx.Creator.Classes
             return xwhen;
         }
 
+        int pbCounter = 1;
         private XElement HandleBlock(DynParaBlock bl, XElement parent)
         {
             XElement block = new XElement(Get("ParameterBlock"));
@@ -983,9 +993,12 @@ namespace Kaenx.Creator.Classes
 
             if (bl.Id == -1)
             {
-                bl.Id = 1; //TODO get real next free Id
+                bl.Id = pbCounter++; //TODO get real next free Id
             }
-            block.SetAttributeValue("Id", $"{appVersion}_PB-{bl.ParameterRefObject.Id}");
+            if(bl.UseTextParameter)
+                block.SetAttributeValue("Id", $"{appVersionMod}_PB-{bl.ParameterRefObject.Id}");
+            else
+                block.SetAttributeValue("Id", $"{appVersionMod}_PB-{bl.Id}");
 
             string dText = bl.Text.Single(p => p.Language.CultureCode == currentLang).Text;
             if (!string.IsNullOrEmpty(dText))

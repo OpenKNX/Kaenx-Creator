@@ -122,6 +122,28 @@ namespace Kaenx.Creator.Models
             set { _assocMemoryId = value; }
         }
 
+        
+        private int _comTableOffset = 0;
+        public int ComObjectTableOffset
+        {
+            get { return _comTableOffset; }
+            set { _comTableOffset = value; Changed("ComObjectTableOffset"); }
+        }
+        private Memory _comMemoryObject;
+        [JsonIgnore]
+        public Memory ComObjectMemoryObject
+        {
+            get { return _comMemoryObject; }
+            set { _comMemoryObject = value; Changed("ComObjectMemoryObject"); }
+        }
+        [JsonIgnore]
+        public int _comMemoryId;
+        public int ComObjectMemoryId
+        {
+            get { return ComObjectMemoryObject?.UId ?? -1; }
+            set { _comMemoryId = value; }
+        }
+
 
 
         private bool _isAutoPR = true;

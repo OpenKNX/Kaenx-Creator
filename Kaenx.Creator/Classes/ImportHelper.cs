@@ -175,6 +175,8 @@ namespace Kaenx.Creator.Classes
             currentVers.NamespaceVersion = int.Parse(ns);
             currentVers.DefaultLanguage = xapp.Attribute("DefaultLanguage").Value;
             currentVers.Languages.Add(new Language(_langTexts[currentVers.DefaultLanguage], currentVers.DefaultLanguage));
+
+            
 #endregion
             ImportLanguages(xapp.Parent.Parent.Element(Get("Languages")));
             currentVers.Text = GetTranslation(xapp.Attribute("Id").Value, "Name", xapp);
@@ -218,10 +220,6 @@ namespace Kaenx.Creator.Classes
 
         public ObservableCollection<Translation> GetTranslation(string id, string attr, XElement xele) {
             ObservableCollection<Translation> translations = new ObservableCollection<Translation>();
-
-            if(id == "M-0083_A-0024-15-6E79_O-42_R-12008") {
-
-            }
 
             if(_translations.ContainsKey(id) && _translations[id].ContainsKey(attr)) {
                 foreach(KeyValuePair<string, string> trans in _translations[id][attr]) {
@@ -520,6 +518,11 @@ namespace Kaenx.Creator.Classes
                 com.FlagUpdate = ParseFlagType(xcom.Attribute("UpdateFlag")?.Value);
                 com.FlagOnInit = ParseFlagType(xcom.Attribute("ReadOnInitFlag")?.Value);
 
+                string[] objSize = xcom.Attribute("ObjectSize").Value.Split(' ');
+                if(objSize[1] == "Bit")
+                    com.ObjectSize = int.Parse(objSize[0]);
+                else
+                    com.ObjectSize = int.Parse(objSize[0]) * 8;
                 string type = xcom.Attribute("DatapointType")?.Value;
 
                 if (type != null)
@@ -542,10 +545,6 @@ namespace Kaenx.Creator.Classes
                     {
                         throw new Exception("Unbekanntes DPT Format für KO: " + type);
                     }
-                }
-                else
-                {
-                    //TODO muss ich hier was machen?
                 }
 
                 if(vbase is Models.Module mod && xcom.Attribute("BaseNumber") != null)
@@ -633,7 +632,17 @@ namespace Kaenx.Creator.Classes
                             cref.SubType = cref.Type.SubTypes.Single(s => s.Number == dpts[2]);
                         }
                     }
+                }
 
+                if(xref.Attribute("ObjectSize") != null)
+                {
+                    cref.OverwriteOS = true;
+
+                    string[] objSize = xref.Attribute("ObjectSize").Value.Split(' ');
+                    if(objSize[1] == "Bit")
+                        cref.ObjectSize = int.Parse(objSize[0]);
+                    else
+                        cref.ObjectSize = int.Parse(objSize[0]) * 8;
                 }
 
                 vbase.ComObjectRefs.Add(cref);
@@ -663,6 +672,16 @@ namespace Kaenx.Creator.Classes
                 }
                 currentVers.AssociationTableMaxCount = int.Parse(tadd.Attribute("MaxEntries")?.Value ?? "0");
                 currentVers.AssociationTableOffset = int.Parse(tadd.Attribute("Offset")?.Value ?? "0");
+            }
+            if(xstatic.Element(Get("ComObjectTable")) != null)
+            {
+                XElement tadd = xstatic.Element(Get("ComObjectTable"));
+                if(tadd.Attribute("CodeSegment") != null)
+                {
+                    string segName = GetLastSplit(tadd.Attribute("CodeSegment").Value);
+                    currentVers.ComObjectMemoryObject = currentVers.Memories.SingleOrDefault(m => m.Name.StartsWith(segName + " "));
+                }
+                currentVers.ComObjectTableOffset = int.Parse(tadd.Attribute("Offset")?.Value ?? "0");
             }
         }
 

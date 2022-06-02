@@ -14,6 +14,7 @@
     <UserControl.Resources>
         <conv:EmptyToBool x:Key="EmptyToBool" />
         <conv:BoolToVisibility x:Key="BoolToVis" />
+        <conv:BoolNegation x:Key="BoolNeg" />
         <conv:BoolToBrush x:Key="BoolToBrush" TrueValue="Red" FalseValue="Black" />
     </UserControl.Resources>
 
@@ -152,6 +153,33 @@
 
                         <CheckBox IsChecked="{Binding OverwriteDpst}" VerticalAlignment="Center" />
                         <ComboBox Grid.Column="1" IsEnabled="{Binding OverwriteDpst}" ItemsSource="{Binding ElementName=InComRefType, Path=SelectedItem.SubTypes}" SelectedItem="{Binding SubType}" DisplayMemberPath="Name" />
+                    </Grid>
+                </HeaderedContentControl>
+
+                <HeaderedContentControl Header="Object Size" IsEnabled="{Binding HasDpt, Converter={StaticResource BoolNeg}}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <CheckBox IsChecked="{Binding OverwriteOS}" VerticalAlignment="Center" />
+                        <ComboBox Grid.Column="1" IsEnabled="{Binding OverwriteOS}" SelectedValue="{Binding ObjectSize}" SelectedValuePath="Tag">
+                            <ComboBoxItem Content="1 Bit" Tag="1" />
+                            <ComboBoxItem Content="2 Bit" Tag="2" />
+                            <ComboBoxItem Content="3 Bit" Tag="3" />
+                            <ComboBoxItem Content="4 Bit" Tag="4" />
+                            <ComboBoxItem Content="5 Bit" Tag="5" />
+                            <ComboBoxItem Content="6 Bit" Tag="6" />
+                            <ComboBoxItem Content="7 Bit" Tag="7" />
+                            <ComboBoxItem Content="1 Byte" Tag="8" />
+                            <ComboBoxItem Content="2 Byte" Tag="16" />
+                            <ComboBoxItem Content="3 Byte" Tag="24" />
+                            <ComboBoxItem Content="4 Byte" Tag="32" />
+                            <ComboBoxItem Content="6 Byte" Tag="48" />
+                            <ComboBoxItem Content="8 Byte" Tag="64" />
+                            <ComboBoxItem Content="14 Byte" Tag="112" />
+                        </ComboBox>
                     </Grid>
                 </HeaderedContentControl>
 

@@ -14,6 +14,7 @@
     <UserControl.Resources>
         <conv:EmptyToBool x:Key="EmptyToBool" />
         <conv:BoolToVisibility x:Key="BoolToVis" />
+        <conv:BoolNegation x:Key="BoolNeg" />
         <conv:BoolToBrush x:Key="BoolToBrush" TrueValue="Red" FalseValue="Black" />
     </UserControl.Resources>
 
@@ -159,6 +160,24 @@
                         </Grid>
                     </HeaderedContentControl>
 
+                    <HeaderedContentControl Header="Object Size">
+                        <ComboBox IsEnabled="{Binding HasDpt, Converter={StaticResource BoolNeg}}" SelectedValue="{Binding ObjectSize}" SelectedValuePath="Tag">
+                            <ComboBoxItem Content="1 Bit" Tag="1" />
+                            <ComboBoxItem Content="2 Bit" Tag="2" />
+                            <ComboBoxItem Content="3 Bit" Tag="3" />
+                            <ComboBoxItem Content="4 Bit" Tag="4" />
+                            <ComboBoxItem Content="5 Bit" Tag="5" />
+                            <ComboBoxItem Content="6 Bit" Tag="6" />
+                            <ComboBoxItem Content="7 Bit" Tag="7" />
+                            <ComboBoxItem Content="1 Byte" Tag="8" />
+                            <ComboBoxItem Content="2 Byte" Tag="16" />
+                            <ComboBoxItem Content="3 Byte" Tag="24" />
+                            <ComboBoxItem Content="4 Byte" Tag="32" />
+                            <ComboBoxItem Content="6 Byte" Tag="48" />
+                            <ComboBoxItem Content="8 Byte" Tag="64" />
+                            <ComboBoxItem Content="14 Byte" Tag="112" />
+                        </ComboBox>
+                    </HeaderedContentControl>
 
                     <HeaderedContentControl Header="Flag Kommunikation" Margin="5 30 5 5">
                         <ComboBox ItemsSource="{Binding Source={StaticResource dataFromCom}}" SelectedItem="{Binding FlagComm}" />

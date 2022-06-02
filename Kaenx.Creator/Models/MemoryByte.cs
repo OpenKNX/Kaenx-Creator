@@ -183,6 +183,7 @@ namespace Kaenx.Creator.Models
         Used,
         Free,
         GroupAddress,
-        Association
+        Association,
+        Coms
     }
 }
