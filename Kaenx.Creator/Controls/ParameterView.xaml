@@ -9,7 +9,8 @@
     xmlns:models="clr-namespace:Kaenx.Creator.Models"
     mc:Ignorable="d"
     d:DesignHeight="300"
-    d:DesignWidth="400">
+    d:DesignWidth="400"
+    x:Name="ViewControl">
     <UserControl.Resources>
         <conv:EmptyToBool x:Key="EmptyToBool" />
         <conv:BoolToVisibility x:Key="BoolToVis" />
@@ -134,7 +135,7 @@
                         </TextBlock>
                     </Grid>
 
-                    <HeaderedContentControl Header="Union zugehörigkeit">
+                    <HeaderedContentControl Header="Union zugehörigkeit" Visibility="{Binding Version.IsUnionActive, ElementName=ViewControl, Converter={StaticResource BoolToVis}}">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="auto" />

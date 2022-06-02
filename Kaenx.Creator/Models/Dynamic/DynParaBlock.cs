@@ -35,14 +35,13 @@ namespace Kaenx.Creator.Models.Dynamic
             set { _transText = value; Changed("TranslationText"); }
         }
 
-        private bool _useTextParam = false;
-        public bool UseTextParameter
+        private bool _useParamRef = false;
+        public bool UseParameterRef
         {
-            get { return _useTextParam; }
-            set { _useTextParam = value; Changed("UseTextParameter"); }
+            get { return _useParamRef; }
+            set { _useParamRef = value; Changed("UseParameterRef"); }
         }
-
-
+        
         private ParameterRef _parameterRefObject;
         [JsonIgnore]
         public ParameterRef ParameterRefObject
@@ -57,6 +56,32 @@ namespace Kaenx.Creator.Models.Dynamic
         {
             get { return ParameterRefObject?.UId ?? -1; }
             set { _parameterRef = value; }
+        }
+
+
+
+        private bool _useTextParam = false;
+        public bool UseTextParameter
+        {
+            get { return _useTextParam; }
+            set { _useTextParam = value; Changed("UseTextParameter"); }
+        }
+
+
+        private ParameterRef _textRefObject;
+        [JsonIgnore]
+        public ParameterRef TextRefObject
+        {
+            get { return _textRefObject; }
+            set { _textRefObject = value; Changed("TextRefObject"); }
+        }
+
+        [JsonIgnore]
+        public int _textRef;
+        public int TextRef
+        {
+            get { return TextRefObject?.UId ?? -1; }
+            set { _textRef = value; }
         }
 
 

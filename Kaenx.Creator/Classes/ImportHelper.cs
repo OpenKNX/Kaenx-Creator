@@ -879,11 +879,17 @@ namespace Kaenx.Creator.Classes
                         };
                         dpb.Text = GetTranslation(xele.Attribute("Id")?.Value ?? "", "Text", xele);
                         if(xele.Attribute("ParamRefId") != null) {
-                            dpb.UseTextParameter = true;
+                            dpb.UseParameterRef = true;
                             paraId = int.Parse(GetLastSplit(xele.Attribute("ParamRefId").Value, 2));
                             dpb.ParameterRefObject = vbase.ParameterRefs.Single(p => p.Id == paraId);
                         } else {
                             dpb.Id = int.Parse(GetLastSplit(xele.Attribute("Id").Value, 3));
+                        }
+                        if(xele.Attribute("TextParameterRefId") != null)
+                        {
+                            dpb.UseTextParameter = true;
+                            paraId = int.Parse(GetLastSplit(xele.Attribute("TextParameterRefId").Value, 2));
+                            dpb.TextRefObject = vbase.ParameterRefs.Single(p => p.Id == paraId);
                         }
                         parent.Items.Add(dpb);
                         ParseDynamic(dpb, xele, vbase);

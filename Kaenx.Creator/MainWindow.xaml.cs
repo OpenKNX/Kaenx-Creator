@@ -758,6 +758,9 @@ namespace Kaenx.Creator
 
             foreach(Models.ComObject com in mod.ComObjects)
             {
+                if(com._parameterRef != -1)
+                    com.ParameterRefObject = mod.ParameterRefs.SingleOrDefault(p => p.UId == com._parameterRef);
+
                 if (!string.IsNullOrEmpty(com._typeNumber))
                     com.Type = DPTs.Single(d => d.Number == com._typeNumber);
                     
@@ -857,6 +860,7 @@ namespace Kaenx.Creator
             MenuSave.IsEnabled = enable;
             MenuClose.IsEnabled = enable;
             MenuImport.IsEnabled = enable;
+            MenuClean.IsEnabled = enable;
             TabsEdit.IsEnabled = enable;
             
             if(TabsEdit.SelectedIndex == 4)
@@ -867,10 +871,33 @@ namespace Kaenx.Creator
         private void ClickShowClean(object sender, RoutedEventArgs e)
         { 
             Models.AppVersion vers = VersionList.SelectedItem as Models.AppVersion;
+            if(vers == null)
+            {
+                MessageBox.Show("Bitte wählen Sie erst eine Applikationsversion aus.");
+                return;
+            }
 
             ClearHelper.ShowUnusedElements(vers);
 
-            MessageBox.Show("Um nicht verwendete ParameterRefs oder ComObjectRefs zu sehen, deaktivieren Sie bitte die Option 'Parameter/KOs Refs automatisch berechnen'.", "Fertig");  
+            int uTypes = vers.ParameterTypes.Count(t => t.IsNotUsed);
+            int uParas = vers.Parameters.Count(t => t.IsNotUsed);
+            int uPRefs = vers.ParameterRefs.Count(t => t.IsNotUsed);
+            int uComOs = vers.ComObjects.Count(t => t.IsNotUsed);
+            int uCRefs = vers.ComObjectRefs.Count(t => t.IsNotUsed);
+
+            string message = $"Folgende Elemente wurden nicht verwendet:\r\n";
+            message += $"{uTypes}\tParameterTypes\r\n";
+            message += $"{uParas}\tParameter\r\n";
+            message += $"{uPRefs}\tParameterRefs\r\n";
+            message += $"{uComOs}\tComObjects\r\n";
+            message += $"{uCRefs}\tComObjectRefs\r\n";
+
+            MessageBox.Show(message, "Fertig");  
+        }
+
+        private void ClickDoClean(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Funktion noch nicht implementiert");
         }
 
         private void ClickImport(object sender, RoutedEventArgs e)

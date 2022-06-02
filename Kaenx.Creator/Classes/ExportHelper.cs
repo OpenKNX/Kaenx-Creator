@@ -460,6 +460,12 @@ namespace Kaenx.Creator.Classes
             xmanu.Add(xlanguages);
 
             Debug.WriteLine($"Speichere Hardware: {GetRelPath("Temp", Manu, "Hardware.xml")}");
+            doc.Root.Attributes().Where((x) => x.IsNamespaceDeclaration).Remove();
+            doc.Root.Name = doc.Root.Name.LocalName;
+            foreach(XElement xele in doc.Descendants())
+            {
+                xele.Name = xele.Name.LocalName;
+            }
             doc.Save(GetRelPath("Temp", Manu, "Hardware.xml"));
             #endregion
 
@@ -505,6 +511,12 @@ namespace Kaenx.Creator.Classes
             xmanu.Add(xlanguages);
 
             Debug.WriteLine($"Speichere Catalog: {GetRelPath("Temp", Manu, "Catalog.xml")}");
+            doc.Root.Attributes().Where((x) => x.IsNamespaceDeclaration).Remove();
+            doc.Root.Name = doc.Root.Name.LocalName;
+            foreach(XElement xele in doc.Descendants())
+            {
+                xele.Name = xele.Name.LocalName;
+            }
             doc.Save(GetRelPath("Temp", Manu, "Catalog.xml"));
             #endregion
         }
@@ -764,6 +776,7 @@ namespace Kaenx.Creator.Classes
 
                 if (cref.ComObjectObject.UseTextParameter)
                 {
+                    int nsVersion = int.Parse(currentNamespace.Substring(currentNamespace.LastIndexOf('/')+1));
                     xcref.SetAttributeValue("TextParameterRefId", appVersionMod + (cref.ComObjectObject.ParameterRefObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{cref.ComObjectObject.ParameterRefObject.ParameterObject.Id}_R-{cref.ComObjectObject.ParameterRefObject.Id}");
                 }
 
@@ -995,26 +1008,30 @@ namespace Kaenx.Creator.Classes
             {
                 bl.Id = pbCounter++; //TODO get real next free Id
             }
-            if(bl.UseTextParameter)
-                block.SetAttributeValue("Id", $"{appVersionMod}_PB-{bl.ParameterRefObject.Id}");
-            else
-                block.SetAttributeValue("Id", $"{appVersionMod}_PB-{bl.Id}");
-
-            string dText = bl.Text.Single(p => p.Language.CultureCode == currentLang).Text;
-            if (!string.IsNullOrEmpty(dText))
+            if(bl.UseParameterRef)
             {
-                block.SetAttributeValue("Text", dText);
-                if (!bl.TranslationText)
-                    foreach (Models.Translation trans in bl.Text) AddTranslation(trans.Language.CultureCode, $"{appVersion}_PB-{bl.Id}", "Text", trans.Text);
+                block.SetAttributeValue("Id", $"{appVersionMod}_PB-{bl.ParameterRefObject.Id}");
+                block.SetAttributeValue("ParamRefId", appVersionMod + (bl.ParameterRefObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{bl.ParameterRefObject.ParameterObject.Id}_R-{bl.ParameterRefObject.Id}");
             }
+            else
+            {
+                block.SetAttributeValue("Id", $"{appVersionMod}_PB-{bl.Id}");string dText = bl.Text.Single(p => p.Language.CultureCode == currentLang).Text;
+                if (!string.IsNullOrEmpty(dText))
+                {
+                    block.SetAttributeValue("Text", dText);
+                    if (!bl.TranslationText)
+                        foreach (Models.Translation trans in bl.Text) AddTranslation(trans.Language.CultureCode, $"{appVersion}_PB-{bl.Id}", "Text", trans.Text);
+                }
+            }
+
+
+            
 
             if(!string.IsNullOrEmpty(bl.Name))
                 block.SetAttributeValue("Name", bl.Name);
 
-
-
             if (bl.UseTextParameter)
-                block.SetAttributeValue("TextParameterRefId", appVersionMod + (bl.ParameterRefObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{bl.ParameterRefObject.ParameterObject.Id}_R-{bl.ParameterRefObject.Id}");
+                block.SetAttributeValue("TextParameterRefId", appVersionMod + (bl.TextRefObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{bl.TextRefObject.ParameterObject.Id}_R-{bl.TextRefObject.Id}");
 
             return block;
         }

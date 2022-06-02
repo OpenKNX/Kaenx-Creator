@@ -79,8 +79,13 @@ namespace Kaenx.Creator.Classes
                     case DynChannel: //TODO return textparameterrefid
                     case DynChannelIndependent:
                     case DynChoose:
-                    case DynParaBlock: //TODO return textparameterrefid
                     case DynWhen:
+                        GetIDs(item, uids, isPara);
+                        break;
+                        
+                    case DynParaBlock db:
+                        if(isPara && db.UseParameterRef && db.ParameterRefObject != null) 
+                            uids.Add(db.ParameterRefObject.UId);
                         GetIDs(item, uids, isPara);
                         break;
 

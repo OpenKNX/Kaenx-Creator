@@ -286,6 +286,10 @@
                 <MenuItem Header="{x:Static p:Resources.menu_impo_ets}" Click="ClickImport" />
                 <MenuItem Header="{x:Static p:Resources.menu_impo_kaenx}" IsEnabled="False" />
             </MenuItem>
+            <MenuItem x:Name="MenuClean" IsEnabled="False" Header="Bereinigen">
+                <MenuItem Header="Nicht verwendete Elemente markieren" Click="ClickShowClean" />
+                <MenuItem Header="Nicht verwendete Elemente automatisch löschen" Click="ClickDoClean" />
+            </MenuItem>
             <MenuItem x:Name="MenuLang" Header="{x:Static p:Resources.menu_lang}">
                 <TextBlock Text="Please restart Application after changing language" TextWrapping="WrapWithOverflow" />
                 <Separator />
@@ -694,8 +698,7 @@
                                     <CheckBox IsChecked="{Binding IsComObjectRefAuto}" Content="KO Refs automatisch berechnen" />
                                     <CheckBox IsChecked="{Binding IsUnionActive}" Content="Unions aktivieren" />
                                     <CheckBox IsChecked="{Binding IsModulesActive}" Content="ModuleDefines aktivieren" />
-                                    <Button Content="Zeige nicht verwendete Elemente" Click="ClickShowClean" />
-
+                                  
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition />
