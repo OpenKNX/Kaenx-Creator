@@ -1137,7 +1137,7 @@ namespace Kaenx.Creator
                         case Models.ParameterTypes.NumberUInt:
                             if(!ptype.IsSizeManual)
                             {
-                                string bin = Convert.ToString(ptype.Max, 2);
+                                string bin = Convert.ToString((int)ptype.Max, 2);
                                 ptype.SizeInBit = bin.Length;
                                 maxsize = (int)Math.Pow(2, ptype.SizeInBit);
                             }
@@ -1149,8 +1149,8 @@ namespace Kaenx.Creator
                         case Models.ParameterTypes.NumberInt:
                             if(!ptype.IsSizeManual)
                             {
-                                int z = ptype.Min * (-1);
-                                if(z < (ptype.Max - 1)) z = ptype.Max;
+                                int z = ((int)ptype.Min) * (-1);
+                                if(z < (ptype.Max - 1)) z = (int)ptype.Max;
                                 string y = z.ToString().Replace("-", "");
                                 string bin = Convert.ToString(int.Parse(y), 2);
                                 if(z == (ptype.Min * (-1))) bin += "1";
@@ -1162,16 +1162,18 @@ namespace Kaenx.Creator
                             if(ptype.Min < ((maxsize/2)*(-1))) PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Min ({ptype.Min}) kann nicht kleiner als das Minimum ({(maxsize/2)*(-1)}) sein", State = Models.PublishState.Fail });
                             break;
 
-                        case Models.ParameterTypes.Float9:
+                        case Models.ParameterTypes.Float_DPT9:
                             break;
 
                         case Models.ParameterTypes.Picture:
+                            PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterTyp Picture für {ptype.Name} ({ptype.UId}) wird nicht exportiert", State = Models.PublishState.Warning });
                             break;
 
                         case Models.ParameterTypes.None:
                             break;
 
                         case Models.ParameterTypes.IpAddress:
+                            PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterTyp IpAddress für {ptype.Name} ({ptype.UId}) wird nicht exportiert", State = Models.PublishState.Warning });
                             break;
 
                         default:
@@ -1207,7 +1209,9 @@ namespace Kaenx.Creator
                                 }
                                 break;
 
-                            case Models.ParameterTypes.Float9:
+                            case Models.ParameterTypes.Float_DPT9:
+                            case Models.ParameterTypes.Float_IEEE_Single:
+                            case Models.ParameterTypes.Float_IEEE_Double:
 
 
                             case Models.ParameterTypes.Picture:
@@ -1278,7 +1282,9 @@ namespace Kaenx.Creator
                                 }
                                 break;
 
-                            case Models.ParameterTypes.Float9:
+                            case Models.ParameterTypes.Float_DPT9:
+                            case Models.ParameterTypes.Float_IEEE_Single:
+                            case Models.ParameterTypes.Float_IEEE_Double:
 
 
                             case Models.ParameterTypes.Picture:

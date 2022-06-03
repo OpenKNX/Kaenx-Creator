@@ -155,10 +155,44 @@ namespace Kaenx.Creator.Classes
 
                         case ParameterTypes.NumberInt:
                         case ParameterTypes.NumberUInt:
-                            xcontent = new XElement(Get("TypeNumber"));
-                            xcontent.SetAttributeValue("Type", type.Type == ParameterTypes.NumberUInt ? "unsignedInt" : "signedInt");
+                        case ParameterTypes.Float_DPT9:
+                        case ParameterTypes.Float_IEEE_Double:
+                        case ParameterTypes.Float_IEEE_Single:
+                            if(type.Type == ParameterTypes.NumberUInt || type.Type == ParameterTypes.NumberInt)
+                                xcontent = new XElement(Get("TypeNumber"));
+                            else
+                                xcontent = new XElement(Get("TypeFloat"));
+
+                            string ftype = "failed";
+                            switch(type.Type)
+                            {
+                                case ParameterTypes.NumberUInt:
+                                    ftype = "unsignedInt";
+                                    break;
+                                
+                                case ParameterTypes.NumberInt:
+                                    ftype = "signedInt";
+                                    break;
+
+                                case ParameterTypes.Float_DPT9:
+                                    ftype = "DPT 9";
+                                    break;
+
+                                case ParameterTypes.Float_IEEE_Single:
+                                    ftype = "IEEE-754 Single";
+                                    break;
+
+                                case ParameterTypes.Float_IEEE_Double:
+                                    ftype = "IEEE-754 Double";
+                                    break;
+                            }
+                            xcontent.SetAttributeValue("Type", ftype);
                             xcontent.SetAttributeValue("minInclusive", type.Min);
                             xcontent.SetAttributeValue("maxInclusive", type.Max);
+                            if(type.Increment != 1)
+                                xcontent.SetAttributeValue("Increment", type.Increment);
+                            if(type.UIHint != "None")
+                                xcontent.SetAttributeValue("UIHint", type.UIHint);
                             break;
 
                         case ParameterTypes.Enum:
@@ -338,7 +372,6 @@ namespace Kaenx.Creator.Classes
                     Debug.WriteLine("XSD nicht gefunden. Validierung wird übersprungen");
                 }
                 
-
                 doc.Root.Attributes().Where((x) => x.IsNamespaceDeclaration).Remove();
                 doc.Root.Name = doc.Root.Name.LocalName;
                 foreach(XElement xele in doc.Descendants())
@@ -658,7 +691,7 @@ namespace Kaenx.Creator.Classes
             }
             if(vbase is Models.AppVersion ver)
             {
-                if(ver.ComObjectMemoryObject != null)
+                if(ver.ComObjectMemoryObject != null && ver.ComObjectMemoryObject.Type == MemoryTypes.Absolute)
                 {
                     xcoms.SetAttributeValue("CodeSegment", $"{appVersion}_AS-{ver.ComObjectMemoryObject.Address:X4}");
                     xcoms.SetAttributeValue("Offset", ver.ComObjectTableOffset);

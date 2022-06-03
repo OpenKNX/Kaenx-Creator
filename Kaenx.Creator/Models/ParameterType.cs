@@ -59,8 +59,11 @@ namespace Kaenx.Creator.Models
             set { _isNotUsed = value; Changed("IsNotUsed"); }
         }
 
-        public int Min { get; set; } = 0;
-        public int Max { get; set; } = 255;
+        public string UIHint { get; set; } = "None";
+
+        public double Min { get; set; } = 0;
+        public double Max { get; set; } = 255;
+        public double Increment { get; set; } = 1.0;
 
         public ObservableCollection<ParameterTypeEnum> Enums {get;set;} = new ObservableCollection<ParameterTypeEnum>();
 
@@ -76,7 +79,9 @@ namespace Kaenx.Creator.Models
         Enum,
         NumberUInt,
         NumberInt,
-        Float9,
+        Float_DPT9,
+        Float_IEEE_Single,
+        Float_IEEE_Double,
         Picture,
         None,
         IpAddress

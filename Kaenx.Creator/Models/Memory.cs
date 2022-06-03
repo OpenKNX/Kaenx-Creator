@@ -13,7 +13,7 @@ namespace Kaenx.Creator.Models
 {
     public class Memory : INotifyPropertyChanged
     {
-        public int StartAddress;
+        public int StartAddress = 0;
 
         private int _uid = -1;
         public int UId

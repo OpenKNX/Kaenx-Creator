@@ -1125,14 +1125,33 @@
                                     </DataGrid.Columns>
                                 </DataGrid>
                                     
-                                <StackPanel Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=NumberUInt-NumberInt-Float9, FallbackValue=Collapsed}">
+                                <StackPanel Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=NumberUInt-NumberInt-Float_DPT9-Float_IEEE_Single-Float_IEEE_Double, FallbackValue=Collapsed}">
                                     <HeaderedContentControl Header="Min">
                                         <TextBox Text="{Binding Min, UpdateSourceTrigger=PropertyChanged}"/>
                                     </HeaderedContentControl>
                                     <HeaderedContentControl Header="Max">
                                         <TextBox Text="{Binding Max, UpdateSourceTrigger=PropertyChanged}"/>
                                     </HeaderedContentControl>
+                                    <HeaderedContentControl Header="Increment">
+                                        <TextBox Text="{Binding Increment, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </HeaderedContentControl>
                                 </StackPanel>
+
+                                <HeaderedContentControl Header="UIHint" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=NumberUInt-NumberInt, FallbackValue=Collapsed}">
+                                    <ComboBox SelectedValue="{Binding UIHint}" SelectedValuePath="Tag">
+                                        <ComboBoxItem Content="None" Tag="None" />
+                                        <ComboBoxItem Content="Slider" Tag="Slider" />
+                                        <ComboBoxItem Content="CheckBox" Tag="CheckBox" />
+                                        <ComboBoxItem Content="ProgressBar" Tag="ProgressBar" />
+                                    </ComboBox>
+                                </HeaderedContentControl>
+
+                                <HeaderedContentControl Header="UIHint" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Float_DPT9-Float_IEEE_Single-Float_IEEE_Double, FallbackValue=Collapsed}">
+                                    <ComboBox SelectedValue="{Binding UIHint}" SelectedValuePath="Tag">
+                                        <ComboBoxItem Content="None" Tag="None" />
+                                        <ComboBoxItem Content="Slider" Tag="Slider" />
+                                    </ComboBox>
+                                </HeaderedContentControl>
                             </StackPanel>
                         </Grid>
                     </TabItem>

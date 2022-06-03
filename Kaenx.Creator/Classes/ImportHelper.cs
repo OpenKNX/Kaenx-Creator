@@ -306,12 +306,17 @@ namespace Kaenx.Creator.Classes
                         {
                             "unsignedInt" => ParameterTypes.NumberUInt,
                             "signedInt" => ParameterTypes.NumberInt,
-                            "float9" => ParameterTypes.Float9,
                             _ => throw new Exception("Unbekannter TypeNumber Type: " + xsub.Attribute("Type").Value)
                         };
                         ptype.SizeInBit = int.Parse(xsub.Attribute("SizeInBit").Value);
                         ptype.Min = int.Parse(xsub.Attribute("minInclusive").Value);
                         ptype.Max = int.Parse(xsub.Attribute("maxInclusive").Value);
+                        if(xsub.Attribute("UIHint") != null)
+                            ptype.UIHint = xsub.Attribute("UIHint").Value;
+                        if(xsub.Attribute("Increment") != null)
+                            ptype.Increment = int.Parse(xsub.Attribute("Increment").Value);
+                        //TODO displayoffset & displayfactor ab xsd 20
+                        //UIHint slider & checkbox
                         break;
 
                     case "TypeRestriction":

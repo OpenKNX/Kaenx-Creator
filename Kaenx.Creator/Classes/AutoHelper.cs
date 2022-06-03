@@ -16,18 +16,26 @@ namespace Kaenx.Creator.Classes
 
             mem.Sections.Clear();
 
-            int memOffset = mem.Address;
-            mem.StartAddress = mem.Address - (mem.Address % 16);
+            if(mem.Type == MemoryTypes.Absolute)
+                mem.StartAddress = mem.Address - (mem.Address % 16);
+            else
+            {
+                mem.StartAddress = 0;
+                mem.Address = 0;
+            }
 
             if(!mem.IsAutoSize)
                 mem.AddBytes(mem.Size);
 
-            if(ver.AddressMemoryObject == mem)
-                MemoryCalculationGroups(ver, mem);
-            if(ver.AssociationMemoryObject == mem)
-                MemoryCalculationAssocs(ver, mem);
-            if(ver.ComObjectMemoryObject == mem)
-                MemoryCalculationComs(ver, mem);
+            if(mem.Type == MemoryTypes.Absolute)
+            {
+                if(ver.AddressMemoryObject == mem)
+                    MemoryCalculationGroups(ver, mem);
+                if(ver.AssociationMemoryObject == mem)
+                    MemoryCalculationAssocs(ver, mem);
+                if(ver.ComObjectMemoryObject == mem)
+                    MemoryCalculationComs(ver, mem);
+            }
             MemoryCalculationRegular(ver, mem);
         }
 
@@ -214,13 +222,15 @@ namespace Kaenx.Creator.Classes
                     {
                         double b = Math.Log2(ptype.Min * (-1));
                         int bin1 = (int)Math.Ceiling(b) + 1;
-                        int bin2 = Convert.ToString(ptype.Max, 2).Length;
+                        int bin2 = Convert.ToString((int)ptype.Max, 2).Length;
                         ptype.SizeInBit = (bin1 > bin2) ? bin1 : bin2;
                         break;
                     }
 
-                    case Models.ParameterTypes.Float9:
-                        throw new Exception($"ParameterTyp Größe für Float9 wurde nicht implementiert: {ptype.Name} ({ptype.UId})");
+                    case Models.ParameterTypes.Float_DPT9:
+                    case Models.ParameterTypes.Float_IEEE_Double:
+                    case Models.ParameterTypes.Float_IEEE_Single:
+                        throw new Exception($"ParameterTyp Größe für Float wurde nicht implementiert: {ptype.Name} ({ptype.UId})");
                     
                     case Models.ParameterTypes.Picture:
                         throw new Exception($"ParameterTyp Größe für Picture kann nicht berechnet werden: {ptype.Name} ({ptype.UId})");
