@@ -754,6 +754,9 @@
                                             </ComboBox.ItemContainerStyle>
                                         </ComboBox>
                                     </HeaderedContentControl>
+                                    <HeaderedContentControl Header="Sprachen" VerticalAlignment="Stretch">
+                                        <ListBox x:Name="SupportedLanguagesVers" ItemsSource="{Binding Languages}" DisplayMemberPath="Text" />                                    
+                                    </HeaderedContentControl>
                                     <HeaderedContentControl Header="Bearbeiten">
                                         <StackPanel>
                                             <ComboBox x:Name="LanguagesListVers" DisplayMemberPath="Text">
@@ -787,9 +790,6 @@
                                     </HeaderedContentControl>
                                     <HeaderedContentControl Header="Standard Sprache">
                                         <ComboBox ItemsSource="{Binding Languages}" SelectedValue="{Binding DefaultLanguage}" SelectedValuePath="CultureCode" DisplayMemberPath="Text"></ComboBox>
-                                    </HeaderedContentControl>
-                                    <HeaderedContentControl Header="Sprachen" VerticalAlignment="Stretch">
-                                        <ListBox x:Name="SupportedLanguagesVers" ItemsSource="{Binding Languages}" DisplayMemberPath="Text" />                                    
                                     </HeaderedContentControl>
                                 </StackPanel>
                             </Grid>
@@ -1016,14 +1016,27 @@
                                                 <Rectangle Height="18" Width="18" Fill="{Binding FillColor[7]}" Margin="2" />
                                             </StackPanel>
 
-                                            <DataGrid ItemsSource="{Binding Parameters}" AutoGenerateColumns="false" IsReadOnly="True" CanUserAddRows="False" CanUserResizeRows="False" CanUserResizeColumns="False"> 
-                                                <DataGrid.Columns>
-                                                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
-                                                    <DataGridTextColumn Header="Offset" Binding="{Binding Offset}" />
-                                                    <DataGridTextColumn Header="Bit Offset" Binding="{Binding OffsetBit}" />
-                                                    <DataGridTextColumn Header="Größe in Bits" Binding="{Binding ParameterTypeObject.SizeInBit}" />
-                                                </DataGrid.Columns>
-                                            </DataGrid>
+                                            <HeaderedContentControl Header="Parameter">
+                                                <DataGrid ItemsSource="{Binding ParameterList}" AutoGenerateColumns="false" IsReadOnly="True" CanUserAddRows="False" CanUserResizeRows="False" CanUserResizeColumns="False"> 
+                                                    <DataGrid.Columns>
+                                                        <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
+                                                        <DataGridTextColumn Header="Offset" Binding="{Binding Offset}" />
+                                                        <DataGridTextColumn Header="Bit Offset" Binding="{Binding OffsetBit}" />
+                                                        <DataGridTextColumn Header="Größe in Bits" Binding="{Binding ParameterTypeObject.SizeInBit}" />
+                                                    </DataGrid.Columns>
+                                                </DataGrid>
+                                            </HeaderedContentControl>
+
+                                            <HeaderedContentControl Header="Unions">
+                                                <DataGrid ItemsSource="{Binding UnionList}" AutoGenerateColumns="false" IsReadOnly="True" CanUserAddRows="False" CanUserResizeRows="False" CanUserResizeColumns="False"> 
+                                                    <DataGrid.Columns>
+                                                        <DataGridTextColumn Header="Name" Binding="{Binding UnionObject.Name}" />
+                                                        <DataGridTextColumn Header="Offset" Binding="{Binding UnionObject.Offset}" />
+                                                        <DataGridTextColumn Header="Bit Offset" Binding="{Binding UnionObject.OffsetBit}" />
+                                                        <DataGridTextColumn Header="Größe in Bits" Binding="{Binding UnionObject.SizeInBit}" />
+                                                    </DataGrid.Columns>
+                                                </DataGrid>
+                                            </HeaderedContentControl>
                                         </StackPanel>
                                     </Grid>
 
@@ -1384,8 +1397,8 @@
                     </TabItem>
 
 
-                    <TabItem DataContext="{Binding SelectedItem, ElementName=AppList}" Header="Ladeprozedur" Style="{StaticResource LeftTabItem}">
-                        <ctrl:LoadProcedures />
+                    <TabItem Header="Ladeprozedur" Style="{StaticResource LeftTabItem}">
+                        <ctrl:LoadProcedures Mask="{Binding SelectedItem.Mask, ElementName=AppList}" Version="{Binding SelectedItem, ElementName=VersionList}"/>
                     </TabItem>
 
 

@@ -472,7 +472,7 @@ namespace Kaenx.Creator
 
         private void ClickRemoveLanguageVers(object sender, RoutedEventArgs e) {
             if(SupportedLanguagesVers.SelectedItem == null){
-                MessageBox.Show("Bitte wählen Sie erst links eine Sprache aus.");
+                MessageBox.Show("Bitte wählen Sie erst oben eine Sprache aus.");
                 return;
             }
             Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;

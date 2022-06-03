@@ -181,6 +181,13 @@ namespace Kaenx.Creator.Models
             set { _isMemSizeAuto = value; Changed("IsMemSizeAuto"); }
         }
 
+        private string _procedure = "";
+        public string Procedure
+        {
+            get { return _procedure; }
+            set { _procedure = value; Changed("Procedure"); }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
         public void Changed(string name)
         {

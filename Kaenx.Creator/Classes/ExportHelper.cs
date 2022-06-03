@@ -259,7 +259,15 @@ namespace Kaenx.Creator.Classes
                 switch (app.Mask.Procedure)
                 {
                     case ProcedureTypes.Product:
-                        temp = XDocument.Parse($"<LoadProcedures><LoadProcedure><LdCtrlConnect /><LdCtrlDisconnect /></LoadProcedure></LoadProcedures>").Root;
+                        temp = XElement.Parse(ver.Procedure);
+                        
+                        temp.Attributes().Where((x) => x.IsNamespaceDeclaration).Remove();
+                        temp.Name = XName.Get(temp.Name.LocalName, currentNamespace);
+                        foreach(XElement xele in temp.Descendants())
+                        {
+                            xele.Name = XName.Get(xele.Name.LocalName, currentNamespace);
+                        }
+
                         xunderapp.Add(temp);
                         break;
 

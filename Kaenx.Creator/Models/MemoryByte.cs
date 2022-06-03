@@ -36,12 +36,11 @@ namespace Kaenx.Creator.Models
                 Bits[x] = 'x';
                 
             Usage = usage;
-            Parameters.Add(para);
+            ParameterList.Add(para);
         }
 
-        public Union UnionObject {get;set;}
-
-        public List<Parameter> Parameters { get; set; } = new List<Parameter>();
+        public List<MemoryUnion> UnionList { get; set; } = new List<MemoryUnion>();
+        public List<Parameter> ParameterList { get; set; } = new List<Parameter>();
 
         public List<char> Bits {get;set;} = new List<char>() {
             'o',
@@ -101,13 +100,17 @@ namespace Kaenx.Creator.Models
                 
                 Bits[offset + x] = 'x';
             }
-            if(!Parameters.Contains(para))
-                Parameters.Add(para);
+            if(!ParameterList.Contains(para))
+                ParameterList.Add(para);
         }
 
         public void SetBitsUsed(Union union, List<Parameter> paras, int size, int offset)
         {
-            Parameters.AddRange(paras);
+
+            UnionList.Add(new MemoryUnion() {
+                UnionObject = union,
+                ParameterList = paras
+            });
 
             for(int x = 0; x < size; x++)
             {
@@ -116,8 +119,6 @@ namespace Kaenx.Creator.Models
                 
                 Bits[offset + x] = 'x';
             }
-
-            UnionObject = union;
         }
 
         public int SetBytesUsed(Parameter para, int size)
@@ -144,8 +145,8 @@ namespace Kaenx.Creator.Models
             for(int x = 0; x < size; x++)
                 Bits[offset+x] = 'x';
 
-            if(!Parameters.Contains(para))
-                Parameters.Add(para);
+            if(!ParameterList.Contains(para))
+                ParameterList.Add(para);
 
             return offset;
         }

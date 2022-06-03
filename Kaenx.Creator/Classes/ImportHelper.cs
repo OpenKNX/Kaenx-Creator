@@ -190,14 +190,35 @@ namespace Kaenx.Creator.Classes
             ImportTables(xstatic);
             ImportModules(xapp.Element(Get("ModuleDefs")));
             ImportDynamic(xapp.Element(Get("Dynamic")), currentVers);
+
+
+            if(xstatic.Element(Get("LoadProcedures")) != null)
+            {
+                XElement xproc = xstatic.Element(Get("LoadProcedures"));
+                xproc.Attributes().Where((x) => x.IsNamespaceDeclaration).Remove();
+                xproc.Name = xproc.Name.LocalName;
+                foreach(XElement xele in xproc.Descendants())
+                {
+                    xele.Name = xele.Name.LocalName;
+                }
+                currentVers.Procedure = xproc.ToString();
+            }
         }
 
         public void ImportLanguages(XElement xlangs) {
             _translations.Clear();
             foreach(XElement xlang in xlangs.Elements()) {
                 string cultureCode = xlang.Attribute("Identifier").Value;
-                if(!currentVers.Languages.Any(l => l.CultureCode == cultureCode))
-                    currentVers.Languages.Add(new Language(_langTexts[cultureCode], cultureCode));
+
+                XElement firstUnit = xlang.Elements().ElementAt(0);
+                string firstId = firstUnit.Attribute("RefId").Value;
+
+                if(firstId.StartsWith($"M-{_general.ManufacturerId:X4}_A-"))
+                {
+                } else {
+                    if(!_general.Languages.Any(l => l.CultureCode == cultureCode))
+                        _general.Languages.Add(new Language(_langTexts[cultureCode], cultureCode));
+                }
 
                 foreach(XElement xtele in xlang.Descendants(Get("TranslationElement"))) {
                     foreach(XElement xattr in xtele.Elements()) {

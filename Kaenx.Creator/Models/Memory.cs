@@ -141,7 +141,11 @@ namespace Kaenx.Creator.Models
                     sec.Bytes[byteIndex].SetBitsUsed(union, paras, 8, 0);
                 }
             } else {
-                throw new Exception("Union can? not be smaller than a byte");
+                int paraAddr = Address + union.Offset;
+                int secAddr = paraAddr - (paraAddr % 16);
+                MemorySection sec = Sections.Single(s => s.Address == secAddr);
+                int byteIndex = paraAddr - secAddr;
+                sec.Bytes[byteIndex].SetBitsUsed(union, paras, union.SizeInBit, union.OffsetBit);
             }
         }
 

@@ -67,7 +67,7 @@ namespace Kaenx.Creator.Models
                         continue;
                 }
                 
-                if(mbyte.UnionObject != null)
+                if(mbyte.UnionList.Count > 0)
                 {
                     fillColor.Add(new SolidColorBrush(Colors.Blue));
                     continue;

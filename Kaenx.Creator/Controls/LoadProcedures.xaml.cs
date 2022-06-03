@@ -1,8 +1,10 @@
 using ICSharpCode.AvalonEdit.CodeCompletion;
+using Kaenx.Creator.Models;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.IO;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -10,12 +12,23 @@ namespace Kaenx.Creator.Controls
 {
     public partial class LoadProcedures : UserControl
     {
+        public static readonly DependencyProperty VersionProperty = DependencyProperty.Register("Version", typeof(AppVersion), typeof(LoadProcedures), new PropertyMetadata());
+        public static readonly DependencyProperty MaskProperty = DependencyProperty.Register("Mask", typeof(MaskVersion), typeof(LoadProcedures), new PropertyMetadata());
+        public AppVersion Version {
+            get { return (AppVersion)GetValue(VersionProperty); }
+            set { SetValue(VersionProperty, value); }
+        }
+        public IVersionBase Mask {
+            get { return (IVersionBase)GetValue(MaskProperty); }
+            set { SetValue(MaskProperty, value); }
+        }
         
         public LoadProcedures()
 		{
 			InitializeComponent();
             editor.TextArea.TextEntered += EditorEntered;
             editor.TextArea.TextEntering += EditorEntering;
+            this.DataContext = this;
 		}
 
         CompletionWindow completionWindow;
