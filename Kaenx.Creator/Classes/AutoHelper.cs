@@ -24,6 +24,9 @@ namespace Kaenx.Creator.Classes
                 mem.Address = 0;
             }
 
+            foreach(Module mod in ver.Modules)
+                mod.Memory.Sections.Clear();
+
             if(!mem.IsAutoSize)
                 mem.AddBytes(mem.Size);
 
@@ -69,123 +72,131 @@ namespace Kaenx.Creator.Classes
             mem.SetBytesUsed(MemoryByteUsage.Coms, maxSize, ver.ComObjectTableOffset);
         }
 
-        private static void MemoryCalculationRegular(AppVersion ver, Memory mem)
+        private static void MemCalcStatics(IVersionBase vbase, Memory mem, int memId)
         {
-            List<Parameter> paras = ver.Parameters.Where(p => p.MemoryId == mem.UId && p.IsInUnion == false).ToList();
+            List<Parameter> paras = vbase.Parameters.Where(p => p.MemoryId == memId && p.IsInUnion == false).ToList();
 
-            if(!mem.IsAutoPara || (mem.IsAutoPara && !mem.IsAutoOrder))
+            foreach(Parameter para in paras.Where(p => p.Offset != -1))
             {
-                foreach(Parameter para in paras.Where(p => p.Offset != -1))
+                if(para.Offset >= mem.GetCount())
                 {
-                    if(para.Offset >= mem.GetCount())
-                    {
-                        if(!mem.IsAutoSize) throw new Exception("Parameter liegt außerhalb des Speichers");
-                        
-                        int toadd = (para.Offset - mem.GetCount()) + 1;
-                        if(para.ParameterTypeObject.SizeInBit > 8) toadd += (para.ParameterTypeObject.SizeInBit / 8) - 1;
-                        mem.AddBytes(toadd);
-                    }
-
-                    mem.SetBytesUsed(para);
+                    if(!mem.IsAutoSize) throw new Exception("Parameter liegt außerhalb des Speichers");
+                    
+                    int toadd = (para.Offset - mem.GetCount()) + 1;
+                    if(para.ParameterTypeObject.SizeInBit > 8) toadd += (para.ParameterTypeObject.SizeInBit / 8) - 1;
+                    mem.AddBytes(toadd);
                 }
 
-                foreach (Union union in ver.Unions.Where(u => u.MemoryId == mem.UId && u.Offset != -1))
-                {
-                    if(union.Offset >= mem.GetCount())
-                    {
-                        if(!mem.IsAutoSize) throw new Exception("Parameter liegt außerhalb des Speichers");
-
-                        int toadd = 1;
-                        if(union.SizeInBit > 8) toadd = (union.Offset - mem.GetCount()) + (union.SizeInBit / 8);
-                        mem.AddBytes(toadd);
-                    }
-
-                    mem.SetBytesUsed(union, ver.Parameters.Where(p => p.UnionId == union.UId).ToList());
-                }
-
-                foreach(Module mod in ver.Modules)
-                {
-                    mod.Memory.Sections.Clear();
-                    //todo also check option isautoorder!
-                    foreach(Parameter para in mod.Parameters.Where(p => p.MemoryId == mem.UId && p.Offset != -1))
-                    {
-                        if(para.Offset >= mod.Memory.GetCount())
-                        {
-                            int toadd = (para.Offset - mod.Memory.GetCount()) + 1;
-                            if(para.ParameterTypeObject.SizeInBit > 8) toadd += (para.ParameterTypeObject.SizeInBit / 8) - 1;
-                            int reloffset = mod.Memory.GetCount();
-                            //for(int i = 0; i < toadd; i++)
-                            //    mod.Memory.Bytes.Add(new MemoryByte(memOffset + reloffset + i));
-                        }
-
-                        if(para.ParameterTypeObject.SizeInBit > 7)
-                        {
-                            int sizeInByte = (int)Math.Ceiling(para.ParameterTypeObject.SizeInBit / 8.0);
-                            //for(int i = 0; i < sizeInByte;i++)
-                            //    mod.Memory.Bytes[para.Offset+i].SetBytesUsed(8,0);
-                        } else {
-                            //mod.Memory.Bytes[para.Offset].SetBytesUsed(para.ParameterTypeObject.SizeInBit, para.OffsetBit);
-                        }
-                    }
-
-                    foreach(Parameter para in mod.Parameters.Where(p => p.MemoryId == mem.UId && p.Offset == -1))
-                    {
-                        (int offset, int offsetbit) result = mod.Memory.GetFreeOffset(para.ParameterTypeObject.SizeInBit);
-                        para.Offset = result.offset;
-                        para.OffsetBit = result.offsetbit;
-                    }
-                }
+                mem.SetBytesUsed(para);
             }
 
+            foreach (Union union in vbase.Unions.Where(u => u.MemoryId == mem.UId && u.Offset != -1))
+            {
+                if(union.Offset >= mem.GetCount())
+                {
+                    if(!mem.IsAutoSize) throw new Exception("Parameter liegt außerhalb des Speichers");
+
+                    int toadd = 1;
+                    if(union.SizeInBit > 8) toadd = (union.Offset - mem.GetCount()) + (union.SizeInBit / 8);
+                    mem.AddBytes(toadd);
+                }
+
+                mem.SetBytesUsed(union, vbase.Parameters.Where(p => p.UnionId == union.UId).ToList());
+            }
+        }
+
+        private static void MemCalcAuto(IVersionBase vbase, Memory mem, int memId)
+        {
+            List<Parameter> paras = vbase.Parameters.Where(p => p.MemoryId == memId && p.IsInUnion == false).ToList();
+            IEnumerable<Parameter> list1;
+            if(mem.IsAutoOrder) list1 = paras.ToList();
+            else list1 = paras.Where(p => p.Offset == -1);
+            foreach(Parameter para in list1)
+            {
+                (int offset, int offsetbit) result = mem.GetFreeOffset(para.ParameterTypeObject.SizeInBit);
+                para.Offset = result.offset;
+                para.OffsetBit = result.offsetbit;
+                mem.SetBytesUsed(para);
+            }
+
+            IEnumerable<Union> list2;
+            if(mem.IsAutoOrder) list2 = vbase.Unions.Where(u => u.MemoryId == memId);
+            else list2 = vbase.Unions.Where(u => u.MemoryId == memId && u.Offset == -1);
+            foreach (Union union in list2)
+            {
+                (int offset, int offsetbit) result = mem.GetFreeOffset(union.SizeInBit);
+                union.Offset = result.offset;
+                union.OffsetBit = result.offsetbit;
+                mem.SetBytesUsed(union, vbase.Parameters.Where(p => p.UnionId == union.UId).ToList());
+            }
+        }
+
+        private static void MemoryCalculationRegular(AppVersion ver, Memory mem)
+        {
+            if(!mem.IsAutoPara || (mem.IsAutoPara && !mem.IsAutoOrder))
+            {
+                foreach(Module mod in ver.Modules)
+                    MemCalcStatics(mod, mod.Memory, mem.UId);
+                    
+                MemCalcStatics(ver, mem, mem.UId);
+            }
 
             if(mem.IsAutoPara)
             {
-                IEnumerable<Parameter> list1;
-                if(mem.IsAutoOrder) list1 = paras.Where(p => p.MemoryId == mem.UId);
-                else list1 = paras.Where(p => p.MemoryId == mem.UId && p.Offset == -1);
-                foreach(Parameter para in list1)
+                foreach(Module mod in ver.Modules)
+                    MemCalcAuto(mod, mod.Memory, mem.UId);
+
+                MemCalcAuto(ver, mem, mem.UId);
+            }
+
+            List<Models.Dynamic.DynModule> mods = new List<Models.Dynamic.DynModule>();
+            GetModules(ver.Dynamics[0], mods);
+            int highestComNumber = ver.ComObjects.OrderByDescending(c => c.Number).FirstOrDefault()?.Number ?? -1;
+            foreach(Models.Dynamic.DynModule dmod in mods)
+            {
+                Models.Dynamic.DynModuleArg argParas = dmod.Arguments.SingleOrDefault(a => a.ArgumentId == dmod.ModuleObject.ParameterBaseOffsetUId);
+                if(argParas == null) continue;
+
+                if(!mem.IsAutoPara || (mem.IsAutoPara && !mem.IsAutoOrder && !string.IsNullOrEmpty(argParas.Value)))
                 {
-                    (int offset, int offsetbit) result = mem.GetFreeOffset(para.ParameterTypeObject.SizeInBit);
-                    para.Offset = result.offset;
-                    para.OffsetBit = result.offsetbit;
-                    mem.SetBytesUsed(para);
+                    int modSize = dmod.ModuleObject.Memory.GetCount();
+                    int start = int.Parse(argParas.Value);
+                    mem.SetBytesUsed(MemoryByteUsage.Module, modSize, start);
                 }
 
-                IEnumerable<Union> list2;
-                if(mem.IsAutoOrder) list2 = ver.Unions.Where(u => u.MemoryId == mem.UId);
-                else list2 = ver.Unions.Where(u => u.MemoryId == mem.UId && u.Offset == -1);
-                foreach (Union union in list2)
+                if(mem.IsAutoPara && (string.IsNullOrEmpty(argParas.Value) || mem.IsAutoOrder))
                 {
-                    (int offset, int offsetbit) result = mem.GetFreeOffset(union.SizeInBit);
-                    union.Offset = result.offset;
-                    union.OffsetBit = result.offsetbit;
-                    mem.SetBytesUsed(union, ver.Parameters.Where(p => p.UnionId == union.UId).ToList());
+                    int modSize = dmod.ModuleObject.Memory.GetCount();
+                    (int offset, int offsetbit) result = mem.GetFreeOffset(modSize * 8);
+                    argParas.Value = result.offset.ToString();
+                    mem.SetBytesUsed(MemoryByteUsage.Module, modSize, result.offset);
+                }
+
+                if(dmod.ModuleObject.IsComObjectBaseNumberAuto)
+                {
+                    int highestComNumber2 = dmod.ModuleObject.ComObjects.OrderByDescending(c => c.Number).FirstOrDefault()?.Number ?? 0;
+                    Models.Dynamic.DynModuleArg argComs = dmod.Arguments.SingleOrDefault(a => a.ArgumentId == dmod.ModuleObject.ComObjectBaseNumberUId);
+                    if(argComs != null)
+                    {
+                        argComs.Value = (++highestComNumber).ToString();
+                        highestComNumber += highestComNumber2;
+                    }
                 }
             }
-            
-            
-
-
 
             if (mem.IsAutoSize)
                 mem.Size = mem.GetCount();
         }
 
-        private static int SetBytes(Memory mem, int size, int offset)
+        private static void GetModules(Models.Dynamic.IDynItems item, List<Models.Dynamic.DynModule> mods)
         {
-            int offsetbit = 0;
-            int sizeInByte = (int)Math.Ceiling(size / 8.0);
-            if(size > 7)
-            {
-                for(int i = 0; i < sizeInByte; i++)
-                {
-                    //mem.Bytes[offset+i].SetBytesUsed(8);
-                }
-                offsetbit = 0;
-            } else {
-                //offsetbit = mem.Bytes[offset].SetBytesUsed(size);
-            }
-            return offsetbit;
+            if(item is Models.Dynamic.DynModule dm)
+                mods.Add(dm);
+
+            if(item.Items == null) return;
+
+            foreach(Models.Dynamic.IDynItems i in item.Items)
+                GetModules(i, mods);
         }
 
         public static void ParameterTypeCalculations(AppVersion ver)

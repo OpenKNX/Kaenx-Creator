@@ -414,6 +414,7 @@ namespace Kaenx.Creator.Classes
                 }
             }
             //TODO check if module can also have unions
+            //yes it can
             currentVers.IsUnionActive = unionCounter > 1;
         }
 
@@ -967,6 +968,13 @@ namespace Kaenx.Creator.Classes
                         dmo.Id = int.Parse(GetLastSplit(xele.Attribute("Id").Value, 2));
                         paraId = int.Parse(GetLastSplit(xele.Attribute("RefId").Value, 3));
                         dmo.ModuleObject = currentVers.Modules.Single(m => m.Id == paraId);
+                        foreach(XElement xarg in xele.Elements())
+                        {
+                            int id = int.Parse(GetLastSplit(xarg.Attribute("RefId").Value, 2));
+                            Argument arg = dmo.ModuleObject.Arguments.Single(a => a.Id == id);
+                            DynModuleArg darg = dmo.Arguments.Single(a => a.Argument == arg);
+                            darg.Value = xarg.Attribute("Value").Value;
+                        }
                         parent.Items.Add(dmo);
                         break;
 

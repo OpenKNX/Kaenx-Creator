@@ -185,6 +185,7 @@ namespace Kaenx.Creator.Models
         Free,
         GroupAddress,
         Association,
-        Coms
+        Coms,
+        Module
     }
 }

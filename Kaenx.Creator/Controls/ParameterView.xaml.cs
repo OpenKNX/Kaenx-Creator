@@ -46,7 +46,7 @@ namespace Kaenx.Creator.Controls
         protected virtual void OnModuleChanged() {
             InUnion.ItemsSource = Module?.Unions;
             //InArgument.ItemsSource = (Module as Models.Module)?.Arguments;
-            InBaseOffset.Visibility = (Module is Models.Module) ? Visibility.Visible : Visibility.Collapsed;
+            //InBaseOffset.Visibility = (Module is Models.Module) ? Visibility.Visible : Visibility.Collapsed;
         }
         
         private void ClickAdd(object sender, RoutedEventArgs e)

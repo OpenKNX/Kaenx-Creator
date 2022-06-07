@@ -11,10 +11,10 @@ namespace Kaenx.Creator.Classes
     public static class ClearHelper
     {
         
-        public static void ShowUnusedElements(AppVersion vers)
+        public static ClearResult ShowUnusedElements(AppVersion vers)
         {
             List<int> uids = new List<int>();
-
+            ClearResult result = new ClearResult();
 
             foreach(Parameter para in vers.Parameters)
                 if(!uids.Contains(para.ParameterType))
@@ -26,48 +26,73 @@ namespace Kaenx.Creator.Classes
             foreach(ParameterType ptype in vers.ParameterTypes)
                 ptype.IsNotUsed = !uids.Contains(ptype.UId);
 
-            CheckParameter(vers);
-            CheckComObject(vers);
+            CheckParameter(vers, result);
+            CheckComObject(vers, result);
+            CheckUnion(vers, result);
             
             foreach(Module mod in vers.Modules)
             {
-                CheckParameter(mod);
-                CheckComObject(mod);
+                CheckParameter(mod, result);
+                CheckComObject(mod, result);
+                CheckUnion(mod, result);
             }
+            return result;
         }
 
-        private static void CheckParameter(IVersionBase vbase)
+        private static void CheckParameter(IVersionBase vbase, ClearResult res)
         {
             List<int> uids = new List<int>();
             foreach(ParameterRef pref in vbase.ParameterRefs)
                 if(!uids.Contains(pref.Parameter))
                     uids.Add(pref.Parameter);
             foreach(Parameter para in vbase.Parameters)
+            {
                 para.IsNotUsed = !uids.Contains(para.UId);
+                if(para.IsNotUsed) res.Parameters++;
+            }
 
             uids.Clear();
             GetIDs(vbase.Dynamics[0], uids, true);
             foreach(ParameterRef pref in vbase.ParameterRefs)
+            {
                 pref.IsNotUsed = !uids.Contains(pref.UId);
-
-            //TODO also check for TextParemeterRefId
+                if(pref.IsNotUsed) res.ParameterRefs++;
+            }
         }
         
-        private static void CheckComObject(IVersionBase vbase)
+        private static void CheckComObject(IVersionBase vbase, ClearResult res)
         {
             List<int> uids = new List<int>();
             foreach(Models.ComObjectRef cref in vbase.ComObjectRefs)
                 if(!uids.Contains(cref.ComObject))
                     uids.Add(cref.ComObject);
             foreach(Models.ComObject com in vbase.ComObjects)
+            {
                 com.IsNotUsed = !uids.Contains(com.UId);
+                if(com.IsNotUsed) res.ComObjects++;
+            }
                 
             uids.Clear();
             GetIDs(vbase.Dynamics[0], uids, false);
             foreach(ComObjectRef rcom in vbase.ComObjectRefs)
+            {
                 rcom.IsNotUsed = !uids.Contains(rcom.UId);
+                if(rcom.IsNotUsed) res.ComObjectRefs++;
+            }
+        }
 
-            //TODO also check for TextParemeterRefId
+        private static void CheckUnion(IVersionBase vbase, ClearResult res)
+        {
+            List<int> uids = new List<int>();
+            foreach(Parameter para in vbase.Parameters)
+                if(para.IsInUnion && para.UnionId != -1)
+                    uids.Add(para.UnionId);
+                    
+            foreach(Union union in vbase.Unions)
+            {
+                union.IsNotUsed = !uids.Contains(union.UId);
+                if(union.IsNotUsed) res.Unions++;
+            }
         }
 
         private static void GetIDs(IDynItems dyn, List<int> uids, bool isPara)
@@ -76,7 +101,7 @@ namespace Kaenx.Creator.Classes
             {
                 switch(item)
                 {
-                    case DynChannel: //TODO return textparameterrefid
+                    case DynChannel:
                     case DynChannelIndependent:
                     case DynChoose:
                     case DynWhen:

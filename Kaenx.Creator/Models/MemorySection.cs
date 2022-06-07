@@ -65,6 +65,10 @@ namespace Kaenx.Creator.Models
                     case MemoryByteUsage.Coms:
                         fillColor.Add(new SolidColorBrush(Colors.Chocolate));
                         continue;
+                    
+                    case MemoryByteUsage.Module:
+                        fillColor.Add(new SolidColorBrush(Colors.Pink));
+                        continue;
                 }
                 
                 if(mbyte.UnionList.Count > 0)

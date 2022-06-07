@@ -559,6 +559,11 @@ namespace Kaenx.Creator
         {
             Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
             Models.Module mod = new Models.Module() { UId = AutoHelper.GetNextFreeUId(ver.Modules)};
+            mod.Arguments.Add(new Models.Argument() { Name = "argParas", UId = AutoHelper.GetNextFreeUId(mod.Arguments) });
+            mod.Arguments.Add(new Models.Argument() { Name = "argComs", UId = AutoHelper.GetNextFreeUId(mod.Arguments) });
+            //mod.Arguments.Add(new Models.Argument() { Name = "argChan", UId = AutoHelper.GetNextFreeUId(mod.Arguments) });
+            mod.ParameterBaseOffset = mod.Arguments[0];
+            mod.ComObjectBaseNumber = mod.Arguments[1];
             mod.Dynamics.Add(new Models.Dynamic.DynamicMain());
             ver.Modules.Add(mod);
         }
@@ -567,18 +572,6 @@ namespace Kaenx.Creator
         {
             Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
             ver.Modules.Remove(ModuleList.SelectedItem as Models.Module);
-        }
-
-        private void ClickAddUnion(object sender, RoutedEventArgs e)
-        {
-            Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
-            ver.Unions.Add(new Models.Union() { UId = AutoHelper.GetNextFreeUId(ver.Unions)});
-        }
-        
-        private void ClickRemoveUnion(object sender, RoutedEventArgs e)
-        {
-            Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
-            ver.Unions.Remove(UnionList.SelectedItem as Models.Union);
         }
 
         private void ClickAddHardware(object sender, RoutedEventArgs e)
@@ -730,6 +723,13 @@ namespace Kaenx.Creator
                     
                 if(vbase._comMemoryId != -1)
                     vbase.ComObjectMemoryObject = vbase.Memories.SingleOrDefault(m => m.UId == vbase._comMemoryId);
+            } else {
+                Models.Module modu = mod as Models.Module;
+                if(modu._parameterBaseOffsetUId != -1)
+                    modu.ParameterBaseOffset = modu.Arguments.SingleOrDefault(m => m.UId == modu._parameterBaseOffsetUId);
+                
+                if(modu._comObjectBaseNumberUId != -1)
+                    modu.ComObjectBaseNumber = modu.Arguments.SingleOrDefault(m => m.UId == modu._comObjectBaseNumberUId);
             }
 
             foreach(Models.Parameter para in mod.Parameters)
@@ -876,20 +876,15 @@ namespace Kaenx.Creator
                 return;
             }
 
-            ClearHelper.ShowUnusedElements(vers);
-
-            int uTypes = vers.ParameterTypes.Count(t => t.IsNotUsed);
-            int uParas = vers.Parameters.Count(t => t.IsNotUsed);
-            int uPRefs = vers.ParameterRefs.Count(t => t.IsNotUsed);
-            int uComOs = vers.ComObjects.Count(t => t.IsNotUsed);
-            int uCRefs = vers.ComObjectRefs.Count(t => t.IsNotUsed);
+            Models.ClearResult res = ClearHelper.ShowUnusedElements(vers);
 
             string message = $"Folgende Elemente wurden nicht verwendet:\r\n";
-            message += $"{uTypes}\tParameterTypes\r\n";
-            message += $"{uParas}\tParameter\r\n";
-            message += $"{uPRefs}\tParameterRefs\r\n";
-            message += $"{uComOs}\tComObjects\r\n";
-            message += $"{uCRefs}\tComObjectRefs\r\n";
+            message += $"{res.ParameterTypes}\tParameterTypes\r\n";
+            message += $"{res.Parameters}\tParameter\r\n";
+            message += $"{res.ParameterRefs}\tParameterRefs\r\n";
+            message += $"{res.Unions}\tUnions\r\n";
+            message += $"{res.ComObjects}\tComObjects\r\n";
+            message += $"{res.ComObjectRefs}\tComObjectRefs\r\n";
 
             MessageBox.Show(message, "Fertig");  
         }
@@ -1092,6 +1087,9 @@ namespace Kaenx.Creator
                 
                 if (vers.NamespaceVersion > highestNS)
                     highestNS = vers.NamespaceVersion;
+
+                if(vers.IsModulesActive && vers.NamespaceVersion < 20)
+                    PublishActions.Add(new Models.PublishAction() { Text = $"Applikation '{app.Name}': ModuleDefindes werden erst ab Namespace 20 unterstützt.", State = Models.PublishState.Fail });
 
                 foreach(Models.ParameterType ptype in vers.ParameterTypes) {
                     int maxsize = (int)Math.Pow(2, ptype.SizeInBit);

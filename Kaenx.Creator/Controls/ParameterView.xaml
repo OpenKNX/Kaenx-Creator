@@ -46,10 +46,6 @@
                 <RowDefinition />
             </Grid.RowDefinitions>
 
-            <HeaderedContentControl x:Name="InBaseOffset" Header="BaseOffset (gilt für alle):" Margin="5" IsTabStop="false" Visibility="Collapsed">
-                <ComboBox ItemsSource="{Binding Arguments}" SelectedItem="{Binding ParameterBaseOffset, Mode=TwoWay}" DisplayMemberPath="Name" Margin="0 5" />
-            </HeaderedContentControl>
-
             <ScrollViewer Grid.Row="2" DataContext="{Binding ElementName=ParamList, Path=SelectedItem}" IsEnabled="{Binding Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
                 <StackPanel Margin="5">
                     <StackPanel.Resources>

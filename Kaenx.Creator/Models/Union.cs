@@ -71,6 +71,15 @@ namespace Kaenx.Creator.Models
             set { _savePath = value; Changed("SavePath"); }
         }
 
+        
+        private bool _isNotUsed = false;
+        [JsonIgnore]
+        public bool IsNotUsed
+        {
+            get { return _isNotUsed; }
+            set { _isNotUsed = value; Changed("IsNotUsed"); }
+        }
+
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void Changed(string name)

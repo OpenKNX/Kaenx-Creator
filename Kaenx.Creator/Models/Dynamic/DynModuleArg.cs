@@ -15,9 +15,6 @@ namespace Kaenx.Creator.Models.Dynamic
             Argument = arg;
         }
 
-
-        public ObservableCollection<IDynItems> Items { get; set; } = new ObservableCollection<IDynItems>();
-
         [JsonIgnore]
         public Models.Argument Argument { get; set; }
 

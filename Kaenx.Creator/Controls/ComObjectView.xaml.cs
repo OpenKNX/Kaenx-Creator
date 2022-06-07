@@ -46,7 +46,7 @@ namespace Kaenx.Creator.Controls
         protected virtual void OnModuleChanged()
         {
             //InParameter.ItemsSource = Module?.Parameters;
-            InBaseNumber.Visibility = (Module is Models.Module) ? Visibility.Visible : Visibility.Collapsed;
+            //InBaseNumber.Visibility = (Module is Models.Module) ? Visibility.Visible : Visibility.Collapsed;
             Changed("ParameterRefsList");
         }
         

@@ -58,6 +58,13 @@ namespace Kaenx.Creator.Models
             set { _isAutoCR = value; Changed("IsComObjectRefAuto"); }
         }
 
+        private bool _isAutoCBN= true;
+        public bool IsComObjectBaseNumberAuto
+        {
+            get { return _isAutoCBN; }
+            set { _isAutoCBN = value; Changed("IsComObjectBaseNumberAuto"); }
+        }
+
         
         private Argument _parameterBaseOffset;
         [JsonIgnore]
@@ -80,7 +87,10 @@ namespace Kaenx.Creator.Models
         public Argument ComObjectBaseNumber
         {
             get { return _comObjectBaseNumber; }
-            set { _comObjectBaseNumber = value; Changed("ComObjectBaseNumber"); }
+            set { 
+                _comObjectBaseNumber = value; 
+                Changed("ComObjectBaseNumber"); 
+            }
         }
 
         [JsonIgnore]
