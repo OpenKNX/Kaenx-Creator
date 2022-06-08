@@ -531,7 +531,8 @@ namespace Kaenx.Creator
         private void LanguageCatalogItemRemove(Models.CatalogItem parent, Models.Language lang)
         {
             foreach(Models.CatalogItem item in parent.Items) {
-                item.Text.Remove(item.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
+                if(item.IsSection)
+                    item.Text.Remove(item.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
 
                 LanguageCatalogItemRemove(item, lang);
             }
@@ -891,7 +892,27 @@ namespace Kaenx.Creator
 
         private void ClickDoClean(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Funktion noch nicht implementiert");
+            Models.AppVersion vers = VersionList.SelectedItem as Models.AppVersion;
+            if(vers == null)
+            {
+                MessageBox.Show("Bitte wählen Sie erst eine Applikationsversion aus.");
+                return;
+            }
+
+            Models.ClearResult res = ClearHelper.ShowUnusedElements(vers);
+
+            string message = $"Folgende Elemente werden gelöscht:\r\n";
+            message += $"{res.ParameterTypes}\tParameterTypes\r\n";
+            message += $"{res.Parameters}\tParameter\r\n";
+            message += $"{res.ParameterRefs}\tParameterRefs\r\n";
+            message += $"{res.Unions}\tUnions\r\n";
+            message += $"{res.ComObjects}\tComObjects\r\n";
+            message += $"{res.ComObjectRefs}\tComObjectRefs\r\n";
+            message += "\r\nWollen Sie diese Elemente wirklich löschen?";
+
+            var msgRes = MessageBox.Show(message, "Bereinigung", System.Windows.MessageBoxButton.YesNo);
+            if(msgRes == MessageBoxResult.Yes)
+                ClearHelper.RemoveUnusedElements(vers);
         }
 
         private void ClickImport(object sender, RoutedEventArgs e)

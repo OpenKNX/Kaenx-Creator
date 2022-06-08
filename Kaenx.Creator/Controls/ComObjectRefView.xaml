@@ -156,7 +156,7 @@
                     </Grid>
                 </HeaderedContentControl>
 
-                <HeaderedContentControl Header="Object Size" IsEnabled="{Binding HasDpt, Converter={StaticResource BoolNeg}}">
+                <HeaderedContentControl Header="Object Size" IsEnabled="{Binding OverwriteDpt, Converter={StaticResource BoolNeg}}">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="auto" />

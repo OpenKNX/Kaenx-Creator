@@ -24,7 +24,10 @@ namespace Kaenx.Creator.Classes
                     if(!uids.Contains(para.ParameterType))
                         uids.Add(para.ParameterType);    
             foreach(ParameterType ptype in vers.ParameterTypes)
+            {
                 ptype.IsNotUsed = !uids.Contains(ptype.UId);
+                result.ParameterTypes++;
+            }
 
             CheckParameter(vers, result);
             CheckComObject(vers, result);
@@ -37,6 +40,35 @@ namespace Kaenx.Creator.Classes
                 CheckUnion(mod, result);
             }
             return result;
+        }
+
+        public static void RemoveUnusedElements(AppVersion vers)
+        {
+            foreach(ParameterType pt in vers.ParameterTypes.Where(p => p.IsNotUsed).ToList())
+                vers.ParameterTypes.Remove(pt);
+
+            RemoveElements(vers);
+
+            foreach(Module mod in vers.Modules)
+                RemoveElements(mod);
+        }
+
+        private static void RemoveElements(IVersionBase vbase)
+        {
+            foreach(Parameter p in vbase.Parameters.Where(p => p.IsNotUsed).ToList())
+                vbase.Parameters.Remove(p);
+
+            foreach(ParameterRef pr in vbase.ParameterRefs.Where(p => p.IsNotUsed).ToList())
+                vbase.ParameterRefs.Remove(pr);
+
+            foreach(ComObject c in vbase.ComObjects.Where(c => c.IsNotUsed).ToList())
+                vbase.ComObjects.Remove(c);
+
+            foreach(ComObjectRef cr in vbase.ComObjectRefs.Where(c => c.IsNotUsed).ToList())
+                vbase.ComObjectRefs.Remove(cr);
+
+            foreach(Union u in vbase.Unions.Where(u => u.IsNotUsed).ToList())
+                vbase.Unions.Remove(u);
         }
 
         private static void CheckParameter(IVersionBase vbase, ClearResult res)

@@ -1263,7 +1263,7 @@
                                                 <ComboBox ItemsSource="{Binding Arguments}" SelectedItem="{Binding ComObjectBaseNumber}" DisplayMemberPath="Name" Margin="0 5" />
                                             </HeaderedContentControl>
                 
-                                            <CheckBox Content="ComObjectBaseNumber automatisch berechnen" IsChecked="{Binding IsComObjectNumberAuto}" />
+                                            <CheckBox Content="ComObjectBaseNumber automatisch berechnen" IsChecked="{Binding IsComObjectBaseNumberAuto}" />
                                             
                                             <Grid Margin="5">
                                                 <Grid.ColumnDefinitions>
