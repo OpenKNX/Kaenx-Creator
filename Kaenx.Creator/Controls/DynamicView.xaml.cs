@@ -141,6 +141,12 @@ namespace Kaenx.Creator.Controls
             item.Items.Add(new Models.Dynamic.DynModule() { Parent = item });
         }
 
+        private void ClickAddDynAssign(object sender, RoutedEventArgs e)
+        {
+            Models.Dynamic.IDynItems item = (sender as MenuItem).DataContext as Models.Dynamic.IDynItems;
+            item.Items.Add(new Models.Dynamic.DynAssign() { Parent = item });
+        }
+
         private void LoadingContextDynWhen(object sender, RoutedEventArgs e)
         {
             ContextMenu menu = sender as ContextMenu;
@@ -199,7 +205,7 @@ namespace Kaenx.Creator.Controls
                     (menu.Items[6] as MenuItem).IsEnabled = true;
                     (menu.Items[7] as MenuItem).IsEnabled = true;
                     (menu.Items[8] as MenuItem).IsEnabled = true;
-                    (menu.Items[9] as MenuItem).IsEnabled = false;
+                    (menu.Items[9] as MenuItem).IsEnabled = true;
                     (menu.Items[10] as MenuItem).IsEnabled = false;
                     (menu.Items[12] as MenuItem).IsEnabled = true;
                     break;
@@ -213,7 +219,7 @@ namespace Kaenx.Creator.Controls
                     (menu.Items[6] as MenuItem).IsEnabled = true;
                     (menu.Items[7] as MenuItem).IsEnabled = true;
                     (menu.Items[8] as MenuItem).IsEnabled = true;
-                    (menu.Items[9] as MenuItem).IsEnabled = false;
+                    (menu.Items[9] as MenuItem).IsEnabled = true;
                     (menu.Items[10] as MenuItem).IsEnabled = false;
                     (menu.Items[12] as MenuItem).IsEnabled = true;
                     break;

@@ -358,6 +358,14 @@ namespace Kaenx.Creator
             newVer.Text.Add(new Models.Translation(lang, "Dummy"));
             newVer.Dynamics.Add(new Models.Dynamic.DynamicMain());
 
+            if(app.Mask.Procedure == Models.ProcedureTypes.Product)
+            {
+                newVer.Procedure = "<LoadProcedures>\r\n<LoadProcedure>\r\n<LdCtrlConnect />\r\n<LdCtrlCompareProp ObjIdx=\"0\" PropId=\"78\" InlineData=\"00000000012700000000\" />\r\n<LdCtrlUnload LsmIdx=\"1\" />\r\n<LdCtrlUnload LsmIdx=\"2\" />\r\n<LdCtrlUnload LsmIdx=\"3\" />\r\n<LdCtrlLoad LsmIdx=\"1\" />\r\n<LdCtrlAbsSegment LsmIdx=\"1\" SegType=\"0\" Address=\"16384\" Size=\"513\" Access=\"255\" MemType=\"3\" SegFlags=\"128\" />\r\n<LdCtrlTaskSegment LsmIdx=\"1\" Address=\"16384\" />\r\n<LdCtrlLoadCompleted LsmIdx=\"1\" />\r\n<LdCtrlLoad LsmIdx=\"2\" />\r\n<LdCtrlAbsSegment LsmIdx=\"2\" SegType=\"0\" Address=\"16897\" Size=\"511\" Access=\"255\" MemType=\"3\" SegFlags=\"128\" />\r\n<LdCtrlTaskSegment LsmIdx=\"2\" Address=\"16897\" />\r\n<LdCtrlLoadCompleted LsmIdx=\"2\" />\r\n<LdCtrlLoad LsmIdx=\"3\" />\r\n<LdCtrlAbsSegment LsmIdx=\"3\" SegType=\"0\" Address=\"1792\" Size=\"152\" Access=\"0\" MemType=\"2\" SegFlags=\"0\" />\r\n<LdCtrlAbsSegment LsmIdx=\"3\" SegType=\"1\" Address=\"1944\" Size=\"1\" Access=\"0\" MemType=\"2\" SegFlags=\"0\" />\r\n<LdCtrlAbsSegment LsmIdx=\"3\" SegType=\"0\" Address=\"17408\" Size=\"394\" Access=\"255\" MemType=\"3\" SegFlags=\"128\" />\r\n<LdCtrlTaskSegment LsmIdx=\"3\" Address=\"17408\" />\r\n<LdCtrlLoadCompleted LsmIdx=\"3\" />\r\n<LdCtrlRestart />\r\n<LdCtrlDisconnect />\r\n</LoadProcedure>\r\n</LoadProcedures>";
+            } else if(app.Mask.Procedure == Models.ProcedureTypes.Merged)
+            {
+                newVer.Procedure = "<LoadProcedures>\r\n<LoadProcedure MergeId=\"2\">\r\n<LdCtrlRelSegment  AppliesTo=\"full\" LsmIdx=\"4\" Size=\"1\" Mode=\"0\" Fill=\"0\" />\r\n</LoadProcedure>\r\n<LoadProcedure MergeId=\"4\">\r\n<LdCtrlWriteRelMem ObjIdx=\"4\" Offset=\"0\" Size=\"1\" Verify=\"true\" />\r\n</LoadProcedure>\r\n</LoadProcedures>";
+            }
+
             if(app.Versions.Count > 0){
                 Models.AppVersion ver = app.Versions.OrderByDescending(v => v.Number).ElementAt(0);
                 newVer.Number = ver.Number + 1;
@@ -1098,19 +1106,23 @@ namespace Kaenx.Creator
             {
                 var check5 = app.Versions.GroupBy(v => v.Number).Where(l => l.Count() > 1);
                 foreach (var group in check5)
-                    PublishActions.Add(new Models.PublishAction() { Text = "Applikation '" + app.Name + "' verwendet Version " + group.Key + " (" + Math.Floor(group.Key / 16.0) + "." + (group.Key % 16) + ") " + group.Count() + " mal", State = Models.PublishState.Fail });
+                    PublishActions.Add(new Models.PublishAction() { Text = "Applikation '" + app.NameText + "' verwendet Version " + group.Key + " (" + Math.Floor(group.Key / 16.0) + "." + (group.Key % 16) + ") " + group.Count() + " mal", State = Models.PublishState.Fail });
             }
 
             int highestNS = 0;
             foreach(Models.AppVersion vers in versions) {
                 Models.Application app = apps.Single(a => a.Versions.Contains(vers));
-                PublishActions.Add(new Models.PublishAction() { Text = $"Prüfe Applikation '{app.Name}' Version '{vers.NameText}'" });
+                PublishActions.Add(new Models.PublishAction() { Text = $"Prüfe Applikation '{app.NameText}' Version '{vers.NameText}'" });
                 
                 if (vers.NamespaceVersion > highestNS)
                     highestNS = vers.NamespaceVersion;
 
                 if(vers.IsModulesActive && vers.NamespaceVersion < 20)
-                    PublishActions.Add(new Models.PublishAction() { Text = $"Applikation '{app.Name}': ModuleDefindes werden erst ab Namespace 20 unterstützt.", State = Models.PublishState.Fail });
+                    PublishActions.Add(new Models.PublishAction() { Text = $"Applikation '{app.NameText}': ModuleDefindes werden erst ab Namespace 20 unterstützt.", State = Models.PublishState.Fail });
+
+                if(app.Mask.Procedure != Models.ProcedureTypes.Default && string.IsNullOrEmpty(vers.Procedure))
+                    PublishActions.Add(new Models.PublishAction() { Text = $"Applikation '{app.NameText}': Version muss eine Ladeprozedur enthalten.", State = Models.PublishState.Fail });
+
 
                 foreach(Models.ParameterType ptype in vers.ParameterTypes) {
                     int maxsize = (int)Math.Pow(2, ptype.SizeInBit);
@@ -1379,10 +1391,11 @@ namespace Kaenx.Creator
 
                 //TODO check dynamic
                 // - separator Text required
+
+                //TODO check ParameterBlockRename only in vers 11
             
             }
 
-            
             if(EtsVersions.Single(v => v.Number == highestNS).IsEnabled == false)
                     PublishActions.Add(new Models.PublishAction() { Text = $"Mindestens eine Applikation verwendet einen Namespace ({highestNS}), der auf diesem Rechner nicht erstellt werden kann.", State = Models.PublishState.Fail });
 

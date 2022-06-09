@@ -290,7 +290,7 @@
                     <MenuItem Header="Parameter hinzufügen" Click="ClickAddDynPara" />
                     <MenuItem Header="KO hinzufügen" Click="ClickAddDynCom" />
                     <MenuItem Header="Separator hinzufügen" Click="ClickAddDynSep" />
-                    <MenuItem Header="Assign hinzufügen" />
+                    <MenuItem Header="Assign hinzufügen" Click="ClickAddDynAssign" />
                     <MenuItem Header="Button hinzufügen" />
                     <Separator />
                     <MenuItem Header="Entfernen" Click="ClickRemoveDyn" />
@@ -326,6 +326,12 @@
                     <StackPanel Orientation="Horizontal">
                         <Image Source="{svgc:SvgImage Source=/Assets/Images/Dynamic/Separator.svg, AppName=Kaenx.Creator}" Height="18" Width="18" Margin="4" />
                         <TextBlock Text="Seperator" VerticalAlignment="Center" />
+                    </StackPanel>
+                </HierarchicalDataTemplate>
+                <HierarchicalDataTemplate DataType="{x:Type dyn:DynAssign}">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="{svgc:SvgImage Source=/Assets/Images/Dynamic/Assign.svg, AppName=Kaenx.Creator}" Height="18" Width="18" Margin="4" />
+                        <TextBlock Text="Assign" VerticalAlignment="Center" />
                     </StackPanel>
                 </HierarchicalDataTemplate>
                 <HierarchicalDataTemplate DataType="{x:Type dyn:DynModule}" ItemsSource="{Binding Items}">

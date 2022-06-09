@@ -188,7 +188,7 @@ namespace Kaenx.Creator.Classes
                 mem.Size = mem.GetCount();
         }
 
-        private static void GetModules(Models.Dynamic.IDynItems item, List<Models.Dynamic.DynModule> mods)
+        public static void GetModules(Models.Dynamic.IDynItems item, List<Models.Dynamic.DynModule> mods)
         {
             if(item is Models.Dynamic.DynModule dm)
                 mods.Add(dm);

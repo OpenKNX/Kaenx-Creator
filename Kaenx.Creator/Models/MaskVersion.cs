@@ -9,8 +9,6 @@ namespace Kaenx.Creator.Models
         public string Id { get; set; }
         public MemoryTypes Memory { get; set; }
         public ProcedureTypes Procedure { get; set; }
-
-        public string OwnProcedure {get;set;}
         public List<Procedure> Procedures {get;set;} = new List<Procedure>();
     }
 

@@ -26,7 +26,8 @@ namespace Kaenx.Creator.Classes
             foreach(ParameterType ptype in vers.ParameterTypes)
             {
                 ptype.IsNotUsed = !uids.Contains(ptype.UId);
-                result.ParameterTypes++;
+                if(ptype.IsNotUsed)
+                    result.ParameterTypes++;
             }
 
             CheckParameter(vers, result);

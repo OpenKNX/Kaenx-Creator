@@ -25,7 +25,7 @@ namespace Kaenx.Creator.Models
 
         public string NameText
         {
-            get { return Name + " " + Fill(Number.ToString("X2"), 4); }
+            get { return Name + " " + Number.ToString("X4"); }
         }
 
         private MaskVersion _mask = null;
@@ -52,13 +52,6 @@ namespace Kaenx.Creator.Models
         private void Changed(string name)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-
-        private string Fill(string input, int length)
-        {
-            for (int i = input.Length; i < length; i++)
-                input = "0" + input;
-            return input;
         }
     }
 }

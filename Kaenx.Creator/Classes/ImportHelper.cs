@@ -276,7 +276,7 @@ namespace Kaenx.Creator.Classes
                         UId = _uidCounter++,
                         Address = int.Parse(xcode.Attribute("Address").Value),
                         Size = int.Parse(xcode.Attribute("Size").Value),
-                        Name = GetLastSplit(xcode.Attribute("Id").Value) + " " + (xcode.Attribute("Name")?.Value ?? "Unnamed"),
+                        Name = string.IsNullOrEmpty(xcode.Attribute("Name")?.Value) ? GetLastSplit(xcode.Attribute("Id").Value) : xcode.Attribute("Name").Value,
                         Type = MemoryTypes.Absolute,
                         IsAutoSize = false,
                         IsAutoPara = false
@@ -289,7 +289,7 @@ namespace Kaenx.Creator.Classes
                         UId = _uidCounter++,
                         Size = int.Parse(xcode.Attribute("Size").Value),
                         Offset = int.Parse(xcode.Attribute("Offset")?.Value ?? "0"),
-                        Name = GetLastSplit(xcode.Attribute("Id").Value) + (xcode.Attribute("Name")?.Value ?? ""),
+                        Name = string.IsNullOrEmpty(xcode.Attribute("Name")?.Value) ? GetLastSplit(xcode.Attribute("Id").Value) : xcode.Attribute("Name").Value,
                         Type = MemoryTypes.Relative,
                         IsAutoSize = false,
                         IsAutoPara = false
@@ -347,7 +347,8 @@ namespace Kaenx.Creator.Classes
                         {
                             ptype.Enums.Add(new Models.ParameterTypeEnum()
                             {
-                                Name = xenum.Attribute("Text").Value,
+                                Name = xenum.Attribute("Text")?.Value ?? "",
+                                Icon = xenum.Attribute("Icon")?.Value ?? "",
                                 Text = GetTranslation(xenum.Attribute("Id").Value, "Text", xenum),
                                 Value = int.Parse(xenum.Attribute("Value").Value)
                             });
@@ -364,6 +365,28 @@ namespace Kaenx.Creator.Classes
                     case "TypeIPAddress":
                         ptype.Type = ParameterTypes.IpAddress;
                         //TODO read if ipv4 or ipv6
+                        break;
+
+                    case "TypeFloat":
+                        ptype.Type = xsub.Attribute("Encoding").Value switch
+                        {
+                            "DPT 9" => ParameterTypes.Float_DPT9,
+                            "IEEE-754 Single" => ParameterTypes.Float_IEEE_Single,
+                            "IEEE-754 Double" => ParameterTypes.Float_IEEE_Double,
+                            _ => throw new Exception("Unbekannter TypeFloat Type: " + xsub.Attribute("Type").Value)
+                        };
+                        ptype.SizeInBit = 16;
+                        ptype.Min = double.Parse(xsub.Attribute("minInclusive").Value.Replace('.', ','));
+                        ptype.Max = double.Parse(xsub.Attribute("maxInclusive").Value.Replace('.', ','));
+                        if(xsub.Attribute("UIHint") != null)
+                            ptype.UIHint = xsub.Attribute("UIHint").Value;
+                        if(xsub.Attribute("Increment") != null)
+                            ptype.Increment = double.Parse(xsub.Attribute("Increment").Value.Replace('.', ','));
+                        break;
+
+                    case "TypePicture":
+                        ptype.Type = ParameterTypes.Picture;
+                        ptype.UIHint = xsub.Attribute("RefId").Value;
                         break;
 
                     default:
@@ -403,19 +426,19 @@ namespace Kaenx.Creator.Classes
                         union.Offset = int.Parse(xmem.Attribute("Offset").Value);
                         union.OffsetBit = int.Parse(xmem.Attribute("BitOffset").Value);
                         break;
+
+                    default:
+                        throw new Exception("Not supportet SavePath for Union: " + xmem.Name.LocalName);
                 }
                 vbase.Unions.Add(union);
-
-
-
 
                 foreach(XElement xpara in xunion.Elements(Get("Parameter"))) {
                     ParseParameter(xpara, vbase, union, xmem);
                 }
             }
-            //TODO check if module can also have unions
-            //yes it can
-            currentVers.IsUnionActive = unionCounter > 1;
+            
+            if(!currentVers.IsUnionActive && unionCounter > 1)
+                currentVers.IsUnionActive = true;
         }
 
         public void ParseParameter(XElement xpara, IVersionBase vbase, Union union = null, XElement xmemory = null)
@@ -454,7 +477,13 @@ namespace Kaenx.Creator.Classes
                 {
                     para.SavePath = ParamSave.Memory;
                     string memName = GetLastSplit(xmem.Attribute("CodeSegment").Value);
-                    para.MemoryObject = currentVers.Memories.Single(m => m.Name.StartsWith(memName));
+                    if(memName.StartsWith("RS-"))
+                        para.MemoryObject = currentVers.Memories[0];
+                    else{
+                        int addr = int.Parse(memName.Split('-')[1], System.Globalization.NumberStyles.HexNumber);
+                        para.MemoryObject = currentVers.Memories.Single(m => m.Address == addr);
+                    }
+
                     if (para.IsInUnion)
                     {
                         para.Offset = int.Parse(xpara.Attribute("Offset").Value);
@@ -684,7 +713,7 @@ namespace Kaenx.Creator.Classes
                 if(tadd.Attribute("CodeSegment") != null)
                 {
                     string segName = GetLastSplit(tadd.Attribute("CodeSegment").Value);
-                    currentVers.AddressMemoryObject = currentVers.Memories.SingleOrDefault(m => m.Name.StartsWith(segName + " "));
+                    currentVers.AddressMemoryObject = currentVers.Memories.SingleOrDefault(m => m.Name == segName);
                 }
                 currentVers.AddressTableMaxCount = int.Parse(tadd.Attribute("MaxEntries")?.Value ?? "0");
                 currentVers.AddressTableOffset = int.Parse(tadd.Attribute("Offset")?.Value ?? "0");
@@ -695,7 +724,7 @@ namespace Kaenx.Creator.Classes
                 if(tadd.Attribute("CodeSegment") != null)
                 {
                     string segName = GetLastSplit(tadd.Attribute("CodeSegment").Value);
-                    currentVers.AssociationMemoryObject = currentVers.Memories.SingleOrDefault(m => m.Name.StartsWith(segName + " "));
+                    currentVers.AssociationMemoryObject = currentVers.Memories.SingleOrDefault(m => m.Name == segName);
                 }
                 currentVers.AssociationTableMaxCount = int.Parse(tadd.Attribute("MaxEntries")?.Value ?? "0");
                 currentVers.AssociationTableOffset = int.Parse(tadd.Attribute("Offset")?.Value ?? "0");
@@ -706,7 +735,7 @@ namespace Kaenx.Creator.Classes
                 if(tadd.Attribute("CodeSegment") != null)
                 {
                     string segName = GetLastSplit(tadd.Attribute("CodeSegment").Value);
-                    currentVers.ComObjectMemoryObject = currentVers.Memories.SingleOrDefault(m => m.Name.StartsWith(segName + " "));
+                    currentVers.ComObjectMemoryObject = currentVers.Memories.SingleOrDefault(m => m.Name == segName);
                 }
                 currentVers.ComObjectTableOffset = int.Parse(tadd.Attribute("Offset")?.Value ?? "0");
             }
@@ -963,7 +992,6 @@ namespace Kaenx.Creator.Classes
                         break;
 
                     case "Module":
-                        //TODO import modules
                         DynModule dmo = new DynModule();
                         dmo.Id = int.Parse(GetLastSplit(xele.Attribute("Id").Value, 2));
                         paraId = int.Parse(GetLastSplit(xele.Attribute("RefId").Value, 3));
@@ -976,6 +1004,23 @@ namespace Kaenx.Creator.Classes
                             darg.Value = xarg.Attribute("Value").Value;
                         }
                         parent.Items.Add(dmo);
+                        break;
+
+                    case "Assign":
+                        DynAssign dass = new DynAssign();
+                        int targetid = int.Parse(GetLastSplit(xele.Attribute("TargetParamRefRef").Value, 2));
+                        dass.TargetObject = vbase.ParameterRefs.Single(p => p.Id == targetid);
+                        if(xele.Attribute("SourceParamRefRef") != null)
+                        {
+                            int sourceid = int.Parse(GetLastSplit(xele.Attribute("SourceParamRefRef").Value, 2));
+                            dass.SourceObject = vbase.ParameterRefs.Single(p => p.Id == sourceid);
+                        }
+                        dass.Value = xele.Attribute("Value")?.Value;
+                        parent.Items.Add(dass);
+                        break;
+
+                    case "ParameterBlockRename":
+                        //TODO implement
                         break;
 
                     default:
@@ -1032,6 +1077,7 @@ namespace Kaenx.Creator.Classes
             input = input.Replace(".28", "(");
             input = input.Replace(".29", ")");
             input = input.Replace(".2B", "+");
+            input = input.Replace(".2C", ",");
             input = input.Replace(".2D", "-");
             input = input.Replace(".2F", "/");
             input = input.Replace(".3A", ":");
@@ -1049,6 +1095,7 @@ namespace Kaenx.Creator.Classes
             input = input.Replace(".7B", "{");
             input = input.Replace(".7C", "|");
             input = input.Replace(".7D", "}");
+            input = input.Replace(".C2.B0", "°");
 
             input = input.Replace(".2E", ".");
             return input;

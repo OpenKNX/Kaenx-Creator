@@ -231,9 +231,11 @@ namespace Kaenx.Creator.Classes
                 xunderapp.Add(temp);
                 #endregion
 
-                ExportParameters(ver, xunderapp);
+                StringBuilder headers = new StringBuilder();
+
+                ExportParameters(ver, xunderapp, headers);
                 ExportParameterRefs(ver, xunderapp);
-                ExportComObjects(ver, xunderapp);
+                ExportComObjects(ver, xunderapp, headers);
                 ExportComObjectRefs(ver, xunderapp);
 
                 #region Tables
@@ -253,30 +255,15 @@ namespace Kaenx.Creator.Classes
                 }
                 temp.SetAttributeValue("MaxEntries", ver.AssociationTableMaxCount);
                 xunderapp.Add(temp);
-                //TODO export codesegment and offset of mask memory absolute
-
-
-                switch (app.Mask.Procedure)
+                
+                temp = XElement.Parse(ver.Procedure);
+                temp.Attributes().Where((x) => x.IsNamespaceDeclaration).Remove();
+                temp.Name = XName.Get(temp.Name.LocalName, currentNamespace);
+                foreach(XElement xele in temp.Descendants())
                 {
-                    case ProcedureTypes.Product:
-                        temp = XElement.Parse(ver.Procedure);
-                        
-                        temp.Attributes().Where((x) => x.IsNamespaceDeclaration).Remove();
-                        temp.Name = XName.Get(temp.Name.LocalName, currentNamespace);
-                        foreach(XElement xele in temp.Descendants())
-                        {
-                            xele.Name = XName.Get(xele.Name.LocalName, currentNamespace);
-                        }
-
-                        xunderapp.Add(temp);
-                        break;
-
-                    case ProcedureTypes.Merged:
-                        temp = XDocument.Parse($"<LoadProcedures><LoadProcedure MergeId=\"2\"><LdCtrlRelSegment  AppliesTo=\"full\" LsmIdx=\"4\" Size=\"1\" Mode=\"0\" Fill=\"0\" /></LoadProcedure><LoadProcedure MergeId=\"4\"><LdCtrlWriteRelMem ObjIdx=\"4\" Offset=\"0\" Size=\"1\" Verify=\"true\" /></LoadProcedure></LoadProcedures>").Root;
-                        xunderapp.Add(temp);
-                        break;
+                    xele.Name = XName.Get(xele.Name.LocalName, currentNamespace);
                 }
-
+                xunderapp.Add(temp);
 
 
                 #endregion
@@ -289,7 +276,6 @@ namespace Kaenx.Creator.Classes
 
                     foreach (Models.Module mod in ver.Modules)
                     {
-
                         if (mod.Id == -1)
                             mod.Id = AutoHelper.GetNextFreeId(ver.Modules);
 
@@ -313,9 +299,9 @@ namespace Kaenx.Creator.Classes
                         xmod.SetAttributeValue("Id", $"{appVersion}_MD-{mod.Id}");
                         xmod.SetAttributeValue("Name", mod.Name);
 
-                        ExportParameters(mod, xunderstatic);
+                        ExportParameters(mod, xunderstatic, null);
                         ExportParameterRefs(mod, xunderstatic);
-                        ExportComObjects(mod, xunderstatic);
+                        ExportComObjects(mod, xunderstatic, null);
                         ExportComObjectRefs(mod, xunderstatic);
 
                         
@@ -327,6 +313,49 @@ namespace Kaenx.Creator.Classes
                         appVersionMod = appVersion;
                     }
                 }
+
+                headers.AppendLine("");
+                headers.AppendLine("//---------------------Modules----------------------------");
+
+                List<DynModule> mods = new List<DynModule>();
+                AutoHelper.GetModules(ver.Dynamics[0], mods);
+
+                int counter = 1;
+                foreach(DynModule dmod in mods)
+                {
+                    DynModuleArg dargp = dmod.Arguments.Single(a => a.ArgumentId == dmod.ModuleObject.ParameterBaseOffsetUId);
+                    int poffset = int.Parse(dargp.Value);
+                    foreach(Parameter para in dmod.ModuleObject.Parameters)
+                    {
+                        string line = $"#define PARAM_M{counter}_{para.Name.Replace(' ', '_')}";
+                        if(para.IsInUnion && para.UnionObject != null)
+                        {
+                            line += $"\t0x{(poffset + para.UnionObject.Offset + para.Offset).ToString("X4")}\t//!< UnionOffset: {poffset + para.UnionObject.Offset}, ParaOffset: {para.Offset},";
+                        } else {
+                            line += $"\t0x{(poffset + para.Offset).ToString("X4")}\t//!< Offset: {poffset + para.Offset},";
+                        }
+                        if (para.OffsetBit > 0) line += ", BitOffset: " + para.OffsetBit;
+                        line += $", Size: {para.ParameterTypeObject.SizeInBit} Bit";
+                        if (para.ParameterTypeObject.SizeInBit % 8 == 0) line += " (" + (para.ParameterTypeObject.SizeInBit / 8) + " Byte)";
+                        line += $", Module: {dmod.ModuleObject.Name}, Text: {para.Text.Single(p => p.Language.CultureCode == currentLang).Text}";
+                        headers.AppendLine(line);
+                    }
+
+                    
+                    DynModuleArg dargc = dmod.Arguments.Single(a => a.ArgumentId == dmod.ModuleObject.ComObjectBaseNumberUId);
+                    int coffset = int.Parse(dargc.Value);
+                    foreach(ComObject com in dmod.ModuleObject.ComObjects)
+                    {
+                        string line = $"#define COMOBJ_M{counter}_{com.Name.Replace(' ', '_')} \t{coffset + com.Number}\t//!< Number: {coffset + com.Number}, Module: {dmod.ModuleObject.Name}, Text: {com.Text.Single(c => c.Language.CultureCode == currentLang).Text}, Function: {com.FunctionText.Single(c => c.Language.CultureCode == currentLang).Text}";
+                        headers.AppendLine(line);
+                        
+                    }
+                    headers.AppendLine();
+                    counter++;
+                }
+
+                System.IO.File.WriteAllText(GetRelPath(appVersion + ".h"), headers.ToString());
+                headers = null;
 
                 #endregion
 
@@ -600,13 +629,11 @@ namespace Kaenx.Creator.Classes
             xparent.Add(codes);
         }
 
-        private void ExportParameters(IVersionBase vbase, XElement xparent)
+        private void ExportParameters(IVersionBase vbase, XElement xparent, StringBuilder headers)
         {
             Debug.WriteLine($"Exportiere Parameter: {vbase.Parameters.Count}x");
             if(vbase.Parameters.Count == 0) return;
             XElement xparas = new XElement(Get("Parameters"));
-
-            StringBuilder headers = new StringBuilder();
 
             foreach (Parameter para in vbase.Parameters.Where(p => !p.IsInUnion))
             {
@@ -647,9 +674,7 @@ namespace Kaenx.Creator.Classes
 
                 xparas.Add(xunion);
             }
-            System.IO.File.WriteAllText(GetRelPath(appVersion + ".h"), headers.ToString());
-            headers = null;
-
+            
             xparent.Add(xparas);
         }
 
@@ -683,7 +708,7 @@ namespace Kaenx.Creator.Classes
             xparent.Add(xrefs);
         }
 
-        private void ExportComObjects(IVersionBase vbase, XElement xparent)
+        private void ExportComObjects(IVersionBase vbase, XElement xparent, StringBuilder headers)
         {
             Debug.WriteLine($"Exportiere ComObjects: {vbase.ComObjects.Count}x");
             XElement xcoms;
@@ -709,6 +734,12 @@ namespace Kaenx.Creator.Classes
             foreach (ComObject com in vbase.ComObjects)
             {
                 //Debug.WriteLine($"    - ComObject {com.UId} {com.Name}");
+                if(headers != null)
+                {
+                    string line = $"#define COMOBJ_{com.Name.Replace(' ', '_')} \t{com.Number}\t//!< Number: {com.Number}, Text: {com.Text.Single(c => c.Language.CultureCode == currentLang).Text}, Function: {com.FunctionText.Single(c => c.Language.CultureCode == currentLang).Text}";
+                    headers.AppendLine(line);
+                }
+
                 XElement xcom = new XElement(Get("ComObject"));
                 if (com.Id == -1)
                 {
@@ -739,7 +770,6 @@ namespace Kaenx.Creator.Classes
                 xcom.SetAttributeValue("TransmitFlag", com.FlagTrans.ToString());
                 xcom.SetAttributeValue("UpdateFlag", com.FlagUpdate.ToString());
                 xcom.SetAttributeValue("ReadOnInitFlag", com.FlagOnInit.ToString());
-
 
                 if (com.HasDpt && com.Type.Number != "0")
                 {
@@ -829,10 +859,22 @@ namespace Kaenx.Creator.Classes
 
         private void ParseParameter(Parameter para, XElement parent, IVersionBase ver, StringBuilder headers)
         {
-            string line = "#define PARAM_" + para.Name + " " + para.Offset + " //Size: " + para.ParameterTypeObject.SizeInBit;
-            if (para.ParameterTypeObject.SizeInBit % 8 == 0) line += " (" + (para.ParameterTypeObject.SizeInBit / 8) + " Byte)";
-            if (para.OffsetBit > 0) line += " | Bit Offset: " + para.OffsetBit;
-            headers.AppendLine(line);
+            if(headers != null && para.SavePath != ParamSave.Nowhere)
+            {
+                int offset = para.Offset;
+                string line = $"#define PARAM_{para.Name.Replace(' ', '_')}";
+                if(para.IsInUnion && para.UnionObject != null)
+                {
+                    line += $"\t0x{(para.UnionObject.Offset + para.Offset).ToString("X4")}\t//!< UnionOffset: {para.UnionObject.Offset}, ParaOffset: {para.Offset},";
+                } else {
+                    line += $"\t0x{para.Offset.ToString("X4")}\t//!< Offset: {para.Offset},";
+                }
+                if (para.OffsetBit > 0) line += ", BitOffset: " + para.OffsetBit;
+                line += $", Size: {para.ParameterTypeObject.SizeInBit} Bit";
+                if (para.ParameterTypeObject.SizeInBit % 8 == 0) line += " (" + (para.ParameterTypeObject.SizeInBit / 8) + " Byte)";
+                line += $", {para.Text.Single(p => p.Language.CultureCode == currentLang).Text}";
+                headers.AppendLine(line);
+            }
 
             XElement xpara = new XElement(Get("Parameter"));
 
