@@ -330,9 +330,9 @@ namespace Kaenx.Creator.Classes
                         string line = $"#define PARAM_M{counter}_{para.Name.Replace(' ', '_')}";
                         if(para.IsInUnion && para.UnionObject != null)
                         {
-                            line += $"\t0x{(poffset + para.UnionObject.Offset + para.Offset).ToString("X4")}\t//!< UnionOffset: {poffset + para.UnionObject.Offset}, ParaOffset: {para.Offset},";
+                            line += $"\t0x{(poffset + para.UnionObject.Offset + para.Offset).ToString("X4")}\t//!< UnionOffset: {poffset + para.UnionObject.Offset}, ParaOffset: {para.Offset}";
                         } else {
-                            line += $"\t0x{(poffset + para.Offset).ToString("X4")}\t//!< Offset: {poffset + para.Offset},";
+                            line += $"\t0x{(poffset + para.Offset).ToString("X4")}\t//!< Offset: {poffset + para.Offset}";
                         }
                         if (para.OffsetBit > 0) line += ", BitOffset: " + para.OffsetBit;
                         line += $", Size: {para.ParameterTypeObject.SizeInBit} Bit";
@@ -859,20 +859,20 @@ namespace Kaenx.Creator.Classes
 
         private void ParseParameter(Parameter para, XElement parent, IVersionBase ver, StringBuilder headers)
         {
-            if(headers != null && para.SavePath != ParamSave.Nowhere)
+            if((headers != null && para.SavePath != ParamSave.Nowhere) || (headers != null && para.IsInUnion && para.UnionObject != null && para.UnionObject.SavePath != ParamSave.Nowhere))
             {
                 int offset = para.Offset;
                 string line = $"#define PARAM_{para.Name.Replace(' ', '_')}";
                 if(para.IsInUnion && para.UnionObject != null)
                 {
-                    line += $"\t0x{(para.UnionObject.Offset + para.Offset).ToString("X4")}\t//!< UnionOffset: {para.UnionObject.Offset}, ParaOffset: {para.Offset},";
+                    line += $"\t0x{(para.UnionObject.Offset + para.Offset).ToString("X4")}\t//!< UnionOffset: {para.UnionObject.Offset}, ParaOffset: {para.Offset}";
                 } else {
-                    line += $"\t0x{para.Offset.ToString("X4")}\t//!< Offset: {para.Offset},";
+                    line += $"\t0x{para.Offset.ToString("X4")}\t//!< Offset: {para.Offset}";
                 }
                 if (para.OffsetBit > 0) line += ", BitOffset: " + para.OffsetBit;
                 line += $", Size: {para.ParameterTypeObject.SizeInBit} Bit";
                 if (para.ParameterTypeObject.SizeInBit % 8 == 0) line += " (" + (para.ParameterTypeObject.SizeInBit / 8) + " Byte)";
-                line += $", {para.Text.Single(p => p.Language.CultureCode == currentLang).Text}";
+                line += $", Text: {para.Text.Single(p => p.Language.CultureCode == currentLang).Text}";
                 headers.AppendLine(line);
             }
 
