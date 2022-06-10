@@ -22,6 +22,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -31,8 +32,10 @@
         </Grid.ColumnDefinitions>
         <Button Content="Hinzufügen" Click="ClickAdd" Margin="0 0 1 2" />
         <Button Grid.Column="1" Content="Löschen" Click="ClickRemove" Margin="1 0 0 2" />
+        <TextBlock Grid.Row="1" Text="Suche:" HorizontalAlignment="Right" />
+        <TextBox x:Name="query" Grid.Column="1" Grid.Row="1" TextChanged="QueryChanged" Margin="1 0 0 2" />
 
-        <ListView x:Name="ParamList" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding Parameters}">
+        <ListView x:Name="ParamList" Grid.Row="2" Grid.ColumnSpan="2" ItemsSource="{Binding QueryList, ElementName=ViewControl}">
             <ListView.ItemTemplate>
 				<DataTemplate>
 					<TextBlock Text="{Binding Name}" Foreground="{Binding IsNotUsed, Converter={StaticResource BoolToBrush}}" />
@@ -40,7 +43,7 @@
 			</ListView.ItemTemplate>
         </ListView>
 
-        <Grid Grid.Column="2" Grid.RowSpan="2">
+        <Grid Grid.Column="2" Grid.RowSpan="3">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto" />
                 <RowDefinition />
@@ -122,12 +125,12 @@
                             <ColumnDefinition Width="auto" />
                         </Grid.ColumnDefinitions>
                         <HeaderedContentControl Header="Type">
-                            <ComboBox x:Name="InType" DisplayMemberPath="Name" SelectedItem="{Binding ParameterTypeObject}" />
+                            <ComboBox x:Name="InType" ItemsSource="{Binding Version.ParameterTypes, ElementName=ViewControl}" DisplayMemberPath="Name" SelectedItem="{Binding ParameterTypeObject}" />
                         </HeaderedContentControl>
 
                         <TextBlock Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0 0 10 14">
-                        <Run Text="{Binding ParameterTypeObject.SizeInBit}" />
-                        <Run Text="Bit" />
+                            <Run Text="{Binding ParameterTypeObject.SizeInBit}" />
+                            <Run Text="Bit" />
                         </TextBlock>
                     </Grid>
 
@@ -139,7 +142,7 @@
                             </Grid.ColumnDefinitions>
 
                             <CheckBox IsChecked="{Binding IsInUnion}" VerticalAlignment="Center" />
-                            <ComboBox x:Name="InUnion" Grid.Column="1" IsEnabled="{Binding IsInUnion}" SelectedItem="{Binding UnionObject}" DisplayMemberPath="Name" />
+                            <ComboBox ItemsSource="{Binding Module.Unions, ElementName=ViewControl}" Grid.Column="1" IsEnabled="{Binding IsInUnion}" SelectedItem="{Binding UnionObject}" DisplayMemberPath="Name" />
                         </Grid>
                     </HeaderedContentControl>
 
@@ -162,7 +165,7 @@
                     <Grid Visibility="{Binding IsInUnion, Converter={StaticResource BoolToVis}, ConverterParameter=true, FallbackValue=Collapsed}">
                         <StackPanel Visibility="{Binding SavePath, Converter={StaticResource EnumToVis}, ConverterParameter=Memory}">
                             <HeaderedContentControl Header="Speicher auswählen">
-                                <ComboBox x:Name="InMemory" SelectedItem="{Binding MemoryObject, Mode=TwoWay}" DisplayMemberPath="Name" />
+                                <ComboBox ItemsSource="{Binding Version.Memories, ElementName=ViewControl}" SelectedItem="{Binding MemoryObject, Mode=TwoWay}" DisplayMemberPath="Name" />
                             </HeaderedContentControl>
 
                             <StackPanel Visibility="{Binding MemoryObject.IsAutoPara, Converter={StaticResource BoolToVis}, ConverterParameter=true, FallbackValue=Collapsed}">

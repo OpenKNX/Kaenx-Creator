@@ -402,7 +402,8 @@ namespace Kaenx.Creator
         private void ClickRemoveParamType(object sender, RoutedEventArgs e)
         {
             Models.AppVersion version = (sender as Button).DataContext as Models.AppVersion;
-            version.ParameterTypes.Remove(ListParamTypes.SelectedItem as Models.ParameterType);
+            foreach(Models.ParameterType ptype in ListParamTypes.SelectedItems)
+                version.ParameterTypes.Remove(ptype);
         }
 
         private void ClickRemoveMemory(object sender, RoutedEventArgs e)
@@ -1127,6 +1128,9 @@ namespace Kaenx.Creator
                 foreach(Models.ParameterType ptype in vers.ParameterTypes) {
                     int maxsize = (int)Math.Pow(2, ptype.SizeInBit);
         
+                    if(ptype.UIHint == "CheckBox" && (ptype.Min != 0 || ptype.Max != 1 || ptype.SizeInBit != 1))
+                        PublishActions.Add(new Models.PublishAction() { Text = $"    ParameterType Text {ptype.Name} ({ptype.UId}): Wenn UIHint Checkbox ist, ist Min=0 und Max=1 erforderlich, sowie Size=1", State = Models.PublishState.Fail });
+                            
                     switch(ptype.Type) {
                         case Models.ParameterTypes.Text:
                             if(ptype.SizeInBit % 8 != 0)
