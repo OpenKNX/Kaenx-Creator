@@ -251,7 +251,6 @@ namespace Kaenx.Creator.Classes {
                 }
                 
 
-                //TODO auslagern in Funktion
                 if(para.TranslationText) {
                     Translation trans = para.Text.Single(t => t.Language.CultureCode == defaultLang);
                     if(string.IsNullOrEmpty(trans.Text))
@@ -395,8 +394,15 @@ namespace Kaenx.Creator.Classes {
             //TODO check ParameterBlockRename only in vers 11
 
 
-            //CheckDynamicItem(vers.Dynamics[0], actions);
+            CheckDynamicItem(vbase.Dynamics[0], actions);
         }
+
+        
+        private static void CheckDynamicItem(Models.Dynamic.IDynItems item, ObservableCollection<Models.PublishAction> actions)
+        {
+
+        }
+
 
     }
 }

@@ -1082,11 +1082,6 @@ namespace Kaenx.Creator
             System.Windows.MessageBox.Show("Erfolgreich erstellt");
         }
 
-        private void CheckDynamicItem(Models.Dynamic.IDynItems item, ObservableCollection<Models.PublishAction> actions)
-        {
-
-        }
-
         private void CurrentCellChanged(object sender, EventArgs e)
         {
             Models.Memory mem = (sender as DataGrid).DataContext as Models.Memory;

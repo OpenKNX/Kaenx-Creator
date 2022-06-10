@@ -109,14 +109,14 @@ namespace Kaenx.Creator.Classes
             XElement xele = XDocument.Load(entry.Open()).Root;
             _namespace = xele.Attribute("xmlns").Value;
             xele = xele.Element(Get("ManufacturerData")).Element(Get("Manufacturer")).Element(Get("Hardware"));
-            ImportLanguages(xele.Parent.Element(Get("Languages")));
+            ImportLanguages(xele.Parent.Element(Get("Languages")), _general.Languages);
             ImportHardware(xele);
 
             entry = Archive.GetEntry($"M-{manuHex}/Catalog.xml");
             xele = XDocument.Load(entry.Open()).Root;
             _namespace = xele.Attribute("xmlns").Value;
             xele = xele.Element(Get("ManufacturerData")).Element(Get("Manufacturer")).Element(Get("Catalog"));
-            ImportLanguages(xele.Parent.Element(Get("Languages")));
+            ImportLanguages(xele.Parent.Element(Get("Languages")), _general.Languages);
             ImportCatalog(xele);
         }
 
@@ -178,7 +178,7 @@ namespace Kaenx.Creator.Classes
 
             
 #endregion
-            ImportLanguages(xapp.Parent.Parent.Element(Get("Languages")));
+            ImportLanguages(xapp.Parent.Parent.Element(Get("Languages")), currentVers.Languages);
             currentVers.Text = GetTranslation(xapp.Attribute("Id").Value, "Name", xapp);
             XElement xstatic = xapp.Element(Get("Static"));
             ImportSegments(xstatic.Element(Get("Code")));
@@ -205,7 +205,7 @@ namespace Kaenx.Creator.Classes
             }
         }
 
-        public void ImportLanguages(XElement xlangs) {
+        public void ImportLanguages(XElement xlangs, ObservableCollection<Language> langs) {
             _translations.Clear();
             foreach(XElement xlang in xlangs.Elements()) {
                 string cultureCode = xlang.Attribute("Identifier").Value;
@@ -213,12 +213,8 @@ namespace Kaenx.Creator.Classes
                 XElement firstUnit = xlang.Elements().ElementAt(0);
                 string firstId = firstUnit.Attribute("RefId").Value;
 
-                if(firstId.StartsWith($"M-{_general.ManufacturerId:X4}_A-"))
-                {
-                } else {
-                    if(!_general.Languages.Any(l => l.CultureCode == cultureCode))
-                        _general.Languages.Add(new Language(_langTexts[cultureCode], cultureCode));
-                }
+                if(!langs.Any(l => l.CultureCode == cultureCode))
+                    langs.Add(new Language(_langTexts[cultureCode], cultureCode));
 
                 foreach(XElement xtele in xlang.Descendants(Get("TranslationElement"))) {
                     foreach(XElement xattr in xtele.Elements()) {
