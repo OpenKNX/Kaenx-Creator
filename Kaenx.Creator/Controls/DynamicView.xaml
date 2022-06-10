@@ -49,6 +49,9 @@
                     </TextBlock>
                     <Button Content="Zurücksetzen" HorizontalAlignment="Right" Click="ResetId" />
                 </Grid>      
+                <HeaderedContentControl Header="Name">
+                    <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
+                </HeaderedContentControl>
                 <HeaderedContentControl Header="Module">
                     <ComboBox ItemsSource="{Binding ModulesList, ElementName=ViewControl}" SelectedItem="{Binding ModuleObject}" DisplayMemberPath="Name" />
                 </HeaderedContentControl>
@@ -139,6 +142,13 @@
         </DataTemplate>
         <DataTemplate x:Key="TempDynSeparator">
             <StackPanel>
+                <Grid Visibility="{Binding UseTextParameter, Converter={StaticResource BoolToVis}, ConverterParameter=true}" Margin="5 0">
+                    <TextBlock VerticalAlignment="Center">
+                        <Run Text="ID:" />
+                        <Run Text="{Binding Id}"/>
+                    </TextBlock>
+                    <Button Content="Zurücksetzen" HorizontalAlignment="Right" Click="ResetId" />
+                </Grid>
                 <HeaderedContentControl Header="Text Parameter">
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -147,16 +157,9 @@
                         </Grid.ColumnDefinitions>
 
                         <CheckBox IsChecked="{Binding UseTextParameter}" VerticalAlignment="Center" />
-                        <ComboBox Grid.Column="1" IsEnabled="{Binding UseTextParameter}" ItemsSource="{Binding ElementName=VersionList, Path=SelectedItem.ParameterRefs}" SelectedItem="{Binding ParameterRefObject, Mode=TwoWay}" DisplayMemberPath="Name" />
+                        <ComboBox Grid.Column="1" IsEnabled="{Binding UseTextParameter}" ItemsSource="{Binding Module.ParameterRefs, ElementName=ViewControl}" SelectedItem="{Binding ParameterRefObject, Mode=TwoWay}" DisplayMemberPath="Name" />
                     </Grid>
                 </HeaderedContentControl>
-                <Grid Visibility="{Binding UseTextParameter, Converter={StaticResource BoolToVis}, ConverterParameter=true}" Margin="5 0">
-                    <TextBlock VerticalAlignment="Center">
-                        <Run Text="ID:" />
-                        <Run Text="{Binding Id}"/>
-                    </TextBlock>
-                    <Button Content="Zurücksetzen" HorizontalAlignment="Right" Click="ResetId" />
-                </Grid>
                 <HeaderedContentControl Header="Text">
                     <StackPanel>
                         <CheckBox IsChecked="{Binding TranslationText}" Content="Übersetzung nicht exportieren" />
@@ -308,41 +311,36 @@
                     </StackPanel>
                 </HierarchicalDataTemplate>
                 <HierarchicalDataTemplate DataType="{x:Type dyn:DynChannelIndependent}" ItemsSource="{Binding Items}">
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" ContextMenu="{StaticResource ContextMenu}">
                         <Image Source="{svgc:SvgImage Source=/Assets/Images/Dynamic/Block.svg, AppName=Kaenx.Creator}" Height="18" Width="18" Margin="4" />
-                        <TextBlock Text="Channel Independent" VerticalAlignment="Center" ContextMenu="{StaticResource ContextMenu}" />
+                        <TextBlock Text="Channel Independent" VerticalAlignment="Center" />
                     </StackPanel>
                 </HierarchicalDataTemplate>
                 <HierarchicalDataTemplate DataType="{x:Type dyn:DynParaBlock}" ItemsSource="{Binding Items}">
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" ContextMenu="{StaticResource ContextMenu}">
                         <Image Source="{svgc:SvgImage Source=/Assets/Images/Dynamic/Block.svg, AppName=Kaenx.Creator}" Height="18" Width="18" Margin="4" />
-                        <TextBlock VerticalAlignment="Center" ContextMenu="{StaticResource ContextMenu}">
+                        <TextBlock VerticalAlignment="Center">
                             <Run Text="Block" />
                             <Run Text="{Binding Name}" />
                         </TextBlock>
                     </StackPanel>
                 </HierarchicalDataTemplate>
                 <HierarchicalDataTemplate DataType="{x:Type dyn:DynSeparator}">
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" ContextMenu="{StaticResource ContextMenu}">
                         <Image Source="{svgc:SvgImage Source=/Assets/Images/Dynamic/Separator.svg, AppName=Kaenx.Creator}" Height="18" Width="18" Margin="4" />
                         <TextBlock Text="Seperator" VerticalAlignment="Center" />
                     </StackPanel>
                 </HierarchicalDataTemplate>
                 <HierarchicalDataTemplate DataType="{x:Type dyn:DynAssign}">
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" ContextMenu="{StaticResource ContextMenu}">
                         <Image Source="{svgc:SvgImage Source=/Assets/Images/Dynamic/Assign.svg, AppName=Kaenx.Creator}" Height="18" Width="18" Margin="4" />
                         <TextBlock Text="Assign" VerticalAlignment="Center" />
                     </StackPanel>
                 </HierarchicalDataTemplate>
                 <HierarchicalDataTemplate DataType="{x:Type dyn:DynModule}" ItemsSource="{Binding Items}">
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" ContextMenu="{StaticResource ContextMenu}">
                         <Image Source="{svgc:SvgImage Source=/Assets/Images/Dynamic/Block.svg, AppName=Kaenx.Creator}" Height="18" Width="18" Margin="4" />
                         <TextBlock VerticalAlignment="Center">
-                            <TextBlock.ContextMenu>
-                                <ContextMenu>
-                                    <MenuItem Header="Entfernen" Click="ClickRemoveDyn" />
-                                </ContextMenu>
-                            </TextBlock.ContextMenu>
                             <Run Text="Module" />
                             <Run Text="{Binding Name}" />
                         </TextBlock>

@@ -400,7 +400,98 @@ namespace Kaenx.Creator.Classes {
         
         private static void CheckDynamicItem(Models.Dynamic.IDynItems item, ObservableCollection<Models.PublishAction> actions)
         {
+            switch(item)
+            {
+                case DynChannel dc:
+                {
+                    if(string.IsNullOrEmpty(dc.Number))
+                        actions.Add(new PublishAction() { Text = $"    DynChannel {dc.Name} hat keine Nummer", State = PublishState.Fail});
 
+                    if(dc.UseTextParameter && dc.ParameterRefObject == null)
+                        actions.Add(new PublishAction() { Text = $"    DynChannel {dc.Name} wurde kein Text Parameter zugeordnet", State = PublishState.Fail});
+                    break;
+                }
+
+                case DynParaBlock dpb:
+                {
+                    if(dpb.UseParameterRef && dpb.ParameterRefObject == null)
+                        actions.Add(new PublishAction() { Text = $"    DynParaBlock {dpb.Name} wurde kein ParameterRef zugeordnet", State = PublishState.Fail});
+                        
+                    if(dpb.UseTextParameter && dpb.TextRefObject == null)
+                        actions.Add(new PublishAction() { Text = $"    DynParaBlock {dpb.Name} wurde kein TextParameterRef zugeordnet", State = PublishState.Fail});
+                    break;
+                }
+
+                case DynModule dm:
+                {
+                    if(dm.ModuleObject == null)
+                        actions.Add(new PublishAction() { Text = $"    DynModule {dm.Name} wurde kein Module zugeordnet", State = PublishState.Fail});
+                        
+                    if(dm.Arguments.Any(a => string.IsNullOrEmpty(a.Value)))
+                        actions.Add(new PublishAction() { Text = $"    DynModule {dm.Name} hat Argumente, die leer sind", State = PublishState.Fail});
+                    break;
+                }
+
+                case DynChoose dco:
+                {
+                    if(dco.ParameterRefObject == null)
+                        actions.Add(new PublishAction() { Text = $"    DynChoose {dco.Name} wurde kein ParameterRef zugeordnet", State = PublishState.Fail});
+                    break;
+                }
+
+                case DynWhen dwh:
+                {
+                    if(string.IsNullOrEmpty(dwh.Condition) && !dwh.IsDefault)
+                        actions.Add(new PublishAction() { Text = $"    DynWhen {dwh.Name} wurde keine Bedingung angegeben", State = PublishState.Fail});
+                    
+                    if(!string.IsNullOrEmpty(dwh.Condition) && dwh.IsDefault)
+                        actions.Add(new PublishAction() { Text = $"    DynWhen {dwh.Name} ist Default, Bedingung wird ignoriert", State = PublishState.Warning});
+                    break;
+                }
+
+                case DynParameter dpa:
+                {
+                    if(dpa.ParameterRefObject == null)
+                        actions.Add(new PublishAction() { Text = $"    DynParameter {dpa.Name} wurde kein ParameterRef zugeordnet", State = PublishState.Fail});
+                    break;
+                }
+
+                case DynComObject dco:
+                {
+                    if(dco.ComObjectRefObject == null)
+                        actions.Add(new PublishAction() { Text = $"    DynComObject {dco.Name} wurde kein ComObjectRef zugeordnet", State = PublishState.Fail});
+                    break;
+                }
+
+                case DynSeparator dse:
+                {
+                    //TODO add properties to DynSeperator UseTextParameter, ParameterRefObject
+                    //if(dse.para == null)
+                    //    actions.Add(new PublishAction() { Text = $"    DynComObject {dco.Name} wurde kein ComObjectRef zugeordnet", State = PublishState.Warning});
+                    break;
+                }
+
+                case DynAssign das:
+                {
+                    if(das.TargetObject == null)
+                        actions.Add(new PublishAction() { Text = $"    DynAssign {das.Name} wurde kein Ziel-Parameter zugeordnet", State = PublishState.Fail});
+                        
+                    if(string.IsNullOrEmpty(das.Value))
+                        actions.Add(new PublishAction() { Text = $"    DynAssign {das.Name} wurde kein Wert zugeordnet", State = PublishState.Fail});
+                    
+                    if(das.SourceObject == null)
+                        actions.Add(new PublishAction() { Text = $"    DynAssign {das.Name} wurde kein Quell-Parameter zugeordnet", State = PublishState.Fail});
+                    break;
+                }
+
+                default:
+                    System.Diagnostics.Debug.WriteLine("Not checked DynElement: " + item.ToString());
+                    break;
+            }
+
+            if(item.Items == null) return;
+            foreach(IDynItems xitem in item.Items)
+                CheckDynamicItem(xitem, actions);
         }
 
 

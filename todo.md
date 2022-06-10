@@ -1,12 +1,12 @@
 Liste was noch zu tun ist:  
 - [x] DLLs in aktuellen ETS verzeichnissen suchen oder im Root verzeichnis
 - [x] Nur die ETS Versionen anzeigen, die auch installiert/unterstützt werden
-- [ ] Ladeprozeduren im-/exportieren
-- [ ] Parameter Union-Einstellungen nur anzeigen, wenn AppVerson UseUnion=true
-- [ ] Nicht verwendete Parameter/KOs anzeigen lassen und option zum Löschen
+- [x] Ladeprozeduren im-/exportieren
+- [x] Parameter Union-Einstellungen nur anzeigen, wenn AppVerson UseUnion=true
+- [x] Nicht verwendete Parameter/KOs anzeigen lassen und option zum Löschen
 - [x] Parameter BaseOffset anzeigen, wenn Module
-- [ ] KO BaseNumber anzeigen, wenn Module
+- [x] KO BaseNumber anzeigen, wenn Module
 - [x] Beim Laden eines Projekts auch ModuleDefs initialisieren (checks einfügen)
-- [ ] automatische anordnung der Parameter in ModuleDefs
+- [x] automatische anordnung der Parameter in ModuleDefs
 - [ ] Check für Module: Argumente existieren
 - [ ] Reset or change manual: Offset für Parameter/Unions
