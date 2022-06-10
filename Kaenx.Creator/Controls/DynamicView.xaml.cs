@@ -12,6 +12,9 @@ using System.Windows.Input;
 
 namespace Kaenx.Creator.Controls
 {
+
+    //TODO add button "alle ausklappen"
+    
     public partial class DynamicView : UserControl, INotifyPropertyChanged
     {
         public static readonly DependencyProperty VersionProperty = DependencyProperty.Register("Version", typeof(AppVersion), typeof(DynamicView), new PropertyMetadata(OnVersionChangedCallback));
