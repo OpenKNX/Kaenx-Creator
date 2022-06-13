@@ -1,8 +1,10 @@
 using Kaenx.Creator.Classes;
 using Kaenx.Creator.Models;
+using Kaenx.Creator.Models.Dynamic;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -35,12 +37,42 @@ namespace Kaenx.Creator.Controls
 
         private static void OnModuleChangedCallback(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
-            (sender as ComObjectRefView)?.OnModuleChanged();
+            (sender as ComObjectRefView)?.OnModuleChanged(e);
         }
 
-        protected virtual void OnModuleChanged()
+        protected virtual void OnModuleChanged(DependencyPropertyChangedEventArgs e)
         {
             Changed("ComObjectsList");
+
+            if(e.OldValue != null)
+                (e.OldValue as IVersionBase).ComObjectRefs.CollectionChanged -= RefsChanged;
+
+            if(e.NewValue != null)
+                (e.NewValue as IVersionBase).ComObjectRefs.CollectionChanged += RefsChanged;
+        }
+
+        private void RefsChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if(e.OldItems != null)
+            {
+                foreach(ComObjectRef cref in e.OldItems)
+                    DeleteDynamicRef(Module.Dynamics[0], cref);
+            }
+        }
+
+        private void DeleteDynamicRef(IDynItems item, ComObjectRef cref)
+        {
+            switch(item)
+            {
+                case DynComObject dc:
+                    if(dc.ComObjectRefObject == cref)
+                        dc.ComObjectRefObject = null;
+                    break;
+            }
+
+            if(item.Items != null)
+                foreach(IDynItems ditem in item.Items)
+                    DeleteDynamicRef(ditem, cref);
         }
         
         private void ClickAdd(object sender, RoutedEventArgs e)

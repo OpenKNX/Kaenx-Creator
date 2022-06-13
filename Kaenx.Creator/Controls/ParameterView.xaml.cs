@@ -1,5 +1,6 @@
 using Kaenx.Creator.Classes;
 using Kaenx.Creator.Models;
+using Kaenx.Creator.Models.Dynamic;
 using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -107,7 +108,14 @@ namespace Kaenx.Creator.Controls
 
         private void ClickRemove(object sender, RoutedEventArgs e)
         {
-            Module.Parameters.Remove(ParamList.SelectedItem as Models.Parameter);
+            Parameter para = ParamList.SelectedItem as Models.Parameter;
+            Module.Parameters.Remove(para);
+
+            if(Version.IsParameterRefAuto)
+            {
+                foreach(ParameterRef pref in Module.ParameterRefs.Where(p => p.ParameterObject == para).ToList())
+                    Module.ParameterRefs.Remove(pref);
+            }
         }
 
         private void ResetId(object sender, RoutedEventArgs e)

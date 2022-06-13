@@ -79,8 +79,9 @@ namespace Kaenx.Creator.Controls
             Models.ComObject com = ComobjectList.SelectedItem as Models.ComObject;
             Module.ComObjects.Remove(com);
 
-            if(Module.IsComObjectRefAuto){
-                Module.ComObjectRefs.Remove(Module.ComObjectRefs.Single(c => c.ComObjectObject == com));
+            if(Version.IsComObjectRefAuto){
+                foreach(ComObjectRef cref in Module.ComObjectRefs.Where(c => c.ComObjectObject == com).ToList())
+                    Module.ComObjectRefs.Remove(cref);
             }
         }
 

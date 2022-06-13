@@ -580,7 +580,19 @@ namespace Kaenx.Creator
         private void ClickRemoveModule(object sender, RoutedEventArgs e)
         {
             Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
-            ver.Modules.Remove(ModuleList.SelectedItem as Models.Module);
+            Models.Module mod = ModuleList.SelectedItem as Models.Module;
+            ver.Modules.Remove(mod);
+            RemoveModule(ver.Dynamics[0], mod);
+        }
+
+        private void RemoveModule(Models.Dynamic.IDynItems item, Models.Module mod)
+        {
+            if(item is Models.Dynamic.DynModule dm)
+                dm.ModuleObject = null;
+
+            if(item.Items != null)
+                foreach(Models.Dynamic.IDynItems ditem in item.Items)
+                    RemoveModule(ditem, mod);
         }
 
         private void ClickAddHardware(object sender, RoutedEventArgs e)

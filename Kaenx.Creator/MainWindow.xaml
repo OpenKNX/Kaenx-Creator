@@ -1431,7 +1431,7 @@
                                 </TabItem>
 
                                 <TabItem Header="Parameter Refs" Visibility="{Binding SelectedItem.IsParameterRefAuto, ElementName=VersionList, Converter={StaticResource BoolToVis}, ConverterParameter=true}" Style="{StaticResource LeftTabItem2}">
-                                    <ctrl:ParameterRefView  Module="{Binding ElementName=ModuleList, Path=SelectedItem}" />
+                                    <ctrl:ParameterRefView Module="{Binding ElementName=ModuleList, Path=SelectedItem}" />
                                 </TabItem>
 
                                 <TabItem Header="ComObjekte" Style="{StaticResource LeftTabItem2}">
