@@ -621,7 +621,10 @@ namespace Kaenx.Creator.Classes
             
                 XElement xinfo = new XElement(Get("FileInfo"));
                 //xinfo.SetAttributeValue("TimeInfo", "2022-01-28T13:55:35.2905057Z");
-                xinfo.SetAttributeValue("TimeInfo", bag.TimeStamp.ToString("O") + "Z");
+                string time = bag.TimeStamp.ToString("O");
+                if (time.Contains("+"))
+                    time = time.Substring(0, time.LastIndexOf("+"));
+                xinfo.SetAttributeValue("TimeInfo", time + "Z");
                 xbag.Add(xinfo);
 
                 xbags.Add(xbag);
