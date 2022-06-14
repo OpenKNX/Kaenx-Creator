@@ -61,6 +61,21 @@ namespace Kaenx.Creator.Models
 
         public string UIHint { get; set; } = "None";
 
+        private Baggage _baggageObject;
+        [JsonIgnore]
+        public Baggage BaggageObject
+        {
+            get { return _baggageObject; }
+            set { _baggageObject = value; Changed("BaggageObject"); }
+        }
+        [JsonIgnore]
+        public int _baggageUId = -1;
+        public int BaggageUId
+        {
+            get { return BaggageObject?.UId ?? -1; }
+            set { _baggageUId = value; }
+        }
+
         public double Min { get; set; } = 0;
         public double Max { get; set; } = 255;
         public double Increment { get; set; } = 1.0;

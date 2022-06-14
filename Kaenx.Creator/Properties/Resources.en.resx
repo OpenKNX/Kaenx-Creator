@@ -162,4 +162,7 @@
   <data name="tabs_pub" xml:space="preserve">
     <value>Publish</value>
   </data>
+  <data name="tabs_bagg" xml:space="preserve">
+    <value>Baggages</value>
+  </data>
 </root>

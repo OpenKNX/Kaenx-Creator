@@ -15,6 +15,7 @@ namespace Kaenx.Creator.Models
         public ObservableCollection<Application> Applications { get; set; } = new ObservableCollection<Application>();
         public ObservableCollection<Hardware> Hardware { get; set; } = new ObservableCollection<Hardware>();
         public ObservableCollection<Language> Languages { get; set; } = new ObservableCollection<Language>();
+        public ObservableCollection<Baggage> Baggages { get; set; } = new ObservableCollection<Baggage>();
 
         private int _manuId = 250;
         public int ManufacturerId

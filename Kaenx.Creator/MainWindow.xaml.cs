@@ -706,6 +706,11 @@ namespace Kaenx.Creator
 
                     foreach(Models.Module mod in ver.Modules)
                         LoadVersion(ver, mod);
+
+                    foreach(Models.ParameterType ptype in ver.ParameterTypes.Where(p => p.Type == Models.ParameterTypes.Picture && p._baggageUId != -1))
+                    {
+                        ptype.BaggageObject = General.Baggages.SingleOrDefault(b => b.UId == ptype._baggageUId);
+                    }
                 }
 
 
@@ -883,8 +888,8 @@ namespace Kaenx.Creator
             MenuImport.IsEnabled = enable;
             TabsEdit.IsEnabled = enable;
             
-            if(TabsEdit.SelectedIndex == 4)
-                TabsEdit.SelectedIndex = 3;
+            if(TabsEdit.SelectedIndex == 5)
+                TabsEdit.SelectedIndex = 4;
         }
 
         
@@ -1084,7 +1089,12 @@ namespace Kaenx.Creator
             ExportHelper helper = new ExportHelper(General, hardware, devices, apps, versions, convPath);
             switch(InPublishTarget.SelectedValue) {
                 case "ets":
-                    helper.ExportEts();
+                    bool success = helper.ExportEts(PublishActions);
+                    if(!success)
+                    {
+                        MessageBox.Show("Produktdatenbank konnte nicht veröffentlicht werden.");
+                        return;
+                    }
                     helper.SignOutput();
                     break;
 

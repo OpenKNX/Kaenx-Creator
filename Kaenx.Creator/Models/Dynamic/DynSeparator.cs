@@ -42,6 +42,31 @@ namespace Kaenx.Creator.Models.Dynamic
             set { _transText = value; Changed("TranslationText"); }
         }
         
+        private bool _useTextParam = false;
+        public bool UseTextParameter
+        {
+            get { return _useTextParam; }
+            set { _useTextParam = value; Changed("UseTextParameter"); }
+        }
+
+
+        private ParameterRef _textRefObject;
+        [JsonIgnore]
+        public ParameterRef TextRefObject
+        {
+            get { return _textRefObject; }
+            set { _textRefObject = value; Changed("TextRefObject"); }
+        }
+
+        [JsonIgnore]
+        public int _textRef;
+        public int TextRef
+        {
+            get { return TextRefObject?.UId ?? -1; }
+            set { _textRef = value; }
+        }
+
+        
         public ObservableCollection<IDynItems> Items { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;

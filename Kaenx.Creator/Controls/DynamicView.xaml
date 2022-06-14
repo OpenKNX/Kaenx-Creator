@@ -33,7 +33,7 @@
                     <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
                 </HeaderedContentControl>
                 <HeaderedContentControl Header="Paremeter Ref">
-                    <ComboBox ItemsSource="{Binding ParameterRefsList, ElementName=ViewControl}" SelectedItem="{Binding ParameterRefObject, Mode=TwoWay}" DisplayMemberPath="Name" />
+                    <ComboBox ItemsSource="{Binding ParameterRefsList, ElementName=ViewControl}" SelectedItem="{Binding ParameterRefObject}" DisplayMemberPath="Name" />
                 </HeaderedContentControl>
                 <HeaderedContentControl Header="Parameter Name:">
                     <TextBlock Text="{Binding ParameterRefObject.ParameterObject.Name}" />
@@ -157,7 +157,7 @@
                         </Grid.ColumnDefinitions>
 
                         <CheckBox IsChecked="{Binding UseTextParameter}" VerticalAlignment="Center" />
-                        <ComboBox Grid.Column="1" IsEnabled="{Binding UseTextParameter}" ItemsSource="{Binding Module.ParameterRefs, ElementName=ViewControl}" SelectedItem="{Binding ParameterRefObject, Mode=TwoWay}" DisplayMemberPath="Name" />
+                        <ComboBox Grid.Column="1" IsEnabled="{Binding UseTextParameter}" ItemsSource="{Binding Module.ParameterRefs, ElementName=ViewControl}" SelectedItem="{Binding TextRefObject, Mode=TwoWay}" DisplayMemberPath="Name" />
                     </Grid>
                 </HeaderedContentControl>
                 <HeaderedContentControl Header="Text">

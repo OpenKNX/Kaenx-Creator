@@ -177,7 +177,7 @@ namespace Kaenx.Creator.Classes {
                             break;
 
                         case ParameterTypes.Picture:
-                            actions.Add(new PublishAction() { Text = $"    ParameterTyp Picture für {ptype.Name} ({ptype.UId}) wird nicht exportiert", State = PublishState.Warning });
+                            //actions.Add(new PublishAction() { Text = $"    ParameterTyp Picture für {ptype.Name} ({ptype.UId}) wird nicht exportiert", State = PublishState.Warning });
                             break;
 
                         case ParameterTypes.None:

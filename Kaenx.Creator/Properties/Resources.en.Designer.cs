@@ -149,5 +149,14 @@ namespace Kaenx.Creator.Properties {
                 return ResourceManager.GetString("menu_proj_save", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string tabs_bagg {
+            get {
+                return ResourceManager.GetString("tabs_bagg", resourceCulture);
+            }
+        }
     }
 }

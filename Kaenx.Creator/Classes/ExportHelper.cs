@@ -2,6 +2,7 @@
 using Kaenx.Creator.Models.Dynamic;
 using Kaenx.Creator.Signing;
 using System;
+using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -49,7 +50,7 @@ namespace Kaenx.Creator.Classes
             if(!languages[lang][id].ContainsKey(attr)) languages[lang][id].Add(attr, value);
         }
 
-        public void ExportEts()
+        public bool ExportEts(ObservableCollection<PublishAction> actions)
         {
             string Manu = "M-" + general.ManufacturerId.ToString("X4");
 
@@ -211,6 +212,11 @@ namespace Kaenx.Creator.Classes
                                     foreach(Models.Translation trans in enu.Text) AddTranslation(trans.Language.CultureCode, $"{id}_EN-{enu.Value}", "Text", trans.Text);
                                 c++;
                             }
+                            break;
+
+                        case ParameterTypes.Picture:
+                            xcontent = new XElement(Get("TypePicture"));
+                            xcontent.SetAttributeValue("RefId", $"M-{general.ManufacturerId:X4}_BG-{GetEncoded(type.BaggageObject.TargetPath)}-{GetEncoded(type.BaggageObject.Name + type.BaggageObject.Extension)}");
                             break;
 
                         default:
@@ -400,9 +406,17 @@ namespace Kaenx.Creator.Classes
                     Debug.WriteLine("XSD gefunden. Validierung wird ausgeführt");
                     XmlSchemaSet schemas = new XmlSchemaSet();
                     schemas.Add(null, xsdFile);
+                    bool flag = false;
+
                     doc.Validate(schemas, (o, e) => {
                         Debug.WriteLine($"Fehler beim Validieren! {e.Message} ({o})");
+                        actions.Add(new PublishAction() { Text = $"    Fehler beim Validieren! {e.Message} ({o})", State = PublishState.Fail});
+                        flag = true;
                     });
+                    if(flag)
+                    {
+                        return false;
+                    }
                 }
                 else
                 {
@@ -589,6 +603,41 @@ namespace Kaenx.Creator.Classes
             }
             doc.Save(GetRelPath("Temp", Manu, "Catalog.xml"));
             #endregion
+        
+            #region XML Baggages
+
+            Debug.WriteLine($"Exportiere Baggages");
+            languages.Clear();
+            xmanu = CreateNewXML(Manu);
+            XElement xbags = new XElement(Get("Baggages"));
+
+            //TODO only export used baggages
+            foreach(Baggage bag in general.Baggages)
+            {
+                XElement xbag = new XElement(Get("Baggage"));
+                xbag.SetAttributeValue("TargetPath", GetEncoded(bag.TargetPath));
+                xbag.SetAttributeValue("Name", bag.Name + bag.Extension);
+                xbag.SetAttributeValue("Id", $"M-{general.ManufacturerId.ToString("X4")}_BG-{GetEncoded(bag.TargetPath)}-{GetEncoded(bag.Name + bag.Extension)}");
+            
+                XElement xinfo = new XElement(Get("FileInfo"));
+                //xinfo.SetAttributeValue("TimeInfo", "2022-01-28T13:55:35.2905057Z");
+                xinfo.SetAttributeValue("TimeInfo", bag.TimeStamp.ToString("O") + "Z");
+                xbag.Add(xinfo);
+
+                xbags.Add(xbag);
+
+                if(!Directory.Exists(GetRelPath("Temp", Manu, "Baggages", bag.TargetPath)))
+                    Directory.CreateDirectory(GetRelPath("Temp", Manu, "Baggages", bag.TargetPath));
+
+                File.WriteAllBytes(GetRelPath("Temp", Manu, "Baggages", bag.TargetPath, bag.Name + bag.Extension), bag.Data);
+            }
+
+            xmanu.Add(xbags);
+            doc.Save(GetRelPath("Temp", Manu, "Baggages.xml"));
+
+            #endregion
+
+            return true;
         }
 
         private void ExportSegments(AppVersion ver, XElement xparent)
@@ -1266,6 +1315,11 @@ namespace Kaenx.Creator.Classes
 
         private string GetEncoded(string input)
         {
+            if(input == null)
+            {
+                Debug.WriteLine("GetEncoded: Input was null");
+                return "";
+            }
             input = input.Replace(".", ".2E");
 
             input = input.Replace("%", ".25");

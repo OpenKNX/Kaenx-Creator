@@ -13,6 +13,7 @@
         xmlns:select="clr-namespace:Kaenx.Creator.Selectors"
         mc:Ignorable="d"
         Icon="FileLogo.ico"
+        x:Name="ViewControl"
         Title="Kaenx Creator" Height="700" Width="1300">
     <Window.Resources>
         <conv:BoolNegation x:Key="BoolNegate" />
@@ -613,6 +614,10 @@
                 
             </TabItem>
 
+            <TabItem Header="{x:Static p:Resources.tabs_bagg}" Style="{StaticResource TopTabItem}">
+                <ctrl:BaggageView General="{Binding General}" />
+            </TabItem>
+
             <TabItem Header="{x:Static p:Resources.tabs_apps}" Style="{StaticResource TopTabItem}">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -629,14 +634,14 @@
 
                     <ListView x:Name="AppList" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding General.Applications}" DisplayMemberPath="NameText" />
 
-                    <Grid Grid.Column="2" Grid.RowSpan="2" DataContext="{Binding ElementName=AppList, Path=SelectedItem}" IsEnabled="{Binding ElementName=AppList, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
+                    <Grid Grid.Column="2" Grid.RowSpan="2" DataContext="{Binding ElementName=AppList, Path=SelectedItem}" IsEnabled="{Binding ., Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="auto" />
                             <RowDefinition Height="auto" />
                             <RowDefinition Height="auto" />
                             <RowDefinition />
                         </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
+                        <Grid.ColumnDefinitions>
                             <ColumnDefinition />
                             <ColumnDefinition />
                             <ColumnDefinition />
@@ -756,7 +761,7 @@
                                     <CheckBox IsChecked="{Binding IsComObjectRefAuto}" Content="KO Refs automatisch berechnen" />
                                     <CheckBox IsChecked="{Binding IsUnionActive}" Content="Unions aktivieren" />
                                     <CheckBox IsChecked="{Binding IsModulesActive}" Content="ModuleDefines aktivieren" />
-                                  
+                                
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition />
@@ -1189,6 +1194,10 @@
                                         <ComboBoxItem Content="None" Tag="None" />
                                         <ComboBoxItem Content="Slider" Tag="Slider" />
                                     </ComboBox>
+                                </HeaderedContentControl>
+                                
+                                <HeaderedContentControl Header="Baggage" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Picture, FallbackValue=Collapsed}">
+                                    <ComboBox ItemsSource="{Binding General.Baggages, ElementName=ViewControl}" SelectedItem="{Binding BaggageObject}" DisplayMemberPath="Name" Margin="0 5" />
                                 </HeaderedContentControl>
                             </StackPanel>
                         </Grid>

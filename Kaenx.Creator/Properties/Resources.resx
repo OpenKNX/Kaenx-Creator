@@ -162,4 +162,7 @@
   <data name="tabs_pub" xml:space="preserve">
     <value>Veröffentlichen</value>
   </data>
+  <data name="tabs_bagg" xml:space="preserve">
+    <value>Anhänge</value>
+  </data>
 </root>
