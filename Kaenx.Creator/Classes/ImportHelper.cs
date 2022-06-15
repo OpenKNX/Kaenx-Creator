@@ -225,9 +225,10 @@ namespace Kaenx.Creator.Classes
 
             
 #endregion
+            XElement xstatic = xapp.Element(Get("Static"));
+            CheckUniqueRefId(xstatic, xapp.Element(Get("Dynamic")));
             ImportLanguages(xapp.Parent.Parent.Element(Get("Languages")), currentVers.Languages);
             currentVers.Text = GetTranslation(xapp.Attribute("Id").Value, "Name", xapp);
-            XElement xstatic = xapp.Element(Get("Static"));
             ImportSegments(xstatic.Element(Get("Code")));
             ImportParameterTypes(xstatic.Element(Get("ParameterTypes")));
             ImportParameter(xstatic.Element(Get("Parameters")), currentVers);
@@ -250,6 +251,115 @@ namespace Kaenx.Creator.Classes
                 }
                 currentVers.Procedure = xproc.ToString();
             }
+        }
+
+        private void CheckUniqueRefId(XElement xstatic, XElement xdyn)
+        {
+            List<int> ids = new List<int>();
+            bool flag1 = false;
+            bool flag2 = false;
+
+            foreach(XElement xele in xstatic.Descendants(Get("ParameterRef")))
+            {
+                int paraId = int.Parse(GetLastSplit(xele.Attribute("Id").Value, 2));
+                if(!ids.Contains(paraId))
+                    ids.Add(paraId);
+                else {
+                    flag1 = true;
+                    break;
+                }
+            }
+
+            ids.Clear();
+            foreach(XElement xele in xstatic.Descendants(Get("ComObjectRef")))
+            {
+                int comId = int.Parse(GetLastSplit(xele.Attribute("Id").Value, 2));
+                if(!ids.Contains(comId))
+                    ids.Add(comId);
+                else {
+                    flag2 = true;
+                    break;
+                }
+            }
+
+            if(flag1 || flag2)
+            {
+                string text = "Parameter-/ComObjectRefIds";
+                if(flag1 && !flag2) text = "ParameterRefIds";
+                if(!flag1 && flag2) text = "ComObjectRefIds";
+                System.Windows.MessageBox.Show($"Die Produktdatenbank enthält {text}, die nicht komplett eindeutig sind.\r\n\r\nEin Import führt dazu, dass diese geändert werden. Die importierte Version kann somit nicht mehr als Update verwendet werden.", "RefId nicht eindeutig", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
+            }
+            
+            DynamicRenameRefIds(flag1, flag2, xstatic, xdyn);
+        }
+
+        private void DynamicRenameRefIds(bool renameParas, bool renameComs, XElement xstatic, XElement xdyn)
+        {
+            Dictionary<string, int> newIds = new Dictionary<string, int>();
+
+            int counter = 1;
+            if(renameParas)
+            {
+                foreach(XElement xele in xstatic.Descendants(Get("ParameterRef")))
+                {
+                    newIds.Add(xele.Attribute("Id").Value, counter);
+                    xele.Attribute("Id").Value = "P-x_R-" + counter;
+                    counter++;
+                }
+
+                foreach(XElement xele in xdyn.Descendants(Get("ParameterRefRef")))
+                    if(xele.Attribute("RefId") != null)
+                        xele.Attribute("RefId").Value = "P-x_R-" + newIds[xele.Attribute("RefId").Value];
+
+                foreach(XElement xele in xdyn.Descendants(Get("ComObjectRef")))
+                    if(xele.Attribute("TextParameterRefId") != null)
+                        xele.Attribute("TextParameterRefId").Value = "P-x_R-" + newIds[xele.Attribute("TextParameterRefId").Value];
+
+                foreach(XElement xele in xdyn.Descendants(Get("Channel")))
+                    if(xele.Attribute("TextParameterRefId") != null)
+                        xele.Attribute("TextParameterRefId").Value = "P-x_R-" + newIds[xele.Attribute("TextParameterRefId").Value];
+
+                foreach(XElement xele in xdyn.Descendants(Get("Separator")))
+                    if(xele.Attribute("TextParameterRefId") != null)
+                        xele.Attribute("TextParameterRefId").Value = "P-x_R-" + newIds[xele.Attribute("TextParameterRefId").Value];
+
+                foreach(XElement xele in xdyn.Descendants(Get("ParameterBlock")))
+                {
+                    if(xele.Attribute("TextParameterRefId") != null)
+                        xele.Attribute("TextParameterRefId").Value = "P-x_R-" + newIds[xele.Attribute("TextParameterRefId").Value];
+                    if(xele.Attribute("ParamRefId") != null)
+                        xele.Attribute("ParamRefId").Value = "P-x_R-" + newIds[xele.Attribute("ParamRefId").Value];
+                }
+
+                foreach(XElement xele in xdyn.Descendants(Get("Assign")))
+                {
+                    if(xele.Attribute("TargetParamRefRef") != null)
+                        xele.Attribute("TargetParamRefRef").Value = "P-x_R-" + newIds[xele.Attribute("TargetParamRefRef").Value];
+                    if(xele.Attribute("SourceParamRefRef") != null)
+                        xele.Attribute("SourceParamRefRef").Value = "P-x_R-" + newIds[xele.Attribute("SourceParamRefRef").Value];
+                }
+
+                foreach(XElement xele in xdyn.Descendants(Get("choose")))
+                    xele.Attribute("ParamRefId").Value = "P-x_R-" + newIds[xele.Attribute("ParamRefId").Value];
+            }
+
+            counter = 1;
+            if(renameComs)
+            {
+                foreach(XElement xele in xstatic.Descendants(Get("ComObjectRef")))
+                {
+                    newIds.Add(xele.Attribute("Id").Value, counter);
+                    xele.Attribute("Id").Value = "O-x_R-" + counter;
+                    counter++;
+                }
+
+                foreach(XElement xele in xstatic.Descendants(Get("ComObjectRefRef")))
+                {
+                    xele.Attribute("Id").Value = "O-x_R-" + newIds[xele.Attribute("Id").Value];
+                }
+            }
+
+            //TODO rename translationelement
         }
 
         private void ImportLanguages(XElement xlangs, ObservableCollection<Language> langs) {
@@ -637,9 +747,14 @@ namespace Kaenx.Creator.Classes
                     if (type.StartsWith("DPST-"))
                     {
                         string[] xtype = type.Split("-");
-                        com.HasDpts = true;
                         com.Type = DPTs.Single(d => d.Number == xtype[1]);
-                        com.SubType = com.Type.SubTypes.Single(s => s.Number == xtype[2]);
+                        com.HasDpts = com.Type.SubTypes.Any(s => s.Number == xtype[2]);
+                        if(com.HasDpts)
+                            com.SubType = com.Type.SubTypes.Single(s => s.Number == xtype[2]);
+                        else
+                        {
+                            System.Windows.MessageBox.Show($"{type} wurde nicht gefunden.\r\nSie können versuchen die Datei 'datapoints.json' zu löschen und das Produkt erneut importieren.", "DPST nicht gefunden", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
+                        }
                     }
                     else if (type.StartsWith("DPT-"))
                     {
