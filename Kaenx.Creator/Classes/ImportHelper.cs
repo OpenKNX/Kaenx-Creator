@@ -148,11 +148,11 @@ namespace Kaenx.Creator.Classes
                 Baggage bag = new Baggage();
                 bag.Name = xbag.Attribute("Name").Value;
                 bag.Extension = bag.Name.Substring(bag.Name.LastIndexOf('.')).ToLower();
-
-                if(!supportedExtensions.Contains(bag.Extension)) continue;
-
                 bag.Name = bag.Name.Substring(0, bag.Name.LastIndexOf('.'));
                 bag.TargetPath = xbag.Attribute("TargetPath").Value;
+
+                if(!supportedExtensions.Contains(bag.Extension) || _general.Baggages.Any(b => b.Name == bag.Name && b.TargetPath == bag.TargetPath)) continue;
+
                 bag.TimeStamp = DateTime.Parse(xbag.Element(Get("FileInfo")).Attribute("TimeInfo").Value);
                 
                 string path = $"{bag.Name}{bag.Extension}";
@@ -223,6 +223,7 @@ namespace Kaenx.Creator.Classes
             currentVers.DefaultLanguage = xapp.Attribute("DefaultLanguage").Value;
             currentVers.Languages.Add(new Language(_langTexts[currentVers.DefaultLanguage], currentVers.DefaultLanguage));
 
+            if(xapp.Attribute("ReplacesVersions") != null) currentVers.ReplacesVersions = xapp.Attribute("ReplacesVersions").Value;
             
 #endregion
             XElement xstatic = xapp.Element(Get("Static"));
@@ -341,6 +342,12 @@ namespace Kaenx.Creator.Classes
 
                 foreach(XElement xele in xdyn.Descendants(Get("choose")))
                     xele.Attribute("ParamRefId").Value = "P-x_R-" + newIds[xele.Attribute("ParamRefId").Value];
+
+                    
+                foreach(XElement xele in xstatic.Parent.Parent.Parent.Element(Get("Languages")).Descendants(Get("TranslationElement")))
+                    if(newIds.ContainsKey(xele.Attribute("RefId").Value))
+                        xele.Attribute("RefId").Value = "P-x_R-" + newIds[xele.Attribute("RefId").Value];
+
             }
 
             counter = 1;
@@ -698,6 +705,12 @@ namespace Kaenx.Creator.Classes
                 int paraId = int.Parse(id);
                 pref.ParameterObject = vbase.Parameters.Single(p => p.Id == paraId);
                 pref.Name = pref.Id + " " + pref.ParameterObject.Name;
+
+                if(xref.Attribute("Text") != null)
+                {
+                    pref.OverwriteText = true;
+                    pref.Text = GetTranslation(xref.Attribute("Id").Value, "Text", xref);
+                }
 
                 vbase.ParameterRefs.Add(pref);
             }
@@ -1196,10 +1209,6 @@ namespace Kaenx.Creator.Classes
                         }
                         dass.Value = xele.Attribute("Value")?.Value;
                         parent.Items.Add(dass);
-                        break;
-
-                    case "ParameterBlockRename":
-                        //TODO implement
                         break;
 
                     default:

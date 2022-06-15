@@ -106,6 +106,7 @@ namespace Kaenx.Creator.Classes
                 xapp.SetAttributeValue("PeiType", "0");
                 xapp.SetAttributeValue("DynamicTableManagement", "false"); //TODO check when to add
                 xapp.SetAttributeValue("Linkable", "false"); //TODO check when to add
+                if(!string.IsNullOrEmpty(ver.ReplacesVersions)) xapp.SetAttributeValue("ReplacesVersions", ver.ReplacesVersions);
 
                 switch (currentNamespace)
                 {

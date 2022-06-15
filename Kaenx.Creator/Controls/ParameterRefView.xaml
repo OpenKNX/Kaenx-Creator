@@ -8,6 +8,7 @@
     xmlns:conv="clr-namespace:Kaenx.Creator.Converter"
     xmlns:models="clr-namespace:Kaenx.Creator.Models"
     mc:Ignorable="d"
+    x:Name="ViewControl"
     d:DesignHeight="300"
     d:DesignWidth="400">
     <UserControl.Resources>
@@ -97,6 +98,27 @@
                     <TextBox Grid.Column="2" IsEnabled="{Binding OverwriteValue}" Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" />
                 </Grid>
             </HeaderedContentControl>
+            
+            <HeaderedContentControl Header="Funktionstext">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <CheckBox IsChecked="{Binding OverwriteText}" VerticalAlignment="Center" />
+                    <StackPanel Grid.Column="1">
+                        <CheckBox IsEnabled="{Binding OverwriteText}" IsChecked="{Binding TranslationText}" Content="Übersetzung nicht exportieren" />
+                        <DataGrid IsEnabled="{Binding OverwriteText}" ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                                <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </StackPanel>
+                </Grid>
+            </HeaderedContentControl>
+
             <HeaderedContentControl Header="Zugriff">
                 <Grid>
                     <Grid.ColumnDefinitions>
