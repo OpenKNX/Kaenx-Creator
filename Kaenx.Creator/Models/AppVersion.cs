@@ -45,6 +45,13 @@ namespace Kaenx.Creator.Models
             set { _name = value; Changed("NameText"); }
         }
 
+        private string _replaces = "";
+        public string ReplacesVersions
+        {
+            get { return _replaces; }
+            set { _replaces = value; Changed("ReplacesVersions"); }
+        }
+
         public string NameText
         {
             get

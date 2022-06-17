@@ -10,3 +10,5 @@ Liste was noch zu tun ist:
 - [x] automatische anordnung der Parameter in ModuleDefs
 - [ ] Check für Module: Argumente existieren
 - [ ] Reset or change manual: Offset für Parameter/Unions
+- [ ] VersionChecks ausbauen
+- [ ] Verhindern, dass Applikation/Types/etc mehrfach geladen werden

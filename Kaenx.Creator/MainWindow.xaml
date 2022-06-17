@@ -808,6 +808,9 @@
                                     <HeaderedContentControl Header="Version">
                                         <TextBox Text="{Binding Number, UpdateSourceTrigger=PropertyChanged}" />
                                     </HeaderedContentControl>
+                                    <HeaderedContentControl Header="Ersetzt folgende Versionen">
+                                        <TextBox Text="{Binding ReplacesVersions, UpdateSourceTrigger=PropertyChanged}" />
+                                    </HeaderedContentControl>
                                     <HeaderedContentControl Header="Namespace Version">
                                         <ComboBox x:Name="NamespaceSelection" DisplayMemberPath="DisplayName" SelectedValue="{Binding NamespaceVersion}" SelectedIndex="3" SelectedValuePath="Number">
                                             <ComboBox.ItemContainerStyle>

@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Text;
 
@@ -97,6 +98,22 @@ namespace Kaenx.Creator.Models
         public ParamAccess Access { get; set; } = ParamAccess.Default;
         public string Value { get; set; } = "";
         public string Suffix { get; set; } = "";
+
+
+
+        public ObservableCollection<Translation> Text {get;set;} = new ObservableCollection<Translation>();
+        private bool _transText = false;
+        public bool TranslationText
+        {
+            get { return _transText; }
+            set { _transText = value; Changed("TranslationText"); }
+        }
+        private bool _overText = false;
+        public bool OverwriteText
+        {
+            get { return _overText; }
+            set { _overText = value; Changed("OverwriteText"); }
+        }
 
 
         public event PropertyChangedEventHandler PropertyChanged;
