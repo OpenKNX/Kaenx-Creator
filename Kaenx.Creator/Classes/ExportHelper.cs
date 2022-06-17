@@ -71,6 +71,7 @@ namespace Kaenx.Creator.Classes
 
             Dictionary<string, string> ProductIds = new Dictionary<string, string>();
             Dictionary<string, string> HardwareIds = new Dictionary<string, string>();
+            List<Baggage> baggagesManu = new List<Baggage>();
 
             #region XML Applications
             Debug.WriteLine($"Exportiere Applikationen: {vers.Count}x");
@@ -132,7 +133,8 @@ namespace Kaenx.Creator.Classes
                 XElement temp;
                 ExportSegments(ver, xunderapp);
 
-                #region ParamTypes
+                #region ParamTypes/Baggages
+                List<Baggage> baggagesApp = new List<Baggage>();
                 Debug.WriteLine($"Exportiere ParameterTypes: {ver.ParameterTypes.Count}x");
                 temp = new XElement(Get("ParameterTypes"));
                 foreach (ParameterType type in ver.ParameterTypes)
@@ -217,6 +219,8 @@ namespace Kaenx.Creator.Classes
                         case ParameterTypes.Picture:
                             xcontent = new XElement(Get("TypePicture"));
                             xcontent.SetAttributeValue("RefId", $"M-{general.ManufacturerId:X4}_BG-{GetEncoded(type.BaggageObject.TargetPath)}-{GetEncoded(type.BaggageObject.Name + type.BaggageObject.Extension)}");
+                            if (!baggagesApp.Contains(type.BaggageObject))
+                                baggagesApp.Add(type.BaggageObject);
                             break;
 
                         default:
@@ -235,6 +239,21 @@ namespace Kaenx.Creator.Classes
                     temp.Add(xtype);
                 }
                 xunderapp.Add(temp);
+                XElement xextension = null;
+
+                if (baggagesApp.Count > 0)
+                {
+                    xextension = new XElement(Get("Extension"));
+                    foreach(Baggage bag in baggagesApp)
+                    {
+                        XElement xbag = new XElement(Get("Baggage"));
+                        xbag.SetAttributeValue("RefId", $"M-{general.ManufacturerId:X4}_BG-{GetEncoded(bag.TargetPath)}-{GetEncoded(bag.Name + bag.Extension)}");
+                        xextension.Add(xbag);
+                        if (!baggagesManu.Contains(bag))
+                            baggagesManu.Add(bag);
+                    }
+                }
+
                 #endregion
 
                 StringBuilder headers = new StringBuilder();
@@ -365,6 +384,9 @@ namespace Kaenx.Creator.Classes
 
                 #endregion
 
+
+                if(xextension != null)
+                    xunderapp.Add(xextension);
 
                 xunderapp = new XElement(Get("Dynamic"));
                 xapp.Add(xunderapp);
@@ -606,37 +628,44 @@ namespace Kaenx.Creator.Classes
         
             #region XML Baggages
 
-            Debug.WriteLine($"Exportiere Baggages");
-            languages.Clear();
-            xmanu = CreateNewXML(Manu);
-            XElement xbags = new XElement(Get("Baggages"));
-
-            //TODO only export used baggages
-            foreach(Baggage bag in general.Baggages)
+            if(baggagesManu.Count > 0)
             {
-                XElement xbag = new XElement(Get("Baggage"));
-                xbag.SetAttributeValue("TargetPath", GetEncoded(bag.TargetPath));
-                xbag.SetAttributeValue("Name", bag.Name + bag.Extension);
-                xbag.SetAttributeValue("Id", $"M-{general.ManufacturerId.ToString("X4")}_BG-{GetEncoded(bag.TargetPath)}-{GetEncoded(bag.Name + bag.Extension)}");
-            
-                XElement xinfo = new XElement(Get("FileInfo"));
-                //xinfo.SetAttributeValue("TimeInfo", "2022-01-28T13:55:35.2905057Z");
-                string time = bag.TimeStamp.ToString("O");
-                if (time.Contains("+"))
-                    time = time.Substring(0, time.LastIndexOf("+"));
-                xinfo.SetAttributeValue("TimeInfo", time + "Z");
-                xbag.Add(xinfo);
+                Debug.WriteLine($"Exportiere Baggages");
+                languages.Clear();
+                xmanu = CreateNewXML(Manu);
+                XElement xbags = new XElement(Get("Baggages"));
 
-                xbags.Add(xbag);
+                //TODO only export used baggages
+                foreach (Baggage bag in baggagesManu)
+                {
+                    XElement xbag = new XElement(Get("Baggage"));
+                    xbag.SetAttributeValue("TargetPath", GetEncoded(bag.TargetPath));
+                    xbag.SetAttributeValue("Name", bag.Name + bag.Extension);
+                    xbag.SetAttributeValue("Id", $"M-{general.ManufacturerId.ToString("X4")}_BG-{GetEncoded(bag.TargetPath)}-{GetEncoded(bag.Name + bag.Extension)}");
 
-                if(!Directory.Exists(GetRelPath("Temp", Manu, "Baggages", bag.TargetPath)))
-                    Directory.CreateDirectory(GetRelPath("Temp", Manu, "Baggages", bag.TargetPath));
+                    XElement xinfo = new XElement(Get("FileInfo"));
+                    //xinfo.SetAttributeValue("TimeInfo", "2022-01-28T13:55:35.2905057Z");
+                    string time = bag.TimeStamp.ToString("O");
+                    if (time.Contains("+"))
+                        time = time.Substring(0, time.LastIndexOf("+"));
+                    xinfo.SetAttributeValue("TimeInfo", time + "Z");
+                    xbag.Add(xinfo);
 
-                File.WriteAllBytes(GetRelPath("Temp", Manu, "Baggages", bag.TargetPath, bag.Name + bag.Extension), bag.Data);
+                    xbags.Add(xbag);
+
+                    if (!Directory.Exists(GetRelPath("Temp", Manu, "Baggages", bag.TargetPath)))
+                        Directory.CreateDirectory(GetRelPath("Temp", Manu, "Baggages", bag.TargetPath));
+
+                    File.WriteAllBytes(GetRelPath("Temp", Manu, "Baggages", bag.TargetPath, bag.Name + bag.Extension), bag.Data);
+                }
+
+                xmanu.Add(xbags);
+                doc.Save(GetRelPath("Temp", Manu, "Baggages.xml"));
+            } else
+            {
+                Debug.WriteLine($"Exportiere keine Baggages");
             }
-
-            xmanu.Add(xbags);
-            doc.Save(GetRelPath("Temp", Manu, "Baggages.xml"));
+            
 
             #endregion
 
