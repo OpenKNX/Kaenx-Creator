@@ -629,6 +629,20 @@ namespace Kaenx.Creator
             System.IO.File.WriteAllText(filePath, general);
         }
 
+        private void ClickClose(object sender, RoutedEventArgs e)
+        {
+            General = null;
+            SetButtons(false);
+        }
+
+        private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
+        {
+            // for .NET Core you need to add UseShellExecute = true
+            // see https://docs.microsoft.com/dotnet/api/system.diagnostics.processstartinfo.useshellexecute#property-value
+            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
+            e.Handled = true;
+        }
+
         private void ClickSaveAs(object sender, RoutedEventArgs e)
         {
             string general = Newtonsoft.Json.JsonConvert.SerializeObject(General, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Auto });
@@ -888,8 +902,17 @@ namespace Kaenx.Creator
             MenuImport.IsEnabled = enable;
             TabsEdit.IsEnabled = enable;
             
-            if(TabsEdit.SelectedIndex == 5)
-                TabsEdit.SelectedIndex = 4;
+            if(General != null)
+            {
+                TabsEdit.Visibility = Visibility.Visible;
+                LogoGrid.Visibility = Visibility.Collapsed;
+                if(TabsEdit.SelectedIndex == 5)
+                    TabsEdit.SelectedIndex = 4;
+            } else {
+                TabsEdit.SelectedIndex = 0;
+                TabsEdit.Visibility = Visibility.Collapsed;
+                LogoGrid.Visibility = Visibility.Visible;
+            }
         }
 
         

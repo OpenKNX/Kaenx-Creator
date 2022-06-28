@@ -14,7 +14,7 @@
         mc:Ignorable="d"
         Icon="FileLogo.ico"
         x:Name="ViewControl"
-        Title="Kaenx Creator" Height="700" Width="1300">
+        Title="Kaenx-Creator" Height="700" Width="1300">
     <Window.Resources>
         <conv:BoolNegation x:Key="BoolNegate" />
         <conv:EmptyOListToBool x:Key="EmptyListToBool" />
@@ -339,7 +339,7 @@
                     <MenuItem Header="Speichern unter" Click="ClickSaveAs" />
                     <MenuItem Header="Speichern als Template" Click="ClickSaveTemplate" />
                 </MenuItem>
-                <MenuItem x:Name="MenuClose" IsEnabled="False" Header="{x:Static p:Resources.menu_proj_close}" />
+                <MenuItem x:Name="MenuClose" IsEnabled="False" Header="{x:Static p:Resources.menu_proj_close}" Click="ClickClose" />
             </MenuItem>
             <MenuItem x:Name="MenuImport" IsEnabled="False" Header="{x:Static p:Resources.menu_impo}">
                 <MenuItem Header="{x:Static p:Resources.menu_impo_ets}" Click="ClickImport" />
@@ -1563,5 +1563,33 @@
                 </Grid>
             </TabItem>
         </TabControl>
+
+        <Grid x:Name="LogoGrid" Grid.Row="1" Background="White">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="150" />
+            </Grid.RowDefinitions>
+
+            <TextBlock FontSize="25" HorizontalAlignment="Center" Text="Willkommen bei Kaenx-Creator!" Margin="20" />
+
+            <TextBlock FontSize="17" HorizontalAlignment="Center" Grid.Row="1">
+                <Run Text="Um ein neues Projekt zu beginnen, oder ein bestehendes zu öffnen" />
+                <LineBreak />
+                <Run Text="wählen Sie oben im Menü 'Projekt' aus." />
+            </TextBlock>
+
+            <TextBlock Grid.Row="3" HorizontalAlignment="Center">
+                <Run Text="Der Kaenx-Creator ist ein Teil von OpenKNX." />
+                <LineBreak />
+                <Run Text="Mehr Informationen auf " />
+                <Hyperlink NavigateUri="https://github.com/OpenKNX" RequestNavigate="Hyperlink_RequestNavigate">Github</Hyperlink>
+            </TextBlock>
+
+            <Image Grid.Row="4" Source="Assets\Images\OpenKNX.png" Margin="10" />
+        </Grid>
+
     </Grid>
 </Window>
