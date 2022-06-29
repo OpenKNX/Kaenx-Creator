@@ -38,6 +38,15 @@ namespace Kaenx.Creator.Models
             set { _defLang = value; Changed("DefaultLanguage"); }
         }
 
+        private int _defLangIndex = -1;
+        public int DefaultLanguageIndex
+        {
+            get { return _defLangIndex; }
+            set { 
+                _defLangIndex = value; 
+                Changed("DefaultLanguageIndex"); }
+        }
+
         private string _name = "";
         public string Name
         {

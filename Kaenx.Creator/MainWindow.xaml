@@ -748,6 +748,7 @@
                                     <HeaderedContentControl Header="Name (intern)">
                                         <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
                                     </HeaderedContentControl>
+                                    <TextBlock Text="{Binding Text[0].Text}" />
                                     <HeaderedContentControl Header="Text">
                                         <DataGrid ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
                                             <DataGrid.Columns>
@@ -855,7 +856,7 @@
                                         </StackPanel>
                                     </HeaderedContentControl>
                                     <HeaderedContentControl Header="Standard Sprache">
-                                        <ComboBox ItemsSource="{Binding Languages}" SelectedValue="{Binding DefaultLanguage}" SelectedValuePath="CultureCode" DisplayMemberPath="Text"></ComboBox>
+                                        <ComboBox ItemsSource="{Binding Languages}" SelectedIndex="{Binding DefaultLanguageIndex}" SelectedValue="{Binding DefaultLanguage}" SelectedValuePath="CultureCode" DisplayMemberPath="Text"></ComboBox>
                                     </HeaderedContentControl>
                                 </StackPanel>
                             </Grid>

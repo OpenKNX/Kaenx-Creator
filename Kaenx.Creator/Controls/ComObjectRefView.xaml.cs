@@ -46,6 +46,7 @@ namespace Kaenx.Creator.Controls
             if(e.NewValue != null)
                 (e.NewValue as IVersionBase).ComObjectRefs.CollectionChanged += RefsChanged;
 
+            if(Module == null) return;
             TextFilter filter = new TextFilter(Module.ComObjectRefs, query);
         }
 

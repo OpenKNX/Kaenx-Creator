@@ -35,6 +35,7 @@ namespace Kaenx.Creator.Controls
 
         protected virtual void OnVersionChanged(DependencyPropertyChangedEventArgs e)
         {
+            if(Version == null) return;
             TextFilter x = new TextFilter(Version.ParameterTypes, query);
         }
 

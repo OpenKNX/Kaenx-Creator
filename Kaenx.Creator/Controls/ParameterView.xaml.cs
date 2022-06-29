@@ -48,6 +48,7 @@ namespace Kaenx.Creator.Controls
         }
         
         protected virtual void OnModuleChanged() {
+            if(Module == null) return;
             TextFilter filter = new TextFilter(Module.Parameters, query);
         }
 

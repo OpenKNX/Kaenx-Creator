@@ -21,7 +21,7 @@
         </Grid.RowDefinitions>
 
         <avalonedit:TextEditor x:Name="editor" ShowLineNumbers="True" Grid.RowSpan="2" SyntaxHighlighting="XML" />
-        <TextBox Text="{Binding Version.Procedure}" Grid.RowSpan="2" />
+        <TextBox Text="{Binding Version.Procedure, UpdateSourceTrigger=PropertyChanged}" Grid.RowSpan="2" />
 
         <GridSplitter Grid.RowSpan="2" Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
 
