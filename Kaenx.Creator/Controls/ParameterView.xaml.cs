@@ -28,28 +28,9 @@ namespace Kaenx.Creator.Controls
             set { SetValue(ModuleProperty, value); }
         }
 
-        private ObservableCollection<Parameter> _queryList = new ObservableCollection<Parameter>();
-        public ObservableCollection<Parameter> QueryList {
-            get { return _queryList; }
-            set { _queryList = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("QueryList")); }
-        }
-        
         public ParameterView()
 		{
             InitializeComponent();
-        }
-
-        private void QueryChanged(object sender, TextChangedEventArgs e)
-        {
-            SearchQuery((sender as TextBox).Text);
-        }
-
-        private void SearchQuery(string query)
-        {
-            QueryList.Clear();
-            query = query.ToLower();
-            foreach(Parameter para in Module.Parameters.Where(p => p.Name.ToLower().Contains(query)))
-                QueryList.Add(para);
         }
 
         private static void OnVersionChangedCallback(DependencyObject sender, DependencyPropertyChangedEventArgs e)
@@ -67,30 +48,9 @@ namespace Kaenx.Creator.Controls
         }
         
         protected virtual void OnModuleChanged() {
-            if(Module != null)
-            {
-                query.Text = "";
-                QueryList.Clear();
-                foreach(Parameter para in Module.Parameters)
-                    QueryList.Add(para);
-
-                Module.Parameters.CollectionChanged += CollectionChanged;
-            }
+            TextFilter filter = new TextFilter(Module.Parameters, query);
         }
 
-        private void CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if(e.NewItems != null)
-                foreach(Parameter para in e.NewItems)
-                    QueryList.Add(para);
-
-            if(e.OldItems != null)
-                foreach(Parameter para in e.OldItems)
-                    QueryList.Remove(para);
-
-            SearchQuery(query.Text);
-        }
-        
         private void ClickAdd(object sender, RoutedEventArgs e)
         {
             Models.Parameter para = new Models.Parameter() {

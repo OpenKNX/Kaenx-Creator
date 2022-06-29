@@ -38,6 +38,23 @@
                 <HeaderedContentControl Header="Parameter Name:">
                     <TextBlock Text="{Binding ParameterRefObject.ParameterObject.Name}" />
                 </HeaderedContentControl>
+
+                <HeaderedContentControl Header="Parameter Text" IsEnabled="False" Margin="5 30 5 5">
+                    <DataGrid ItemsSource="{Binding ParameterRefObject.ParameterObject.Text}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                            <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </HeaderedContentControl>
+                <HeaderedContentControl Header="ParameterRef Text" IsEnabled="False">
+                    <DataGrid ItemsSource="{Binding ParameterRefObject.Text}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                            <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </HeaderedContentControl>
             </StackPanel>
         </DataTemplate>
         <DataTemplate x:Key="TempDynModule">
@@ -89,6 +106,23 @@
                 </HeaderedContentControl>
                 <HeaderedContentControl Header="Kommunikationsobjekt Name:">
                     <TextBlock Text="{Binding ComObjectRefObject.ComObjectObject.Name}" />
+                </HeaderedContentControl>
+
+                <HeaderedContentControl Header="ComObject Text" IsEnabled="False" Margin="5 30 5 5">
+                    <DataGrid ItemsSource="{Binding ComObjectRefObject.ComObjectObject.Text}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                            <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </HeaderedContentControl>
+                <HeaderedContentControl Header="ComObjectRef Text" IsEnabled="False">
+                    <DataGrid ItemsSource="{Binding ComObjectRefObject.Text}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                            <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                        </DataGrid.Columns>
+                    </DataGrid>
                 </HeaderedContentControl>
             </StackPanel>
         </DataTemplate>

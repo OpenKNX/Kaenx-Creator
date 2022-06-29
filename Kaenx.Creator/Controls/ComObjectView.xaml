@@ -21,6 +21,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -30,8 +31,10 @@
         </Grid.ColumnDefinitions>
         <Button Content="Hinzufügen" Margin="0 0 1 2" Click="ClickAdd" />
         <Button Grid.Column="1" Content="Löschen" Click="ClickRemove" Margin="1 0 0 2" IsEnabled="{Binding ElementName=ComobjectList, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
+        <TextBlock Grid.Row="1" Text="Filter:" HorizontalAlignment="Right" />
+        <TextBox x:Name="query" Grid.Column="1" Grid.Row="1" Margin="1 0 0 2" />
 
-        <ListView x:Name="ComobjectList" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding ComObjects}">
+        <ListView x:Name="ComobjectList" Grid.Row="2" Grid.ColumnSpan="2" ItemsSource="{Binding Module.ComObjects, ElementName=ViewControl}">
             <ListView.ItemTemplate>
 				<DataTemplate>
 					<TextBlock Text="{Binding Name}" Foreground="{Binding IsNotUsed, Converter={StaticResource BoolToBrush}}" />
@@ -40,7 +43,7 @@
         </ListView>
 
 
-        <Grid Grid.Column="2" Grid.RowSpan="2">
+        <Grid Grid.Column="2" Grid.RowSpan="3">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto" />
                 <RowDefinition />
@@ -112,7 +115,7 @@
                             </Grid.ColumnDefinitions>
 
                             <CheckBox IsChecked="{Binding UseTextParameter}" VerticalAlignment="Center" />
-                            <ComboBox Grid.Column="1" IsEnabled="{Binding UseTextParameter}" ItemsSource="{Binding ParameterRefsList, ElementName=ViewControl}" SelectedItem="{Binding ParameterRefObject, Mode=TwoWay}" DisplayMemberPath="Name" />
+                            <ComboBox Grid.Column="1" IsEnabled="{Binding UseTextParameter}" ItemsSource="{Binding Module.ParameterRefs, ElementName=ViewControl}" SelectedItem="{Binding ParameterRefObject, Mode=TwoWay}" DisplayMemberPath="Name" />
                         </Grid>
                     </HeaderedContentControl>
 

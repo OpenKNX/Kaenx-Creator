@@ -3,7 +3,10 @@ using Kaenx.Creator.Models;
 using Kaenx.Creator.Models.Dynamic;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Linq;
 using System.Reflection;
 using System.IO;
 using System.Windows;
@@ -12,8 +15,10 @@ using System.Windows.Input;
 
 namespace Kaenx.Creator.Controls
 {
-    public partial class ParameterRefView : UserControl
+    public partial class ParameterRefView : UserControl, INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+
         public static readonly DependencyProperty ModuleProperty = DependencyProperty.Register("Module", typeof(IVersionBase), typeof(ParameterRefView), new PropertyMetadata(OnModuleChangedCallback));
         public IVersionBase Module {
             get { return (IVersionBase)GetValue(ModuleProperty); }
@@ -38,8 +43,10 @@ namespace Kaenx.Creator.Controls
 
             if(e.NewValue != null)
                 (e.NewValue as IVersionBase).ParameterRefs.CollectionChanged += RefsChanged;
-        }
 
+            TextFilter filter = new TextFilter(Module.ParameterRefs, query);
+        }
+        
         private void RefsChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if(e.OldItems != null)
@@ -95,20 +102,6 @@ namespace Kaenx.Creator.Controls
         private void ResetId(object sender, RoutedEventArgs e)
         {
             ((sender as Button).DataContext as ParameterRef).Id = -1;
-        }
-
-        private void ClickGenerateRefAuto(object sender, RoutedEventArgs e)
-        {
-            Module.ParameterRefs.Clear();
-
-            foreach(Parameter para in Module.Parameters)
-            {
-                ParameterRef pref = new ParameterRef();
-                pref.UId = AutoHelper.GetNextFreeUId(Module.ParameterRefs);
-                pref.Name = para.Name;
-                pref.ParameterObject = para;
-                Module.ParameterRefs.Add(pref);
-            }
         }
     }
 }

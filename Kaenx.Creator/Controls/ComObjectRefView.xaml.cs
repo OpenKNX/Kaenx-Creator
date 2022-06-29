@@ -28,8 +28,6 @@ namespace Kaenx.Creator.Controls
             set { SetValue(ModuleProperty, value); }
         }
 
-        public ObservableCollection<ComObject> ComObjectsList { get { return Module?.ComObjects; } }
-
         public ComObjectRefView()
 		{
             InitializeComponent();
@@ -42,13 +40,13 @@ namespace Kaenx.Creator.Controls
 
         protected virtual void OnModuleChanged(DependencyPropertyChangedEventArgs e)
         {
-            Changed("ComObjectsList");
-
             if(e.OldValue != null)
                 (e.OldValue as IVersionBase).ComObjectRefs.CollectionChanged -= RefsChanged;
 
             if(e.NewValue != null)
                 (e.NewValue as IVersionBase).ComObjectRefs.CollectionChanged += RefsChanged;
+
+            TextFilter filter = new TextFilter(Module.ComObjectRefs, query);
         }
 
         private void RefsChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -88,20 +86,6 @@ namespace Kaenx.Creator.Controls
         private void ClickRemove(object sender, RoutedEventArgs e)
         {
             Module.ComObjectRefs.Remove(ComobjectRefList.SelectedItem as Models.ComObjectRef);
-        }
-
-        private void ClickGenerateRefAuto(object sender, RoutedEventArgs e)
-        {
-            Module.ComObjectRefs.Clear();
-
-            foreach(Models.ComObject com in Module.ComObjects)
-            {
-                Models.ComObjectRef cref = new Models.ComObjectRef();
-                cref.UId = AutoHelper.GetNextFreeUId(Module.ComObjectRefs);
-                cref.Name = com.Name;
-                cref.ComObjectObject = com;
-                Module.ComObjectRefs.Add(cref);
-            }
         }
 
         private void ResetId(object sender, RoutedEventArgs e)

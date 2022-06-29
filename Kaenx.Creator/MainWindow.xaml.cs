@@ -180,7 +180,7 @@ namespace Kaenx.Creator
             {
                 if(ele is MenuItem item)
                 {
-                    item.IsChecked = item.Tag.ToString() == lang;
+                    item.IsChecked = item.Tag?.ToString() == lang;
                 }
             }
         }
@@ -373,38 +373,12 @@ namespace Kaenx.Creator
             app.Versions.Add(newVer);
         }
 
-        private void ClickAddParamType(object sender, RoutedEventArgs e)
-        {
-            Models.AppVersion version = (sender as Button).DataContext as Models.AppVersion;
-            version.ParameterTypes.Add(new Models.ParameterType() { UId = AutoHelper.GetNextFreeUId(version.ParameterTypes) });
-        }
-
-        private void ClickAddParamEnum(object sender, RoutedEventArgs e)
-        {
-            Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
-            Models.ParameterType ptype = (sender as Button).DataContext as Models.ParameterType;
-            Models.ParameterTypeEnum penum = new Models.ParameterTypeEnum();
-            foreach(Models.Language lang in ver.Languages)
-                penum.Text.Add(new Models.Translation(lang, ""));
-            if(ptype.Enums.Count > 0)
-                penum.Value = ptype.Enums.OrderByDescending(e => e.Value).First().Value + 1;
-            ptype.Enums.Add(penum);
-        }
-
         private void ClickAddMemory(object sender, RoutedEventArgs e)
         {
             Models.Application app = AppList.SelectedItem as Models.Application;
             Models.AppVersion version = (sender as Button).DataContext as Models.AppVersion;
             version.Memories.Add(new Models.Memory() { Type = app.Mask.Memory, UId = AutoHelper.GetNextFreeUId(version.Memories) });
         }
-
-        private void ClickRemoveParamType(object sender, RoutedEventArgs e)
-        {
-            Models.AppVersion version = (sender as Button).DataContext as Models.AppVersion;
-            foreach(Models.ParameterType ptype in ListParamTypes.SelectedItems)
-                version.ParameterTypes.Remove(ptype);
-        }
-
         private void ClickRemoveMemory(object sender, RoutedEventArgs e)
         {
             Models.AppVersion version = (sender as Button).DataContext as Models.AppVersion;

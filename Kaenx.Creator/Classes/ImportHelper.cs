@@ -371,6 +371,8 @@ namespace Kaenx.Creator.Classes
 
         private void ImportLanguages(XElement xlangs, ObservableCollection<Language> langs) {
             _translations.Clear();
+            if(xlangs == null) return;
+            
             foreach(XElement xlang in xlangs.Elements()) {
                 string cultureCode = xlang.Attribute("Identifier").Value;
 

@@ -3,6 +3,7 @@ using Kaenx.Creator.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -26,8 +27,6 @@ namespace Kaenx.Creator.Controls
             set { SetValue(ModuleProperty, value); }
         }
         
-        public ObservableCollection<ParameterRef> ParameterRefsList { get { return Module?.ParameterRefs; } }
-
         public ComObjectView()
 		{
             InitializeComponent();
@@ -45,9 +44,7 @@ namespace Kaenx.Creator.Controls
 
         protected virtual void OnModuleChanged()
         {
-            //InParameter.ItemsSource = Module?.Parameters;
-            //InBaseNumber.Visibility = (Module is Models.Module) ? Visibility.Visible : Visibility.Collapsed;
-            Changed("ParameterRefsList");
+            TextFilter filter = new TextFilter(Module.ComObjects, query);
         }
         
         protected virtual void OnVersionChanged() {

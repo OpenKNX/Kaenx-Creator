@@ -31,9 +31,10 @@
         </Grid.ColumnDefinitions>
         <Button Content="Hinzufügen" Margin="0 0 1 2" Click="ClickAdd" />
         <Button Grid.Column="1" Content="Löschen" Click="ClickRemove" Margin="1 0 0 2" IsEnabled="{Binding ElementName=ComobjectRefList, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
-        <Button Grid.Row="1" Grid.ColumnSpan="2" Content="Auto generieren" Click="ClickGenerateRefAuto" Margin="0 0 0 2" />
+        <TextBlock Grid.Row="1" Text="Filter:" HorizontalAlignment="Right" />
+        <TextBox x:Name="query" Grid.Column="1" Grid.Row="1" Margin="1 0 0 2" />
 
-        <ListView x:Name="ComobjectRefList" Grid.Row="2" Grid.ColumnSpan="2" ItemsSource="{Binding ComObjectRefs}">
+        <ListView x:Name="ComobjectRefList" Grid.Row="2" Grid.ColumnSpan="2" ItemsSource="{Binding Module.ComObjectRefs, ElementName=ViewControl}">
             <ListView.ItemTemplate>
 				<DataTemplate>
 					<TextBlock Text="{Binding Name}" Foreground="{Binding IsNotUsed, Converter={StaticResource BoolToBrush}}" />
@@ -88,7 +89,7 @@
                 </HeaderedContentControl>
 
                 <HeaderedContentControl Header="Kommunikationsobjekt">
-                    <ComboBox ItemsSource="{Binding ComObjectsList, ElementName=ViewControl}" DisplayMemberPath="Name" SelectedItem="{Binding ComObjectObject}" />
+                    <ComboBox ItemsSource="{Binding Module.ComObjects, ElementName=ViewControl}" DisplayMemberPath="Name" SelectedItem="{Binding ComObjectObject}" />
                 </HeaderedContentControl>
 
                 <HeaderedContentControl Header="Text">
