@@ -1028,7 +1028,7 @@ namespace Kaenx.Creator
 
         private void ExportInFilter_TextChanged(object sender, TextChangedEventArgs e)
         {
-            ExportList.ItemsSource = Exports.Where(i => i.Version.NameText.Contains(ExportInFilter.Text) || i.App.NameText.Contains(ExportInFilter.Text) || i.Hardware.Name.Contains(ExportInFilter.Text) || i.Device.Name.Contains(ExportInFilter.Text)).ToList();
+            ExportList.ItemsSource = Exports.Where(i => i.Version.NameText.Contains(ExportInFilter.Text) || i.App.NameText.Contains(ExportInFilter.Text) || i.Hardware.Name.Contains(ExportInFilter.Text) || i.Device.Name.Contains(ExportInFilter.Text));
         }
 
         private void ResetId(object sender, RoutedEventArgs e)
@@ -1049,7 +1049,7 @@ namespace Kaenx.Creator
             List<Models.Application> apps = new List<Models.Application>();
             List<Models.AppVersion> versions = new List<Models.AppVersion>();
 
-            foreach(Models.ExportItem item in Exports.Where(ex => ex.Selected).ToList())
+            foreach(Models.ExportItem item in Exports.Where(ex => ex.Selected))
             {
                 if (!hardware.Contains(item.Hardware)) hardware.Add(item.Hardware);
                 if (!devices.Contains(item.Device)) devices.Add(item.Device);

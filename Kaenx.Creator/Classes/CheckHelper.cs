@@ -158,6 +158,7 @@ namespace Kaenx.Creator.Classes {
                             break;
 
                         case ParameterTypes.NumberInt:
+                            maxsize = (int)Math.Ceiling(maxsize / 2.0);
                             if(!ptype.IsSizeManual)
                             {
                                 int z = ((int)ptype.Min) * (-1);
@@ -165,6 +166,7 @@ namespace Kaenx.Creator.Classes {
                                 string y = z.ToString().Replace("-", "");
                                 string bin = Convert.ToString(int.Parse(y), 2);
                                 if(z == (ptype.Min * (-1))) bin += "1";
+                                if(!z.ToString().StartsWith("-")) bin = "1" + bin;
                                 ptype.SizeInBit = bin.Length;
                                 maxsize = (int)Math.Pow(2, ptype.SizeInBit);
                             }

@@ -83,5 +83,26 @@ namespace Kaenx.Creator.Controls
         {
             ((sender as Button).DataContext as Models.Parameter).Id = -1;
         }
+
+        private void ManuelId(object sender, RoutedEventArgs e)
+        {
+            PromptDialog diag = new PromptDialog("Neue Parameter ID", "ID Manuell");
+            if(diag.ShowDialog() == true)
+            {
+                int id;
+                if(!int.TryParse(diag.Answer, out id))
+                {
+                    MessageBox.Show("Bitte geben Sie eine Ganzzahl ein.", "Eingabefehler");
+                    return;
+                }
+                Parameter para = Module.Parameters.SingleOrDefault(p => p.Id == id);
+                if(para != null)
+                {
+                    MessageBox.Show($"Die ID {id} wird bereits von Parameter {para.Name} verwendet.", "Doppelte ID");
+                    return;
+                }
+                ((sender as Button).DataContext as Models.Parameter).Id = id;
+            }
+        }
     }
 }

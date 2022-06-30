@@ -204,6 +204,9 @@ namespace Kaenx.Creator.Models
             set { _procedure = value; Changed("Procedure"); }
         }
 
+        public int LastParameterId { get; set; } = 0;
+        public int LastParameterRefId { get; set; } = 0;
+
         public event PropertyChangedEventHandler PropertyChanged;
         public void Changed(string name)
         {

@@ -15,7 +15,8 @@ namespace Kaenx.Creator.Classes
 
         public static void MemoryCalculation(AppVersion ver, Memory mem)
         {
-            ParameterTypeCalculations(ver);
+            //already Calculated by checkhelper
+            //ParameterTypeCalculations(ver);
 
             mem.Sections.Clear();
 
@@ -301,29 +302,30 @@ namespace Kaenx.Creator.Classes
             return id;
         }
 
-        public static int GetNextFreeId(object list, int start = 1) {
+        public static int GetNextFreeId(IVersionBase vbase, string list, int start = 1) {
             int id = start;
 
-            if(list is System.Collections.ObjectModel.ObservableCollection<Parameter>) {
-                while((list as System.Collections.ObjectModel.ObservableCollection<Parameter>).Any(i => i.Id == id))
-                    id++;
-            }else if(list is System.Collections.ObjectModel.ObservableCollection<ParameterRef>) {
-                while((list as System.Collections.ObjectModel.ObservableCollection<ParameterRef>).Any(i => i.Id == id))
-                    id++;
-            }else if(list is System.Collections.ObjectModel.ObservableCollection<ComObject>) {
-                while((list as System.Collections.ObjectModel.ObservableCollection<ComObject>).Any(i => i.Id == id))
-                    id++;
-            }else if(list is System.Collections.ObjectModel.ObservableCollection<ComObjectRef>) {
-                while((list as System.Collections.ObjectModel.ObservableCollection<ComObjectRef>).Any(i => i.Id == id))
-                    id++;
-            }else if(list is System.Collections.ObjectModel.ObservableCollection<Argument>) {
-                while((list as System.Collections.ObjectModel.ObservableCollection<Argument>).Any(i => i.Id == id))
-                    id++;
-            }else if(list is System.Collections.ObjectModel.ObservableCollection<Module>) {
-                while((list as System.Collections.ObjectModel.ObservableCollection<Module>).Any(i => i.Id == id))
-                    id++;
+            if(list == "Parameters") {
+                return ++vbase.LastParameterId;
+            } else if(list == "ParameterRefs") {
+                return ++vbase.LastParameterRefId;
+            } else {
+                var x = vbase.GetType().GetProperty(list).GetValue(vbase);
+                if(x is System.Collections.ObjectModel.ObservableCollection<ComObject> lc) {
+                    while(lc.Any(i => i.Id == id))
+                        id++;
+                }else if(x is System.Collections.ObjectModel.ObservableCollection<ComObjectRef> lcr) {
+                    while(lcr.Any(i => i.Id == id))
+                        id++;
+                }else if(x is System.Collections.ObjectModel.ObservableCollection<Argument> la) {
+                    while(la.Any(i => i.Id == id))
+                        id++;
+                }else if(x is System.Collections.ObjectModel.ObservableCollection<Module> lm) {
+                    while(lm.Any(i => i.Id == id))
+                        id++;
+                }
+                return id;
             }
-            return id;
         }
     
         public static byte[] GetFileBytes(string file)

@@ -110,6 +110,8 @@ namespace Kaenx.Creator.Models
         public ObservableCollection<Argument> Arguments { get; set; } = new ObservableCollection<Argument>();
         public List<DynamicMain> Dynamics { get; set; } = new List<DynamicMain>();
 
+        public int LastParameterId { get; set; } = 0;
+        public int LastParameterRefId { get; set; } = 0;
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void Changed(string name)

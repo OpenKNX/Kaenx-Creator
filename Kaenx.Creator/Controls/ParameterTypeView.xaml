@@ -87,7 +87,7 @@
                     </Grid.ColumnDefinitions>
 
                     <CheckBox IsChecked="{Binding IsSizeManual}" VerticalAlignment="Center" />
-                    <TextBox Grid.Column="1" Text="{Binding SizeInBit, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" IsEnabled="{Binding IsSizeManual}"/>
+                    <TextBox Grid.Column="1" Text="{Binding SizeInBit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" IsEnabled="{Binding IsSizeManual}"/>
                 </Grid>
             </HeaderedContentControl>
 

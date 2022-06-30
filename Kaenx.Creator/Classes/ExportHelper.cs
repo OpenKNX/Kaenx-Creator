@@ -303,7 +303,7 @@ namespace Kaenx.Creator.Classes
                     foreach (Models.Module mod in ver.Modules)
                     {
                         if (mod.Id == -1)
-                            mod.Id = AutoHelper.GetNextFreeId(ver.Modules);
+                            mod.Id = AutoHelper.GetNextFreeId(ver, "Modules");
 
                         appVersionMod += $"_MD-{mod.Id}";
 
@@ -312,7 +312,7 @@ namespace Kaenx.Creator.Classes
                         {
                             XElement xarg = new XElement(Get("Argument"));
                             if (arg.Id == -1)
-                                arg.Id = AutoHelper.GetNextFreeId(mod.Arguments);
+                                arg.Id = AutoHelper.GetNextFreeId(mod, "Arguments");
                             xarg.SetAttributeValue("Id", $"{appVersionMod}_A-{arg.Id}");
                             xarg.SetAttributeValue("Name", arg.Name);
                             temp.Add(xarg);
@@ -773,7 +773,7 @@ namespace Kaenx.Creator.Classes
                 XElement xpref = new XElement(Get("ParameterRef"));
                 if (pref.Id == -1)
                 {
-                    pref.Id = AutoHelper.GetNextFreeId(vbase.ParameterRefs);
+                    pref.Id = AutoHelper.GetNextFreeId(vbase, "ParameterRefs");
                 }
                 string id = appVersionMod + (pref.ParameterObject.IsInUnion ? "_UP-" : "_P-") + pref.ParameterObject.Id;
                 xpref.SetAttributeValue("Id", $"{id}_R-{pref.Id}");
@@ -825,7 +825,7 @@ namespace Kaenx.Creator.Classes
                 XElement xcom = new XElement(Get("ComObject"));
                 if (com.Id == -1)
                 {
-                    com.Id = AutoHelper.GetNextFreeId(vbase.ComObjects, 0);
+                    com.Id = AutoHelper.GetNextFreeId(vbase, "ComObjects");
                 }
                 string id = $"{appVersionMod}_O-";
                 if(vbase is Models.Module) id += "2-";
@@ -882,7 +882,7 @@ namespace Kaenx.Creator.Classes
                 XElement xcref = new XElement(Get("ComObjectRef"));
                 if (cref.Id == -1)
                 {
-                    cref.Id = AutoHelper.GetNextFreeId(vbase.ComObjectRefs, 0);
+                    cref.Id = AutoHelper.GetNextFreeId(vbase, "ComObjectRefs");
                 }
                 string id = $"{appVersionMod}_O-";
                 if(vbase is Models.Module) id += "2-";
@@ -962,7 +962,7 @@ namespace Kaenx.Creator.Classes
 
             if (para.Id == -1)
             {
-                para.Id = AutoHelper.GetNextFreeId(ver.Parameters);
+                para.Id = AutoHelper.GetNextFreeId(ver, "Parameters");
             }
             string id = appVersionMod + (para.IsInUnion ? "_UP-" : "_P-") + para.Id;
             xpara.SetAttributeValue("Id", id);
