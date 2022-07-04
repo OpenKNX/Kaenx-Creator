@@ -348,6 +348,8 @@
             <MenuItem IsEnabled="{Binding SelectedItem, ElementName=VersionList, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" Header="Bereinigen">
                 <MenuItem Header="Nicht verwendete Elemente markieren" Click="ClickShowClean" />
                 <MenuItem Header="Nicht verwendete Elemente automatisch löschen" Click="ClickDoClean" />
+                <Separator />
+                <MenuItem Header="Alle Parameter-IDs zurücksetzen" Click="ClickDoResetParaIds" />
             </MenuItem>
             <MenuItem x:Name="MenuLang" Header="{x:Static p:Resources.menu_lang}">
                 <MenuItem Header="Please restart Application after changing language" IsEnabled="False" />

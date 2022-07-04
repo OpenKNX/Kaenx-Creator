@@ -168,30 +168,31 @@ namespace Kaenx.Creator.Classes
                             else
                                 xcontent = new XElement(Get("TypeFloat"));
 
-                            string ftype = "failed";
                             switch(type.Type)
                             {
                                 case ParameterTypes.NumberUInt:
-                                    ftype = "unsignedInt";
+                                    xcontent.SetAttributeValue("Type", "unsignedInt");
                                     break;
                                 
                                 case ParameterTypes.NumberInt:
-                                    ftype = "signedInt";
+                                    xcontent.SetAttributeValue("Type", "signedInt");
                                     break;
 
                                 case ParameterTypes.Float_DPT9:
-                                    ftype = "DPT 9";
+                                    xcontent.SetAttributeValue("Encoding", "DPT 9");
                                     break;
 
                                 case ParameterTypes.Float_IEEE_Single:
-                                    ftype = "IEEE-754 Single";
+                                    xcontent.SetAttributeValue("Encoding", "IEEE-754 Single");
                                     break;
 
                                 case ParameterTypes.Float_IEEE_Double:
-                                    ftype = "IEEE-754 Double";
+                                    xcontent.SetAttributeValue("Encoding", "IEEE-754 Double");
                                     break;
+
+                                default:
+                                    throw new Exception("Unbekannter ParameterType: " + type.Type.ToString());
                             }
-                            xcontent.SetAttributeValue("Type", ftype);
                             xcontent.SetAttributeValue("minInclusive", type.Min);
                             xcontent.SetAttributeValue("maxInclusive", type.Max);
                             if(type.Increment != 1)
@@ -230,6 +231,7 @@ namespace Kaenx.Creator.Classes
                     }
 
                     if (xcontent != null && 
+                        xcontent.Name.LocalName != "TypeFloat" &&
                         xcontent.Name.LocalName != "TypeNone" &&
                         xcontent.Name.LocalName != "TypePicture" &&
                         xcontent.Name.LocalName != "IpAddress")
@@ -291,7 +293,7 @@ namespace Kaenx.Creator.Classes
                     xele.Name = XName.Get(xele.Name.LocalName, currentNamespace);
                 }
                 xunderapp.Add(temp);
-
+                
 
                 #endregion
 
@@ -441,7 +443,8 @@ namespace Kaenx.Creator.Classes
                         flag = true;
                     });
 
-                    File.Delete(GetRelPath("Temp", Manu, appVersion + ".validate.xml"));
+                    if(!flag)
+                        File.Delete(GetRelPath("Temp", Manu, appVersion + ".validate.xml"));
 
                     if(flag)
                     {

@@ -157,5 +157,20 @@ namespace Kaenx.Creator.Classes
                 }
             }
         }
+    
+        public static void ResetParameterIds(IVersionBase vbase)
+        {
+            foreach(Parameter para in vbase.Parameters)
+                para.Id = -1;
+
+            foreach(ParameterRef pref in vbase.ParameterRefs)
+                pref.Id = -1;
+
+            if(vbase is AppVersion ver)
+            {
+                foreach(Module mod in ver.Modules)
+                    ResetParameterIds(mod);
+            }
+        }
     }
 }

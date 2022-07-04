@@ -937,6 +937,12 @@ namespace Kaenx.Creator
                 ClearHelper.RemoveUnusedElements(vers);
         }
 
+        private void ClickDoResetParaIds(object sender, RoutedEventArgs e)
+        {
+            Models.AppVersion vers = VersionList.SelectedItem as Models.AppVersion;
+            ClearHelper.ResetParameterIds(vers);
+        }
+
         private void ClickImport(object sender, RoutedEventArgs e)
         {
             var dialog = new Microsoft.Win32.OpenFileDialog();
