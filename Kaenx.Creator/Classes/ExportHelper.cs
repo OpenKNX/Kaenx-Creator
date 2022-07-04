@@ -11,6 +11,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Linq;
+using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
 
@@ -426,16 +427,22 @@ namespace Kaenx.Creator.Classes
                 string xsdFile = "Data\\knx_project_" + nsnumber + ".xsd";
                 if (File.Exists(xsdFile))
                 {
+                    doc.Save(GetRelPath("Temp", Manu, appVersion + ".validate.xml"));
                     Debug.WriteLine("XSD gefunden. Validierung wird ausgeführt");
                     XmlSchemaSet schemas = new XmlSchemaSet();
                     schemas.Add(null, xsdFile);
                     bool flag = false;
 
-                    doc.Validate(schemas, (o, e) => {
-                        Debug.WriteLine($"Fehler beim Validieren! {e.Message} ({o})");
-                        actions.Add(new PublishAction() { Text = $"    Fehler beim Validieren! {e.Message} ({o})", State = PublishState.Fail});
+                    XDocument doc2 = XDocument.Load(GetRelPath("Temp", Manu, appVersion + ".validate.xml"), LoadOptions.SetLineInfo);
+
+                    doc2.Validate(schemas, (o, e) => {
+                        Debug.WriteLine($"Fehler beim Validieren! Zeile {e.Exception.LineNumber}:{e.Exception.LinePosition}\r\n--->{e.Message}\r\n--->({o})");
+                        actions.Add(new PublishAction() { Text = $"    Fehler beim Validieren! Zeile {e.Exception.LineNumber}:{e.Exception.LinePosition} -> {e.Message} ({o})", State = PublishState.Fail});
                         flag = true;
                     });
+
+                    File.Delete(GetRelPath("Temp", Manu, appVersion + ".validate.xml"));
+
                     if(flag)
                     {
                         return false;

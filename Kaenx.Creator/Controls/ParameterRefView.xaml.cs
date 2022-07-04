@@ -15,9 +15,8 @@ using System.Windows.Input;
 
 namespace Kaenx.Creator.Controls
 {
-    public partial class ParameterRefView : UserControl, INotifyPropertyChanged
+    public partial class ParameterRefView : UserControl
     {
-        public event PropertyChangedEventHandler PropertyChanged;
 
         public static readonly DependencyProperty ModuleProperty = DependencyProperty.Register("Module", typeof(IVersionBase), typeof(ParameterRefView), new PropertyMetadata(OnModuleChangedCallback));
         public IVersionBase Module {

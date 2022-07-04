@@ -12,11 +12,8 @@ using System.Windows.Input;
 
 namespace Kaenx.Creator.Controls
 {
-    public partial class ParameterView : UserControl, INotifyPropertyChanged
+    public partial class ParameterView : UserControl
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-
-
         public static readonly DependencyProperty VersionProperty = DependencyProperty.Register("Version", typeof(AppVersion), typeof(ParameterView), new PropertyMetadata(OnVersionChangedCallback));
         public static readonly DependencyProperty ModuleProperty = DependencyProperty.Register("Module", typeof(IVersionBase), typeof(ParameterView), new PropertyMetadata(OnModuleChangedCallback));
         public AppVersion Version {

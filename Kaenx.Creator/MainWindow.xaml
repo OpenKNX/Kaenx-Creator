@@ -1080,7 +1080,7 @@
                     </TabItem>
 
                     <TabItem Header="ParameterTypes" Style="{StaticResource LeftTabItem}">
-                        <ctrl:ParameterTypeView Version="{Binding ElementName=VersionList, Path=SelectedItem}" />
+                        <ctrl:ParameterTypeView Baggages="{Binding General.Baggages, ElementName=ViewControl}" Version="{Binding ElementName=VersionList, Path=SelectedItem}" />
                     </TabItem>
 
                     <TabItem Header="Unions" Visibility="{Binding IsUnionActive, Converter={StaticResource BoolToVis}}" Style="{StaticResource LeftTabItem}">

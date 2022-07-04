@@ -17,10 +17,15 @@ namespace Kaenx.Creator.Controls
 {
     public partial class ParameterTypeView : UserControl, INotifyPropertyChanged
     {
+        public static readonly DependencyProperty BaggagesProperty = DependencyProperty.Register("Baggages", typeof(ObservableCollection<Baggage>), typeof(ParameterTypeView), new PropertyMetadata(null));
         public static readonly DependencyProperty VersionProperty = DependencyProperty.Register("Version", typeof(AppVersion), typeof(ParameterTypeView), new PropertyMetadata(OnVersionChangedCallback));
         public AppVersion Version {
             get { return (AppVersion)GetValue(VersionProperty); }
             set { SetValue(VersionProperty, value); }
+        }
+        public ObservableCollection<Baggage> Baggages {
+            get { return (ObservableCollection<Baggage>)GetValue(BaggagesProperty); }
+            set { SetValue(BaggagesProperty, value); }
         }
 
         public ParameterTypeView()
@@ -46,8 +51,8 @@ namespace Kaenx.Creator.Controls
 
         private void ClickAddParamEnum(object sender, RoutedEventArgs e)
         {
-            Models.ParameterType ptype = (sender as Button).DataContext as Models.ParameterType;
-            Models.ParameterTypeEnum penum = new Models.ParameterTypeEnum();
+            ParameterType ptype = (sender as Button).DataContext as ParameterType;
+            ParameterTypeEnum penum = new ParameterTypeEnum();
             foreach(Models.Language lang in Version.Languages)
                 penum.Text.Add(new Models.Translation(lang, ""));
             if(ptype.Enums.Count > 0)
