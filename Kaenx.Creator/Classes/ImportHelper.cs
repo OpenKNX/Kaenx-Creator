@@ -221,7 +221,20 @@ namespace Kaenx.Creator.Classes
             ns = ns.Substring(ns.LastIndexOf('/') + 1);
             currentVers.NamespaceVersion = int.Parse(ns);
             currentVers.DefaultLanguage = xapp.Attribute("DefaultLanguage").Value;
-            currentVers.Languages.Add(new Language(_langTexts[currentVers.DefaultLanguage], currentVers.DefaultLanguage));
+            if(_langTexts.ContainsKey(currentVers.DefaultLanguage))
+            {
+                currentVers.Languages.Add(new Language(_langTexts[currentVers.DefaultLanguage], currentVers.DefaultLanguage));
+            } else {
+                if(_langTexts.Any(l => l.Key.StartsWith(currentVers.DefaultLanguage)))
+                {
+                    string lang = _langTexts.First(l => l.Key.StartsWith(currentVers.DefaultLanguage)).Key;
+                    currentVers.DefaultLanguage = lang;
+                    currentVers.Languages.Add(new Language(_langTexts[currentVers.DefaultLanguage], currentVers.DefaultLanguage));
+                } else {
+                    System.Windows.Forms.MessageBox.Show($"Sprache '{currentVers.DefaultLanguage}' konnte nicht zugeordnet werden");
+                    currentVers.DefaultLanguage = "";
+                }
+            }
 
             if(xapp.Attribute("ReplacesVersions") != null) currentVers.ReplacesVersions = xapp.Attribute("ReplacesVersions").Value;
             
@@ -256,13 +269,13 @@ namespace Kaenx.Creator.Classes
 
         private void CheckUniqueRefId(XElement xstatic, XElement xdyn)
         {
-            List<int> ids = new List<int>();
+            List<Int64> ids = new List<Int64>();
             bool flag1 = false;
             bool flag2 = false;
 
             foreach(XElement xele in xstatic.Descendants(Get("ParameterRef")))
             {
-                int paraId = int.Parse(GetLastSplit(xele.Attribute("Id").Value, 2));
+                Int64 paraId = Int64.Parse(GetLastSplit(xele.Attribute("Id").Value, 2));
                 if(!ids.Contains(paraId))
                     ids.Add(paraId);
                 else {
@@ -274,7 +287,7 @@ namespace Kaenx.Creator.Classes
             ids.Clear();
             foreach(XElement xele in xstatic.Descendants(Get("ComObjectRef")))
             {
-                int comId = int.Parse(GetLastSplit(xele.Attribute("Id").Value, 2));
+                Int64 comId = Int64.Parse(GetLastSplit(xele.Attribute("Id").Value, 2));
                 if(!ids.Contains(comId))
                     ids.Add(comId);
                 else {
@@ -688,7 +701,7 @@ namespace Kaenx.Creator.Classes
                 ParameterRef pref = new ParameterRef();
 
                 pref.UId = _uidCounter++;
-                pref.Id = int.Parse(GetLastSplit(xref.Attribute("Id").Value, 2));
+                pref.Id = Int64.Parse(GetLastSplit(xref.Attribute("Id").Value, 2));
 
                 pref.OverwriteValue = xref.Attribute("Value") != null;
                 pref.Value = xref.Attribute("Value")?.Value ?? "";
@@ -1136,8 +1149,8 @@ namespace Kaenx.Creator.Classes
                         DynChoose dch = new DynChoose() {
                             Parent = parent
                         };
-                        paraId = int.Parse(GetLastSplit(xele.Attribute("ParamRefId").Value, 2));
-                        dch.ParameterRefObject = vbase.ParameterRefs.Single(p => p.Id == paraId);
+                        Int64 paraId64_2 = Int64.Parse(GetLastSplit(xele.Attribute("ParamRefId").Value, 2));
+                        dch.ParameterRefObject = vbase.ParameterRefs.Single(p => p.Id == paraId64_2);
                         parent.Items.Add(dch);
                         ParseDynamic(dch, xele, vbase);
                         break;
@@ -1157,8 +1170,8 @@ namespace Kaenx.Creator.Classes
                         DynParameter dp = new DynParameter() {
                             Parent = parent
                         };
-                        paraId = int.Parse(GetLastSplit(xele.Attribute("RefId").Value, 2));
-                        dp.ParameterRefObject = vbase.ParameterRefs.Single(p => p.Id == paraId);
+                        Int64 paraId64 = Int64.Parse(GetLastSplit(xele.Attribute("RefId").Value, 2));
+                        dp.ParameterRefObject = vbase.ParameterRefs.Single(p => p.Id == paraId64);
                         parent.Items.Add(dp);
                         break;
 

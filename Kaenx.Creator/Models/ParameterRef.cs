@@ -30,8 +30,8 @@ namespace Kaenx.Creator.Models
             set { _uid = value; Changed("UId"); }
         }
 
-        private int _id = -1;
-        public int Id
+        private Int64 _id = -1;
+        public Int64 Id
         {
             get { return _id; }
             set { _id = value; Changed("Id"); }

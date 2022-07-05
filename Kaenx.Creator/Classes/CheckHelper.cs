@@ -102,7 +102,7 @@ namespace Kaenx.Creator.Classes {
 
 
                 foreach(ParameterType ptype in vers.ParameterTypes) {
-                    int maxsize = (int)Math.Pow(2, ptype.SizeInBit);
+                    Int64 maxsize = (Int64)Math.Pow(2, ptype.SizeInBit);
         
                     if(ptype.UIHint == "CheckBox" && (ptype.Min != 0 || ptype.Max != 1 || ptype.SizeInBit != 1))
                         actions.Add(new PublishAction() { Text = $"    ParameterType Text {ptype.Name} ({ptype.UId}): Wenn UIHint Checkbox ist, ist Min=0 und Max=1 erforderlich, sowie Size=1", State = PublishState.Fail });
@@ -158,7 +158,7 @@ namespace Kaenx.Creator.Classes {
                             break;
 
                         case ParameterTypes.NumberInt:
-                            maxsize = (int)Math.Ceiling(maxsize / 2.0);
+                            maxsize = (Int64)Math.Ceiling(maxsize / 2.0);
                             if(!ptype.IsSizeManual)
                             {
                                 int z = ((int)ptype.Min) * (-1);
@@ -171,11 +171,14 @@ namespace Kaenx.Creator.Classes {
                                 maxsize = (int)Math.Pow(2, ptype.SizeInBit);
                             }
                             if(ptype.Min > ptype.Max) actions.Add(new PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Min ({ptype.Min}) ist größer als Max ({ptype.Max})", State = PublishState.Fail });
-                            if(ptype.Max > ((maxsize/2)-1)) actions.Add(new PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Max ({ptype.Max}) kann nicht größer als das Maximum ({(maxsize/2)-1}) sein", State = PublishState.Fail });
-                            if(ptype.Min < ((maxsize/2)*(-1))) actions.Add(new PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Min ({ptype.Min}) kann nicht kleiner als das Minimum ({(maxsize/2)*(-1)}) sein", State = PublishState.Fail });
+                            if(ptype.Max > ((maxsize)-1)) actions.Add(new PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Max ({ptype.Max}) kann nicht größer als das Maximum ({(maxsize/2)-1}) sein", State = PublishState.Fail });
+                            if(ptype.Min < ((maxsize)*(-1))) actions.Add(new PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Min ({ptype.Min}) kann nicht kleiner als das Minimum ({(maxsize/2)*(-1)}) sein", State = PublishState.Fail });
                             break;
 
                         case ParameterTypes.Float_DPT9:
+                        case ParameterTypes.Float_IEEE_Single:
+                        case ParameterTypes.Float_IEEE_Double:
+
                             break;
 
                         case ParameterTypes.Picture:
