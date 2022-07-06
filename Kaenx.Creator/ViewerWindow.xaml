@@ -1,0 +1,21 @@
+<Window x:Class="Kaenx.Creator.ViewerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Kaenx.Creator"
+        xmlns:models="clr-namespace:Kaenx.Creator.Models"
+        xmlns:conv="clr-namespace:Kaenx.Creator.Converter"
+        xmlns:System="clr-namespace:System;assembly=mscorlib"
+        xmlns:p="clr-namespace:Kaenx.Creator.Properties"
+        xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
+        xmlns:ctrl="clr-namespace:Kaenx.Creator.Controls"
+        xmlns:select="clr-namespace:Kaenx.Creator.Selectors"
+        mc:Ignorable="d"
+        Icon="/FileLogo.ico"
+        x:Name="ViewControl2"
+        Title="Kaenx-Creator ProdViewer" Height="700" Width="1300">
+
+<TextBlock Text="Viewer" />
+
+</Window>

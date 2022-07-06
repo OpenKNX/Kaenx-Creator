@@ -351,6 +351,10 @@
                 <Separator />
                 <MenuItem Header="Alle Parameter-IDs zurücksetzen" Click="ClickDoResetParaIds" />
             </MenuItem>
+            <MenuItem Header="ProdViewer">
+                <MenuItem Header="KnxProd-Datei öffnen" IsEnabled="False" />
+                <MenuItem Header="Creator-Datei öffnen" IsEnabled="False" />
+            </MenuItem>
             <MenuItem x:Name="MenuLang" Header="{x:Static p:Resources.menu_lang}">
                 <MenuItem Header="Please restart Application after changing language" IsEnabled="False" />
                 <Separator />
@@ -361,7 +365,6 @@
         </Menu>
 
         <TabControl x:Name="TabsEdit" Grid.Row="1" Margin=" 0 10 0 0" IsEnabled="False" BorderThickness="0 0 0 4" Style="{StaticResource ResourceKey=TopTabControl}">
-
             <TabItem Header="{x:Static p:Resources.tabs_gen}" Style="{StaticResource TopTabItem}">
                 <StackPanel>
                     <StackPanel.Resources>
@@ -647,9 +650,10 @@
                             <ColumnDefinition />
                             <ColumnDefinition />
                             <ColumnDefinition />
+                            <ColumnDefinition />
                         </Grid.ColumnDefinitions>
 
-                        <StackPanel Grid.ColumnSpan="3">
+                        <StackPanel Grid.ColumnSpan="4">
                             <StackPanel.Resources>
                                 <Style TargetType="HeaderedContentControl">
                                     <Setter Property="Margin" Value="5" />
@@ -693,13 +697,14 @@
                         </StackPanel>
 
 
-                        <Separator Grid.Row="1" Grid.ColumnSpan="3" Margin="0 10 0 4" />
+                        <Separator Grid.Row="1" Grid.ColumnSpan="4" Margin="0 10 0 4" />
 
                         <Button Grid.Row="2" Content="Version hinzufügen" Click="ClickAddVersion" Margin="5 5 2.5 2" IsEnabled="{Binding Mask, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
                         <Button Grid.Row="2" Grid.Column="1" Content="Version Löschen" Click="ClickRemoveVersion" Margin="2.5 5 5 2" IsEnabled="{Binding ElementName=VersionList, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
                         <Button Grid.Row="2" Grid.Column="2" Content="Version Kopieren" Click="ClickCopyVersion" Margin="2.5 5 5 2" IsEnabled="{Binding ElementName=VersionList, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
+                        <Button Grid.Row="2" Grid.Column="3" Content="Version in Viewer öffnen" Click="ClickOpenViewer" Margin="2.5 5 5 2" IsEnabled="{Binding ElementName=VersionList, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
 
-                        <ListView x:Name="VersionList" Grid.Row="3" Grid.ColumnSpan="3" ItemsSource="{Binding Versions}" DisplayMemberPath="NameText" Margin="5 5 5 0" />
+                        <ListView x:Name="VersionList" Grid.Row="3" Grid.ColumnSpan="4" ItemsSource="{Binding Versions}" DisplayMemberPath="NameText" Margin="5 5 5 0" />
                     </Grid>
                 </Grid>
             </TabItem>
@@ -1469,6 +1474,5 @@
 
             <Image Grid.Row="4" Source="Assets\Images\OpenKNX.png" Margin="10" />
         </Grid>
-
     </Grid>
 </Window>

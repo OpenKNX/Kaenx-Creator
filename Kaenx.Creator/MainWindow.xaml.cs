@@ -410,6 +410,12 @@ namespace Kaenx.Creator
             app.Versions.Add(copy);
         }
 
+        private void ClickOpenViewer(object sender, RoutedEventArgs e)
+        {
+            ViewerWindow viewer = new ViewerWindow(new Viewer.ImporterCreator((Models.AppVersion)VersionList.SelectedItem, (Models.Application)AppList.SelectedItem));
+            viewer.Show();
+        }
+
         private void ClickAddApp(object sender, RoutedEventArgs e)
         {
             General.Applications.Add(new Models.Application());
