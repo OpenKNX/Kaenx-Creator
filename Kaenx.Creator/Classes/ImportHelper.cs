@@ -769,7 +769,7 @@ namespace Kaenx.Creator.Classes
                     com.ObjectSize = int.Parse(objSize[0]) * 8;
                 string type = xcom.Attribute("DatapointType")?.Value;
 
-                if (type != null)
+                if (!string.IsNullOrEmpty(type))
                 {
                     com.HasDpt = true;
                     if (type.StartsWith("DPST-"))
