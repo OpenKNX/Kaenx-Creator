@@ -1,21 +1,252 @@
-<Window x:Class="Kaenx.Creator.ViewerWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Kaenx.Creator"
-        xmlns:models="clr-namespace:Kaenx.Creator.Models"
-        xmlns:conv="clr-namespace:Kaenx.Creator.Converter"
-        xmlns:System="clr-namespace:System;assembly=mscorlib"
-        xmlns:p="clr-namespace:Kaenx.Creator.Properties"
-        xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
-        xmlns:ctrl="clr-namespace:Kaenx.Creator.Controls"
-        xmlns:select="clr-namespace:Kaenx.Creator.Selectors"
-        mc:Ignorable="d"
-        Icon="/FileLogo.ico"
-        x:Name="ViewControl2"
-        Title="Kaenx-Creator ProdViewer" Height="700" Width="1300">
+<Window x:Class="Kaenx.Creator.ViewerWindow" 
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:local="clr-namespace:Kaenx.Creator" 
+    xmlns:models="clr-namespace:Kaenx.Creator.Models" 
+    xmlns:System="clr-namespace:System;assembly=mscorlib" 
+    xmlns:p="clr-namespace:Kaenx.Creator.Properties" 
+    xmlns:svgc="http://sharpvectors.codeplex.com/svgc/" 
+    xmlns:conv="clr-namespace:Kaenx.Creator.Converter" 
+    xmlns:selectors="clr-namespace:Kaenx.Creator.Viewer.Selectors" 
+    xmlns:ctrls="clr-namespace:Kaenx.Creator.Viewer.Controls" 
+    mc:Ignorable="d" Icon="/FileLogo.ico" x:Name="ParaControl" Title="Kaenx-Creator ProdViewer" Height="700" Width="1300">
+    <Window.Resources>
+        <conv:BoolToVisibility x:Key="Bool2Vis" />
+        <conv:IsHeadlineToObject x:Key="HeadlineToSize" TrueValue="14" FalseValue="12" />
+        <conv:IsHeadlineToObject x:Key="HeadlineToWeight" TrueValue="Bold" FalseValue="Normal" />
+        <conv:SeparatorHintToObject x:Key="HintToIcon" InformationValue="/Assets/information.png" ErrorValue="/Assets/error.png" />
+        <conv:SeparatorHintToObject x:Key="HintToBrush" InformationValue="Aquamarine" ErrorValue="Red" />
 
-<TextBlock Text="Viewer" />
+        <DataTemplate x:Key="ChannelTemplate">
+            <Expander Header="{Binding Text}" BorderThickness="0 1" Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}" HorizontalContentAlignment="Stretch">
+                <ListView ItemsSource="{Binding Blocks}" SelectedItem="{Binding SelectedBlock, ElementName=ParaControl, Mode=TwoWay}" SelectedValue="{Binding SelectedBlockId, ElementName=ParaControl, Mode=TwoWay}" SelectedValuePath="Id" HorizontalAlignment="Stretch">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            <Setter Property="Padding" Value="0" />
+                            <Setter Property="Margin" Value="0" />
+                            <Setter Property="MinHeight" Value="0" />
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Border Height="40" Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}">
+                                <TextBlock Text="{Binding Text}" VerticalAlignment="Center" Margin="40 0 10 0" />
+                            </Border>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </Expander>
+        </DataTemplate>
+        <DataTemplate x:Key="IndependentTemplate">
+            <ListView ItemsSource="{Binding Blocks}" SelectedItem="{Binding SelectedBlock, ElementName=ParaControl, Mode=TwoWay}" SelectedValue="{Binding SelectedBlockId, ElementName=ParaControl, Mode=TwoWay}" SelectedValuePath="Id">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        <Setter Property="Padding" Value="0" />
+                        <Setter Property="Margin" Value="0" />
+                        <Setter Property="MinHeight" Value="0" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Border Height="40" Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}">
+                            <TextBlock Text="{Binding Text}" VerticalAlignment="Center" Margin="40 0 10 0" />
+                        </Border>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </DataTemplate>
 
+
+        <DataTemplate x:Key="TypeNotFound">
+            <TextBlock>
+                <Run Text="Type nicht gefunden..." />
+                <LineBreak />
+                <Run Text="{Binding Id}" />
+                <LineBreak />
+                <Run Text="{Binding Text}" />
+            </TextBlock>
+        </DataTemplate>
+
+        <DataTemplate x:Key="TypeEnums">
+            <Grid Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}" Margin="0 5">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition MaxWidth="550" Width="9*" />
+                    <ColumnDefinition MinWidth="230" MaxWidth="350" Width="3*" />
+                    <ColumnDefinition MaxWidth="120" Width="1*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding Text}" Margin="10 0" VerticalAlignment="Center" TextWrapping="Wrap" />
+                <ComboBox Grid.Column="1" IsEnabled="{Binding IsEnabled}" ItemsSource="{Binding Options}" DisplayMemberPath="Text" SelectedValuePath="Value" SelectedValue="{Binding Value, Mode=TwoWay}" VerticalAlignment="Center" HorizontalAlignment="Stretch" />
+                <TextBlock Grid.Column="2" Text="{Binding SuffixText}" Margin="10 0" VerticalAlignment="Center" HorizontalAlignment="Left" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="TypeEnumsTwo">
+            <Grid Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}" Margin="0 5" x:Name="test">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition MaxWidth="550" Width="9*" />
+                    <ColumnDefinition MinWidth="230" MaxWidth="350" Width="3*" />
+                    <ColumnDefinition MaxWidth="120" Width="1*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding Text}" Margin="10 0" VerticalAlignment="Center" TextWrapping="Wrap" />
+
+                <StackPanel Grid.Column="1" Orientation="{Binding Orientation}">
+                    <RadioButton IsEnabled="{Binding IsEnabled}" IsChecked="{Binding Selected1, Mode=TwoWay}" Tag="{Binding Option1.Value}" Content="{Binding Option1.Text}" GroupName="{Binding Id}" />
+                    <RadioButton IsEnabled="{Binding IsEnabled}" IsChecked="{Binding Selected2, Mode=TwoWay}" Content="{Binding Option2.Text}" GroupName="{Binding Id}" />
+                </StackPanel>
+                <TextBlock Grid.Column="2" Text="{Binding SuffixText}" Margin="10 0" VerticalAlignment="Center" HorizontalAlignment="Left" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="TypeNumber">
+            <Grid Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}" Margin="0 5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition MaxWidth="550" Width="9*" />
+                    <ColumnDefinition MinWidth="230" MaxWidth="350" Width="3*" />
+                    <ColumnDefinition MaxWidth="120" Width="1*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding Text}" Margin="10 0" VerticalAlignment="Center" />
+
+                <ctrls:NumberBox Grid.Column="1" IsEnabled="{Binding IsEnabled}" Value="{Binding Value}" ValueOk="{Binding Value, Mode=TwoWay}" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Default="{Binding Default}" />
+                <TextBlock Grid.Column="2" Text="{Binding SuffixText}" Margin="10 0" VerticalAlignment="Center" HorizontalAlignment="Left" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="TypeSlider">
+            <Grid Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}" Margin="0 5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition MaxWidth="550" Width="9*" />
+                    <ColumnDefinition MinWidth="230" MaxWidth="350" Width="3*" />
+                    <ColumnDefinition MaxWidth="120" Width="1*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding Text}" Margin="10 0" VerticalAlignment="Center" />
+
+                <ctrls:Slider x:Name="slider" Grid.Column="1" Value="{Binding Value}" ValueOk="{Binding Value, Mode=TwoWay}" Maximum="{Binding Maximum}" Minimum="{Binding Minimum}" />
+                <TextBlock Grid.Column="2" Margin="10 0" VerticalAlignment="Center" HorizontalAlignment="Left">
+                    <Run Text="{Binding Value, ElementName=slider}" />
+                    <Run Text="{Binding SuffixText}" />
+                </TextBlock>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="TypePicture">
+            <Grid Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}" Margin="0 5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition MaxWidth="550" Width="9*" />
+                    <ColumnDefinition MinWidth="230" MaxWidth="350" Width="3*" />
+                    <ColumnDefinition MaxWidth="120" Width="1*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding Text}" Margin="10 0" VerticalAlignment="Center" />
+
+                <Image Grid.Column="1" Source="{Binding Image}" />
+                <TextBlock Grid.Column="2" Text="{Binding SuffixText}" Margin="10 0" VerticalAlignment="Center" HorizontalAlignment="Left" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="TypeTextRead">
+            <Grid Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}" Margin="0 5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition MaxWidth="550" Width="9*" />
+                    <ColumnDefinition MinWidth="230" MaxWidth="350" Width="3*" />
+                    <ColumnDefinition MaxWidth="120" Width="1*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding Text}" Margin="10 0" VerticalAlignment="Center" TextWrapping="Wrap" />
+                <TextBlock Grid.Column="1" Text="{Binding Value, Mode=TwoWay}" VerticalAlignment="Center" />
+                <TextBlock Grid.Column="2" Text="{Binding SuffixText}" Margin="10 0" VerticalAlignment="Center" HorizontalAlignment="Left" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="TypeText">
+            <Grid Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}" Margin="0 5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition MaxWidth="550" Width="9*" />
+                    <ColumnDefinition MinWidth="230" MaxWidth="350" Width="3*" />
+                    <ColumnDefinition MaxWidth="120" Width="1*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding Text}" Margin="10 0" VerticalAlignment="Center" TextWrapping="Wrap" />
+                <TextBox Grid.Column="1" IsEnabled="{Binding IsEnabled}" MaxLength="{Binding MaxLength}" Text="{Binding Value, Mode=TwoWay}" VerticalAlignment="Center" />
+                <TextBlock Grid.Column="2" Text="{Binding SuffixText}" Margin="10 0" VerticalAlignment="Center" HorizontalAlignment="Left" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="TypeNone">
+            <Grid Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}" Margin="0 5">
+                <TextBlock Text="{Binding Text}" Foreground="Gray" Margin="10 0" VerticalAlignment="Center" TextWrapping="Wrap" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="TypeSeparator">
+            <Grid Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}" Margin="0 5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition MaxWidth="550" Width="9*" />
+                    <ColumnDefinition MinWidth="230" MaxWidth="350" Width="3*" />
+                    <ColumnDefinition MaxWidth="120" Width="1*" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.ColumnSpan="4" Margin="10 5" BorderBrush="Gray" BorderThickness="0 1 0 0" Visibility="{Binding IsLineVisible, Converter={StaticResource Bool2Vis}}" />
+                <!--Visibility="{Binding Text, Converter={StaticResource ConvertStringVisible}}"-->
+                <TextBlock Grid.ColumnSpan="2" Text="{Binding Text}" FontSize="{Binding Hint, Converter={StaticResource HeadlineToSize}}" FontWeight="{Binding Hint, Converter={StaticResource HeadlineToWeight}}" Margin="10 0" VerticalAlignment="Center" TextWrapping="Wrap" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="TypeSeparatorBox">
+            <!--BorderBrush="{Binding IsError, Converter={StaticResource BoolToBrush}}"
+                    {Binding IsError, Converter={StaticResource BoolToBrush}}-->
+            <Border Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}" Margin="10 5" Padding="10" BorderThickness="1" BorderBrush="{Binding Hint, Converter={StaticResource HintToBrush}}">
+                <Border.Background>
+                    <SolidColorBrush Color="{Binding Hint, Converter={StaticResource HintToBrush}}" Opacity="0.2" />
+                </Border.Background>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <!--<FontIcon FontFamily="Segoe MDL2 Assets" Glyph="{Binding IsError, Converter={StaticResource ConvertBoolToIcon}}" />-->
+                    <Image Height="20" Source="{Binding Hint, Converter={StaticResource HintToIcon}}" />
+                    <TextBlock Grid.Column="1" Text="{Binding Text}" Margin="10 3 0 3" VerticalAlignment="Center" TextWrapping="Wrap" />
+                </Grid>
+            </Border>
+        </DataTemplate>
+
+        <selectors:ChannelSelector x:Key="ChannelSelector" Channel="{StaticResource ChannelTemplate}" Independent="{StaticResource IndependentTemplate}" />
+        <selectors:ParameterTypeSelector x:Key="ParaTypeSelector" NotFound="{StaticResource TypeNotFound}" None="{StaticResource TypeNone}" Enums="{StaticResource TypeEnums}" EnumsTwo="{StaticResource TypeEnumsTwo}" Number="{StaticResource TypeNumber}" TextRead="{StaticResource TypeTextRead}" Text="{StaticResource TypeText}" Seperator="{StaticResource TypeSeparator}" SeperatorBox="{StaticResource TypeSeparatorBox}" Slider="{StaticResource TypeSlider}" Picture="{StaticResource TypePicture}" />
+    </Window.Resources>
+
+
+    <Grid Grid.Row="2">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto" MinWidth="80" MaxWidth="300" />
+            <ColumnDefinition />
+            <ColumnDefinition MaxWidth="400" />
+        </Grid.ColumnDefinitions>
+
+
+        <ScrollViewer>
+            <ItemsControl ItemsSource="{Binding Channels}" ItemTemplateSelector="{StaticResource ChannelSelector}" />
+        </ScrollViewer>
+
+
+        <ScrollViewer Grid.Column="1">
+            <ItemsControl ItemTemplateSelector="{StaticResource ParaTypeSelector}" ItemsSource="{Binding SelectedBlock.Parameters}" />
+        </ScrollViewer>
+
+        <DataGrid Grid.Column="2" ItemsSource="{Binding ComObjects}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False">
+            <DataGrid.Columns>
+
+                <DataGridTextColumn Header="Number" Binding="{Binding Number}" />
+                <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
+                <DataGridTextColumn Header="Function" Binding="{Binding Function}" />
+
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
 </Window>

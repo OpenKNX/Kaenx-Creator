@@ -416,6 +416,13 @@ namespace Kaenx.Creator
             viewer.Show();
         }
 
+        private void ClickViewerKnxProd(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Diese Funktion lädt eine Statische Datei und ist nur für Entwicklungszwecke eingebaut.");
+            ViewerWindow viewer = new ViewerWindow(new Viewer.ImporterKnxProd(@"C:\Users\u6\Downloads\output.knxprod"));
+            viewer.Show();
+        }
+
         private void ClickAddApp(object sender, RoutedEventArgs e)
         {
             General.Applications.Add(new Models.Application());

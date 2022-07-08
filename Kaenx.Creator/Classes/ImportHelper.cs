@@ -551,12 +551,12 @@ namespace Kaenx.Creator.Classes
                             _ => throw new Exception("Unbekannter TypeFloat Type: " + xsub.Attribute("Type").Value)
                         };
                         ptype.SizeInBit = 16;
-                        ptype.Min = double.Parse(xsub.Attribute("minInclusive").Value.Replace('.', ','));
-                        ptype.Max = double.Parse(xsub.Attribute("maxInclusive").Value.Replace('.', ','));
+                        ptype.Min = float.Parse(xsub.Attribute("minInclusive").Value.Replace('.', ','));
+                        ptype.Max = float.Parse(xsub.Attribute("maxInclusive").Value.Replace('.', ','));
                         if(xsub.Attribute("UIHint") != null)
                             ptype.UIHint = xsub.Attribute("UIHint").Value;
                         if(xsub.Attribute("Increment") != null)
-                            ptype.Increment = double.Parse(xsub.Attribute("Increment").Value.Replace('.', ','));
+                            ptype.Increment = float.Parse(xsub.Attribute("Increment").Value.Replace('.', ','));
                         break;
 
                     case "TypePicture":
@@ -719,7 +719,7 @@ namespace Kaenx.Creator.Classes
                     id = id.Substring(1);
                 int paraId = int.Parse(id);
                 pref.ParameterObject = vbase.Parameters.Single(p => p.Id == paraId);
-                pref.Name = pref.Id + " " + pref.ParameterObject.Name;
+                pref.Name = pref.ParameterObject.Name;
 
                 if(xref.Attribute("Text") != null)
                 {
@@ -831,7 +831,7 @@ namespace Kaenx.Creator.Classes
                 id = id.Substring(id.LastIndexOf('-') + 1); //Modules haben Id M-00FA_A-0207-23-E298_MD-1_O-2-0
                 int comId = int.Parse(id);
                 cref.ComObjectObject = vbase.ComObjects.Single(c => c.Id == comId);
-                cref.Name = cref.Id + " " + cref.ComObjectObject.Name;
+                cref.Name = cref.ComObjectObject.Name;
 
 
                 cref.FlagRead = ParseFlagType(xref.Attribute("ReadFlag")?.Value);

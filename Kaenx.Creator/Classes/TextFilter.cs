@@ -25,6 +25,11 @@ namespace Kaenx.Creator.Classes
 
             view.Filter = (object item) => {
                 string value = item.GetType().GetProperty("Name").GetValue(item, null).ToString();
+                if(item.GetType().GetProperty("Id") != null)
+                {
+                    string id = item.GetType().GetProperty("Id").GetValue(item, null).ToString();
+                    if(id == Query) return true;
+                }
                 return value.ToLower().Contains(Query);
             };
 

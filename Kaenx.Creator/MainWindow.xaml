@@ -352,7 +352,7 @@
                 <MenuItem Header="Alle Parameter-IDs zurücksetzen" Click="ClickDoResetParaIds" />
             </MenuItem>
             <MenuItem Header="ProdViewer">
-                <MenuItem Header="KnxProd-Datei öffnen" IsEnabled="False" />
+                <MenuItem Header="KnxProd-Datei öffnen" Click="ClickViewerKnxProd" />
                 <MenuItem Header="Creator-Datei öffnen" IsEnabled="False" />
             </MenuItem>
             <MenuItem x:Name="MenuLang" Header="{x:Static p:Resources.menu_lang}">

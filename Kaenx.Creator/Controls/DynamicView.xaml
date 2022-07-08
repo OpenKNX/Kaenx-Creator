@@ -421,11 +421,11 @@
                             <Run Text="{Binding Name}" />
                             <Run Text="{Binding ParameterRefObject.Name}" />
                         </TextBlock>
-                        <TextBlock Margin="10 0 0 0" VerticalAlignment="Center">
+                        <!--<TextBlock Margin="10 0 0 0" VerticalAlignment="Center">
                             <Run Text="[" />
                             <Run Text="{Binding ParameterRefObject.ParameterObject.Name}" />
                             <Run Text="]" />
-                        </TextBlock>
+                        </TextBlock>-->
                     </StackPanel>
                 </DataTemplate>
                 <DataTemplate DataType="{x:Type dyn:DynComObject}">

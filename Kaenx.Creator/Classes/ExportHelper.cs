@@ -383,6 +383,13 @@ namespace Kaenx.Creator.Classes
                     counter++;
                 }
 
+                headers.AppendLine();
+                headers.AppendLine("//--------------------Allgemein---------------------------");
+                headers.AppendLine($"#define MAIN_OpenKnxId 0x{(app.Number >> 8):X2}");
+                headers.AppendLine($"#define MAIN_ApplicationNumber {app.Number}");
+                headers.AppendLine($"#define MAIN_ApplicationVersion {ver.Number}");
+                headers.AppendLine($"#define MAIN_OrderNumber \"{hardware.First(h => h.Apps.Contains(app)).Devices.First().OrderNumber}\" //may not work with multiple devices on same hardware or app on different hardware");
+
                 System.IO.File.WriteAllText(GetRelPath(appVersion + ".h"), headers.ToString());
                 headers = null;
 

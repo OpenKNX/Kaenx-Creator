@@ -1,0 +1,55 @@
+<UserControl
+    x:Class="Kaenx.Creator.Viewer.Controls.NumberBox"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converter="clr-namespace:Kaenx.Creator.Converter"
+    mc:Ignorable="d"
+    d:DesignHeight="50"
+    d:DesignWidth="400">
+    <UserControl.Resources>
+        <converter:NumberConverter x:Key="NumberConverter" />
+    </UserControl.Resources>
+
+    <Grid x:Name="DataGrid">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <VisualStateManager.VisualStateGroups>
+            <!-- Visual states reflect the application's window size -->
+            <VisualStateGroup>
+                <VisualState x:Name="DefaultLayout">
+                    <Storyboard>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="NotAcceptedLayout">
+                    <Storyboard>
+                        <ColorAnimation To="Red" Storyboard.TargetName="InputBox" Storyboard.TargetProperty="BorderBrush.Color"/>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Message" Storyboard.TargetProperty="(UIElement.Visibility)">
+                            <DiscreteObjectKeyFrame KeyTime="00:00:00" Value="{x:Static Visibility.Visible}" />
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <TextBox x:Name="InputBox" Height="25" VerticalAlignment="Center" Text="{Binding Value, Converter={StaticResource NumberConverter}}" TextChanged="InputBox_TextChanged" AcceptsReturn="False" VerticalContentAlignment="Center" BorderThickness="2,2,0.5,2" ToolTipService.ToolTip="{Binding Tooltip}" PreviewKeyDown="InputBox_PreviewKeyDown" />
+        <TextBlock x:Name="Message" Grid.Row="1" FontSize="12" TextWrapping="Wrap" Foreground="Red" Margin="5 0 0 0" Grid.ColumnSpan="3" VerticalAlignment="Center" Text="{Binding ErrMessage}" Visibility="Collapsed" />
+
+        <Button x:Name="BtnUp" Grid.Column="1" Height="25" MinHeight="25" Foreground="Black" Click="GoUp" Width="30" BorderThickness="1,2,0.5,2" VerticalAlignment="Stretch">
+            <Image Source="/Assets/arrow_up.png" Height="13" VerticalAlignment="Center" />
+        </Button>
+        <Button x:Name="BtnDown" Grid.Column="2" Height="25" MinHeight="25" Foreground="Black" Click="GoDown" Width="30" BorderThickness="0.5,2,2,2" VerticalAlignment="Stretch">
+            <Image Source="/Assets/arrow_down.png" Height="13" VerticalAlignment="Center" />
+        </Button>
+    </Grid>
+
+
+</UserControl>
