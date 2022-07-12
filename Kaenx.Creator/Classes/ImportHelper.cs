@@ -1064,6 +1064,7 @@ namespace Kaenx.Creator.Classes
                     item.IsSection = false;
                     string[] hard2ref = xitem.Attribute("Hardware2ProgramRefId").Value.Split('-');
                     string serialNr = hard2ref[2];
+                    serialNr = Unescape(serialNr);
                     item.Hardware = _general.Hardware.Single(h => h.SerialNumber == serialNr);
                     //item.Hardware.Description = GetTranslation("VisibleDescription");
                     //TODO add import translation

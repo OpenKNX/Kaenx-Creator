@@ -115,7 +115,7 @@ namespace Kaenx.Creator
                 foreach (string comIdStr in comsDefault.Split(','))
                 {
                     int comId = int.Parse(comIdStr);
-                    AppComObject comObj = _comObjects.Single(c => c.UId == comId);
+                    AppComObject comObj = _comObjects.Single(c => c.Id == comId);
                     ComObjects.Add(new DeviceComObject(comObj));
                 }
                 comsDefault = null;
@@ -259,6 +259,57 @@ namespace Kaenx.Creator
                     ch.IsVisible = ch.Blocks.Any(b => b.IsVisible);
                 }
             }
+
+
+            foreach(ParamBinding bind in Bindings.Where(b => b.SourceId == para.Id))
+            {
+                switch(bind.Type)
+                {
+                    case BindingTypes.ParameterBlock:
+                    {
+                        ParameterBlock pb = GetDynamicParameterBlock(bind.TargetId);
+                        if(pb == null)
+                            throw new Exception("ParameterBlock konnt nicht gefunden werden");
+
+                        pb.Text = bind.FullText.Replace("{d}", string.IsNullOrEmpty(para.Value) ? bind.DefaultText : para.Value);
+                        break;
+                    }
+
+                    case BindingTypes.Channel:
+                    {
+                        break;
+                    }
+
+                    case BindingTypes.ComObject:
+                    {
+                        DeviceComObject com = ComObjects.SingleOrDefault(c => c.Id == bind.TargetId);
+                        if(com != null)
+                            com.Name = bind.FullText.Replace("{d}", string.IsNullOrEmpty(para.Value) ? bind.DefaultText : para.Value);
+                        break;
+                    }
+                }
+            }
+        }
+
+        private ParameterBlock GetDynamicParameterBlock(int id)
+        {
+            foreach(IDynChannel chan in Channels)
+            {
+                var x = GetDynamicParameterBlock(id, chan.Blocks);
+                if(x != null) return x;
+            }
+            return null;
+        }
+
+        private ParameterBlock GetDynamicParameterBlock(int id, List<ParameterBlock> blocks)
+        {
+            foreach(ParameterBlock pb in blocks)
+            {
+                if(id == pb.Id) return pb;
+
+                GetDynamicParameterBlock(id, pb.Blocks);
+            }
+            return null;
         }
 
         private void CalculateVisibilityComs(IDynParameter para)
@@ -278,7 +329,7 @@ namespace Kaenx.Creator
                         {
                             string source = values[bind.SourceId].Value;
                             //TODO check if source==x, then dont do this
-                            string val = string.IsNullOrEmpty(source) ? bind.DefaultText : source;
+                            string val = source == "x" ? bind.DefaultText : source;
                             dcom.Name = bind.FullText.Replace("{d}", val);
                         }
                         ComObjects.Add(dcom);

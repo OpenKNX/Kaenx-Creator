@@ -412,6 +412,10 @@ namespace Kaenx.Creator
 
         private void ClickOpenViewer(object sender, RoutedEventArgs e)
         {
+            if(MessageBoxResult.Cancel == MessageBox.Show("Achtung, um den Viewer verwenden zu können, werden die IDs überprüft und ggf. neue vergeben.\r\n\r\nTrotzdem weiter machen?", "ProdViewer öffnen", MessageBoxButton.OKCancel)) return;
+
+            AutoHelper.CheckIds((Models.AppVersion)VersionList.SelectedItem);
+
             ViewerWindow viewer = new ViewerWindow(new Viewer.ImporterCreator((Models.AppVersion)VersionList.SelectedItem, (Models.Application)AppList.SelectedItem));
             viewer.Show();
         }
@@ -620,6 +624,7 @@ namespace Kaenx.Creator
         {
             General = null;
             SetButtons(false);
+            MenuSaveBtn.IsEnabled = false;
         }
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
@@ -828,24 +833,31 @@ namespace Kaenx.Creator
 
                 switch(item)
                 {
+                    case Models.Dynamic.DynChannel dch:
+                        if(dch.UseTextParameter)
+                            dch.ParameterRefObject = paras.SingleOrDefault(p => p.UId == dch._parameter);
+                        break;
+
                     case Models.Dynamic.DynParameter dp:
                         if (dp._parameter != -1)
-                            dp.ParameterRefObject = paras.Single(p => p.UId == dp._parameter);
+                            dp.ParameterRefObject = paras.SingleOrDefault(p => p.UId == dp._parameter);
                         break;
 
                     case Models.Dynamic.DynChoose dc:
                         if (dc._parameterRef != -1)
-                            dc.ParameterRefObject = paras.Single(p => p.UId == dc._parameterRef);
+                            dc.ParameterRefObject = paras.SingleOrDefault(p => p.UId == dc._parameterRef);
                         break;
 
                     case Models.Dynamic.DynComObject dco:
                         if (dco._comObjectRef != -1)
-                            dco.ComObjectRefObject = coms.Single(c => c.UId == dco._comObjectRef);
+                            dco.ComObjectRefObject = coms.SingleOrDefault(c => c.UId == dco._comObjectRef);
                         break;
 
                     case Models.Dynamic.DynParaBlock dpb:
-                        if(dpb._parameterRef != -1)
-                            dpb.ParameterRefObject = paras.Single(p => p.UId == dpb._parameterRef);
+                        if(dpb.UseParameterRef && dpb._parameterRef != -1)
+                            dpb.ParameterRefObject = paras.SingleOrDefault(p => p.UId == dpb._parameterRef);
+                        if(dpb.UseTextParameter && dpb._textRef != -1)
+                            dpb.TextRefObject = paras.SingleOrDefault(p => p.UId == dpb._textRef);
                         break;
 
                     case Models.Dynamic.DynModule dm:

@@ -22,6 +22,6 @@
         <TextBlock Grid.Column="2" Text="{Binding ValueOk, ElementName=ViewControl}" />
     </Grid>-->
 
-    <Slider IsEnabled="{Binding IsEnabled}" ToolTip="{Binding Tooltip, ElementName=ViewControl}" TickFrequency="{Binding Interval}" IsSnapToTickEnabled="True" Value="{Binding Value, ElementName=ViewControl}" Minimum="{Binding Minimum, ElementName=ViewControl}" Maximum="{Binding Maximum, ElementName=ViewControl}" />
+    <Slider ToolTip="{Binding Tooltip, ElementName=ViewControl}" TickFrequency="{Binding Interval}" IsSnapToTickEnabled="True" Value="{Binding Value, ElementName=ViewControl}" Minimum="{Binding Minimum, ElementName=ViewControl}" Maximum="{Binding Maximum, ElementName=ViewControl}" />
 
 </UserControl>

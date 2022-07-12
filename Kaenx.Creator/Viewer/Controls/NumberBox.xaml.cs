@@ -18,13 +18,12 @@ namespace Kaenx.Creator.Viewer.Controls
         public static readonly DependencyProperty MaximumProperty = DependencyProperty.Register("Maximum", typeof(float), typeof(NumberBox), new PropertyMetadata(null));
         public static readonly DependencyProperty MinimumProperty = DependencyProperty.Register("Minimum", typeof(float), typeof(NumberBox), new PropertyMetadata(null));
         public static readonly DependencyProperty DefaultProperty = DependencyProperty.Register("Default", typeof(float), typeof(NumberBox), new PropertyMetadata(null));
+        public static readonly DependencyProperty IncrementProperty = DependencyProperty.Register("Increment", typeof(float), typeof(NumberBox), new PropertyMetadata(null));
 
 
         public delegate string PreviewChangedHandler(NumberBox sender, float Value);
         public event PreviewChangedHandler PreviewChanged;
         public event PropertyChangedEventHandler PropertyChanged;
-
-        public float Increment { get; set; } = 1;
 
         private static void TextProperty_PropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
@@ -104,6 +103,12 @@ namespace Kaenx.Creator.Viewer.Controls
         {
             get { return (float)GetValue(ValueOkProperty); }
             set { SetValue(ValueProperty, value); SetValue(ValueOkProperty, value); }
+        }
+
+        public float Increment
+        {
+            get { return (float)GetValue(IncrementProperty); }
+            set { SetValue(IncrementProperty, value); }
         }
 
         public float Maximum

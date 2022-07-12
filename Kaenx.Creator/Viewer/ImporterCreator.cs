@@ -4,6 +4,7 @@ using Kaenx.DataContext.Import.Dynamic;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System;
 
 namespace Kaenx.Creator.Viewer
 {
@@ -49,7 +50,6 @@ namespace Kaenx.Creator.Viewer
             ImportParameterTypes();
             ImportParameters(_version);
             ImportComObjects(_version);
-
 
             ImportDynamic();
 
@@ -160,7 +160,7 @@ namespace Kaenx.Creator.Viewer
             }
         }
     
-        private void ImportParameters(IVersionBase vbase, int baseOffset = 0)
+        private void ImportParameters(IVersionBase vbase, Dictionary<string, string> args = null)
         {
             foreach(ParameterRef pref in vbase.ParameterRefs)
             {
@@ -171,10 +171,16 @@ namespace Kaenx.Creator.Viewer
                     Text = GetDefaultLang(pref.OverwriteText ? pref.Text : pref.ParameterObject.Text),
                     Value = pref.OverwriteValue ? pref.Value : pref.ParameterObject.Value,
                     SuffixText = pref.ParameterObject.Suffix,
-                    Offset = pref.ParameterObject.Offset + 0,
+                    Offset = pref.ParameterObject.Offset,
                     OffsetBit = pref.ParameterObject.OffsetBit,
                     ParameterTypeId = TypeNameToId[pref.ParameterObject.ParameterTypeObject.Name]
                 };
+
+                if(args != null)
+                {
+                    mpara.Offset += int.Parse(args["###para"]);
+                    //TODO replace all arguments in Text
+                }
 
                 ParamAccess paccess = pref.OverwriteAccess ? pref.Access : pref.ParameterObject.Access;
 
@@ -204,7 +210,7 @@ namespace Kaenx.Creator.Viewer
             }
         }
 
-        private void ImportComObjects(IVersionBase vbase, int baseNumber = 0)
+        private void ImportComObjects(IVersionBase vbase, Dictionary<string, string> args = null)
         {
             foreach(ComObjectRef cref in vbase.ComObjectRefs)
             {
@@ -214,7 +220,7 @@ namespace Kaenx.Creator.Viewer
                     Id = cref.Id,
                     Text = GetDefaultLang(cref.OverwriteText ? cref.Text : cref.ComObjectObject.Text),
                     FunctionText = GetDefaultLang(cref.OverwriteFunctionText ? cref.FunctionText : cref.ComObjectObject.FunctionText),
-                    Number = cref.ComObjectObject.Number + baseNumber,
+                    Number = cref.ComObjectObject.Number,
                     Size = cref.ComObjectObject.ObjectSize,
 
                     Flag_Communicate = (cref.OverwriteFC ? cref.FlagComm : cref.ComObjectObject.FlagComm) == FlagType.Enabled,
@@ -225,6 +231,14 @@ namespace Kaenx.Creator.Viewer
                     Flag_Write = (cref.OverwriteFW ? cref.FlagWrite : cref.ComObjectObject.FlagWrite) == FlagType.Enabled,
                 };
 
+                if(args != null)
+                {
+                    com.Number += int.Parse(args["###coms"]);
+                    //TODO replace args in Text and FunctionText
+                }
+
+                CheckForBindings(com, cref);
+
                 _context.AppComObjects.Add(com);
             }
         }
@@ -233,6 +247,8 @@ namespace Kaenx.Creator.Viewer
         List<IDynChannel> Channels = new List<IDynChannel>();
         Dictionary<int,  Kaenx.DataContext.Import.Values.IValues> values = new Dictionary<int,  Kaenx.DataContext.Import.Values.IValues>();
         List<ComBinding> ComBindings = new List<ComBinding>();
+        List<ParamBinding> Bindings = new List<ParamBinding>();
+        List<int> defaultComs = new List<int>();
 
         private void ImportDynamic()
         {
@@ -249,12 +265,18 @@ namespace Kaenx.Creator.Viewer
                 foreach(ParameterBlock block in chan.Blocks)
                     CheckConditions(block);
             }
+            
+            foreach(ComBinding bind in ComBindings)
+            {
+                if(!defaultComs.Contains(bind.ComId) && Kaenx.DataContext.Import.FunctionHelper.CheckConditions(bind.Conditions, values))
+                    defaultComs.Add(bind.ComId);
+            }
 
             _adds.ParamsHelper = Kaenx.DataContext.Import.FunctionHelper.ObjectToByteArray(Channels, true, "Kaenx.DataContext.Import.Dynamic");
-            _adds.Bindings = Kaenx.DataContext.Import.FunctionHelper.ObjectToByteArray(new List<string>(), true);
+            _adds.Bindings = Kaenx.DataContext.Import.FunctionHelper.ObjectToByteArray(Bindings, true);
             _adds.Assignments = Kaenx.DataContext.Import.FunctionHelper.ObjectToByteArray(new List<string>(), true);
             _adds.ComsAll = Kaenx.DataContext.Import.FunctionHelper.ObjectToByteArray(ComBindings, true);
-            _adds.ComsDefault = new byte[0];
+            _adds.ComsDefault = System.Text.Encoding.UTF8.GetBytes(string.Join(',', defaultComs));
         }
 
         private void CheckConditions(ParameterBlock block)
@@ -272,7 +294,7 @@ namespace Kaenx.Creator.Viewer
                 CheckConditions(bl);
         }
 
-        private void ParseDynamicItem(Models.Dynamic.IDynItems ditem, IDynChannel dch, ParameterBlock dblock, List<ParamCondition> conds)
+        private void ParseDynamicItem(Models.Dynamic.IDynItems ditem, IDynChannel dch, ParameterBlock dblock, List<ParamCondition> conds, Dictionary<string, string> args = null)
         {
             switch(ditem)
             {
@@ -312,6 +334,7 @@ namespace Kaenx.Creator.Viewer
                 case Models.Dynamic.DynParaBlock dpb:
                 {
                     ParameterBlock pb = new ParameterBlock() {
+                        Id = dpb.Id,
                         Conditions = conds
                     };
                     if(dpb.UseParameterRef)
@@ -320,6 +343,7 @@ namespace Kaenx.Creator.Viewer
                     } else {
                         pb.Text = GetDefaultLang(dpb.Text);
                     }
+                    CheckForBindings(pb, dpb);
 
                     if(dblock == null) dch.Blocks.Add(pb);
                     else dblock.Blocks.Add(pb);
@@ -356,7 +380,16 @@ namespace Kaenx.Creator.Viewer
                             ComId = dcom.ComObjectRefObject.Id,
                             Conditions = conds
                         });
+                    } else {
+                        if(!defaultComs.Contains(dcom.ComObjectRefObject.Id))
+                            defaultComs.Add(dcom.ComObjectRefObject.Id);
                     }
+                    break;
+                }
+            
+                case Models.Dynamic.DynModule dmod:
+                {
+                    ParseModule(dmod, dch, dblock, conds);
                     break;
                 }
             }
@@ -393,6 +426,16 @@ namespace Kaenx.Creator.Viewer
                 {
                     continue;
                 }*/
+
+                List<string> conds = new List<string>();
+
+                foreach(Models.Dynamic.DynWhen when in (test.Parent as Models.Dynamic.DynChoose).Items)
+                {
+                    if(when == test) continue;
+                    conds.Add(when.Condition);
+                }
+                cond.Values = string.Join(',', conds);
+                cond.Operation = ConditionOperation.Default;
             }
             else if (test.Condition.Contains(" ") == true || int.TryParse(test.Condition, out tempOut))
             {
@@ -513,7 +556,11 @@ namespace Kaenx.Creator.Viewer
                                 Value = mpara.Value,
                                 Default = mpara.Value,
                                 Conditions = conds,
+                                Increment = para.ParameterRefObject.ParameterObject.ParameterTypeObject.Increment,
+                                Minimum = (int)para.ParameterRefObject.ParameterObject.ParameterTypeObject.Min, //TODO also allo double
+                                Maximum = (int)para.ParameterRefObject.ParameterObject.ParameterTypeObject.Max
                         };
+                        block.Parameters.Add(pslide);
                     } else {
                         ParamNumber pnum = new ParamNumber() {
                                 Id = mpara.ParameterId,
@@ -565,21 +612,61 @@ namespace Kaenx.Creator.Viewer
         }
 
 
+        private void ParseModule(Models.Dynamic.DynModule mod, IDynChannel dch, ParameterBlock block, List<ParamCondition> conds)
+        {
+            Models.Dynamic.DynModuleArg argPara = mod.Arguments.Single(a => a.ArgumentId == mod.ModuleObject.ParameterBaseOffsetUId);
+            Models.Dynamic.DynModuleArg argComs = mod.Arguments.Single(a => a.ArgumentId == mod.ModuleObject.ComObjectBaseNumberUId);
+
+            Dictionary<string, string> args = new Dictionary<string, string>();
+
+            foreach(Models.Dynamic.DynModuleArg arg in mod.Arguments)
+                args.Add(arg.Argument.Name, arg.Value);
+
+            args.Add("###para", argPara.Value);
+            args.Add("###coms", argComs.Value);
+
+
+            long maxId = _version.ParameterRefs.OrderByDescending(p => p.Id).First().Id;
+            maxId++;
+            args.Add("###lastId", maxId.ToString());
+
+            ImportParameters(mod.ModuleObject, args);
+
+
+            foreach(Models.Dynamic.IDynItems item in mod.ModuleObject.Dynamics[0].Items)
+            {
+                ParseDynamicItem(item, dch, block, conds, args);
+            }
+        }
+
+
         private string GetDefaultLang(ObservableCollection<Translation> text)
         {
             return text.Single(t => t.Language.CultureCode == _version.DefaultLanguage).Text;
         }
 
-        /*
-        public string CheckForBindings(string text, BindingTypes type, int targetId, XElement xele, Dictionary<string, string> args, Dictionary<string, int> idMapper) {
-            Regex reg = new Regex("{{(.*)}}"); //[A-Za-z0-9: -]
+
+        public void CheckForBindings(ParameterBlock pb, Models.Dynamic.DynParaBlock dpb)
+        {
+            pb.Text = CheckForBindings(pb.Text, BindingTypes.ParameterBlock, pb.Id, (dpb.TextRefObject != null ? dpb.TextRefObject.ParameterObject.Id : -1));
+        }
+        
+        public void CheckForBindings(AppComObject com, Models.ComObjectRef dcom)
+        {
+            com.Text = CheckForBindings(com.Text, BindingTypes.ComObject, com.Id, (dcom.ComObjectObject.UseTextParameter && dcom.ComObjectObject.ParameterRefObject != null) ? (int)dcom.ComObjectObject.ParameterRefObject.Id : -1);
+        }
+        
+        public string CheckForBindings(string text, BindingTypes type, int targetId, int sourceId) //, int targetId, XElement xele, Dictionary<string, string> args, Dictionary<string, int> idMapper) {
+        {
+            System.Text.RegularExpressions.Regex reg = new System.Text.RegularExpressions.Regex("{{(.*)}}"); //[A-Za-z0-9: -]
+            
             if(reg.IsMatch(text)){
-                Match match = reg.Match(text);
+                System.Text.RegularExpressions.Match match = reg.Match(text);
                 string g2 = match.Groups[1].Value;
-                if(args != null && args.ContainsKey(g2)) {
+                /*if(args != null && args.ContainsKey(g2)) {
                     //Argument von Modul einsetzen
                     return text.Replace(match.Groups[0].Value, args[g2]);
-                }
+                }*/
 
                 ParamBinding bind = new ParamBinding()
                 {
@@ -588,7 +675,7 @@ namespace Kaenx.Creator.Viewer
                     FullText = text.Replace(match.Groups[0].Value, "{d}")
                 };
                 //Text beinhaltet ein Binding zu einem Parameter
-                try{
+                
                 if(g2.Contains(':')){
                     string[] opts = g2.Split(':');
                     text = text.Replace(match.Groups[0].Value, opts[1]);
@@ -599,47 +686,20 @@ namespace Kaenx.Creator.Viewer
                     bind.SourceId = g2 == "0" ? -1 : int.Parse(g2);
                     bind.DefaultText = "";
                 }
-                }catch{
-
-                }
                 
                 if(bind.SourceId == -1) {
-                    if(xele.Attribute("TextParameterRefId") != null)
+                    if(sourceId != -1)
                     {
-                        string bindId = GetAttributeAsString(xele, "TextParameterRefId");
-                        if (string.IsNullOrEmpty(bindId))
-                            throw new Exception("Kein TextParameterRefId für KO gefunden");
-                        bind.SourceId = GetItemId(bindId);
+                        bind.SourceId = sourceId;
                     } else
                     {
                         throw new Exception("Object enthält dynamischen Text mit Referenz 0, hat aber kein Attribut mit TextParameterRefId");
-                        //XElement xstatic = xele;
-                        //while (true)
-                        //{
-                        //    xstatic = xstatic.Parent;
-                        //    if (xstatic.Name.LocalName == "Static") break;
-                        //}
-                        //if (xstatic.Parent.Element(GetXName("Dynamic")) != null)
-                        //{
-                        //    XElement xdyn = xstatic.Parent.Element(GetXName("Dynamic"));
-                        //    XElement xref = xdyn.Descendants(GetXName("ComObjectRefRef")).First(co => co.Attribute("RefId").Value == GetAttributeAsString(xele, "Id"));
-
-                        //    while (true)
-                        //    {
-                        //        xref = xref.Parent;
-                        //        if (xref.Name.LocalName == "ParameterBlock") break;
-                        //    }
-                        //    string bindId = GetAttributeAsString(xref, "TextParameterRefId");
-                        //    if (string.IsNullOrEmpty(bindId))
-                        //        throw new Exception("Kein TextParameterRefId für KO gefunden");
-                        //    bind.SourceId = GetItemId(bindId);
-                        //}
                     }
                 }
                 
                 Bindings.Add(bind);
             }
             return text;
-        }*/
+        }
     }
 }

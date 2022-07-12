@@ -328,6 +328,38 @@ namespace Kaenx.Creator.Classes
             }
         }
     
+        public static void CheckIds(AppVersion version)
+        {
+            CheckIdsModule(version, version);
+
+            foreach(Module mod in version.Modules)
+            {
+                if(mod.Id == -1) mod.Id = GetNextFreeId(version, "Modules");
+                CheckIdsModule(version, mod);
+            }
+        }
+
+        private static void CheckIdsModule(AppVersion version, IVersionBase vbase)
+        {
+            foreach(Parameter para in vbase.Parameters)
+                if(para.Id == -1) para.Id = GetNextFreeId(vbase, "Parameters");
+
+            foreach(ParameterRef pref in vbase.ParameterRefs)
+                if(pref.Id == -1) pref.Id = GetNextFreeId(vbase, "ParameterRefs");
+
+            foreach(ComObject com in vbase.ComObjects)
+                if(com.Id == -1) com.Id = GetNextFreeId(vbase, "ComObjects");
+
+            foreach(ComObjectRef cref in vbase.ComObjectRefs)
+                if(cref.Id == -1) cref.Id = GetNextFreeId(vbase, "ComObjectRefs");
+
+            if(vbase is Module mod)
+            {
+                foreach(Argument arg in mod.Arguments)
+                    if(arg.Id == -1) arg.Id = GetNextFreeId(vbase, "Arguments");
+            }
+        }
+
         public static byte[] GetFileBytes(string file)
         {
             byte[] data;

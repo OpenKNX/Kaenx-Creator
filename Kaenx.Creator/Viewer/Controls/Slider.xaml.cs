@@ -51,7 +51,7 @@ namespace Kaenx.Creator.Viewer.Controls
             set { SetValue(IntervalProperty, value); }
         }
         
-        private string Tooltip { get { return Minimum + " - " + Maximum; } }
+        public string Tooltip { get { return Minimum + " - " + Maximum; } }
 
         private static void PropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {

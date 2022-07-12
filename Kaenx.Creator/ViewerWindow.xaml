@@ -18,6 +18,7 @@
         <conv:IsHeadlineToObject x:Key="HeadlineToWeight" TrueValue="Bold" FalseValue="Normal" />
         <conv:SeparatorHintToObject x:Key="HintToIcon" InformationValue="/Assets/information.png" ErrorValue="/Assets/error.png" />
         <conv:SeparatorHintToObject x:Key="HintToBrush" InformationValue="Aquamarine" ErrorValue="Red" />
+        <conv:BinaryToBool x:Key="BinToBool" />
 
         <DataTemplate x:Key="ChannelTemplate">
             <Expander Header="{Binding Text}" BorderThickness="0 1" Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}" HorizontalContentAlignment="Stretch">
@@ -97,7 +98,7 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="{Binding Text}" Margin="10 0" VerticalAlignment="Center" TextWrapping="Wrap" />
 
-                <StackPanel Grid.Column="1" Orientation="{Binding Orientation}">
+                <StackPanel Grid.Column="1">
                     <RadioButton IsEnabled="{Binding IsEnabled}" IsChecked="{Binding Selected1, Mode=TwoWay}" Tag="{Binding Option1.Value}" Content="{Binding Option1.Text}" GroupName="{Binding Id}" />
                     <RadioButton IsEnabled="{Binding IsEnabled}" IsChecked="{Binding Selected2, Mode=TwoWay}" Content="{Binding Option2.Text}" GroupName="{Binding Id}" />
                 </StackPanel>
@@ -114,7 +115,7 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="{Binding Text}" Margin="10 0" VerticalAlignment="Center" />
 
-                <ctrls:NumberBox Grid.Column="1" IsEnabled="{Binding IsEnabled}" Value="{Binding Value}" ValueOk="{Binding Value, Mode=TwoWay}" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Default="{Binding Default}" />
+                <ctrls:NumberBox Grid.Column="1" IsEnabled="{Binding IsEnabled}" Value="{Binding Value}" ValueOk="{Binding Value, Mode=TwoWay}" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Default="{Binding Default}" Increment="{Binding Increment}" />
                 <TextBlock Grid.Column="2" Text="{Binding SuffixText}" Margin="10 0" VerticalAlignment="Center" HorizontalAlignment="Left" />
             </Grid>
         </DataTemplate>
@@ -128,7 +129,7 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="{Binding Text}" Margin="10 0" VerticalAlignment="Center" />
 
-                <ctrls:Slider x:Name="slider" Grid.Column="1" Value="{Binding Value}" ValueOk="{Binding Value, Mode=TwoWay}" Maximum="{Binding Maximum}" Minimum="{Binding Minimum}" />
+                <ctrls:Slider x:Name="slider" Grid.Column="1" Value="{Binding Value}" ValueOk="{Binding Value, Mode=TwoWay}" Maximum="{Binding Maximum}" Minimum="{Binding Minimum}" Interval="{Binding Invrement}" />
                 <TextBlock Grid.Column="2" Margin="10 0" VerticalAlignment="Center" HorizontalAlignment="Left">
                     <Run Text="{Binding Value, ElementName=slider}" />
                     <Run Text="{Binding SuffixText}" />
@@ -147,6 +148,18 @@
 
                 <Image Grid.Column="1" Source="{Binding Image}" />
                 <TextBlock Grid.Column="2" Text="{Binding SuffixText}" Margin="10 0" VerticalAlignment="Center" HorizontalAlignment="Left" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="TypeCheckBox">
+            <Grid Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}" Margin="0 5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition MaxWidth="550" Width="9*" />
+                    <ColumnDefinition MinWidth="230" MaxWidth="350" Width="3*" />
+                    <ColumnDefinition MaxWidth="120" Width="1*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding Text}" Margin="10 0" VerticalAlignment="Center" TextWrapping="Wrap" />
+                <CheckBox Grid.Column="1" IsChecked="{Binding Value, Converter={StaticResource BinToBool}}" />
             </Grid>
         </DataTemplate>
 
@@ -217,8 +230,22 @@
             </Border>
         </DataTemplate>
 
-        <selectors:ChannelSelector x:Key="ChannelSelector" Channel="{StaticResource ChannelTemplate}" Independent="{StaticResource IndependentTemplate}" />
-        <selectors:ParameterTypeSelector x:Key="ParaTypeSelector" NotFound="{StaticResource TypeNotFound}" None="{StaticResource TypeNone}" Enums="{StaticResource TypeEnums}" EnumsTwo="{StaticResource TypeEnumsTwo}" Number="{StaticResource TypeNumber}" TextRead="{StaticResource TypeTextRead}" Text="{StaticResource TypeText}" Seperator="{StaticResource TypeSeparator}" SeperatorBox="{StaticResource TypeSeparatorBox}" Slider="{StaticResource TypeSlider}" Picture="{StaticResource TypePicture}" />
+        <selectors:ChannelSelector x:Key="ChannelSelector" 
+            Channel="{StaticResource ChannelTemplate}" 
+            Independent="{StaticResource IndependentTemplate}" />
+        <selectors:ParameterTypeSelector x:Key="ParaTypeSelector" 
+            NotFound="{StaticResource TypeNotFound}" 
+            None="{StaticResource TypeNone}" 
+            Enums="{StaticResource TypeEnums}" 
+            EnumsTwo="{StaticResource TypeEnumsTwo}" 
+            Number="{StaticResource TypeNumber}" 
+            TextRead="{StaticResource TypeTextRead}" 
+            Text="{StaticResource TypeText}" 
+            Seperator="{StaticResource TypeSeparator}" 
+            SeperatorBox="{StaticResource TypeSeparatorBox}" 
+            Slider="{StaticResource TypeSlider}" 
+            Picture="{StaticResource TypePicture}" 
+            CheckBox="{StaticResource TypeCheckBox}" />
     </Window.Resources>
 
 

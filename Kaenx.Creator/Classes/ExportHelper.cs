@@ -402,7 +402,7 @@ namespace Kaenx.Creator.Classes
                 xunderapp = new XElement(Get("Dynamic"));
                 xapp.Add(xunderapp);
 
-                HandleSubItems(ver.Dynamics[0], xunderapp);
+                HandleSubItems(ver.Dynamics[0], xunderapp, ver);
 
 
                 #region Translations
@@ -788,10 +788,6 @@ namespace Kaenx.Creator.Classes
                 //Debug.WriteLine($"    - ParameterRef {pref.UId} {pref.Name}");
                 if (pref.ParameterObject == null) continue;
                 XElement xpref = new XElement(Get("ParameterRef"));
-                if (pref.Id == -1)
-                {
-                    pref.Id = AutoHelper.GetNextFreeId(vbase, "ParameterRefs");
-                }
                 string id = appVersionMod + (pref.ParameterObject.IsInUnion ? "_UP-" : "_P-") + pref.ParameterObject.Id;
                 xpref.SetAttributeValue("Id", $"{id}_R-{pref.Id}");
                 xpref.SetAttributeValue("RefId", id);
@@ -840,10 +836,6 @@ namespace Kaenx.Creator.Classes
                 }
 
                 XElement xcom = new XElement(Get("ComObject"));
-                if (com.Id == -1)
-                {
-                    com.Id = AutoHelper.GetNextFreeId(vbase, "ComObjects");
-                }
                 string id = $"{appVersionMod}_O-";
                 if(vbase is Models.Module) id += "2-";
                 id += com.Id;
@@ -897,10 +889,6 @@ namespace Kaenx.Creator.Classes
             {
                 //Debug.WriteLine($"    - ComObjectRef {cref.UId} {cref.Name}");
                 XElement xcref = new XElement(Get("ComObjectRef"));
-                if (cref.Id == -1)
-                {
-                    cref.Id = AutoHelper.GetNextFreeId(vbase, "ComObjectRefs");
-                }
                 string id = $"{appVersionMod}_O-";
                 if(vbase is Models.Module) id += "2-";
                 id += cref.ComObjectObject.Id;
@@ -976,11 +964,6 @@ namespace Kaenx.Creator.Classes
             }
 
             XElement xpara = new XElement(Get("Parameter"));
-
-            if (para.Id == -1)
-            {
-                para.Id = AutoHelper.GetNextFreeId(ver, "Parameters");
-            }
             string id = appVersionMod + (para.IsInUnion ? "_UP-" : "_P-") + para.Id;
             xpara.SetAttributeValue("Id", id);
             xpara.SetAttributeValue("Name", para.Name);
@@ -1030,7 +1013,7 @@ namespace Kaenx.Creator.Classes
 
         #region Create Dyn Stuff
 
-        private void HandleSubItems(IDynItems parent, XElement xparent)
+        private void HandleSubItems(IDynItems parent, XElement xparent, AppVersion ver = null)
         {
             foreach (IDynItems item in parent.Items)
             {
@@ -1068,7 +1051,7 @@ namespace Kaenx.Creator.Classes
                         break;
 
                     case DynModule dm:
-                        HandleMod(dm, xparent);
+                        HandleMod(dm, xparent, ver);
                         break;
 
                     default:
@@ -1118,11 +1101,11 @@ namespace Kaenx.Creator.Classes
             parent.Add(xcom);
         }
 
-        private void HandleMod(DynModule mod, XElement parent)
+        private void HandleMod(DynModule mod, XElement parent, AppVersion ver)
         {
             XElement xmod = new XElement(Get("Module"));
             if(mod.Id == -1)
-                mod.Id = modCounter++;
+                mod.Id = ++ver.LastDynModuleId;
             xmod.SetAttributeValue("Id", $"{appVersion}_MD-{mod.ModuleObject.Id}_M-{mod.Id}");
             xmod.SetAttributeValue("RefId", $"{appVersion}_MD-{mod.ModuleObject.Id}");
 
@@ -1138,7 +1121,6 @@ namespace Kaenx.Creator.Classes
         }
 
         private int separatorCounter = 1;
-        private int modCounter = 1;
 
         private void HandleSep(DynSeparator sep, XElement parent)
         {
@@ -1167,10 +1149,6 @@ namespace Kaenx.Creator.Classes
         {
             XElement xwhen = new XElement(Get("when"));
             parent.Add(xwhen);
-
-            //when.Condition = when.Condition.Replace(">", "&gt;");
-            //when.Condition = when.Condition.Replace("<", "&lt;");
-
 
             if (when.IsDefault)
                 xwhen.SetAttributeValue("default", "true");
