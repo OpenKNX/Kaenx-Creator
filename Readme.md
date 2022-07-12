@@ -12,6 +12,7 @@ Es gibt 2 Möglichkeiten die Anwendung zu installieren:
     Hier werden nur größere Releases veröffentlicht
  - Selbst kompilieren  
     Dazu dieses Repo lokal klonen und mit Visual Studio oder auch Visual Studio Code öffnen  
+    Zusätzlich wird das Repo https://github.com/thewhobox/Kaenx.DataContext benötigt.
     Danach kann die Anwendung debugt oder selbst ein Release erstellt werden.
 
 # Bilder
