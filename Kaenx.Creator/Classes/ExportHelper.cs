@@ -132,6 +132,8 @@ namespace Kaenx.Creator.Classes
                         break;
                 }
 
+                AutoHelper.CheckIds(ver);
+
                 XElement temp;
                 ExportSegments(ver, xunderapp);
 
@@ -1077,8 +1079,8 @@ namespace Kaenx.Creator.Classes
                     channel.SetAttributeValue("TextParameterRefId", appVersionMod + (dch.ParameterRefObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{dch.ParameterRefObject.ParameterObject.Id}_R-{dch.ParameterRefObject.Id}");
 
                 channel.SetAttributeValue("Text", dch.Text.Single(p => p.Language.CultureCode == currentLang).Text);
-                    if (!dch.TranslationText)
-                        foreach (Models.Translation trans in dch.Text) AddTranslation(trans.Language.CultureCode, $"{appVersionMod}_CH-{dch.Number}", "Text", trans.Text);
+                if (!dch.TranslationText)
+                    foreach (Models.Translation trans in dch.Text) AddTranslation(trans.Language.CultureCode, $"{appVersionMod}_CH-{dch.Number}", "Text", trans.Text);
                 
                 channel.SetAttributeValue("Number", dch.Number);
                 channel.SetAttributeValue("Id", $"{appVersionMod}_CH-{dch.Number}");

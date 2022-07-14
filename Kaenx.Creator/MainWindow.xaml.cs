@@ -914,6 +914,11 @@ namespace Kaenx.Creator
             }
         }
 
+        private void ClickShowVersion(object sender, RoutedEventArgs e)
+        {
+            var x = System.Reflection.Assembly.GetExecutingAssembly();
+            MessageBox.Show(x.FullName, "Kaenx-Creator Version", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
         
         private void ClickShowClean(object sender, RoutedEventArgs e)
         { 

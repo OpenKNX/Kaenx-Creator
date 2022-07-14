@@ -269,7 +269,7 @@
         <DataGrid Grid.Column="2" ItemsSource="{Binding ComObjects}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False">
             <DataGrid.Columns>
 
-                <DataGridTextColumn Header="Number" Binding="{Binding Number}" />
+                <DataGridTextColumn Header="Number" Binding="{Binding Number}" SortDirection="Ascending" />
                 <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
                 <DataGridTextColumn Header="Function" Binding="{Binding Function}" />
 

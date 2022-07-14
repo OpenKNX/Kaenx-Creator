@@ -67,6 +67,9 @@ namespace Kaenx.Creator.Viewer.Selectors
                 case ParamSlider psl:
                     return Slider;
 
+                case ParamPicture ppic:
+                    return Picture;
+
                 case ParamNone pnon:
                     return None;
             }

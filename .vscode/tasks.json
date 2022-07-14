@@ -35,7 +35,7 @@
                 "${workspaceFolder}/Kaenx.Creator/Kaenx.Creator.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary",
-                "-r", "win-x64",
+                "-r", "win-x86",
                 "-p:PublishSingleFile=true"
             ],
             "problemMatcher": "$msCompile"

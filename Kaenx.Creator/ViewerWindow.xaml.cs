@@ -42,7 +42,7 @@ namespace Kaenx.Creator
         private ApplicationViewModel _app;
 
 
-        private Dictionary<int, IValues> values = new Dictionary<int, IValues>();
+        private Dictionary<long, IValues> values = new Dictionary<long, IValues>();
         private List<ComBinding> _comBindings;
         private List<AppComObject> _comObjects;
         private List<AssignParameter> Assignments;
@@ -86,8 +86,6 @@ namespace Kaenx.Creator
             this.DataContext = this;
             _importer = importer;
 
-            //_context = new CatalogContext(new LocalConnectionCatalog() { Type = LocalConnectionCatalog.DbConnectionType.Memory });
-
             Load();
         }
 
@@ -98,6 +96,16 @@ namespace Kaenx.Creator
             using (CatalogContext context = new CatalogContext(new LocalConnectionCatalog() { Type = LocalConnectionCatalog.DbConnectionType.Memory }))
             {
                 context.Database.Migrate();
+                context.AppAdditionals.RemoveRange(context.AppAdditionals.ToList());
+                context.AppComObjects.RemoveRange(context.AppComObjects.ToList());
+                context.Applications.RemoveRange(context.Applications.ToList());
+                context.AppParameters.RemoveRange(context.AppParameters.ToList());
+                context.AppParameterTypeEnums.RemoveRange(context.AppParameterTypeEnums.ToList());
+                context.AppParameterTypes.RemoveRange(context.AppParameterTypes.ToList());
+                context.AppSegments.RemoveRange(context.AppSegments.ToList());
+                context.Hardware2App.RemoveRange(context.Hardware2App.ToList());
+                context.Sections.RemoveRange(context.Sections.ToList());
+                context.Devices.RemoveRange(context.Devices.ToList());
 
                 await System.Threading.Tasks.Task.Run(() => _importer.StartImport(context)).WaitAsync(TimeSpan.FromMinutes(60));
 
@@ -192,7 +200,7 @@ namespace Kaenx.Creator
             Changed("Channels");
         }
 
-        private object Pc_OnPictureRequest(string BaggageId)
+        private object Pc_OnPictureRequest(int BaggageId)
         {
             throw new NotImplementedException();
         }
@@ -291,7 +299,7 @@ namespace Kaenx.Creator
             }
         }
 
-        private ParameterBlock GetDynamicParameterBlock(int id)
+        private ParameterBlock GetDynamicParameterBlock(long id)
         {
             foreach(IDynChannel chan in Channels)
             {
@@ -301,7 +309,7 @@ namespace Kaenx.Creator
             return null;
         }
 
-        private ParameterBlock GetDynamicParameterBlock(int id, List<ParameterBlock> blocks)
+        private ParameterBlock GetDynamicParameterBlock(long id, List<ParameterBlock> blocks)
         {
             foreach(ParameterBlock pb in blocks)
             {

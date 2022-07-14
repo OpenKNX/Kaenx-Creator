@@ -362,6 +362,9 @@
                 <MenuItem IsCheckable="True" Header="Deutsch" Tag="de" Click="ChangeLang" />
                 <MenuItem IsCheckable="True" Header="English" Tag="en" Click="ChangeLang" />
             </MenuItem>
+            <MenuItem Header="Info">
+                <MenuItem Header="Version anzeigen" Click="ClickShowVersion" />
+            </MenuItem>
         </Menu>
 
         <TabControl x:Name="TabsEdit" Grid.Row="1" Margin=" 0 10 0 0" IsEnabled="False" BorderThickness="0 0 0 4" Style="{StaticResource ResourceKey=TopTabControl}">
