@@ -342,8 +342,9 @@
                 <MenuItem x:Name="MenuClose" IsEnabled="False" Header="{x:Static p:Resources.menu_proj_close}" Click="ClickClose" />
             </MenuItem>
             <MenuItem x:Name="MenuImport" IsEnabled="False" Header="{x:Static p:Resources.menu_impo}">
-                <MenuItem Header="{x:Static p:Resources.menu_impo_ets}" Click="ClickImport" />
-                <MenuItem Header="{x:Static p:Resources.menu_impo_kaenx}" IsEnabled="False" />
+                <MenuItem Header="{x:Static p:Resources.menu_impo_ets}" Click="ClickImport" Tag="knxprod" />
+                <MenuItem Header="KnxProd XML" Click="ClickImport" Tag="xml" />
+                <MenuItem Header="{x:Static p:Resources.menu_impo_kaenx}" IsEnabled="False" Tag="ae-prod" />
             </MenuItem>
             <MenuItem IsEnabled="{Binding SelectedItem, ElementName=VersionList, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" Header="Bereinigen">
                 <MenuItem Header="Nicht verwendete Elemente markieren" Click="ClickShowClean" />

@@ -973,17 +973,36 @@ namespace Kaenx.Creator
             ClearHelper.ResetParameterIds(vers);
         }
 
+
         private void ClickImport(object sender, RoutedEventArgs e)
         {
+            Dictionary<string, string> filters = new Dictionary<string, string>() {
+                {"knxprod", "KNX Produktdatenbank (*.knxprod)|*.knxprod"},
+                {"xml", "XML Produktatenbank (*.xml)|*.xml"},
+                {"ae-prod", "Kaenx Produktatenbank (*.ae-prod)|*.ae-prod"},
+            };
+
+            string prod = (sender as MenuItem).Tag.ToString();
             var dialog = new Microsoft.Win32.OpenFileDialog();
-            dialog.DefaultExt = ".knxprod"; // Default file extension
-            dialog.Filter = "KNX Produktdatenbank|*.knxprod";
+            dialog.Filter = filters[prod];
             bool? result = dialog.ShowDialog();
 
             if (result == true)
             {
                 ImportHelper helper = new ImportHelper(dialog.FileName, bcus);
-                helper.Start(_general, DPTs);
+                switch(prod)
+                {
+                    case "knxprod":
+                        helper.StartZip(_general, DPTs);
+                        break;
+
+                    case "xml":
+                        helper.StartXml(_general, DPTs);
+                        break;
+
+                    default:
+                        throw new Exception("Unbekannter Dateityp: " + prod);
+                }
             }
         }
 

@@ -85,6 +85,7 @@ namespace Kaenx.Creator.Models.Dynamic
         }
 
 
+        public bool IsInline { get; set; } = false;
         public ObservableCollection<IDynItems> Items { get; set; } = new ObservableCollection<IDynItems>();
         public event PropertyChangedEventHandler PropertyChanged;
         private void Changed(string name)

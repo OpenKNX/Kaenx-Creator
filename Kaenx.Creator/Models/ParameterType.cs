@@ -99,6 +99,7 @@ namespace Kaenx.Creator.Models
         Float_IEEE_Double,
         Picture,
         None,
-        IpAddress
+        IpAddress,
+        Color
     }
 }

@@ -62,13 +62,47 @@ namespace Kaenx.Creator.Classes
             _bcus = bcus;
         }
 
-        public void Start(ModelGeneral general, ObservableCollection<DataPointType> dpts)
+        public void StartXml(ModelGeneral general, ObservableCollection<DataPointType>dpts)
         {
             _general = general;
             DPTs = dpts;
-            Archive = ZipFile.OpenRead(_path);
-            string manuHex = "";
+            XDocument xdoc = XDocument.Load(_path);
+            _namespace = xdoc.Root.Attribute("xmlns").Value;
+            XElement xmanu = xdoc.Root.Element(Get("ManufacturerData")).Element(Get("Manufacturer"));
+            
+            string manuHex = xmanu.Attribute("RefId").Value.Substring(2);
+            int manuId = int.Parse(manuHex, System.Globalization.NumberStyles.HexNumber);
+            if (_general.ManufacturerId != manuId)
+            {
+                var res = System.Windows.MessageBox.Show($"Hersteller der Produktdatenbank stimmt nicht mit dem Hersteller des Projekts über ein.\r\nWollen Sie ihre HerstellerId von {_general.ManufacturerId:X4} auf {manuId:X4} ändern?", "Question", System.Windows.MessageBoxButton.YesNoCancel, System.Windows.MessageBoxImage.Warning);
+                switch(res) {
+                    case System.Windows.MessageBoxResult.Yes:
+                        _general.ManufacturerId = manuId;;
+                        break;
+                    case System.Windows.MessageBoxResult.Cancel:
+                        return;
+                }
+            }
 
+            System.Diagnostics.Debug.WriteLine("XML unterstützt keine Baggages");
+
+            XElement xtemp = xmanu.Element(Get("ApplicationPrograms")).Element(Get("ApplicationProgram"));
+            ImportApplication(xtemp);
+
+            xtemp = xmanu.Element(Get("Hardware"));
+            //ImportLanguages(xele.Parent.Element(Get("Languages")), _general.Languages);
+            ImportHardware(xtemp);
+
+            xtemp = xmanu.Element(Get("Catalog"));
+            //ImportLanguages(xele.Parent.Element(Get("Languages")), _general.Languages);
+            ImportCatalog(xtemp);
+        }
+
+        public void StartZip(ModelGeneral general, ObservableCollection<DataPointType> dpts)
+        {
+            _general = general;
+            DPTs = dpts;
+            string manuHex = "";
             foreach (ZipArchiveEntry entryTemp in Archive.Entries)
             {
                 if (entryTemp.FullName.Contains("M-"))
@@ -571,6 +605,11 @@ namespace Kaenx.Creator.Classes
                         ptype.BaggageObject = _general.Baggages.Single(b => b.Name == name && b.TargetPath == path && b.Extension == extension);
                         break;
 
+                    case "TypeColor":
+                        ptype.Type = ParameterTypes.Color;
+                        //TODO save Space (RGB/HSV)
+                        break;
+
                     default:
                         throw new Exception("Unbekannter ParameterType: " + xsub.Name.LocalName);
                 }
@@ -604,7 +643,12 @@ namespace Kaenx.Creator.Classes
                     case "Memory":
                         union.SavePath = ParamSave.Memory;
                         string memName = GetLastSplit(xmem.Attribute("CodeSegment").Value);
-                        union.MemoryObject = currentVers.Memories.Single(m => m.Name.StartsWith(memName));
+                        union.MemoryObject = currentVers.Memories.SingleOrDefault(m => m.Name.StartsWith(memName));
+                        if(union.MemoryObject == null && memName.Contains("-RS-"))
+                        {
+                            int offset = int.Parse(memName.Split('-')[2], System.Globalization.NumberStyles.HexNumber);
+                            union.MemoryObject = currentVers.Memories.Single(m => m.Offset == offset);
+                        }
                         union.Offset = int.Parse(xmem.Attribute("Offset").Value);
                         union.OffsetBit = int.Parse(xmem.Attribute("BitOffset").Value);
                         break;
@@ -1126,7 +1170,8 @@ namespace Kaenx.Creator.Classes
                     case "ParameterBlock":
                         DynParaBlock dpb = new DynParaBlock() {
                             Name = xele.Attribute("Name")?.Value ?? "",
-                            Parent = parent
+                            Parent = parent,
+                            IsInline = xele.Attribute("Inline")?.Value == "true"
                         };
                         dpb.Text = GetTranslation(xele.Attribute("Id")?.Value ?? "", "Text", xele);
                         if(xele.Attribute("ParamRefId") != null) {
@@ -1145,6 +1190,7 @@ namespace Kaenx.Creator.Classes
                         parent.Items.Add(dpb);
                         ParseDynamic(dpb, xele, vbase);
                         break;
+
 
                     case "choose":
                         DynChoose dch = new DynChoose() {
