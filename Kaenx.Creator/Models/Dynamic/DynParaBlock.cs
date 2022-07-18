@@ -84,7 +84,7 @@ namespace Kaenx.Creator.Models.Dynamic
             set { _textRef = value; }
         }
 
-
+        public BlockLayout Layout { get; set; } = BlockLayout.List;
         public bool IsInline { get; set; } = false;
         public ObservableCollection<IDynItems> Items { get; set; } = new ObservableCollection<IDynItems>();
         public event PropertyChangedEventHandler PropertyChanged;
@@ -92,5 +92,12 @@ namespace Kaenx.Creator.Models.Dynamic
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
+    }
+
+    public enum BlockLayout
+    {
+        List,
+        Grid,
+        Table
     }
 }

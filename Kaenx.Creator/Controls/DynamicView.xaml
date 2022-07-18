@@ -19,6 +19,12 @@
         <conv:BoolToVisibility x:Key="BoolToVis" />
         <conv:EnumToVisibility x:Key="EnumToVis" />
         <conv:BoolNegation x:Key="BoolNegate" />
+        
+        <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="dyn:BlockLayout"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
 
 
         <DataTemplate x:Key="TempDynMain">
@@ -137,6 +143,10 @@
                 </Grid>
                 <HeaderedContentControl Header="Name">
                     <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
+                </HeaderedContentControl>
+                <CheckBox Content="Ist InLine" IsChecked="{Binding IsInline}" />
+                <HeaderedContentControl Header="Layout">
+                    <ComboBox ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding Layout}" />
                 </HeaderedContentControl>
                 <HeaderedContentControl Header="Parameter Ref">
                     <Grid>

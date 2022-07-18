@@ -1173,6 +1173,12 @@ namespace Kaenx.Creator.Classes
                             Parent = parent,
                             IsInline = xele.Attribute("Inline")?.Value == "true"
                         };
+                        dpb.Layout = xele.Attribute("Layout")?.Value switch {
+                            "Table" => BlockLayout.Table,
+                            "Grid" => BlockLayout.Grid,
+                            "List" => BlockLayout.List,
+                            _ => BlockLayout.List
+                        };
                         dpb.Text = GetTranslation(xele.Attribute("Id")?.Value ?? "", "Text", xele);
                         if(xele.Attribute("ParamRefId") != null) {
                             dpb.UseParameterRef = true;
@@ -1271,6 +1277,10 @@ namespace Kaenx.Creator.Classes
                         }
                         dass.Value = xele.Attribute("Value")?.Value;
                         parent.Items.Add(dass);
+                        break;
+
+                    case "Rows":
+                    case "Columns":
                         break;
 
                     default:
