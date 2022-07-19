@@ -66,6 +66,7 @@ namespace Kaenx.Creator.Models.Dynamic
             set { _textRef = value; }
         }
 
+        public string Cell { get; set; }
         
         public ObservableCollection<IDynItems> Items { get; set; }
 

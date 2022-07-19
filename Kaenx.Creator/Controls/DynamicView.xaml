@@ -44,6 +44,9 @@
                 <HeaderedContentControl Header="Parameter Name:">
                     <TextBlock Text="{Binding ParameterRefObject.ParameterObject.Name}" />
                 </HeaderedContentControl>
+                <HeaderedContentControl Header="Zelle: (nur bei ParameterBlock Layout Grid/Table)">
+                    <TextBox Text="{Binding Cell, UpdateSourceTrigger=PropertyChanged}" />
+                </HeaderedContentControl>
 
                 <HeaderedContentControl Header="Parameter Text" IsEnabled="False" Margin="5 30 5 5">
                     <DataGrid ItemsSource="{Binding ParameterRefObject.ParameterObject.Text}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
@@ -148,39 +151,61 @@
                 <HeaderedContentControl Header="Layout">
                     <ComboBox ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding Layout}" />
                 </HeaderedContentControl>
-                <HeaderedContentControl Header="Parameter Ref">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="auto" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
 
-                        <CheckBox IsChecked="{Binding UseParameterRef}" VerticalAlignment="Center" />
-                        <ComboBox Grid.Column="1" IsEnabled="{Binding UseParameterRef}" ItemsSource="{Binding ParameterRefsList, ElementName=ViewControl}" SelectedItem="{Binding ParameterRefObject, Mode=TwoWay}" DisplayMemberPath="Name" />
-                    </Grid>
+                <HeaderedContentControl Header="Zeilen">
+                    <DataGrid ItemsSource="{Binding Rows}" AutoGenerateColumns="False" Visibility="{Binding Layout, Converter={StaticResource EnumToVis}, ConverterParameter=Grid-Table}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Id" Binding="{Binding Id}" IsReadOnly="True" />
+                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
+                        </DataGrid.Columns>
+                    </DataGrid>
                 </HeaderedContentControl>
-                <HeaderedContentControl Header="Text Parameter">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="auto" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
 
-                        <CheckBox IsChecked="{Binding UseTextParameter}" VerticalAlignment="Center" />
-                        <ComboBox Grid.Column="1" IsEnabled="{Binding UseTextParameter}" ItemsSource="{Binding ParameterRefsList, ElementName=ViewControl}" SelectedItem="{Binding TextRefObject, Mode=TwoWay}" DisplayMemberPath="Name" />
-                    </Grid>
+                <HeaderedContentControl Header="Spalten">
+                    <DataGrid ItemsSource="{Binding Columns}" AutoGenerateColumns="False" Visibility="{Binding Layout, Converter={StaticResource EnumToVis}, ConverterParameter=Grid-Table}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Id" Binding="{Binding Id}" IsReadOnly="True" />
+                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
+                            <DataGridTextColumn Header="Breite (in %)" Binding="{Binding Width}" />
+                        </DataGrid.Columns>
+                    </DataGrid>
                 </HeaderedContentControl>
-                <HeaderedContentControl Header="Text" IsEnabled="{Binding UseParameterRef, Converter={StaticResource BoolNegate}}">
-                    <StackPanel>
-                        <CheckBox IsChecked="{Binding TranslationText}" Content="Übersetzung nicht exportieren" />
-                        <DataGrid ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
-                                <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
-                            </DataGrid.Columns>
-                        </DataGrid>
-                    </StackPanel>
-                </HeaderedContentControl>
+                
+                <StackPanel Visibility="{Binding IsInline, Converter={StaticResource BoolToVis}, ConverterParameter=true}">
+                    <HeaderedContentControl Header="Parameter Ref">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+    
+                            <CheckBox IsChecked="{Binding UseParameterRef}" VerticalAlignment="Center" />
+                            <ComboBox Grid.Column="1" IsEnabled="{Binding UseParameterRef}" ItemsSource="{Binding ParameterRefsList, ElementName=ViewControl}" SelectedItem="{Binding ParameterRefObject, Mode=TwoWay}" DisplayMemberPath="Name" />
+                        </Grid>
+                    </HeaderedContentControl>
+                    <HeaderedContentControl Header="Text Parameter">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+    
+                            <CheckBox IsChecked="{Binding UseTextParameter}" VerticalAlignment="Center" />
+                            <ComboBox Grid.Column="1" IsEnabled="{Binding UseTextParameter}" ItemsSource="{Binding ParameterRefsList, ElementName=ViewControl}" SelectedItem="{Binding TextRefObject, Mode=TwoWay}" DisplayMemberPath="Name" />
+                        </Grid>
+                    </HeaderedContentControl>
+                    <HeaderedContentControl Header="Text" IsEnabled="{Binding UseParameterRef, Converter={StaticResource BoolNegate}}">
+                        <StackPanel>
+                            <CheckBox IsChecked="{Binding TranslationText}" Content="Übersetzung nicht exportieren" />
+                            <DataGrid ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                                    <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </StackPanel>
+                    </HeaderedContentControl>
+                </StackPanel>
                 
             </StackPanel>
         </DataTemplate>
@@ -224,6 +249,9 @@
                         </ObjectDataProvider>
                     </HeaderedContentControl.Resources>
                     <ComboBox ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding Hint}" />
+                </HeaderedContentControl>
+                <HeaderedContentControl Header="Zelle: (nur bei ParameterBlock Layout Grid/Table)">
+                    <TextBox Text="{Binding Cell, UpdateSourceTrigger=PropertyChanged}" />
                 </HeaderedContentControl>
             </StackPanel>
         </DataTemplate>
@@ -303,7 +331,6 @@
                 </TextBlock>
             </StackPanel>
         </DataTemplate>
-        
         
         
         <select:DynSelector x:Key="SelectorDyn"

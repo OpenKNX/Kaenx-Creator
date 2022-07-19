@@ -35,7 +35,7 @@ namespace Kaenx.Creator.Models.Dynamic
             set { _parameter = value; }
         }
 
-
+        public string Cell { get; set; }
 
         public ObservableCollection<IDynItems> Items { get; set; }
 

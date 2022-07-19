@@ -286,6 +286,15 @@ namespace Kaenx.Creator.Viewer
             {
                 if(para.HasAccess)
                     para.IsVisible = Kaenx.DataContext.Import.FunctionHelper.CheckConditions(para.Conditions, values);
+
+                    if(para is ParameterTable pt)
+                    {
+                        foreach(IDynParameter tpara in pt.Parameters)
+                        {
+                            if(tpara.HasAccess)
+                                tpara.IsVisible = Kaenx.DataContext.Import.FunctionHelper.CheckConditions(tpara.Conditions, values);
+                        }
+                    }
             }
 
             foreach(ParameterBlock bl in block.Blocks)
@@ -331,23 +340,12 @@ namespace Kaenx.Creator.Viewer
 
                 case Models.Dynamic.DynParaBlock dpb:
                 {
-                    ParameterBlock pb = new ParameterBlock() {
-                        Id = dpb.Id,
-                        Conditions = conds
-                    };
-                    if(dpb.UseParameterRef)
+                    if(dpb.IsInline && dpb.Layout == Models.Dynamic.BlockLayout.Grid)
                     {
-                        pb.Text = GetDefaultLang(dpb.ParameterRefObject.OverwriteText ? dpb.ParameterRefObject.Text : dpb.ParameterRefObject.ParameterObject.Text);
+                        ParseTable(dpb, dblock, conds, args);
                     } else {
-                        pb.Text = GetDefaultLang(dpb.Text);
+                        ParseBlock(dpb, dch, dblock, conds, args);
                     }
-                    CheckForBindings(pb, dpb, args);
-
-                    if(dblock == null) dch.Blocks.Add(pb);
-                    else dblock.Blocks.Add(pb);
-
-                    foreach(Models.Dynamic.IDynItems item in dpb.Items)
-                        ParseDynamicItem(item, dch, pb, conds, args);
                     break;
                 }
 
@@ -390,7 +388,63 @@ namespace Kaenx.Creator.Viewer
                     ParseModule(dmod, dch, dblock, conds);
                     break;
                 }
+
+                case Models.Dynamic.DynSeparator ds:
+                {
+                    ParamSeparator psep = new ParamSeparator() {
+                        Id = ds.Id,
+                        Text = GetDefaultLang(ds.Text),
+                        HasAccess = true,
+                        Conditions = conds
+                    };
+                    dblock.Parameters.Add(psep);
+                    break;
+                }
+
+                default:
+                    throw new Exception("Not Implemented Type: " + ditem.GetType().ToString());
             }
+        }
+
+        private void ParseTable(Models.Dynamic.DynParaBlock dpb, ParameterBlock dblock, List<ParamCondition> conds, Dictionary<string, string> args)
+        {
+            ParameterBlock pb = new ParameterBlock();
+                
+            foreach(Models.Dynamic.IDynItems item in dpb.Items)
+                ParseDynamicItem(item, null, pb, conds, args);
+
+            ParameterTable table = new ParameterTable()
+            {
+                Id = dpb.Id,
+                Conditions = conds,
+                Parameters = pb.Parameters
+            };
+            foreach(Models.Dynamic.ParameterBlockRow row in dpb.Rows)
+                table.Rows.Add(1);
+            foreach(Models.Dynamic.ParameterBlockColumn col in dpb.Columns)
+                table.Columns.Add(col.Width);
+            dblock.Parameters.Add(table);
+        }
+
+        private void ParseBlock(Models.Dynamic.DynParaBlock dpb, IDynChannel dch, ParameterBlock dblock, List<ParamCondition> conds, Dictionary<string, string> args)
+        {
+            ParameterBlock pb = new ParameterBlock() {
+                Id = dpb.Id,
+                Conditions = conds
+            };
+            if(dpb.UseParameterRef)
+            {
+                pb.Text = GetDefaultLang(dpb.ParameterRefObject.OverwriteText ? dpb.ParameterRefObject.Text : dpb.ParameterRefObject.ParameterObject.Text);
+            } else {
+                pb.Text = GetDefaultLang(dpb.Text);
+            }
+            CheckForBindings(pb, dpb, args);
+
+            if(dblock == null) dch.Blocks.Add(pb);
+            else dblock.Blocks.Add(pb);
+
+            foreach(Models.Dynamic.IDynItems item in dpb.Items)
+                ParseDynamicItem(item, dch, pb, conds, args);
         }
 
         private ParamCondition ParseCondition(Models.Dynamic.DynWhen test, int sourceId)
@@ -399,31 +453,11 @@ namespace Kaenx.Creator.Viewer
             int tempOut;
             if (test.IsDefault)
             {
-                //TODO implement default
-                //TODO check if it works
                 //check if choose ist ParameterBlock (happens when vd5 gets converted to knxprods)
-                /*if(xele.Parent.Parent.Name.LocalName == "ParameterBlock"){
-                    string refid = xele.Parent.Attribute("ParamRefId").Value;
-                    if(GetAttributeAsString(xele.Parent.Parent, "TextParameterRefId") == refid)
-                        break;
+                if(test.Parent.Parent is Models.Dynamic.DynParaBlock dpb){
+                    if((test.Parent as Models.Dynamic.DynChoose).ParameterRefObject == dpb.ParameterRefObject)
+                        return cond;
                 }
-
-                List<string> values = new List<string>();
-                IEnumerable<XElement> whens = xele.Parent.Elements();
-                foreach (XElement w in whens)
-                {
-                    if (w == xele)
-                        continue;
-
-                    values.AddRange(w.Attribute("test").Value.Split(' '));
-                }
-                cond.Values = string.Join(",", values);
-                cond.Operation = ConditionOperation.Default;
-
-                if (cond.Values == "")
-                {
-                    continue;
-                }*/
 
                 List<string> conds = new List<string>();
 
@@ -641,14 +675,24 @@ namespace Kaenx.Creator.Viewer
 
             if(maxParaId == -1)
             {
-                maxParaId = _version.ParameterRefs.OrderByDescending(p => p.Id).First().Id;
-                maxParaId++;
+                if(_version.ParameterRefs.Count > 0)
+                {
+                    maxParaId = _version.ParameterRefs.OrderByDescending(p => p.Id).First().Id;
+                    maxParaId++;
+                } else {
+                    maxParaId = 1;
+                }
             }
 
             if(maxComsId == -1)
             {
-                maxComsId = _version.ComObjectRefs.OrderByDescending(c => c.Id).First().Id;
-                maxComsId++;
+                if(_version.ComObjectRefs.Count > 0)
+                {
+                    maxComsId = _version.ComObjectRefs.OrderByDescending(c => c.Id).First().Id;
+                    maxComsId++;
+                } else {
+                    maxComsId = 1;
+                }
             } 
 
 
@@ -737,6 +781,13 @@ namespace Kaenx.Creator.Viewer
                 {
                     if(dco._comObjectRef != -1)
                         dco.ComObjectRefObject = vbase.ComObjectRefs.SingleOrDefault(c => c.UId == dco._comObjectRef);
+                    break;
+                }
+
+                case Models.Dynamic.DynSeparator dse:
+                {
+                    if(dse._textRef != -1)
+                        dse.TextRefObject = vbase.ParameterRefs.SingleOrDefault(p => p.UId == dse._textRef);
                     break;
                 }
 

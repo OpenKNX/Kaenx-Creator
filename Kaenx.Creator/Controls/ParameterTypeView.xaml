@@ -98,7 +98,7 @@
                     <ColumnDefinition Width="auto" />
                 </Grid.ColumnDefinitions>
 
-                <DataGrid x:Name="ptypeList" ItemsSource="{Binding Enums}" MaxHeight="100" AutoGenerateColumns="False" CanUserAddRows="False">
+                <DataGrid x:Name="ptypeList" ItemsSource="{Binding Enums}" MaxHeight="200" AutoGenerateColumns="False" CanUserAddRows="False">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*" />
                         <DataGridTextColumn Header="Wert" Binding="{Binding Value}" MinWidth="50" />

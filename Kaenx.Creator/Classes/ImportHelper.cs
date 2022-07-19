@@ -103,6 +103,7 @@ namespace Kaenx.Creator.Classes
             _general = general;
             DPTs = dpts;
             string manuHex = "";
+            Archive = ZipFile.OpenRead(_path);
             foreach (ZipArchiveEntry entryTemp in Archive.Entries)
             {
                 if (entryTemp.FullName.Contains("M-"))
@@ -1180,6 +1181,33 @@ namespace Kaenx.Creator.Classes
                             _ => BlockLayout.List
                         };
                         dpb.Text = GetTranslation(xele.Attribute("Id")?.Value ?? "", "Text", xele);
+                        if(xele.Element(Get("Rows")) != null)
+                        {
+                            foreach(XElement xrow in xele.Element(Get("Rows")).Elements())
+                            {
+                                ParameterBlockRow row = new ParameterBlockRow()
+                                {
+                                    Id = int.Parse(GetLastSplit(xrow.Attribute("Id").Value, 2)),
+                                    Name = xrow.Attribute("Name")?.Value ?? ""
+                                };
+                                dpb.Rows.Add(row);
+                            }
+                        }
+                        if(xele.Element(Get("Columns")) != null)
+                        {
+                            foreach(XElement xcol in xele.Element(Get("Columns")).Elements())
+                            {
+                                ParameterBlockColumn col = new ParameterBlockColumn()
+                                {
+                                    Id = int.Parse(GetLastSplit(xcol.Attribute("Id").Value, 2)),
+                                    Name = xcol.Attribute("Name")?.Value ?? ""
+                                };
+                                string width = xcol.Attribute("Width").Value;
+                                width = width.Substring(0, width.Length - 1);
+                                col.Width = int.Parse(width);
+                                dpb.Columns.Add(col);
+                            }
+                        }
                         if(xele.Attribute("ParamRefId") != null) {
                             dpb.UseParameterRef = true;
                             paraId = int.Parse(GetLastSplit(xele.Attribute("ParamRefId").Value, 2));
@@ -1221,7 +1249,8 @@ namespace Kaenx.Creator.Classes
 
                     case "ParameterRefRef":
                         DynParameter dp = new DynParameter() {
-                            Parent = parent
+                            Parent = parent,
+                            Cell = xele.Attribute("Cell")?.Value
                         };
                         Int64 paraId64 = Int64.Parse(GetLastSplit(xele.Attribute("RefId").Value, 2));
                         dp.ParameterRefObject = vbase.ParameterRefs.Single(p => p.Id == paraId64);
@@ -1230,7 +1259,8 @@ namespace Kaenx.Creator.Classes
 
                     case "ParameterSeparator":
                         DynSeparator ds = new DynSeparator() {
-                            Parent = parent
+                            Parent = parent,
+                            Cell = xele.Attribute("Cell")?.Value
                         };
                         paraId = int.Parse(GetLastSplit(xele.Attribute("Id").Value, 3));
                         ds.Id = paraId;

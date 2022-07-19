@@ -1103,11 +1103,12 @@ namespace Kaenx.Creator.Classes
             parent.Add(xcom);
         }
 
+        private int moduleCounter = 1;
         private void HandleMod(DynModule mod, XElement parent, AppVersion ver)
         {
             XElement xmod = new XElement(Get("Module"));
             if(mod.Id == -1)
-                mod.Id = ++ver.LastDynModuleId;
+                mod.Id = moduleCounter++;
             xmod.SetAttributeValue("Id", $"{appVersion}_MD-{mod.ModuleObject.Id}_M-{mod.Id}");
             xmod.SetAttributeValue("RefId", $"{appVersion}_MD-{mod.ModuleObject.Id}");
 
@@ -1136,6 +1137,8 @@ namespace Kaenx.Creator.Classes
             {
                 xsep.SetAttributeValue("UIHint", sep.Hint.ToString());
             }
+            if(!string.IsNullOrEmpty(sep.Cell))
+                xsep.SetAttributeValue("Cell", sep.Cell);
             parent.Add(xsep);
         }
 
@@ -1170,29 +1173,73 @@ namespace Kaenx.Creator.Classes
             {
                 bl.Id = pbCounter++; //TODO get real next free Id
             }
-            if(bl.UseParameterRef)
+
+            //Wenn Block InLine ist, kann kein ParamRef angegeben werden
+            
+
+            if(bl.IsInline)
             {
-                block.SetAttributeValue("Id", $"{appVersionMod}_PB-{bl.ParameterRefObject.Id}");
-                block.SetAttributeValue("ParamRefId", appVersionMod + (bl.ParameterRefObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{bl.ParameterRefObject.ParameterObject.Id}_R-{bl.ParameterRefObject.Id}");
-            }
-            else
-            {
-                block.SetAttributeValue("Id", $"{appVersionMod}_PB-{bl.Id}");string dText = bl.Text.Single(p => p.Language.CultureCode == currentLang).Text;
-                if (!string.IsNullOrEmpty(dText))
+                block.SetAttributeValue("Id", $"{appVersionMod}_PB-{bl.Id}");
+                block.SetAttributeValue("Inline", "true");
+            } else {
+                if(bl.UseParameterRef)
                 {
-                    block.SetAttributeValue("Text", dText);
-                    if (!bl.TranslationText)
-                        foreach (Models.Translation trans in bl.Text) AddTranslation(trans.Language.CultureCode, $"{appVersion}_PB-{bl.Id}", "Text", trans.Text);
+                    block.SetAttributeValue("Id", $"{appVersionMod}_PB-{bl.ParameterRefObject.Id}");
+                    block.SetAttributeValue("ParamRefId", appVersionMod + (bl.ParameterRefObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{bl.ParameterRefObject.ParameterObject.Id}_R-{bl.ParameterRefObject.Id}");
+                }
+                else
+                {
+                    block.SetAttributeValue("Id", $"{appVersionMod}_PB-{bl.Id}");
+                    string dText = bl.Text.Single(p => p.Language.CultureCode == currentLang).Text;
+                    //Wenn Block InLine ist, kann kein Text angegeben werden
+                    if (!string.IsNullOrEmpty(dText))
+                    {
+                        block.SetAttributeValue("Text", dText);
+                        if (!bl.TranslationText)
+                            foreach (Models.Translation trans in bl.Text) AddTranslation(trans.Language.CultureCode, $"{appVersion}_PB-{bl.Id}", "Text", trans.Text);
+                    }
                 }
             }
 
+            if(bl.Layout != BlockLayout.List)
+            {
+                block.SetAttributeValue("Layout", bl.Layout.ToString());
 
-            
+                if(bl.Rows.Count > 0)
+                {
+                    int rowCounter = 1;
+                    XElement xrows = new XElement(Get("Rows"));
+                    foreach(ParameterBlockRow row in bl.Rows)
+                    {
+                        XElement xrow = new XElement(Get("Row"));
+                        xrow.SetAttributeValue("Id", $"{appVersionMod}_PB-{bl.Id}_R-{rowCounter++}");
+                        xrow.SetAttributeValue("Name", row.Name);
+                        xrows.Add(xrow);
+                    }
+                    block.Add(xrows);
+                }
+
+                if(bl.Columns.Count > 0)
+                {
+                    int colCounter = 1;
+                    XElement xcols = new XElement(Get("Columns"));
+                    foreach(ParameterBlockColumn col in bl.Columns)
+                    {
+                        XElement xcol = new XElement(Get("Column"));
+                        xcol.SetAttributeValue("Id", $"{appVersionMod}_PB-{bl.Id}_C-{colCounter++}");
+                        xcol.SetAttributeValue("Name", col.Name);
+                        xcol.SetAttributeValue("Width", $"{col.Width}%");
+                        xcols.Add(xcol);
+                    }
+                    block.Add(xcols);
+                }
+            }
 
             if(!string.IsNullOrEmpty(bl.Name))
                 block.SetAttributeValue("Name", bl.Name);
 
-            if (bl.UseTextParameter)
+            //Wenn Block InLine ist, kann kein TextParameter angegeben werden
+            if (bl.UseTextParameter && !bl.IsInline)
                 block.SetAttributeValue("TextParameterRefId", appVersionMod + (bl.TextRefObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{bl.TextRefObject.ParameterObject.Id}_R-{bl.TextRefObject.Id}");
 
             return block;
@@ -1203,6 +1250,8 @@ namespace Kaenx.Creator.Classes
             XElement xpara = new XElement(Get("ParameterRefRef"));
             parent.Add(xpara);
             xpara.SetAttributeValue("RefId", appVersionMod + (pa.ParameterRefObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{pa.ParameterRefObject.ParameterObject.Id}_R-{pa.ParameterRefObject.Id}");
+            if(!string.IsNullOrEmpty(pa.Cell))
+                xpara.SetAttributeValue("Cell", pa.Cell);
         }
         #endregion
 

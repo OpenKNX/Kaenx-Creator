@@ -52,17 +52,17 @@ namespace Kaenx.Creator.Viewer.Selectors
                 case ParamColor pco:
                     return Color;
 
-                case ParamSeperator pse:
+                case ParamSeparator pse:
                     return Seperator;
 
-                case ParamSeperatorBox psex:
+                case ParamSeparatorBox psex:
                     return SeperatorBox;
 
                 case ParamTime pti:
                     return Time;
 
                 case ParameterTable ptable:
-                    return NotFound;
+                    return Table;
 
                 case ParamSlider psl:
                     return Slider;

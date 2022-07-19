@@ -170,7 +170,7 @@ namespace Kaenx.Creator
                         para.PropertyChanged += Para_PropertyChanged;
                         Parameters.Add(para);
 
-                        if (para is ParamSeperator || para is ParamSeperatorBox) continue;
+                        if (para is ParamSeparator || para is ParamSeparatorBox) continue;
 
                         if (!values.ContainsKey(para.Id))
                             values.Add(para.Id, new ParameterValues());
@@ -179,6 +179,25 @@ namespace Kaenx.Creator
                         if (para is ParamPicture pc)
                         {
                             pc.OnPictureRequest += Pc_OnPictureRequest;
+                        }
+
+                        if(para is ParameterTable pt)
+                        {
+                            foreach(IDynParameter tpara in pt.Parameters)
+                            {
+                                tpara.PropertyChanged += Para_PropertyChanged;
+                                Parameters.Add(para);
+
+                                if (tpara is ParamSeparator || tpara is ParamSeparatorBox) continue;
+                                if (!values.ContainsKey(tpara.Id))
+                                    values.Add(tpara.Id, new ParameterValues());
+
+                                ((ParameterValues)values[tpara.Id]).Parameters.Add(tpara);
+                                if (tpara is ParamPicture pc2)
+                                {
+                                    pc2.OnPictureRequest += Pc_OnPictureRequest;
+                                }
+                            }
                         }
                     }
                 }

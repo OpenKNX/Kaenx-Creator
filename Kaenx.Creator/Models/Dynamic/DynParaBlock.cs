@@ -84,14 +84,39 @@ namespace Kaenx.Creator.Models.Dynamic
             set { _textRef = value; }
         }
 
-        public BlockLayout Layout { get; set; } = BlockLayout.List;
-        public bool IsInline { get; set; } = false;
+        private BlockLayout _layout = BlockLayout.List;
+        public BlockLayout Layout
+        {
+            get { return _layout; }
+            set { _layout = value; Changed("Layout"); }
+        }
+        private bool _isInline = false;
+        public bool IsInline
+        {
+            get { return _isInline; }
+            set { _isInline = value; Changed("IsInline"); }
+        }
         public ObservableCollection<IDynItems> Items { get; set; } = new ObservableCollection<IDynItems>();
+        public ObservableCollection<ParameterBlockRow> Rows { get; set; } = new ObservableCollection<ParameterBlockRow>();
+        public ObservableCollection<ParameterBlockColumn> Columns { get; set; } = new ObservableCollection<ParameterBlockColumn>();
         public event PropertyChangedEventHandler PropertyChanged;
         private void Changed(string name)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
+    }
+
+    public class ParameterBlockRow
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
+
+    public class ParameterBlockColumn
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public int Width { get; set; }
     }
 
     public enum BlockLayout
