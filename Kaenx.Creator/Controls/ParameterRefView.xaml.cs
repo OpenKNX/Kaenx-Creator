@@ -88,7 +88,7 @@ namespace Kaenx.Creator.Controls
                         dp.ParameterRefObject = null;
                     break;
 
-                case DynChoose dch:
+                case IDynChoose dch:
                     if(dch.ParameterRefObject == pref)
                         dch.ParameterRefObject = null;
                     break;

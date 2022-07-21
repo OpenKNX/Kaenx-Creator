@@ -437,14 +437,14 @@ namespace Kaenx.Creator.Classes {
                     break;
                 }
 
-                case DynChoose dco:
+                case IDynChoose dco:
                 {
                     if(dco.ParameterRefObject == null)
                         actions.Add(new PublishAction() { Text = $"    DynChoose {dco.Name} wurde kein ParameterRef zugeordnet", State = PublishState.Fail});
                     break;
                 }
 
-                case DynWhen dwh:
+                case IDynWhen dwh:
                 {
                     if(string.IsNullOrEmpty(dwh.Condition) && !dwh.IsDefault)
                         actions.Add(new PublishAction() { Text = $"    DynWhen {dwh.Name} wurde keine Bedingung angegeben", State = PublishState.Fail});

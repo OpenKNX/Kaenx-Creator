@@ -34,10 +34,10 @@ namespace Kaenx.Creator.Selectors
                 case DynParameter dp:
                     return DPara;
 
-                case DynChoose dco:
+                case IDynChoose dco:
                     return DChoose;
 
-                case DynWhen dw:
+                case IDynWhen dw:
                     return DWhen;
 
                 case DynamicMain dm:

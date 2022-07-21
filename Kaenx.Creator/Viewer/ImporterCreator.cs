@@ -355,9 +355,9 @@ namespace Kaenx.Creator.Viewer
                     break;
                 }
 
-                case Models.Dynamic.DynChoose dcho:
+                case Models.Dynamic.IDynChoose dcho:
                 {
-                    foreach(Models.Dynamic.DynWhen when in dcho.Items)
+                    foreach(Models.Dynamic.IDynWhen when in dcho.Items)
                     {
                         List<ParamCondition> conds2 = conds.ToList();
                         conds2.Add(ParseCondition(when, (int)dcho.ParameterRefObject.Id)); //TODO use long
@@ -447,7 +447,7 @@ namespace Kaenx.Creator.Viewer
                 ParseDynamicItem(item, dch, pb, conds, args);
         }
 
-        private ParamCondition ParseCondition(Models.Dynamic.DynWhen test, int sourceId)
+        private ParamCondition ParseCondition(Models.Dynamic.IDynWhen test, int sourceId)
         {
             ParamCondition cond = new ParamCondition();
             int tempOut;
@@ -455,13 +455,13 @@ namespace Kaenx.Creator.Viewer
             {
                 //check if choose ist ParameterBlock (happens when vd5 gets converted to knxprods)
                 if(test.Parent.Parent is Models.Dynamic.DynParaBlock dpb){
-                    if((test.Parent as Models.Dynamic.DynChoose).ParameterRefObject == dpb.ParameterRefObject)
+                    if((test.Parent as Models.Dynamic.IDynChoose).ParameterRefObject == dpb.ParameterRefObject)
                         return cond;
                 }
 
                 List<string> conds = new List<string>();
 
-                foreach(Models.Dynamic.DynWhen when in (test.Parent as Models.Dynamic.DynChoose).Items)
+                foreach(Models.Dynamic.IDynWhen when in (test.Parent as Models.Dynamic.IDynChoose).Items)
                 {
                     if(when == test) continue;
                     conds.Add(when.Condition);
@@ -763,7 +763,14 @@ namespace Kaenx.Creator.Viewer
                     break;
                 }
 
-                case Models.Dynamic.DynChoose dch:
+                case Models.Dynamic.DynChooseBlock dch:
+                {
+                    if(dch._parameterRef != -1)
+                        dch.ParameterRefObject = vbase.ParameterRefs.SingleOrDefault(p => p.UId == dch._parameterRef);
+                    break;
+                }
+
+                case Models.Dynamic.DynChooseChannel dch:
                 {
                     if(dch._parameterRef != -1)
                         dch.ParameterRefObject = vbase.ParameterRefs.SingleOrDefault(p => p.UId == dch._parameterRef);
@@ -791,7 +798,7 @@ namespace Kaenx.Creator.Viewer
                     break;
                 }
 
-                case Models.Dynamic.DynWhen:
+                case Models.Dynamic.IDynWhen:
                     break;
 
                 default:

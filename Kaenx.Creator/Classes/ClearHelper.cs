@@ -136,8 +136,8 @@ namespace Kaenx.Creator.Classes
                 {
                     case DynChannel:
                     case DynChannelIndependent:
-                    case DynChoose:
-                    case DynWhen:
+                    case IDynChoose:
+                    case IDynWhen:
                         GetIDs(item, uids, isPara);
                         break;
                         

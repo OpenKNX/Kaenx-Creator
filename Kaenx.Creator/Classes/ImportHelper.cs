@@ -1221,15 +1221,30 @@ namespace Kaenx.Creator.Classes
                             paraId = int.Parse(GetLastSplit(xele.Attribute("TextParameterRefId").Value, 2));
                             dpb.TextRefObject = vbase.ParameterRefs.Single(p => p.Id == paraId);
                         }
+                        dpb.ShowInComObjectTree = xele.Attribute("ShowInComObjectTree")?.Value.ToLower() == "true";
                         parent.Items.Add(dpb);
                         ParseDynamic(dpb, xele, vbase);
                         break;
 
 
                     case "choose":
-                        DynChoose dch = new DynChoose() {
-                            Parent = parent
-                        };
+                        IDynChoose dch;
+                        switch(parent)
+                        {
+                            case DynWhenBlock:
+                            case DynParaBlock:
+                                dch = new DynChooseBlock();
+                                break;
+
+                            case DynWhenChannel:
+                            case IDynChannel:
+                                dch = new DynChooseChannel();
+                                break;
+
+                            default:
+                                throw new Exception("Not implemented Parent");
+                        }
+                        dch.Parent = parent;
                         Int64 paraId64_2 = Int64.Parse(GetLastSplit(xele.Attribute("ParamRefId").Value, 2));
                         dch.ParameterRefObject = vbase.ParameterRefs.Single(p => p.Id == paraId64_2);
                         parent.Items.Add(dch);
@@ -1237,12 +1252,23 @@ namespace Kaenx.Creator.Classes
                         break;
 
                     case "when":
-                        DynWhen dw = new DynWhen()
+                        IDynWhen dw;
+                        switch(parent)
                         {
-                            Condition = xele.Attribute("test")?.Value ?? "",
-                            IsDefault = xele.Attribute("default")?.Value == "true",
-                            Parent = parent
-                        };
+                            case DynChooseBlock:
+                                dw = new DynWhenBlock();
+                                break;
+
+                            case DynChooseChannel:
+                                dw = new DynWhenChannel();
+                                break;
+
+                            default:
+                                throw new Exception("Not possible Parent");
+                        }
+                        dw.Condition = xele.Attribute("test")?.Value ?? "";
+                        dw.IsDefault = xele.Attribute("default")?.Value == "true";
+                        dw.Parent = parent;
                         parent.Items.Add(dw);
                         ParseDynamic(dw, xele, vbase);
                         break;

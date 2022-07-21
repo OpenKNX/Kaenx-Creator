@@ -843,9 +843,14 @@ namespace Kaenx.Creator
                             dp.ParameterRefObject = paras.SingleOrDefault(p => p.UId == dp._parameter);
                         break;
 
-                    case Models.Dynamic.DynChoose dc:
-                        if (dc._parameterRef != -1)
-                            dc.ParameterRefObject = paras.SingleOrDefault(p => p.UId == dc._parameterRef);
+                    case Models.Dynamic.DynChooseBlock dcb:
+                        if (dcb._parameterRef != -1)
+                            dcb.ParameterRefObject = paras.SingleOrDefault(p => p.UId == dcb._parameterRef);
+                        break;
+
+                    case Models.Dynamic.DynChooseChannel dcc:
+                        if (dcc._parameterRef != -1)
+                            dcc.ParameterRefObject = paras.SingleOrDefault(p => p.UId == dcc._parameterRef);
                         break;
 
                     case Models.Dynamic.DynComObject dco:

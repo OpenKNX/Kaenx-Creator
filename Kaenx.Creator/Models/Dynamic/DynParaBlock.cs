@@ -96,6 +96,9 @@ namespace Kaenx.Creator.Models.Dynamic
             get { return _isInline; }
             set { _isInline = value; Changed("IsInline"); }
         }
+
+
+        public bool ShowInComObjectTree { get; set; } = false;
         public ObservableCollection<IDynItems> Items { get; set; } = new ObservableCollection<IDynItems>();
         public ObservableCollection<ParameterBlockRow> Rows { get; set; } = new ObservableCollection<ParameterBlockRow>();
         public ObservableCollection<ParameterBlockColumn> Columns { get; set; } = new ObservableCollection<ParameterBlockColumn>();

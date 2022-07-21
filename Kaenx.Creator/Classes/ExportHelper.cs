@@ -1036,11 +1036,11 @@ namespace Kaenx.Creator.Classes
                         HandleParam(dp, xparent);
                         break;
 
-                    case DynChoose dch:
+                    case IDynChoose dch:
                         xitem = HandleChoose(dch, xparent);
                         break;
 
-                    case DynWhen dw:
+                    case IDynWhen dw:
                         xitem = HandleWhen(dw, xparent);
                         break;
 
@@ -1142,7 +1142,7 @@ namespace Kaenx.Creator.Classes
             parent.Add(xsep);
         }
 
-        private XElement HandleChoose(DynChoose cho, XElement parent)
+        private XElement HandleChoose(IDynChoose cho, XElement parent)
         {
             XElement xcho = new XElement(Get("choose"));
             parent.Add(xcho);
@@ -1150,7 +1150,7 @@ namespace Kaenx.Creator.Classes
             return xcho;
         }
 
-        private XElement HandleWhen(DynWhen when, XElement parent)
+        private XElement HandleWhen(IDynWhen when, XElement parent)
         {
             XElement xwhen = new XElement(Get("when"));
             parent.Add(xwhen);
@@ -1241,6 +1241,9 @@ namespace Kaenx.Creator.Classes
             //Wenn Block InLine ist, kann kein TextParameter angegeben werden
             if (bl.UseTextParameter && !bl.IsInline)
                 block.SetAttributeValue("TextParameterRefId", appVersionMod + (bl.TextRefObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{bl.TextRefObject.ParameterObject.Id}_R-{bl.TextRefObject.Id}");
+
+            if(bl.ShowInComObjectTree)
+                block.SetAttributeValue("ShowInComObjectTree", "true");
 
             return block;
         }

@@ -101,5 +101,88 @@ namespace Kaenx.Creator.Controls
                 ((sender as Button).DataContext as Models.Parameter).Id = id;
             }
         }
+    
+    
+        #region DragNDrop
+
+        private Parameter _draggedItem;
+        private Parameter _target;
+
+        private void ListMouseMove(object sender, MouseEventArgs e)
+        {
+            if (sender is ListBox && e.LeftButton == MouseButtonState.Pressed)
+            {
+                _draggedItem = (Parameter)ParamList.SelectedItem;
+                if (_draggedItem != null)
+                {
+                    DragDropEffects finalDropEffect = DragDrop.DoDragDrop(ParamList, ParamList.SelectedValue, DragDropEffects.Move);
+                    //Checking target is not null and item is
+                    //dragging(moving) and move drop was accepted
+                    
+                    if ((finalDropEffect == DragDropEffects.Move) && (_target != null) && (_draggedItem != _target))
+                    {
+                        //TODO decide to insert above or below by pressing shift?
+                        Module.Parameters.Remove(_draggedItem);
+                        Module.Parameters.Insert(Module.Parameters.IndexOf(_target), _draggedItem);
+
+                        _target = null;
+                        _draggedItem = null;
+                    }
+                }
+            }
+        }
+
+        private void ListDragOver(object sender, DragEventArgs e)
+        {
+            if(sender != ParamList)
+            {
+                e.Effects = DragDropEffects.None;
+                e.Handled = true;
+                return;
+            }
+
+            Parameter item = GetNearestContainer(e.OriginalSource);
+
+            if(item == null)
+            {
+                System.Diagnostics.Debug.WriteLine(e.OriginalSource.GetType().ToString());
+                e.Effects = DragDropEffects.None;
+            } else {
+                e.Effects = DragDropEffects.Move;
+            }
+            
+            e.Handled = true;
+        }
+
+        private void ListDrop(object sender, DragEventArgs e)
+        {
+            e.Handled = true;
+            // Verify that this is a valid drop and then store the drop target
+            Parameter TargetItem = GetNearestContainer(e.OriginalSource);
+            if (TargetItem != null && _draggedItem != null)
+            {
+                _target = TargetItem;
+                e.Effects = DragDropEffects.Move;
+            } else {
+                e.Effects = DragDropEffects.None;
+            }
+        }
+
+        private Parameter GetNearestContainer(object source)
+        {
+            Parameter item = (source as System.Windows.Documents.Run)?.DataContext as Parameter;
+
+            if(item == null)
+                item = (source as System.Windows.Controls.Border)?.DataContext as Parameter;
+
+            if(item == null)
+                item = (source as System.Windows.Controls.Image)?.DataContext as Parameter;
+
+            if(item == null)
+                item = (source as System.Windows.Controls.TextBlock)?.DataContext as Parameter;
+            return item;
+        }
+
+        #endregion
     }
 }

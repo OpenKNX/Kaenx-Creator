@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Kaenx.Creator.Models.Dynamic
 {
-    public class DynChoose : IDynItems, INotifyPropertyChanged
+    public class DynChooseBlock : IDynChoose, INotifyPropertyChanged
     {
         [JsonIgnore]
         public IDynItems Parent { get; set; }

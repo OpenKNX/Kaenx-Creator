@@ -34,13 +34,14 @@
         <TextBlock Grid.Row="1" Text="Filter/ID:" HorizontalAlignment="Right" />
         <TextBox x:Name="query" Grid.Column="1" Grid.Row="1" Margin="1 0 0 2" />
 
-        <ListView x:Name="ComobjectList" Grid.Row="2" Grid.ColumnSpan="2" ItemsSource="{Binding Module.ComObjects, ElementName=ViewControl}">
-            <ListView.ItemTemplate>
+        <ListBox x:Name="ComobjectList" Grid.Row="2" Grid.ColumnSpan="2" ItemsSource="{Binding Module.ComObjects, ElementName=ViewControl}"
+            AllowDrop="True" MouseMove="ListMouseMove" DragOver="ListDragOver" Drop="ListDrop">
+            <ListBox.ItemTemplate>
 				<DataTemplate>
 					<TextBlock Text="{Binding Name}" Foreground="{Binding IsNotUsed, Converter={StaticResource BoolToBrush}}" />
 				</DataTemplate>
-			</ListView.ItemTemplate>
-        </ListView>
+			</ListBox.ItemTemplate>
+        </ListBox>
 
 
         <Grid Grid.Column="2" Grid.RowSpan="3">

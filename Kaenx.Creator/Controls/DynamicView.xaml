@@ -147,6 +147,7 @@
                 <HeaderedContentControl Header="Name">
                     <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
                 </HeaderedContentControl>
+                <CheckBox Content="In KO-Ansicht anzeigen" IsChecked="{Binding ShowInComObjectTree}" />
                 <CheckBox Content="Ist InLine" IsChecked="{Binding IsInline}" />
                 <HeaderedContentControl Header="Layout">
                     <ComboBox ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding Layout}" />
@@ -352,7 +353,8 @@
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
 
-        <TreeView Name="DynamicList" ItemsSource="{Binding Dynamics}" MinWidth="300">
+        <TreeView x:Name="DynamicList" ItemsSource="{Binding Dynamics}" MinWidth="300"
+            AllowDrop="True" MouseMove="TreeMouseMove" DragOver="TreeDragOver" Drop="TreeDrop">
             <TreeView.Resources>
                 <ContextMenu x:Key="ContextMenu" Loaded="LoadingContextDynWhen">
                     <MenuItem Header="Independent Channel hinzufügen" Click="ClickAddDynIndep" />
@@ -367,6 +369,16 @@
                     <MenuItem Header="Assign hinzufügen" Click="ClickAddDynAssign" />
                     <MenuItem Header="Button hinzufügen" />
                     <Separator />
+                    <MenuItem Header="Kopieren" Click="ClickCopyDyn" />
+                    <MenuItem Header="Ausschneiden" Click="ClickCutDyn" />
+                    <MenuItem Header="Einfügen" Click="ClickInsertDyn" />
+                    <MenuItem Header="Entfernen" Click="ClickRemoveDyn" />
+                </ContextMenu>
+                <ContextMenu x:Key="ContextMenuChoose">
+                    <MenuItem Header="Bedingung hinzufügen" Click="ClickAddDynWhen" />
+                    <MenuItem Header="Kopieren" Click="ClickCopyDyn" />
+                    <MenuItem Header="Ausschneiden" Click="ClickCutDyn" />
+                    <MenuItem Header="Einfügen" Click="ClickInsertDyn" />
                     <MenuItem Header="Entfernen" Click="ClickRemoveDyn" />
                 </ContextMenu>
                 <HierarchicalDataTemplate DataType="{x:Type dyn:DynamicMain}" ItemsSource="{Binding Items}">
@@ -417,23 +429,39 @@
                         </TextBlock>
                     </StackPanel>
                 </HierarchicalDataTemplate>
-                <HierarchicalDataTemplate DataType="{x:Type dyn:DynChoose}" ItemsSource="{Binding Items}">
+                <HierarchicalDataTemplate DataType="{x:Type dyn:DynChooseChannel}" ItemsSource="{Binding Items}">
                     <StackPanel Orientation="Horizontal">
                         <Image Source="{svgc:SvgImage Source=/Assets/Images/Dynamic/Choose.svg, AppName=Kaenx.Creator}" Height="18" Width="18" Margin="4" />
-                        <TextBlock VerticalAlignment="Center">
-                            <TextBlock.ContextMenu>
-                                <ContextMenu>
-                                    <MenuItem Header="Bedingung hinzufügen" Click="ClickAddDynWhen" />
-                                    <MenuItem Header="Entfernen" Click="ClickRemoveDyn" />
-                                </ContextMenu>
-                            </TextBlock.ContextMenu>
+                        <TextBlock VerticalAlignment="Center" ContextMenu="{StaticResource ContextMenuChoose}">
                             <Run Text="Auswahl" />
                             <Run Text="{Binding Name}" />
                             <Run Text="{Binding ParameterRefObject.Name}" />
                         </TextBlock>
                     </StackPanel>
                 </HierarchicalDataTemplate>
-                <HierarchicalDataTemplate DataType="{x:Type dyn:DynWhen}" ItemsSource="{Binding Items}">
+                <HierarchicalDataTemplate DataType="{x:Type dyn:DynChooseBlock}" ItemsSource="{Binding Items}">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="{svgc:SvgImage Source=/Assets/Images/Dynamic/Choose.svg, AppName=Kaenx.Creator}" Height="18" Width="18" Margin="4" />
+                        <TextBlock VerticalAlignment="Center" ContextMenu="{StaticResource ContextMenuChoose}">
+                            <Run Text="Auswahl" />
+                            <Run Text="{Binding Name}" />
+                            <Run Text="{Binding ParameterRefObject.Name}" />
+                        </TextBlock>
+                    </StackPanel>
+                </HierarchicalDataTemplate>
+                <HierarchicalDataTemplate DataType="{x:Type dyn:DynWhenChannel}" ItemsSource="{Binding Items}">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="{svgc:SvgImage Source=/Assets/Images/Dynamic/When.svg, AppName=Kaenx.Creator}" Height="18" Width="18" Margin="4" />
+                        <TextBlock VerticalAlignment="Center" ContextMenu="{StaticResource ContextMenu}">
+                            <Run Text="Bedingung" />
+                            <Run Text="{Binding Name}" />
+                            <Run Text="[" />
+                            <Run Text="{Binding Condition}" />
+                            <Run Text="]" />
+                        </TextBlock>
+                    </StackPanel>
+                </HierarchicalDataTemplate>
+                <HierarchicalDataTemplate DataType="{x:Type dyn:DynWhenBlock}" ItemsSource="{Binding Items}">
                     <StackPanel Orientation="Horizontal">
                         <Image Source="{svgc:SvgImage Source=/Assets/Images/Dynamic/When.svg, AppName=Kaenx.Creator}" Height="18" Width="18" Margin="4" />
                         <TextBlock VerticalAlignment="Center" ContextMenu="{StaticResource ContextMenu}">
@@ -449,6 +477,9 @@
                     <StackPanel Orientation="Horizontal">
                         <StackPanel.ContextMenu>
                             <ContextMenu>
+                                <MenuItem Header="Kopieren" Click="ClickCopyDyn" />
+                                <MenuItem Header="Ausschneiden" Click="ClickCutDyn" />
+                                <MenuItem Header="Einfügen" Click="ClickInsertDyn" />
                                 <MenuItem Header="Entfernen" Click="ClickRemoveDyn" />
                             </ContextMenu>
                         </StackPanel.ContextMenu>
@@ -469,6 +500,9 @@
                     <StackPanel Orientation="Horizontal">
                         <StackPanel.ContextMenu>
                             <ContextMenu>
+                                <MenuItem Header="Kopieren" Click="ClickCopyDyn" />
+                                <MenuItem Header="Ausschneiden" Click="ClickCutDyn" />
+                                <MenuItem Header="Einfügen" Click="ClickInsertDyn" />
                                 <MenuItem Header="Entfernen" Click="ClickRemoveDyn" />
                             </ContextMenu>
                         </StackPanel.ContextMenu>
