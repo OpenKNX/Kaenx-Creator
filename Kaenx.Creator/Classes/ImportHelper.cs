@@ -1238,6 +1238,7 @@ namespace Kaenx.Creator.Classes
 
                             case DynWhenChannel:
                             case IDynChannel:
+                            case DynamicMain:
                                 dch = new DynChooseChannel();
                                 break;
 

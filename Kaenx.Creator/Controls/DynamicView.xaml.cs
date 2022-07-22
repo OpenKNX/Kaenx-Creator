@@ -197,7 +197,7 @@ namespace Kaenx.Creator.Controls
                 new List<string>() { 
                     "DynChannel",
                     "DynChannelIndependent",
-                    "DynChooseChannel",
+                    "DynChoose",
                     "DynModule",
                     "DynRepeate" }
             },
@@ -210,7 +210,7 @@ namespace Kaenx.Creator.Controls
                 new List<string>() { 
                     "DynParaBlock",
                     "DynComObject",
-                    "DynChooseChannel",
+                    "DynChoose",
                     "DynModule",
                     "DynRepeate" }
             },
@@ -220,14 +220,15 @@ namespace Kaenx.Creator.Controls
                     "DynComObject",
                     "DynModule",
                     "DynRepeate",
-                    "DynChooseChannel" }
+                    "DynChoose" }
             },
             {"DynParaBlock",
                 new List<string>() { 
+                    "DynParameter",
                     "DynParaBlock",
                     "DynSeparator",
                     "DynButton",
-                    "DynChooseBlock",
+                    "DynChoose",
                     "DynComObject",
                     "DynModule",
                     "DynRepeate",
@@ -238,11 +239,12 @@ namespace Kaenx.Creator.Controls
                 new List<string>() { 
                     "DynParaBlock",
                     "DynComObject",
-                    "DynChooseChannel",
+                    "DynChoose",
                     "DynRename" }
             },
             {"DynWhenBlock",
                 new List<string>() { 
+                    "DynParameter",
                     "DynParaBlock",
                     "DynSeparator",
                     "DynButton",
