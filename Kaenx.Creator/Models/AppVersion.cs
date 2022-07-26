@@ -20,7 +20,7 @@ namespace Kaenx.Creator.Models
         public ObservableCollection<Module> Modules { get; set; } = new ObservableCollection<Module>();
         public ObservableCollection<Union> Unions { get; set; } = new ObservableCollection<Union>();
         public ObservableCollection<Language> Languages { get; set; } = new ObservableCollection<Language>();
-        public List<DynamicMain> Dynamics { get; set; } = new List<DynamicMain>();
+        public List<IDynamicMain> Dynamics { get; set; } = new List<IDynamicMain>();
 
         public AppVersion() { }
 

@@ -108,7 +108,7 @@ namespace Kaenx.Creator.Models
         public ObservableCollection<ComObjectRef> ComObjectRefs { get; set; } = new ObservableCollection<ComObjectRef>();
         public ObservableCollection<Union> Unions { get; set; } = new ObservableCollection<Union>();
         public ObservableCollection<Argument> Arguments { get; set; } = new ObservableCollection<Argument>();
-        public List<DynamicMain> Dynamics { get; set; } = new List<DynamicMain>();
+        public List<IDynamicMain> Dynamics { get; set; } = new List<IDynamicMain>();
 
         public int LastParameterId { get; set; } = 0;
         public int LastParameterRefId { get; set; } = 0;

@@ -204,7 +204,11 @@ namespace Kaenx.Creator.Controls
             {"DynamicModule",
                 new List<string>() { 
                     "DynChannel",
-                    "DynChannelIndependent" }
+                    "DynChannelIndependent",
+                    "DynChoose",
+                    "DynModule",
+                    "DynRepeate",
+                    "DynParaBlock" }
             },
             {"DynChannelIndependent",
                 new List<string>() { 

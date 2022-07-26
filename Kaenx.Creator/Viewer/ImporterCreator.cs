@@ -716,7 +716,7 @@ namespace Kaenx.Creator.Viewer
                 ParameterRefs = new ObservableCollection<ParameterRef>(amod.ParameterRefs.ToArray()),
                 ComObjects = new ObservableCollection<ComObject>(amod.ComObjects.ToArray()),
                 ComObjectRefs = new ObservableCollection<ComObjectRef>(amod.ComObjectRefs.ToArray()),
-                Dynamics = new List<Models.Dynamic.DynamicMain>(amod.Dynamics.ToArray())
+                Dynamics = new List<Models.Dynamic.IDynamicMain>(amod.Dynamics.ToArray())
             };
 
             foreach(Models.Dynamic.IDynItems item in bmod.Dynamics[0].Items)

@@ -402,9 +402,9 @@ namespace Kaenx.Creator
             Models.Application app = AppList.SelectedItem as Models.Application;
             Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
 
-            string json = Newtonsoft.Json.JsonConvert.SerializeObject(ver, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Auto });
+            string json = Newtonsoft.Json.JsonConvert.SerializeObject(ver, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
 
-            Models.AppVersion copy = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.AppVersion>(json, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Auto });
+            Models.AppVersion copy = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.AppVersion>(json, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
             copy.Number += 1;
             copy.Name += " Kopie";
             app.Versions.Add(copy);
@@ -564,7 +564,7 @@ namespace Kaenx.Creator
             //mod.Arguments.Add(new Models.Argument() { Name = "argChan", UId = AutoHelper.GetNextFreeUId(mod.Arguments) });
             mod.ParameterBaseOffset = mod.Arguments[0];
             mod.ComObjectBaseNumber = mod.Arguments[1];
-            mod.Dynamics.Add(new Models.Dynamic.DynamicMain());
+            mod.Dynamics.Add(new Models.Dynamic.DynamicModule());
             ver.Modules.Add(mod);
         }
 
@@ -616,7 +616,7 @@ namespace Kaenx.Creator
 
         private void ClickSave(object sender, RoutedEventArgs e)
         {
-            string general = Newtonsoft.Json.JsonConvert.SerializeObject(General, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Auto });
+            string general = Newtonsoft.Json.JsonConvert.SerializeObject(General, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
             System.IO.File.WriteAllText(filePath, general);
         }
 
@@ -637,7 +637,7 @@ namespace Kaenx.Creator
 
         private void ClickSaveAs(object sender, RoutedEventArgs e)
         {
-            string general = Newtonsoft.Json.JsonConvert.SerializeObject(General, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Auto });
+            string general = Newtonsoft.Json.JsonConvert.SerializeObject(General, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
 
             SaveFileDialog diag = new SaveFileDialog();
             diag.FileName = General.ProjectName;
@@ -673,7 +673,7 @@ namespace Kaenx.Creator
                         continue;
                 }
 
-                string general = Newtonsoft.Json.JsonConvert.SerializeObject(General, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Auto });
+                string general = Newtonsoft.Json.JsonConvert.SerializeObject(General, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
                 System.IO.File.WriteAllText("Templates\\" + diag.Answer + ".temp", general);
                 return;
             }
@@ -701,7 +701,7 @@ namespace Kaenx.Creator
         private void DoOpen(string path)
         {
             string general = System.IO.File.ReadAllText(path);
-            General = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.ModelGeneral>(general, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Auto });
+            General = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.ModelGeneral>(general, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
             filePath = path;
 
             foreach(Models.Application app in General.Applications)
