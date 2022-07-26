@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <None Remove="Assets\Images\Dynamic\Separator.svg" />
+    <None Remove="logo.ico" />
   </ItemGroup>
 
   <ItemGroup>
@@ -37,6 +38,7 @@
     <Resource Include="Assets\Images\Menu\Save.svg" />
     <Resource Include="Assets\Images\General\PromptDialog.svg" />
     <Resource Include="Assets\Images\OpenKNX.png" />
+    <Resource Include="logo.ico" />
     <None Update="Templates\Minimal.temp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -53,9 +55,9 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <Content Include="FileLogo.ico">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Resource Include="FileLogo.ico">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
   <ItemGroup>
