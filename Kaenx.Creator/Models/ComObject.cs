@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Text;
 
 namespace Kaenx.Creator.Models
@@ -217,18 +218,8 @@ namespace Kaenx.Creator.Models
             ComObject comobj = (ComObject)this.MemberwiseClone();
 
             /* overwrite old reference with deep copy of the Translation Objects*/
-            comobj.Text = new ObservableCollection<Translation>();
-            foreach (Translation translation in this.Text)
-            {
-                comobj.Text.Add(new Translation(translation.Language, translation.Text));
-            }
-
-            comobj.FunctionText = new ObservableCollection<Translation>();
-            foreach (Translation translation in this.FunctionText)
-            {
-                comobj.FunctionText.Add(new Translation(translation.Language, translation.Text));
-            }
-
+            comobj.Text = new ObservableCollection<Translation>(Text.ToList());
+            comobj.FunctionText = new ObservableCollection<Translation>(FunctionText.ToList());
             return comobj;
         }
     }

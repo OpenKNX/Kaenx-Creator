@@ -158,11 +158,7 @@ namespace Kaenx.Creator.Models
             Parameter para = (Parameter)this.MemberwiseClone();
             
             /* overwrite old reference with deep copy of the Translation Objects*/
-            para.Text = new ObservableCollection<Translation>();
-            foreach (Translation translation in this.Text)
-            {
-                para.Text.Add(new Translation(translation.Language,translation.Text));    
-            }
+            para.Text = new ObservableCollection<Translation>(Text);
             
             return para;
         }

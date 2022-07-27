@@ -7,14 +7,15 @@
     <ApplicationIcon>FileLogo.ico</ApplicationIcon>
     <Version>1.2.0.0</Version>
     
-    <PublishSingleFile>true</PublishSingleFile>
+    <!--<PublishSingleFile>true</PublishSingleFile>
     <SelfContained>true</SelfContained>
-    <RuntimeIdentifier>win-x86</RuntimeIdentifier>
+    <RuntimeIdentifier>win-x86</RuntimeIdentifier>-->
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="Assets\Images\Dynamic\Separator.svg" />
     <None Remove="logo.ico" />
+    <None Remove="Templates\Minimal.temp" />
   </ItemGroup>
 
   <ItemGroup>
