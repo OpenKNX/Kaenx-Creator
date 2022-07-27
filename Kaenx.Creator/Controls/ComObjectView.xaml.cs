@@ -71,7 +71,28 @@ namespace Kaenx.Creator.Controls
                 Module.ComObjectRefs.Add(cref);
             }
         }
-        
+
+        private void ClickClone(object sender, RoutedEventArgs e)
+        {
+            Models.ComObject com = ComobjectList.SelectedItem as Models.ComObject;
+            Models.ComObject clonedCom = com.Copy();
+            clonedCom.Id = -1;
+            clonedCom.UId = AutoHelper.GetNextFreeUId(Module.ComObjects);
+
+            Module.ComObjects.Add(clonedCom);
+
+            if (Version.IsComObjectRefAuto)
+            {
+                Models.ComObjectRef cref = new Models.ComObjectRef(clonedCom) { UId = AutoHelper.GetNextFreeUId(Module.ComObjectRefs) };
+                foreach (Models.Language lang in Version.Languages)
+                {
+                    cref.Text.Add(new Models.Translation(lang, ""));
+                    cref.FunctionText.Add(new Models.Translation(lang, ""));
+                }
+                Module.ComObjectRefs.Add(cref);
+            }
+        }
+
         private void ClickRemove(object sender, RoutedEventArgs e)
         {
             Models.ComObject com = ComobjectList.SelectedItem as Models.ComObject;

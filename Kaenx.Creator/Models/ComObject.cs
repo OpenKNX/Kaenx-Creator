@@ -211,6 +211,26 @@ namespace Kaenx.Creator.Models
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
+
+        public ComObject Copy()
+        {
+            ComObject comobj = (ComObject)this.MemberwiseClone();
+
+            /* overwrite old reference with deep copy of the Translation Objects*/
+            comobj.Text = new ObservableCollection<Translation>();
+            foreach (Translation translation in this.Text)
+            {
+                comobj.Text.Add(new Translation(translation.Language, translation.Text));
+            }
+
+            comobj.FunctionText = new ObservableCollection<Translation>();
+            foreach (Translation translation in this.FunctionText)
+            {
+                comobj.FunctionText.Add(new Translation(translation.Language, translation.Text));
+            }
+
+            return comobj;
+        }
     }
 
     public enum FlagType
