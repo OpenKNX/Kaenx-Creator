@@ -153,6 +153,20 @@ namespace Kaenx.Creator.Models
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
+        public Parameter Copy()
+        {
+            Parameter para = (Parameter)this.MemberwiseClone();
+            
+            /* overwrite old reference with deep copy of the Translation Objects*/
+            para.Text = new ObservableCollection<Translation>();
+            foreach (Translation translation in this.Text)
+            {
+                para.Text.Add(new Translation(translation.Language,translation.Text));    
+            }
+            
+            return para;
+        }
+
     }
 
     public enum ParamAccess

@@ -30,6 +30,7 @@
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <Button Content="Hinzufügen" Margin="0 0 1 2" Click="ClickAdd" />
+        <Button Grid.Row="1" Content="Klonen" Click="ClickClone" HorizontalAlignment="Left" />
         <Button Grid.Column="1" Content="Löschen" Click="ClickRemove" Margin="1 0 0 2" IsEnabled="{Binding ElementName=ComobjectList, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
         <TextBlock Grid.Row="1" Text="Filter/ID:" HorizontalAlignment="Right" />
         <TextBox x:Name="query" Grid.Column="1" Grid.Row="1" Margin="1 0 0 2" />

@@ -64,6 +64,21 @@ namespace Kaenx.Creator.Controls
             }
         }
 
+        private void ClickClone(object sender, RoutedEventArgs e)
+        {
+            Parameter para = ParamList.SelectedItem as Models.Parameter;
+            Parameter clonedPara = para.Copy();
+            clonedPara.Id = -1;
+            clonedPara.UId = AutoHelper.GetNextFreeUId(Module.Parameters);
+
+            Module.Parameters.Add(clonedPara);
+
+            if (Version.IsParameterRefAuto)
+            {
+                Module.ParameterRefs.Add(new Models.ParameterRef(clonedPara) { UId = AutoHelper.GetNextFreeUId(Module.ParameterRefs) });
+            }
+        }
+
         private void ClickRemove(object sender, RoutedEventArgs e)
         {
             Parameter para = ParamList.SelectedItem as Models.Parameter;
