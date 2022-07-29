@@ -17,6 +17,11 @@
         <conv:EnumToVisibility x:Key="EnumToVis" />
         <conv:BoolNegation x:Key="BoolNegate" />
         <conv:BoolToBrush x:Key="BoolToBrush" TrueValue="Red" FalseValue="Black" />
+
+        <ContextMenu x:Key="ListMenu">
+            <MenuItem Header="Klonen" Click="ClickClone" />
+            <MenuItem Header="Löschen" Click="ClickRemove" />
+        </ContextMenu>
     </UserControl.Resources>
 
     <Grid>
@@ -26,23 +31,34 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="150" />
-            <ColumnDefinition Width="150" />
+            <ColumnDefinition Width="300" />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <Button Content="Hinzufügen" Click="ClickAdd" Margin="0 0 1 2" />
-        <Button Grid.Row="1" Content="Klonen" Click="ClickClone" HorizontalAlignment="Left" Margin="0 1 0 2" Padding="5 0" />
-        <Button Grid.Column="1" Content="Löschen" Click="ClickRemove" Margin="1 0 0 2" IsEnabled="{Binding ElementName=ParamList, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
-        <TextBlock Grid.Row="1" Text="Filter/ID:" HorizontalAlignment="Right" />
-        <TextBox x:Name="query" Grid.Column="1" Grid.Row="1" Margin="1 0 0 2" />
 
-        <ListBox x:Name="ParamList" Grid.Row="2" Grid.ColumnSpan="2" ItemsSource="{Binding Module.Parameters, ElementName=ViewControl}"
+        <Button Content="Hinzufügen" Click="ClickAdd" Margin="0 0 0 2" />
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Text="Filter/ID:" Margin="2 0 2 1" VerticalAlignment="Center" />
+            <TextBox x:Name="query" Grid.Column="1" Margin="1 0 0 2" />
+        </Grid>
+
+        <ListBox x:Name="ParamList" Grid.Row="2" ItemsSource="{Binding Module.Parameters, ElementName=ViewControl}"
             AllowDrop="True" MouseMove="ListMouseMove" DragOver="ListDragOver" Drop="ListDrop">
             <ListBox.ItemTemplate>
 				<DataTemplate>
 					<TextBlock Text="{Binding Name}" Foreground="{Binding IsNotUsed, Converter={StaticResource BoolToBrush}}" />
 				</DataTemplate>
 			</ListBox.ItemTemplate>
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="ContextMenu" Value="{StaticResource ListMenu}" />
+                </Style>
+            </ListBox.ItemContainerStyle>
         </ListBox>
 
         <Grid Grid.Column="2" Grid.RowSpan="3">

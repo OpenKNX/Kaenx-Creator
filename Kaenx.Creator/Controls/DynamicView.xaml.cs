@@ -343,8 +343,6 @@ namespace Kaenx.Creator.Controls
                     
                     if ((finalDropEffect == DragDropEffects.Move) && (_target != null) && (_draggedItem != _target))
                     {
-                        //TODO decide to add or insert by pressing shift?
-                        //and decide to copy or cut by pressing ctrl?
                         _draggedItem.Parent.Items.Remove(_draggedItem);
                         if(_draggedItem.Parent == _target.Parent)
                         {
@@ -352,8 +350,9 @@ namespace Kaenx.Creator.Controls
                             _target.Parent.Items.Insert(index, _draggedItem);
                             _draggedItem.Parent = _target.Parent;
                         } else {
-                            _draggedItem.Parent = _target;
-                            _target.Items.Add(_draggedItem);
+                            //_draggedItem.Parent = _target;
+                            //_target.Items.Add(_draggedItem);
+                            MessageBox.Show("Not supported");
                         }
                         _target = null;
                         _draggedItem = null;
@@ -382,9 +381,13 @@ namespace Kaenx.Creator.Controls
 
             if(target.Parent == _draggedItem.Parent) return true;
 
+            return false;
+
+            //only allow to reorder in same depth
 
             string targetType = target.GetType().ToString();
             targetType = targetType.Substring(targetType.LastIndexOf('.') + 1);
+            if(!SubTypes.ContainsKey(targetType)) return false;
             string draggedType = _draggedItem.GetType().ToString();
             draggedType = draggedType.Substring(draggedType.LastIndexOf('.') + 1);
             if(!SubTypes[targetType].Contains(draggedType)) return false;

@@ -15,7 +15,6 @@
   <ItemGroup>
     <None Remove="Assets\Images\Dynamic\Separator.svg" />
     <None Remove="logo.ico" />
-    <None Remove="Templates\Minimal.temp" />
   </ItemGroup>
 
   <ItemGroup>

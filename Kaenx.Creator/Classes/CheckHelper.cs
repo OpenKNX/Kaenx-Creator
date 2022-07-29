@@ -470,9 +470,8 @@ namespace Kaenx.Creator.Classes {
 
                 case DynSeparator dse:
                 {
-                    //TODO add properties to DynSeperator UseTextParameter, ParameterRefObject
-                    //if(dse.para == null)
-                    //    actions.Add(new PublishAction() { Text = $"    DynComObject {dco.Name} wurde kein ComObjectRef zugeordnet", State = PublishState.Warning});
+                    if(dse.UseTextParameter && dse.TextRefObject == null)
+                        actions.Add(new PublishAction() { Text = $"    DynSeparator {dse.Name} wurde kein ParameterRef zugeordnet", State = PublishState.Fail});
                     break;
                 }
 

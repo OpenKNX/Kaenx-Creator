@@ -675,6 +675,13 @@
                             <HeaderedContentControl Header="Name (intern)">
                                 <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
                             </HeaderedContentControl>
+                            <HeaderedContentControl Header="Weitere Infos zur Applikationsnummer:">
+                                <TextBlock>
+                                    <Hyperlink NavigateUri="https://github.com/OpenKNX/OpenKNX/wiki/Information-about-KnxProd#applicationnumber" RequestNavigate="Hyperlink_RequestNavigate">
+                                        https://github.com/OpenKNX/OpenKNX/wiki/Information-about-KnxProd#applicationnumber
+                                    </Hyperlink>
+                                </TextBlock>
+                            </HeaderedContentControl>
                             <HeaderedContentControl Header="Nummer">
                                 <TextBox Text="{Binding Number, UpdateSourceTrigger=PropertyChanged}" />
                             </HeaderedContentControl>

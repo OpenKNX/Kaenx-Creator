@@ -547,7 +547,6 @@ namespace Kaenx.Creator.Classes
                         if(xsub.Attribute("Increment") != null)
                             ptype.Increment = int.Parse(xsub.Attribute("Increment").Value);
                         //TODO displayoffset & displayfactor ab xsd 20
-                        //UIHint slider & checkbox
                         break;
 
                     case "TypeRestriction":
@@ -1111,8 +1110,6 @@ namespace Kaenx.Creator.Classes
                     string serialNr = hard2ref[2];
                     serialNr = Unescape(serialNr);
                     item.Hardware = _general.Hardware.Single(h => h.SerialNumber == serialNr);
-                    //item.Hardware.Description = GetTranslation("VisibleDescription");
-                    //TODO add import translation
                     item.Text = GetTranslation(xitem.Attribute("Id")?.Value ?? "", "Text", xitem);
                     string prodId = xitem.Attribute("ProductRefId").Value;
                     prodId = prodId.Substring(prodId.LastIndexOf('-')+1);

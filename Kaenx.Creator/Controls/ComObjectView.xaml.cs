@@ -133,7 +133,6 @@ namespace Kaenx.Creator.Controls
                     
                     if ((finalDropEffect == DragDropEffects.Move) && (_target != null) && (_draggedItem != _target))
                     {
-                        //TODO decide to insert above or below by pressing shift?
                         Module.ComObjects.Remove(_draggedItem);
                         Module.ComObjects.Insert(Module.ComObjects.IndexOf(_target), _draggedItem);
 

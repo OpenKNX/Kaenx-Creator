@@ -1129,7 +1129,7 @@ namespace Kaenx.Creator.Classes
         {
             XElement xsep = new XElement(Get("ParameterSeparator"));
             if(sep.Id == -1) {
-                sep.Id = separatorCounter++; //TODO get real next free Id
+                sep.Id = separatorCounter++;
             }
             xsep.SetAttributeValue("Id", $"{appVersion}_PS-{sep.Id}");
             xsep.SetAttributeValue("Text", sep.Text.Single(p => p.Language.CultureCode == currentLang).Text);

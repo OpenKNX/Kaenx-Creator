@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Collections.ObjectModel;
 using System.Windows.Data;
@@ -158,7 +159,9 @@ namespace Kaenx.Creator.Models
             Parameter para = (Parameter)this.MemberwiseClone();
             
             /* overwrite old reference with deep copy of the Translation Objects*/
-            para.Text = new ObservableCollection<Translation>(Text);
+            para.Text = new ObservableCollection<Translation>();
+            foreach (Translation translation in this.Text)
+                para.Text.Add(new Translation(translation.Language, translation.Text));  
             
             return para;
         }

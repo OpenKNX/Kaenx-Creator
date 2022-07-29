@@ -355,7 +355,6 @@ namespace Kaenx.Creator
                         if(bind != null)
                         {
                             string source = values[bind.SourceId].Value;
-                            //TODO check if source==x, then dont do this
                             string val = source == "x" ? bind.DefaultText : source;
                             dcom.Name = bind.FullText.Replace("{d}", val);
                         }
