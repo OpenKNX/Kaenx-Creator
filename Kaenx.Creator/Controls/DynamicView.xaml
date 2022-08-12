@@ -39,7 +39,7 @@
                     <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
                 </HeaderedContentControl>
                 <HeaderedContentControl Header="Paremeter Ref">
-                    <ComboBox ItemsSource="{Binding ParameterRefsList, ElementName=ViewControl}" SelectedItem="{Binding ParameterRefObject}" DisplayMemberPath="Name" />
+                    <ComboBox IsEditable="true" ItemsSource="{Binding ParameterRefsList, ElementName=ViewControl}" SelectedItem="{Binding ParameterRefObject}" DisplayMemberPath="Name" />
                 </HeaderedContentControl>
                 <HeaderedContentControl Header="Parameter Name:">
                     <TextBlock Text="{Binding ParameterRefObject.ParameterObject.Name}" />
@@ -111,7 +111,7 @@
                     <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
                 </HeaderedContentControl>
                 <HeaderedContentControl Header="Kommunikationsobjekt Ref">
-                    <ComboBox ItemsSource="{Binding ComObjectRefsList, ElementName=ViewControl}" SelectedItem="{Binding ComObjectRefObject}" DisplayMemberPath="Name" />
+                    <ComboBox IsEditable="true" ItemsSource="{Binding ComObjectRefsList, ElementName=ViewControl}" SelectedItem="{Binding ComObjectRefObject}" DisplayMemberPath="Name" />
                 </HeaderedContentControl>
                 <HeaderedContentControl Header="Kommunikationsobjekt Name:">
                     <TextBlock Text="{Binding ComObjectRefObject.ComObjectObject.Name}" />
@@ -153,8 +153,8 @@
                     <ComboBox ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding Layout}" />
                 </HeaderedContentControl>
 
-                <HeaderedContentControl Header="Zeilen">
-                    <DataGrid ItemsSource="{Binding Rows}" AutoGenerateColumns="False" Visibility="{Binding Layout, Converter={StaticResource EnumToVis}, ConverterParameter=Grid-Table}">
+                <HeaderedContentControl Header="Zeilen" Visibility="{Binding Layout, Converter={StaticResource EnumToVis}, ConverterParameter=Grid-Table}">
+                    <DataGrid ItemsSource="{Binding Rows}" AutoGenerateColumns="False">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Id" Binding="{Binding Id}" IsReadOnly="True" />
                             <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
@@ -162,8 +162,8 @@
                     </DataGrid>
                 </HeaderedContentControl>
 
-                <HeaderedContentControl Header="Spalten">
-                    <DataGrid ItemsSource="{Binding Columns}" AutoGenerateColumns="False" Visibility="{Binding Layout, Converter={StaticResource EnumToVis}, ConverterParameter=Grid-Table}">
+                <HeaderedContentControl Header="Spalten" Visibility="{Binding Layout, Converter={StaticResource EnumToVis}, ConverterParameter=Grid-Table}">
+                    <DataGrid ItemsSource="{Binding Columns}" AutoGenerateColumns="False">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Id" Binding="{Binding Id}" IsReadOnly="True" />
                             <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
@@ -181,7 +181,7 @@
                             </Grid.ColumnDefinitions>
     
                             <CheckBox IsChecked="{Binding UseParameterRef}" VerticalAlignment="Center" />
-                            <ComboBox Grid.Column="1" IsEnabled="{Binding UseParameterRef}" ItemsSource="{Binding ParameterRefsList, ElementName=ViewControl}" SelectedItem="{Binding ParameterRefObject, Mode=TwoWay}" DisplayMemberPath="Name" />
+                            <ComboBox Grid.Column="1" IsEditable="true" IsEnabled="{Binding UseParameterRef}" ItemsSource="{Binding ParameterRefsList, ElementName=ViewControl}" SelectedItem="{Binding ParameterRefObject, Mode=TwoWay}" DisplayMemberPath="Name" />
                         </Grid>
                     </HeaderedContentControl>
                     <HeaderedContentControl Header="Text Parameter">
@@ -192,7 +192,7 @@
                             </Grid.ColumnDefinitions>
     
                             <CheckBox IsChecked="{Binding UseTextParameter}" VerticalAlignment="Center" />
-                            <ComboBox Grid.Column="1" IsEnabled="{Binding UseTextParameter}" ItemsSource="{Binding ParameterRefsList, ElementName=ViewControl}" SelectedItem="{Binding TextRefObject, Mode=TwoWay}" DisplayMemberPath="Name" />
+                            <ComboBox Grid.Column="1" IsEditable="true" IsEnabled="{Binding UseTextParameter}" ItemsSource="{Binding ParameterRefsList, ElementName=ViewControl}" SelectedItem="{Binding TextRefObject, Mode=TwoWay}" DisplayMemberPath="Name" />
                         </Grid>
                     </HeaderedContentControl>
                     <HeaderedContentControl Header="Text" IsEnabled="{Binding UseParameterRef, Converter={StaticResource BoolNegate}}">
@@ -294,16 +294,7 @@
                     <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
                 </HeaderedContentControl>
                 <HeaderedContentControl Header="Paremeter Ref">
-                    <ComboBox ItemsSource="{Binding ParameterRefsList, ElementName=ViewControl}" SelectedItem="{Binding ParameterRefObject}">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock>
-                                    <Run Text="{Binding Name}" />
-                                    <Run Text="{Binding ParameterObject.Name}" />
-                                </TextBlock>
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
+                    <ComboBox IsEditable="true" ItemsSource="{Binding ParameterRefsList, ElementName=ViewControl}" SelectedItem="{Binding ParameterRefObject}" DisplayMemberPath="Name"/>
                 </HeaderedContentControl>
             </StackPanel>
         </DataTemplate>

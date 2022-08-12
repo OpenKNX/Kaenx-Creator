@@ -89,7 +89,7 @@
                 </HeaderedContentControl>
 
                 <HeaderedContentControl Header="Kommunikationsobjekt">
-                    <ComboBox ItemsSource="{Binding Module.ComObjects, ElementName=ViewControl}" DisplayMemberPath="Name" SelectedItem="{Binding ComObjectObject}" />
+                    <ComboBox IsEditable="true" ItemsSource="{Binding Module.ComObjects, ElementName=ViewControl}" DisplayMemberPath="Name" SelectedItem="{Binding ComObjectObject}" />
                 </HeaderedContentControl>
 
                 <HeaderedContentControl Header="Text">

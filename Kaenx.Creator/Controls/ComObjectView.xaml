@@ -160,7 +160,7 @@
                             </Grid.ColumnDefinitions>
 
                             <CheckBox IsChecked="{Binding HasDpt}" VerticalAlignment="Center" />
-                            <ComboBox Grid.Column="1" IsEnabled="{Binding HasDpt}" Name="InComType" ItemsSource="{Binding DPTs, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" SelectedItem="{Binding Type}" DisplayMemberPath="Name" />
+                            <ComboBox Grid.Column="1" IsEditable="true" IsEnabled="{Binding HasDpt}" Name="InComType" ItemsSource="{Binding DPTs, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" SelectedItem="{Binding Type}" DisplayMemberPath="Name" />
                         </Grid>
                     </HeaderedContentControl>
 
@@ -172,7 +172,7 @@
                             </Grid.ColumnDefinitions>
 
                             <CheckBox IsChecked="{Binding HasDpts}" VerticalAlignment="Center" />
-                            <ComboBox Grid.Column="1" IsEnabled="{Binding HasDpts}" ItemsSource="{Binding ElementName=InComType, Path=SelectedItem.SubTypes}" SelectedItem="{Binding SubType}" DisplayMemberPath="Name" />
+                            <ComboBox Grid.Column="1" IsEditable="true" IsEnabled="{Binding HasDpts}" ItemsSource="{Binding ElementName=InComType, Path=SelectedItem.SubTypes}" SelectedItem="{Binding SubType}" DisplayMemberPath="Name" />
                         </Grid>
                     </HeaderedContentControl>
 
