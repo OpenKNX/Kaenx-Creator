@@ -728,7 +728,7 @@
                     </StackPanel>
                 </TabItem.Header>
 
-                <TabControl TabStripPlacement="Left" Style="{StaticResource LeftTabControl}">
+                <TabControl SelectionChanged="TabChanged" TabStripPlacement="Left" Style="{StaticResource LeftTabControl}">
                     <TabItem Header="{x:Static p:Resources.tabs_gen}" BorderThickness="0 0 4 0" Style="{StaticResource LeftTabItem}">
                         <StackPanel>
                             <StackPanel.Resources>

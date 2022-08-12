@@ -14,7 +14,7 @@ using System.Windows.Input;
 
 namespace Kaenx.Creator.Controls
 {
-    public partial class ComObjectView : UserControl, INotifyPropertyChanged
+    public partial class ComObjectView : UserControl, INotifyPropertyChanged, IFilterable
     {
         public static readonly DependencyProperty VersionProperty = DependencyProperty.Register("Version", typeof(AppVersion), typeof(ComObjectView), new PropertyMetadata(OnVersionChangedCallback));
         public static readonly DependencyProperty ModuleProperty = DependencyProperty.Register("Module", typeof(IVersionBase), typeof(ComObjectView), new PropertyMetadata(OnModuleChangedCallback));
@@ -26,7 +26,22 @@ namespace Kaenx.Creator.Controls
             get { return (IVersionBase)GetValue(ModuleProperty); }
             set { SetValue(ModuleProperty, value); }
         }
-        
+
+        private TextFilter _filter;
+        private object _selectedItem = null;
+
+        public void FilterShow()
+        {
+            _filter.Show();
+            ComobjectList.SelectedItem = _selectedItem;
+        }
+
+        public void FilterHide()
+        {
+            _filter.Hide();
+            _selectedItem = ComobjectList.SelectedItem;
+            ComobjectList.SelectedItem = null;
+        }
         public ComObjectView()
 		{
             InitializeComponent();
@@ -45,7 +60,7 @@ namespace Kaenx.Creator.Controls
         protected virtual void OnModuleChanged()
         {
             if(Module == null) return;
-            TextFilter filter = new TextFilter(Module.ComObjects, query);
+            _filter = new TextFilter(Module.ComObjects, query);
         }
         
         protected virtual void OnVersionChanged() {

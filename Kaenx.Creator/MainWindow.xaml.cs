@@ -767,7 +767,7 @@ namespace Kaenx.Creator
             foreach(Models.Parameter para in mod.Parameters)
             {
                 if (para._memoryId != -1)
-                    para.MemoryObject = vbase.Memories.SingleOrDefault(m => m.UId == para._memoryId);
+                    para.SaveObject = vbase.Memories.SingleOrDefault(m => m.UId == para._memoryId);
                     
                 if (para._parameterType != -1)
                     para.ParameterTypeObject = vbase.ParameterTypes.SingleOrDefault(p => p.UId == para._parameterType);
@@ -1037,6 +1037,17 @@ namespace Kaenx.Creator
             Models.Memory mem = (sender as Button).DataContext as Models.Memory;
             Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
             AutoHelper.MemoryCalculation(ver, mem);
+        }
+
+        private void TabChanged(object sender, SelectionChangedEventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine("Selektion geändert");
+            if(e.RemovedItems.Count > 0 && (e.RemovedItems[0] as TabItem) != null && (e.RemovedItems[0] as TabItem).Content is IFilterable mx1)
+                mx1.FilterHide();
+
+            if(e.AddedItems.Count > 0 && (e.AddedItems[0] as TabItem) != null &&(e.AddedItems[0] as TabItem).Content is IFilterable mx2)
+                mx2.FilterShow();
+            System.Diagnostics.Debug.WriteLine("Selektion fertig");
         }
 
         private void TabItem_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)

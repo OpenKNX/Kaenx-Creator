@@ -18,10 +18,12 @@ namespace Kaenx.Creator.Classes
     public class TextFilter
     {
         private string Query { get; set; } = "";
+        private string _query { get; set; } = "";
+        private ICollectionView view;
 
         public TextFilter(object list, TextBox query)
         {
-            ICollectionView view = System.Windows.Data.CollectionViewSource.GetDefaultView(list);
+            view = System.Windows.Data.CollectionViewSource.GetDefaultView(list);
 
             view.Filter = (object item) => {
                 string value = item.GetType().GetProperty("Name").GetValue(item, null).ToString();
@@ -37,6 +39,19 @@ namespace Kaenx.Creator.Classes
                 Query = query.Text.ToLower();
                 view.Refresh();
             };
+        }
+
+        public void Hide()
+        {
+            _query = Query;
+            Query = "";
+            view.Refresh();
+        }
+
+        public void Show()
+        {
+            Query = _query;
+            view.Refresh();
         }
     }
 }

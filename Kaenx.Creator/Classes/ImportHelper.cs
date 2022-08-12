@@ -704,10 +704,10 @@ namespace Kaenx.Creator.Classes
                     para.SavePath = ParamSave.Memory;
                     string memName = GetLastSplit(xmem.Attribute("CodeSegment").Value);
                     if(memName.StartsWith("RS-"))
-                        para.MemoryObject = currentVers.Memories[0];
+                        para.SaveObject = currentVers.Memories[0];
                     else{
                         int addr = int.Parse(memName.Split('-')[1], System.Globalization.NumberStyles.HexNumber);
-                        para.MemoryObject = currentVers.Memories.Single(m => m.Address == addr);
+                        para.SaveObject = currentVers.Memories.Single(m => m.Address == addr);
                     }
 
                     if (para.IsInUnion)
@@ -724,6 +724,15 @@ namespace Kaenx.Creator.Classes
                         int argid = int.Parse(GetLastSplit(xmem.Attribute("BaseOffset").Value, 2));
                         mod.ParameterBaseOffset = mod.Arguments.Single(a => a.Id == argid);
                     }
+                } else if(xmem.Name.LocalName == "Property")
+                {
+                    para.SavePath = ParamSave.Property;
+                    para.SaveObject = new Property() {
+                        ObjectIndex = int.Parse(xmem.Attribute("ObjectIndex").Value),
+                        PropertyId = int.Parse(xmem.Attribute("PropertyId").Value),
+                        Offset = int.Parse(xmem.Attribute("Offset").Value),
+                        OffsetBit = int.Parse(xmem.Attribute("BitOffset").Value),
+                    };
                 }
                 else
                 {

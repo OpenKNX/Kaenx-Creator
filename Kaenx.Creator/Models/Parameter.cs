@@ -44,19 +44,27 @@ namespace Kaenx.Creator.Models
 
 
 
-        private Memory _memoryObject;
+        private IParameterSavePath _saveObject;
         [JsonIgnore]
-        public Memory MemoryObject
+        public IParameterSavePath SaveObject
         {
-            get { return _memoryObject; }
-            set { _memoryObject = value; Changed("MemoryObject"); }
+            get {
+                if(SavePath == ParamSave.Property && (_saveObject == null || _saveObject is not Property))
+                    _saveObject = new Property();
+                return _saveObject; 
+            }
+            set { _saveObject = value; Changed("SaveObject"); }
         }
 
         [JsonIgnore]
         public int _memoryId;
         public int MemoryId
         {
-            get { return MemoryObject?.UId ?? -1; }
+            get { 
+                if(SaveObject is Memory mem)
+                    return mem?.UId ?? -1; 
+                return -1;
+            }
             set { _memoryId = value; }
         }
 

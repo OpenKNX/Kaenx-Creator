@@ -61,14 +61,15 @@ namespace Kaenx.Creator.Models
         {
             get { return _parameterObject; }
             set { 
-                Changed("ParameterObject");
                 if(_parameterObject != null)
                     if(value == null || _parameterObject != value)
                         _parameterObject.PropertyChanged -= ParameterChanged;
-
-
-                _parameterObject = value; 
-                _parameterObject.PropertyChanged += ParameterChanged;
+                        
+                _parameterObject = value;
+                if(_parameterObject != null)
+                    _parameterObject.PropertyChanged += ParameterChanged;
+                System.Diagnostics.Debug.WriteLine("ParameterObject geändert");
+                Changed("ParameterObject");
             }
         }
 

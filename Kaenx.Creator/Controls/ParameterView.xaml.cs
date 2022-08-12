@@ -2,6 +2,7 @@ using Kaenx.Creator.Classes;
 using Kaenx.Creator.Models;
 using Kaenx.Creator.Models.Dynamic;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -12,7 +13,7 @@ using System.Windows.Input;
 
 namespace Kaenx.Creator.Controls
 {
-    public partial class ParameterView : UserControl
+    public partial class ParameterView : UserControl, IFilterable
     {
         public static readonly DependencyProperty VersionProperty = DependencyProperty.Register("Version", typeof(AppVersion), typeof(ParameterView), new PropertyMetadata(OnVersionChangedCallback));
         public static readonly DependencyProperty ModuleProperty = DependencyProperty.Register("Module", typeof(IVersionBase), typeof(ParameterView), new PropertyMetadata(OnModuleChangedCallback));
@@ -25,9 +26,65 @@ namespace Kaenx.Creator.Controls
             set { SetValue(ModuleProperty, value); }
         }
 
+        public List<ObjectType> ObjectTypes { get; set; } = new List<ObjectType>();
+
+        private TextFilter _filter;
+        private object _selectedItem = null;
+
+        public void FilterShow()
+        {
+            _filter.Show();
+            ParamList.SelectedItem = _selectedItem;
+        }
+
+        public void FilterHide()
+        {
+            _filter.Hide();
+            _selectedItem = ParamList.SelectedItem;
+            ParamList.SelectedItem = null;
+        }
+
         public ParameterView()
 		{
             InitializeComponent();
+
+            
+            List<ObjectProperty> defaultProperties = new List<ObjectProperty>() {
+                new ObjectProperty(1, "Interface Object Type", "PID_OBJECT_TYPE"),
+                new ObjectProperty(2, "Interface Object Name", "PID_OBJECT_NAME"),
+                new ObjectProperty(3, "Semaphor", "PID_SEMAPHOR"),
+                new ObjectProperty(4, "Group Object Reference", "PID_GROUP_OBJECT_REFERENCE"),
+                new ObjectProperty(5, "Load Control", "PID_LOAD_STATE_CONTROL"),
+                new ObjectProperty(6, "Run Control", "PID_RUN_STATE_CONTROL"),
+                new ObjectProperty(7, "Table Reference", "PID_TABLE_REFERENCE"),
+                new ObjectProperty(8, "Service Control", "PID_SERVICE_CONTROL"),
+                new ObjectProperty(9, "Firmware Revision", "PID_FIRMWARE_REVISION"),
+                new ObjectProperty(10, "Services Supported", "PID_SERVICES_SUPPORTED"),
+            };
+
+            ObjectTypes.Add(new ObjectType(0, "Device Object", "OT_DEVICE", defaultProperties, new List<ObjectProperty>() {
+                new ObjectProperty(51, "Routing Count", "PID_ROUTING_COUNT"),
+                new ObjectProperty(52, "Maximum Retry Count", "PID_MAX_RETRY_COUNT"),
+                new ObjectProperty(53, "Error Flags", "PID_ERROR_FLAGS"),
+                new ObjectProperty(54, "Programming Mode", "PID_PROGMODE"),
+                new ObjectProperty(55, "Product Identification", "PID_PRODUCT_ID"),
+                new ObjectProperty(56, "Max. APDU-Length", "PID_MAX_APDULENGTH"),
+                new ObjectProperty(57, "PID_SUBNET_ADDR", "Subnetwork Address"),
+                new ObjectProperty(58, "Device Address", "PID_DEVICE_ADDR"),
+                new ObjectProperty(59, "Config Link", "PID_PB_CONFIG")
+                //noch mehr
+            }));
+
+            ObjectTypes.Add(new ObjectType(1, "Addresstable Object", "OT_ADDRESS_TABLE", defaultProperties));
+            ObjectTypes.Add(new ObjectType(2, "Associationtable Object", "OT_ASSOCIATION_TABLE", defaultProperties));
+            ObjectTypes.Add(new ObjectType(3, "Applicationprogram Object", "OT_APPLICATION_PROGRAM", defaultProperties));
+            ObjectTypes.Add(new ObjectType(4, "Interfaceprogram Object", "OT_INTERACE_PROGRAM", defaultProperties));
+            ObjectTypes.Add(new ObjectType(5, "KNX-Object Associationtable Object", "OT_EIBOBJECT_ASSOCIATATION_TABLE", defaultProperties));
+            
+            ObjectTypes.Add(new ObjectType(9, "KNX-Object Associationtable Object", "OT_EIBOBJECT_ASSOCIATATION_TABLE", defaultProperties, new List<ObjectProperty>() {
+                new ObjectProperty(51, "Groupobject Table", "PID_GRPOBJTABLE"),
+                new ObjectProperty(52, "Groupobject Table Extended", "PID_EXT_GRPOBJREFERENCE")
+            }));
         }
 
         private static void OnVersionChangedCallback(DependencyObject sender, DependencyPropertyChangedEventArgs e)
@@ -46,7 +103,7 @@ namespace Kaenx.Creator.Controls
         
         protected virtual void OnModuleChanged() {
             if(Module == null) return;
-            TextFilter filter = new TextFilter(Module.Parameters, query);
+            _filter = new TextFilter(Module.Parameters, query);
         }
 
         private void ClickAdd(object sender, RoutedEventArgs e)
@@ -198,5 +255,42 @@ namespace Kaenx.Creator.Controls
         }
 
         #endregion
+    }
+
+    public class ObjectType
+    {
+        public int Number { get; set; }
+        public string Name { get; set; }
+        public string Text { get; set; }
+        public List<ObjectProperty> Properties { get; set; }
+
+        public ObjectType(int num, string text, string name, List<ObjectProperty> defaults, List<ObjectProperty> added = null)
+        {
+            Number = num;
+            Name = name;
+            Text = text;
+            Properties = new List<ObjectProperty>(defaults);
+            if(added != null)
+                Properties.AddRange(added);
+        }
+
+        public override string ToString()
+        {
+            return $"{Number} - {Text} - {Name}";
+        }
+    }
+
+    public class ObjectProperty
+    {
+        public int Number { get; set; }
+        public string Name { get; set; }
+        public string Text { get; set; }
+
+        public ObjectProperty(int num, string text, string name)
+        {
+            Number = num;
+            Name = name;
+            Text = text;
+        }
     }
 }

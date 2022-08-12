@@ -15,7 +15,7 @@ using System.Windows.Input;
 
 namespace Kaenx.Creator.Controls
 {
-    public partial class ParameterRefView : UserControl
+    public partial class ParameterRefView : UserControl, IFilterable
     {
 
         public static readonly DependencyProperty ModuleProperty = DependencyProperty.Register("Module", typeof(IVersionBase), typeof(ParameterRefView), new PropertyMetadata(OnModuleChangedCallback));
@@ -23,7 +23,23 @@ namespace Kaenx.Creator.Controls
             get { return (IVersionBase)GetValue(ModuleProperty); }
             set { SetValue(ModuleProperty, value); }
         }
-        
+
+        private TextFilter _filter;
+        private object _selectedItem = -1;
+
+        public void FilterShow()
+        {
+            _filter.Show();
+            ParamRefList.SelectedItem = _selectedItem;
+        }
+
+        public void FilterHide()
+        {
+            _filter.Hide();
+            _selectedItem = ParamRefList.SelectedItem;
+            ParamRefList.SelectedItem = null;
+        }
+
         public ParameterRefView()
 		{
             InitializeComponent();
@@ -36,15 +52,15 @@ namespace Kaenx.Creator.Controls
 
         protected virtual void OnModuleChanged(DependencyPropertyChangedEventArgs e)
         {
-            
             if(e.OldValue != null)
                 (e.OldValue as IVersionBase).ParameterRefs.CollectionChanged -= RefsChanged;
 
             if(e.NewValue != null)
+            {
                 (e.NewValue as IVersionBase).ParameterRefs.CollectionChanged += RefsChanged;
+                _filter = new TextFilter((e.NewValue as IVersionBase).ParameterRefs, query);
+            }
 
-            if(Module == null) return;
-            TextFilter filter = new TextFilter(Module.ParameterRefs, query);
         }
         
         private void RefsChanged(object sender, NotifyCollectionChangedEventArgs e)

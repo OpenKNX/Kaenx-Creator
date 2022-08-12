@@ -977,12 +977,15 @@ namespace Kaenx.Creator.Classes
             if(!para.IsInUnion) {
                 switch(para.SavePath) {
                     case ParamSave.Memory:
+                    {
                         XElement xparamem = new XElement(Get("Memory"));
+                        Memory mem = para.SaveObject as Memory;
+                        if(mem == null) throw new Exception("Parameter soll in Memory gespeichert werden, aber der Typ von SaveObject ist kein Memory: " + para.SaveObject.GetType().ToString());
                         string memid = appVersion;
-                        if (para.MemoryObject.Type == MemoryTypes.Absolute)
-                            memid += $"_AS-{para.MemoryObject.Address:X4}";
+                        if (mem.Type == MemoryTypes.Absolute)
+                            memid += $"_AS-{mem.Address:X4}";
                         else
-                            memid += $"_RS-04-{para.MemoryObject.Offset:X4}";
+                            memid += $"_RS-04-{mem.Offset:X4}";
                         xparamem.SetAttributeValue("CodeSegment", memid);
                         xparamem.SetAttributeValue("Offset", para.Offset);
                         xparamem.SetAttributeValue("BitOffset", para.OffsetBit);
@@ -994,6 +997,20 @@ namespace Kaenx.Creator.Classes
 
                         xpara.Add(xparamem);
                         break;
+                    }
+
+                    case ParamSave.Property:
+                    {
+                        XElement xparamem = new XElement(Get("Property"));
+                        Property prop = para.SaveObject as Property;
+                        if(prop == null) throw new Exception("Parameter soll in Property gespeichert werden, aber der Typ von SaveObject ist kein Property: " + para.SaveObject.GetType().ToString());
+                        
+                        xparamem.SetAttributeValue("ObjectIndex", prop.ObjectIndex);
+                        xparamem.SetAttributeValue("PropertyId", prop.PropertyId);
+                        xparamem.SetAttributeValue("Offset", prop.Offset);
+                        xparamem.SetAttributeValue("BitOffset", prop.OffsetBit);
+                        break;
+                    }
                 }
             }
             else

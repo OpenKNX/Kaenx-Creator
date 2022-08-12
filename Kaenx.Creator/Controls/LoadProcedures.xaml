@@ -37,7 +37,7 @@
             </ListBox.ItemTemplate>
         </ListBox>
         <ScrollViewer Grid.Row="1" Grid.Column="2">
-            <TextBlock Text="{Binding SelectedItem.Controls, ElementName=MaskList}" Margin="5" />
+            <TextBox BorderThickness="0" IsReadOnly="true" Text="{Binding SelectedItem.Controls, ElementName=MaskList}" Margin="5" />
         </ScrollViewer>
     </Grid>
 </UserControl>

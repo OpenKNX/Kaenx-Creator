@@ -146,7 +146,7 @@
                             <ColumnDefinition Width="auto" />
                         </Grid.ColumnDefinitions>
                         <HeaderedContentControl Header="Type">
-                            <ComboBox x:Name="InType" ItemsSource="{Binding Version.ParameterTypes, ElementName=ViewControl}" DisplayMemberPath="Name" SelectedItem="{Binding ParameterTypeObject}" />
+                            <ComboBox x:Name="InType" IsEditable="true" ItemsSource="{Binding Version.ParameterTypes, ElementName=ViewControl}" DisplayMemberPath="Name" SelectedItem="{Binding ParameterTypeObject}" />
                         </HeaderedContentControl>
 
                         <TextBlock Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0 0 10 14">
@@ -186,10 +186,10 @@
                     <Grid Visibility="{Binding IsInUnion, Converter={StaticResource BoolToVis}, ConverterParameter=true, FallbackValue=Collapsed}">
                         <StackPanel Visibility="{Binding SavePath, Converter={StaticResource EnumToVis}, ConverterParameter=Memory}">
                             <HeaderedContentControl Header="Speicher auswählen">
-                                <ComboBox ItemsSource="{Binding Version.Memories, ElementName=ViewControl}" SelectedItem="{Binding MemoryObject, Mode=TwoWay}" DisplayMemberPath="Name" />
+                                <ComboBox ItemsSource="{Binding Version.Memories, ElementName=ViewControl}" SelectedItem="{Binding SaveObject, Mode=TwoWay}" DisplayMemberPath="Name" />
                             </HeaderedContentControl>
 
-                            <StackPanel Visibility="{Binding MemoryObject.IsAutoPara, Converter={StaticResource BoolToVis}, ConverterParameter=true, FallbackValue=Collapsed}">
+                            <StackPanel Visibility="{Binding SaveObject.IsAutoPara, Converter={StaticResource BoolToVis}, ConverterParameter=true, FallbackValue=Collapsed}">
                                 <StackPanel>
                                     <HeaderedContentControl Header="Offset">
                                         <TextBox Text="{Binding Offset, UpdateSourceTrigger=PropertyChanged}"/>
@@ -200,9 +200,9 @@
                                 </StackPanel>
                             </StackPanel>
 
-                            <TextBlock Text="Adresse wird automatisch festgelegt (Speicher)" Margin="5" Visibility="{Binding MemoryObject.IsAutoPara, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}" />
+                            <TextBlock Text="Adresse wird automatisch festgelegt (Speicher)" Margin="5" Visibility="{Binding SaveObject.IsAutoPara, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}" />
 
-                            <Border Visibility="{Binding MemoryObject.IsAutoPara, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}">
+                            <Border Visibility="{Binding SaveObject.IsAutoPara, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}">
                                 <TextBlock Margin="5">
                                         <Run Text="Offset:" />
                                         <Run Text="{Binding Offset, Mode=OneWay}" />
@@ -214,7 +214,40 @@
                         </StackPanel>
 
                         <StackPanel Visibility="{Binding SavePath, Converter={StaticResource EnumToVis}, ConverterParameter=Property}">
-                            <TextBlock Text="Properties werden noch nicht unterstütz" />
+                            <HeaderedContentControl Header="ObjectIndex">
+                                <ComboBox x:Name="ObjectTypeList" ItemsSource="{Binding ObjectTypes, ElementName=ViewControl}" SelectedValuePath="Number" SelectedValue="{Binding SaveObject.ObjectIndex}">
+                                    <ComboBox.ItemContainerStyle>
+                                        <Style TargetType="{x:Type ComboBoxItem}">
+                                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                        </Style>
+                                    </ComboBox.ItemContainerStyle>
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="auto" />
+                                                    <ColumnDefinition Width="auto" />
+                                                    <ColumnDefinition />
+                                                </Grid.ColumnDefinitions>
+                    
+                                                <TextBlock Text="{Binding Number}" HorizontalAlignment="Right" />
+                                                <TextBlock Grid.Column="1" Text="{Binding Text}" Margin="5 0" />
+                                                <TextBlock Grid.Column="2" Text="{Binding Name}" HorizontalAlignment="Right" Margin="5 0" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                            </HeaderedContentControl>
+                            <HeaderedContentControl Header="PropertyId">
+                                <ComboBox ItemsSource="{Binding SelectedItem.Properties, ElementName=ObjectTypeList}" DisplayMemberPath="Text" SelectedValuePath="Number" SelectedValue="{Binding SaveObject.PropertyId}">
+                                </ComboBox>
+                            </HeaderedContentControl>
+                            <HeaderedContentControl Header="Offset">
+                                <TextBox Text="{Binding Offset, UpdateSourceTrigger=PropertyChanged}" />
+                            </HeaderedContentControl>
+                            <HeaderedContentControl Header="Offset Bit">
+                                <TextBox Text="{Binding OffsetBit, UpdateSourceTrigger=PropertyChanged}" />
+                            </HeaderedContentControl>
                         </StackPanel>
                     </Grid>
                 </StackPanel>

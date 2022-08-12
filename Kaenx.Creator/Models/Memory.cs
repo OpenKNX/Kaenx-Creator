@@ -11,7 +11,7 @@ using System.Windows.Media;
 
 namespace Kaenx.Creator.Models
 {
-    public class Memory : INotifyPropertyChanged
+    public class Memory : IParameterSavePath, INotifyPropertyChanged
     {
         public int StartAddress = 0;
 
