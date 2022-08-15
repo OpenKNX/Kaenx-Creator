@@ -192,7 +192,7 @@ namespace Kaenx.Creator.Classes {
                             if(ptype.UIHint != "RGB" && ptype.UIHint != "RGBW" && ptype.UIHint != "HSV")
                                 actions.Add(new PublishAction() { Text = $"    ParameterTyp Color {ptype.Name} ({ptype.UId}): Nicht unterstützter Farbraum {ptype.UIHint}", State = PublishState.Warning });
                             if(ptype.UIHint == "RGBW" && vers.NamespaceVersion < 20)
-                                actions.Add(new PublishAction() { Text = $"    ParameterTyp Color {ptype.Name} ({ptype.UId}): RGBW wird erst ab NamespaceVersion 20 unterstützt}", State = PublishState.Warning });
+                                actions.Add(new PublishAction() { Text = $"    ParameterTyp Color {ptype.Name} ({ptype.UId}): RGBW wird erst ab NamespaceVersion 20 unterstützt", State = PublishState.Warning });
                             break;
 
                         case ParameterTypes.IpAddress:
