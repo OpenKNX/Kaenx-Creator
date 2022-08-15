@@ -228,6 +228,11 @@ namespace Kaenx.Creator.Classes
                                 baggagesApp.Add(type.BaggageObject);
                             break;
 
+                        case ParameterTypes.Color:
+                            xcontent = new XElement(Get("TypeColor"));
+                            xcontent.SetAttributeValue("Space", type.UIHint);
+                            break;
+
                         default:
                             throw new Exception("Unbekannter Parametertyp: " + type.Type);
                     }
@@ -236,6 +241,7 @@ namespace Kaenx.Creator.Classes
                         xcontent.Name.LocalName != "TypeFloat" &&
                         xcontent.Name.LocalName != "TypeNone" &&
                         xcontent.Name.LocalName != "TypePicture" &&
+                        xcontent.Name.LocalName != "TypeColor" &&
                         xcontent.Name.LocalName != "IpAddress")
                     {
                         xcontent.SetAttributeValue("SizeInBit", type.SizeInBit);
@@ -799,6 +805,8 @@ namespace Kaenx.Creator.Classes
                     xpref.SetAttributeValue("Access", pref.Access.ToString());
                 if (pref.OverwriteValue)
                     xpref.SetAttributeValue("Value", pref.Value);
+                //TODO implement override Suffix
+                //TODO implement override Text
                 xrefs.Add(xpref);
             }
 
@@ -856,6 +864,8 @@ namespace Kaenx.Creator.Classes
                     xcom.SetAttributeValue("ObjectSize", (com.ObjectSize / 8) + " Byte"+ ((com.ObjectSize > 15) ? "s":""));
                 else
                     xcom.SetAttributeValue("ObjectSize", com.ObjectSize + " Bit");
+
+                //TODO implement mayread >=20
 
                 xcom.SetAttributeValue("ReadFlag", com.FlagRead.ToString());
                 xcom.SetAttributeValue("WriteFlag", com.FlagWrite.ToString());
@@ -1073,6 +1083,10 @@ namespace Kaenx.Creator.Classes
                         HandleMod(dm, xparent, ver);
                         break;
 
+                    case DynAssign da:
+                        HandleAssign(da, xparent);
+                        break;
+
                     default:
                         throw new Exception("Nicht behandeltes dynamisches Element: " + item.ToString());
                 }
@@ -1157,6 +1171,9 @@ namespace Kaenx.Creator.Classes
             if(!string.IsNullOrEmpty(sep.Cell))
                 xsep.SetAttributeValue("Cell", sep.Cell);
             parent.Add(xsep);
+
+            if(!sep.TranslationText)
+                foreach(Models.Translation trans in sep.Text) AddTranslation(trans.Language.CultureCode, $"{appVersion}_PS-{sep.Id}", "Text", trans.Text);
         }
 
         private XElement HandleChoose(IDynChoose cho, XElement parent)
@@ -1273,6 +1290,20 @@ namespace Kaenx.Creator.Classes
             if(!string.IsNullOrEmpty(pa.Cell))
                 xpara.SetAttributeValue("Cell", pa.Cell);
         }
+        
+        
+        private XElement HandleAssign(DynAssign da, XElement parent)
+        {
+            XElement xcho = new XElement(Get("Assign"));
+            parent.Add(xcho);
+            xcho.SetAttributeValue("TargetParamRefRef", appVersion + (da.TargetObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{da.TargetObject.ParameterObject.Id}_R-{da.TargetObject.Id}");
+            if(string.IsNullOrEmpty(da.Value))
+                xcho.SetAttributeValue("SourceParamRefRef", appVersion + (da.SourceObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{da.SourceObject.ParameterObject.Id}_R-{da.SourceObject.Id}");
+            else
+                xcho.SetAttributeValue("Value", da.Value);
+            return xcho;
+        }
+
         #endregion
 
         private bool CheckSections(CatalogItem parent)
@@ -1431,6 +1462,7 @@ namespace Kaenx.Creator.Classes
             input = input.Replace("(", ".28");
             input = input.Replace(")", ".29");
             input = input.Replace("+", ".2B");
+            input = input.Replace(",", ".2C");
             input = input.Replace("-", ".2D");
             input = input.Replace("/", ".2F");
             input = input.Replace(":", ".3A");
@@ -1448,6 +1480,7 @@ namespace Kaenx.Creator.Classes
             input = input.Replace("{", ".7B");
             input = input.Replace("|", ".7C");
             input = input.Replace("}", ".7D");
+            input = input.Replace("°", ".C2.B0");
             return input;
         }
 

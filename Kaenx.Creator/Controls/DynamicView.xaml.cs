@@ -30,10 +30,6 @@ namespace Kaenx.Creator.Controls
             set { SetValue(ModuleProperty, value); }
         }
 
-        public ObservableCollection<Models.Module> ModulesList { get { return Version?.Modules; } }
-        public ObservableCollection<ParameterRef> ParameterRefsList { get { return Module?.ParameterRefs; } }
-        public ObservableCollection<ComObjectRef> ComObjectRefsList { get { return Module?.ComObjectRefs; } }
-
         public DynamicView()
         {
             InitializeComponent();
@@ -52,13 +48,12 @@ namespace Kaenx.Creator.Controls
 
         protected virtual void OnVersionChanged()
         {
-            Changed("ModulesList");
+            
         }
 
         protected virtual void OnModuleChanged()
         {
-            Changed("ParameterRefsList");
-            Changed("ComObjectRefsList");
+            
         }
 
 

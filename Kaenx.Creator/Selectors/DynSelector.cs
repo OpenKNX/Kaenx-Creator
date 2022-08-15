@@ -19,6 +19,7 @@ namespace Kaenx.Creator.Selectors
         public DataTemplate DModule { get; set; }
         public DataTemplate DCom { get; set; }
         public DataTemplate DSeparator { get; set; }
+        public DataTemplate DAssign { get; set; }
 
 
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
@@ -54,6 +55,9 @@ namespace Kaenx.Creator.Selectors
 
                 case DynSeparator ds:
                     return DSeparator;
+
+                case DynAssign da:
+                    return DAssign;
             }
 
             return null;

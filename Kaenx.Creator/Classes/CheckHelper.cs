@@ -36,7 +36,7 @@ namespace Kaenx.Creator.Classes {
 
             #region Hardware Check
             actions.Add(new PublishAction() { Text = "Überprüfe Hardware" });
-            Regex reg = new Regex("^([0-9a-zA-Z_-]|\\s)+$");
+            Regex reg = new Regex("^([0-9a-zA-Z_\\-äöüÄÖÜ ]|\\s)+$");
             List<string> serials = new List<string>();
 
             var check1 = General.Hardware.GroupBy(h => h.Name).Where(h => h.Count() > 1);
@@ -188,6 +188,13 @@ namespace Kaenx.Creator.Classes {
                         case ParameterTypes.None:
                             break;
 
+                        case ParameterTypes.Color:
+                            if(ptype.UIHint != "RGB" && ptype.UIHint != "RGBW" && ptype.UIHint != "HSV")
+                                actions.Add(new PublishAction() { Text = $"    ParameterTyp Color {ptype.Name} ({ptype.UId}): Nicht unterstützter Farbraum {ptype.UIHint}", State = PublishState.Warning });
+                            if(ptype.UIHint == "RGBW" && vers.NamespaceVersion < 20)
+                                actions.Add(new PublishAction() { Text = $"    ParameterTyp Color {ptype.Name} ({ptype.UId}): RGBW wird erst ab NamespaceVersion 20 unterstützt}", State = PublishState.Warning });
+                            break;
+
                         case ParameterTypes.IpAddress:
                             actions.Add(new PublishAction() { Text = $"    ParameterTyp IpAddress für {ptype.Name} ({ptype.UId}) wird nicht exportiert", State = PublishState.Warning });
                             break;
@@ -198,13 +205,13 @@ namespace Kaenx.Creator.Classes {
                     }
                 }
 
-                CheckVersion(vers, actions, vers.DefaultLanguage);
+                CheckVersion(vers, actions, vers.DefaultLanguage, vers.NamespaceVersion);
 
 
                 foreach(Module mod in vers.Modules)
                 {
                     actions.Add(new PublishAction() { Text = $"Prüfe Module '{mod.Name}'" });
-                    CheckVersion(mod, actions, vers.DefaultLanguage);
+                    CheckVersion(mod, actions, vers.DefaultLanguage, vers.NamespaceVersion);
                 }
             }
             #endregion
@@ -214,7 +221,7 @@ namespace Kaenx.Creator.Classes {
         }
 
 
-        private static void CheckVersion(IVersionBase vbase, ObservableCollection<PublishAction> actions, string defaultLang)
+        private static void CheckVersion(IVersionBase vbase, ObservableCollection<PublishAction> actions, string defaultLang, int ns)
         {
             foreach(Parameter para in vbase.Parameters) {
                 if(para.ParameterTypeObject == null) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Kein ParameterTyp ausgewählt", State = PublishState.Fail });
@@ -408,11 +415,11 @@ namespace Kaenx.Creator.Classes {
             //TODO check ParameterBlockRename only in vers 11
 
 
-            CheckDynamicItem(vbase.Dynamics[0], actions);
+            CheckDynamicItem(vbase.Dynamics[0], actions, ns);
         }
 
         
-        private static void CheckDynamicItem(Models.Dynamic.IDynItems item, ObservableCollection<Models.PublishAction> actions)
+        private static void CheckDynamicItem(Models.Dynamic.IDynItems item, ObservableCollection<Models.PublishAction> actions, int ns)
         {
             switch(item)
             {
@@ -481,6 +488,8 @@ namespace Kaenx.Creator.Classes {
                 {
                     if(dse.UseTextParameter && dse.TextRefObject == null)
                         actions.Add(new PublishAction() { Text = $"    DynSeparator {dse.Name} wurde kein ParameterRef zugeordnet", State = PublishState.Fail});
+                    if(dse.Hint != SeparatorHint.None && ns < 14)
+                        actions.Add(new PublishAction() { Text = $"    DynSeparator {dse.Name} UIHint wird erst ab NamespaceVersion 14 unterstützt", State = PublishState.Fail});
                     break;
                 }
 
@@ -489,11 +498,8 @@ namespace Kaenx.Creator.Classes {
                     if(das.TargetObject == null)
                         actions.Add(new PublishAction() { Text = $"    DynAssign {das.Name} wurde kein Ziel-Parameter zugeordnet", State = PublishState.Fail});
                         
-                    if(string.IsNullOrEmpty(das.Value))
-                        actions.Add(new PublishAction() { Text = $"    DynAssign {das.Name} wurde kein Wert zugeordnet", State = PublishState.Fail});
-                    
-                    if(das.SourceObject == null)
-                        actions.Add(new PublishAction() { Text = $"    DynAssign {das.Name} wurde kein Quell-Parameter zugeordnet", State = PublishState.Fail});
+                    if(das.SourceObject == null && string.IsNullOrEmpty(das.Value))
+                        actions.Add(new PublishAction() { Text = $"    DynAssign {das.Name} wurde kein Quell-Parameter/Wert zugeordnet", State = PublishState.Fail});
                     break;
                 }
 
@@ -504,7 +510,7 @@ namespace Kaenx.Creator.Classes {
 
             if(item.Items == null) return;
             foreach(IDynItems xitem in item.Items)
-                CheckDynamicItem(xitem, actions);
+                CheckDynamicItem(xitem, actions, ns);
         }
 
 

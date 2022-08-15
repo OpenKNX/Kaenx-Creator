@@ -38,8 +38,8 @@
                 <HeaderedContentControl Header="Name">
                     <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
                 </HeaderedContentControl>
-                <HeaderedContentControl Header="Paremeter Ref">
-                    <ComboBox IsEditable="true" ItemsSource="{Binding ParameterRefsList, ElementName=ViewControl}" SelectedItem="{Binding ParameterRefObject}" DisplayMemberPath="Name" />
+                <HeaderedContentControl Header="Parameter Ref">
+                    <ComboBox IsEditable="true" ItemsSource="{Binding Module.ParameterRefs, ElementName=ViewControl}" SelectedItem="{Binding ParameterRefObject}" DisplayMemberPath="Name" />
                 </HeaderedContentControl>
                 <HeaderedContentControl Header="Parameter Name:">
                     <TextBlock Text="{Binding ParameterRefObject.ParameterObject.Name}" />
@@ -111,7 +111,7 @@
                     <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
                 </HeaderedContentControl>
                 <HeaderedContentControl Header="Kommunikationsobjekt Ref">
-                    <ComboBox IsEditable="true" ItemsSource="{Binding ComObjectRefsList, ElementName=ViewControl}" SelectedItem="{Binding ComObjectRefObject}" DisplayMemberPath="Name" />
+                    <ComboBox IsEditable="true" ItemsSource="{Binding Module.ComObjectRefs, ElementName=ViewControl}" SelectedItem="{Binding ComObjectRefObject}" DisplayMemberPath="Name" />
                 </HeaderedContentControl>
                 <HeaderedContentControl Header="Kommunikationsobjekt Name:">
                     <TextBlock Text="{Binding ComObjectRefObject.ComObjectObject.Name}" />
@@ -181,7 +181,7 @@
                             </Grid.ColumnDefinitions>
     
                             <CheckBox IsChecked="{Binding UseParameterRef}" VerticalAlignment="Center" />
-                            <ComboBox Grid.Column="1" IsEditable="true" IsEnabled="{Binding UseParameterRef}" ItemsSource="{Binding ParameterRefsList, ElementName=ViewControl}" SelectedItem="{Binding ParameterRefObject, Mode=TwoWay}" DisplayMemberPath="Name" />
+                            <ComboBox Grid.Column="1" IsEditable="true" IsEnabled="{Binding UseParameterRef}" ItemsSource="{Binding Module.ParameterRefs, ElementName=ViewControl}" SelectedItem="{Binding ParameterRefObject, Mode=TwoWay}" DisplayMemberPath="Name" />
                         </Grid>
                     </HeaderedContentControl>
                     <HeaderedContentControl Header="Text Parameter">
@@ -192,7 +192,7 @@
                             </Grid.ColumnDefinitions>
     
                             <CheckBox IsChecked="{Binding UseTextParameter}" VerticalAlignment="Center" />
-                            <ComboBox Grid.Column="1" IsEditable="true" IsEnabled="{Binding UseTextParameter}" ItemsSource="{Binding ParameterRefsList, ElementName=ViewControl}" SelectedItem="{Binding TextRefObject, Mode=TwoWay}" DisplayMemberPath="Name" />
+                            <ComboBox Grid.Column="1" IsEditable="true" IsEnabled="{Binding UseTextParameter}" ItemsSource="{Binding Module.ParameterRefs, ElementName=ViewControl}" SelectedItem="{Binding TextRefObject, Mode=TwoWay}" DisplayMemberPath="Name" />
                         </Grid>
                     </HeaderedContentControl>
                     <HeaderedContentControl Header="Text" IsEnabled="{Binding UseParameterRef, Converter={StaticResource BoolNegate}}">
@@ -293,8 +293,8 @@
                 <HeaderedContentControl Header="Name">
                     <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
                 </HeaderedContentControl>
-                <HeaderedContentControl Header="Paremeter Ref">
-                    <ComboBox IsEditable="true" ItemsSource="{Binding ParameterRefsList, ElementName=ViewControl}" SelectedItem="{Binding ParameterRefObject}" DisplayMemberPath="Name"/>
+                <HeaderedContentControl Header="Parameter Ref">
+                    <ComboBox IsEditable="true" ItemsSource="{Binding Module.ParameterRefs, ElementName=ViewControl}" SelectedItem="{Binding ParameterRefObject}" DisplayMemberPath="Name"/>
                 </HeaderedContentControl>
             </StackPanel>
         </DataTemplate>
@@ -323,6 +323,24 @@
                 </TextBlock>
             </StackPanel>
         </DataTemplate>
+        <DataTemplate x:Key="TempDynAssign">
+            <StackPanel>
+                <HeaderedContentControl Header="Target Parameter Ref">
+                    <ComboBox IsEditable="true" ItemsSource="{Binding Module.ParameterRefs, ElementName=ViewControl}" SelectedItem="{Binding TargetObject}" DisplayMemberPath="Name" />
+                </HeaderedContentControl>
+                <HeaderedContentControl Header="Source Parameter Ref">
+                    <ComboBox IsEditable="true" ItemsSource="{Binding Module.ParameterRefs, ElementName=ViewControl}" SelectedItem="{Binding SourceObject}" DisplayMemberPath="Name" />
+                </HeaderedContentControl>
+                <HeaderedContentControl Header="Source Value">
+                    <TextBox Text="{Binding Value}" />
+                </HeaderedContentControl>
+
+                <TextBlock>
+                    <Run Text="ACHTUNG! Entweder Source Value ODER Source Parameter Ref angeben." />
+                    <Run Text="Wenn Value leer ist, wird Source Parameter Ref exportiert" />
+                </TextBlock>
+            </StackPanel>
+        </DataTemplate>
         
         
         <select:DynSelector x:Key="SelectorDyn"
@@ -335,7 +353,8 @@
             DChannel="{StaticResource TempDynChannel}"
             DModule="{StaticResource TempDynModule}"
             DCom="{StaticResource TempDynComObject}"
-            DSeparator="{StaticResource TempDynSeparator}" />
+            DSeparator="{StaticResource TempDynSeparator}"
+            DAssign="{StaticResource TempDynAssign}" />
     </UserControl.Resources>
 
     <Grid>

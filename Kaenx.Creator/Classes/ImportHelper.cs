@@ -607,7 +607,7 @@ namespace Kaenx.Creator.Classes
 
                     case "TypeColor":
                         ptype.Type = ParameterTypes.Color;
-                        //TODO save Space (RGB/HSV)
+                        ptype.UIHint = xsub.Attribute("Space").Value;
                         break;
 
                     default:
@@ -1298,6 +1298,10 @@ namespace Kaenx.Creator.Classes
                         paraId = int.Parse(GetLastSplit(xele.Attribute("Id").Value, 3));
                         ds.Id = paraId;
                         ds.Text = GetTranslation(xele.Attribute("Id")?.Value ?? "", "Text", xele);
+                        if(xele.Attribute("UIHint") != null)
+                            ds.Hint = (SeparatorHint)Enum.Parse(typeof(SeparatorHint), xele.Attribute("UIHint").Value);
+                        else
+                            ds.Hint = SeparatorHint.None;
                         parent.Items.Add(ds);
                         break;
 

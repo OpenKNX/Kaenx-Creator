@@ -15,7 +15,7 @@ using System.Windows.Input;
 
 namespace Kaenx.Creator.Controls
 {
-    public partial class ParameterTypeView : UserControl, INotifyPropertyChanged
+    public partial class ParameterTypeView : UserControl, INotifyPropertyChanged, IFilterable
     {
         public static readonly DependencyProperty BaggagesProperty = DependencyProperty.Register("Baggages", typeof(ObservableCollection<Baggage>), typeof(ParameterTypeView), new PropertyMetadata(null));
         public static readonly DependencyProperty VersionProperty = DependencyProperty.Register("Version", typeof(AppVersion), typeof(ParameterTypeView), new PropertyMetadata(OnVersionChangedCallback));
@@ -33,6 +33,22 @@ namespace Kaenx.Creator.Controls
             InitializeComponent();
         }
 
+        private TextFilter _filter;
+        private object _selectedItem = null;
+
+        public void FilterShow()
+        {
+            _filter.Show();
+            ListParamTypes.SelectedItem = _selectedItem;
+        }
+
+        public void FilterHide()
+        {
+            _filter.Hide();
+            _selectedItem = ListParamTypes.SelectedItem;
+            ListParamTypes.SelectedItem = null;
+        }
+
         private static void OnVersionChangedCallback(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
             (sender as ParameterTypeView)?.OnVersionChanged(e);
@@ -41,7 +57,7 @@ namespace Kaenx.Creator.Controls
         protected virtual void OnVersionChanged(DependencyPropertyChangedEventArgs e)
         {
             if(Version == null) return;
-            TextFilter x = new TextFilter(Version.ParameterTypes, query);
+            _filter = new TextFilter(Version.ParameterTypes, query);
         }
 
         private void ClickAddParamType(object sender, RoutedEventArgs e)
