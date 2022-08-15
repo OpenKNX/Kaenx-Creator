@@ -196,7 +196,8 @@ namespace Kaenx.Creator.Viewer
                     mpara.SegmentType = SegmentTypes.Memory;
                     mpara.SegmentId = 0; //TODO get real id
                 } else if(pref.ParameterObject.SavePath == ParamSave.Property) {
-                    throw new System.Exception("ParameterSave Property not supported");
+                    mpara.SegmentType = SegmentTypes.Property;
+                    //TODO add info for property (maybe index << 32 | propid)
                 } else if(pref.ParameterObject.SavePath == ParamSave.Nowhere) {
                     mpara.SegmentType = SegmentTypes.None;
                 } else {
@@ -528,7 +529,7 @@ namespace Kaenx.Creator.Viewer
             {
                 case ParameterTypes.Enum:
                 {
-                    if(para.ParameterRefObject.ParameterObject.ParameterTypeObject.Enums.Count > 2)
+                    if(para.ParameterRefObject.ParameterObject.ParameterTypeObject.Enums.Count != 2)
                     {
                         ParamEnum penu = new ParamEnum()
                         {
@@ -565,6 +566,7 @@ namespace Kaenx.Creator.Viewer
                     break;
                 }
 
+                case ParameterTypes.Float_DPT9:
                 case ParameterTypes.NumberUInt:
                 case ParameterTypes.NumberInt:
                 {
@@ -651,9 +653,8 @@ namespace Kaenx.Creator.Viewer
                 case ParameterTypes.None:
                     break;
 
-
                 default:
-                    throw new System.Exception("Not implemented!");
+                    throw new System.Exception("Not implemented! " + para.ParameterRefObject.ParameterObject.ParameterTypeObject.Type);
             }
         }
 
