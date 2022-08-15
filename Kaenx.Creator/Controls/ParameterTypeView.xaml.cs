@@ -46,7 +46,10 @@ namespace Kaenx.Creator.Controls
 
         private void ClickAddParamType(object sender, RoutedEventArgs e)
         {
-            Version.ParameterTypes.Add(new ParameterType() { UId = AutoHelper.GetNextFreeUId(Version.ParameterTypes) });
+            ParameterType type = new ParameterType() { UId = AutoHelper.GetNextFreeUId(Version.ParameterTypes) };
+            Version.ParameterTypes.Add(type);
+            ListParamTypes.ScrollIntoView(type);
+            ListParamTypes.SelectedItem = type;
         }
 
         private void ClickAddParamEnum(object sender, RoutedEventArgs e)
@@ -62,7 +65,48 @@ namespace Kaenx.Creator.Controls
 
         private void ClickRemoveParamType(object sender, RoutedEventArgs e)
         {
-            Version.ParameterTypes.Remove(ListParamTypes.SelectedItem as ParameterType);
+            ParameterType type = ListParamTypes.SelectedItem as ParameterType;
+
+            if(CheckType(type))
+            {
+                if(MessageBoxResult.No == MessageBox.Show("Dieser ParameterType wird von mindestens einem Parameter verwendet. Wirklich löschen?", "ParameterType löschen", MessageBoxButton.YesNo, MessageBoxImage.Warning))
+                    return;
+
+                RemoveType(type);
+            }
+
+            Version.ParameterTypes.Remove(type);
+        }
+
+        private bool CheckType(ParameterType type)
+        {
+            bool flag = false;
+
+            if(Version.Parameters.Any(p => p.ParameterTypeObject == type))
+                flag = true;
+
+            if(flag) return true;
+
+            foreach(Models.Module mod in Version.Modules)
+            {
+                if(mod.Parameters.Any(p => p.ParameterTypeObject == type))
+                {
+                    flag = true;
+                    break;
+                }
+            }
+
+            return flag;
+        }
+
+        private void RemoveType(ParameterType type)
+        {
+            foreach(Parameter para in Version.Parameters.Where(p => p.ParameterTypeObject == type))
+                para.ParameterTypeObject = null;
+
+            foreach(Models.Module mod in Version.Modules)
+                foreach(Parameter para in mod.Parameters.Where(p => p.ParameterTypeObject == type))
+                    para.ParameterTypeObject = null;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -18,13 +18,17 @@
         <conv:BoolToVisibility x:Key="BoolToVis" />
         <conv:BoolNegation x:Key="BoolNeg" />
         <conv:BoolToBrush x:Key="BoolToBrush" TrueValue="Red" FalseValue="Black" />
+
+        <ContextMenu x:Key="ListMenu">
+            <MenuItem Header="Löschen" Click="ClickRemoveParamType" />
+        </ContextMenu>
     </UserControl.Resources>
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="150" />
-            <ColumnDefinition Width="150" />
-            <ColumnDefinition />
+            <ColumnDefinition Width="300" MinWidth="300" />
+            <ColumnDefinition Width="10" />
+            <ColumnDefinition MinWidth="300" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
@@ -32,18 +36,32 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
-        <Button Content="Hinzufügen" Click="ClickAddParamType" Margin="0 0 1 2" />
-        <Button Grid.Column="1" Content="Löschen" Click="ClickRemoveParamType" Margin="1 0 0 2" />
-        <TextBlock Grid.Row="1" Text="Filter:" HorizontalAlignment="Right" />
-        <TextBox x:Name="query" Grid.Column="1" Grid.Row="1" Margin="1 0 0 2" />
+        <Button Content="Hinzufügen" Click="ClickAddParamType" Margin="0 0 0 2" />
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
 
-        <ListView x:Name="ListParamTypes" Grid.Row="2" Grid.ColumnSpan="2" ItemsSource="{Binding Version.ParameterTypes, ElementName=ViewControl}">
+            <TextBlock Text="Filter/ID:" Margin="2 0 2 1" VerticalAlignment="Center" />
+            <TextBox x:Name="query" Grid.Column="1" Margin="1 0 0 2" />
+        </Grid>
+
+
+        <ListView x:Name="ListParamTypes" Grid.Row="2" ItemsSource="{Binding Version.ParameterTypes, ElementName=ViewControl}">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding Name}" Foreground="{Binding IsNotUsed, Converter={StaticResource BoolToBrush}}" />
                 </DataTemplate>
             </ListView.ItemTemplate>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="ContextMenu" Value="{StaticResource ListMenu}" />
+                </Style>
+            </ListView.ItemContainerStyle>
         </ListView>
+
+        <GridSplitter Grid.Column="1" Grid.RowSpan="3" HorizontalAlignment="Stretch" />
 
         <StackPanel Grid.Column="3" Grid.RowSpan="3" Margin="5" DataContext="{Binding ElementName=ListParamTypes, Path=SelectedItem}" IsEnabled="{Binding Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
             <StackPanel.Resources>
