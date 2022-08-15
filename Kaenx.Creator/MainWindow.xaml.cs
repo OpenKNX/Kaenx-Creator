@@ -1041,13 +1041,11 @@ namespace Kaenx.Creator
 
         private void TabChanged(object sender, SelectionChangedEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("Selektion geändert");
             if(e.RemovedItems.Count > 0 && (e.RemovedItems[0] as TabItem) != null && (e.RemovedItems[0] as TabItem).Content is IFilterable mx1)
                 mx1.FilterHide();
 
             if(e.AddedItems.Count > 0 && (e.AddedItems[0] as TabItem) != null &&(e.AddedItems[0] as TabItem).Content is IFilterable mx2)
                 mx2.FilterShow();
-            System.Diagnostics.Debug.WriteLine("Selektion fertig");
         }
 
         private void TabItem_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)

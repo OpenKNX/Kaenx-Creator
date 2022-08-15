@@ -31,8 +31,9 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="300" />
-            <ColumnDefinition />
+            <ColumnDefinition Width="300" MinWidth="300" />
+            <ColumnDefinition Width="10" />
+            <ColumnDefinition MinWidth="300" />
         </Grid.ColumnDefinitions>
 
         <Button Content="Hinzufügen" Click="ClickAdd" Margin="0 0 0 2" />
@@ -60,6 +61,8 @@
                 </Style>
             </ListBox.ItemContainerStyle>
         </ListBox>
+
+        <GridSplitter Grid.Column="1" Grid.RowSpan="3" HorizontalAlignment="Stretch" />
 
         <Grid Grid.Column="2" Grid.RowSpan="3">
             <Grid.RowDefinitions>

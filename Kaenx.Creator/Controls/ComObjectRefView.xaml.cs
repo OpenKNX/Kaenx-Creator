@@ -75,6 +75,29 @@ namespace Kaenx.Creator.Controls
             }
         }
 
+        private bool CheckDynamicRef(IDynItems item, ComObjectRef cref)
+        {
+            bool flag = false;
+
+            switch(item)
+            {
+                case DynComObject dc:
+                    if(dc.ComObjectRefObject == cref)
+                        flag = true;
+                    break;
+            }
+
+            if(flag)
+                return true;
+
+            if(item.Items != null)
+                foreach(IDynItems ditem in item.Items)
+                    if(CheckDynamicRef(ditem, cref))
+                        flag = true;
+
+            return flag;
+        }
+        
         private void DeleteDynamicRef(IDynItems item, ComObjectRef cref)
         {
             switch(item)
@@ -98,11 +121,19 @@ namespace Kaenx.Creator.Controls
                 cref.FunctionText.Add(new Models.Translation(lang, ""));
             }
             Module.ComObjectRefs.Add(cref);
+            ComobjectRefList.ScrollIntoView(cref);
+            ComobjectRefList.SelectedItem = cref;
         }
 
         private void ClickRemove(object sender, RoutedEventArgs e)
         {
-            Module.ComObjectRefs.Remove(ComobjectRefList.SelectedItem as Models.ComObjectRef);
+            ComObjectRef cref = ComobjectRefList.SelectedItem as Models.ComObjectRef;
+
+             if(CheckDynamicRef(Module.Dynamics[0], cref)
+                && MessageBoxResult.No == MessageBox.Show("Dieser ComObjectRef wird mindestens ein mal im Dynamic benutzt. Wirklich löschen?", "ComObjectRef löschen", MessageBoxButton.YesNo, MessageBoxImage.Warning))
+                    return;
+
+            Module.ComObjectRefs.Remove(cref);
         }
 
         private void ResetId(object sender, RoutedEventArgs e)

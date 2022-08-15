@@ -115,6 +115,8 @@ namespace Kaenx.Creator.Controls
                 para.Text.Add(new Models.Translation(lang, "Dummy"));
             }
             Module.Parameters.Add(para);
+            ParamList.ScrollIntoView(para);
+            ParamList.SelectedItem = para;
 
             if(Version.IsParameterRefAuto){
                 Module.ParameterRefs.Add(new Models.ParameterRef(para) { UId = AutoHelper.GetNextFreeUId(Module.ParameterRefs) });
@@ -139,6 +141,17 @@ namespace Kaenx.Creator.Controls
         private void ClickRemove(object sender, RoutedEventArgs e)
         {
             Parameter para = ParamList.SelectedItem as Models.Parameter;
+
+            if(Module.ParameterRefs.Any(p => p.ParameterObject == para))
+            {
+                if(MessageBoxResult.No == MessageBox.Show("Dieser Parameter wird von mindestens einem ParameterRef benutzt. Wirklich löschen?", "Parameter löschen", MessageBoxButton.YesNo, MessageBoxImage.Warning))
+                    return;
+
+                foreach(ParameterRef pref in Module.ParameterRefs.Where(p => p.ParameterObject == para))
+                    pref.ParameterObject = null;
+            }
+                
+
             Module.Parameters.Remove(para);
 
             if(Version.IsParameterRefAuto)

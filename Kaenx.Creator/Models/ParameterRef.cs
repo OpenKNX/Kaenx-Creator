@@ -68,7 +68,6 @@ namespace Kaenx.Creator.Models
                 _parameterObject = value;
                 if(_parameterObject != null)
                     _parameterObject.PropertyChanged += ParameterChanged;
-                System.Diagnostics.Debug.WriteLine("ParameterObject geändert");
                 Changed("ParameterObject");
             }
         }

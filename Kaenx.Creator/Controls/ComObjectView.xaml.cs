@@ -76,6 +76,8 @@ namespace Kaenx.Creator.Controls
                 com.FunctionText.Add(new Models.Translation(lang, "Dummy"));
             }
             Module.ComObjects.Add(com);
+            ComobjectList.ScrollIntoView(com);
+            ComobjectList.SelectedItem = com;
 
             if(Version.IsComObjectRefAuto){
                 Models.ComObjectRef cref = new Models.ComObjectRef(com) { UId = AutoHelper.GetNextFreeUId(Module.ComObjectRefs) };
@@ -111,6 +113,16 @@ namespace Kaenx.Creator.Controls
         private void ClickRemove(object sender, RoutedEventArgs e)
         {
             Models.ComObject com = ComobjectList.SelectedItem as Models.ComObject;
+
+            if(Module.ComObjectRefs.Any(c => c.ComObjectObject == com))
+            {
+                if(MessageBoxResult.No == MessageBox.Show("Dieses ComObject wird von mindestens einem ComObjectRef benutzt. Wirklich löschen?", "ComObject löschen", MessageBoxButton.YesNo, MessageBoxImage.Warning))
+                    return;
+
+                foreach(ComObjectRef cref in Module.ComObjectRefs.Where(c => c.ComObjectObject == com))
+                    cref.ComObjectObject = null;
+            }
+
             Module.ComObjects.Remove(com);
 
             if(Version.IsComObjectRefAuto){

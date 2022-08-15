@@ -74,13 +74,60 @@ namespace Kaenx.Creator.Controls
 
         private void ClickAdd(object sender, RoutedEventArgs e)
         {
-            Module.ParameterRefs.Add(new ParameterRef() { UId = AutoHelper.GetNextFreeUId(Module.ParameterRefs) });
+            ParameterRef pref = new ParameterRef() { UId = AutoHelper.GetNextFreeUId(Module.ParameterRefs) };
+            Module.ParameterRefs.Add(pref);
+            ParamRefList.ScrollIntoView(pref);
+            ParamRefList.SelectedItem = pref;
         }
 
         private void ClickRemove(object sender, RoutedEventArgs e)
         {
             ParameterRef pref = ParamRefList.SelectedItem as ParameterRef;
+
+            if(CheckDynamicRef(Module.Dynamics[0], pref)
+                && MessageBoxResult.No == MessageBox.Show("Dieser ParameterRef wird mindestens ein mal im Dynamic benutzt. Wirklich löschen?", "ParameterRef löschen", MessageBoxButton.YesNo, MessageBoxImage.Warning))
+                    return;
+
             Module.ParameterRefs.Remove(pref);
+        }
+
+        private bool CheckDynamicRef(IDynItems item, ParameterRef pref)
+        {
+            bool flag = false;
+
+            switch(item)
+            {
+                case DynChannel dc:
+                    if(dc.UseTextParameter && dc.ParameterRefObject == pref)
+                        flag = true;
+                    break;
+
+                case DynParaBlock dpb:
+                    if(dpb.UseParameterRef && dpb.ParameterRefObject == pref)
+                        flag = true;
+                    if(dpb.UseTextParameter && dpb.TextRefObject == pref)
+                        flag = true;
+                    break;
+
+                case DynParameter dp:
+                    if(dp.ParameterRefObject == pref)
+                        flag = true;
+                    break;
+
+                case IDynChoose dch:
+                    if(dch.ParameterRefObject == pref)
+                        flag = true;
+                    break;
+            }
+
+            if(flag) return true;
+
+            if(item.Items != null)
+                foreach(IDynItems ditem in item.Items)
+                    if(CheckDynamicRef(ditem, pref))
+                        flag = true;
+
+            return flag;
         }
 
         private void DeleteDynamicRef(IDynItems item, ParameterRef pref)
