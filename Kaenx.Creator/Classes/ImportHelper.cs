@@ -573,7 +573,13 @@ namespace Kaenx.Creator.Classes
 
                     case "TypeIPAddress":
                         ptype.Type = ParameterTypes.IpAddress;
-                        //TODO read if ipv4 or ipv6
+                        ptype.UIHint = xsub.Attribute("AddressType").Value;
+                        ptype.SizeInBit = xsub.Attribute("Version")?.Value switch 
+                        {
+                            "IPV4" => 1,
+                            "IPV6" => 2,
+                            _ => 0
+                        };
                         break;
 
                     case "TypeFloat":

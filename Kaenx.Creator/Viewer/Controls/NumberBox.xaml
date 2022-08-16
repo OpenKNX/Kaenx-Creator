@@ -12,44 +12,42 @@
         <converter:NumberConverter x:Key="NumberConverter" />
     </UserControl.Resources>
 
-    <Grid x:Name="DataGrid">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-        <VisualStateManager.VisualStateGroups>
-            <!-- Visual states reflect the application's window size -->
-            <VisualStateGroup>
-                <VisualState x:Name="DefaultLayout">
-                    <Storyboard>
-                    </Storyboard>
-                </VisualState>
-                <VisualState x:Name="NotAcceptedLayout">
-                    <Storyboard>
-                        <ColorAnimation To="Red" Storyboard.TargetName="InputBox" Storyboard.TargetProperty="BorderBrush.Color"/>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Message" Storyboard.TargetProperty="(UIElement.Visibility)">
-                            <DiscreteObjectKeyFrame KeyTime="00:00:00" Value="{x:Static Visibility.Visible}" />
-                        </ObjectAnimationUsingKeyFrames>
-                    </Storyboard>
-                </VisualState>
-            </VisualStateGroup>
-        </VisualStateManager.VisualStateGroups>
-
-        <TextBox x:Name="InputBox" Height="25" VerticalAlignment="Center" Text="{Binding Value, Converter={StaticResource NumberConverter}}" TextChanged="InputBox_TextChanged" AcceptsReturn="False" VerticalContentAlignment="Center" BorderThickness="2,2,0.5,2" ToolTipService.ToolTip="{Binding Tooltip}" PreviewKeyDown="InputBox_PreviewKeyDown" />
-        <TextBlock x:Name="Message" Grid.Row="1" FontSize="12" TextWrapping="Wrap" Foreground="Red" Margin="5 0 0 0" Grid.ColumnSpan="3" VerticalAlignment="Center" Text="{Binding ErrMessage}" Visibility="Collapsed" />
-
-        <Button x:Name="BtnUp" Grid.Column="1" Height="25" MinHeight="25" Foreground="Black" Click="GoUp" Width="30" BorderThickness="1,2,0.5,2" VerticalAlignment="Stretch">
-            <Image Source="/Assets/arrow_up.png" Height="13" VerticalAlignment="Center" />
-        </Button>
-        <Button x:Name="BtnDown" Grid.Column="2" Height="25" MinHeight="25" Foreground="Black" Click="GoDown" Width="30" BorderThickness="0.5,2,2,2" VerticalAlignment="Stretch">
-            <Image Source="/Assets/arrow_down.png" Height="13" VerticalAlignment="Center" />
-        </Button>
-    </Grid>
-
-
+          <Grid x:Name="DataGrid">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <VisualStateManager.VisualStateGroups>
+                <!-- Visual states reflect the application's window size -->
+                <VisualStateGroup>
+                    <VisualState x:Name="DefaultLayout">
+                        <Storyboard>
+                        </Storyboard>
+                    </VisualState>
+                    <VisualState x:Name="NotAcceptedLayout">
+                        <Storyboard>
+                            <ColorAnimation To="Red" Storyboard.TargetName="InputBox" Storyboard.TargetProperty="BorderBrush.Color"/>
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Message" Storyboard.TargetProperty="(UIElement.Visibility)">
+                                <DiscreteObjectKeyFrame KeyTime="00:00:00" Value="{x:Static Visibility.Visible}" />
+                            </ObjectAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+    
+            <TextBox x:Name="InputBox" Height="22" VerticalAlignment="Center" Text="{Binding Value, Converter={StaticResource NumberConverter}}" TextChanged="InputBox_TextChanged" AcceptsReturn="False" VerticalContentAlignment="Center" ToolTipService.ToolTip="{Binding Tooltip}" PreviewKeyDown="InputBox_PreviewKeyDown" />
+            <TextBlock x:Name="Message" Grid.Row="1" FontSize="12" TextWrapping="Wrap" Foreground="Red" Margin="5 0 0 0" Grid.ColumnSpan="3" VerticalAlignment="Center" Text="{Binding ErrMessage}" Visibility="Collapsed" />
+    
+            <Button x:Name="BtnUp" Grid.Column="1" Height="22" MinHeight="22" Foreground="Black" Click="GoUp" Width="30" BorderThickness="0 1 0 1" VerticalAlignment="Stretch">
+                <Image Source="pack://application:,,,/Assets/Images/Controls/ArrowUp.png" Height="13" VerticalAlignment="Center" />
+            </Button>
+            <Button x:Name="BtnDown" Grid.Column="2" Height="22" MinHeight="22" Foreground="Black" Click="GoDown" Width="30" BorderThickness="1" VerticalAlignment="Stretch">
+                <Image Source="pack://application:,,,/Kaenx.Creator;component/Assets/Images/Controls/ArrowDown.png" Height="13" VerticalAlignment="Center" />
+            </Button>
+        </Grid>
 </UserControl>

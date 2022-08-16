@@ -228,6 +228,15 @@ namespace Kaenx.Creator.Classes
                                 baggagesApp.Add(type.BaggageObject);
                             break;
 
+                        case ParameterTypes.IpAddress:
+                            xcontent.SetAttributeValue("AddressType", type.UIHint);
+                            if(type.SizeInBit != 0)
+                            {
+                                string version = type.SizeInBit switch { 1 => "IPv4", 2 => "IPv6" };
+                                xcontent.SetAttributeValue("Version", version);
+                            }
+                            break;
+
                         case ParameterTypes.Color:
                             xcontent = new XElement(Get("TypeColor"));
                             xcontent.SetAttributeValue("Space", type.UIHint);

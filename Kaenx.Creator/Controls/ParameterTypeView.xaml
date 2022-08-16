@@ -78,7 +78,7 @@
                     <Setter Property="Margin" Value="5" />
                 </Style>
                 <Style TargetType="ComboBox">
-                    <Setter Property="Margin" Value="5" />
+                    <Setter Property="Margin" Value="0 5" />
                 </Style>
                 <Style TargetType="Button">
                     <Setter Property="Margin" Value="5" />
@@ -94,7 +94,7 @@
                 <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
             </HeaderedContentControl>
             <HeaderedContentControl Header="Type">
-                <ComboBox Margin="0 5" ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding Type, Mode=TwoWay}" />
+                <ComboBox ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding Type, Mode=TwoWay}" />
             </HeaderedContentControl>
             
             <HeaderedContentControl Header="Manuelle Größe in Bits" Visibility="{Binding Type, Converter={StaticResource EnumToVisNeg}, ConverterParameter=None-IpAddress-Picture}">
@@ -158,6 +158,25 @@
                 <ComboBox SelectedValue="{Binding UIHint}" SelectedValuePath="Tag">
                     <ComboBoxItem Content="None" Tag="None" />
                     <ComboBoxItem Content="Slider" Tag="Slider" />
+                </ComboBox>
+            </HeaderedContentControl>
+
+            <HeaderedContentControl Header="AddressType" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=IpAddress, FallbackValue=Collapsed}">
+                <ComboBox SelectedValue="{Binding UIHint}" SelectedValuePath="Tag">
+                    <ComboBoxItem Content="HostAddress" Tag="HostAddress" />
+                    <ComboBoxItem Content="GatewayAddress" Tag="GatewayAddress" />
+                    <ComboBoxItem Content="UnicastAddress" Tag="UnicastAddress" />
+                    <ComboBoxItem Content="BroadcastAddress" Tag="BroadcastAddress" />
+                    <ComboBoxItem Content="MulticastAddress" Tag="MulticastAddress" />
+                    <ComboBoxItem Content="SubnetMask" Tag="SubnetMask" />
+                </ComboBox>
+            </HeaderedContentControl>
+            
+            <HeaderedContentControl Header="Version" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=IpAddress, FallbackValue=Collapsed}">
+                <ComboBox SelectedValue="{Binding SizeInBit}" SelectedValuePath="Tag">
+                    <ComboBoxItem Content="Keine Angabe" Tag="0" />
+                    <ComboBoxItem Content="IPv4" Tag="1" />
+                    <ComboBoxItem Content="IPV6" Tag="2" />
                 </ComboBox>
             </HeaderedContentControl>
             

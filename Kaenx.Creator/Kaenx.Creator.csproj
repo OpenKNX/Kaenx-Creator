@@ -38,6 +38,8 @@
     <Resource Include="Assets\Images\Menu\Save.svg" />
     <Resource Include="Assets\Images\General\PromptDialog.svg" />
     <Resource Include="Assets\Images\OpenKNX.png" />
+    <Resource Include="Assets\Images\Controls\ArrowUp.png" />
+    <Resource Include="Assets\Images\Controls\ArrowDown.png" />
     <Resource Include="logo.ico" />
     <None Update="Templates\Minimal.temp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

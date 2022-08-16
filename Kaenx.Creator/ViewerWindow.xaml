@@ -21,43 +21,82 @@
         <conv:BinaryToBool x:Key="BinToBool" />
 
         <DataTemplate x:Key="ChannelTemplate">
-            <Expander Header="{Binding Text}" BorderThickness="0 1" Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}" HorizontalContentAlignment="Stretch">
-                <ListView ItemsSource="{Binding Blocks}" SelectedItem="{Binding SelectedBlock, ElementName=ParaControl, Mode=TwoWay}" SelectedValue="{Binding SelectedBlockId, ElementName=ParaControl, Mode=TwoWay}" SelectedValuePath="Id" HorizontalAlignment="Stretch">
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                            <Setter Property="Padding" Value="0" />
-                            <Setter Property="Margin" Value="0" />
-                            <Setter Property="MinHeight" Value="0" />
-                        </Style>
-                    </ListView.ItemContainerStyle>
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <Border Height="40" Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}">
-                                <TextBlock Text="{Binding Text}" VerticalAlignment="Center" Margin="40 0 10 0" />
-                            </Border>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
+            <Expander IsExpanded="True" BorderThickness="0 1 1 1" BorderBrush="Gray" Background="LightGray" Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}" HorizontalContentAlignment="Stretch">
+                <ListView BorderThickness="0 1 0 0" ItemsSource="{Binding Blocks}" SelectedItem="{Binding SelectedBlock, ElementName=ParaControl, Mode=TwoWay}" SelectedValue="{Binding SelectedBlockId, ElementName=ParaControl, Mode=TwoWay}" SelectedValuePath="Id" HorizontalAlignment="Stretch">
+                    <ListView.Resources>
+                        <Style x:Key="{x:Type ListViewItem}" TargetType="ListViewItem">
+                            <Setter Property="SnapsToDevicePixels" Value="true"/>
+                            <Setter Property="OverridesDefaultStyle" Value="true"/>
+                            <Setter Property="Template">
+                              <Setter.Value>
+                                <ControlTemplate TargetType="ListBoxItem">
+                                  <Border 
+                                    Name="Border"
+                                    Padding="0 10"
+                                    SnapsToDevicePixels="true"
+                                    Background="Transparent"
+                                    BorderThickness="5 0 0 0"
+                                    BorderBrush="Transparent"
+                                    Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}">
+                                    
+                                    <TextBlock Text="{Binding Text}" Margin="20 0 10 0" />
+                                  </Border>
+                                  <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="true">
+                                      <Setter TargetName="Border" Property="BorderBrush" Value="Orange"/>
+                                    </Trigger>
+                                    <Trigger Property="IsSelected" Value="true">
+                                        <Setter TargetName="Border" Property="Background" Value="#B0DEB0"/>
+                                        <Setter TargetName="Border" Property="BorderBrush" Value="Green"/>
+                                    </Trigger>
+                                  </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                              </Setter.Value>
+                            </Setter>
+                          </Style>
+                    </ListView.Resources>
                 </ListView>
+                <Expander.Header>
+                    <Border Height="40">
+                        <TextBlock Text="{Binding Text}" VerticalAlignment="Center" Margin="10 0 10 0" />
+                    </Border>
+                </Expander.Header>
             </Expander>
         </DataTemplate>
         <DataTemplate x:Key="IndependentTemplate">
             <ListView ItemsSource="{Binding Blocks}" SelectedItem="{Binding SelectedBlock, ElementName=ParaControl, Mode=TwoWay}" SelectedValue="{Binding SelectedBlockId, ElementName=ParaControl, Mode=TwoWay}" SelectedValuePath="Id">
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                        <Setter Property="Padding" Value="0" />
-                        <Setter Property="Margin" Value="0" />
-                        <Setter Property="MinHeight" Value="0" />
+                <ListView.Resources>
+                    <Style x:Key="{x:Type ListViewItem}" TargetType="ListViewItem">
+                        <Setter Property="SnapsToDevicePixels" Value="true"/>
+                        <Setter Property="OverridesDefaultStyle" Value="true"/>
+                        <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListBoxItem">
+                            <Border 
+                                Name="Border"
+                                Padding="0 10"
+                                SnapsToDevicePixels="true"
+                                Background="Transparent"
+                                BorderThickness="5 0 0 0"
+                                BorderBrush="Transparent"
+                                Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}">
+                                
+                                <TextBlock Text="{Binding Text}" Margin="20 0 10 0" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="true">
+                                <Setter TargetName="Border" Property="BorderBrush" Value="Orange"/>
+                                </Trigger>
+                                <Trigger Property="IsSelected" Value="true">
+                                    <Setter TargetName="Border" Property="Background" Value="#B0DEB0"/>
+                                    <Setter TargetName="Border" Property="BorderBrush" Value="Green"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                        </Setter>
                     </Style>
-                </ListView.ItemContainerStyle>
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <Border Height="40" Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}">
-                            <TextBlock Text="{Binding Text}" VerticalAlignment="Center" Margin="40 0 10 0" />
-                        </Border>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
+                </ListView.Resources>
             </ListView>
         </DataTemplate>
 
@@ -82,10 +121,12 @@
                     <ColumnDefinition MaxWidth="550" Width="9*" />
                     <ColumnDefinition MinWidth="230" MaxWidth="350" Width="3*" />
                     <ColumnDefinition MaxWidth="120" Width="1*" />
+                    <ColumnDefinition Width="50" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="{Binding Text}" Margin="10 0" VerticalAlignment="Center" TextWrapping="Wrap" />
                 <ComboBox Grid.Column="1" IsEnabled="{Binding IsEnabled}" ItemsSource="{Binding Options}" DisplayMemberPath="Text" SelectedValuePath="Value" SelectedValue="{Binding Value, Mode=TwoWay}" VerticalAlignment="Center" HorizontalAlignment="Stretch" />
                 <TextBlock Grid.Column="2" Text="{Binding SuffixText}" Margin="10 0" VerticalAlignment="Center" HorizontalAlignment="Left" />
+                <TextBlock Grid.Column="3" Text="{Binding Value}" Margin="5 0" HorizontalAlignment="Right" />
             </Grid>
         </DataTemplate>
 
@@ -95,6 +136,7 @@
                     <ColumnDefinition MaxWidth="550" Width="9*" />
                     <ColumnDefinition MinWidth="230" MaxWidth="350" Width="3*" />
                     <ColumnDefinition MaxWidth="120" Width="1*" />
+                    <ColumnDefinition Width="50" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="{Binding Text}" Margin="10 0" VerticalAlignment="Center" TextWrapping="Wrap" />
 
@@ -103,20 +145,26 @@
                     <RadioButton IsEnabled="{Binding IsEnabled}" IsChecked="{Binding Selected2, Mode=TwoWay}" Content="{Binding Option2.Text}" GroupName="{Binding Id}" />
                 </StackPanel>
                 <TextBlock Grid.Column="2" Text="{Binding SuffixText}" Margin="10 0" VerticalAlignment="Center" HorizontalAlignment="Left" />
+                <TextBlock Grid.Column="3" Text="{Binding Value}" Margin="5 0" HorizontalAlignment="Right" />
             </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="TypeNumber">
-            <Grid Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}" Margin="5">
+            <Grid Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}" Margin="0 5">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="45*" /> <!--MaxWidth="550"-->
-                    <ColumnDefinition Width="50*" /><!--MinWidth="230" MaxWidth="350"-->
-                    <ColumnDefinition Width="5*" /><!--MaxWidth="100"-->
+                    <ColumnDefinition MaxWidth="550" Width="9*" />
+                    <ColumnDefinition MinWidth="230" MaxWidth="350" Width="3*" />
+                    <ColumnDefinition MaxWidth="120" Width="1*" />
+                    <ColumnDefinition Width="50" />
+                    <!--<ColumnDefinition Width="45*" /> MaxWidth="550"-->
+                    <!--<ColumnDefinition Width="50*" />MinWidth="230" MaxWidth="350"-->
+                    <!--<ColumnDefinition Width="5*" />MaxWidth="100"-->
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="{Binding Text}" Margin="10 0" VerticalAlignment="Center" />
 
                 <ctrls:NumberBox Grid.Column="1" IsEnabled="{Binding IsEnabled}" Value="{Binding Value}" ValueOk="{Binding Value, Mode=TwoWay}" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Default="{Binding Default}" Increment="{Binding Increment}" />
                 <TextBlock Grid.Column="2" Text="{Binding SuffixText}" Margin="10 0" VerticalAlignment="Center" HorizontalAlignment="Left" />
+                <TextBlock Grid.Column="3" Text="{Binding Value}" Margin="5 0" HorizontalAlignment="Right" />
             </Grid>
         </DataTemplate>
 
@@ -126,6 +174,7 @@
                     <ColumnDefinition MaxWidth="550" Width="9*" />
                     <ColumnDefinition MinWidth="230" MaxWidth="350" Width="3*" />
                     <ColumnDefinition MaxWidth="120" Width="1*" />
+                    <ColumnDefinition Width="50" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="{Binding Text}" Margin="10 0" VerticalAlignment="Center" />
 
@@ -134,6 +183,7 @@
                     <Run Text="{Binding Value, ElementName=slider}" />
                     <Run Text="{Binding SuffixText}" />
                 </TextBlock>
+                <TextBlock Grid.Column="3" Text="{Binding Value}" Margin="5 0" HorizontalAlignment="Right" />
             </Grid>
         </DataTemplate>
 
@@ -157,9 +207,11 @@
                     <ColumnDefinition MaxWidth="550" Width="9*" />
                     <ColumnDefinition MinWidth="230" MaxWidth="350" Width="3*" />
                     <ColumnDefinition MaxWidth="120" Width="1*" />
+                    <ColumnDefinition Width="50" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="{Binding Text}" Margin="10 0" VerticalAlignment="Center" TextWrapping="Wrap" />
                 <CheckBox Grid.Column="1" IsChecked="{Binding Value, Converter={StaticResource BinToBool}}" />
+                <TextBlock Grid.Column="3" Text="{Binding Value}" Margin="5 0" HorizontalAlignment="Right" />
             </Grid>
         </DataTemplate>
 
@@ -169,6 +221,7 @@
                     <ColumnDefinition MaxWidth="550" Width="9*" />
                     <ColumnDefinition MinWidth="230" MaxWidth="350" Width="3*" />
                     <ColumnDefinition MaxWidth="120" Width="1*" />
+                    <ColumnDefinition Width="50" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="{Binding Text}" Margin="10 0" VerticalAlignment="Center" TextWrapping="Wrap" />
                 <TextBlock Grid.Column="1" Text="{Binding Value, Mode=TwoWay}" VerticalAlignment="Center" />
@@ -182,9 +235,10 @@
                     <ColumnDefinition MaxWidth="550" Width="9*" />
                     <ColumnDefinition MinWidth="230" MaxWidth="350" Width="3*" />
                     <ColumnDefinition MaxWidth="120" Width="1*" />
+                    <ColumnDefinition Width="50" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="{Binding Text}" Margin="10 0" VerticalAlignment="Center" TextWrapping="Wrap" />
-                <TextBox Grid.Column="1" IsEnabled="{Binding IsEnabled}" MaxLength="{Binding MaxLength}" Text="{Binding Value, Mode=TwoWay}" VerticalAlignment="Center" />
+                <TextBox Height="22" VerticalContentAlignment="Center" Grid.Column="1" IsEnabled="{Binding IsEnabled}" MaxLength="{Binding MaxLength}" Text="{Binding Value, Mode=TwoWay}" VerticalAlignment="Center" />
                 <TextBlock Grid.Column="2" Text="{Binding SuffixText}" Margin="10 0" VerticalAlignment="Center" HorizontalAlignment="Left" />
             </Grid>
         </DataTemplate>
@@ -302,14 +356,19 @@
             <ColumnDefinition />
             <ColumnDefinition MaxWidth="400" />
         </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition MinHeight="300" />
+            <RowDefinition Height="10" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
 
 
-        <ScrollViewer>
+        <ScrollViewer Grid.RowSpan="3" VerticalScrollBarVisibility="Auto">
             <ItemsControl ItemsSource="{Binding Channels}" ItemTemplateSelector="{StaticResource ChannelSelector}" />
         </ScrollViewer>
 
 
-        <ScrollViewer Grid.Column="1">
+        <ScrollViewer Grid.RowSpan="3" Grid.Column="1">
             <ItemsControl ItemTemplateSelector="{StaticResource ParaTypeSelector}" ItemsSource="{Binding SelectedBlock.Parameters}" />
         </ScrollViewer>
 
@@ -322,5 +381,9 @@
 
             </DataGrid.Columns>
         </DataGrid>
+
+        <GridSplitter Grid.Row="1" Grid.Column="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+
+        <TextBlock Grid.Row="2" Grid.Column="2" x:Name="LogViewer" />
     </Grid>
 </Window>

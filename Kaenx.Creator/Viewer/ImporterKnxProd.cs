@@ -14,19 +14,33 @@ namespace Kaenx.Creator.Viewer
         private AppVersion _version;
         private CatalogContext _context;
         private ApplicationViewModel _model;
+        private Kaenx.DataContext.Import.Manager.KnxProdFileManager _man;
 
         private Dictionary<string, int> TypeNameToId = new Dictionary<string, int>();
 
-        public ImporterKnxProd(string filePath) => _filePath = filePath;
+        public ImporterKnxProd(string filePath)
+        {
+            _filePath = filePath;
+            _man = new DataContext.Import.Manager.KnxProdFileManager(_filePath);
+        }
 
 
         public void StartImport(CatalogContext context)
         {
             _context = context;
 
-            Kaenx.DataContext.Import.Manager.KnxProdFileManager man = new DataContext.Import.Manager.KnxProdFileManager(_filePath);
-            var x = man.GetDeviceList();
-            man.StartImport(x, _context);
+            var x = _man.GetDeviceList();
+            _man.StartImport(x, _context);
+        }
+
+        public List<string> GetLanguages()
+        {
+            return _man.GetLanguages();
+        }
+
+        public void SetLanguage(string langCode)
+        {
+            _man.SetLanguage(langCode);
         }
 
     }

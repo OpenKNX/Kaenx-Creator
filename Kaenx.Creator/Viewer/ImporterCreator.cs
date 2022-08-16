@@ -15,6 +15,7 @@ namespace Kaenx.Creator.Viewer
         private CatalogContext _context;
         private ApplicationViewModel _model;
         private AppAdditional _adds;
+        private string _langCode;
 
         private Dictionary<string, int> TypeNameToId = new Dictionary<string, int>();
         private Dictionary<int, AppParameter> IdToParameter = new Dictionary<int, AppParameter>();
@@ -24,6 +25,7 @@ namespace Kaenx.Creator.Viewer
         {
             _version = version;
             _app = app;
+            _langCode = _version.DefaultLanguage;
         }
 
 
@@ -31,6 +33,19 @@ namespace Kaenx.Creator.Viewer
         {
             _context = context;
             DoImport();
+        }
+
+        public List<string> GetLanguages()
+        {
+            List<string> langs = new List<string>();
+            foreach(Language lang in _version.Languages)
+                langs.Add(lang.CultureCode);
+            return langs;
+        }
+
+        public void SetLanguage(string langCode)
+        {
+            _langCode = langCode;
         }
 
         private void DoImport()
@@ -612,6 +627,7 @@ namespace Kaenx.Creator.Viewer
                     break;
                 }
 
+                case ParameterTypes.IpAddress: //TODO check if other control is better with regex
                 case ParameterTypes.Text:
                 {
                     if(mpara.Access == AccessType.Read){
@@ -815,7 +831,7 @@ namespace Kaenx.Creator.Viewer
 
         private string GetDefaultLang(ObservableCollection<Translation> text)
         {
-            return text.Single(t => t.Language.CultureCode == _version.DefaultLanguage).Text;
+            return text.Single(t => t.Language.CultureCode == _langCode).Text;
         }
 
 

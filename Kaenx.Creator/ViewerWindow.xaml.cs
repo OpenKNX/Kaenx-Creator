@@ -107,6 +107,23 @@ namespace Kaenx.Creator
                 context.Sections.RemoveRange(context.Sections.ToList());
                 context.Devices.RemoveRange(context.Devices.ToList());
 
+                var x = _importer.GetLanguages();
+                string threadCulture = System.Threading.Thread.CurrentThread.CurrentUICulture.IetfLanguageTag;
+                if(System.Threading.Thread.CurrentThread.CurrentUICulture.IsNeutralCulture)
+                {
+                    if(x.Any(l => l.StartsWith(threadCulture + "-")))
+                    {
+                        string lang = x.First(l => l.StartsWith(threadCulture + "-"));
+                        _importer.SetLanguage(lang);
+                        System.Diagnostics.Debug.WriteLine("Importing Language: " + lang);
+                    }
+                } else {
+                    if(x.Contains(threadCulture))
+                    {
+                        _importer.SetLanguage(threadCulture);
+                        System.Diagnostics.Debug.WriteLine("Importing Language: " + threadCulture);
+                    }
+                }
                 await System.Threading.Tasks.Task.Run(() => _importer.StartImport(context)).WaitAsync(TimeSpan.FromMinutes(60));
 
                 _app = context.Applications.First();
@@ -242,7 +259,7 @@ namespace Kaenx.Creator
             {
                 //if(values[para.Id].Value == "x") return; //TODO check why paramNumber always fires changed at loading
                 System.Diagnostics.Debug.WriteLine("Wert geändert! " + para.Id + " -> " + para.Value);
-
+                LogViewer.Text = $"Parameter geändert: ID={para.Id} Wert={para.Value}\r\n{LogViewer.Text}";
             }
 
 
