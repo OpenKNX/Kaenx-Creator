@@ -284,6 +284,7 @@ namespace Kaenx.Creator.Classes
             ImportParameterRefs(xstatic.Element(Get("ParameterRefs")), currentVers);
             ImportComObjects(xstatic.Element(Get("ComObjectTable")), currentVers);
             ImportComObjectRefs(xstatic.Element(Get("ComObjectRefs")), currentVers);
+            ImportMessages(xstatic.Element(Get("Messages")));
             ImportTables(xstatic);
             ImportModules(xapp.Element(Get("ModuleDefs")));
             ImportDynamic(xapp.Element(Get("Dynamic")), currentVers);
@@ -647,7 +648,7 @@ namespace Kaenx.Creator.Classes
                 switch (xmem.Name.LocalName)
                 {
                     case "Memory":
-                        union.SavePath = ParamSave.Memory;
+                        union.SavePath = SavePaths.Memory;
                         string memName = GetLastSplit(xmem.Attribute("CodeSegment").Value);
                         union.MemoryObject = currentVers.Memories.SingleOrDefault(m => m.Name.StartsWith(memName));
                         if(union.MemoryObject == null && memName.Contains("-RS-"))
@@ -678,7 +679,6 @@ namespace Kaenx.Creator.Classes
             Parameter para = new Parameter() {
                 Name = xpara.Attribute("Name").Value,
                 Value = xpara.Attribute("Value").Value,
-                Suffix = xpara.Attribute("SuffixText")?.Value ?? "",
                 UId = _uidCounter++,
                 IsInUnion = (xmemory != null),
                 UnionObject = union,
@@ -690,6 +690,7 @@ namespace Kaenx.Creator.Classes
             para.Id = int.Parse(id);
 
             para.Text = GetTranslation(xpara.Attribute("Id").Value, "Text", xpara);
+            para.Suffix = GetTranslation(xpara.Attribute("Id").Value, "SuffixText", xpara);
 
             para.Access = (xpara.Attribute("Access")?.Value) switch {
                 "None" => ParamAccess.None,
@@ -707,7 +708,7 @@ namespace Kaenx.Creator.Classes
                 XElement xmem = xmemory ?? xpara.Elements().ElementAt(0);
                 if (xmem.Name.LocalName == "Memory")
                 {
-                    para.SavePath = ParamSave.Memory;
+                    para.SavePath = SavePaths.Memory;
                     string memName = GetLastSplit(xmem.Attribute("CodeSegment").Value);
                     if(memName.StartsWith("RS-"))
                         para.SaveObject = currentVers.Memories[0];
@@ -732,7 +733,7 @@ namespace Kaenx.Creator.Classes
                     }
                 } else if(xmem.Name.LocalName == "Property")
                 {
-                    para.SavePath = ParamSave.Property;
+                    para.SavePath = SavePaths.Property;
                     para.SaveObject = new Property() {
                         ObjectIndex = int.Parse(xmem.Attribute("ObjectIndex").Value),
                         PropertyId = int.Parse(xmem.Attribute("PropertyId").Value),
@@ -756,7 +757,6 @@ namespace Kaenx.Creator.Classes
 
             foreach (XElement xref in xrefs.Elements())
             {
-                //TODO also import DisplayOrder and Tag
                 ParameterRef pref = new ParameterRef();
 
                 pref.UId = _uidCounter++;
@@ -779,12 +779,10 @@ namespace Kaenx.Creator.Classes
                 int paraId = int.Parse(id);
                 pref.ParameterObject = vbase.Parameters.Single(p => p.Id == paraId);
                 pref.Name = pref.ParameterObject.Name;
-
-                if(xref.Attribute("Text") != null)
-                {
-                    pref.OverwriteText = true;
-                    pref.Text = GetTranslation(xref.Attribute("Id").Value, "Text", xref);
-                }
+                
+                pref.OverwriteText = xref.Attribute("Text") != null;
+                pref.Text = GetTranslation(xref.Attribute("Id").Value, "Text", xref);
+                pref.Suffix = GetTranslation(xref.Attribute("Id").Value, "SuffixText", xref);
 
                 vbase.ParameterRefs.Add(pref);
             }
@@ -872,7 +870,6 @@ namespace Kaenx.Creator.Classes
 
             foreach (XElement xref in xrefs.Elements())
             {
-                //TODO also import DisplayOrder and Tag
                 ComObjectRef cref = new ComObjectRef();
 
                 cref.UId = _uidCounter++;
@@ -954,6 +951,26 @@ namespace Kaenx.Creator.Classes
                 }
 
                 vbase.ComObjectRefs.Add(cref);
+            }
+        }
+
+        private void ImportMessages(XElement xmsgs)
+        {
+            if(xmsgs == null) return;
+
+            currentVers.IsMessagesActive = true;
+
+            int counter = 1;
+            foreach(XElement xmsg in xmsgs.Elements())
+            {
+                Message msg = new Message()
+                {
+                    UId = counter++,
+                    Id = int.Parse(GetLastSplit(xmsg.Attribute("Id").Value, 2)),
+                    Name = xmsg.Attribute("Name")?.Value,
+                    Text = GetTranslation(xmsg.Attribute("Id").Value, "Text", xmsg)
+                };
+                currentVers.Messages.Add(msg);
             }
         }
 
@@ -1109,7 +1126,7 @@ namespace Kaenx.Creator.Classes
                 Number = xitem.Attribute("Number").Value
             };
 
-
+            //!TODO check if section exists
             switch (xitem.Name.LocalName)
             {
                 case "CatalogSection":
@@ -1258,7 +1275,7 @@ namespace Kaenx.Creator.Classes
                                 throw new Exception("Not implemented Parent");
                         }
                         dch.Parent = parent;
-                        Int64 paraId64_2 = Int64.Parse(GetLastSplit(xele.Attribute("ParamRefId").Value, 2));
+                        long paraId64_2 = long.Parse(GetLastSplit(xele.Attribute("ParamRefId").Value, 2));
                         dch.ParameterRefObject = vbase.ParameterRefs.Single(p => p.Id == paraId64_2);
                         parent.Items.Add(dch);
                         ParseDynamic(dch, xele, vbase);
@@ -1369,7 +1386,7 @@ namespace Kaenx.Creator.Classes
             {
                 "Enabled" => FlagType.Enabled,
                 "Disabled" => FlagType.Disabled,
-                null => FlagType.Undefined, //TODO check
+                null => FlagType.Undefined,
                 _ => throw new Exception("Unbekannter FlagTyp: " + type)
             };
         }

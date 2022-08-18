@@ -117,7 +117,7 @@
                 </Grid>
             </HeaderedContentControl>
             
-            <HeaderedContentControl Header="Funktionstext">
+            <HeaderedContentControl Header="Text">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="auto" />
@@ -126,8 +126,28 @@
 
                     <CheckBox IsChecked="{Binding OverwriteText}" VerticalAlignment="Center" />
                     <StackPanel Grid.Column="1">
-                        <CheckBox IsEnabled="{Binding OverwriteText}" IsChecked="{Binding TranslationText}" Content="Übersetzung nicht exportieren" />
+                        <CheckBox IsEnabled="False" IsChecked="{Binding ParameterObject.TranslationText}" Content="Nur Standardsprache exportieren (keine Translation-Unit)" />
                         <DataGrid IsEnabled="{Binding OverwriteText}" ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                                <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </StackPanel>
+                </Grid>
+            </HeaderedContentControl>
+            
+            <HeaderedContentControl Header="Suffix">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <CheckBox IsChecked="{Binding OverwriteSuffix}" VerticalAlignment="Center" />
+                    <StackPanel Grid.Column="1">
+                        <CheckBox IsEnabled="False" IsChecked="{Binding ParameterObject.TranslationSuffix}" Content="Nur Standardsprache exportieren (keine Translation-Unit)" />
+                        <DataGrid IsEnabled="{Binding OverwriteSuffix}" ItemsSource="{Binding Suffix}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
                                 <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />

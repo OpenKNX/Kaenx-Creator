@@ -18,7 +18,7 @@ namespace Kaenx.Creator.Viewer
         private string _langCode;
 
         private Dictionary<string, int> TypeNameToId = new Dictionary<string, int>();
-        private Dictionary<int, AppParameter> IdToParameter = new Dictionary<int, AppParameter>();
+        private Dictionary<long, AppParameter> IdToParameter = new Dictionary<long, AppParameter>();
 
 
         public ImporterCreator(AppVersion version, Application app)
@@ -182,10 +182,10 @@ namespace Kaenx.Creator.Viewer
                 AppParameter mpara = new AppParameter()
                 {
                     ApplicationId = _model.Id,
-                    ParameterId = (int)pref.Id, //TODO caution creator uses long, viewer only int!
+                    ParameterId = pref.Id,
                     Text = GetDefaultLang(pref.OverwriteText ? pref.Text : pref.ParameterObject.Text),
                     Value = pref.OverwriteValue ? pref.Value : pref.ParameterObject.Value,
-                    SuffixText = pref.ParameterObject.Suffix,
+                    SuffixText = GetDefaultLang(pref.ParameterObject.Suffix),
                     Offset = pref.ParameterObject.Offset,
                     OffsetBit = pref.ParameterObject.OffsetBit,
                     ParameterTypeId = TypeNameToId[pref.ParameterObject.ParameterTypeObject.Name]
@@ -193,7 +193,7 @@ namespace Kaenx.Creator.Viewer
 
                 if(args != null)
                 {
-                    mpara.Offset += int.Parse(args["###para"]);
+                    //mpara.Offset += int.Parse(args["###para"]);
                 }
 
                 ParamAccess paccess = pref.OverwriteAccess ? pref.Access : pref.ParameterObject.Access;
@@ -206,14 +206,14 @@ namespace Kaenx.Creator.Viewer
                     _ => throw new System.Exception("Unbekannter ParamAccess: " + paccess.ToString())
                 };
 
-                if(pref.ParameterObject.SavePath == ParamSave.Memory)
+                if(pref.ParameterObject.SavePath == SavePaths.Memory)
                 {
                     mpara.SegmentType = SegmentTypes.Memory;
                     mpara.SegmentId = 0; //TODO get real id
-                } else if(pref.ParameterObject.SavePath == ParamSave.Property) {
+                } else if(pref.ParameterObject.SavePath == SavePaths.Property) {
                     mpara.SegmentType = SegmentTypes.Property;
                     //TODO add info for property (maybe index << 32 | propid)
-                } else if(pref.ParameterObject.SavePath == ParamSave.Nowhere) {
+                } else if(pref.ParameterObject.SavePath == SavePaths.Nowhere) {
                     mpara.SegmentType = SegmentTypes.None;
                 } else {
                     throw new System.Exception("ParameterSave " + pref.ParameterObject.SavePath.ToString() + " not supported");
@@ -248,7 +248,7 @@ namespace Kaenx.Creator.Viewer
 
                 if(args != null)
                 {
-                    com.Number += int.Parse(args["###coms"]);
+                    //com.Number += int.Parse(args["###coms"]);
                 }
 
                 CheckForBindings(com, cref, args);
@@ -262,7 +262,7 @@ namespace Kaenx.Creator.Viewer
         Dictionary<long,  Kaenx.DataContext.Import.Values.IValues> values = new Dictionary<long,  Kaenx.DataContext.Import.Values.IValues>();
         List<ComBinding> ComBindings = new List<ComBinding>();
         List<ParamBinding> Bindings = new List<ParamBinding>();
-        List<int> defaultComs = new List<int>();
+        List<long> defaultComs = new List<long>();
 
         private void ImportDynamic()
         {
@@ -329,6 +329,7 @@ namespace Kaenx.Creator.Viewer
                         Conditions = conds
                     };
                     chanb.Text = GetDefaultLang(chan.Text);
+                    CheckForBindings(chanb, chan, args);
 
                     if(string.IsNullOrEmpty(chanb.Text))
                     {
@@ -356,6 +357,8 @@ namespace Kaenx.Creator.Viewer
 
                 case Models.Dynamic.DynParaBlock dpb:
                 {
+                    if(args != null)
+                        dpb.Id = maxBlockId++;
                     if(dpb.IsInline && dpb.Layout == Models.Dynamic.BlockLayout.Grid)
                     {
                         ParseTable(dpb, dblock, conds, args);
@@ -376,7 +379,7 @@ namespace Kaenx.Creator.Viewer
                     foreach(Models.Dynamic.IDynWhen when in dcho.Items)
                     {
                         List<ParamCondition> conds2 = conds.ToList();
-                        conds2.Add(ParseCondition(when, (int)dcho.ParameterRefObject.Id)); //TODO use long
+                        conds2.Add(ParseCondition(when, dcho.ParameterRefObject.Id));
                         foreach(Models.Dynamic.IDynItems ditem2 in when.Items)
                             ParseDynamicItem(ditem2, dch, dblock, conds2, args);
                     }
@@ -463,7 +466,7 @@ namespace Kaenx.Creator.Viewer
                 ParseDynamicItem(item, dch, pb, conds, args);
         }
 
-        private ParamCondition ParseCondition(Models.Dynamic.IDynWhen test, int sourceId)
+        private ParamCondition ParseCondition(Models.Dynamic.IDynWhen test, long sourceId)
         {
             ParamCondition cond = new ParamCondition();
             int tempOut;
@@ -538,7 +541,7 @@ namespace Kaenx.Creator.Viewer
 
         private void ParseParameter(Models.Dynamic.DynParameter para, ParameterBlock block, List<ParamCondition> conds)
         {
-            AppParameter mpara = IdToParameter[(int)para.ParameterRefObject.Id]; //TODO use long
+            AppParameter mpara = IdToParameter[para.ParameterRefObject.Id];
             
             switch(para.ParameterRefObject.ParameterObject.ParameterTypeObject.Type)
             {
@@ -550,7 +553,7 @@ namespace Kaenx.Creator.Viewer
                         {
                             Id = mpara.ParameterId,
                             Text = mpara.Text, //TODO maybe save space and check overwrite again
-                            SuffixText = para.ParameterRefObject.ParameterObject.Suffix,
+                            SuffixText = GetDefaultLang(para.ParameterRefObject.ParameterObject.Suffix),
                             HasAccess = mpara.Access != AccessType.None,
                             Value = mpara.Value,
                             Default = mpara.Value,
@@ -606,8 +609,8 @@ namespace Kaenx.Creator.Viewer
                                 Default = mpara.Value,
                                 Conditions = conds,
                                 Increment = para.ParameterRefObject.ParameterObject.ParameterTypeObject.Increment,
-                                Minimum = (int)para.ParameterRefObject.ParameterObject.ParameterTypeObject.Min, //TODO also allo double
-                                Maximum = (int)para.ParameterRefObject.ParameterObject.ParameterTypeObject.Max
+                                Minimum = para.ParameterRefObject.ParameterObject.ParameterTypeObject.Min,
+                                Maximum = para.ParameterRefObject.ParameterObject.ParameterTypeObject.Max
                         };
                         block.Parameters.Add(pslide);
                     } else {
@@ -619,8 +622,8 @@ namespace Kaenx.Creator.Viewer
                                 Default = mpara.Value,
                                 Conditions = conds,
                                 Increment = para.ParameterRefObject.ParameterObject.ParameterTypeObject.Increment,
-                                Minimum = (int)para.ParameterRefObject.ParameterObject.ParameterTypeObject.Min, //TODO also allo double
-                                Maximum = (int)para.ParameterRefObject.ParameterObject.ParameterTypeObject.Max
+                                Minimum = para.ParameterRefObject.ParameterObject.ParameterTypeObject.Min,
+                                Maximum = para.ParameterRefObject.ParameterObject.ParameterTypeObject.Max
                         };
                         block.Parameters.Add(pnum);
                     }
@@ -676,6 +679,7 @@ namespace Kaenx.Creator.Viewer
 
         long maxParaId = -1;
         long maxComsId = -1;
+        int maxBlockId = -1;
 
         private void ParseModule(Models.Dynamic.DynModule mod, IDynChannel dch, ParameterBlock block, List<ParamCondition> conds)
         {
@@ -687,8 +691,8 @@ namespace Kaenx.Creator.Viewer
             foreach(Models.Dynamic.DynModuleArg arg in mod.Arguments)
                 args.Add(arg.Argument.Name, arg.Value);
 
-            args.Add("###para", argPara.Value);
-            args.Add("###coms", argComs.Value);
+            //args.Add("###para", argPara.Value);
+            //args.Add("###coms", argComs.Value);
 
             if(maxParaId == -1)
             {
@@ -710,7 +714,13 @@ namespace Kaenx.Creator.Viewer
                 } else {
                     maxComsId = 1;
                 }
-            } 
+            }
+
+            if(maxBlockId == -1)
+            {
+                maxBlockId = FindBiggestBlockId(_version.Dynamics[0], 0);
+                maxBlockId++;
+            }
 
 
             
@@ -721,43 +731,13 @@ namespace Kaenx.Creator.Viewer
 
             foreach(Models.Dynamic.IDynItems item in nmod.Dynamics[0].Items)
             {
+                CopyDynamicItem(item, nmod);
+            }
+
+            foreach(Models.Dynamic.IDynItems item in nmod.Dynamics[0].Items)
+            {
                 ParseDynamicItem(item, dch, block, conds, args);
             }
-        }
-
-        private Module CopyModule(Module amod, int paraOffset, int comOffset)
-        {
-            Module bmod = new Module()
-            {
-                Parameters = new ObservableCollection<Parameter>(amod.Parameters.ToArray()),
-                ParameterRefs = new ObservableCollection<ParameterRef>(amod.ParameterRefs.ToArray()),
-                ComObjects = new ObservableCollection<ComObject>(amod.ComObjects.ToArray()),
-                ComObjectRefs = new ObservableCollection<ComObjectRef>(amod.ComObjectRefs.ToArray()),
-                Dynamics = new List<Models.Dynamic.IDynamicMain>(amod.Dynamics.ToArray())
-            };
-
-            foreach(Models.Dynamic.IDynItems item in bmod.Dynamics[0].Items)
-            {
-                CopyDynamicItem(item, bmod);
-            }
-
-            foreach(Parameter para in bmod.Parameters)
-            {
-                para.Offset += paraOffset;
-            }
-
-            foreach(ParameterRef pref in bmod.ParameterRefs)
-            {
-                pref.Id = maxParaId++;
-            }
-
-            foreach(ComObjectRef cref in bmod.ComObjectRefs)
-            {
-                cref.Id = (int)maxComsId++; //TODO change to long
-            }
-
-
-            return bmod;
         }
 
         private void CopyDynamicItem(Models.Dynamic.IDynItems item, IVersionBase vbase)
@@ -766,52 +746,52 @@ namespace Kaenx.Creator.Viewer
             {
                 case Models.Dynamic.DynChannel dc:
                 {
-                    if(dc.UseTextParameter && dc._parameter != -1)
-                        dc.ParameterRefObject = vbase.ParameterRefs.SingleOrDefault(p => p.UId == dc._parameter);
+                    if(dc.UseTextParameter && dc.ParameterRef != -1)
+                        dc.ParameterRefObject = vbase.ParameterRefs.SingleOrDefault(p => p.UId == dc.ParameterRef);
                     break;
                 }
 
                 case Models.Dynamic.DynParaBlock dpb:
                 {
-                    if(dpb.UseParameterRef && dpb._parameterRef != -1)
-                        dpb.ParameterRefObject = vbase.ParameterRefs.SingleOrDefault(p => p.UId == dpb._parameterRef);
-                    if(dpb.UseTextParameter && dpb._textRef != -1)
-                        dpb.ParameterRefObject = vbase.ParameterRefs.SingleOrDefault(p => p.UId == dpb._textRef);
+                    if(dpb.UseParameterRef && dpb.ParameterRef != -1)
+                        dpb.ParameterRefObject = vbase.ParameterRefs.SingleOrDefault(p => p.UId == dpb.ParameterRef);
+                    if(dpb.UseTextParameter && dpb.TextRef != -1)
+                        dpb.ParameterRefObject = vbase.ParameterRefs.SingleOrDefault(p => p.UId == dpb.TextRef);
                     break;
                 }
 
                 case Models.Dynamic.DynChooseBlock dch:
                 {
-                    if(dch._parameterRef != -1)
-                        dch.ParameterRefObject = vbase.ParameterRefs.SingleOrDefault(p => p.UId == dch._parameterRef);
+                    if(dch.ParameterRef != -1)
+                        dch.ParameterRefObject = vbase.ParameterRefs.SingleOrDefault(p => p.UId == dch.ParameterRef);
                     break;
                 }
 
                 case Models.Dynamic.DynChooseChannel dch:
                 {
-                    if(dch._parameterRef != -1)
-                        dch.ParameterRefObject = vbase.ParameterRefs.SingleOrDefault(p => p.UId == dch._parameterRef);
+                    if(dch.ParameterRef != -1)
+                        dch.ParameterRefObject = vbase.ParameterRefs.SingleOrDefault(p => p.UId == dch.ParameterRef);
                     break;
                 }
 
                 case Models.Dynamic.DynParameter dp:
                 {
-                    if(dp._parameter != -1)
-                        dp.ParameterRefObject = vbase.ParameterRefs.SingleOrDefault(p => p.UId == dp._parameter);
+                    if(dp.ParameterRef != -1)
+                        dp.ParameterRefObject = vbase.ParameterRefs.SingleOrDefault(p => p.UId == dp.ParameterRef);
                     break;
                 }
 
                 case Models.Dynamic.DynComObject dco:
                 {
-                    if(dco._comObjectRef != -1)
-                        dco.ComObjectRefObject = vbase.ComObjectRefs.SingleOrDefault(c => c.UId == dco._comObjectRef);
+                    if(dco.ComObjectRef != -1)
+                        dco.ComObjectRefObject = vbase.ComObjectRefs.SingleOrDefault(c => c.UId == dco.ComObjectRef);
                     break;
                 }
 
                 case Models.Dynamic.DynSeparator dse:
                 {
-                    if(dse._textRef != -1)
-                        dse.TextRefObject = vbase.ParameterRefs.SingleOrDefault(p => p.UId == dse._textRef);
+                    if(dse.TextRef != -1)
+                        dse.TextRefObject = vbase.ParameterRefs.SingleOrDefault(p => p.UId == dse.TextRef);
                     break;
                 }
 
@@ -828,13 +808,101 @@ namespace Kaenx.Creator.Viewer
                 CopyDynamicItem(ditem, vbase);
         }
 
+        private int FindBiggestBlockId(Models.Dynamic.IDynItems parent, int current)
+        {
+            foreach(Models.Dynamic.IDynItems item in parent.Items)
+            {
+                switch(item)
+                {
+                    case Models.Dynamic.DynParaBlock pb:
+                    {
+                        if(pb.Id > current)
+                            current = pb.Id;
+
+                        current = FindBiggestBlockId(pb, current);
+                        break;
+                    }
+
+                    case Models.Dynamic.IDynChannel dch:
+                        current = FindBiggestBlockId((Models.Dynamic.IDynItems)dch, current);
+                        break;
+
+                    case Models.Dynamic.IDynChoose dc:
+                        current = FindBiggestBlockId((Models.Dynamic.IDynItems)dc, current);
+                        break;
+
+                    case Models.Dynamic.IDynWhen dw:
+                        current = FindBiggestBlockId((Models.Dynamic.IDynItems)dw, current);
+                        break;
+                }
+            }
+            return current;
+        }
+
+        private Module CopyModule(Module amod, int paraOffset, int comOffset)
+        {
+            Module bmod = new Module()
+            {
+                Parameters = new ObservableCollection<Parameter>(),
+                ParameterRefs = new ObservableCollection<ParameterRef>(),
+                ComObjects = new ObservableCollection<ComObject>(),
+                ComObjectRefs = new ObservableCollection<ComObjectRef>(),
+                Dynamics = new List<Models.Dynamic.IDynamicMain>()
+            };
+
+            bmod.Dynamics.Add(new Models.Dynamic.DynamicModule());
+            foreach(Parameter para in amod.Parameters)
+                bmod.Parameters.Add(para.Copy());
+            foreach(ParameterRef pref in amod.ParameterRefs)
+                bmod.ParameterRefs.Add(pref.Copy());
+            foreach(ComObject com in amod.ComObjects)
+                bmod.ComObjects.Add(com.Copy());
+            foreach(ComObjectRef cref in amod.ComObjectRefs)
+                bmod.ComObjectRefs.Add(cref.Copy());
+
+            foreach(Models.Dynamic.IDynItems item in amod.Dynamics[0].Items)
+            {
+                bmod.Dynamics[0].Items.Add((Models.Dynamic.IDynItems)item.Copy());
+            }
+
+            foreach(Parameter para in bmod.Parameters)
+            {
+                para.Offset += paraOffset;
+            }
+
+            foreach(ParameterRef pref in bmod.ParameterRefs)
+            {
+                pref.Id = maxParaId++;
+            }
+
+            foreach(ComObject com in bmod.ComObjects)
+            {
+                com.Number += comOffset;
+            }
+
+            foreach(ComObjectRef cref in bmod.ComObjectRefs)
+            {
+                if(cref.ComObject != -1)
+                    cref.ComObjectObject = bmod.ComObjects.SingleOrDefault(c => c.UId == cref.ComObject);
+                cref.Id = (int)maxComsId++; //TODO change to long
+            }
+
+
+            return bmod;
+        }
 
         private string GetDefaultLang(ObservableCollection<Translation> text)
         {
+            if(text == null) return "";
             return text.Single(t => t.Language.CultureCode == _langCode).Text;
         }
 
 
+        public void CheckForBindings(ChannelBlock cb, Models.Dynamic.DynChannel dpb, Dictionary<string, string> args)
+        {
+            cb.Text = CheckForBindings(cb.Text, BindingTypes.Channel, cb.Id, (dpb.ParameterRefObject != null ? dpb.ParameterRefObject.ParameterObject.Id : -1), args);
+        }
+        
         public void CheckForBindings(ParameterBlock pb, Models.Dynamic.DynParaBlock dpb, Dictionary<string, string> args)
         {
             pb.Text = CheckForBindings(pb.Text, BindingTypes.ParameterBlock, pb.Id, (dpb.TextRefObject != null ? dpb.TextRefObject.ParameterObject.Id : -1), args);
@@ -843,6 +911,7 @@ namespace Kaenx.Creator.Viewer
         public void CheckForBindings(AppComObject com, Models.ComObjectRef dcom, Dictionary<string, string> args)
         {
             com.Text = CheckForBindings(com.Text, BindingTypes.ComObject, com.Id, ((dcom.ComObjectObject.UseTextParameter && dcom.ComObjectObject.ParameterRefObject != null) ? (int)dcom.ComObjectObject.ParameterRefObject.Id : -1), args);
+            com.FunctionText = CheckForBindings(com.FunctionText, BindingTypes.ComObject, com.Id, ((dcom.ComObjectObject.UseTextParameter && dcom.ComObjectObject.ParameterRefObject != null) ? (int)dcom.ComObjectObject.ParameterRefObject.Id : -1), args);
         }
         
         public string CheckForBindings(string text, BindingTypes type, long targetId, long sourceId, Dictionary<string, string> args)

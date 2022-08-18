@@ -232,7 +232,7 @@ namespace Kaenx.Creator.Classes
                             xcontent.SetAttributeValue("AddressType", type.UIHint);
                             if(type.SizeInBit != 0)
                             {
-                                string version = type.SizeInBit switch { 1 => "IPv4", 2 => "IPv6" };
+                                string version = type.SizeInBit switch { 1 => "IPv4", 2 => "IPv6", _ => throw new NotImplementedException("AddressType export not implemented") };
                                 xcontent.SetAttributeValue("Version", version);
                             }
                             break;
@@ -310,9 +310,23 @@ namespace Kaenx.Creator.Classes
                     xele.Name = XName.Get(xele.Name.LocalName, currentNamespace);
                 }
                 xunderapp.Add(temp);
-                
-
                 #endregion
+
+                temp = new XElement(Get("Messages"));
+                foreach(Message msg in ver.Messages)
+                {
+                    if(msg.Id == -1)
+                        msg.Id = AutoHelper.GetNextFreeId(ver, "Messages");
+
+                    XElement xmsg = new XElement(Get("Message"));
+                    xmsg.SetAttributeValue("Id", $"{appVersion}_M-{msg.Id}");
+                    xmsg.SetAttributeValue("Name", msg.Name);
+                    xmsg.SetAttributeValue("Text",  msg.Text.Single(p => p.Language.CultureCode == currentLang).Text);
+
+                    if(msg.TranslationText)
+                        foreach(Translation trans in msg.Text)
+                            AddTranslation(trans.Language.CultureCode, $"{appVersion}_M-{msg.Id}", "Text", trans.Text);
+                }
 
                 #region ModuleDefines
                 if(ver.Modules.Count > 0)
@@ -730,7 +744,7 @@ namespace Kaenx.Creator.Classes
 
                     case MemoryTypes.Relative:
                         xmem = new XElement(Get("RelativeSegment"));
-                        id = $"{appVersion}_RS-04-{mem.Offset:X4}"; //TODO LoadStateMachine angeben
+                        id = $"{appVersion}_RS-04-{mem.Offset:X4}";
                         xmem.SetAttributeValue("Id", id);
                         xmem.SetAttributeValue("Name", mem.Name);
                         xmem.SetAttributeValue("Offset", mem.Offset);
@@ -765,7 +779,7 @@ namespace Kaenx.Creator.Classes
 
                 switch (paras.Key.SavePath)
                 {
-                    case ParamSave.Memory:
+                    case SavePaths.Memory:
                         XElement xmem = new XElement(Get("Memory"));
                         string memid = $"{appVersion}_";
                         if (paras.Key.MemoryObject.Type == MemoryTypes.Absolute)
@@ -814,8 +828,18 @@ namespace Kaenx.Creator.Classes
                     xpref.SetAttributeValue("Access", pref.Access.ToString());
                 if (pref.OverwriteValue)
                     xpref.SetAttributeValue("Value", pref.Value);
-                //TODO implement override Suffix
-                //TODO implement override Text
+                if(pref.OverwriteText)
+                {
+                    xpref.SetAttributeValue("Text", pref.Text.Single(p => p.Language.CultureCode == currentLang).Text);
+                    if(!pref.ParameterObject.TranslationText)
+                    foreach(Models.Translation trans in pref.Text) AddTranslation(trans.Language.CultureCode, id, "SuffixText", trans.Text);
+                }
+                if(pref.OverwriteSuffix)
+                {
+                    xpref.SetAttributeValue("SuffixText", pref.Suffix.Single(p => p.Language.CultureCode == currentLang).Text);
+                    if(!pref.ParameterObject.TranslationSuffix)
+                    foreach(Models.Translation trans in pref.Suffix) AddTranslation(trans.Language.CultureCode, id, "SuffixText", trans.Text);
+                }
                 xrefs.Add(xpref);
             }
 
@@ -967,7 +991,7 @@ namespace Kaenx.Creator.Classes
 
         private void ParseParameter(Parameter para, XElement parent, IVersionBase ver, StringBuilder headers)
         {
-            if((headers != null && para.SavePath != ParamSave.Nowhere) || (headers != null && para.IsInUnion && para.UnionObject != null && para.UnionObject.SavePath != ParamSave.Nowhere))
+            if((headers != null && para.SavePath != SavePaths.Nowhere) || (headers != null && para.IsInUnion && para.UnionObject != null && para.UnionObject.SavePath != SavePaths.Nowhere))
             {
                 int offset = para.Offset;
                 string line = $"#define PARAM_{para.Name.Replace(' ', '_')}";
@@ -993,9 +1017,12 @@ namespace Kaenx.Creator.Classes
             if(!para.TranslationText)
                 foreach(Models.Translation trans in para.Text) AddTranslation(trans.Language.CultureCode, id, "Text", trans.Text);
 
+            if(!para.TranslationSuffix)
+                foreach(Models.Translation trans in para.Suffix) AddTranslation(trans.Language.CultureCode, id, "SuffixText", trans.Text);
+
             if(!para.IsInUnion) {
                 switch(para.SavePath) {
-                    case ParamSave.Memory:
+                    case SavePaths.Memory:
                     {
                         XElement xparamem = new XElement(Get("Memory"));
                         Memory mem = para.SaveObject as Memory;
@@ -1018,7 +1045,7 @@ namespace Kaenx.Creator.Classes
                         break;
                     }
 
-                    case ParamSave.Property:
+                    case SavePaths.Property:
                     {
                         XElement xparamem = new XElement(Get("Property"));
                         Property prop = para.SaveObject as Property;
@@ -1042,7 +1069,7 @@ namespace Kaenx.Creator.Classes
             
             xpara.SetAttributeValue("Text", para.Text.Single(p => p.Language.CultureCode == currentLang).Text);
             if (para.Access != ParamAccess.Default && para.Access != ParamAccess.ReadWrite) xpara.SetAttributeValue("Access", para.Access);
-            if (!string.IsNullOrWhiteSpace(para.Suffix)) xpara.SetAttributeValue("SuffixText", para.Suffix);
+            if (para.Suffix.Any(s => !string.IsNullOrWhiteSpace(s.Text))) xpara.SetAttributeValue("SuffixText", para.Text.Single(p => p.Language.CultureCode == currentLang).Text);
             xpara.SetAttributeValue("Value", para.Value);
 
             parent.Add(xpara);
@@ -1212,14 +1239,9 @@ namespace Kaenx.Creator.Classes
             XElement block = new XElement(Get("ParameterBlock"));
             parent.Add(block);
 
-            if (bl.Id == -1)
-            {
-                bl.Id = pbCounter++; //TODO get real next free Id
-            }
+            bl.Id = pbCounter++;
 
             //Wenn Block InLine ist, kann kein ParamRef angegeben werden
-            
-
             if(bl.IsInline)
             {
                 block.SetAttributeValue("Id", $"{appVersionMod}_PB-{bl.Id}");

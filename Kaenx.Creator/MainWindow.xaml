@@ -346,12 +346,6 @@
                 <MenuItem Header="KnxProd XML" Click="ClickImport" Tag="xml" />
                 <MenuItem Header="{x:Static p:Resources.menu_impo_kaenx}" IsEnabled="False" Tag="ae-prod" />
             </MenuItem>
-            <MenuItem IsEnabled="{Binding SelectedItem, ElementName=VersionList, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" Header="Bereinigen">
-                <MenuItem Header="Nicht verwendete Elemente markieren" Click="ClickShowClean" />
-                <MenuItem Header="Nicht verwendete Elemente automatisch löschen" Click="ClickDoClean" />
-                <Separator />
-                <MenuItem Header="Alle Parameter-IDs zurücksetzen" Click="ClickDoResetParaIds" />
-            </MenuItem>
             <MenuItem Header="ProdViewer">
                 <MenuItem Header="KnxProd-Datei öffnen" Click="ClickViewerKnxProd" />
                 <MenuItem Header="Creator-Datei öffnen" IsEnabled="False" />
@@ -648,16 +642,15 @@
                             <RowDefinition Height="auto" />
                             <RowDefinition Height="auto" />
                             <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
                             <RowDefinition />
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
                             <ColumnDefinition />
-                            <ColumnDefinition />
-                            <ColumnDefinition />
                         </Grid.ColumnDefinitions>
 
-                        <StackPanel Grid.ColumnSpan="4">
+                        <StackPanel Grid.ColumnSpan="2">
                             <StackPanel.Resources>
                                 <Style TargetType="HeaderedContentControl">
                                     <Setter Property="Margin" Value="5" />
@@ -688,34 +681,37 @@
                             <HeaderedContentControl Header="BCU">
                                 <ComboBox SelectedItem="{Binding Mask, Mode=TwoWay}" Margin="0" DisplayMemberPath="Id" IsEnabled="{Binding Versions.Count, Converter={StaticResource EmptyListToBool}}" ItemsSource="{Binding BCUs, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
                             </HeaderedContentControl>
-
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition />
-                                    <ColumnDefinition />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock HorizontalAlignment="Center">
-                                    <Run Text="Speicherart:" />
-                                    <Run Text="{Binding Mask.Memory}" />
-                                </TextBlock>
-
-                                <TextBlock Grid.Column="1" HorizontalAlignment="Center">
-                                    <Run Text="Ladeprocedure:" />
-                                    <Run Text="{Binding Mask.Procedure}" />
-                                </TextBlock>
-                            </Grid>
                         </StackPanel>
 
+                        <TextBlock Grid.Row="1" HorizontalAlignment="Center">
+                            <Run Text="Speicherart:" />
+                            <Run Text="{Binding Mask.Memory}" />
+                        </TextBlock>
 
-                        <Separator Grid.Row="1" Grid.ColumnSpan="4" Margin="0 10 0 4" />
+                        <TextBlock Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center">
+                            <Run Text="Ladeprocedure:" />
+                            <Run Text="{Binding Mask.Procedure}" />
+                        </TextBlock>
 
-                        <Button Grid.Row="2" Content="Version hinzufügen" Click="ClickAddVersion" Margin="5 5 2.5 2" IsEnabled="{Binding Mask, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
-                        <Button Grid.Row="2" Grid.Column="1" Content="Version Löschen" Click="ClickRemoveVersion" Margin="2.5 5 5 2" IsEnabled="{Binding ElementName=VersionList, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
-                        <Button Grid.Row="2" Grid.Column="2" Content="Version Kopieren" Click="ClickCopyVersion" Margin="2.5 5 5 2" IsEnabled="{Binding ElementName=VersionList, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
-                        <Button Grid.Row="2" Grid.Column="3" Content="Version in Viewer öffnen" Click="ClickOpenViewer" Margin="2.5 5 5 2" IsEnabled="{Binding ElementName=VersionList, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
+                        <Separator Grid.Row="2" Grid.ColumnSpan="2" Margin="0 10 0 4" />
 
-                        <ListView x:Name="VersionList" Grid.Row="3" Grid.ColumnSpan="4" ItemsSource="{Binding Versions}" DisplayMemberPath="NameText" Margin="5 5 5 0" />
+                        <Button Grid.Row="3" Grid.ColumnSpan="2" Content="Version hinzufügen" Click="ClickAddVersion" Margin="5 5 5 2" IsEnabled="{Binding Mask, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
+                        
+                        <ListView x:Name="VersionList" Grid.Row="4" Grid.ColumnSpan="4" ItemsSource="{Binding Versions}" DisplayMemberPath="NameText" Margin="5 5 5 0">
+                            <ListView.Resources>
+                                <ContextMenu x:Key="ContextMenu">
+                                    <MenuItem Header="In ProdViewer öffnen" Click="ClickOpenViewer" />
+                                    <Separator />
+                                    <MenuItem Header="Kopieren" Click="ClickCopyVersion" />
+                                    <MenuItem Header="Entfernen" Click="ClickRemoveVersion" />
+                                </ContextMenu>
+                            </ListView.Resources>
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="ContextMenu" Value="{StaticResource ContextMenu}" />
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                        </ListView>
                     </Grid>
                 </Grid>
             </TabItem>
@@ -878,6 +874,10 @@
                                 </StackPanel>
                             </Grid>
                         </StackPanel>
+                    </TabItem>
+
+                    <TabItem Header="Überprüfen" Style="{StaticResource LeftTabItem}">
+                        <ctrl:CheckView App="{Binding SelectedItem, ElementName=AppList}" Version="{Binding SelectedItem, ElementName=VersionList}" />
                     </TabItem>
 
                     <TabItem Header="Speicher" Style="{StaticResource LeftTabItem}">
@@ -1374,6 +1374,10 @@
 
                     <TabItem Header="Ladeprozedur" Style="{StaticResource LeftTabItem}">
                         <ctrl:LoadProcedures Mask="{Binding SelectedItem.Mask, ElementName=AppList}" Version="{Binding SelectedItem, ElementName=VersionList}"/>
+                    </TabItem>
+
+                    <TabItem Header="Nachrichten" Visibility="{Binding IsMessagesActive, Converter={StaticResource BoolToVis}}" Style="{StaticResource LeftTabItem}">
+                        <ctrl:MessagesView Version="{Binding ElementName=VersionList, Path=SelectedItem}" />
                     </TabItem>
 
 

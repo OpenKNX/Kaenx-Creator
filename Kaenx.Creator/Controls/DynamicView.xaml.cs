@@ -12,9 +12,6 @@ using System.Windows.Input;
 
 namespace Kaenx.Creator.Controls
 {
-
-    //TODO add button "alle ausklappen"
-
     public partial class DynamicView : UserControl, INotifyPropertyChanged
     {
         public static readonly DependencyProperty VersionProperty = DependencyProperty.Register("Version", typeof(AppVersion), typeof(DynamicView), new PropertyMetadata(OnVersionChangedCallback));
@@ -252,6 +249,9 @@ namespace Kaenx.Creator.Controls
                     "DynRepeate",
                     "DynRename" }
             },
+            {"DynModule", 
+                new List<string>()
+            },
         };
 
 
@@ -300,6 +300,7 @@ namespace Kaenx.Creator.Controls
         {
             Models.Dynamic.IDynItems target = (sender as MenuItem).DataContext as Models.Dynamic.IDynItems;
             target.Items.Add(_copyItem);
+            _copyItem.Parent = target;
             _copyItem = null;
         }
 

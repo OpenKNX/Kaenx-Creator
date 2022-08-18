@@ -296,6 +296,9 @@ namespace Kaenx.Creator.Classes
             } else if(list is System.Collections.ObjectModel.ObservableCollection<Baggage>) {
                 while((list as System.Collections.ObjectModel.ObservableCollection<Baggage>).Any(i => i.UId == id))
                     id++;
+            } else if(list is System.Collections.ObjectModel.ObservableCollection<Message>) {
+                while((list as System.Collections.ObjectModel.ObservableCollection<Message>).Any(i => i.UId == id))
+                    id++;
             } else {
                 throw new Exception("Can't get NextFreeUId. Type not implemented.");
             }
@@ -322,6 +325,9 @@ namespace Kaenx.Creator.Classes
                         id++;
                 }else if(x is System.Collections.ObjectModel.ObservableCollection<Module> lm) {
                     while(lm.Any(i => i.Id == id))
+                        id++;
+                }else if(x is System.Collections.ObjectModel.ObservableCollection<Message> ls) {
+                    while(ls.Any(i => i.Id == id))
                         id++;
                 }
                 return id;

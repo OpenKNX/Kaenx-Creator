@@ -379,6 +379,7 @@ namespace Kaenx.Creator
             Models.AppVersion version = (sender as Button).DataContext as Models.AppVersion;
             version.Memories.Add(new Models.Memory() { Type = app.Mask.Memory, UId = AutoHelper.GetNextFreeUId(version.Memories) });
         }
+
         private void ClickRemoveMemory(object sender, RoutedEventArgs e)
         {
             Models.AppVersion version = (sender as Button).DataContext as Models.AppVersion;
@@ -387,20 +388,16 @@ namespace Kaenx.Creator
 
         private void ClickRemoveVersion(object sender, RoutedEventArgs e)
         {
-            if (AppList.SelectedItem == null || VersionList.SelectedItem == null) return;
-
             Models.Application app = AppList.SelectedItem as Models.Application;
-            Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
+            Models.AppVersion ver = (sender as MenuItem).DataContext as Models.AppVersion;
 
             app.Versions.Remove(ver);
         }
 
         private void ClickCopyVersion(object sender, RoutedEventArgs e)
         {
-            if (AppList.SelectedItem == null || VersionList.SelectedItem == null) return;
-
             Models.Application app = AppList.SelectedItem as Models.Application;
-            Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
+            Models.AppVersion ver = (sender as MenuItem).DataContext as Models.AppVersion;
 
             string json = Newtonsoft.Json.JsonConvert.SerializeObject(ver, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
 
@@ -414,7 +411,7 @@ namespace Kaenx.Creator
         {
             if(MessageBoxResult.Cancel == MessageBox.Show("Achtung, um den Viewer verwenden zu können, werden die IDs überprüft und ggf. neue vergeben.\r\n\r\nTrotzdem weiter machen?", "ProdViewer öffnen", MessageBoxButton.OKCancel)) return;
 
-            AutoHelper.CheckIds((Models.AppVersion)VersionList.SelectedItem);
+            AutoHelper.CheckIds((sender as MenuItem).DataContext as Models.AppVersion);
 
             ViewerWindow viewer = new ViewerWindow(new Viewer.ImporterCreator((Models.AppVersion)VersionList.SelectedItem, (Models.Application)AppList.SelectedItem));
             viewer.Show();
@@ -454,7 +451,16 @@ namespace Kaenx.Creator
             else {
                 ver.Languages.Add(lang);
                 ver.Text.Add(new Models.Translation(lang, ""));
-                foreach(Models.Parameter para in ver.Parameters) para.Text.Add(new Models.Translation(lang, ""));
+                foreach(Models.Parameter para in ver.Parameters)
+                {
+                    para.Text.Add(new Models.Translation(lang, ""));
+                    para.Suffix.Add(new Models.Translation(lang, ""));
+                }
+                foreach(Models.ParameterRef para in ver.ParameterRefs)
+                {
+                    para.Text.Add(new Models.Translation(lang, ""));
+                    para.Suffix.Add(new Models.Translation(lang, ""));
+                }
                 foreach(Models.ComObject com in ver.ComObjects) {
                     com.Text.Add(new Models.Translation(lang, ""));
                     com.FunctionText.Add(new Models.Translation(lang, ""));
@@ -698,10 +704,28 @@ namespace Kaenx.Creator
             }
         }
 
+
+        private int VersionCurrent = 1;
         private void DoOpen(string path)
         {
             string general = System.IO.File.ReadAllText(path);
+
+            System.Text.RegularExpressions.Regex reg = new System.Text.RegularExpressions.Regex("\"ImportVersion\":[ ]?([0-9]+)");
+            System.Text.RegularExpressions.Match match = reg.Match(general);
+
+            int VersionToOpen = 0;
+            if(match.Success)
+            {
+                VersionToOpen = int.Parse(match.Groups[1].Value);
+            }
+
+            if(VersionToOpen < VersionCurrent)
+            {
+                general = CheckHelper.CheckImportVersion(general, VersionToOpen);
+            }
+                
             General = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.ModelGeneral>(general, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
+            General.ImportVersion = VersionCurrent;
             filePath = path;
 
             foreach(Models.Application app in General.Applications)
@@ -925,53 +949,6 @@ namespace Kaenx.Creator
             MessageBox.Show(x.FullName, "Kaenx-Creator Version", MessageBoxButton.OK, MessageBoxImage.Information);
         }
         
-        private void ClickShowClean(object sender, RoutedEventArgs e)
-        { 
-            Models.AppVersion vers = VersionList.SelectedItem as Models.AppVersion;
-            if(vers == null)
-            {
-                MessageBox.Show("Bitte wählen Sie erst eine Applikationsversion aus.");
-                return;
-            }
-
-            Models.ClearResult res = ClearHelper.ShowUnusedElements(vers);
-
-            string message = $"Folgende Elemente wurden nicht verwendet:\r\n";
-            message += $"{res.ParameterTypes}\tParameterTypes\r\n";
-            message += $"{res.Parameters}\tParameter\r\n";
-            message += $"{res.ParameterRefs}\tParameterRefs\r\n";
-            message += $"{res.Unions}\tUnions\r\n";
-            message += $"{res.ComObjects}\tComObjects\r\n";
-            message += $"{res.ComObjectRefs}\tComObjectRefs\r\n";
-
-            MessageBox.Show(message, "Fertig");  
-        }
-
-        private void ClickDoClean(object sender, RoutedEventArgs e)
-        {
-            Models.AppVersion vers = VersionList.SelectedItem as Models.AppVersion;
-            if(vers == null)
-            {
-                MessageBox.Show("Bitte wählen Sie erst eine Applikationsversion aus.");
-                return;
-            }
-
-            Models.ClearResult res = ClearHelper.ShowUnusedElements(vers);
-
-            string message = $"Folgende Elemente werden gelöscht:\r\n";
-            message += $"{res.ParameterTypes}\tParameterTypes\r\n";
-            message += $"{res.Parameters}\tParameter\r\n";
-            message += $"{res.ParameterRefs}\tParameterRefs\r\n";
-            message += $"{res.Unions}\tUnions\r\n";
-            message += $"{res.ComObjects}\tComObjects\r\n";
-            message += $"{res.ComObjectRefs}\tComObjectRefs\r\n";
-            message += "\r\nWollen Sie diese Elemente wirklich löschen?";
-
-            var msgRes = MessageBox.Show(message, "Bereinigung", System.Windows.MessageBoxButton.YesNo);
-            if(msgRes == MessageBoxResult.Yes)
-                ClearHelper.RemoveUnusedElements(vers);
-        }
-
         private void ClickDoResetParaIds(object sender, RoutedEventArgs e)
         {
             Models.AppVersion vers = VersionList.SelectedItem as Models.AppVersion;

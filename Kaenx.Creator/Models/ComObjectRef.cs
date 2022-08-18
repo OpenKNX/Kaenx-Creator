@@ -254,5 +254,22 @@ namespace Kaenx.Creator.Models
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
+
+        
+        public ComObjectRef Copy()
+        {
+            ComObjectRef com = (ComObjectRef)this.MemberwiseClone();
+            
+            /* overwrite old reference with deep copy of the Translation Objects*/
+            com.Text = new ObservableCollection<Translation>();
+            foreach (Translation translation in this.Text)
+                com.Text.Add(new Translation(translation.Language, translation.Text));  
+            
+            com.FunctionText = new ObservableCollection<Translation>();
+            foreach (Translation translation in this.FunctionText)
+                com.FunctionText.Add(new Translation(translation.Language, translation.Text));  
+            
+            return com;
+        }
     }
 }

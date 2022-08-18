@@ -66,14 +66,13 @@ namespace Kaenx.Creator
             }
         }
 
-        private int _selectedBlockId;
-        public int SelectedBlockId
+        private long _selectedBlockId;
+        public long SelectedBlockId
         {
             get { return _selectedBlockId; }
             set
             {
                 _selectedBlockId = value;
-                Debug.WriteLine("Id1:" + value.ToString());
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedBlockId"));
             }
         }
@@ -257,7 +256,6 @@ namespace Kaenx.Creator
 
             if (e.PropertyName == "Value")
             {
-                //if(values[para.Id].Value == "x") return; //TODO check why paramNumber always fires changed at loading
                 System.Diagnostics.Debug.WriteLine("Wert geändert! " + para.Id + " -> " + para.Value);
                 LogViewer.Text = $"Parameter geändert: ID={para.Id} Wert={para.Value}\r\n{LogViewer.Text}";
             }
@@ -360,7 +358,7 @@ namespace Kaenx.Creator
         {
             IEnumerable<ComBinding> list = _comBindings.Where(co => co.Conditions.Any(c => c.SourceId == para.Id));
 
-            foreach(IGrouping<int, ComBinding> bindings in list.GroupBy(cb => cb.ComId))
+            foreach(IGrouping<long, ComBinding> bindings in list.GroupBy(cb => cb.ComId))
             {
                 if(bindings.Any(cond => FunctionHelper.CheckConditions(cond.Conditions, values)))
                 {
@@ -390,7 +388,6 @@ namespace Kaenx.Creator
             //TODO allow to sort for name, function, etc
             //ComObjects.Sort(c => c.Number);
         }
-
 
         private void Changed(string name)
         {

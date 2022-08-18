@@ -113,6 +113,7 @@ namespace Kaenx.Creator.Controls
             };
             foreach(Models.Language lang in Version.Languages) {
                 para.Text.Add(new Models.Translation(lang, "Dummy"));
+                para.Suffix.Add(new Models.Translation(lang, "Dummy"));
             }
             Module.Parameters.Add(para);
             ParamList.ScrollIntoView(para);

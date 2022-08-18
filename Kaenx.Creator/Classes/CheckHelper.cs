@@ -1,3 +1,5 @@
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -13,12 +15,20 @@ namespace Kaenx.Creator.Classes {
     public class CheckHelper
     {
         
+        public static void CheckThis(Application app,
+                                    AppVersion version,
+                                    ObservableCollection<PublishAction> actions,
+                                    bool showOnlyErrors = false)
+        {
+            CheckThis(null, null, null, new List<Application>() { app }, new List<AppVersion>() { version }, actions, showOnlyErrors);
+        }
+
         public static void CheckThis(ModelGeneral General,
                                     List<Hardware> hardware,
                                     List<Device> devices,
                                     List<Application> apps,
                                     List<AppVersion> versions,
-                                    ObservableCollection<PublishAction> actions)
+                                    ObservableCollection<PublishAction> actions, bool showOnlyErrors = false)
         {
             if(apps.Count == 0) {
                 actions.Add(new PublishAction() { Text = $"Es wurden keine Applikationen ausgewählt.", State = PublishState.Fail });
@@ -26,66 +36,78 @@ namespace Kaenx.Creator.Classes {
             }
 
             actions.Add(new PublishAction() { Text = "Starte Check" });
-            actions.Add(new PublishAction() { Text = $"{devices.Count} Geräte - {hardware.Count} Hardware - {apps.Count} Applikationen - {versions.Count} Versionen" });
+            actions.Add(new PublishAction() { Text = $"{devices?.Count} Geräte - {hardware?.Count} Hardware - {apps.Count} Applikationen - {versions.Count} Versionen" });
 
-            if(General.Catalog[0].Items.Any(c => !c.IsSection ))
-                actions.Add(new PublishAction() { Text = "Katalog muss mindestens eine Unterkategorie haben.", State = PublishState.Fail });
-
-            if(General.ManufacturerId <= 0 || General.ManufacturerId > 0xFFFF)
-                actions.Add(new PublishAction() { Text = $"Ungültige HerstellerId angegeben: {General.ManufacturerId:X4}", State = PublishState.Fail });
-
-            #region Hardware Check
-            actions.Add(new PublishAction() { Text = "Überprüfe Hardware" });
-            Regex reg = new Regex("^([0-9a-zA-Z_\\-äöüÄÖÜ ]|\\s)+$");
-            List<string> serials = new List<string>();
-
-            var check1 = General.Hardware.GroupBy(h => h.Name).Where(h => h.Count() > 1);
-            foreach(var group in check1)
-                actions.Add(new PublishAction() { Text = "Hardwarename '" + group.Key + "' wird von " + group.Count() + " Hardware verwendet", State = PublishState.Fail });
-
-            check1 = General.Hardware.GroupBy(h => h.SerialNumber).Where(h => h.Count() > 1);
-            foreach (var group in check1)
-                actions.Add(new PublishAction() { Text = "Hardwareserial '" + group.Key + "' wird von " + group.Count() + " Hardware verwendet", State = PublishState.Fail });
-
-            check1 = null;
-            var check2 = General.Hardware.Where(h => h.Devices.Count == 0);
-            foreach (var group in check2)
-                actions.Add(new PublishAction() { Text = "Hardware '" + group.Name + "' hat keine Geräte zugeordnet", State = PublishState.Warning });
-
-            check2 = General.Hardware.Where(h => h.HasApplicationProgram && h.Apps.Count == 0);
-            foreach (var group in check2)
-                actions.Add(new PublishAction() { Text = "Hardware '" + group.Name + "' hat keine Applikation zugeordnet", State = PublishState.Warning });
-
-            check2 = General.Hardware.Where(h => !h.HasApplicationProgram && h.Apps.Count != 0);
-            foreach (var group in check2)
-                actions.Add(new PublishAction() { Text = "Hardware '" + group.Name + "' hat Applikation zugeordnet obwohl angegeben ist, dass keine benötigt wird", State = PublishState.Warning });
-
-            check2 = General.Hardware.Where(h => !reg.IsMatch(h.Name));
-            foreach (var group in check2)
-                actions.Add(new PublishAction() { Text = "Hardware '" + group.Name + "' hat ungültige Zeichen im Namen", State = PublishState.Fail });
-            check2 = null;
-            #endregion
-
-            #region Applikation Check
-            actions.Add(new PublishAction() { Text = "Überprüfe Applikationen" });
-
-            var check3 = General.Applications.GroupBy(h => h.Name).Where(h => h.Count() > 1);
-            foreach (var group in check3)
-                actions.Add(new PublishAction() { Text = "Applikationsname '" + group.Key + "' wird von " + group.Count() + " Applikationen verwendet", State = PublishState.Fail });
-
-            check3 = null;
-            var check4 = General.Applications.GroupBy(h => h.Number).Where(h => h.Count() > 1);
-            foreach (var group in check4)
-                actions.Add(new PublishAction() { Text = "Applikations Nummer " + group.Key + " (" + group.Key.ToString("X4") + ") wird von " + group.Count() + " Applikationen verwendet", State = PublishState.Fail });
-
-            check4 = null;
-            foreach(Application app in General.Applications)
+            if(General != null)
             {
-                var check5 = app.Versions.GroupBy(v => v.Number).Where(l => l.Count() > 1);
-                foreach (var group in check5)
-                    actions.Add(new PublishAction() { Text = "Applikation '" + app.NameText + "' verwendet Version " + group.Key + " (" + Math.Floor(group.Key / 16.0) + "." + (group.Key % 16) + ") " + group.Count() + " mal", State = PublishState.Fail });
+                if(General.Catalog[0].Items.Any(c => !c.IsSection ))
+                    actions.Add(new PublishAction() { Text = "Katalog muss mindestens eine Unterkategorie haben.", State = PublishState.Fail });
+
+                if(General.ManufacturerId <= 0 || General.ManufacturerId > 0xFFFF)
+                    actions.Add(new PublishAction() { Text = $"Ungültige HerstellerId angegeben: {General.ManufacturerId:X4}", State = PublishState.Fail });
+
+
+                #region Hardware Check
+                actions.Add(new PublishAction() { Text = "Überprüfe Hardware" });
+                Regex reg = new Regex("^([0-9a-zA-Z_\\-äöüÄÖÜ ]|\\s)+$");
+                List<string> serials = new List<string>();
+
+                var check1 = General.Hardware.GroupBy(h => h.Name).Where(h => h.Count() > 1);
+                foreach(var group in check1)
+                    actions.Add(new PublishAction() { Text = "Hardwarename '" + group.Key + "' wird von " + group.Count() + " Hardware verwendet", State = PublishState.Fail });
+
+                check1 = General.Hardware.GroupBy(h => h.SerialNumber).Where(h => h.Count() > 1);
+                foreach (var group in check1)
+                    actions.Add(new PublishAction() { Text = "Hardwareserial '" + group.Key + "' wird von " + group.Count() + " Hardware verwendet", State = PublishState.Fail });
+
+                IEnumerable<Hardware> check2;
+                if(!showOnlyErrors)
+                {
+                    check1 = null;
+                    check2 = General.Hardware.Where(h => h.Devices.Count == 0);
+                    foreach (var group in check2)
+                        actions.Add(new PublishAction() { Text = "Hardware '" + group.Name + "' hat keine Geräte zugeordnet", State = PublishState.Warning });
+
+                    check2 = General.Hardware.Where(h => h.HasApplicationProgram && h.Apps.Count == 0);
+                    foreach (var group in check2)
+                        actions.Add(new PublishAction() { Text = "Hardware '" + group.Name + "' hat keine Applikation zugeordnet", State = PublishState.Warning });
+
+                    check2 = General.Hardware.Where(h => !h.HasApplicationProgram && h.Apps.Count != 0);
+                    foreach (var group in check2)
+                        actions.Add(new PublishAction() { Text = "Hardware '" + group.Name + "' hat Applikation zugeordnet obwohl angegeben ist, dass keine benötigt wird", State = PublishState.Warning });
+                }
+                check2 = General.Hardware.Where(h => !reg.IsMatch(h.Name));
+                foreach (var group in check2)
+                    actions.Add(new PublishAction() { Text = "Hardware '" + group.Name + "' hat ungültige Zeichen im Namen", State = PublishState.Fail });
+                check2 = null;
+                #endregion
+
+
+                #region Applikation Check
+                actions.Add(new PublishAction() { Text = "Überprüfe Applikationen" });
+
+                var check3 = General.Applications.GroupBy(h => h.Name).Where(h => h.Count() > 1);
+                foreach (var group in check3)
+                    actions.Add(new PublishAction() { Text = "Applikationsname '" + group.Key + "' wird von " + group.Count() + " Applikationen verwendet", State = PublishState.Fail });
+
+                check3 = null;
+                var check4 = General.Applications.GroupBy(h => h.Number).Where(h => h.Count() > 1);
+                foreach (var group in check4)
+                    actions.Add(new PublishAction() { Text = "Applikations Nummer " + group.Key + " (" + group.Key.ToString("X4") + ") wird von " + group.Count() + " Applikationen verwendet", State = PublishState.Fail });
+
+                check4 = null;
+                foreach(Application app in General.Applications)
+                {
+                    var check5 = app.Versions.GroupBy(v => v.Number).Where(l => l.Count() > 1);
+                    foreach (var group in check5)
+                        actions.Add(new PublishAction() { Text = "Applikation '" + app.NameText + "' verwendet Version " + group.Key + " (" + Math.Floor(group.Key / 16.0) + "." + (group.Key % 16) + ") " + group.Count() + " mal", State = PublishState.Fail });
+                }
+                #endregion
             }
 
+            //TODO check hardware/device/app
+
+            #region Applikation Check
             int highestNS = 0;
             foreach(AppVersion vers in versions) {
                 Application app = apps.Single(a => a.Versions.Contains(vers));
@@ -96,6 +118,9 @@ namespace Kaenx.Creator.Classes {
 
                 if(vers.IsModulesActive && vers.NamespaceVersion < 20)
                     actions.Add(new PublishAction() { Text = $"Applikation '{app.NameText}': ModuleDefindes werden erst ab Namespace 20 unterstützt.", State = PublishState.Fail });
+
+                if(vers.IsMessagesActive && vers.NamespaceVersion < 14)
+                    actions.Add(new PublishAction() { Text = $"Applikation '{app.NameText}': Messages werden erst ab Namespace 14 unterstützt.", State = PublishState.Fail });
 
                 if(app.Mask.Procedure != ProcedureTypes.Default && string.IsNullOrEmpty(vers.Procedure))
                     actions.Add(new PublishAction() { Text = $"Applikation '{app.NameText}': Version muss eine Ladeprozedur enthalten.", State = PublishState.Fail });
@@ -109,7 +134,7 @@ namespace Kaenx.Creator.Classes {
                             
                     switch(ptype.Type) {
                         case ParameterTypes.Text:
-                            if(ptype.SizeInBit % 8 != 0)
+                            if(!showOnlyErrors && ptype.SizeInBit % 8 != 0)
                                 actions.Add(new PublishAction() { Text = $"    ParameterType Text {ptype.Name} ({ptype.UId}): ist kein vielfaches von 8", State = PublishState.Warning });
                             break;
 
@@ -138,9 +163,10 @@ namespace Kaenx.Creator.Classes {
                                     if(string.IsNullOrEmpty(trans.Text))
                                         actions.Add(new PublishAction() { Text = $"    ParameterType Enum {penum.Name}/{ptype.Name} ({ptype.UId}): Keine Übersetzung vorhanden ({trans.Language.Text})", State = PublishState.Fail });
                                 } else {
-                                    foreach(Translation trans in penum.Text)
-                                        if(string.IsNullOrEmpty(trans.Text))
-                                            actions.Add(new PublishAction() { Text = $"    ParameterType Enum {penum.Name}/{ptype.Name} ({ptype.UId}): Keine Übersetzung vorhanden ({trans.Language.Text})", State = PublishState.Warning });
+                                    if(!showOnlyErrors)
+                                        foreach(Translation trans in penum.Text)
+                                            if(string.IsNullOrEmpty(trans.Text))
+                                                actions.Add(new PublishAction() { Text = $"    ParameterType Enum {penum.Name}/{ptype.Name} ({ptype.UId}): Keine Übersetzung vorhanden ({trans.Language.Text})", State = PublishState.Warning });
                                 }
                             }
                             break;
@@ -190,9 +216,9 @@ namespace Kaenx.Creator.Classes {
 
                         case ParameterTypes.Color:
                             if(ptype.UIHint != "RGB" && ptype.UIHint != "RGBW" && ptype.UIHint != "HSV")
-                                actions.Add(new PublishAction() { Text = $"    ParameterTyp Color {ptype.Name} ({ptype.UId}): Nicht unterstützter Farbraum {ptype.UIHint}", State = PublishState.Warning });
+                                actions.Add(new PublishAction() { Text = $"    ParameterTyp Color {ptype.Name} ({ptype.UId}): Nicht unterstützter Farbraum {ptype.UIHint}", State = PublishState.Fail });
                             if(ptype.UIHint == "RGBW" && vers.NamespaceVersion < 20)
-                                actions.Add(new PublishAction() { Text = $"    ParameterTyp Color {ptype.Name} ({ptype.UId}): RGBW wird erst ab NamespaceVersion 20 unterstützt", State = PublishState.Warning });
+                                actions.Add(new PublishAction() { Text = $"    ParameterTyp Color {ptype.Name} ({ptype.UId}): RGBW wird erst ab NamespaceVersion 20 unterstützt", State = PublishState.Fail });
                             break;
 
                         case ParameterTypes.IpAddress:
@@ -205,24 +231,24 @@ namespace Kaenx.Creator.Classes {
                     }
                 }
 
-                CheckVersion(vers, actions, vers.DefaultLanguage, vers.NamespaceVersion);
+                CheckVersion(vers, actions, vers.DefaultLanguage, vers.NamespaceVersion, showOnlyErrors);
 
 
                 foreach(Module mod in vers.Modules)
                 {
                     actions.Add(new PublishAction() { Text = $"Prüfe Module '{mod.Name}'" });
-                    CheckVersion(mod, actions, vers.DefaultLanguage, vers.NamespaceVersion);
+                    CheckVersion(mod, actions, vers.DefaultLanguage, vers.NamespaceVersion, showOnlyErrors);
+                    //TODO check for Argument exist
                 }
             }
             #endregion
-
-            //if(EtsVersions.Single(v => v.Number == highestNS).IsEnabled == false)
-            //        actions.Add(new PublishAction() { Text = $"Mindestens eine Applikation verwendet einen Namespace ({highestNS}), der auf diesem Rechner nicht erstellt werden kann.", State = PublishState.Fail });
         }
 
 
-        private static void CheckVersion(IVersionBase vbase, ObservableCollection<PublishAction> actions, string defaultLang, int ns)
+        private static void CheckVersion(IVersionBase vbase, ObservableCollection<PublishAction> actions, string defaultLang, int ns, bool showOnlyErrors)
         {
+            //TODO check languages from Texts
+            
             foreach(Parameter para in vbase.Parameters) {
                 if(para.ParameterTypeObject == null) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Kein ParameterTyp ausgewählt", State = PublishState.Fail });
                 else {
@@ -266,16 +292,38 @@ namespace Kaenx.Creator.Classes {
                 if(para.TranslationText) {
                     Translation trans = para.Text.Single(t => t.Language.CultureCode == defaultLang);
                     if(string.IsNullOrEmpty(trans.Text))
-                        actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Keine Übersetzung vorhanden ({trans.Language.Text})", State = PublishState.Fail });
+                        actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Keine Übersetzung für Text vorhanden ({trans.Language.Text})", State = PublishState.Fail });
                 } else {
-                    foreach(Translation trans in para.Text)
-                        if(string.IsNullOrEmpty(trans.Text))
-                            actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Keine Übersetzung vorhanden ({trans.Language.Text})", State = PublishState.Warning });
+                    if(!showOnlyErrors)
+                    {
+                        if(para.Text.Count == para.Text.Count(t => string.IsNullOrEmpty(t.Text)))
+                                actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Keine Übersetzungen für Text vorhanden", State = PublishState.Warning });
+                        else
+                            foreach(Translation trans in para.Text)
+                                if(string.IsNullOrEmpty(trans.Text))
+                                    actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Keine Übersetzung für Text vorhanden ({trans.Language.Text})", State = PublishState.Warning });
+                    }
+                }
+
+                if(para.TranslationSuffix) {
+                    Translation trans = para.Suffix.Single(t => t.Language.CultureCode == defaultLang);
+                    if(string.IsNullOrEmpty(trans.Text))
+                        actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Keine Übersetzung für Suffix vorhanden ({trans.Language.Text})", State = PublishState.Fail });
+                } else {
+                    if(!showOnlyErrors)
+                    {
+                        if(para.Suffix.Count == para.Suffix.Count(t => string.IsNullOrEmpty(t.Text)))
+                                actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Keine Übersetzungen für Suffix vorhanden", State = PublishState.Warning });
+                        else
+                            foreach(Translation trans in para.Suffix)
+                                if(string.IsNullOrEmpty(trans.Text))
+                                    actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Keine Übersetzung für Suffix vorhanden ({trans.Language.Text})", State = PublishState.Warning });
+                    }
                 }
 
                 if(!para.IsInUnion) {
                     switch(para.SavePath) {
-                        case ParamSave.Memory:
+                        case SavePaths.Memory:
                         {
                             if(para.SaveObject == null)
                                 actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Kein Speichersegment ausgewählt", State = PublishState.Fail });
@@ -288,7 +336,7 @@ namespace Kaenx.Creator.Classes {
                             break;
                         }
 
-                        case ParamSave.Property:
+                        case SavePaths.Property:
                         {
                             if((para.SaveObject as Property).ObjectIndex == -1) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): ObjectIndex nicht festgelegt", State = PublishState.Fail });
                             if((para.SaveObject as Property).PropertyId == -1) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): PropertyId nicht festgelegt", State = PublishState.Fail });
@@ -306,6 +354,39 @@ namespace Kaenx.Creator.Classes {
                     
                     //TODO check value overwrite
                     ParameterType ptype = para.ParameterObject.ParameterTypeObject;
+
+                    if(para.OverwriteText)
+                    {
+                        if(para.ParameterObject.TranslationText) {
+                            Translation trans = para.Text.Single(t => t.Language.CultureCode == defaultLang);
+                            if(string.IsNullOrEmpty(trans.Text))
+                                actions.Add(new PublishAction() { Text = $"    ParameterRef {para.Name} ({para.UId}): Keine Übersetzung vorhanden ({trans.Language.Text})", State = PublishState.Fail });
+                        } else {
+                            if(!showOnlyErrors)
+                            {
+                                if(para.Text.Count == para.Text.Count(t => string.IsNullOrEmpty(t.Text)))
+                                        actions.Add(new PublishAction() { Text = $"    ParameterRef {para.Name} ({para.UId}): Keine Übersetzungen für Text vorhanden", State = PublishState.Warning });
+                                else
+                                    foreach(Translation trans in para.Text)
+                                        if(string.IsNullOrEmpty(trans.Text))
+                                            actions.Add(new PublishAction() { Text = $"    ParameterRef {para.Name} ({para.UId}): Keine Übersetzung für Text vorhanden ({trans.Language.Text})", State = PublishState.Warning });
+                            }
+                        }
+                    }
+
+                    if(para.OverwriteSuffix)
+                    {
+                        if(para.ParameterObject.TranslationSuffix) {
+                            Translation trans = para.Suffix.Single(t => t.Language.CultureCode == defaultLang);
+                            if(string.IsNullOrEmpty(trans.Text))
+                                actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Keine Übersetzung für Suffix vorhanden ({trans.Language.Text})", State = PublishState.Fail });
+                        } else {
+                            if(!showOnlyErrors)
+                                foreach(Translation trans in para.Suffix)
+                                    if(string.IsNullOrEmpty(trans.Text))
+                                        actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Keine Übersetzung für Suffix vorhanden ({trans.Language.Text})", State = PublishState.Warning });
+                        }
+                    }
 
                     switch(ptype.Type) {
                         case ParameterTypes.Text:
@@ -355,19 +436,32 @@ namespace Kaenx.Creator.Classes {
                     if(string.IsNullOrEmpty(trans.Text))
                         actions.Add(new PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Keine Übersetzung für Text vorhanden ({trans.Language.Text})", State = PublishState.Fail });
                 } else {
-                    foreach(Translation trans in com.Text)
-                        if(string.IsNullOrEmpty(trans.Text))
-                            actions.Add(new PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Keine Übersetzung für Text vorhanden ({trans.Language.Text})", State = PublishState.Warning });
+                    if(!showOnlyErrors)
+                    {
+                        if(com.Text.Count == com.Text.Count(t => string.IsNullOrEmpty(t.Text)))
+                                actions.Add(new PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Keine Übersetzungen für Text vorhanden", State = PublishState.Warning });
+                        else
+                            foreach(Translation trans in com.Text)
+                                if(string.IsNullOrEmpty(trans.Text))
+                                    actions.Add(new PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Keine Übersetzung für Text vorhanden ({trans.Language.Text})", State = PublishState.Warning });
+                    }
                 }
+                
 
                 if(com.TranslationFunctionText) {
                     Translation trans = com.FunctionText.Single(t => t.Language.CultureCode == defaultLang);
                     if(string.IsNullOrEmpty(trans.Text))
                         actions.Add(new PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Keine Übersetzung für FunktionsText vorhanden ({trans.Language.Text})", State = PublishState.Fail });
                 } else {
-                    foreach(Translation trans in com.FunctionText)
-                        if(string.IsNullOrEmpty(trans.Text))
-                            actions.Add(new PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Keine Übersetzung für FunktionsText vorhanden ({trans.Language.Text})", State = PublishState.Warning });
+                    if(!showOnlyErrors)
+                    {
+                        if(com.FunctionText.Count == com.FunctionText.Count(t => string.IsNullOrEmpty(t.Text)))
+                                actions.Add(new PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Keine Übersetzungen für FunktionsText vorhanden", State = PublishState.Warning });
+                        else
+                            foreach(Translation trans in com.FunctionText)
+                                if(string.IsNullOrEmpty(trans.Text))
+                                    actions.Add(new PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Keine Übersetzung für FunktionsText vorhanden ({trans.Language.Text})", State = PublishState.Warning });
+                    }
                 }
 
                 if(com.UseTextParameter && com.ParameterRefObject == null)
@@ -384,9 +478,10 @@ namespace Kaenx.Creator.Classes {
                         if(string.IsNullOrEmpty(trans.Text))
                             actions.Add(new PublishAction() { Text = $"    ComObjectRef {rcom.Name} ({rcom.UId}): Keine Übersetzung für Text vorhanden ({trans.Language.Text})", State = PublishState.Fail });
                     } else {
-                        foreach(Translation trans in rcom.Text)
-                            if(string.IsNullOrEmpty(trans.Text))
-                                actions.Add(new PublishAction() { Text = $"    ComObjectRef {rcom.Name} ({rcom.UId}): Keine Übersetzung für Text vorhanden ({trans.Language.Text})", State = PublishState.Warning });
+                        if(!showOnlyErrors)
+                            foreach(Translation trans in rcom.Text)
+                                if(string.IsNullOrEmpty(trans.Text))
+                                    actions.Add(new PublishAction() { Text = $"    ComObjectRef {rcom.Name} ({rcom.UId}): Keine Übersetzung für Text vorhanden ({trans.Language.Text})", State = PublishState.Warning });
                     }
                 }
 
@@ -396,30 +491,26 @@ namespace Kaenx.Creator.Classes {
                         if(string.IsNullOrEmpty(trans.Text))
                             actions.Add(new PublishAction() { Text = $"    ComObjectRef {rcom.Name} ({rcom.UId}): Keine Übersetzung für FunktionsText vorhanden ({trans.Language.Text})", State = PublishState.Fail });
                     } else {
-                        foreach(Translation trans in rcom.FunctionText)
-                            if(string.IsNullOrEmpty(trans.Text))
-                                actions.Add(new PublishAction() { Text = $"    ComObjectRef {rcom.Name} ({rcom.UId}): Keine Übersetzung für FunktionsText vorhanden ({trans.Language.Text})", State = PublishState.Warning });
+                        if(!showOnlyErrors)
+                            foreach(Translation trans in rcom.FunctionText)
+                                if(string.IsNullOrEmpty(trans.Text))
+                                    actions.Add(new PublishAction() { Text = $"    ComObjectRef {rcom.Name} ({rcom.UId}): Keine Übersetzung für FunktionsText vorhanden ({trans.Language.Text})", State = PublishState.Warning });
                     }
                 }
             }
         
             
-            //TODO check Modules also
-            //check for Argument exist
 
             //TODO check union size fits parameter+offset
-
-            //TODO check dynamic
-            // - separator Text required
 
             //TODO check ParameterBlockRename only in vers 11
 
 
-            CheckDynamicItem(vbase.Dynamics[0], actions, ns);
+            CheckDynamicItem(vbase.Dynamics[0], actions, ns, showOnlyErrors);
         }
 
         
-        private static void CheckDynamicItem(Models.Dynamic.IDynItems item, ObservableCollection<Models.PublishAction> actions, int ns)
+        private static void CheckDynamicItem(Models.Dynamic.IDynItems item, ObservableCollection<Models.PublishAction> actions, int ns, bool showOnlyErrors)
         {
             switch(item)
             {
@@ -465,7 +556,7 @@ namespace Kaenx.Creator.Classes {
                     if(string.IsNullOrEmpty(dwh.Condition) && !dwh.IsDefault)
                         actions.Add(new PublishAction() { Text = $"    DynWhen {dwh.Name} wurde keine Bedingung angegeben", State = PublishState.Fail});
                     
-                    if(!string.IsNullOrEmpty(dwh.Condition) && dwh.IsDefault)
+                    if(!showOnlyErrors && !string.IsNullOrEmpty(dwh.Condition) && dwh.IsDefault)
                         actions.Add(new PublishAction() { Text = $"    DynWhen {dwh.Name} ist Default, Bedingung wird ignoriert", State = PublishState.Warning});
                     break;
                 }
@@ -510,9 +601,63 @@ namespace Kaenx.Creator.Classes {
 
             if(item.Items == null) return;
             foreach(IDynItems xitem in item.Items)
-                CheckDynamicItem(xitem, actions, ns);
+                CheckDynamicItem(xitem, actions, ns, showOnlyErrors);
         }
 
+        public static string CheckImportVersion(string json, int version)
+        {
+            JObject gen = JObject.Parse(json);
 
+            if(version < 1)
+            {
+                foreach(JObject app in gen["Applications"])
+                {
+                    foreach(JObject ver in app["Versions"])
+                    {
+                        ObservableCollection<Language> langs = ver["Languages"].ToObject<ObservableCollection<Language>>();
+
+                        for(int i = 0; i < ver["Parameters"].Count(); i++)
+                        {
+                            Parameter para = ver["Parameters"][i].ToObject<Parameter>();
+                            para.Suffix = new ObservableCollection<Translation>();
+                            foreach(Language lang in langs)
+                                para.Suffix.Add(new Translation(lang, ver["Parameters"][i]["Suffix"].Value<string>()));
+                            ver["Parameters"][i] = JObject.FromObject(para);
+                        }
+                        
+                        for(int i = 0; i < ver["ParameterRefs"].Count(); i++)
+                        {
+                            Parameter para = ver["ParameterRefs"][i].ToObject<Parameter>();
+                            para.Suffix = new ObservableCollection<Translation>();
+                            foreach(Language lang in langs)
+                                para.Suffix.Add(new Translation(lang, ver["ParameterRefs"][i]["Suffix"].Value<string>()));
+                            ver["ParameterRefs"][i] = JObject.FromObject(para);
+                        }
+
+                        foreach(JObject jmodule in ver["Modules"])
+                        {
+                            for(int i = 0; i < jmodule["Parameters"].Count(); i++)
+                            {
+                                Parameter para = jmodule["Parameters"][i].ToObject<Parameter>();
+                                para.Suffix = new ObservableCollection<Translation>();
+                                foreach(Language lang in langs)
+                                    para.Suffix.Add(new Translation(lang, jmodule["Parameters"][i]["Suffix"].Value<string>()));
+                                jmodule["Parameters"][i] = JObject.FromObject(para);
+                            }
+                            
+                            for(int i = 0; i < jmodule["ParameterRefs"].Count(); i++)
+                            {
+                                Parameter para = jmodule["ParameterRefs"][i].ToObject<Parameter>();
+                                para.Suffix = new ObservableCollection<Translation>();
+                                foreach(Language lang in langs)
+                                    para.Suffix.Add(new Translation(lang, jmodule["ParameterRefs"][i]["Suffix"].Value<string>()));
+                                jmodule["ParameterRefs"][i] = JObject.FromObject(para);
+                            }
+                        }
+                    }
+                }
+            }
+            return gen.ToString();
+        }
     }
 }

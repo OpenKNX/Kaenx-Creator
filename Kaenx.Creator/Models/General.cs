@@ -17,6 +17,8 @@ namespace Kaenx.Creator.Models
         public ObservableCollection<Language> Languages { get; set; } = new ObservableCollection<Language>();
         public ObservableCollection<Baggage> Baggages { get; set; } = new ObservableCollection<Baggage>();
 
+        public int ImportVersion { get; set; }
+
         private int _manuId = 250;
         public int ManufacturerId
         {

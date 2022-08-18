@@ -35,8 +35,8 @@ namespace Kaenx.Creator.Models
         }
 
 
-        private ParamSave _savePath = ParamSave.Nowhere;
-        public ParamSave SavePath
+        private SavePaths _savePath = SavePaths.Nowhere;
+        public SavePaths SavePath
         {
             get { return _savePath; }
             set { _savePath = value; Changed("SavePath"); }
@@ -49,7 +49,7 @@ namespace Kaenx.Creator.Models
         public IParameterSavePath SaveObject
         {
             get {
-                if(SavePath == ParamSave.Property && (_saveObject == null || _saveObject is not Property))
+                if(SavePath == SavePaths.Property && (_saveObject == null || _saveObject is not Property))
                     _saveObject = new Property();
                 return _saveObject; 
             }
@@ -145,6 +145,7 @@ namespace Kaenx.Creator.Models
         }
 
         public ObservableCollection<Translation> Text {get;set;} = new ObservableCollection<Translation>();
+        public ObservableCollection<Translation> Suffix {get;set;} = new ObservableCollection<Translation>();
 
         private bool _transText = false;
         public bool TranslationText
@@ -153,7 +154,13 @@ namespace Kaenx.Creator.Models
             set { _transText = value; Changed("TranslationText"); }
         }
 
-        public string Suffix { get; set; }
+        private bool _transSuffix = false;
+        public bool TranslationSuffix
+        {
+            get { return _transSuffix; }
+            set { _transSuffix = value; Changed("TranslationSuffix"); }
+        }
+
         public ParamAccess Access { get; set; } = ParamAccess.Default;
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -170,6 +177,9 @@ namespace Kaenx.Creator.Models
             para.Text = new ObservableCollection<Translation>();
             foreach (Translation translation in this.Text)
                 para.Text.Add(new Translation(translation.Language, translation.Text));  
+            para.Suffix = new ObservableCollection<Translation>();
+            foreach (Translation translation in this.Suffix)
+                para.Suffix.Add(new Translation(translation.Language, translation.Text));  
             
             return para;
         }
@@ -184,8 +194,7 @@ namespace Kaenx.Creator.Models
         ReadWrite
     }
 
-    //TODO change name so union can also use it
-    public enum ParamSave {
+    public enum SavePaths {
         Nowhere,
         Memory,
         Property

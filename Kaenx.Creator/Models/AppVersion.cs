@@ -18,6 +18,7 @@ namespace Kaenx.Creator.Models
         public ObservableCollection<ComObjectRef> ComObjectRefs { get; set; } = new ObservableCollection<ComObjectRef>();
         public ObservableCollection<Memory> Memories { get; set; } = new ObservableCollection<Memory>();
         public ObservableCollection<Module> Modules { get; set; } = new ObservableCollection<Module>();
+        public ObservableCollection<Message> Messages { get; set; } = new ObservableCollection<Message>();
         public ObservableCollection<Union> Unions { get; set; } = new ObservableCollection<Union>();
         public ObservableCollection<Language> Languages { get; set; } = new ObservableCollection<Language>();
         public List<IDynamicMain> Dynamics { get; set; } = new List<IDynamicMain>();
@@ -188,6 +189,13 @@ namespace Kaenx.Creator.Models
         {
             get { return _isModulesActive; }
             set { _isModulesActive = value; Changed("IsModulesActive"); }
+        }
+        
+        private bool _isMessagesActive = false;
+        public bool IsMessagesActive
+        {
+            get { return _isMessagesActive; }
+            set { _isMessagesActive = value; Changed("IsMessagesActive"); }
         }
 
         private bool _isMemSizeAuto = true;

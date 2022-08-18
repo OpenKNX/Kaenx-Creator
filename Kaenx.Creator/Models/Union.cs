@@ -64,8 +64,8 @@ namespace Kaenx.Creator.Models
 
 
 
-        private ParamSave _savePath = ParamSave.Nowhere;
-        public ParamSave SavePath
+        private SavePaths _savePath = SavePaths.Nowhere;
+        public SavePaths SavePath
         {
             get { return _savePath; }
             set { _savePath = value; Changed("SavePath"); }

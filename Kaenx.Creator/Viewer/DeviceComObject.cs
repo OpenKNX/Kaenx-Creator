@@ -42,7 +42,7 @@ namespace Kaenx.Creator.Viewer
 
         private string _name;
 
-        public int Id { get; set; }
+        public long Id { get; set; }
         public int BindedId { get; set; }
         public int Number { get; set; }
         public string Name { get { return _name; } set { _name = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Name")); } }

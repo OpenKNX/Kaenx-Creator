@@ -35,13 +35,7 @@
         <Button Grid.Row="1" Content="Import" Click="ClickImport" Margin="0 1 1 2" />
         <Button Grid.Row="1" Grid.Column="1" Content="Export" Click="ClickExport" Margin="1 1 0 2" />
 
-        <ListView x:Name="BaggageList" Grid.Row="2" Grid.ColumnSpan="2" ItemsSource="{Binding General.Baggages, ElementName=ViewControl}">
-            <ListView.ItemTemplate>
-				<DataTemplate>
-					<TextBlock Text="{Binding Name}" Foreground="{Binding IsNotUsed, Converter={StaticResource BoolToBrush}}" />
-				</DataTemplate>
-			</ListView.ItemTemplate>
-        </ListView>
+        <ListView x:Name="BaggageList" Grid.Row="2" Grid.ColumnSpan="2" ItemsSource="{Binding General.Baggages, ElementName=ViewControl}" DisplayMemberPath="Name" />
 
         <ScrollViewer Grid.Column="3" Grid.RowSpan="3" DataContext="{Binding ElementName=BaggageList, Path=SelectedItem}" IsEnabled="{Binding Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
             <StackPanel Margin="5">
@@ -53,7 +47,7 @@
                     </ObjectDataProvider>
                     <ObjectDataProvider x:Key="dataSave" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
                         <ObjectDataProvider.MethodParameters>
-                            <x:Type TypeName="models:ParamSave"/>
+                            <x:Type TypeName="models:SavePaths"/>
                         </ObjectDataProvider.MethodParameters>
                     </ObjectDataProvider>
                     <Style TargetType="HeaderedContentControl">

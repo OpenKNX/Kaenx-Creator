@@ -120,7 +120,7 @@
 
                         <CheckBox IsChecked="{Binding OverwriteText}" VerticalAlignment="Center" />
                         <StackPanel Grid.Column="1">
-                            <CheckBox IsEnabled="{Binding OverwriteText}" IsChecked="{Binding TranslationText}" Content="Übersetzung nicht exportieren" />
+                            <CheckBox IsEnabled="{Binding OverwriteText}" IsChecked="{Binding TranslationText}" Content="Nur Standardsprache exportieren (keine Translation-Unit)" />
                             <DataGrid IsEnabled="{Binding OverwriteText}" ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
@@ -140,7 +140,7 @@
 
                         <CheckBox IsChecked="{Binding OverwriteFunctionText}" VerticalAlignment="Center" />
                         <StackPanel Grid.Column="1">
-                            <CheckBox IsEnabled="{Binding OverwriteFunctionText}" IsChecked="{Binding TranslationFunctionText}" Content="Übersetzung nicht exportieren" />
+                            <CheckBox IsEnabled="{Binding OverwriteFunctionText}" IsChecked="{Binding TranslationFunctionText}" Content="Nur Standardsprache exportieren (keine Translation-Unit)" />
                             <DataGrid IsEnabled="{Binding OverwriteFunctionText}" ItemsSource="{Binding FunctionText}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />

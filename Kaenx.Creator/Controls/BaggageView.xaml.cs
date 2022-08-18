@@ -26,10 +26,6 @@ namespace Kaenx.Creator.Controls
             InitializeComponent();
         }
 
-        protected virtual void OnVersionChanged() {
-            //Changed("MemoriesList");
-        }
-
         private void ClickAdd(object sender, System.Windows.RoutedEventArgs e)
         {
             OpenFileDialog diag = new OpenFileDialog();

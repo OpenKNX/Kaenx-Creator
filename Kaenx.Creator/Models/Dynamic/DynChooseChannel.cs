@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Text;
 
 namespace Kaenx.Creator.Models.Dynamic
@@ -40,6 +41,15 @@ namespace Kaenx.Creator.Models.Dynamic
         private void Changed(string name)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+        
+        public object Copy()
+        {
+            DynChooseBlock dyn = (DynChooseBlock)this.MemberwiseClone();
+            dyn.Items = new ObservableCollection<IDynItems>();
+            foreach (IDynItems item in this.Items)
+                dyn.Items.Add((IDynItems)item.Copy());
+            return dyn;
         }
     }
 }

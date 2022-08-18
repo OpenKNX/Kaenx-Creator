@@ -26,5 +26,16 @@ namespace Kaenx.Creator.Models.Dynamic
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
+        
+        public object Copy()
+        {
+            DynamicModule main = (DynamicModule)this.MemberwiseClone();
+
+            /* overwrite old reference with deep copy of the Translation Objects*/
+            main.Items = new ObservableCollection<IDynItems>();
+            foreach (IDynItems item in this.Items)
+                main.Items.Add((IDynItems)item.Copy());
+            return main;
+        }
     }
 }

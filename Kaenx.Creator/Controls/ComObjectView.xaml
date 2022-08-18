@@ -116,7 +116,7 @@
 
                     <HeaderedContentControl Header="Text">
                         <StackPanel>
-                            <CheckBox IsChecked="{Binding TranslationText}" Content="Übersetzung nicht exportieren" />
+                            <CheckBox IsChecked="{Binding TranslationText}" Content="Nur Standardsprache exportieren (keine Translation-Unit)" />
                             <DataGrid ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
@@ -140,7 +140,7 @@
 
                     <HeaderedContentControl Header="Funktionstext">
                         <StackPanel>
-                            <CheckBox IsChecked="{Binding TranslationFunctionText}" Content="Übersetzung nicht exportieren" />
+                            <CheckBox IsChecked="{Binding TranslationFunctionText}" Content="Nur Standardsprache exportieren (keine Translation-Unit)" />
                             <DataGrid ItemsSource="{Binding FunctionText}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />

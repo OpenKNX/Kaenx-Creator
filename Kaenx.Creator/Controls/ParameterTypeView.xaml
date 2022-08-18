@@ -181,7 +181,7 @@
             </HeaderedContentControl>
             
             <HeaderedContentControl Header="Baggage" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Picture, FallbackValue=Collapsed}">
-                <ComboBox ItemsSource="{Binding General.Baggages, ElementName=ViewControl}" SelectedItem="{Binding BaggageObject}" DisplayMemberPath="Name" Margin="0 5" />
+                <ComboBox ItemsSource="{Binding Baggages, ElementName=ViewControl}" SelectedItem="{Binding BaggageObject}" DisplayMemberPath="Name" Margin="0 5" />
             </HeaderedContentControl>
 
             <HeaderedContentControl Header="Farbraum" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Color, FallbackValue=Collapsed}">

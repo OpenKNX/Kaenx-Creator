@@ -50,7 +50,7 @@
                     </ObjectDataProvider>
                     <ObjectDataProvider x:Key="dataSave" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
                         <ObjectDataProvider.MethodParameters>
-                            <x:Type TypeName="models:ParamSave"/>
+                            <x:Type TypeName="models:SavePaths"/>
                         </ObjectDataProvider.MethodParameters>
                     </ObjectDataProvider>
                     <Style TargetType="HeaderedContentControl">
