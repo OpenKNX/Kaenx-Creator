@@ -127,7 +127,7 @@ namespace Kaenx.Creator.Classes {
 
 
                 foreach(ParameterType ptype in vers.ParameterTypes) {
-                    Int64 maxsize = (Int64)Math.Pow(2, ptype.SizeInBit);
+                    long maxsize = (long)Math.Pow(2, ptype.SizeInBit);
         
                     if(ptype.UIHint == "CheckBox" && (ptype.Min != 0 || ptype.Max != 1 || ptype.SizeInBit != 1))
                         actions.Add(new PublishAction() { Text = $"    ParameterType Text {ptype.Name} ({ptype.UId}): Wenn UIHint Checkbox ist, ist Min=0 und Max=1 erforderlich, sowie Size=1", State = PublishState.Fail });
@@ -184,7 +184,7 @@ namespace Kaenx.Creator.Classes {
                             break;
 
                         case ParameterTypes.NumberInt:
-                            maxsize = (Int64)Math.Ceiling(maxsize / 2.0);
+                            maxsize = (long)Math.Ceiling(maxsize / 2.0);
                             if(!ptype.IsSizeManual)
                             {
                                 int z = ((int)ptype.Min) * (-1);

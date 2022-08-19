@@ -172,6 +172,9 @@
                     <ComboBox Grid.Column="2" IsEnabled="{Binding OverwriteAccess}" ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding Access, Mode=TwoWay}" />
                 </Grid>
             </HeaderedContentControl>
+            <HeaderedContentControl Header="DisplayOrder">
+                <TextBox Text="{Binding DisplayOrder, UpdateSourceTrigger=PropertyChanged}"/>
+            </HeaderedContentControl>
         </StackPanel>
     </Grid>
 </UserControl>

@@ -305,13 +305,13 @@ namespace Kaenx.Creator.Classes
 
         private void CheckUniqueRefId(XElement xstatic, XElement xdyn)
         {
-            List<Int64> ids = new List<Int64>();
+            List<long> ids = new List<long>();
             bool flag1 = false;
             bool flag2 = false;
 
             foreach(XElement xele in xstatic.Descendants(Get("ParameterRef")))
             {
-                Int64 paraId = Int64.Parse(GetLastSplit(xele.Attribute("Id").Value, 2));
+                long paraId = long.Parse(GetLastSplit(xele.Attribute("Id").Value, 2));
                 if(!ids.Contains(paraId))
                     ids.Add(paraId);
                 else {
@@ -323,7 +323,7 @@ namespace Kaenx.Creator.Classes
             ids.Clear();
             foreach(XElement xele in xstatic.Descendants(Get("ComObjectRef")))
             {
-                Int64 comId = Int64.Parse(GetLastSplit(xele.Attribute("Id").Value, 2));
+                long comId = long.Parse(GetLastSplit(xele.Attribute("Id").Value, 2));
                 if(!ids.Contains(comId))
                     ids.Add(comId);
                 else {
@@ -760,7 +760,7 @@ namespace Kaenx.Creator.Classes
                 ParameterRef pref = new ParameterRef();
 
                 pref.UId = _uidCounter++;
-                pref.Id = Int64.Parse(GetLastSplit(xref.Attribute("Id").Value, 2));
+                pref.Id = long.Parse(GetLastSplit(xref.Attribute("Id").Value, 2));
 
                 pref.OverwriteValue = xref.Attribute("Value") != null;
                 pref.Value = xref.Attribute("Value")?.Value ?? "";
@@ -783,6 +783,7 @@ namespace Kaenx.Creator.Classes
                 pref.OverwriteText = xref.Attribute("Text") != null;
                 pref.Text = GetTranslation(xref.Attribute("Id").Value, "Text", xref);
                 pref.Suffix = GetTranslation(xref.Attribute("Id").Value, "SuffixText", xref);
+                pref.DisplayOrder = int.Parse(xref.Attribute("DisplayOrder")?.Value ?? "-1");
 
                 vbase.ParameterRefs.Add(pref);
             }
@@ -1308,7 +1309,7 @@ namespace Kaenx.Creator.Classes
                             Parent = parent,
                             Cell = xele.Attribute("Cell")?.Value
                         };
-                        Int64 paraId64 = Int64.Parse(GetLastSplit(xele.Attribute("RefId").Value, 2));
+                        long paraId64 = long.Parse(GetLastSplit(xele.Attribute("RefId").Value, 2));
                         dp.ParameterRefObject = vbase.ParameterRefs.Single(p => p.Id == paraId64);
                         parent.Items.Add(dp);
                         break;

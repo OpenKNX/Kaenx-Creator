@@ -29,11 +29,18 @@ namespace Kaenx.Creator.Models
             set { _uid = value; Changed("UId"); }
         }
 
-        private Int64 _id = -1;
-        public Int64 Id
+        private long _id = -1;
+        public long Id
         {
             get { return _id; }
             set { _id = value; Changed("Id"); }
+        }
+
+        private int _displayOrder = -1;
+        public int DisplayOrder
+        {
+            get { return _displayOrder; }
+            set { _displayOrder = value; Changed("DisplayOrder"); }
         }
 
 

@@ -464,11 +464,35 @@ namespace Kaenx.Creator
                 }
 
                 addLangToVersion(ver, lang);
+                addLangToVersion(ver.Dynamics[0], lang);
                 foreach(Models.Module mod in ver.Modules)
+                {
                     addLangToVersion(mod, lang);
-
-                //TODO add lang to dynamic items (blocks/channels/separators)
+                    addLangToVersion(mod.Dynamics[0], lang);
+                }
             }
+        }
+
+        private void addLangToVersion(Models.Dynamic.IDynItems parent, Models.Language lang)
+        {
+            switch(parent)
+            {
+                case Models.Dynamic.DynChannel dch:
+                    dch.Text.Add(new Models.Translation(lang, ""));
+                    break;
+                    
+                case Models.Dynamic.DynParaBlock dpb:
+                    dpb.Text.Add(new Models.Translation(lang, ""));
+                    break;
+
+                case Models.Dynamic.DynSeparator ds:
+                    ds.Text.Add(new Models.Translation(lang, ""));
+                    break;
+            }
+
+            if(parent.Items?.Count > 0)
+                foreach(Models.Dynamic.IDynItems item in parent.Items)
+                    addLangToVersion(item, lang);
         }
 
         private void addLangToVersion(Models.IVersionBase vbase, Models.Language lang)

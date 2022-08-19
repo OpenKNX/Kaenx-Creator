@@ -122,11 +122,13 @@
                     <ColumnDefinition MinWidth="230" MaxWidth="350" Width="3*" />
                     <ColumnDefinition MaxWidth="120" Width="1*" />
                     <ColumnDefinition Width="50" />
+                    <ColumnDefinition Width="50" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="{Binding Text}" Margin="10 0" VerticalAlignment="Center" TextWrapping="Wrap" />
                 <ComboBox Grid.Column="1" IsEnabled="{Binding IsEnabled}" ItemsSource="{Binding Options}" DisplayMemberPath="Text" SelectedValuePath="Value" SelectedValue="{Binding Value, Mode=TwoWay}" VerticalAlignment="Center" HorizontalAlignment="Stretch" />
                 <TextBlock Grid.Column="2" Text="{Binding SuffixText}" Margin="10 0" VerticalAlignment="Center" HorizontalAlignment="Left" />
                 <TextBlock Grid.Column="3" Text="{Binding Value}" Margin="5 0" HorizontalAlignment="Right" />
+                <TextBlock Grid.Column="4" Text="{Binding Id}" Margin="5 0" HorizontalAlignment="Right" />
             </Grid>
         </DataTemplate>
 
@@ -137,6 +139,7 @@
                     <ColumnDefinition MinWidth="230" MaxWidth="350" Width="3*" />
                     <ColumnDefinition MaxWidth="120" Width="1*" />
                     <ColumnDefinition Width="50" />
+                    <ColumnDefinition Width="50" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="{Binding Text}" Margin="10 0" VerticalAlignment="Center" TextWrapping="Wrap" />
 
@@ -146,6 +149,7 @@
                 </StackPanel>
                 <TextBlock Grid.Column="2" Text="{Binding SuffixText}" Margin="10 0" VerticalAlignment="Center" HorizontalAlignment="Left" />
                 <TextBlock Grid.Column="3" Text="{Binding Value}" Margin="5 0" HorizontalAlignment="Right" />
+                <TextBlock Grid.Column="4" Text="{Binding Id}" Margin="5 0" HorizontalAlignment="Right" />
             </Grid>
         </DataTemplate>
 
@@ -156,6 +160,7 @@
                     <ColumnDefinition MinWidth="230" MaxWidth="350" Width="3*" />
                     <ColumnDefinition MaxWidth="120" Width="1*" />
                     <ColumnDefinition Width="50" />
+                    <ColumnDefinition Width="50" />
                     <!--<ColumnDefinition Width="45*" /> MaxWidth="550"-->
                     <!--<ColumnDefinition Width="50*" />MinWidth="230" MaxWidth="350"-->
                     <!--<ColumnDefinition Width="5*" />MaxWidth="100"-->
@@ -165,6 +170,7 @@
                 <ctrls:NumberBox Grid.Column="1" IsEnabled="{Binding IsEnabled}" Value="{Binding Value}" ValueOk="{Binding Value, Mode=TwoWay}" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Default="{Binding Default}" Increment="{Binding Increment}" />
                 <TextBlock Grid.Column="2" Text="{Binding SuffixText}" Margin="10 0" VerticalAlignment="Center" HorizontalAlignment="Left" />
                 <TextBlock Grid.Column="3" Text="{Binding Value}" Margin="5 0" HorizontalAlignment="Right" />
+                <TextBlock Grid.Column="4" Text="{Binding Id}" Margin="5 0" HorizontalAlignment="Right" />
             </Grid>
         </DataTemplate>
 
@@ -175,6 +181,7 @@
                     <ColumnDefinition MinWidth="230" MaxWidth="350" Width="3*" />
                     <ColumnDefinition MaxWidth="120" Width="1*" />
                     <ColumnDefinition Width="50" />
+                    <ColumnDefinition Width="50" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="{Binding Text}" Margin="10 0" VerticalAlignment="Center" />
 
@@ -184,6 +191,7 @@
                     <Run Text="{Binding SuffixText}" />
                 </TextBlock>
                 <TextBlock Grid.Column="3" Text="{Binding Value}" Margin="5 0" HorizontalAlignment="Right" />
+                <TextBlock Grid.Column="4" Text="{Binding Id}" Margin="5 0" HorizontalAlignment="Right" />
             </Grid>
         </DataTemplate>
 
@@ -193,11 +201,13 @@
                     <ColumnDefinition MaxWidth="550" Width="9*" />
                     <ColumnDefinition MinWidth="230" MaxWidth="350" Width="3*" />
                     <ColumnDefinition MaxWidth="120" Width="1*" />
+                    <ColumnDefinition Width="50" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="{Binding Text}" Margin="10 0" VerticalAlignment="Center" />
 
                 <Image Grid.Column="1" Source="{Binding Image}" />
                 <TextBlock Grid.Column="2" Text="{Binding SuffixText}" Margin="10 0" VerticalAlignment="Center" HorizontalAlignment="Left" />
+                <TextBlock Grid.Column="3" Text="{Binding Id}" Margin="5 0" HorizontalAlignment="Right" />
             </Grid>
         </DataTemplate>
 
@@ -208,10 +218,12 @@
                     <ColumnDefinition MinWidth="230" MaxWidth="350" Width="3*" />
                     <ColumnDefinition MaxWidth="120" Width="1*" />
                     <ColumnDefinition Width="50" />
+                    <ColumnDefinition Width="50" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="{Binding Text}" Margin="10 0" VerticalAlignment="Center" TextWrapping="Wrap" />
                 <CheckBox Grid.Column="1" IsChecked="{Binding Value, Converter={StaticResource BinToBool}}" />
                 <TextBlock Grid.Column="3" Text="{Binding Value}" Margin="5 0" HorizontalAlignment="Right" />
+                <TextBlock Grid.Column="4" Text="{Binding Id}" Margin="5 0" HorizontalAlignment="Right" />
             </Grid>
         </DataTemplate>
 
@@ -222,10 +234,12 @@
                     <ColumnDefinition MinWidth="230" MaxWidth="350" Width="3*" />
                     <ColumnDefinition MaxWidth="120" Width="1*" />
                     <ColumnDefinition Width="50" />
+                    <ColumnDefinition Width="50" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="{Binding Text}" Margin="10 0" VerticalAlignment="Center" TextWrapping="Wrap" />
                 <TextBlock Grid.Column="1" Text="{Binding Value, Mode=TwoWay}" VerticalAlignment="Center" />
                 <TextBlock Grid.Column="2" Text="{Binding SuffixText}" Margin="10 0" VerticalAlignment="Center" HorizontalAlignment="Left" />
+                <TextBlock Grid.Column="4" Text="{Binding Id}" Margin="5 0" HorizontalAlignment="Right" />
             </Grid>
         </DataTemplate>
 
@@ -236,10 +250,12 @@
                     <ColumnDefinition MinWidth="230" MaxWidth="350" Width="3*" />
                     <ColumnDefinition MaxWidth="120" Width="1*" />
                     <ColumnDefinition Width="50" />
+                    <ColumnDefinition Width="50" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="{Binding Text}" Margin="10 0" VerticalAlignment="Center" TextWrapping="Wrap" />
                 <TextBox Height="22" VerticalContentAlignment="Center" Grid.Column="1" IsEnabled="{Binding IsEnabled}" MaxLength="{Binding MaxLength}" Text="{Binding Value, Mode=TwoWay}" VerticalAlignment="Center" />
                 <TextBlock Grid.Column="2" Text="{Binding SuffixText}" Margin="10 0" VerticalAlignment="Center" HorizontalAlignment="Left" />
+                <TextBlock Grid.Column="4" Text="{Binding Id}" Margin="5 0" HorizontalAlignment="Right" />
             </Grid>
         </DataTemplate>
 
@@ -256,11 +272,13 @@
                     <ColumnDefinition MinWidth="230" MaxWidth="350" Width="50*" />
                     <ColumnDefinition MaxWidth="120" Width="5*" />
                     <ColumnDefinition />
+                    <ColumnDefinition Width="50" />
                 </Grid.ColumnDefinitions>
 
                 <Border Grid.ColumnSpan="4" Margin="10 5" BorderBrush="Gray" BorderThickness="0 1 0 0" Visibility="{Binding IsLineVisible, Converter={StaticResource Bool2Vis}}" />
                 <!--Visibility="{Binding Text, Converter={StaticResource ConvertStringVisible}}"-->
                 <TextBlock Grid.ColumnSpan="2" Text="{Binding Text}" FontSize="{Binding Hint, Converter={StaticResource HeadlineToSize}}" FontWeight="{Binding Hint, Converter={StaticResource HeadlineToWeight}}" Margin="10 0" VerticalAlignment="Center" TextWrapping="Wrap" />
+                <TextBlock Grid.Column="4" Text="{Binding Id}" Margin="5 0" HorizontalAlignment="Right" />
             </Grid>
         </DataTemplate>
 
@@ -275,11 +293,13 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="auto" />
                         <ColumnDefinition />
+                        <ColumnDefinition Width="50" />
                     </Grid.ColumnDefinitions>
 
                     <!--<FontIcon FontFamily="Segoe MDL2 Assets" Glyph="{Binding IsError, Converter={StaticResource ConvertBoolToIcon}}" />-->
                     <Image Height="20" Source="{Binding Hint, Converter={StaticResource HintToIcon}}" />
                     <TextBlock Grid.Column="1" Text="{Binding Text}" Margin="10 3 0 3" VerticalAlignment="Center" TextWrapping="Wrap" />
+                    <TextBlock Grid.Column="2" Text="{Binding Id}" Margin="5 0" HorizontalAlignment="Right" />
                 </Grid>
             </Border>
         </DataTemplate>
@@ -290,6 +310,8 @@
                     <ColumnDefinition MaxWidth="550" Width="9*" />
                     <ColumnDefinition MinWidth="230" MaxWidth="350" Width="3*" />
                     <ColumnDefinition MaxWidth="120" Width="1*" />
+                    <ColumnDefinition Width="50" />
+                    <ColumnDefinition Width="50" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="{Binding Text}" Margin="10 0" VerticalAlignment="Center" />
 
@@ -321,6 +343,8 @@
                         </Button.Flyout>-->
                     </Button>
                 </Grid>
+                
+                <TextBlock Grid.Column="4" Text="{Binding Id}" Margin="5 0" HorizontalAlignment="Right" />
             </Grid>
         </DataTemplate>
         
@@ -384,6 +408,13 @@
 
         <GridSplitter Grid.Row="1" Grid.Column="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
 
-        <TextBlock Grid.Row="2" Grid.Column="2" x:Name="LogViewer" />
+        <Grid Grid.Row="2" Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Button Content="Parameter Wert abfragen" Click="ClickGetValue" />
+            <TextBlock Grid.Row="1" x:Name="LogViewer" />
+        </Grid>
     </Grid>
 </Window>

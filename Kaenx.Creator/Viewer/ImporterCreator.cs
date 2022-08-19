@@ -464,6 +464,8 @@ namespace Kaenx.Creator.Viewer
 
             foreach(Models.Dynamic.IDynItems item in dpb.Items)
                 ParseDynamicItem(item, dch, pb, conds, args);
+
+            pb.Parameters.Sort((a, b) => a.DisplayOrder.CompareTo(b.DisplayOrder));
         }
 
         private ParamCondition ParseCondition(Models.Dynamic.IDynWhen test, long sourceId)
@@ -557,7 +559,8 @@ namespace Kaenx.Creator.Viewer
                             HasAccess = mpara.Access != AccessType.None,
                             Value = mpara.Value,
                             Default = mpara.Value,
-                            Conditions = conds
+                            Conditions = conds,
+                            DisplayOrder = para.ParameterRefObject.DisplayOrder
                         };
                         foreach(Models.ParameterTypeEnum ptenu  in para.ParameterRefObject.ParameterObject.ParameterTypeObject.Enums)
                             penu.Options.Add(new ParamEnumOption() { Text = GetDefaultLang(ptenu.Text), Value = ptenu.Value.ToString() });
@@ -569,7 +572,8 @@ namespace Kaenx.Creator.Viewer
                             HasAccess = mpara.Access != AccessType.None,
                             Value = mpara.Value,
                             Default = mpara.Value,
-                            Conditions = conds
+                            Conditions = conds,
+                            DisplayOrder = para.ParameterRefObject.DisplayOrder
                         };
                         penu.Option1 = new ParamEnumOption() {
                             Text = GetDefaultLang(para.ParameterRefObject.ParameterObject.ParameterTypeObject.Enums[0].Text),
@@ -597,6 +601,7 @@ namespace Kaenx.Creator.Viewer
                                 Value = mpara.Value,
                                 Default = mpara.Value,
                                 Conditions = conds,
+                                DisplayOrder = para.ParameterRefObject.DisplayOrder
                         };
                         block.Parameters.Add(pcheck);
                     } else if(para.ParameterRefObject.ParameterObject.ParameterTypeObject.UIHint == "Slider")
@@ -610,7 +615,8 @@ namespace Kaenx.Creator.Viewer
                                 Conditions = conds,
                                 Increment = para.ParameterRefObject.ParameterObject.ParameterTypeObject.Increment,
                                 Minimum = para.ParameterRefObject.ParameterObject.ParameterTypeObject.Min,
-                                Maximum = para.ParameterRefObject.ParameterObject.ParameterTypeObject.Max
+                                Maximum = para.ParameterRefObject.ParameterObject.ParameterTypeObject.Max,
+                                DisplayOrder = para.ParameterRefObject.DisplayOrder
                         };
                         block.Parameters.Add(pslide);
                     } else {
@@ -623,7 +629,8 @@ namespace Kaenx.Creator.Viewer
                                 Conditions = conds,
                                 Increment = para.ParameterRefObject.ParameterObject.ParameterTypeObject.Increment,
                                 Minimum = para.ParameterRefObject.ParameterObject.ParameterTypeObject.Min,
-                                Maximum = para.ParameterRefObject.ParameterObject.ParameterTypeObject.Max
+                                Maximum = para.ParameterRefObject.ParameterObject.ParameterTypeObject.Max,
+                                DisplayOrder = para.ParameterRefObject.DisplayOrder
                         };
                         block.Parameters.Add(pnum);
                     }
@@ -640,6 +647,7 @@ namespace Kaenx.Creator.Viewer
                             HasAccess = mpara.Access != AccessType.None,
                             Value = mpara.Value,
                             Conditions = conds,
+                            DisplayOrder = para.ParameterRefObject.DisplayOrder
                         };
                         block.Parameters.Add(ptext);
                     } else {
@@ -649,6 +657,7 @@ namespace Kaenx.Creator.Viewer
                             HasAccess = mpara.Access != AccessType.None,
                             Value = mpara.Value,
                             Conditions = conds,
+                            DisplayOrder = para.ParameterRefObject.DisplayOrder
                         };
                         block.Parameters.Add(ptext);
                     }
@@ -663,7 +672,8 @@ namespace Kaenx.Creator.Viewer
                         Text = mpara.Text,
                         HasAccess = mpara.Access != AccessType.None,
                         Value = mpara.Value,
-                        Conditions = conds
+                        Conditions = conds,
+                            DisplayOrder = para.ParameterRefObject.DisplayOrder
                     };
                     block.Parameters.Add(ppic);
                     break;

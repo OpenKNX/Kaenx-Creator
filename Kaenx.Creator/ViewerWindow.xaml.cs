@@ -258,9 +258,19 @@ namespace Kaenx.Creator
             {
                 System.Diagnostics.Debug.WriteLine("Wert geändert! " + para.Id + " -> " + para.Value);
                 LogViewer.Text = $"Parameter geändert: ID={para.Id} Wert={para.Value}\r\n{LogViewer.Text}";
+            } else if(e.PropertyName == "ParamVisibility")
+            {
+                if(para.Id == 5618)
+                {
+
+                }
+                System.Diagnostics.Debug.WriteLine("Sichtbarkeit geändert! " + para.Id + " -> " + para.IsVisible);
             }
 
-
+                if(para.Id == 5618)
+                {
+                    
+                }
 
             CalculateVisibilityParas(para);
             CalculateVisibilityComs(para);
@@ -289,7 +299,10 @@ namespace Kaenx.Creator
 
             IEnumerable<IDynParameter> list3 = Parameters.Where(p => p.Conditions.Any(c => c.SourceId == para.Id)); // || list5.Contains(c.SourceId)));
 
-            var x = list3.Where(p => p.Id == 5501);
+            var x = list3.Where(p => p.Id == 5618);
+            foreach (IDynParameter par in x)
+                if (par.HasAccess)
+                    par.IsVisible = FunctionHelper.CheckConditions(par.Conditions, values);
             foreach (IDynParameter par in list3)
                 if (par.HasAccess)
                     par.IsVisible = FunctionHelper.CheckConditions(par.Conditions, values);
@@ -387,6 +400,30 @@ namespace Kaenx.Creator
 
             //TODO allow to sort for name, function, etc
             //ComObjects.Sort(c => c.Number);
+        }
+
+        private void ClickGetValue(object sender, RoutedEventArgs e)
+        {
+            Controls.PromptDialog diag = new Controls.PromptDialog("Id des Parameters:", "Wert abfragen");
+            if(diag.ShowDialog() == true)
+            {
+                long id;
+                if(!long.TryParse(diag.Answer, out id))
+                {
+                    MessageBox.Show("Bitte geben Sie eine Ganzzahl ein.", "Eingabefehler");
+                    return;
+                }
+                if(values.ContainsKey(id))
+                {
+                    string value = values[id].Value;
+                    if(value == "x")
+                        MessageBox.Show($"Parameter mit der Id {id} ist aktuell nicht sichtbar.", "Wert abfragen");
+                    else
+                        MessageBox.Show($"Parameter mit der Id {id} hat den Wert: {value}");
+                }
+                else
+                    MessageBox.Show($"Es wurde kein Parameter mit der Id {id} gefunden.", "Wert abfragen");
+            }
         }
 
         private void Changed(string name)
