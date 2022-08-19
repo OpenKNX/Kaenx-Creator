@@ -119,8 +119,14 @@ namespace Kaenx.Creator.Controls
             ParamList.ScrollIntoView(para);
             ParamList.SelectedItem = para;
 
-            if(Version.IsParameterRefAuto){
-                Module.ParameterRefs.Add(new Models.ParameterRef(para) { UId = AutoHelper.GetNextFreeUId(Module.ParameterRefs) });
+            if(Version.IsParameterRefAuto)
+            {
+                Models.ParameterRef pref = new Models.ParameterRef(para) { UId = AutoHelper.GetNextFreeUId(Module.ParameterRefs) };
+                foreach(Models.Language lang in Version.Languages) {
+                    pref.Text.Add(new Models.Translation(lang, "Dummy"));
+                    pref.Suffix.Add(new Models.Translation(lang, "Dummy"));
+                }
+                Module.ParameterRefs.Add(pref);
             }
         }
 
@@ -188,6 +194,16 @@ namespace Kaenx.Creator.Controls
             }
         }
     
+        private void AutoId(object sender, RoutedEventArgs e)
+        {
+            Models.Parameter ele = (sender as Button).DataContext as Models.Parameter;
+            long oldId = ele.Id;
+            ele.Id = -1;
+            ele.Id = AutoHelper.GetNextFreeId(Module, "Parameters");
+            if(ele.Id == oldId)
+                MessageBox.Show("Das Element hat bereits die erste freie ID", "Automatische ID");
+        }
+
     
         #region DragNDrop
 

@@ -94,7 +94,11 @@
                     <Run Text="ID:" />
                     <Run Text="{Binding Id, UpdateSourceTrigger=PropertyChanged}"/>
                 </TextBlock>
-                <Button Content="Zurücksetzen" HorizontalAlignment="Right" Click="ResetId" />
+                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                    <Button Content="Manuell" Click="ManuelId" />
+                    <Button Content="Automatisch" Click="AutoId" />
+                    <Button Content="Zurücksetzen" Click="ResetId" />
+                </StackPanel>
             </Grid>
 
             <TextBlock Text="Dieser ParameterRef wird nicht im Dynamischen Bereich angezeigt." Foreground="Red" Visibility="{Binding IsNotUsed, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}" Margin="5" />

@@ -18,6 +18,10 @@
         <conv:BoolNegation x:Key="BoolNeg" />
         <conv:BoolToBrush x:Key="BoolToBrush" TrueValue="Red" FalseValue="Black" />
         <conv:StateToBrush x:Key="StateToBrush" />
+        
+        <ContextMenu x:Key="ListMenu">
+            <MenuItem Header="Löschen" Click="ClickRemove" />
+        </ContextMenu>
     </UserControl.Resources>
 
     <Grid>
@@ -29,7 +33,7 @@
             <ColumnDefinition Width="300" />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <Button Content="Hinzufügen" Click="ClickAdd" Margin="0 0 1 2" />
+        <Button Content="Hinzufügen" Click="ClickAdd" Margin="0 0 0 2" />
 
         <ListView x:Name="MessagesList" Grid.Row="1" ItemsSource="{Binding Messages}">
             <ListView.ItemTemplate>
@@ -37,6 +41,11 @@
 					<TextBlock Text="{Binding Name}" Foreground="{Binding IsNotUsed, Converter={StaticResource BoolToBrush}}" />
 				</DataTemplate>
 			</ListView.ItemTemplate>
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="ContextMenu" Value="{StaticResource ListMenu}" />
+                </Style>
+            </ListBox.ItemContainerStyle>
         </ListView>
 
         <StackPanel Grid.RowSpan="2" Grid.Column="1" Margin="5" DataContext="{Binding ElementName=MessagesList, Path=SelectedItem}" IsEnabled="{Binding Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
@@ -81,7 +90,7 @@
                 </TextBlock>
                 <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
                     <Button Content="Manuell" Click="ManuelId" />
-                    <Button Content="Automatisch" Click="AutoId" /><!--//TODO show only if id is -1-->
+                    <Button Content="Automatisch" Click="AutoId" />
                     <Button Content="Zurücksetzen" Click="ResetId" />
                 </StackPanel>
             </Grid>

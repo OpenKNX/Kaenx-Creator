@@ -107,6 +107,7 @@
                     </TextBlock>
                     <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
                         <Button Content="Manuell" Click="ManuelId" />
+                        <Button Content="Automatisch" Click="AutoId" />
                         <Button Content="Zurücksetzen" Click="ResetId" />
                     </StackPanel>
                 </Grid>

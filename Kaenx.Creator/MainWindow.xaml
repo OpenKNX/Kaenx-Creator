@@ -775,6 +775,7 @@
                                     <CheckBox IsChecked="{Binding IsComObjectRefAuto}" Content="KO Refs automatisch berechnen" />
                                     <CheckBox IsChecked="{Binding IsUnionActive}" Content="Unions aktivieren" />
                                     <CheckBox IsChecked="{Binding IsModulesActive}" Content="ModuleDefines aktivieren" />
+                                    <CheckBox IsChecked="{Binding IsMessagesActive}" Content="Nachrichten aktivieren" />
                                 
                                     <Grid>
                                         <Grid.ColumnDefinitions>

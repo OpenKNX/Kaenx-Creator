@@ -166,5 +166,36 @@ namespace Kaenx.Creator.Controls
         {
             ((sender as Button).DataContext as ParameterRef).Id = -1;
         }
+        
+        private void ManuelId(object sender, RoutedEventArgs e)
+        {
+            PromptDialog diag = new PromptDialog("Neue ParameterRef ID", "ID Manuell");
+            if(diag.ShowDialog() == true)
+            {
+                long id;
+                if(!long.TryParse(diag.Answer, out id))
+                {
+                    MessageBox.Show("Bitte geben Sie eine Ganzzahl ein.", "Eingabefehler");
+                    return;
+                }
+                ParameterRef ele = Module.ParameterRefs.SingleOrDefault(p => p.Id == id);
+                if(ele != null)
+                {
+                    MessageBox.Show($"Die ID {id} wird bereits von ParameterRef {ele.Name} verwendet.", "Doppelte ID");
+                    return;
+                }
+                ((sender as Button).DataContext as Models.ParameterRef).Id = id;
+            }
+        }
+    
+        private void AutoId(object sender, RoutedEventArgs e)
+        {
+            Models.ParameterRef ele = (sender as Button).DataContext as Models.ParameterRef;
+            long oldId = ele.Id;
+            ele.Id = -1;
+            ele.Id = AutoHelper.GetNextFreeId(Module, "ParameterRefs");
+            if(ele.Id == oldId)
+                MessageBox.Show("Das Element hat bereits die erste freie ID", "Automatische ID");
+        }
     }
 }

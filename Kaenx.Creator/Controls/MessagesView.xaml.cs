@@ -40,7 +40,7 @@ namespace Kaenx.Creator.Controls
 
         private void ClickRemove(object sender, RoutedEventArgs e)
         {
-
+            Version.Messages.Remove((sender as MenuItem).DataContext as Models.Message);
         }
 
         private void ResetId(object sender, RoutedEventArgs e)
@@ -72,7 +72,11 @@ namespace Kaenx.Creator.Controls
         private void AutoId(object sender, RoutedEventArgs e)
         {
             Models.Message msg = (sender as Button).DataContext as Models.Message;
+            long oldId = msg.Id;
+            msg.Id = -1;
             msg.Id = AutoHelper.GetNextFreeId(Version, "Messages");
+            if(msg.Id == oldId)
+                MessageBox.Show("Das Element hat bereits die erste freie ID", "Automatische ID");
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

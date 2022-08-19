@@ -140,6 +140,37 @@ namespace Kaenx.Creator.Controls
         {
             ((sender as Button).DataContext as Models.ComObjectRef).Id = -1;
         }
+        
+        private void ManuelId(object sender, RoutedEventArgs e)
+        {
+            PromptDialog diag = new PromptDialog("Neue ComObjectRef ID", "ID Manuell");
+            if(diag.ShowDialog() == true)
+            {
+                long id;
+                if(!long.TryParse(diag.Answer, out id))
+                {
+                    MessageBox.Show("Bitte geben Sie eine Ganzzahl ein.", "Eingabefehler");
+                    return;
+                }
+                ComObjectRef ele = Module.ComObjectRefs.SingleOrDefault(p => p.Id == id);
+                if(ele != null)
+                {
+                    MessageBox.Show($"Die ID {id} wird bereits von ComObjectRef {ele.Name} verwendet.", "Doppelte ID");
+                    return;
+                }
+                ((sender as Button).DataContext as Models.ComObjectRef).Id = id;
+            }
+        }
+    
+        private void AutoId(object sender, RoutedEventArgs e)
+        {
+            Models.ComObjectRef ele = (sender as Button).DataContext as Models.ComObjectRef;
+            long oldId = ele.Id;
+            ele.Id = -1;
+            ele.Id = AutoHelper.GetNextFreeId(Module, "ComObjectRefs");
+            if(ele.Id == oldId)
+                MessageBox.Show("Das Element hat bereits die erste freie ID", "Automatische ID");
+        }
 
 
         public event PropertyChangedEventHandler PropertyChanged;

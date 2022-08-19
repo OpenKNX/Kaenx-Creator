@@ -451,20 +451,7 @@ namespace Kaenx.Creator
             else {
                 ver.Languages.Add(lang);
                 ver.Text.Add(new Models.Translation(lang, ""));
-                foreach(Models.Parameter para in ver.Parameters)
-                {
-                    para.Text.Add(new Models.Translation(lang, ""));
-                    para.Suffix.Add(new Models.Translation(lang, ""));
-                }
-                foreach(Models.ParameterRef para in ver.ParameterRefs)
-                {
-                    para.Text.Add(new Models.Translation(lang, ""));
-                    para.Suffix.Add(new Models.Translation(lang, ""));
-                }
-                foreach(Models.ComObject com in ver.ComObjects) {
-                    com.Text.Add(new Models.Translation(lang, ""));
-                    com.FunctionText.Add(new Models.Translation(lang, ""));
-                }
+                
                 foreach(Models.ParameterType type in ver.ParameterTypes) {
                     if(type.Type != Models.ParameterTypes.Enum) continue;
 
@@ -472,6 +459,37 @@ namespace Kaenx.Creator
                         enu.Text.Add(new Models.Translation(lang, ""));
                     }
                 }
+                foreach(Models.Message msg in ver.Messages) {
+                    msg.Text.Add(new Models.Translation(lang, ""));
+                }
+
+                addLangToVersion(ver, lang);
+                foreach(Models.Module mod in ver.Modules)
+                    addLangToVersion(mod, lang);
+
+                //TODO add lang to dynamic items (blocks/channels/separators)
+            }
+        }
+
+        private void addLangToVersion(Models.IVersionBase vbase, Models.Language lang)
+        {
+            foreach(Models.Parameter para in vbase.Parameters)
+            {
+                para.Text.Add(new Models.Translation(lang, ""));
+                para.Suffix.Add(new Models.Translation(lang, ""));
+            }
+            foreach(Models.ParameterRef para in vbase.ParameterRefs)
+            {
+                para.Text.Add(new Models.Translation(lang, ""));
+                para.Suffix.Add(new Models.Translation(lang, ""));
+            }
+            foreach(Models.ComObject com in vbase.ComObjects) {
+                com.Text.Add(new Models.Translation(lang, ""));
+                com.FunctionText.Add(new Models.Translation(lang, ""));
+            }
+            foreach(Models.ComObjectRef com in vbase.ComObjectRefs) {
+                com.Text.Add(new Models.Translation(lang, ""));
+                com.FunctionText.Add(new Models.Translation(lang, ""));
             }
         }
 
