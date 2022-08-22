@@ -724,7 +724,7 @@
                     </StackPanel>
                 </TabItem.Header>
 
-                <TabControl SelectionChanged="TabChanged" TabStripPlacement="Left" Style="{StaticResource LeftTabControl}">
+                <TabControl x:Name="VersionTabs" SelectionChanged="TabChanged" TabStripPlacement="Left" Style="{StaticResource LeftTabControl}">
                     <TabItem Header="{x:Static p:Resources.tabs_gen}" BorderThickness="0 0 4 0" Style="{StaticResource LeftTabItem}">
                         <StackPanel>
                             <StackPanel.Resources>
@@ -1121,7 +1121,7 @@
 
                             <ListView x:Name="ModuleList" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding Modules}" DisplayMemberPath="Name" />
 
-                            <TabControl Grid.RowSpan="2" Grid.Column="3" TabStripPlacement="Left" Style="{StaticResource LeftTabControl}"  DataContext="{Binding ElementName=ModuleList, Path=SelectedItem}" IsEnabled="{Binding Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
+                            <TabControl x:Name="ModuleTabs" Grid.RowSpan="2" Grid.Column="3" TabStripPlacement="Left" Style="{StaticResource LeftTabControl}"  DataContext="{Binding ElementName=ModuleList, Path=SelectedItem}" IsEnabled="{Binding Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
                                 <TabItem Header="Allgemein" Style="{StaticResource LeftTabItem2}"> 
                                     <ScrollViewer>
                                         <StackPanel Margin="5">

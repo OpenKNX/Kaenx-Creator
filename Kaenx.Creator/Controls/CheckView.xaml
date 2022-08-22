@@ -31,9 +31,17 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Border BorderBrush="Gray" BorderThickness="0 0 0 1">
-                            <StackPanel Margin="10 5">
-                                <TextBlock Text="{Binding Text}" Foreground="{Binding State, Converter={StaticResource StateToBrush}}" />
-                            </StackPanel>
+                            <Grid Margin="10 5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="50" />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock ToolTip="Gehe direkt zu Element" Visibility="{Binding CanGoToItem, Converter={StaticResource BoolToVis}}">
+                                    <Hyperlink NavigateUri="https://example.com" RequestNavigate="Hyperlink_RequestNavigate">&lt;--</Hyperlink>
+                                </TextBlock>
+                                <TextBlock Grid.Column="1" Text="{Binding Text}" Foreground="{Binding State, Converter={StaticResource StateToBrush}}" />
+                            </Grid>
                         </Border>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>

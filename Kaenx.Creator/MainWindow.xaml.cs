@@ -28,6 +28,7 @@ namespace Kaenx.Creator
     /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
+        public static MainWindow Instance { get; set; }
 
         private Models.ModelGeneral _general;
         private string filePath = "";
@@ -71,6 +72,7 @@ namespace Kaenx.Creator
 
         public MainWindow()
         {
+            Instance = this;
             string lang = Properties.Settings.Default.language;
             if(lang != "def")
                 System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo(lang);
@@ -82,6 +84,47 @@ namespace Kaenx.Creator
             CheckEtsPath();
             CheckEtsVersions();
             LoadTemplates();
+        }
+
+        public void GoToItem(object item, object module)
+        {
+            if(module != null)
+            {
+                VersionTabs.SelectedIndex = 5;
+                int index2 = item switch {
+                    Models.Union => 2,
+                    Models.Parameter => 3,
+                    Models.ParameterRef => 4,
+                    Models.ComObject => 5,
+                    Models.ComObjectRef => 6,
+                    Models.Dynamic.IDynItems => 7,
+                    _ => -1
+                };
+
+                ModuleList.ScrollIntoView(module);
+                ModuleList.SelectedItem = module;
+
+                if(index2 == -1) return;
+                ModuleTabs.SelectedIndex = index2;
+                ((ModuleTabs.Items[index2] as TabItem).Content as ISelectable).ShowItem(item);
+                return;
+            }
+
+
+            int index = item switch{
+                Models.ParameterType => 3,
+                Models.Union => 4,
+                Models.Parameter => 6,
+                Models.ParameterRef => 7,
+                Models.ComObject => 8,
+                Models.ComObjectRef => 9,
+                Models.Dynamic.IDynItems => 12,
+                _ => -1
+            };
+
+            if(index == -1) return;
+            VersionTabs.SelectedIndex = index;
+            ((VersionTabs.Items[index] as TabItem).Content as ISelectable).ShowItem(item);
         }
 
         private void CheckEtsPath() {
@@ -409,11 +452,20 @@ namespace Kaenx.Creator
 
         private void ClickOpenViewer(object sender, RoutedEventArgs e)
         {
-            if(MessageBoxResult.Cancel == MessageBox.Show("Achtung, um den Viewer verwenden zu können, werden die IDs überprüft und ggf. neue vergeben.\r\n\r\nTrotzdem weiter machen?", "ProdViewer öffnen", MessageBoxButton.OKCancel)) return;
+            if(MessageBoxResult.Cancel == MessageBox.Show("Achtung, um den Viewer verwenden zu können, werden die IDs überprüft und ggf. neue vergeben.\r\n\r\nTrotzdem weiter machen?", "ProdViewer öffnen", MessageBoxButton.OKCancel, MessageBoxImage.Question)) return;
+            Models.Application app = (Models.Application)AppList.SelectedItem;
+            Models.AppVersion ver = (sender as MenuItem).DataContext as Models.AppVersion;
+            AutoHelper.CheckIds(ver);
 
-            AutoHelper.CheckIds((sender as MenuItem).DataContext as Models.AppVersion);
+            ObservableCollection<Models.PublishAction> actions = new ObservableCollection<Models.PublishAction>();
+            CheckHelper.CheckThis(app, ver, actions);
+            if(actions.Any(a => a.State == Models.PublishState.Fail))
+            {
+                MessageBox.Show("Die Applikation enthält Fehler. Bitte korriegieren Sie diese und probieren es danach erneut.", "ProdViewer öffnen", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
 
-            ViewerWindow viewer = new ViewerWindow(new Viewer.ImporterCreator((Models.AppVersion)VersionList.SelectedItem, (Models.Application)AppList.SelectedItem));
+            ViewerWindow viewer = new ViewerWindow(new Viewer.ImporterCreator(ver, app));
             viewer.Show();
         }
 

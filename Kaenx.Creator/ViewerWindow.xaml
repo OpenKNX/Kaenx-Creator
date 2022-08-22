@@ -386,15 +386,34 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
-
+        
         <ScrollViewer Grid.RowSpan="3" VerticalScrollBarVisibility="Auto">
             <ItemsControl ItemsSource="{Binding Channels}" ItemTemplateSelector="{StaticResource ChannelSelector}" />
         </ScrollViewer>
 
 
-        <ScrollViewer Grid.RowSpan="3" Grid.Column="1">
-            <ItemsControl ItemTemplateSelector="{StaticResource ParaTypeSelector}" ItemsSource="{Binding SelectedBlock.Parameters}" />
-        </ScrollViewer>
+        <Grid Grid.RowSpan="3" Grid.Column="1" Margin="0 5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition MaxWidth="550" Width="9*" />
+                <ColumnDefinition MinWidth="230" MaxWidth="350" Width="3*" />
+                <ColumnDefinition MaxWidth="120" Width="1*" />
+                <ColumnDefinition Width="50" />
+                <ColumnDefinition Width="50" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="Text" Margin="5 0" HorizontalAlignment="Center" />
+            <TextBlock Grid.Column="1" Grid.ColumnSpan="2" Text="Einstellung" Margin="5 0" HorizontalAlignment="Center" />
+            <TextBlock Grid.Column="3" Text="Wert" Margin="5 0" HorizontalAlignment="Center" />
+            <TextBlock Grid.Column="4" Text="Id" Margin="5 0" HorizontalAlignment="Center" />
+            
+            <ScrollViewer Grid.Row="1" Grid.ColumnSpan="5">
+                <ItemsControl ItemTemplateSelector="{StaticResource ParaTypeSelector}" ItemsSource="{Binding SelectedBlock.Parameters}" />
+            </ScrollViewer>
+        </Grid>
 
         <DataGrid Grid.Column="2" ItemsSource="{Binding ComObjects}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False">
             <DataGrid.Columns>

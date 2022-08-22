@@ -15,7 +15,7 @@ using System.Windows.Input;
 
 namespace Kaenx.Creator.Controls
 {
-    public partial class ComObjectRefView : UserControl, INotifyPropertyChanged, IFilterable
+    public partial class ComObjectRefView : UserControl, INotifyPropertyChanged, IFilterable, ISelectable
     {
         public static readonly DependencyProperty VersionProperty = DependencyProperty.Register("Version", typeof(AppVersion), typeof(ComObjectRefView), new PropertyMetadata(null));
         public static readonly DependencyProperty ModuleProperty = DependencyProperty.Register("Module", typeof(IVersionBase), typeof(ComObjectRefView), new PropertyMetadata(OnModuleChangedCallback));
@@ -42,6 +42,12 @@ namespace Kaenx.Creator.Controls
             _filter.Hide();
             _selectedItem = ComobjectRefList.SelectedItem;
             ComobjectRefList.SelectedItem = null;
+        }
+
+        public void ShowItem(object item)
+        {
+            ComobjectRefList.ScrollIntoView(item);
+            ComobjectRefList.SelectedItem = item;
         }
 
         public ComObjectRefView()

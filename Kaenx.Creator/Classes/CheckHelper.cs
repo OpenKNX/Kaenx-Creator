@@ -244,35 +244,35 @@ namespace Kaenx.Creator.Classes {
             #endregion
         }
 
-
         private static void CheckVersion(IVersionBase vbase, ObservableCollection<PublishAction> actions, string defaultLang, int ns, bool showOnlyErrors)
         {
+            Module mod = vbase as Module;
             //TODO check languages from Texts
             
             foreach(Parameter para in vbase.Parameters) {
-                if(para.ParameterTypeObject == null) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Kein ParameterTyp ausgewählt", State = PublishState.Fail });
+                if(para.ParameterTypeObject == null) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Kein ParameterTyp ausgewählt", State = PublishState.Fail, Item = para, Module = mod });
                 else {
                     switch(para.ParameterTypeObject.Type) {
                         case ParameterTypes.Text:
-                            if((para.Value.Length*8) > para.ParameterTypeObject.SizeInBit) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert benötigt mehr Speicher ({(para.Value.Length*8)}) als verfügbar ({para.ParameterTypeObject.SizeInBit}) ist", State = PublishState.Fail });
+                            if((para.Value.Length*8) > para.ParameterTypeObject.SizeInBit) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert benötigt mehr Speicher ({(para.Value.Length*8)}) als verfügbar ({para.ParameterTypeObject.SizeInBit}) ist", State = PublishState.Fail, Item = para, Module = mod });
                             break;
 
                         case ParameterTypes.Enum:
                             int paraval2;
-                            if(!int.TryParse(para.Value, out paraval2)) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) ist keine gültige Zahl", State = PublishState.Fail });
+                            if(!int.TryParse(para.Value, out paraval2)) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) ist keine gültige Zahl", State = PublishState.Fail, Item = para, Module = mod });
                             else {
                                 if(!para.ParameterTypeObject.Enums.Any(e => e.Value == paraval2))
-                                    actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) ist nicht als option in Enum vorhanden", State = PublishState.Fail });
+                                    actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) ist nicht als option in Enum vorhanden", State = PublishState.Fail, Item = para, Module = mod });
                             }
                             break;
 
                         case ParameterTypes.NumberUInt:
                         case ParameterTypes.NumberInt:
                             int paraval;
-                            if(!int.TryParse(para.Value, out paraval)) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) ist keine gültige Zahl", State = PublishState.Fail });
+                            if(!int.TryParse(para.Value, out paraval)) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) ist keine gültige Zahl", State = PublishState.Fail, Item = para, Module = mod });
                             else {
                                 if(paraval > para.ParameterTypeObject.Max || paraval < para.ParameterTypeObject.Min)
-                                    actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) fällt nicht in Bereich {para.ParameterTypeObject.Min}-{para.ParameterTypeObject.Max}", State = PublishState.Fail });
+                                    actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) fällt nicht in Bereich {para.ParameterTypeObject.Min}-{para.ParameterTypeObject.Max}", State = PublishState.Fail, Item = para, Module = mod });
                             }
                             break;
 
@@ -292,32 +292,32 @@ namespace Kaenx.Creator.Classes {
                 if(para.TranslationText) {
                     Translation trans = para.Text.Single(t => t.Language.CultureCode == defaultLang);
                     if(string.IsNullOrEmpty(trans.Text))
-                        actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Keine Übersetzung für Text vorhanden ({trans.Language.Text})", State = PublishState.Fail });
+                        actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Keine Übersetzung für Text vorhanden ({trans.Language.Text})", State = PublishState.Fail, Item = para, Module = mod });
                 } else {
                     if(!showOnlyErrors)
                     {
                         if(para.Text.Count == para.Text.Count(t => string.IsNullOrEmpty(t.Text)))
-                                actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Keine Übersetzungen für Text vorhanden", State = PublishState.Warning });
+                                actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Keine Übersetzungen für Text vorhanden", State = PublishState.Warning, Item = para, Module = mod });
                         else
                             foreach(Translation trans in para.Text)
                                 if(string.IsNullOrEmpty(trans.Text))
-                                    actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Keine Übersetzung für Text vorhanden ({trans.Language.Text})", State = PublishState.Warning });
+                                    actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Keine Übersetzung für Text vorhanden ({trans.Language.Text})", State = PublishState.Warning, Item = para, Module = mod });
                     }
                 }
 
                 if(para.TranslationSuffix) {
                     Translation trans = para.Suffix.Single(t => t.Language.CultureCode == defaultLang);
                     if(string.IsNullOrEmpty(trans.Text))
-                        actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Keine Übersetzung für Suffix vorhanden ({trans.Language.Text})", State = PublishState.Fail });
+                        actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Keine Übersetzung für Suffix vorhanden ({trans.Language.Text})", State = PublishState.Fail, Item = para, Module = mod });
                 } else {
                     if(!showOnlyErrors)
                     {
                         if(para.Suffix.Count == para.Suffix.Count(t => string.IsNullOrEmpty(t.Text)))
-                                actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Keine Übersetzungen für Suffix vorhanden", State = PublishState.Warning });
+                                actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Keine Übersetzungen für Suffix vorhanden", State = PublishState.Warning, Item = para, Module = mod });
                         else
                             foreach(Translation trans in para.Suffix)
                                 if(string.IsNullOrEmpty(trans.Text))
-                                    actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Keine Übersetzung für Suffix vorhanden ({trans.Language.Text})", State = PublishState.Warning });
+                                    actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Keine Übersetzung für Suffix vorhanden ({trans.Language.Text})", State = PublishState.Warning, Item = para, Module = mod });
                     }
                 }
 
@@ -326,20 +326,20 @@ namespace Kaenx.Creator.Classes {
                         case SavePaths.Memory:
                         {
                             if(para.SaveObject == null)
-                                actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Kein Speichersegment ausgewählt", State = PublishState.Fail });
+                                actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Kein Speichersegment ausgewählt", State = PublishState.Fail, Item = para, Module = mod });
                             else {
-                                if(!(para.SaveObject as Memory).IsAutoPara && para.Offset == -1) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name}: Kein Offset angegeben", State = PublishState.Fail });
-                                if(!(para.SaveObject as Memory).IsAutoPara && para.OffsetBit == -1) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name}: Kein Bit Offset angegeben", State = PublishState.Fail });
+                                if(!(para.SaveObject as Memory).IsAutoPara && para.Offset == -1) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name}: Kein Offset angegeben", State = PublishState.Fail, Item = para, Module = mod });
+                                if(!(para.SaveObject as Memory).IsAutoPara && para.OffsetBit == -1) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name}: Kein Bit Offset angegeben", State = PublishState.Fail, Item = para, Module = mod });
 
                             }
-                            if(para.OffsetBit > 7) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): BitOffset größer als 7 und somit obsolet", State = PublishState.Fail });
+                            if(para.OffsetBit > 7) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): BitOffset größer als 7 und somit obsolet", State = PublishState.Fail, Item = para, Module = mod });
                             break;
                         }
 
                         case SavePaths.Property:
                         {
-                            if((para.SaveObject as Property).ObjectIndex == -1) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): ObjectIndex nicht festgelegt", State = PublishState.Fail });
-                            if((para.SaveObject as Property).PropertyId == -1) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): PropertyId nicht festgelegt", State = PublishState.Fail });
+                            if((para.SaveObject as Property).ObjectIndex == -1) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): ObjectIndex nicht festgelegt", State = PublishState.Fail, Item = para, Module = mod });
+                            if((para.SaveObject as Property).PropertyId == -1) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): PropertyId nicht festgelegt", State = PublishState.Fail, Item = para, Module = mod });
                             break;
                         }
                     }
@@ -347,7 +347,7 @@ namespace Kaenx.Creator.Classes {
             }
         
             foreach(ParameterRef para in vbase.ParameterRefs) {
-                if(para.ParameterObject == null) actions.Add(new PublishAction() { Text = $"    ParameterRef {para.Name} ({para.UId}): Kein Parameter ausgewählt", State = PublishState.Fail });
+                if(para.ParameterObject == null) actions.Add(new PublishAction() { Text = $"    ParameterRef {para.Name} ({para.UId}): Kein Parameter ausgewählt", State = PublishState.Fail, Item = para, Module = mod });
                 else {
                     if(para.ParameterObject.ParameterTypeObject == null || string.IsNullOrEmpty(para.Value))
                         continue;
@@ -360,16 +360,16 @@ namespace Kaenx.Creator.Classes {
                         if(para.ParameterObject.TranslationText) {
                             Translation trans = para.Text.Single(t => t.Language.CultureCode == defaultLang);
                             if(string.IsNullOrEmpty(trans.Text))
-                                actions.Add(new PublishAction() { Text = $"    ParameterRef {para.Name} ({para.UId}): Keine Übersetzung vorhanden ({trans.Language.Text})", State = PublishState.Fail });
+                                actions.Add(new PublishAction() { Text = $"    ParameterRef {para.Name} ({para.UId}): Keine Übersetzung vorhanden ({trans.Language.Text})", State = PublishState.Fail, Item = para, Module = mod });
                         } else {
                             if(!showOnlyErrors)
                             {
                                 if(para.Text.Count == para.Text.Count(t => string.IsNullOrEmpty(t.Text)))
-                                        actions.Add(new PublishAction() { Text = $"    ParameterRef {para.Name} ({para.UId}): Keine Übersetzungen für Text vorhanden", State = PublishState.Warning });
+                                        actions.Add(new PublishAction() { Text = $"    ParameterRef {para.Name} ({para.UId}): Keine Übersetzungen für Text vorhanden", State = PublishState.Warning, Item = para, Module = mod });
                                 else
                                     foreach(Translation trans in para.Text)
                                         if(string.IsNullOrEmpty(trans.Text))
-                                            actions.Add(new PublishAction() { Text = $"    ParameterRef {para.Name} ({para.UId}): Keine Übersetzung für Text vorhanden ({trans.Language.Text})", State = PublishState.Warning });
+                                            actions.Add(new PublishAction() { Text = $"    ParameterRef {para.Name} ({para.UId}): Keine Übersetzung für Text vorhanden ({trans.Language.Text})", State = PublishState.Warning, Item = para, Module = mod });
                             }
                         }
                     }
@@ -379,36 +379,36 @@ namespace Kaenx.Creator.Classes {
                         if(para.ParameterObject.TranslationSuffix) {
                             Translation trans = para.Suffix.Single(t => t.Language.CultureCode == defaultLang);
                             if(string.IsNullOrEmpty(trans.Text))
-                                actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Keine Übersetzung für Suffix vorhanden ({trans.Language.Text})", State = PublishState.Fail });
+                                actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Keine Übersetzung für Suffix vorhanden ({trans.Language.Text})", State = PublishState.Fail, Item = para, Module = mod });
                         } else {
                             if(!showOnlyErrors)
                                 foreach(Translation trans in para.Suffix)
                                     if(string.IsNullOrEmpty(trans.Text))
-                                        actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Keine Übersetzung für Suffix vorhanden ({trans.Language.Text})", State = PublishState.Warning });
+                                        actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Keine Übersetzung für Suffix vorhanden ({trans.Language.Text})", State = PublishState.Warning, Item = para, Module = mod });
                         }
                     }
 
                     switch(ptype.Type) {
                         case ParameterTypes.Text:
-                            if((para.Value.Length*8) > ptype.SizeInBit) actions.Add(new PublishAction() { Text = $"    ParameterRef {para.Name} ({para.UId}): Wert benötigt mehr Speicher ({(para.Value.Length*8)}) als verfügbar ({ptype.SizeInBit}) ist", State = PublishState.Fail });
+                            if((para.Value.Length*8) > ptype.SizeInBit) actions.Add(new PublishAction() { Text = $"    ParameterRef {para.Name} ({para.UId}): Wert benötigt mehr Speicher ({(para.Value.Length*8)}) als verfügbar ({ptype.SizeInBit}) ist", State = PublishState.Fail, Item = para, Module = mod });
                             break;
 
                         case ParameterTypes.Enum:
                             int paraval2;
-                            if(!int.TryParse(para.Value, out paraval2)) actions.Add(new PublishAction() { Text = $"    ParameterRef {para.Name} ({para.UId}): Wert ({para.Value}) ist keine gültige Zahl", State = PublishState.Fail });
+                            if(!int.TryParse(para.Value, out paraval2)) actions.Add(new PublishAction() { Text = $"    ParameterRef {para.Name} ({para.UId}): Wert ({para.Value}) ist keine gültige Zahl", State = PublishState.Fail, Item = para, Module = mod });
                             else {
                                 if(!ptype.Enums.Any(e => e.Value == paraval2))
-                                    actions.Add(new PublishAction() { Text = $"    ParameterRef {para.Name} ({para.UId}): Wert ({para.Value}) ist nicht als option in Enum vorhanden", State = PublishState.Fail });
+                                    actions.Add(new PublishAction() { Text = $"    ParameterRef {para.Name} ({para.UId}): Wert ({para.Value}) ist nicht als option in Enum vorhanden", State = PublishState.Fail, Item = para, Module = mod });
                             }
                             break;
 
                         case ParameterTypes.NumberUInt:
                         case ParameterTypes.NumberInt:
                             int paraval;
-                            if(!int.TryParse(para.Value, out paraval)) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) ist keine gültige Zahl", State = PublishState.Fail });
+                            if(!int.TryParse(para.Value, out paraval)) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) ist keine gültige Zahl", State = PublishState.Fail, Item = para, Module = mod });
                             else {
                                 if(paraval > ptype.Max || paraval < ptype.Min)
-                                    actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) fällt nicht in Bereich {ptype.Min}-{ptype.Max}", State = PublishState.Fail });
+                                    actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) fällt nicht in Bereich {ptype.Min}-{ptype.Max}", State = PublishState.Fail, Item = para, Module = mod });
                             }
                             break;
 
@@ -426,24 +426,24 @@ namespace Kaenx.Creator.Classes {
             }
         
             foreach(ComObject com in vbase.ComObjects) {
-                if(com.HasDpt && com.Type == null) actions.Add(new PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Kein DataPointType angegeben", State = PublishState.Fail });
-                if(com.HasDpt && com.Type != null && com.Type.Number == "0") actions.Add(new PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Keine Angabe des DPT nur bei Refs", State = PublishState.Fail });
-                if(com.HasDpt && com.HasDpts && com.SubType == null) actions.Add(new PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Kein DataPointSubType angegeben", State = PublishState.Fail });
+                if(com.HasDpt && com.Type == null) actions.Add(new PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Kein DataPointType angegeben", State = PublishState.Fail, Item = com, Module = mod });
+                if(com.HasDpt && com.Type != null && com.Type.Number == "0") actions.Add(new PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Keine Angabe des DPT nur bei Refs", State = PublishState.Fail, Item = com, Module = mod });
+                if(com.HasDpt && com.HasDpts && com.SubType == null) actions.Add(new PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Kein DataPointSubType angegeben", State = PublishState.Fail, Item = com, Module = mod });
             
                 //TODO auslagern in Funktion
                 if(com.TranslationText) {
                     Translation trans = com.Text.Single(t => t.Language.CultureCode == defaultLang);
                     if(string.IsNullOrEmpty(trans.Text))
-                        actions.Add(new PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Keine Übersetzung für Text vorhanden ({trans.Language.Text})", State = PublishState.Fail });
+                        actions.Add(new PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Keine Übersetzung für Text vorhanden ({trans.Language.Text})", State = PublishState.Fail, Item = com, Module = mod });
                 } else {
                     if(!showOnlyErrors)
                     {
                         if(com.Text.Count == com.Text.Count(t => string.IsNullOrEmpty(t.Text)))
-                                actions.Add(new PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Keine Übersetzungen für Text vorhanden", State = PublishState.Warning });
+                                actions.Add(new PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Keine Übersetzungen für Text vorhanden", State = PublishState.Warning, Item = com, Module = mod });
                         else
                             foreach(Translation trans in com.Text)
                                 if(string.IsNullOrEmpty(trans.Text))
-                                    actions.Add(new PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Keine Übersetzung für Text vorhanden ({trans.Language.Text})", State = PublishState.Warning });
+                                    actions.Add(new PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Keine Übersetzung für Text vorhanden ({trans.Language.Text})", State = PublishState.Warning, Item = com, Module = mod });
                     }
                 }
                 
@@ -451,37 +451,37 @@ namespace Kaenx.Creator.Classes {
                 if(com.TranslationFunctionText) {
                     Translation trans = com.FunctionText.Single(t => t.Language.CultureCode == defaultLang);
                     if(string.IsNullOrEmpty(trans.Text))
-                        actions.Add(new PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Keine Übersetzung für FunktionsText vorhanden ({trans.Language.Text})", State = PublishState.Fail });
+                        actions.Add(new PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Keine Übersetzung für FunktionsText vorhanden ({trans.Language.Text})", State = PublishState.Fail, Item = com, Module = mod });
                 } else {
                     if(!showOnlyErrors)
                     {
                         if(com.FunctionText.Count == com.FunctionText.Count(t => string.IsNullOrEmpty(t.Text)))
-                                actions.Add(new PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Keine Übersetzungen für FunktionsText vorhanden", State = PublishState.Warning });
+                                actions.Add(new PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Keine Übersetzungen für FunktionsText vorhanden", State = PublishState.Warning, Item = com, Module = mod });
                         else
                             foreach(Translation trans in com.FunctionText)
                                 if(string.IsNullOrEmpty(trans.Text))
-                                    actions.Add(new PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Keine Übersetzung für FunktionsText vorhanden ({trans.Language.Text})", State = PublishState.Warning });
+                                    actions.Add(new PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Keine Übersetzung für FunktionsText vorhanden ({trans.Language.Text})", State = PublishState.Warning, Item = com, Module = mod });
                     }
                 }
 
                 if(com.UseTextParameter && com.ParameterRefObject == null)
-                    actions.Add(new PublishAction() { Text = $"    ComObjectRef {com.Name} ({com.UId}): Kein TextParameter angegeben", State = PublishState.Fail });
+                    actions.Add(new PublishAction() { Text = $"    ComObjectRef {com.Name} ({com.UId}): Kein TextParameter angegeben", State = PublishState.Fail, Item = com, Module = mod });
             }
 
             foreach(ComObjectRef rcom in vbase.ComObjectRefs) {
-                if(rcom.ComObjectObject == null) actions.Add(new PublishAction() { Text = $"    ComObjectRef {rcom.Name} ({rcom.UId}): Kein KO-Ref angegeben", State = PublishState.Fail });
+                if(rcom.ComObjectObject == null) actions.Add(new PublishAction() { Text = $"    ComObjectRef {rcom.Name} ({rcom.UId}): Kein KO-Ref angegeben", State = PublishState.Fail, Item = rcom, Module = mod });
                 //if(rcom.HasDpts && rcom.Type == null && rcom.Name.ToLower() != "dummy") actions.Add(new PublishAction() { Text = $"    ComObject {rcom.Name}: Kein DataPointSubType angegeben", State = PublishState.Fail });
 
                 if(rcom.OverwriteText) {
                     if(rcom.TranslationText) {
                         Translation trans = rcom.Text.Single(t => t.Language.CultureCode == defaultLang);
                         if(string.IsNullOrEmpty(trans.Text))
-                            actions.Add(new PublishAction() { Text = $"    ComObjectRef {rcom.Name} ({rcom.UId}): Keine Übersetzung für Text vorhanden ({trans.Language.Text})", State = PublishState.Fail });
+                            actions.Add(new PublishAction() { Text = $"    ComObjectRef {rcom.Name} ({rcom.UId}): Keine Übersetzung für Text vorhanden ({trans.Language.Text})", State = PublishState.Fail, Item = rcom, Module = mod });
                     } else {
                         if(!showOnlyErrors)
                             foreach(Translation trans in rcom.Text)
                                 if(string.IsNullOrEmpty(trans.Text))
-                                    actions.Add(new PublishAction() { Text = $"    ComObjectRef {rcom.Name} ({rcom.UId}): Keine Übersetzung für Text vorhanden ({trans.Language.Text})", State = PublishState.Warning });
+                                    actions.Add(new PublishAction() { Text = $"    ComObjectRef {rcom.Name} ({rcom.UId}): Keine Übersetzung für Text vorhanden ({trans.Language.Text})", State = PublishState.Warning, Item = rcom, Module = mod });
                     }
                 }
 
@@ -489,18 +489,16 @@ namespace Kaenx.Creator.Classes {
                     if(rcom.TranslationFunctionText) {
                         Translation trans = rcom.FunctionText.Single(t => t.Language.CultureCode == defaultLang);
                         if(string.IsNullOrEmpty(trans.Text))
-                            actions.Add(new PublishAction() { Text = $"    ComObjectRef {rcom.Name} ({rcom.UId}): Keine Übersetzung für FunktionsText vorhanden ({trans.Language.Text})", State = PublishState.Fail });
+                            actions.Add(new PublishAction() { Text = $"    ComObjectRef {rcom.Name} ({rcom.UId}): Keine Übersetzung für FunktionsText vorhanden ({trans.Language.Text})", State = PublishState.Fail, Item = rcom, Module = mod });
                     } else {
                         if(!showOnlyErrors)
                             foreach(Translation trans in rcom.FunctionText)
                                 if(string.IsNullOrEmpty(trans.Text))
-                                    actions.Add(new PublishAction() { Text = $"    ComObjectRef {rcom.Name} ({rcom.UId}): Keine Übersetzung für FunktionsText vorhanden ({trans.Language.Text})", State = PublishState.Warning });
+                                    actions.Add(new PublishAction() { Text = $"    ComObjectRef {rcom.Name} ({rcom.UId}): Keine Übersetzung für FunktionsText vorhanden ({trans.Language.Text})", State = PublishState.Warning, Item = rcom, Module = mod });
                     }
                 }
             }
         
-            
-
             //TODO check union size fits parameter+offset
 
             //TODO check ParameterBlockRename only in vers 11

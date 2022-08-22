@@ -15,7 +15,7 @@ using System.Windows.Input;
 
 namespace Kaenx.Creator.Controls
 {
-    public partial class ParameterRefView : UserControl, IFilterable
+    public partial class ParameterRefView : UserControl, IFilterable, ISelectable
     {
 
         public static readonly DependencyProperty ModuleProperty = DependencyProperty.Register("Module", typeof(IVersionBase), typeof(ParameterRefView), new PropertyMetadata(OnModuleChangedCallback));
@@ -38,6 +38,12 @@ namespace Kaenx.Creator.Controls
             _filter.Hide();
             _selectedItem = ParamRefList.SelectedItem;
             ParamRefList.SelectedItem = null;
+        }
+
+        public void ShowItem(object item)
+        {
+            ParamRefList.ScrollIntoView(item);
+            ParamRefList.SelectedItem = item;
         }
 
         public ParameterRefView()

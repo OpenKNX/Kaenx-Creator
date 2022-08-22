@@ -22,6 +22,10 @@ namespace Kaenx.Creator.Models
             set { _text = value; Changed("Text"); }
         }
 
+        public object Item { get; set; }
+        public object Module { get; set; }
+        public bool CanGoToItem { get { return Item != null; } }
+
         public event PropertyChangedEventHandler PropertyChanged;
         private void Changed(string name)
         {

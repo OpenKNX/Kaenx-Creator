@@ -13,7 +13,7 @@ using System.Windows.Input;
 
 namespace Kaenx.Creator.Controls
 {
-    public partial class ParameterView : UserControl, IFilterable
+    public partial class ParameterView : UserControl, IFilterable, ISelectable
     {
         public static readonly DependencyProperty VersionProperty = DependencyProperty.Register("Version", typeof(AppVersion), typeof(ParameterView), new PropertyMetadata(OnVersionChangedCallback));
         public static readonly DependencyProperty ModuleProperty = DependencyProperty.Register("Module", typeof(IVersionBase), typeof(ParameterView), new PropertyMetadata(OnModuleChangedCallback));
@@ -42,6 +42,12 @@ namespace Kaenx.Creator.Controls
             _filter.Hide();
             _selectedItem = ParamList.SelectedItem;
             ParamList.SelectedItem = null;
+        }
+
+        public void ShowItem(object item)
+        {
+            ParamList.ScrollIntoView(item);
+            ParamList.SelectedItem = item;
         }
 
         public ParameterView()
