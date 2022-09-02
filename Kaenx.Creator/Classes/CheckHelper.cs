@@ -504,11 +504,11 @@ namespace Kaenx.Creator.Classes {
             //TODO check ParameterBlockRename only in vers 11
 
 
-            CheckDynamicItem(vbase.Dynamics[0], actions, ns, showOnlyErrors);
+            CheckDynamicItem(vbase.Dynamics[0], actions, ns, showOnlyErrors, mod);
         }
 
         
-        private static void CheckDynamicItem(Models.Dynamic.IDynItems item, ObservableCollection<Models.PublishAction> actions, int ns, bool showOnlyErrors)
+        private static void CheckDynamicItem(Models.Dynamic.IDynItems item, ObservableCollection<Models.PublishAction> actions, int ns, bool showOnlyErrors, IVersionBase vbase)
         {
             switch(item)
             {
@@ -562,7 +562,7 @@ namespace Kaenx.Creator.Classes {
                 case DynParameter dpa:
                 {
                     if(dpa.ParameterRefObject == null)
-                        actions.Add(new PublishAction() { Text = $"    DynParameter {dpa.Name} wurde kein ParameterRef zugeordnet", State = PublishState.Fail});
+                        actions.Add(new PublishAction() { Text = $"    DynParameter {dpa.Name} wurde kein ParameterRef zugeordnet", State = PublishState.Fail, Item = dpa, Module = vbase });
                     break;
                 }
 
@@ -599,7 +599,7 @@ namespace Kaenx.Creator.Classes {
 
             if(item.Items == null) return;
             foreach(IDynItems xitem in item.Items)
-                CheckDynamicItem(xitem, actions, ns, showOnlyErrors);
+                CheckDynamicItem(xitem, actions, ns, showOnlyErrors, vbase);
         }
 
         public static string CheckImportVersion(string json, int version)

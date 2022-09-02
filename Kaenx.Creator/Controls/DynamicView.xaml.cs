@@ -12,7 +12,7 @@ using System.Windows.Input;
 
 namespace Kaenx.Creator.Controls
 {
-    public partial class DynamicView : UserControl, INotifyPropertyChanged
+    public partial class DynamicView : UserControl, INotifyPropertyChanged, ISelectable
     {
         public static readonly DependencyProperty VersionProperty = DependencyProperty.Register("Version", typeof(AppVersion), typeof(DynamicView), new PropertyMetadata(OnVersionChangedCallback));
         public static readonly DependencyProperty ModuleProperty = DependencyProperty.Register("Module", typeof(IVersionBase), typeof(DynamicView), new PropertyMetadata(OnModuleChangedCallback));
@@ -30,6 +30,26 @@ namespace Kaenx.Creator.Controls
         public DynamicView()
         {
             InitializeComponent();
+        }
+
+        public void ShowItem(object item)
+        {
+            var tvi = FindTviFromObjectRecursive(DynamicList, item);
+            if (tvi != null) tvi.IsSelected = true;
+        }
+
+        public static TreeViewItem FindTviFromObjectRecursive(ItemsControl ic, object o) {
+            //Search for the object model in first level children (recursively)
+            TreeViewItem tvi = ic.ItemContainerGenerator.ContainerFromItem(o) as TreeViewItem;
+            if (tvi != null) return tvi;
+            //Loop through user object models
+            foreach (object i in ic.Items) {
+                //Get the TreeViewItem associated with the iterated object model
+                TreeViewItem tvi2 = ic.ItemContainerGenerator.ContainerFromItem(i) as TreeViewItem;
+                tvi = FindTviFromObjectRecursive(tvi2, o);
+                if (tvi != null) return tvi;
+            }
+            return null;
         }
 
 

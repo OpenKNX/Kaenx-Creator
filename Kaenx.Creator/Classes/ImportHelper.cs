@@ -1092,9 +1092,9 @@ namespace Kaenx.Creator.Classes
                     Device device;
                     string ordernumb = xprod.Attribute("OrderNumber").Value;
 
-                    if (_general.Devices.Any(d => d.OrderNumber == ordernumb))
+                    if (hardware.Devices.Any(d => d.OrderNumber == ordernumb))
                     {
-                        device = _general.Devices.Single(d => d.OrderNumber == ordernumb);
+                        device = hardware.Devices.Single(d => d.OrderNumber == ordernumb);
                     }
                     else
                     {
@@ -1118,42 +1118,84 @@ namespace Kaenx.Creator.Classes
             }
         }
 
+        private CatalogItem GetSection(IEnumerable<string> ids)
+        {
+            CatalogItem item = null;
+            int index = 0;
+
+            while(true)
+            {
+                item = _general.Catalog[0].Items.SingleOrDefault(i => i.Number == ids.ElementAt(index));
+                index++;
+                if(item == null) break;
+                if(index == ids.Count()) break;
+            }
+
+            return item;
+        }
+
         private void ParseCatalogItem(XElement xitem, CatalogItem parent)
         {
-            CatalogItem item = new CatalogItem()
-            {
-                Parent = parent,
-                Name = xitem.Attribute("Name").Value,
-                Number = xitem.Attribute("Number").Value
-            };
-
             //!TODO check if section exists
             switch (xitem.Name.LocalName)
             {
                 case "CatalogSection":
+                {
+                    string[] ids = xitem.Attribute("Id").Value.Split('-');
+                    for(int i = 0; i < ids.Count(); i++)
+                        ids[i] = Unescape(ids[i]);
+                    CatalogItem item = GetSection(ids.Skip(2));
+                    if(item == null)
+                    {
+                        item = new CatalogItem() 
+                        {
+                            Parent = parent,
+                            Name = xitem.Attribute("Name").Value,
+                            Number = xitem.Attribute("Number").Value
+                        };
+                        parent.Items.Add(item);
+                    }
                     item.IsSection = true;
                     item.Text = GetTranslation(xitem.Attribute("Id").Value, "Name", xitem);
+
                     foreach (XElement xele in xitem.Elements())
                         ParseCatalogItem(xele, item);
                     break;
+                }
 
                 case "CatalogItem":
-                    item.IsSection = false;
+                {
                     string[] hard2ref = xitem.Attribute("Hardware2ProgramRefId").Value.Split('-');
                     string serialNr = hard2ref[2];
                     serialNr = Unescape(serialNr);
-                    item.Hardware = _general.Hardware.Single(h => h.SerialNumber == serialNr);
-                    item.Text = GetTranslation(xitem.Attribute("Id")?.Value ?? "", "Text", xitem);
+                    int version = int.Parse(hard2ref[3].Split('_')[0]);
+                    Hardware hard = _general.Hardware.Single(h => h.SerialNumber == serialNr && h.Version == version);
                     string prodId = xitem.Attribute("ProductRefId").Value;
                     prodId = prodId.Substring(prodId.LastIndexOf('-')+1);
                     prodId = Unescape(prodId);
-                    Device device = item.Hardware.Devices.Single(d => d.OrderNumber == prodId);
+
+                    Device device = hard.Devices.Single(d => d.OrderNumber == prodId);
+
+                    if(device.Text.Count > 0)
+                        return;
+                        
+
+                    CatalogItem item = new CatalogItem()
+                    {
+                        Parent = parent,
+                        Name = xitem.Attribute("Name").Value,
+                        Number = Unescape(xitem.Attribute("Number").Value),
+                        IsSection = false,
+                        Hardware = hard
+                    };
+                    item.Text = GetTranslation(xitem.Attribute("Id")?.Value ?? "", "Text", xitem);
                     device.Text = GetTranslation(xitem.Attribute("Id")?.Value ?? "", "Name", xitem);
                     device.Description = GetTranslation(xitem.Attribute("Id")?.Value ?? "", "VisibleDescription", xitem);
+                    parent.Items.Add(item);
                     break;
+                }
             }
 
-            parent.Items.Add(item);
         }
 
         private void ImportDynamic(XElement xdyn, IVersionBase vbase)
