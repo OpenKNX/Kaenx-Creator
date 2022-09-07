@@ -323,7 +323,7 @@
                     <MenuItem.Icon>
                         <Image Source="{svgc:SvgImage Source=/Assets/Images/Menu/New.svg, AppName=Kaenx.Creator}" />
                     </MenuItem.Icon>
-                    <MenuItem Header="Leer" Click="ClickNew" />
+                    <MenuItem Header="{x:Static p:Resources.menu_temp_empty}" Click="ClickNew" />
                     <Separator />
                 </MenuItem>
                 <MenuItem Header="{x:Static p:Resources.menu_proj_open}" Click="ClickOpen">
@@ -335,20 +335,16 @@
                     <MenuItem.Icon>
                         <Image Source="{svgc:SvgImage Source=/Assets/Images/Menu/Save.svg, AppName=Kaenx.Creator}" />
                     </MenuItem.Icon>
-                    <MenuItem x:Name="MenuSaveBtn" Header="Speichern" Click="ClickSave" IsEnabled="false" />
-                    <MenuItem Header="Speichern unter" Click="ClickSaveAs" />
-                    <MenuItem Header="Speichern als Template" Click="ClickSaveTemplate" />
+                    <MenuItem x:Name="MenuSaveBtn" Header="{x:Static p:Resources.menu_save}" Click="ClickSave" IsEnabled="false" />
+                    <MenuItem Header="{x:Static p:Resources.menu_save_as}" Click="ClickSaveAs" />
+                    <MenuItem Header="{x:Static p:Resources.menu_save_template}" Click="ClickSaveTemplate" />
                 </MenuItem>
                 <MenuItem x:Name="MenuClose" IsEnabled="False" Header="{x:Static p:Resources.menu_proj_close}" Click="ClickClose" />
             </MenuItem>
             <MenuItem x:Name="MenuImport" IsEnabled="False" Header="{x:Static p:Resources.menu_impo}">
                 <MenuItem Header="{x:Static p:Resources.menu_impo_ets}" Click="ClickImport" Tag="knxprod" />
-                <MenuItem Header="KnxProd XML" Click="ClickImport" Tag="xml" />
+                <MenuItem Header="{x:Static p:Resources.menu_impo_xml}" Click="ClickImport" Tag="xml" />
                 <MenuItem Header="{x:Static p:Resources.menu_impo_kaenx}" IsEnabled="False" Tag="ae-prod" />
-            </MenuItem>
-            <MenuItem Header="ProdViewer">
-                <MenuItem Header="KnxProd-Datei öffnen" Click="ClickViewerKnxProd" />
-                <MenuItem Header="Creator-Datei öffnen" IsEnabled="False" />
             </MenuItem>
             <MenuItem x:Name="MenuLang" Header="{x:Static p:Resources.menu_lang}">
                 <MenuItem Header="Please restart Application after changing language" IsEnabled="False" />
@@ -358,7 +354,7 @@
                 <MenuItem IsCheckable="True" Header="English" Tag="en" Click="ChangeLang" />
             </MenuItem>
             <MenuItem Header="Info">
-                <MenuItem Header="Version anzeigen" Click="ClickShowVersion" />
+                <MenuItem Header="{x:Static p:Resources.menu_version}" Click="ClickShowVersion" />
             </MenuItem>
         </Menu>
 
@@ -379,14 +375,14 @@
                             <Setter Property="Margin" Value="5" />
                         </Style>
                     </StackPanel.Resources>
-                    <HeaderedContentControl Header="Manufacturer ID">
+                    <HeaderedContentControl Header="{x:Static p:Resources.tgen_manu}">
                         <TextBox Text="{Binding General.ManufacturerId, UpdateSourceTrigger=PropertyChanged}" />
                     </HeaderedContentControl>
-                    <HeaderedContentControl Header="Projekt Name">
+                    <HeaderedContentControl Header="{x:Static p:Resources.tgen_name}">
                         <TextBox Text="{Binding General.ProjectName, UpdateSourceTrigger=PropertyChanged}" />
                     </HeaderedContentControl>
 
-                    <HeaderedContentControl Header="Sprachen für Katalog und Hardware">
+                    <HeaderedContentControl Header="{x:Static p:Resources.tgen_lang}">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition />
@@ -396,7 +392,7 @@
                             <ListBox x:Name="SupportedLanguagesGen" ItemsSource="{Binding General.Languages}" DisplayMemberPath="Text" />
                             
                             <StackPanel Grid.Column="1">
-                                <HeaderedContentControl Header="Bearbeiten">
+                                <HeaderedContentControl Header="{x:Static p:Resources.gen_edit}">
                                     <StackPanel>
                                         <ComboBox x:Name="LanguagesListGen" DisplayMemberPath="Text">
                                             <models:Language Text="Tschechisch" CultureCode="cs-CZ" />
@@ -423,11 +419,11 @@
                                             <models:Language Text="Türkisch" CultureCode="tr-TR" />
                                             <models:Language Text="Chinesisch" CultureCode="zh-CN" />
                                         </ComboBox>
-                                        <Button Content="Hinzufügen" Click="ClickAddLanguageGen" />
-                                        <Button Content="Entfernen" Click="ClickRemoveLanguageGen" />
+                                        <Button Content="{x:Static p:Resources.gen_add}" Click="ClickAddLanguageGen" />
+                                        <Button Content="{x:Static p:Resources.gen_remove}" Click="ClickRemoveLanguageGen" />
                                     </StackPanel>
                                 </HeaderedContentControl>
-                                <HeaderedContentControl Header="Standard Sprache">
+                                <HeaderedContentControl Header="{x:Static p:Resources.tgen_lang_def}">
                                     <ComboBox ItemsSource="{Binding General.Languages}" SelectedValue="{Binding General.DefaultLanguage}" SelectedValuePath="CultureCode" DisplayMemberPath="Text"></ComboBox>
                                 </HeaderedContentControl>
                             </StackPanel>
@@ -449,8 +445,8 @@
                                 <StackPanel Orientation="Horizontal">
                                     <StackPanel.ContextMenu>
                                         <ContextMenu>
-                                            <MenuItem Header="Unterpunkt hinzufügen" Click="ClickCatalogContext" IsEnabled="{Binding IsSection}" />
-                                            <MenuItem Header="Entfernen" Click="ClickCatalogContextRemove" IsEnabled="{Binding Parent, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
+                                            <MenuItem Header="{x:Static p:Resources.tcat_add_sub}" Click="ClickCatalogContext" IsEnabled="{Binding IsSection}" />
+                                            <MenuItem Header="{x:Static p:Resources.gen_remove}" Click="ClickCatalogContextRemove" IsEnabled="{Binding Parent, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
                                         </ContextMenu>
                                     </StackPanel.ContextMenu>
                                     <Image Source="/WpfTutorialSamples;component/Images/group.png" Margin="0,0,5,0" />
@@ -475,23 +471,23 @@
                                 <Setter Property="Margin" Value="5" />
                             </Style>
                         </StackPanel.Resources>
-                        <HeaderedContentControl Header="Name (intern)">
+                        <HeaderedContentControl Header="{x:Static p:Resources.tcat_name}">
                             <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
                         </HeaderedContentControl>
-                        <HeaderedContentControl Header="Number">
+                        <HeaderedContentControl Header="{x:Static p:Resources.tcat_number}">
                             <TextBox Text="{Binding Number, UpdateSourceTrigger=PropertyChanged}" />
                         </HeaderedContentControl>
-                        <CheckBox Name="InCatalogSection" IsChecked="{Binding IsSection}" Content="Element ist eine Kategorie" IsEnabled="{Binding Items.Count, Converter={StaticResource EmptyListToBool}}" />
+                        <CheckBox Name="InCatalogSection" IsChecked="{Binding IsSection}" Content="{x:Static p:Resources.tcat_iscat}" IsEnabled="{Binding Items.Count, Converter={StaticResource EmptyListToBool}}" />
                         
-                        <HeaderedContentControl Header="Text" Visibility="{Binding ElementName=InCatalogSection, Path=IsChecked, Converter={StaticResource BoolToVis}}">
+                        <HeaderedContentControl Header="{x:Static p:Resources.gen_text}" Visibility="{Binding ElementName=InCatalogSection, Path=IsChecked, Converter={StaticResource BoolToVis}}">
                             <DataGrid ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
-                                    <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                                    <DataGridTextColumn Header="{x:Static p:Resources.gen_lang}" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                                    <DataGridTextColumn Header="{x:Static p:Resources.gen_text}" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
                                 </DataGrid.Columns>
                             </DataGrid>
                         </HeaderedContentControl>
-                        <HeaderedContentControl Header="Hardware" Visibility="{Binding ElementName=InCatalogSection, Path=IsChecked, Converter={StaticResource BoolToVis}, ConverterParameter=true}">
+                        <HeaderedContentControl Header="{x:Static p:Resources.gen_hard}" Visibility="{Binding ElementName=InCatalogSection, Path=IsChecked, Converter={StaticResource BoolToVis}, ConverterParameter=true}">
                             <ComboBox Name="InCatalogHardware" Margin="0" ItemsSource="{Binding General.Hardware, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" SelectedItem="{Binding Hardware, Mode=TwoWay}" DisplayMemberPath="Name"/>
                         </HeaderedContentControl>
                     </StackPanel>
@@ -509,8 +505,8 @@
                         <ColumnDefinition Width="150" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
-                    <Button Content="Hinzufügen" Click="ClickAddHardware" Margin="0 0 1 2" />
-                    <Button Grid.Column="1" Content="Löschen" Click="ClickRemoveHardware" Margin="1 0 0 2" IsEnabled="{Binding ElementName=HardwareList, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
+                    <Button Content="{x:Static p:Resources.gen_add}" Click="ClickAddHardware" Margin="0 0 1 2" />
+                    <Button Grid.Column="1" Content="{x:Static p:Resources.gen_remove}" Click="ClickRemoveHardware" Margin="1 0 0 2" IsEnabled="{Binding ElementName=HardwareList, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
 
                     <ListView x:Name="HardwareList" Grid.Row="1" Grid.RowSpan="3" Grid.ColumnSpan="2" ItemsSource="{Binding General.Hardware}" DisplayMemberPath="Name" />
 

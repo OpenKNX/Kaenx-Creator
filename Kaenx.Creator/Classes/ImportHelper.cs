@@ -783,7 +783,10 @@ namespace Kaenx.Creator.Classes
                 pref.OverwriteText = xref.Attribute("Text") != null;
                 pref.Text = GetTranslation(xref.Attribute("Id").Value, "Text", xref);
                 pref.Suffix = GetTranslation(xref.Attribute("Id").Value, "SuffixText", xref);
-                pref.DisplayOrder = int.Parse(xref.Attribute("DisplayOrder")?.Value ?? "-1");
+                if(xref.Attribute("DisplayOrder") == null)
+                    pref.DisplayOrder = -1;
+                else
+                    pref.DisplayOrder = int.Parse(xref.Attribute("DisplayOrder").Value);
 
                 vbase.ParameterRefs.Add(pref);
             }
@@ -1204,6 +1207,7 @@ namespace Kaenx.Creator.Classes
             ParseDynamic(main, xdyn, vbase);
             vbase.Dynamics.Add(main);
         }
+
 
         private void ParseDynamic(IDynItems parent, XElement xeles, IVersionBase vbase)
         {

@@ -465,7 +465,8 @@ namespace Kaenx.Creator.Viewer
             foreach(Models.Dynamic.IDynItems item in dpb.Items)
                 ParseDynamicItem(item, dch, pb, conds, args);
 
-            pb.Parameters.Sort((a, b) => a.DisplayOrder.CompareTo(b.DisplayOrder));
+            if(!pb.Parameters.Any(p => p.DisplayOrder == -1))
+                pb.Parameters.Sort((a, b) => a.DisplayOrder.CompareTo(b.DisplayOrder));
         }
 
         private ParamCondition ParseCondition(Models.Dynamic.IDynWhen test, long sourceId)
