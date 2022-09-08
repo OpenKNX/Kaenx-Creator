@@ -237,11 +237,11 @@
     <value>Add Subitem</value>
     <comment/>
   </data>
-  <data name="tcat_name" xml:space="preserve">
+  <data name="prop_name" xml:space="preserve">
     <value>Name</value>
     <comment/>
   </data>
-  <data name="tcat_number" xml:space="preserve">
+  <data name="prop_number" xml:space="preserve">
     <value>Number</value>
     <comment/>
   </data>
@@ -259,6 +259,458 @@
   </data>
   <data name="gen_hard" xml:space="preserve">
     <value>Hardware</value>
+    <comment/>
+  </data>
+  <data name="gen_gen" xml:space="preserve">
+    <value>General</value>
+    <comment/>
+  </data>
+  <data name="prop_serial" xml:space="preserve">
+    <value>Serialnumber</value>
+    <comment/>
+  </data>
+  <data name="prop_vers" xml:space="preserve">
+    <value>Version</value>
+    <comment/>
+  </data>
+  <data name="prop_buscurrent" xml:space="preserve">
+    <value>Bus Current</value>
+    <comment/>
+  </data>
+  <data name="prop_haspa" xml:space="preserve">
+    <value>Device has an Physical Address</value>
+    <comment/>
+  </data>
+  <data name="prop_ispower" xml:space="preserve">
+    <value>Device is a Power Supply</value>
+    <comment/>
+  </data>
+  <data name="prop_iscoupler" xml:space="preserve">
+    <value>Device is a Coupler</value>
+    <comment/>
+  </data>
+  <data name="prop_ip" xml:space="preserve">
+    <value>Device is IP Enabled</value>
+    <comment/>
+  </data>
+  <data name="prop_hasapp" xml:space="preserve">
+    <value>Device has an Applicationprogram</value>
+    <comment/>
+  </data>
+  <data name="prop_hasapp2" xml:space="preserve">
+    <value>Device has a second Applicationprogram</value>
+    <comment/>
+  </data>
+  <data name="thard_devices" xml:space="preserve">
+    <value>Devices</value>
+    <comment/>
+  </data>
+  <data name="prop_ordernumber" xml:space="preserve">
+    <value>Ordernumber</value>
+    <comment/>
+  </data>
+  <data name="prop_isreg" xml:space="preserve">
+    <value>Device is REG</value>
+    <comment/>
+  </data>
+  <data name="gen_desc" xml:space="preserve">
+    <value>Description</value>
+    <comment/>
+  </data>
+  <data name="thard_apps" xml:space="preserve">
+    <value>Applications</value>
+    <comment/>
+  </data>
+  <data name="gen_import" xml:space="preserve">
+    <value>Import</value>
+    <comment/>
+  </data>
+  <data name="gen_export" xml:space="preserve">
+    <value>Export</value>
+    <comment/>
+  </data>
+  <data name="bagg_error" xml:space="preserve">
+    <value>This baggage is not used by a ParameterType</value>
+    <comment/>
+  </data>
+  <data name="bagg_targetpath" xml:space="preserve">
+    <value>Target Path</value>
+    <comment/>
+  </data>
+  <data name="bagg_file" xml:space="preserve">
+    <value>Change file</value>
+    <comment/>
+  </data>
+  <data name="bagg_timestamp" xml:space="preserve">
+    <value>Timestamp</value>
+    <comment/>
+  </data>
+  <data name="gen_uid" xml:space="preserve">
+    <value>UID:</value>
+    <comment/>
+  </data>
+  <data name="prop_bcu" xml:space="preserve">
+    <value>BCU</value>
+    <comment/>
+  </data>
+  <data name="tapps_info" xml:space="preserve">
+    <value>More information to application numbering</value>
+    <comment/>
+  </data>
+  <data name="tapps_memory" xml:space="preserve">
+    <value>Memory Type:</value>
+    <comment/>
+  </data>
+  <data name="tapps_loadp" xml:space="preserve">
+    <value>Load Procedure</value>
+    <comment/>
+  </data>
+  <data name="gen_copy" xml:space="preserve">
+    <value>Copy</value>
+    <comment/>
+  </data>
+  <data name="tapps_openv" xml:space="preserve">
+    <value>Open in ProdViewer</value>
+    <comment/>
+  </data>
+  <data name="tapps_addv" xml:space="preserve">
+    <value>Add Version</value>
+    <comment/>
+  </data>
+  <data name="tver_addrmem" xml:space="preserve">
+    <value>Addresstable Memory:</value>
+    <comment/>
+  </data>
+  <data name="tver_addroff" xml:space="preserve">
+    <value>Addresstable Offset:</value>
+    <comment/>
+  </data>
+  <data name="tver_addrmax" xml:space="preserve">
+    <value>Addresstable Max Entries:</value>
+    <comment/>
+  </data>
+  <data name="tver_assomem" xml:space="preserve">
+    <value>Associationtable Memory:</value>
+    <comment/>
+  </data>
+  <data name="tver_assooff" xml:space="preserve">
+    <value>Associationtable Offset:</value>
+    <comment/>
+  </data>
+  <data name="tver_assomax" xml:space="preserve">
+    <value>Associationtable Max Entries:</value>
+    <comment/>
+  </data>
+  <data name="tver_commem" xml:space="preserve">
+    <value>ComObjectTable Memory:</value>
+    <comment/>
+  </data>
+  <data name="tver_comoff" xml:space="preserve">
+    <value>ComObjectTable Offset:</value>
+    <comment/>
+  </data>
+  <data name="prop_versreplace" xml:space="preserve">
+    <value>Replaces following Versions:</value>
+    <comment/>
+  </data>
+  <data name="prop_ns" xml:space="preserve">
+    <value>Namespace Version</value>
+    <comment/>
+  </data>
+  <data name="gen_langs" xml:space="preserve">
+    <value>Languages</value>
+    <comment/>
+  </data>
+  <data name="tabs_check" xml:space="preserve">
+    <value>Verify</value>
+    <comment/>
+  </data>
+  <data name="tabs_mem" xml:space="preserve">
+    <value>Memory</value>
+    <comment/>
+  </data>
+  <data name="vgen_autopara" xml:space="preserve">
+    <value>Generate ParameterRefs automaticly</value>
+    <comment/>
+  </data>
+  <data name="vgen_autocom" xml:space="preserve">
+    <value>Generate ComObjectRefs automaticly</value>
+    <comment/>
+  </data>
+  <data name="vgen_union" xml:space="preserve">
+    <value>Activate Unions</value>
+    <comment/>
+  </data>
+  <data name="vgen_mods" xml:space="preserve">
+    <value>Activate Modules</value>
+    <comment/>
+  </data>
+  <data name="vgen_msg" xml:space="preserve">
+    <value>Activate Messages</value>
+    <comment/>
+  </data>
+  <data name="prop_address" xml:space="preserve">
+    <value>Address</value>
+    <comment/>
+  </data>
+  <data name="prop_size" xml:space="preserve">
+    <value>Size</value>
+    <comment/>
+  </data>
+  <data name="vgen_autosize" xml:space="preserve">
+    <value>Automaticly calculate size</value>
+    <comment/>
+  </data>
+  <data name="prop_offset" xml:space="preserve">
+    <value>Offset</value>
+    <comment/>
+  </data>
+  <data name="vgen_mautopara" xml:space="preserve">
+    <value>Order Parameters/Unions/Modules automaticly</value>
+    <comment/>
+  </data>
+  <data name="vgen_mautoorder" xml:space="preserve">
+    <value>Order automaticly even if they have an address</value>
+    <comment/>
+  </data>
+  <data name="vgen_heatmap" xml:space="preserve">
+    <value>Calculate Heatmap</value>
+    <comment/>
+  </data>
+  <data name="tabs_parat" xml:space="preserve">
+    <value>ParameterTypes</value>
+    <comment/>
+  </data>
+  <data name="tabs_union" xml:space="preserve">
+    <value>Unions</value>
+    <comment/>
+  </data>
+  <data name="tabs_module" xml:space="preserve">
+    <value>Modules</value>
+    <comment/>
+  </data>
+  <data name="gen_reset" xml:space="preserve">
+    <value>Reset</value>
+    <comment/>
+  </data>
+  <data name="gen_id" xml:space="preserve">
+    <value>ID:</value>
+    <comment/>
+  </data>
+  <data name="tabs_paras" xml:space="preserve">
+    <value>Parameter</value>
+    <comment/>
+  </data>
+  <data name="tabs_pararefs" xml:space="preserve">
+    <value>ParameterRefs</value>
+    <comment/>
+  </data>
+  <data name="tabs_coms" xml:space="preserve">
+    <value>ComObjects</value>
+    <comment/>
+  </data>
+  <data name="tabs_comrefs" xml:space="preserve">
+    <value>ComObjectRefs</value>
+    <comment/>
+  </data>
+  <data name="tabs_loadp" xml:space="preserve">
+    <value>LoadProcedures</value>
+    <comment/>
+  </data>
+  <data name="tabs_dyn" xml:space="preserve">
+    <value>Dynamic</value>
+    <comment/>
+  </data>
+  <data name="tabs_msg" xml:space="preserve">
+    <value>Messages</value>
+    <comment/>
+  </data>
+  <data name="tabs_arg" xml:space="preserve">
+    <value>Arguments</value>
+    <comment/>
+  </data>
+  <data name="tmo_pbo" xml:space="preserve">
+    <value>ParameterBaseOffset:</value>
+    <comment/>
+  </data>
+  <data name="tmod_cbn" xml:space="preserve">
+    <value>ComObjectBaseNumber:</value>
+    <comment/>
+  </data>
+  <data name="tmod_autocbn" xml:space="preserve">
+    <value>Calculate ComObjectBaseNumber automaticly</value>
+    <comment/>
+  </data>
+  <data name="gen_filter" xml:space="preserve">
+    <value>Filter/ID:</value>
+    <comment/>
+  </data>
+  <data name="parat_error" xml:space="preserve">
+    <value>This ParameterType is not used by a Parameter</value>
+    <comment/>
+  </data>
+  <data name="prop_type" xml:space="preserve">
+    <value>Type</value>
+    <comment/>
+  </data>
+  <data name="parat_mansize" xml:space="preserve">
+    <value>Manually size in bits</value>
+    <comment/>
+  </data>
+  <data name="prop_value" xml:space="preserve">
+    <value>Value</value>
+    <comment/>
+  </data>
+  <data name="prop_trans" xml:space="preserve">
+    <value>Translate</value>
+    <comment/>
+  </data>
+  <data name="parat_add" xml:space="preserve">
+    <value>+</value>
+    <comment/>
+  </data>
+  <data name="parat_min" xml:space="preserve">
+    <value>Min</value>
+    <comment/>
+  </data>
+  <data name="parat_max" xml:space="preserve">
+    <value>Max</value>
+    <comment/>
+  </data>
+  <data name="parat_increment" xml:space="preserve">
+    <value>Increment</value>
+    <comment/>
+  </data>
+  <data name="parat_uihint" xml:space="preserve">
+    <value>UIHint</value>
+    <comment/>
+  </data>
+  <data name="parat_uihint_none" xml:space="preserve">
+    <value>None</value>
+    <comment/>
+  </data>
+  <data name="parat_uihint_slider" xml:space="preserve">
+    <value>Slider</value>
+    <comment/>
+  </data>
+  <data name="parat_uihint_check" xml:space="preserve">
+    <value>CheckBox</value>
+    <comment/>
+  </data>
+  <data name="parat_uihitn_prog" xml:space="preserve">
+    <value>ProgressBar</value>
+    <comment/>
+  </data>
+  <data name="parat_uihint_ha" xml:space="preserve">
+    <value>HostAddress</value>
+    <comment/>
+  </data>
+  <data name="parat_uihint_ga" xml:space="preserve">
+    <value>GatewayAddress</value>
+    <comment/>
+  </data>
+  <data name="parat_uihint_ua" xml:space="preserve">
+    <value>UnicastAddress</value>
+    <comment/>
+  </data>
+  <data name="parat_uihint_ba" xml:space="preserve">
+    <value>BroadcastAddress</value>
+    <comment/>
+  </data>
+  <data name="parat_uihint_ma" xml:space="preserve">
+    <value>MulticastAddress</value>
+    <comment/>
+  </data>
+  <data name="parat_uihint_sm" xml:space="preserve">
+    <value>SubnetMask</value>
+    <comment/>
+  </data>
+  <data name="parat_uihint_ipv4" xml:space="preserve">
+    <value>IPv4</value>
+    <comment/>
+  </data>
+  <data name="parat_uihint_ipv6" xml:space="preserve">
+    <value>IPv6</value>
+    <comment/>
+  </data>
+  <data name="parat_uihint_rgb" xml:space="preserve">
+    <value>RGB</value>
+    <comment/>
+  </data>
+  <data name="parat_uihint_rgbw" xml:space="preserve">
+    <value>RGB+W</value>
+    <comment/>
+  </data>
+  <data name="parat_uihint_hsv" xml:space="preserve">
+    <value>HSV</value>
+    <comment/>
+  </data>
+  <data name="parat_addrt" xml:space="preserve">
+    <value>AddressType</value>
+    <comment/>
+  </data>
+  <data name="parat_vers" xml:space="preserve">
+    <value>Version</value>
+    <comment/>
+  </data>
+  <data name="parat_bagg" xml:space="preserve">
+    <value>Baggage</value>
+    <comment/>
+  </data>
+  <data name="parat_hue" xml:space="preserve">
+    <value>Color Space</value>
+    <comment/>
+  </data>
+  <data name="uni_error" xml:space="preserve">
+    <value>This union is not used by a parameter</value>
+    <comment/>
+  </data>
+  <data name="prop_sizebit" xml:space="preserve">
+    <value>Size in bits</value>
+    <comment/>
+  </data>
+  <data name="uni_savepath" xml:space="preserve">
+    <value>Save in</value>
+    <comment/>
+  </data>
+  <data name="uni_mem" xml:space="preserve">
+    <value>Select memory</value>
+    <comment/>
+  </data>
+  <data name="prop_offsetbit" xml:space="preserve">
+    <value>Bit Offset</value>
+    <comment/>
+  </data>
+  <data name="uni_error2" xml:space="preserve">
+    <value>Properties are not supported yet</value>
+    <comment/>
+  </data>
+  <data name="uni_addrauto" xml:space="preserve">
+    <value>Address is set automaticly</value>
+    <comment/>
+  </data>
+  <data name="prodv_text" xml:space="preserve">
+    <value>Text</value>
+    <comment/>
+  </data>
+  <data name="prodv_settings" xml:space="preserve">
+    <value>Settings</value>
+    <comment/>
+  </data>
+  <data name="prodv_value" xml:space="preserve">
+    <value>Value</value>
+    <comment/>
+  </data>
+  <data name="prodv_id" xml:space="preserve">
+    <value>Id</value>
+    <comment/>
+  </data>
+  <data name="prop_function" xml:space="preserve">
+    <value>Function</value>
+    <comment/>
+  </data>
+  <data name="prodv_getval" xml:space="preserve">
+    <value>Get Parameter Value</value>
     <comment/>
   </data>
 </root>

@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:p="clr-namespace:Kaenx.Creator.Properties"
     xmlns:System="clr-namespace:System;assembly=mscorlib"
     xmlns:conv="clr-namespace:Kaenx.Creator.Converter"
     xmlns:models="clr-namespace:Kaenx.Creator.Models"
@@ -29,8 +30,8 @@
             <ColumnDefinition Width="150" />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <Button Content="Hinzufügen" Click="ClickAddUnion" Margin="0 0 1 2" />
-        <Button Grid.Column="1" Content="Löschen" Click="ClickRemoveUnion" Margin="1 0 0 2" />
+        <Button Content="{x:Static p:Resources.gen_add}" Click="ClickAddUnion" Margin="0 0 1 2" />
+        <Button Grid.Column="1" Content="{x:Static p:Resources.gen_remove}" Click="ClickRemoveUnion" Margin="1 0 0 2" />
 
         <ListView x:Name="UnionList" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding Unions}">
             <ListView.ItemTemplate>
@@ -72,52 +73,52 @@
                 </StackPanel.Resources>
 
                 <TextBlock Margin="5 0" VerticalAlignment="Center">
-                    <Run Text="UID:" />
+                    <Run Text="{x:Static p:Resources.gen_uid}" />
                     <Run Text="{Binding UId}"/>
                 </TextBlock>
 
-                <TextBlock Text="Diese Union wird von keinem Parameter verwendet." Foreground="Red" Visibility="{Binding IsNotUsed, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}" Margin="5" />
+                <TextBlock Text="{x:Static p:Resources.uni_error}" Foreground="Red" Visibility="{Binding IsNotUsed, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}" Margin="5" />
 
-                <HeaderedContentControl Header="Name">
+                <HeaderedContentControl Header="{x:Static p:Resources.prop_name}">
                     <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
                 </HeaderedContentControl>
-                <HeaderedContentControl Header="SizeInBit">
+                <HeaderedContentControl Header="{x:Static p:Resources.prop_sizebit}">
                     <TextBox Text="{Binding SizeInBit, UpdateSourceTrigger=PropertyChanged}"/>
                 </HeaderedContentControl>
 
-                <HeaderedContentControl Header="Speicherort">
+                <HeaderedContentControl Header="{x:Static p:Resources.uni_savepath}">
                     <ComboBox ItemsSource="{Binding Source={StaticResource dataSave}}" SelectedItem="{Binding SavePath, Mode=TwoWay}" />
                 </HeaderedContentControl>
 
                 <StackPanel Visibility="{Binding SavePath, Converter={StaticResource EnumToVis}, ConverterParameter=Memory, FallbackValue=Collapsed}">
-                    <HeaderedContentControl Header="Speicher auswählen">
+                    <HeaderedContentControl Header="{x:Static p:Resources.uni_mem}">
                         <ComboBox ItemsSource="{Binding Version.Memories, ElementName=ViewControl}" SelectedItem="{Binding MemoryObject, Mode=TwoWay}" DisplayMemberPath="Name" />
                     </HeaderedContentControl>
 
                     <StackPanel Visibility="{Binding MemoryObject.IsAutoPara, Converter={StaticResource BoolToVis}, ConverterParameter=true, FallbackValue=Collapsed}">
-                        <HeaderedContentControl Header="Offset">
+                        <HeaderedContentControl Header="{x:Static p:Resources.prop_offset}">
                             <TextBox Text="{Binding Offset, UpdateSourceTrigger=PropertyChanged}" />
                         </HeaderedContentControl>
-                        <HeaderedContentControl Header="Bit Offset">
+                        <HeaderedContentControl Header="{x:Static p:Resources.prop_offsetbit}">
                             <TextBox Text="{Binding OffsetBit, UpdateSourceTrigger=PropertyChanged}"/>
                         </HeaderedContentControl>
                     </StackPanel>
 
                     <StackPanel Visibility="{Binding MemoryObject.IsAutoPara, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}">
-                        <TextBlock Text="Adresse wird automatisch festgelegt (Speicher)" Margin="5" />
+                        <TextBlock Text="{x:Static p:Resources.uni_addrauto}" Margin="5" />
 
                         <TextBlock Margin="5">
-                                <Run Text="Offset:" />
+                                <Run Text="{x:Static p:Resources.prop_offset}" />
                                 <Run Text="{Binding Offset, Mode=OneWay}" />
                                 <LineBreak />
-                                <Run Text="Bit Offset:" />
+                                <Run Text="{x:Static p:Resources.prop_offsetbit}" />
                                 <Run Text="{Binding OffsetBit, Mode=OneWay}" />
                         </TextBlock>
                     </StackPanel>
                 </StackPanel>
 
                 <StackPanel Visibility="{Binding SavePath, Converter={StaticResource EnumToVis}, ConverterParameter=Property, FallbackValue=Collapsed}">
-                    <TextBlock Text="Properties werden noch nicht unterstütz" />
+                    <TextBlock Text="{x:Static p:Resources.uni_error2}" />
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>

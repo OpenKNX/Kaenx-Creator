@@ -30,6 +30,9 @@
         <DataTemplate x:Key="TempDynMain">
             <TextBlock Margin="5" Text="Dieser Knotenpunkt wird nicht exportiert und kann somit nicht gelöscht oder geändert werden." />
         </DataTemplate>
+        <DataTemplate x:Key="TempDynMainModule">
+            <TextBlock Margin="5" Text="Dieser Knotenpunkt wird nicht exportiert und kann somit nicht gelöscht oder geändert werden." />
+        </DataTemplate>
         <DataTemplate x:Key="TempDynIndependent">
             <TextBlock Margin="5" Text="Ein Independent Channel wird selbst nicht dargestellt. Die darunter liegenden Parameterblöcke werden direkt in der Ansicht angezeigt." TextWrapping="Wrap" />
         </DataTemplate>
@@ -349,6 +352,7 @@
             DChoose="{StaticResource TempDynChoose}" 
             DWhen="{StaticResource TempDynWhen}"
             DMain="{StaticResource TempDynMain}"
+            DMainM="{StaticResource TempDynMainModule}"
             DIndependent="{StaticResource TempDynIndependent}"
             DChannel="{StaticResource TempDynChannel}"
             DModule="{StaticResource TempDynModule}"
@@ -403,7 +407,10 @@
                     <MenuItem Header="Zuklappen" Click="ClickCloseDyn" />
                 </ContextMenu>
                 <HierarchicalDataTemplate DataType="{x:Type dyn:DynamicMain}" ItemsSource="{Binding Items}">
-                    <TextBlock Text="{Binding Name}" ContextMenu="{StaticResource ContextMenu}" />
+                    <TextBlock Text="Root Knoten" ContextMenu="{StaticResource ContextMenu}" />
+                </HierarchicalDataTemplate>
+                <HierarchicalDataTemplate DataType="{x:Type dyn:DynamicModule}" ItemsSource="{Binding Items}">
+                    <TextBlock Text="Root Knoten" ContextMenu="{StaticResource ContextMenu}" />
                 </HierarchicalDataTemplate>
                 <HierarchicalDataTemplate DataType="{x:Type dyn:DynChannel}" ItemsSource="{Binding Items}">
                     <StackPanel Orientation="Horizontal">

@@ -15,6 +15,7 @@ namespace Kaenx.Creator.Selectors
         public DataTemplate DChoose { get; set; }
         public DataTemplate DWhen { get; set; }
         public DataTemplate DMain { get; set; }
+        public DataTemplate DMainM { get; set; }
         public DataTemplate DIndependent { get; set; }
         public DataTemplate DModule { get; set; }
         public DataTemplate DCom { get; set; }
@@ -43,6 +44,9 @@ namespace Kaenx.Creator.Selectors
 
                 case DynamicMain dm:
                     return DMain;
+
+                case DynamicModule dmo:
+                    return DMainM;
 
                 case DynChannelIndependent dic:
                     return DIndependent;

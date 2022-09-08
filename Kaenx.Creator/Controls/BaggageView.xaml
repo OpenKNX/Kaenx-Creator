@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:p="clr-namespace:Kaenx.Creator.Properties"
     xmlns:System="clr-namespace:System;assembly=mscorlib"
     xmlns:conv="clr-namespace:Kaenx.Creator.Converter"
     xmlns:models="clr-namespace:Kaenx.Creator.Models"
@@ -30,10 +31,10 @@
             <ColumnDefinition Width="150" />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <Button Content="Hinzufügen" Click="ClickAdd" Margin="0 0 1 1" />
-        <Button Grid.Column="1" Content="Löschen" Click="ClickDelete"  Margin="1 0 0 1" />
-        <Button Grid.Row="1" Content="Import" Click="ClickImport" Margin="0 1 1 2" />
-        <Button Grid.Row="1" Grid.Column="1" Content="Export" Click="ClickExport" Margin="1 1 0 2" />
+        <Button Content="{x:Static p:Resources.gen_add}" Click="ClickAdd" Margin="0 0 1 1" />
+        <Button Grid.Column="1" Content="{x:Static p:Resources.gen_remove}" Click="ClickDelete"  Margin="1 0 0 1" />
+        <Button Grid.Row="1" Content="{x:Static p:Resources.gen_import}" Click="ClickImport" Margin="0 1 1 2" />
+        <Button Grid.Row="1" Grid.Column="1" Content="{x:Static p:Resources.gen_export}" Click="ClickExport" Margin="1 1 0 2" />
 
         <ListView x:Name="BaggageList" Grid.Row="2" Grid.ColumnSpan="2" ItemsSource="{Binding General.Baggages, ElementName=ViewControl}" DisplayMemberPath="Name" />
 
@@ -69,23 +70,23 @@
                 </StackPanel.Resources>
 
                 <TextBlock Margin="5 0" VerticalAlignment="Center">
-                    <Run Text="UID:" />
+                    <Run Text="{x:Static p:Resources.gen_uid}" />
                     <Run Text="{Binding UId}"/>
                 </TextBlock>
 
-                <TextBlock Text="Dieses Baggage wird von keinem ParameterType verwendet." Foreground="Red" Visibility="{Binding IsNotUsed, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}" Margin="5" />
+                <TextBlock Text="{x:Static p:Resources.bagg_error}" Foreground="Red" Visibility="{Binding IsNotUsed, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}" Margin="5" />
 
-                <HeaderedContentControl Header="Name">
+                <HeaderedContentControl Header="{x:Static p:Resources.prop_name}">
                     <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
                 </HeaderedContentControl>
 
-                <HeaderedContentControl Header="TargetPath">
+                <HeaderedContentControl Header="{x:Static p:Resources.bagg_targetpath}">
                     <TextBox Text="{Binding TargetPath, UpdateSourceTrigger=PropertyChanged}"/>
                 </HeaderedContentControl>
 
-                <Button Content="Datei ändern" Click="ClickChangeFile" />
+                <Button Content="{x:Static p:Resources.bagg_file}" Click="ClickChangeFile" />
 
-                <HeaderedContentControl Header="Zeitstempel">
+                <HeaderedContentControl Header="{x:Static p:Resources.bagg_timestamp}">
                     <DatePicker SelectedDate="{Binding TimeStamp}" />
                 </HeaderedContentControl>
 

@@ -17,8 +17,12 @@ namespace Kaenx.Creator.Controls
 {
     public partial class ParameterRefView : UserControl, IFilterable, ISelectable
     {
-
+        public static readonly DependencyProperty VersionProperty = DependencyProperty.Register("Version", typeof(AppVersion), typeof(ParameterRefView), new PropertyMetadata(OnModuleChangedCallback));
         public static readonly DependencyProperty ModuleProperty = DependencyProperty.Register("Module", typeof(IVersionBase), typeof(ParameterRefView), new PropertyMetadata(OnModuleChangedCallback));
+        public AppVersion Version {
+            get { return (AppVersion)GetValue(VersionProperty); }
+            set { SetValue(VersionProperty, value); }
+        }
         public IVersionBase Module {
             get { return (IVersionBase)GetValue(ModuleProperty); }
             set { SetValue(ModuleProperty, value); }
@@ -71,7 +75,7 @@ namespace Kaenx.Creator.Controls
         
         private void RefsChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if(e.OldItems != null)
+            if(e.OldItems != null && Module != null)
             {
                 foreach(ParameterRef pref in e.OldItems)
                     DeleteDynamicRef(Module.Dynamics[0], pref);
@@ -81,6 +85,12 @@ namespace Kaenx.Creator.Controls
         private void ClickAdd(object sender, RoutedEventArgs e)
         {
             ParameterRef pref = new ParameterRef() { UId = AutoHelper.GetNextFreeUId(Module.ParameterRefs) };
+            foreach(Language lang in Version.Languages)
+            {
+                pref.Text.Add(new Translation(lang, ""));
+                pref.Suffix.Add(new Translation(lang, ""));
+            }
+
             Module.ParameterRefs.Add(pref);
             ParamRefList.ScrollIntoView(pref);
             ParamRefList.SelectedItem = pref;
