@@ -298,6 +298,11 @@ namespace Kaenx.Creator.Classes
                 foreach(XElement xele in xproc.Descendants())
                 {
                     xele.Name = xele.Name.LocalName;
+                    if(xele.Name.LocalName == "OnError")
+                    {
+                        string id = GetLastSplit(xele.Attribute("MessageRef").Value, 2);
+                        xele.SetAttributeValue("MessageRef", id);
+                    }
                 }
                 currentVers.Procedure = xproc.ToString();
             }

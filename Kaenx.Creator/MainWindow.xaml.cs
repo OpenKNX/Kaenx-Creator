@@ -84,6 +84,9 @@ namespace Kaenx.Creator
             CheckEtsPath();
             CheckEtsVersions();
             LoadTemplates();
+
+            
+            MenuDebug.IsChecked = Properties.Settings.Default.isDebug;
         }
 
         public void GoToItem(object item, object module)
@@ -1260,6 +1263,16 @@ namespace Kaenx.Creator
                 Properties.Settings.Default.language = tag;
                 Properties.Settings.Default.Save();
                 CheckLangs();
+            }
+        }
+
+        private void ClickToggleDebug(object sender, RoutedEventArgs e)
+        {
+            if(sender is MenuItem)
+            {
+                bool tag = (sender as MenuItem).IsChecked;
+                Properties.Settings.Default.isDebug = tag;
+                Properties.Settings.Default.Save();
             }
         }
     }

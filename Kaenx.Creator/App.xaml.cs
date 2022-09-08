@@ -23,7 +23,10 @@ namespace Kaenx.Creator
                 if (e.Exception is System.Windows.Markup.XamlParseException) return;
 
                 string errorMessage = string.Format("An unhandled exception occurred: {0}", e.Exception.Message);
-                errorMessage += "\r\n\r\n" + e.Exception.StackTrace;
+
+                if(Kaenx.Creator.Properties.Settings.Default.isDebug)
+                    errorMessage += "\r\n\r\n" + e.Exception.StackTrace;
+
                 MessageBox.Show(errorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 MessageBox.Show("Please save your project and close the application.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 e.Handled = true;

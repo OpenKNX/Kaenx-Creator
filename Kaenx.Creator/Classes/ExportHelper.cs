@@ -308,6 +308,11 @@ namespace Kaenx.Creator.Classes
                 foreach(XElement xele in temp.Descendants())
                 {
                     xele.Name = XName.Get(xele.Name.LocalName, currentNamespace);
+                    if(xele.Name.LocalName == "OnError")
+                    {
+                        string id = xele.Attribute("MessageRef").Value;
+                        xele.SetAttributeValue("MessageRef", $"{appVersion}_M-{id}");
+                    }
                 }
                 xunderapp.Add(temp);
                 #endregion

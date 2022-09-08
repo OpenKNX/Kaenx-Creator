@@ -354,7 +354,8 @@
                 <MenuItem IsCheckable="True" Header="English" Tag="en" Click="ChangeLang" />
             </MenuItem>
             <MenuItem Header="Info">
-                <MenuItem Header="{x:Static p:Resources.menu_version}" Click="ClickShowVersion" />
+                <MenuItem Header="{x:Static p:Resources.menu_info_vers}" Click="ClickShowVersion" />
+                <MenuItem x:Name="MenuDebug" IsCheckable="True" Header="{x:Static p:Resources.menu_info_debug}" Click="ClickToggleDebug" />
             </MenuItem>
         </Menu>
 

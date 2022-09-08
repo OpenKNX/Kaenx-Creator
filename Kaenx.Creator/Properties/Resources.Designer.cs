@@ -252,9 +252,9 @@ namespace Kaenx.Creator.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string menu_version {
+        public static string menu_info_vers {
             get {
-                return ResourceManager.GetString("menu_version", resourceCulture);
+                return ResourceManager.GetString("menu_info_vers", resourceCulture);
             }
         }
         
@@ -1398,6 +1398,15 @@ namespace Kaenx.Creator.Properties {
         public static string prodv_getval {
             get {
                 return ResourceManager.GetString("prodv_getval", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string menu_info_debug {
+            get {
+                return ResourceManager.GetString("menu_info_debug", resourceCulture);
             }
         }
     }

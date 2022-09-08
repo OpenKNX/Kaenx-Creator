@@ -201,7 +201,7 @@
     <value>Leer</value>
     <comment/>
   </data>
-  <data name="menu_version" xml:space="preserve">
+  <data name="menu_info_vers" xml:space="preserve">
     <value>Version anzeigen</value>
     <comment/>
   </data>
@@ -675,6 +675,10 @@
   </data>
   <data name="prodv_getval" xml:space="preserve">
     <value>Parameter Wert abfragen</value>
+    <comment/>
+  </data>
+  <data name="menu_info_debug" xml:space="preserve">
+    <value>Aktiviere Debug Meldungen</value>
     <comment/>
   </data>
 </root>

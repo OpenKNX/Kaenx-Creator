@@ -34,5 +34,17 @@ namespace Kaenx.Creator.Properties {
                 this["language"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("false")]
+        public bool isDebug {
+            get {
+                return ((bool)(this["isDebug"]));
+            }
+            set {
+                this["isDebug"] = value;
+            }
+        }
     }
 }

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Xml.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using Kaenx.Creator.Models;
@@ -239,6 +240,29 @@ namespace Kaenx.Creator.Classes {
                     actions.Add(new PublishAction() { Text = $"Prüfe Module '{mod.Name}'" });
                     CheckVersion(mod, actions, vers.DefaultLanguage, vers.NamespaceVersion, showOnlyErrors);
                     //TODO check for Argument exist
+                }
+
+                XElement temp = XElement.Parse(vers.Procedure);
+                temp.Attributes().Where((x) => x.IsNamespaceDeclaration).Remove();
+                foreach(XElement xele in temp.Descendants())
+                {
+                    if(xele.Name.LocalName == "OnError")
+                    {
+                        if(!vers.IsMessagesActive)
+                        {
+                            actions.Add(new PublishAction() { Text = $"Ladeprozedur: Es werden Meldungen verwendet, obwohl diese in der Applikation nicht aktiviert sind.", State = PublishState.Fail });
+                            return;
+                        }
+
+                        int id = -1;
+                        if(!int.TryParse(xele.Attribute("MessageRef").Value, out id))
+                            actions.Add(new PublishAction() { Text = $"Ladeprozedur: MessageRef ist kein Integer.", State = PublishState.Fail });
+                        if(id != -1)
+                        {
+                            if(!vers.Messages.Any(m => m.Id == id))
+                                actions.Add(new PublishAction() { Text = $"Ladeprozedur: MessageRef zeigt auf nicht vorhandene Meldung ({id}).", State = PublishState.Fail });
+                        }
+                    }
                 }
             }
             #endregion
