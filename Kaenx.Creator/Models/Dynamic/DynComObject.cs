@@ -12,6 +12,7 @@ namespace Kaenx.Creator.Models.Dynamic
     {
         [JsonIgnore]
         public IDynItems Parent { get; set; }
+        public bool IsExpanded { get; set; }
 
         private string _name = "";
         public string Name

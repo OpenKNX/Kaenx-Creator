@@ -12,6 +12,13 @@ namespace Kaenx.Creator.Models.Dynamic
         [JsonIgnore]
         public IDynItems Parent { get; set; }
 
+        private bool _isExpanded = false;
+        public bool IsExpanded
+        {
+            get { return _isExpanded; }
+            set { _isExpanded = value; Changed("IsExpanded"); }
+        }
+
         private string _name = "Root Knoten";
         public string Name
         {

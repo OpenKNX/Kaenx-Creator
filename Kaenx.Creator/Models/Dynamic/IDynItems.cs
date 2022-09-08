@@ -10,6 +10,7 @@ namespace Kaenx.Creator.Models.Dynamic
         public IDynItems Parent { get; set; }
         public string Name { get; set; }
         public ObservableCollection<IDynItems> Items { get; set; }
+        public bool IsExpanded { get; set; }
         public object Copy();
     }
 }

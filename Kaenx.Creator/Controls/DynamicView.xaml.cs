@@ -14,8 +14,8 @@ namespace Kaenx.Creator.Controls
 {
     public partial class DynamicView : UserControl, INotifyPropertyChanged, ISelectable
     {
-        public static readonly DependencyProperty VersionProperty = DependencyProperty.Register("Version", typeof(AppVersion), typeof(DynamicView), new PropertyMetadata(OnVersionChangedCallback));
-        public static readonly DependencyProperty ModuleProperty = DependencyProperty.Register("Module", typeof(IVersionBase), typeof(DynamicView), new PropertyMetadata(OnModuleChangedCallback));
+        public static readonly DependencyProperty VersionProperty = DependencyProperty.Register("Version", typeof(AppVersion), typeof(DynamicView), new PropertyMetadata());
+        public static readonly DependencyProperty ModuleProperty = DependencyProperty.Register("Module", typeof(IVersionBase), typeof(DynamicView), new PropertyMetadata());
         public AppVersion Version
         {
             get { return (AppVersion)GetValue(VersionProperty); }
@@ -53,24 +53,39 @@ namespace Kaenx.Creator.Controls
         }
 
 
-        private static void OnVersionChangedCallback(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+
+        private void ClickOpenDyn(object sender, RoutedEventArgs e)
         {
-            (sender as DynamicView)?.OnVersionChanged();
+            Models.Dynamic.IDynItems main = (sender as MenuItem).DataContext as Models.Dynamic.IDynItems;
+            SetIsExpaned(main, true);
         }
 
-        private static void OnModuleChangedCallback(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        private void ClickCloseDyn(object sender, RoutedEventArgs e)
         {
-            (sender as DynamicView)?.OnModuleChanged();
+            Models.Dynamic.IDynItems main = (sender as MenuItem).DataContext as Models.Dynamic.IDynItems;
+            SetIsExpaned(main, false);
         }
 
-        protected virtual void OnVersionChanged()
-        {
-            
-        }
 
-        protected virtual void OnModuleChanged()
+        private void SetIsExpaned(Models.Dynamic.IDynItems item, bool isExpanded)
         {
-            
+            item.IsExpanded = isExpanded;
+
+            switch(item)
+            {
+                case Models.Dynamic.DynamicMain:
+                case Models.Dynamic.DynamicModule:
+                case Models.Dynamic.DynChannel:
+                case Models.Dynamic.DynChannelIndependent:
+                case Models.Dynamic.DynChooseBlock:
+                case Models.Dynamic.DynChooseChannel:
+                case Models.Dynamic.DynParaBlock:
+                case Models.Dynamic.DynWhenBlock:
+                case Models.Dynamic.DynWhenChannel:
+                    foreach(Models.Dynamic.IDynItems ditem in item.Items)
+                        SetIsExpaned(ditem, isExpanded);
+                    break;
+            }
         }
 
 

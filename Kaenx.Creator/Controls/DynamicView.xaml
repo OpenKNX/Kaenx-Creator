@@ -49,17 +49,17 @@
                 </HeaderedContentControl>
 
                 <HeaderedContentControl Header="Parameter Text" IsEnabled="False" Margin="5 30 5 5">
-                    <DataGrid ItemsSource="{Binding ParameterRefObject.ParameterObject.Text}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
+                    <DataGrid ItemsSource="{Binding ParameterRefObject.ParameterObject.Text}" AutoGenerateColumns="False">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                            <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" />
                             <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
                         </DataGrid.Columns>
                     </DataGrid>
                 </HeaderedContentControl>
                 <HeaderedContentControl Header="ParameterRef Text" IsEnabled="False">
-                    <DataGrid ItemsSource="{Binding ParameterRefObject.Text}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
+                    <DataGrid ItemsSource="{Binding ParameterRefObject.Text}" AutoGenerateColumns="False">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                            <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" />
                             <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
                         </DataGrid.Columns>
                     </DataGrid>
@@ -89,7 +89,7 @@
                             </ObjectDataProvider.MethodParameters>
                         </ObjectDataProvider>
                     </HeaderedContentControl.Resources>
-                    <DataGrid ItemsSource="{Binding Arguments}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
+                    <DataGrid ItemsSource="{Binding Arguments}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Name" Binding="{Binding Argument.Name}" IsReadOnly="True" />
                             <DataGridTextColumn Header="Wert" Binding="{Binding Value}" />
@@ -365,6 +365,11 @@
 
         <TreeView x:Name="DynamicList" ItemsSource="{Binding Dynamics}" MinWidth="300"
             AllowDrop="True" MouseMove="TreeMouseMove" DragOver="TreeDragOver" Drop="TreeDrop">
+            <TreeView.ItemContainerStyle>
+				<Style TargetType="TreeViewItem">
+					<Setter Property="IsExpanded" Value="{Binding IsExpanded}" />
+				</Style>
+			</TreeView.ItemContainerStyle>
             <TreeView.Resources>
                 <ContextMenu x:Key="ContextMenu" Loaded="LoadingContextDynWhen">
                     <MenuItem Header="Independent Channel hinzufügen" Click="ClickAddDynIndep" />
@@ -383,6 +388,9 @@
                     <MenuItem Header="Ausschneiden" Click="ClickCutDyn" />
                     <MenuItem Header="Einfügen" Click="ClickInsertDyn" />
                     <MenuItem Header="Entfernen" Click="ClickRemoveDyn" />
+                    <Separator />
+                    <MenuItem Header="Aufklappen" Click="ClickOpenDyn" />
+                    <MenuItem Header="Zuklappen" Click="ClickCloseDyn" />
                 </ContextMenu>
                 <ContextMenu x:Key="ContextMenuChoose">
                     <MenuItem Header="Bedingung hinzufügen" Click="ClickAddDynWhen" />
@@ -390,6 +398,9 @@
                     <MenuItem Header="Ausschneiden" Click="ClickCutDyn" />
                     <MenuItem Header="Einfügen" Click="ClickInsertDyn" />
                     <MenuItem Header="Entfernen" Click="ClickRemoveDyn" />
+                    <Separator />
+                    <MenuItem Header="Aufklappen" Click="ClickOpenDyn" />
+                    <MenuItem Header="Zuklappen" Click="ClickCloseDyn" />
                 </ContextMenu>
                 <HierarchicalDataTemplate DataType="{x:Type dyn:DynamicMain}" ItemsSource="{Binding Items}">
                     <TextBlock Text="{Binding Name}" ContextMenu="{StaticResource ContextMenu}" />
@@ -430,7 +441,7 @@
                         <TextBlock Text="Assign" VerticalAlignment="Center" />
                     </StackPanel>
                 </HierarchicalDataTemplate>
-                <HierarchicalDataTemplate DataType="{x:Type dyn:DynModule}" ItemsSource="{Binding Items}">
+                <HierarchicalDataTemplate DataType="{x:Type dyn:DynModule}">
                     <StackPanel Orientation="Horizontal" ContextMenu="{StaticResource ContextMenu}">
                         <Image Source="{svgc:SvgImage Source=/Assets/Images/Dynamic/Block.svg, AppName=Kaenx.Creator}" Height="18" Width="18" Margin="4" />
                         <TextBlock VerticalAlignment="Center">
@@ -499,11 +510,6 @@
                             <Run Text="{Binding Name}" />
                             <Run Text="{Binding ParameterRefObject.Name}" />
                         </TextBlock>
-                        <!--<TextBlock Margin="10 0 0 0" VerticalAlignment="Center">
-                            <Run Text="[" />
-                            <Run Text="{Binding ParameterRefObject.ParameterObject.Name}" />
-                            <Run Text="]" />
-                        </TextBlock>-->
                     </StackPanel>
                 </DataTemplate>
                 <DataTemplate DataType="{x:Type dyn:DynComObject}">
