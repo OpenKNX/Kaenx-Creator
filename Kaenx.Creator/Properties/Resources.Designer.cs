@@ -1305,18 +1305,18 @@ namespace Kaenx.Creator.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string uni_savepath {
+        public static string prop_savepath {
             get {
-                return ResourceManager.GetString("uni_savepath", resourceCulture);
+                return ResourceManager.GetString("prop_savepath", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string uni_mem {
+        public static string prop_mem {
             get {
-                return ResourceManager.GetString("uni_mem", resourceCulture);
+                return ResourceManager.GetString("prop_mem", resourceCulture);
             }
         }
         
@@ -1407,6 +1407,249 @@ namespace Kaenx.Creator.Properties {
         public static string menu_info_debug {
             get {
                 return ResourceManager.GetString("menu_info_debug", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string tcheck_tooltip {
+            get {
+                return ResourceManager.GetString("tcheck_tooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string tcheck_check {
+            get {
+                return ResourceManager.GetString("tcheck_check", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string tcheck_clean1 {
+            get {
+                return ResourceManager.GetString("tcheck_clean1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string tcheck_clean2 {
+            get {
+                return ResourceManager.GetString("tcheck_clean2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string gen_clone {
+            get {
+                return ResourceManager.GetString("gen_clone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string gen_id_man {
+            get {
+                return ResourceManager.GetString("gen_id_man", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string gen_id_auto {
+            get {
+                return ResourceManager.GetString("gen_id_auto", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string gen_id_reset {
+            get {
+                return ResourceManager.GetString("gen_id_reset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string tpara_error {
+            get {
+                return ResourceManager.GetString("tpara_error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string prop_suffix {
+            get {
+                return ResourceManager.GetString("prop_suffix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string prop_access {
+            get {
+                return ResourceManager.GetString("prop_access", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string gen_bit {
+            get {
+                return ResourceManager.GetString("gen_bit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string tpara_union {
+            get {
+                return ResourceManager.GetString("tpara_union", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string gen_union {
+            get {
+                return ResourceManager.GetString("gen_union", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string tpara_infoauto {
+            get {
+                return ResourceManager.GetString("tpara_infoauto", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string prop_propid {
+            get {
+                return ResourceManager.GetString("prop_propid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string prop_objectindex {
+            get {
+                return ResourceManager.GetString("prop_objectindex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string gen_onlydeflang {
+            get {
+                return ResourceManager.GetString("gen_onlydeflang", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string tpara_error2 {
+            get {
+                return ResourceManager.GetString("tpara_error2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string prop_para {
+            get {
+                return ResourceManager.GetString("prop_para", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string prop_order {
+            get {
+                return ResourceManager.GetString("prop_order", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string tcom_error {
+            get {
+                return ResourceManager.GetString("tcom_error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string tcom_para {
+            get {
+                return ResourceManager.GetString("tcom_para", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string tcom_func {
+            get {
+                return ResourceManager.GetString("tcom_func", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string tcom_dpt {
+            get {
+                return ResourceManager.GetString("tcom_dpt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string tcom_dpst {
+            get {
+                return ResourceManager.GetString("tcom_dpst", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string tcom_size {
+            get {
+                return ResourceManager.GetString("tcom_size", resourceCulture);
             }
         }
     }

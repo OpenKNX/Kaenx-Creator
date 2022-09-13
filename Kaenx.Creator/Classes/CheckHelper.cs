@@ -233,7 +233,8 @@ namespace Kaenx.Creator.Classes {
                 }
 
                 CheckVersion(vers, actions, vers.DefaultLanguage, vers.NamespaceVersion, showOnlyErrors);
-
+                if(General != null)
+                    CheckLanguages(vers, actions, General, devices);
 
                 foreach(Module mod in vers.Modules)
                 {
@@ -531,6 +532,43 @@ namespace Kaenx.Creator.Classes {
             CheckDynamicItem(vbase.Dynamics[0], actions, ns, showOnlyErrors, mod);
         }
 
+        private static void CheckLanguages(AppVersion vers,  ObservableCollection<PublishAction> actions, ModelGeneral general, List<Device> devices)
+        {
+            List<CatalogItem> toCheck = new List<CatalogItem>();
+            CheckCatalog(vers, general.Catalog[0], devices, general, actions);
+        }
+
+        private static void CheckCatalog(AppVersion vers, CatalogItem item, List<Device> devices, ModelGeneral general,  ObservableCollection<PublishAction> actions)
+        {
+            foreach(CatalogItem citem in item.Items)
+            {
+                if(!citem.IsSection)
+                {
+                    Application app = general.Applications.Single(a => a.Versions.Contains(vers));
+                    if(citem.Hardware.Apps.Contains(app))
+                    {
+                        foreach(Device dev in citem.Hardware.Devices.Where(d => devices.Contains(d)))
+                        {
+                            foreach(Language lang in vers.Languages)
+                            {
+                                if(!dev.Text.Any(l => l.Language.CultureCode == lang.CultureCode || string.IsNullOrEmpty(l.Text)))
+                                    actions.Add(new PublishAction() { Text = $"Geräte: Text enthält nicht alle Sprachen der Applikation.", State = PublishState.Fail });
+                                if(!dev.Description.Any(l => l.Language.CultureCode == lang.CultureCode || string.IsNullOrEmpty(l.Text)))
+                                    actions.Add(new PublishAction() { Text = $"Geräte: Beschreibung enthält nicht alle Sprachen der Applikation.", State = PublishState.Fail });
+                            }
+                        }
+                        return;
+                    }
+                } else {
+                    foreach(Language lang in vers.Languages)
+                    {
+                        if(!citem.Text.Any(l => l.Language.CultureCode == lang.CultureCode || string.IsNullOrEmpty(l.Text)))
+                            actions.Add(new PublishAction() { Text = $"Katalog: Text enthält nicht alle Sprachen der Applikation.", State = PublishState.Fail });
+                    }
+                    CheckCatalog(vers, citem, devices, general, actions);
+                }
+            }
+        }
         
         private static void CheckDynamicItem(Models.Dynamic.IDynItems item, ObservableCollection<Models.PublishAction> actions, int ns, bool showOnlyErrors, IVersionBase vbase)
         {

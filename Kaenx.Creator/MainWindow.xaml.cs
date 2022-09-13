@@ -68,6 +68,8 @@ namespace Kaenx.Creator
             new Models.EtsVersion(20, "ETS 5.7 (20)", "5.7"),
             new Models.EtsVersion(21, "ETS 6.0 (21)", "6.0")
         };
+        
+        private int VersionCurrent = 1;
 
 
         public MainWindow()
@@ -233,11 +235,11 @@ namespace Kaenx.Creator
 
         private void ClickNew(object sender, RoutedEventArgs e)
         {
-            General = new Models.ModelGeneral();
+            General = new Models.ModelGeneral() { ImportVersion = VersionCurrent };
             General.Languages.Add(new Models.Language("Deutsch", "de-DE"));
-            General.DefaultLanguage = "de-DE";
             General.Catalog.Add(new Models.CatalogItem() { Name = "Hauptkategorie (wird nicht exportiert)" });
             SetButtons(true);
+            MenuSaveBtn.IsEnabled = false;
         }
 
         private void Changed(string name)
@@ -505,17 +507,19 @@ namespace Kaenx.Creator
                 MessageBox.Show("Die Sprache wird bereits unterstützt.");
             else {
                 ver.Languages.Add(lang);
-                ver.Text.Add(new Models.Translation(lang, ""));
+                if(!ver.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
+                    ver.Text.Add(new Models.Translation(lang, ""));
                 
                 foreach(Models.ParameterType type in ver.ParameterTypes) {
                     if(type.Type != Models.ParameterTypes.Enum) continue;
 
-                    foreach(Models.ParameterTypeEnum enu in type.Enums) {
-                        enu.Text.Add(new Models.Translation(lang, ""));
-                    }
+                    foreach(Models.ParameterTypeEnum enu in type.Enums)
+                        if(!enu.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
+                            enu.Text.Add(new Models.Translation(lang, ""));
                 }
                 foreach(Models.Message msg in ver.Messages) {
-                    msg.Text.Add(new Models.Translation(lang, ""));
+                    if(!msg.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
+                        msg.Text.Add(new Models.Translation(lang, ""));
                 }
 
                 addLangToVersion(ver, lang);
@@ -528,50 +532,6 @@ namespace Kaenx.Creator
             }
         }
 
-        private void addLangToVersion(Models.Dynamic.IDynItems parent, Models.Language lang)
-        {
-            switch(parent)
-            {
-                case Models.Dynamic.DynChannel dch:
-                    dch.Text.Add(new Models.Translation(lang, ""));
-                    break;
-                    
-                case Models.Dynamic.DynParaBlock dpb:
-                    dpb.Text.Add(new Models.Translation(lang, ""));
-                    break;
-
-                case Models.Dynamic.DynSeparator ds:
-                    ds.Text.Add(new Models.Translation(lang, ""));
-                    break;
-            }
-
-            if(parent.Items?.Count > 0)
-                foreach(Models.Dynamic.IDynItems item in parent.Items)
-                    addLangToVersion(item, lang);
-        }
-
-        private void addLangToVersion(Models.IVersionBase vbase, Models.Language lang)
-        {
-            foreach(Models.Parameter para in vbase.Parameters)
-            {
-                para.Text.Add(new Models.Translation(lang, ""));
-                para.Suffix.Add(new Models.Translation(lang, ""));
-            }
-            foreach(Models.ParameterRef para in vbase.ParameterRefs)
-            {
-                para.Text.Add(new Models.Translation(lang, ""));
-                para.Suffix.Add(new Models.Translation(lang, ""));
-            }
-            foreach(Models.ComObject com in vbase.ComObjects) {
-                com.Text.Add(new Models.Translation(lang, ""));
-                com.FunctionText.Add(new Models.Translation(lang, ""));
-            }
-            foreach(Models.ComObjectRef com in vbase.ComObjectRefs) {
-                com.Text.Add(new Models.Translation(lang, ""));
-                com.FunctionText.Add(new Models.Translation(lang, ""));
-            }
-        }
-
         private void ClickRemoveLanguageVers(object sender, RoutedEventArgs e) {
             if(SupportedLanguagesVers.SelectedItem == null){
                 MessageBox.Show("Bitte wählen Sie erst oben eine Sprache aus.");
@@ -580,22 +540,131 @@ namespace Kaenx.Creator
             Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
             Models.Language lang = SupportedLanguagesVers.SelectedItem as Models.Language;
 
-            ver.Text.Remove(ver.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
+            if(ver.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
+                ver.Text.Remove(ver.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
             ver.Languages.Remove(ver.Languages.Single(l => l.CultureCode == lang.CultureCode));
-            foreach(Models.Parameter para in ver.Parameters) {
-                para.Text.Remove(para.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
-            } 
-            foreach(Models.ComObject com in ver.ComObjects) {
-                com.Text.Remove(com.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
-                com.FunctionText.Remove(com.FunctionText.Single(l => l.Language.CultureCode == lang.CultureCode));
-            }
+            
+
             foreach(Models.ParameterType type in ver.ParameterTypes) {
                 if(type.Type != Models.ParameterTypes.Enum) continue;
 
                 foreach(Models.ParameterTypeEnum enu in type.Enums) {
-                    enu.Text.Remove(enu.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
+                    if(enu.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
+                        enu.Text.Remove(enu.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
                 }
             }
+
+            removeLangFromVersion(ver, lang);
+            foreach(Models.Module mod in ver.Modules)
+                removeLangFromVersion(mod, lang);
+        }
+
+        private void addLangToVersion(Models.IVersionBase vbase, Models.Language lang)
+        {
+            foreach(Models.Parameter para in vbase.Parameters)
+            {
+                if(!para.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
+                    para.Text.Add(new Models.Translation(lang, ""));
+                if(!para.Suffix.Any(t => t.Language.CultureCode == lang.CultureCode))
+                    para.Suffix.Add(new Models.Translation(lang, ""));
+            }
+            foreach(Models.ParameterRef para in vbase.ParameterRefs)
+            {
+                if(!para.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
+                    para.Text.Add(new Models.Translation(lang, ""));
+                if(!para.Suffix.Any(t => t.Language.CultureCode == lang.CultureCode))
+                    para.Suffix.Add(new Models.Translation(lang, ""));
+            }
+            foreach(Models.ComObject com in vbase.ComObjects) {
+                if(!com.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
+                    com.Text.Add(new Models.Translation(lang, ""));
+                if(!com.FunctionText.Any(t => t.Language.CultureCode == lang.CultureCode))
+                    com.FunctionText.Add(new Models.Translation(lang, ""));
+            }
+            foreach(Models.ComObjectRef com in vbase.ComObjectRefs) {
+                if(!com.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
+                    com.Text.Add(new Models.Translation(lang, ""));
+                if(!com.FunctionText.Any(t => t.Language.CultureCode == lang.CultureCode))
+                    com.FunctionText.Add(new Models.Translation(lang, ""));
+            }
+        }
+
+        private void addLangToVersion(Models.Dynamic.IDynItems parent, Models.Language lang)
+        {
+            switch(parent)
+            {
+                case Models.Dynamic.DynChannel dch:
+                    if(!dch.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
+                        dch.Text.Add(new Models.Translation(lang, ""));
+                    break;
+                    
+                case Models.Dynamic.DynParaBlock dpb:
+                    if(!dpb.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
+                        dpb.Text.Add(new Models.Translation(lang, ""));
+                    break;
+
+                case Models.Dynamic.DynSeparator ds:
+                    if(!ds.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
+                        ds.Text.Add(new Models.Translation(lang, ""));
+                    break;
+            }
+
+            if(parent.Items?.Count > 0)
+                foreach(Models.Dynamic.IDynItems item in parent.Items)
+                    addLangToVersion(item, lang);
+        }
+
+        private void removeLangFromVersion(Models.IVersionBase vbase, Models.Language lang)
+        {
+            foreach(Models.Parameter para in vbase.Parameters) {
+                if(para.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
+                    para.Text.Remove(para.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
+                if(para.Suffix.Any(t => t.Language.CultureCode == lang.CultureCode))
+                    para.Suffix.Remove(para.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
+            } 
+            foreach(Models.ParameterRef para in vbase.ParameterRefs) {
+                if(para.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
+                    para.Text.Remove(para.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
+                if(para.Suffix.Any(t => t.Language.CultureCode == lang.CultureCode))
+                    para.Suffix.Remove(para.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
+            } 
+            foreach(Models.ComObject com in vbase.ComObjects) {
+                if(com.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
+                    com.Text.Remove(com.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
+                if(com.FunctionText.Any(t => t.Language.CultureCode == lang.CultureCode))
+                    com.FunctionText.Remove(com.FunctionText.Single(l => l.Language.CultureCode == lang.CultureCode));
+            }
+            foreach(Models.ComObjectRef com in vbase.ComObjectRefs) {
+                if(com.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
+                    com.Text.Remove(com.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
+                if(com.FunctionText.Any(t => t.Language.CultureCode == lang.CultureCode))
+                    com.FunctionText.Remove(com.FunctionText.Single(l => l.Language.CultureCode == lang.CultureCode));
+            }
+        }
+
+        private void removeLangToVersion(Models.Dynamic.IDynItems parent, Models.Language lang)
+        {
+            switch(parent)
+            {
+                case Models.Dynamic.DynChannel dch:
+                    if(dch.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
+                        dch.Text.Remove(dch.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
+                    break;
+                    
+                case Models.Dynamic.DynParaBlock dpb:
+                    if(dpb.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
+                        dpb.Text.Remove(dpb.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
+                    break;
+
+                case Models.Dynamic.DynSeparator ds:
+                    if(ds.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
+                        ds.Text.Remove(ds.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
+                    break;
+            }
+
+            if(parent.Items?.Count > 0)
+                foreach(Models.Dynamic.IDynItems item in parent.Items)
+                    addLangToVersion(item, lang);
         }
 
 
@@ -614,8 +683,10 @@ namespace Kaenx.Creator
                 LanguageCatalogItemAdd(_general.Catalog[0], lang);
                 foreach(Models.Hardware hard in _general.Hardware) {
                     foreach(Models.Device dev in hard.Devices) {
-                        dev.Text.Add(new Models.Translation(lang, ""));
-                        dev.Description.Add(new Models.Translation(lang, ""));
+                        if(!dev.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
+                            dev.Text.Add(new Models.Translation(lang, ""));
+                        if(!dev.Description.Any(t => t.Language.CultureCode == lang.CultureCode))
+                            dev.Description.Add(new Models.Translation(lang, ""));
                     }
                 }
             }
@@ -624,7 +695,8 @@ namespace Kaenx.Creator
         private void LanguageCatalogItemAdd(Models.CatalogItem parent, Models.Language lang)
         {
             foreach(Models.CatalogItem item in parent.Items) {
-                item.Text.Add(new Models.Translation(lang, ""));
+                if(!item.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
+                    item.Text.Add(new Models.Translation(lang, ""));
 
                 LanguageCatalogItemAdd(item, lang);
             }
@@ -633,7 +705,7 @@ namespace Kaenx.Creator
         private void LanguageCatalogItemRemove(Models.CatalogItem parent, Models.Language lang)
         {
             foreach(Models.CatalogItem item in parent.Items) {
-                if(item.IsSection)
+                if(item.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
                     item.Text.Remove(item.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
 
                 LanguageCatalogItemRemove(item, lang);
@@ -652,8 +724,10 @@ namespace Kaenx.Creator
             LanguageCatalogItemRemove(_general.Catalog[0], lang);
             foreach(Models.Hardware hard in _general.Hardware) {
                 foreach(Models.Device dev in hard.Devices) {
-                    dev.Text.Remove(dev.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
-                    dev.Description.Remove(dev.Description.Single(l => l.Language.CultureCode == lang.CultureCode));
+                    if(dev.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
+                        dev.Text.Remove(dev.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
+                    if(dev.Description.Any(t => t.Language.CultureCode == lang.CultureCode))
+                        dev.Description.Remove(dev.Description.Single(l => l.Language.CultureCode == lang.CultureCode));
                 } 
             }
         }
@@ -802,7 +876,6 @@ namespace Kaenx.Creator
         }
 
 
-        private int VersionCurrent = 1;
         private void DoOpen(string path)
         {
             string general = System.IO.File.ReadAllText(path);
@@ -816,7 +889,7 @@ namespace Kaenx.Creator
                 VersionToOpen = int.Parse(match.Groups[1].Value);
             }
 
-            if(VersionToOpen < VersionCurrent)
+            if(VersionToOpen < VersionCurrent && MessageBox.Show("Diese Datei wurde mit einer älteren Version erstellt. Soll versucht werden die Datei zu konvertieren?", "Altes Dateiformat", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
             {
                 general = CheckHelper.CheckImportVersion(general, VersionToOpen);
             }

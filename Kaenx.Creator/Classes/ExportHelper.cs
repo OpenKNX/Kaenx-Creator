@@ -518,7 +518,7 @@ namespace Kaenx.Creator.Classes
             xmanu = CreateNewXML(Manu);
             XElement xhards = new XElement(Get("Hardware"));
             xmanu.Add(xhards);
-            currentLang = general.DefaultLanguage;
+            
             foreach (Models.Hardware hard in hardware)
             {
                 string hid = Manu + "_H-" + GetEncoded(hard.SerialNumber) + "-" + hard.Version;

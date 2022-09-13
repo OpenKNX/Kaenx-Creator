@@ -19,6 +19,8 @@ namespace Kaenx.Creator.Viewer
 
         private Dictionary<string, int> TypeNameToId = new Dictionary<string, int>();
         private Dictionary<long, AppParameter> IdToParameter = new Dictionary<long, AppParameter>();
+        
+       
 
 
         public ImporterCreator(AppVersion version, Application app)
@@ -734,8 +736,10 @@ namespace Kaenx.Creator.Viewer
             }
 
 
+            System.Diagnostics.Debug.WriteLine($"Module {mod.Id}: {maxParaId} ParaStart - {maxComsId} ComsStart");
             
             Module nmod = CopyModule(mod.ModuleObject, int.Parse(argPara.Value), int.Parse(argComs.Value));
+
 
             ImportParameters(nmod, args);
             ImportComObjects(nmod, args);
@@ -854,6 +858,7 @@ namespace Kaenx.Creator.Viewer
         {
             Module bmod = new Module()
             {
+                Id = amod.Id,
                 Parameters = new ObservableCollection<Parameter>(),
                 ParameterRefs = new ObservableCollection<ParameterRef>(),
                 ComObjects = new ObservableCollection<ComObject>(),

@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:p="clr-namespace:Kaenx.Creator.Properties"
     xmlns:System="clr-namespace:System;assembly=mscorlib"
     xmlns:conv="clr-namespace:Kaenx.Creator.Converter"
     xmlns:models="clr-namespace:Kaenx.Creator.Models"
@@ -18,8 +19,8 @@
         <conv:BoolToBrush x:Key="BoolToBrush" TrueValue="Red" FalseValue="Black" />
         
         <ContextMenu x:Key="ListMenu">
-            <MenuItem Header="Klonen" Click="ClickClone" />
-            <MenuItem Header="Löschen" Click="ClickRemove" />
+            <MenuItem Header="{x:Static p:Resources.gen_clone}" Click="ClickClone" />
+            <MenuItem Header="{x:Static p:Resources.gen_remove}" Click="ClickRemove" />
         </ContextMenu>
     </UserControl.Resources>
 
@@ -34,7 +35,7 @@
             <ColumnDefinition Width="10" />
             <ColumnDefinition MinWidth="300" />
         </Grid.ColumnDefinitions>
-        <Button Content="Hinzufügen" Margin="0 0 0 2" Click="ClickAdd" />
+        <Button Content="{x:Static p:Resources.gen_add}" Margin="0 0 0 2" Click="ClickAdd" />
         
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
@@ -42,7 +43,7 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
 
-            <TextBlock Text="Filter/ID:" Margin="2 0 2 1" VerticalAlignment="Center" />
+            <TextBlock Text="{x:Static p:Resources.gen_filter}" Margin="2 0 2 1" VerticalAlignment="Center" />
             <TextBox x:Name="query" Grid.Column="1" Margin="1 0 0 2" />
         </Grid>
 
@@ -95,42 +96,42 @@
                     </StackPanel.Resources>
 
                     <TextBlock Margin="5 0" VerticalAlignment="Center">
-                        <Run Text="UID:" />
+                        <Run Text="{x:Static p:Resources.gen_uid}" />
                         <Run Text="{Binding UId}"/>
                     </TextBlock>
 
 
                     <Grid Margin="5 0">
                         <TextBlock VerticalAlignment="Center">
-                            <Run Text="ID:" />
+                            <Run Text="{x:Static p:Resources.gen_id}" />
                             <Run Text="{Binding Id}"/>
                         </TextBlock>
                         <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-                            <Button Content="Manuell" Click="ManuelId" />
-                            <Button Content="Automatisch" Click="AutoId" />
-                            <Button Content="Zurücksetzen" Click="ResetId" />
+                            <Button Content="{x:Static p:Resources.gen_id_man}" Click="ManuelId" />
+                            <Button Content="{x:Static p:Resources.gen_id_auto}" Click="AutoId" />
+                            <Button Content="{x:Static p:Resources.gen_id_reset}" Click="ResetId" />
                         </StackPanel>
                     </Grid>
 
-                    <TextBlock Text="Dieses KO wird von keinem Ref verwendet." Foreground="Red" Visibility="{Binding IsNotUsed, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}" Margin="5" />
+                    <TextBlock Text="{x:Static p:Resources.tcom_error}" Foreground="Red" Visibility="{Binding IsNotUsed, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}" Margin="5" />
 
-                    <HeaderedContentControl Header="Name">
+                    <HeaderedContentControl Header="{x:Static p:Resources.prop_name}">
                         <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
                     </HeaderedContentControl>
 
-                    <HeaderedContentControl Header="Text">
+                    <HeaderedContentControl Header="{x:Static p:Resources.gen_text}">
                         <StackPanel>
-                            <CheckBox IsChecked="{Binding TranslationText}" Content="Nur Standardsprache exportieren (keine Translation-Unit)" />
+                            <CheckBox IsChecked="{Binding TranslationText}" Content="{x:Static p:Resources.gen_onlydeflang}" />
                             <DataGrid ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
-                                    <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                                    <DataGridTextColumn Header="{x:Static p:Resources.gen_lang}" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                                    <DataGridTextColumn Header="{x:Static p:Resources.gen_text}" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
                                 </DataGrid.Columns>
                             </DataGrid>
                         </StackPanel>
                     </HeaderedContentControl>
 
-                    <HeaderedContentControl Header="Text Parameter">
+                    <HeaderedContentControl Header="{x:Static p:Resources.tcom_para}">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="auto" />
@@ -142,23 +143,23 @@
                         </Grid>
                     </HeaderedContentControl>
 
-                    <HeaderedContentControl Header="Funktionstext">
+                    <HeaderedContentControl Header="{x:Static p:Resources.tcom_func}">
                         <StackPanel>
-                            <CheckBox IsChecked="{Binding TranslationFunctionText}" Content="Nur Standardsprache exportieren (keine Translation-Unit)" />
+                            <CheckBox IsChecked="{Binding TranslationFunctionText}" Content="{x:Static p:Resources.gen_onlydeflang}" />
                             <DataGrid ItemsSource="{Binding FunctionText}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
-                                    <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                                    <DataGridTextColumn Header="{x:Static p:Resources.gen_lang}" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                                    <DataGridTextColumn Header="{x:Static p:Resources.gen_text}" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
                                 </DataGrid.Columns>
                             </DataGrid>
                         </StackPanel>
                     </HeaderedContentControl>
 
-                    <HeaderedContentControl Header="Nummer">
+                    <HeaderedContentControl Header="{x:Static p:Resources.prop_number}">
                         <TextBox Text="{Binding Number}" />
                     </HeaderedContentControl>
 
-                    <HeaderedContentControl Header="DataPointType">
+                    <HeaderedContentControl Header="{x:Static p:Resources.tcom_dpt}">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="auto" />
@@ -170,7 +171,7 @@
                         </Grid>
                     </HeaderedContentControl>
 
-                    <HeaderedContentControl Header="DataPointSubType" IsEnabled="{Binding HasDpt}">
+                    <HeaderedContentControl Header="{x:Static p:Resources.tcom_dpst}" IsEnabled="{Binding HasDpt}">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="auto" />
@@ -182,7 +183,7 @@
                         </Grid>
                     </HeaderedContentControl>
 
-                    <HeaderedContentControl Header="Object Size">
+                    <HeaderedContentControl Header="{x:Static p:Resources.tcom_size}">
                         <ComboBox IsEnabled="{Binding HasDpt, Converter={StaticResource BoolNeg}}" SelectedValue="{Binding ObjectSize}" SelectedValuePath="Tag">
                             <ComboBoxItem Content="1 Bit" Tag="1" />
                             <ComboBoxItem Content="2 Bit" Tag="2" />

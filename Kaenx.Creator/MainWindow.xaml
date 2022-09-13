@@ -424,9 +424,6 @@
                                         <Button Content="{x:Static p:Resources.gen_remove}" Click="ClickRemoveLanguageGen" />
                                     </StackPanel>
                                 </HeaderedContentControl>
-                                <HeaderedContentControl Header="{x:Static p:Resources.tgen_lang_def}">
-                                    <ComboBox ItemsSource="{Binding General.Languages}" SelectedValue="{Binding General.DefaultLanguage}" SelectedValuePath="CultureCode" DisplayMemberPath="Text"></ComboBox>
-                                </HeaderedContentControl>
                             </StackPanel>
                         </Grid>
                     </HeaderedContentControl>

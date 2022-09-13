@@ -86,12 +86,12 @@
                     <TextBox Text="{Binding SizeInBit, UpdateSourceTrigger=PropertyChanged}"/>
                 </HeaderedContentControl>
 
-                <HeaderedContentControl Header="{x:Static p:Resources.uni_savepath}">
+                <HeaderedContentControl Header="{x:Static p:Resources.prop_savepath}">
                     <ComboBox ItemsSource="{Binding Source={StaticResource dataSave}}" SelectedItem="{Binding SavePath, Mode=TwoWay}" />
                 </HeaderedContentControl>
 
                 <StackPanel Visibility="{Binding SavePath, Converter={StaticResource EnumToVis}, ConverterParameter=Memory, FallbackValue=Collapsed}">
-                    <HeaderedContentControl Header="{x:Static p:Resources.uni_mem}">
+                    <HeaderedContentControl Header="{x:Static p:Resources.prop_mem}">
                         <ComboBox ItemsSource="{Binding Version.Memories, ElementName=ViewControl}" SelectedItem="{Binding MemoryObject, Mode=TwoWay}" DisplayMemberPath="Name" />
                     </HeaderedContentControl>
 

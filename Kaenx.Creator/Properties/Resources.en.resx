@@ -669,11 +669,11 @@
     <value>Size in bits</value>
     <comment/>
   </data>
-  <data name="uni_savepath" xml:space="preserve">
+  <data name="prop_savepath" xml:space="preserve">
     <value>Save in</value>
     <comment/>
   </data>
-  <data name="uni_mem" xml:space="preserve">
+  <data name="prop_mem" xml:space="preserve">
     <value>Select memory</value>
     <comment/>
   </data>
@@ -715,6 +715,114 @@
   </data>
   <data name="menu_info_debug" xml:space="preserve">
     <value>Activate Debug Messages</value>
+    <comment/>
+  </data>
+  <data name="tcheck_tooltip" xml:space="preserve">
+    <value>Navigate directly to the element</value>
+    <comment/>
+  </data>
+  <data name="tcheck_check" xml:space="preserve">
+    <value>Check</value>
+    <comment/>
+  </data>
+  <data name="tcheck_clean1" xml:space="preserve">
+    <value>Mark not used elements</value>
+    <comment/>
+  </data>
+  <data name="tcheck_clean2" xml:space="preserve">
+    <value>Remove not used elements</value>
+    <comment/>
+  </data>
+  <data name="gen_clone" xml:space="preserve">
+    <value>Clone</value>
+    <comment/>
+  </data>
+  <data name="gen_id_man" xml:space="preserve">
+    <value>Manual</value>
+    <comment/>
+  </data>
+  <data name="gen_id_auto" xml:space="preserve">
+    <value>Automaticly</value>
+    <comment/>
+  </data>
+  <data name="gen_id_reset" xml:space="preserve">
+    <value>Reset</value>
+    <comment/>
+  </data>
+  <data name="tpara_error" xml:space="preserve">
+    <value>This Parameter is not used by a ref</value>
+    <comment/>
+  </data>
+  <data name="prop_suffix" xml:space="preserve">
+    <value>Suffix</value>
+    <comment/>
+  </data>
+  <data name="prop_access" xml:space="preserve">
+    <value>Access</value>
+    <comment/>
+  </data>
+  <data name="gen_bit" xml:space="preserve">
+    <value>Bit</value>
+    <comment/>
+  </data>
+  <data name="tpara_union" xml:space="preserve">
+    <value>Union belonging</value>
+    <comment/>
+  </data>
+  <data name="gen_union" xml:space="preserve">
+    <value>Union</value>
+    <comment/>
+  </data>
+  <data name="tpara_infoauto" xml:space="preserve">
+    <value>Address is being set automaticly</value>
+    <comment/>
+  </data>
+  <data name="prop_propid" xml:space="preserve">
+    <value>PropertyId</value>
+    <comment/>
+  </data>
+  <data name="prop_objectindex" xml:space="preserve">
+    <value>ObjectIndex</value>
+    <comment/>
+  </data>
+  <data name="gen_onlydeflang" xml:space="preserve">
+    <value>Export only the default language (no Translation-Unit)</value>
+    <comment/>
+  </data>
+  <data name="tpara_error2" xml:space="preserve">
+    <value>This ParameterRef is not used in dynamic</value>
+    <comment/>
+  </data>
+  <data name="prop_para" xml:space="preserve">
+    <value>Parameter</value>
+    <comment/>
+  </data>
+  <data name="prop_order" xml:space="preserve">
+    <value>DisplayOrder</value>
+    <comment/>
+  </data>
+  <data name="tcom_error" xml:space="preserve">
+    <value>This ComObject is not used by a ref</value>
+    <comment/>
+  </data>
+  <data name="tcom_para" xml:space="preserve">
+    <value>Text Parameter</value>
+    <comment/>
+  </data>
+  <data name="tcom_func" xml:space="preserve">
+    <value>Functiontext</value>
+    <comment/>
+  </data>
+  <data name="tcom_dpt" xml:space="preserve">
+    <value>DataPointType</value>
+    <comment/>
+  </data>
+  <data name="tcom_dpst" xml:space="preserve">
+    <value>DatapointSubType</value>
+    <comment/>
+  </data>
+  <data name="tcom_size" xml:space="preserve">
+    <value>Object Size</value>
     <comment/>
   </data>
 </root>

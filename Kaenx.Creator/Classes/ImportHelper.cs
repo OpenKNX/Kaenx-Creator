@@ -86,16 +86,17 @@ namespace Kaenx.Creator.Classes
 
             System.Diagnostics.Debug.WriteLine("XML unterstützt keine Baggages");
 
+
             XElement xtemp = xmanu.Element(Get("ApplicationPrograms")).Element(Get("ApplicationProgram"));
             ImportApplication(xtemp);
 
+            ImportLanguages(xmanu.Element(Get("Languages")), _general.Languages);
             xtemp = xmanu.Element(Get("Hardware"));
-            //ImportLanguages(xele.Parent.Element(Get("Languages")), _general.Languages);
             ImportHardware(xtemp);
 
             xtemp = xmanu.Element(Get("Catalog"));
-            //ImportLanguages(xele.Parent.Element(Get("Languages")), _general.Languages);
             ImportCatalog(xtemp);
+
         }
 
         public void StartZip(ModelGeneral general, ObservableCollection<DataPointType> dpts)
@@ -455,7 +456,7 @@ namespace Kaenx.Creator.Classes
             if(!_translations[id][attr].ContainsKey(lang)) _translations[id][attr].Add(lang, value);
         }
 
-        private ObservableCollection<Translation> GetTranslation(string id, string attr, XElement xele) {
+        private ObservableCollection<Translation> GetTranslation(string id, string attr, XElement xele, bool isGeneral = false) {
             ObservableCollection<Translation> translations = new ObservableCollection<Translation>();
 
             if(_translations.ContainsKey(id) && _translations[id].ContainsKey(attr)) {
@@ -473,6 +474,18 @@ namespace Kaenx.Creator.Classes
                         translations.Add(new Translation(lang, xele.Attribute(attr)?.Value ?? ""));
                     else
                         translations.Add(new Translation(lang, ""));
+                }
+            }
+
+            if(isGeneral)
+            {
+                foreach(Language lang in _general.Languages) {
+                    if(!translations.Any(t => t.Language.CultureCode == lang.CultureCode)) {
+                        if(lang.CultureCode == currentVers.DefaultLanguage)
+                            translations.Add(new Translation(lang, xele.Attribute(attr)?.Value ?? ""));
+                        else
+                            translations.Add(new Translation(lang, ""));
+                    }
                 }
             }
 
@@ -1062,6 +1075,14 @@ namespace Kaenx.Creator.Classes
         }
 
         private void ImportHardware(XElement xhards) {
+            XElement temp = xhards.Descendants(Get("Product")).FirstOrDefault();
+            if(temp != null)
+            {
+                string def = temp.Attribute("DefaultLanguage").Value;
+                if(!_general.Languages.Any(l => l.CultureCode == def))
+                    _general.Languages.Add(new Language(_langTexts[def], def));
+            }
+
             foreach(XElement xhard in xhards.Elements()) {
                 Hardware hardware;
 
@@ -1110,6 +1131,7 @@ namespace Kaenx.Creator.Classes
                         {
                             OrderNumber = ordernumb,
                             Name = xprod.Parent.Parent.Attribute("Name").Value,
+                            //Text = GetTranslation(xprod.Attribute("Id").Value, "Text", xprod),
                             IsRailMounted = xprod.Attribute("IsRailMounted")?.Value == "true"
                         };
                         hardware.Devices.Add(device);
@@ -1123,6 +1145,38 @@ namespace Kaenx.Creator.Classes
             foreach (XElement xitem in xcat.Elements())
             {
                 ParseCatalogItem(xitem, _general.Catalog[0]);
+            }
+
+            foreach(Hardware hard in _general.Hardware)
+            {
+                foreach(Device dev in hard.Devices)
+                {
+                    foreach(Language lang in _general.Languages)
+                    {
+                        if(!dev.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
+                            dev.Text.Add(new Translation(lang, ""));
+                        if(!dev.Description.Any(t => t.Language.CultureCode == lang.CultureCode))
+                            dev.Description.Add(new Translation(lang, ""));
+                    }
+                }
+            }
+
+            CheckCatalogSectionLanguages(_general.Catalog[0]);
+        }
+
+        private void CheckCatalogSectionLanguages(CatalogItem parent)
+        {
+            foreach(CatalogItem item in parent.Items)
+            {
+                if(!item.IsSection) continue;
+
+                foreach(Language lang in _general.Languages)
+                {
+                    if(!item.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
+                        item.Text.Add(new Translation(lang, ""));
+                }
+
+                CheckCatalogSectionLanguages(item);
             }
         }
 
@@ -1164,7 +1218,7 @@ namespace Kaenx.Creator.Classes
                         parent.Items.Add(item);
                     }
                     item.IsSection = true;
-                    item.Text = GetTranslation(xitem.Attribute("Id").Value, "Name", xitem);
+                    item.Text = GetTranslation(xitem.Attribute("Id").Value, "Name", xitem, true);
 
                     foreach (XElement xele in xitem.Elements())
                         ParseCatalogItem(xele, item);
@@ -1197,8 +1251,8 @@ namespace Kaenx.Creator.Classes
                         Hardware = hard
                     };
                     item.Text = GetTranslation(xitem.Attribute("Id")?.Value ?? "", "Text", xitem);
-                    device.Text = GetTranslation(xitem.Attribute("Id")?.Value ?? "", "Name", xitem);
-                    device.Description = GetTranslation(xitem.Attribute("Id")?.Value ?? "", "VisibleDescription", xitem);
+                    device.Text = GetTranslation(xitem.Attribute("Id")?.Value ?? "", "Name", xitem, true);
+                    device.Description = GetTranslation(xitem.Attribute("Id")?.Value ?? "", "VisibleDescription", xitem, true);
                     parent.Items.Add(item);
                     break;
                 }

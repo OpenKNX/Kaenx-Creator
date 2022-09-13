@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:p="clr-namespace:Kaenx.Creator.Properties"
     xmlns:System="clr-namespace:System;assembly=mscorlib"
     xmlns:conv="clr-namespace:Kaenx.Creator.Converter"
     xmlns:models="clr-namespace:Kaenx.Creator.Models"
@@ -19,7 +20,7 @@
         <conv:BoolToBrush x:Key="BoolToBrush" TrueValue="Red" FalseValue="Black" />
 
         <ContextMenu x:Key="ListMenu">
-            <MenuItem Header="Löschen" Click="ClickRemove" />
+            <MenuItem Header="{x:Static p:Resources.gen_remove}" Click="ClickRemove" />
         </ContextMenu>
     </UserControl.Resources>
     <Grid>
@@ -33,7 +34,7 @@
             <ColumnDefinition Width="10" />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <Button Content="Hinzufügen" Click="ClickAdd" Margin="0 0 0 2" />
+        <Button Content="{x:Static p:Resources.gen_add}" Click="ClickAdd" Margin="0 0 0 2" />
         
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
@@ -41,7 +42,7 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
 
-            <TextBlock Text="Filter/ID:" Margin="2 0 2 1" VerticalAlignment="Center" />
+            <TextBlock Text="{x:Static p:Resources.gen_filter}" Margin="2 0 2 1" VerticalAlignment="Center" />
             <TextBox x:Name="query" Grid.Column="1" Margin="1 0 0 2" />
         </Grid>
 
@@ -84,32 +85,32 @@
 
             
             <TextBlock Margin="5 0" VerticalAlignment="Center">
-                <Run Text="UID:" />
+                <Run Text="{x:Static p:Resources.gen_uid}" />
                 <Run Text="{Binding UId}"/>
             </TextBlock>
 
 
             <Grid Margin="5 0">
                 <TextBlock VerticalAlignment="Center">
-                    <Run Text="ID:" />
+                    <Run Text="{x:Static p:Resources.gen_id}" />
                     <Run Text="{Binding Id, UpdateSourceTrigger=PropertyChanged}"/>
                 </TextBlock>
                 <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-                    <Button Content="Manuell" Click="ManuelId" />
-                    <Button Content="Automatisch" Click="AutoId" />
-                    <Button Content="Zurücksetzen" Click="ResetId" />
+                    <Button Content="{x:Static p:Resources.gen_id_man}" Click="ManuelId" />
+                    <Button Content="{x:Static p:Resources.gen_id_auto}" Click="AutoId" />
+                    <Button Content="{x:Static p:Resources.gen_id_reset}" Click="ResetId" />
                 </StackPanel>
             </Grid>
 
-            <TextBlock Text="Dieser ParameterRef wird nicht im Dynamischen Bereich angezeigt." Foreground="Red" Visibility="{Binding IsNotUsed, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}" Margin="5" />
+            <TextBlock Text="{x:Static p:Resources.tpara_error2}" Foreground="Red" Visibility="{Binding IsNotUsed, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}" Margin="5" />
 
-            <HeaderedContentControl Header="Name">
+            <HeaderedContentControl Header="{x:Static p:Resources.prop_name}">
                 <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
             </HeaderedContentControl>
-            <HeaderedContentControl Header="Parameter">
+            <HeaderedContentControl Header="{x:Static p:Resources.prop_para}">
                 <ComboBox IsEditable="true" ItemsSource="{Binding Module.Parameters, ElementName=ViewControl}" DisplayMemberPath="Name" SelectedItem="{Binding ParameterObject}" />
             </HeaderedContentControl>
-            <HeaderedContentControl Header="Wert">
+            <HeaderedContentControl Header="{x:Static p:Resources.prop_value}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="auto" />
@@ -121,7 +122,7 @@
                 </Grid>
             </HeaderedContentControl>
             
-            <HeaderedContentControl Header="Text">
+            <HeaderedContentControl Header="{x:Static p:Resources.gen_text}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="auto" />
@@ -133,15 +134,15 @@
                         <CheckBox IsEnabled="False" IsChecked="{Binding ParameterObject.TranslationText}" Content="Nur Standardsprache exportieren (keine Translation-Unit)" />
                         <DataGrid IsEnabled="{Binding OverwriteText}" ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
-                                <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                                <DataGridTextColumn Header="{x:Static p:Resources.gen_lang}" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                                <DataGridTextColumn Header="{x:Static p:Resources.gen_text}" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
                             </DataGrid.Columns>
                         </DataGrid>
                     </StackPanel>
                 </Grid>
             </HeaderedContentControl>
             
-            <HeaderedContentControl Header="Suffix">
+            <HeaderedContentControl Header="{x:Static p:Resources.prop_suffix}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="auto" />
@@ -150,18 +151,18 @@
 
                     <CheckBox IsChecked="{Binding OverwriteSuffix}" VerticalAlignment="Center" />
                     <StackPanel Grid.Column="1">
-                        <CheckBox IsEnabled="False" IsChecked="{Binding ParameterObject.TranslationSuffix}" Content="Nur Standardsprache exportieren (keine Translation-Unit)" />
+                        <CheckBox IsEnabled="False" IsChecked="{Binding ParameterObject.TranslationSuffix}" Content="{x:Static p:Resources.gen_onlydeflang}" />
                         <DataGrid IsEnabled="{Binding OverwriteSuffix}" ItemsSource="{Binding Suffix}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
-                                <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                                <DataGridTextColumn Header="{x:Static p:Resources.gen_lang}" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                                <DataGridTextColumn Header="{x:Static p:Resources.gen_text}" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
                             </DataGrid.Columns>
                         </DataGrid>
                     </StackPanel>
                 </Grid>
             </HeaderedContentControl>
 
-            <HeaderedContentControl Header="Zugriff">
+            <HeaderedContentControl Header="{x:Static p:Resources.prop_access}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="auto" />
@@ -172,7 +173,7 @@
                     <ComboBox Grid.Column="2" IsEnabled="{Binding OverwriteAccess}" ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding Access, Mode=TwoWay}" />
                 </Grid>
             </HeaderedContentControl>
-            <HeaderedContentControl Header="DisplayOrder">
+            <HeaderedContentControl Header="{x:Static p:Resources.prop_order}">
                 <TextBox Text="{Binding DisplayOrder, UpdateSourceTrigger=PropertyChanged}"/>
             </HeaderedContentControl>
         </StackPanel>

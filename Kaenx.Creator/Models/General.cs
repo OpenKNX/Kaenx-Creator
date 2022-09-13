@@ -25,13 +25,6 @@ namespace Kaenx.Creator.Models
             set { _manuId = value; Changed("ManufacturerId"); }
         }
 
-        private string _defaultLang;
-        public string DefaultLanguage
-        {
-            get { return _defaultLang; }
-            set { _defaultLang = value; Changed("DefaultLanguage"); }
-        }
-
         public event PropertyChangedEventHandler PropertyChanged;
         public void Changed(string name)
         {

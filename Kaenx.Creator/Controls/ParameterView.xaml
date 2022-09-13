@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:p="clr-namespace:Kaenx.Creator.Properties"
     xmlns:System="clr-namespace:System;assembly=mscorlib"
     xmlns:conv="clr-namespace:Kaenx.Creator.Converter"
     xmlns:models="clr-namespace:Kaenx.Creator.Models"
@@ -19,8 +20,8 @@
         <conv:BoolToBrush x:Key="BoolToBrush" TrueValue="Red" FalseValue="Black" />
 
         <ContextMenu x:Key="ListMenu">
-            <MenuItem Header="Klonen" Click="ClickClone" />
-            <MenuItem Header="Löschen" Click="ClickRemove" />
+            <MenuItem Header="{x:Static p:Resources.gen_clone}" Click="ClickClone" />
+            <MenuItem Header="{x:Static p:Resources.gen_remove}" Click="ClickRemove" />
         </ContextMenu>
     </UserControl.Resources>
 
@@ -36,7 +37,7 @@
             <ColumnDefinition MinWidth="300" />
         </Grid.ColumnDefinitions>
 
-        <Button Content="Hinzufügen" Click="ClickAdd" Margin="0 0 0 2" />
+        <Button Content="{x:Static p:Resources.gen_add}" Click="ClickAdd" Margin="0 0 0 2" />
 
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
@@ -44,7 +45,7 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
 
-            <TextBlock Text="Filter/ID:" Margin="2 0 2 1" VerticalAlignment="Center" />
+            <TextBlock Text="{x:Static p:Resources.gen_filter}" Margin="2 0 2 1" VerticalAlignment="Center" />
             <TextBox x:Name="query" Grid.Column="1" Margin="1 0 0 2" />
         </Grid>
 
@@ -96,53 +97,53 @@
                 </StackPanel.Resources>
 
                 <TextBlock Margin="5 0" VerticalAlignment="Center">
-                    <Run Text="UID:" />
+                    <Run Text="{x:Static p:Resources.gen_uid}" />
                     <Run Text="{Binding UId}"/>
                 </TextBlock>
 
                 <Grid Margin="5 0">
                     <TextBlock VerticalAlignment="Center">
-                        <Run Text="ID:" />
+                        <Run Text="{x:Static p:Resources.gen_id}" />
                         <Run Text="{Binding Id}"/>
                     </TextBlock>
                     <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-                        <Button Content="Manuell" Click="ManuelId" />
-                        <Button Content="Automatisch" Click="AutoId" />
-                        <Button Content="Zurücksetzen" Click="ResetId" />
+                        <Button Content="{x:Static p:Resources.gen_id_man}" Click="ManuelId" />
+                        <Button Content="{x:Static p:Resources.gen_id_auto}" Click="AutoId" />
+                        <Button Content="{x:Static p:Resources.gen_id_reset}" Click="ResetId" />
                     </StackPanel>
                 </Grid>
                 
-                <TextBlock Text="Dieser Parameter wird von keinem ParameterRef verwendet." Foreground="Red" Visibility="{Binding IsNotUsed, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}" Margin="5" />
+                <TextBlock Text="{x:Static p:Resources.tpara_error}" Foreground="Red" Visibility="{Binding IsNotUsed, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}" Margin="5" />
 
-                <HeaderedContentControl Header="Name">
+                <HeaderedContentControl Header="{x:Static p:Resources.prop_name}">
                     <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
                 </HeaderedContentControl>
-                <HeaderedContentControl Header="Text">
+                <HeaderedContentControl Header="{x:Static p:Resources.gen_text}">
                     <StackPanel>
-                        <CheckBox IsChecked="{Binding TranslationText}" Content="Nur Standardsprache exportieren (keine Translation-Unit)" />
+                        <CheckBox IsChecked="{Binding TranslationText}" Content="{x:Static p:Resources.gen_onlydeflang}" />
                         <DataGrid ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
-                                <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                                <DataGridTextColumn Header="{x:Static p:Resources.gen_lang}" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                                <DataGridTextColumn Header="{x:Static p:Resources.gen_text}" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
                             </DataGrid.Columns>
                         </DataGrid>
                     </StackPanel>
                 </HeaderedContentControl>
-                <HeaderedContentControl Header="Suffix">
+                <HeaderedContentControl Header="{x:Static p:Resources.prop_suffix}">
                     <StackPanel>
-                        <CheckBox IsChecked="{Binding TranslationSuffix}" Content="Nur Standardsprache exportieren (keine Translation-Unit)" />
+                        <CheckBox IsChecked="{Binding TranslationSuffix}" Content="{x:Static p:Resources.gen_onlydeflang}" />
                         <DataGrid ItemsSource="{Binding Suffix}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
-                                <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                                <DataGridTextColumn Header="{x:Static p:Resources.gen_lang}" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                                <DataGridTextColumn Header="{x:Static p:Resources.gen_text}" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
                             </DataGrid.Columns>
                         </DataGrid>
                     </StackPanel>
                 </HeaderedContentControl>
-                <HeaderedContentControl Header="Wert">
+                <HeaderedContentControl Header="{x:Static p:Resources.prop_value}">
                     <TextBox Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}"/>
                 </HeaderedContentControl>
-                <HeaderedContentControl Header="Zugriff">
+                <HeaderedContentControl Header="{x:Static p:Resources.prop_access}">
                     <ComboBox ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding Access, Mode=TwoWay}" />
                 </HeaderedContentControl>
 
@@ -157,11 +158,11 @@
 
                     <TextBlock Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0 0 10 14">
                         <Run Text="{Binding ParameterTypeObject.SizeInBit}" />
-                        <Run Text="Bit" />
+                        <Run Text="{x:Static p:Resources.gen_bit}" />
                     </TextBlock>
                 </Grid>
 
-                <HeaderedContentControl Header="Union zugehörigkeit" Visibility="{Binding Version.IsUnionActive, ElementName=ViewControl, Converter={StaticResource BoolToVis}}">
+                <HeaderedContentControl Header="{x:Static p:Resources.tpara_union}" Visibility="{Binding Version.IsUnionActive, ElementName=ViewControl, Converter={StaticResource BoolToVis}}">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="auto" />
@@ -174,53 +175,53 @@
                 </HeaderedContentControl>
 
                 <StackPanel Visibility="{Binding IsInUnion, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}">
-                    <HeaderedContentControl Header="Union Speicher">
+                    <HeaderedContentControl Header="{x:Static p:Resources.gen_union}">
                         <TextBlock Text="{Binding UnionObject.MemoryObject.Name}" />
                     </HeaderedContentControl>
-                    <HeaderedContentControl Header="Offset">
+                    <HeaderedContentControl Header="{x:Static p:Resources.prop_offset}">
                         <TextBox Text="{Binding Offset, UpdateSourceTrigger=PropertyChanged}"/>
                     </HeaderedContentControl>
-                    <HeaderedContentControl Header="Bit Offset">
+                    <HeaderedContentControl Header="{x:Static p:Resources.prop_offsetbit}">
                         <TextBox Text="{Binding OffsetBit, UpdateSourceTrigger=PropertyChanged}"/>
                     </HeaderedContentControl>
                 </StackPanel>
 
-                <HeaderedContentControl Header="Speicherort" Visibility="{Binding IsInUnion, Converter={StaticResource BoolToVis}, ConverterParameter=true, FallbackValue=Collapsed}">
+                <HeaderedContentControl Header="{x:Static p:Resources.prop_savepath}" Visibility="{Binding IsInUnion, Converter={StaticResource BoolToVis}, ConverterParameter=true, FallbackValue=Collapsed}">
                     <ComboBox ItemsSource="{Binding Source={StaticResource dataSave}}" SelectedItem="{Binding SavePath, Mode=TwoWay}" />
                 </HeaderedContentControl>
 
                 <Grid Visibility="{Binding IsInUnion, Converter={StaticResource BoolToVis}, ConverterParameter=true, FallbackValue=Collapsed}">
                     <StackPanel Visibility="{Binding SavePath, Converter={StaticResource EnumToVis}, ConverterParameter=Memory}">
-                        <HeaderedContentControl Header="Speicher auswählen">
+                        <HeaderedContentControl Header="{x:Static p:Resources.prop_mem}">
                             <ComboBox ItemsSource="{Binding Version.Memories, ElementName=ViewControl}" SelectedItem="{Binding SaveObject, Mode=TwoWay}" DisplayMemberPath="Name" />
                         </HeaderedContentControl>
 
                         <StackPanel Visibility="{Binding SaveObject.IsAutoPara, Converter={StaticResource BoolToVis}, ConverterParameter=true, FallbackValue=Collapsed}">
                             <StackPanel>
-                                <HeaderedContentControl Header="Offset">
+                                <HeaderedContentControl Header="{x:Static p:Resources.prop_offset}">
                                     <TextBox Text="{Binding Offset, UpdateSourceTrigger=PropertyChanged}"/>
                                 </HeaderedContentControl>
-                                <HeaderedContentControl Header="Bit Offset">
+                                <HeaderedContentControl Header="{x:Static p:Resources.prop_offsetbit}">
                                     <TextBox Text="{Binding OffsetBit, UpdateSourceTrigger=PropertyChanged}"/>
                                 </HeaderedContentControl>
                             </StackPanel>
                         </StackPanel>
 
-                        <TextBlock Text="Adresse wird automatisch festgelegt (Speicher)" Margin="5" Visibility="{Binding SaveObject.IsAutoPara, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}" />
+                        <TextBlock Text="{x:Static p:Resources.tpara_infoauto}" Margin="5" Visibility="{Binding SaveObject.IsAutoPara, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}" />
 
                         <Border Visibility="{Binding SaveObject.IsAutoPara, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}">
                             <TextBlock Margin="5">
-                                    <Run Text="Offset:" />
+                                    <Run Text="{x:Static p:Resources.prop_offset}" />
                                     <Run Text="{Binding Offset, Mode=OneWay}" />
                                     <LineBreak />
-                                    <Run Text="Bit Offset:" />
+                                    <Run Text="{x:Static p:Resources.prop_offsetbit}" />
                                     <Run Text="{Binding OffsetBit, Mode=OneWay}" />
                             </TextBlock>
                         </Border>
                     </StackPanel>
 
                     <StackPanel Visibility="{Binding SavePath, Converter={StaticResource EnumToVis}, ConverterParameter=Property}">
-                        <HeaderedContentControl Header="ObjectIndex">
+                        <HeaderedContentControl Header="{x:Static p:Resources.prop_objectindex}">
                             <ComboBox x:Name="ObjectTypeList" ItemsSource="{Binding ObjectTypes, ElementName=ViewControl}" SelectedValuePath="Number" SelectedValue="{Binding SaveObject.ObjectIndex}">
                                 <ComboBox.ItemContainerStyle>
                                     <Style TargetType="{x:Type ComboBoxItem}">
@@ -244,14 +245,14 @@
                                 </ComboBox.ItemTemplate>
                             </ComboBox>
                         </HeaderedContentControl>
-                        <HeaderedContentControl Header="PropertyId">
+                        <HeaderedContentControl Header="{x:Static p:Resources.prop_propid}">
                             <ComboBox ItemsSource="{Binding SelectedItem.Properties, ElementName=ObjectTypeList}" DisplayMemberPath="Text" SelectedValuePath="Number" SelectedValue="{Binding SaveObject.PropertyId}">
                             </ComboBox>
                         </HeaderedContentControl>
-                        <HeaderedContentControl Header="Offset">
+                        <HeaderedContentControl Header="{x:Static p:Resources.prop_offset}">
                             <TextBox Text="{Binding Offset, UpdateSourceTrigger=PropertyChanged}" />
                         </HeaderedContentControl>
-                        <HeaderedContentControl Header="Offset Bit">
+                        <HeaderedContentControl Header="{x:Static p:Resources.prop_offsetbit}">
                             <TextBox Text="{Binding OffsetBit, UpdateSourceTrigger=PropertyChanged}" />
                         </HeaderedContentControl>
                     </StackPanel>
