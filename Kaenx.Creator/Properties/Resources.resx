@@ -693,7 +693,7 @@
     <value>Nicht verwendete Elemente markieren</value>
     <comment/>
   </data>
-  <data name="tchecl_clean1" xml:space="preserve">
+  <data name="tcheck_clean2" xml:space="preserve">
     <value>Nicht verwendete Elemente entfernen</value>
     <comment/>
   </data>
