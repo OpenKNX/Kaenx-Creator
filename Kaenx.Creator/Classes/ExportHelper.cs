@@ -864,7 +864,6 @@ namespace Kaenx.Creator.Classes
             }
             if(vbase is Models.AppVersion ver)
             {
-                //TODO check CO with Memory????
                 if(ver.ComObjectMemoryObject != null && ver.ComObjectMemoryObject.Type == MemoryTypes.Absolute)
                 {
                     xcoms.SetAttributeValue("CodeSegment", $"{appVersion}_AS-{ver.ComObjectMemoryObject.Address:X4}");
@@ -1034,7 +1033,7 @@ namespace Kaenx.Creator.Classes
                         if (mem.Type == MemoryTypes.Absolute)
                             memid += $"_AS-{mem.Address:X4}";
                         else
-                            memid += $"_RS-04-{mem.Offset:X4}";
+                            memid += $"_RS-04-{mem.Offset:X5}";
                         xparamem.SetAttributeValue("CodeSegment", memid);
                         xparamem.SetAttributeValue("Offset", para.Offset);
                         xparamem.SetAttributeValue("BitOffset", para.OffsetBit);
