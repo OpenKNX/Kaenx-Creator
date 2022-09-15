@@ -206,18 +206,15 @@ namespace Kaenx.Creator.Classes
                         case ParameterTypes.Enum:
                             xcontent = new XElement(Get("TypeRestriction"));
                             xcontent.SetAttributeValue("Base", "Value");
-                            int c = 0;
                             foreach (ParameterTypeEnum enu in type.Enums)
                             {
                                 XElement xenu = new XElement(Get("Enumeration"));
                                 xenu.SetAttributeValue("Text", enu.Text.Single(e => e.Language.CultureCode == currentLang).Text);
                                 xenu.SetAttributeValue("Value", enu.Value);
                                 xenu.SetAttributeValue("Id", $"{id}_EN-{enu.Value}");
-                                xenu.SetAttributeValue("DisplayOrder", c.ToString());
                                 xcontent.Add(xenu);
                                 if(enu.Translate)
                                     foreach(Models.Translation trans in enu.Text) AddTranslation(trans.Language.CultureCode, $"{id}_EN-{enu.Value}", "Text", trans.Text);
-                                c++;
                             }
                             break;
 
