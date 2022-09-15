@@ -532,12 +532,12 @@ namespace Kaenx.Creator.Classes
                 if (hard.HasApplicationProgram) xhard.SetAttributeValue("HasApplicationProgram", "1");
                 if (hard.HasApplicationProgram2) xhard.SetAttributeValue("HasApplicationProgram2", "1");
                 if (hard.IsPowerSupply) xhard.SetAttributeValue("IsPowerSupply", "1");
-                xhard.SetAttributeValue("IsChocke", "0"); //Todo check what this is
                 if (hard.IsCoppler) xhard.SetAttributeValue("IsCoupler", "1");
-                xhard.SetAttributeValue("IsPowerLineRepeater", "0");
-                xhard.SetAttributeValue("IsPowerLineSignalFilter", "0");
                 if (hard.IsPowerSupply) xhard.SetAttributeValue("IsPowerSupply", "1");
-                xhard.SetAttributeValue("IsCable", "0"); //Todo check if means PoweLine Cable
+                //xhard.SetAttributeValue("IsCable", "0"); //Todo check if means PoweLine Cable
+                //xhard.SetAttributeValue("IsChoke", "0"); //Ist immer 0 da keine Drossel
+                //xhard.SetAttributeValue("IsPowerLineRepeater", "0");
+                //xhard.SetAttributeValue("IsPowerLineSignalFilter", "0");
                 if (hard.IsIpEnabled) xhard.SetAttributeValue("IsIPEnabled", "1");
 
                 XElement xprods = new XElement(Get("Products"));
@@ -749,7 +749,7 @@ namespace Kaenx.Creator.Classes
 
                     case MemoryTypes.Relative:
                         xmem = new XElement(Get("RelativeSegment"));
-                        id = $"{appVersion}_RS-04-{mem.Offset:X4}";
+                        id = $"{appVersion}_RS-04-{mem.Offset:X5}";
                         xmem.SetAttributeValue("Id", id);
                         xmem.SetAttributeValue("Name", mem.Name);
                         xmem.SetAttributeValue("Offset", mem.Offset);
