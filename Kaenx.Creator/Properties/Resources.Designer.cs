@@ -1652,5 +1652,431 @@ namespace Kaenx.Creator.Properties {
                 return ResourceManager.GetString("tcom_size", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string tcom_flag_com {
+            get {
+                return ResourceManager.GetString("tcom_flag_com", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string tcom_flag_read {
+            get {
+                return ResourceManager.GetString("tcom_flag_read", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string tcom_flag_write {
+            get {
+                return ResourceManager.GetString("tcom_flag_write", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string tcom_flag_trans {
+            get {
+                return ResourceManager.GetString("tcom_flag_trans", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string tcom_flag_update {
+            get {
+                return ResourceManager.GetString("tcom_flag_update", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string tcom_flag_oninit {
+            get {
+                return ResourceManager.GetString("tcom_flag_oninit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string tcom_error2 {
+            get {
+                return ResourceManager.GetString("tcom_error2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string prop_como {
+            get {
+                return ResourceManager.GetString("prop_como", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_tmain {
+            get {
+                return ResourceManager.GetString("tdyn_tmain", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_tindchan {
+            get {
+                return ResourceManager.GetString("tdyn_tindchan", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_troot {
+            get {
+                return ResourceManager.GetString("tdyn_troot", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_pararef {
+            get {
+                return ResourceManager.GetString("tdyn_pararef", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_paraname {
+            get {
+                return ResourceManager.GetString("tdyn_paraname", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_paracell {
+            get {
+                return ResourceManager.GetString("tdyn_paracell", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_paratext {
+            get {
+                return ResourceManager.GetString("tdyn_paratext", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_parareftext {
+            get {
+                return ResourceManager.GetString("tdyn_parareftext", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_mods {
+            get {
+                return ResourceManager.GetString("tdyn_mods", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_args {
+            get {
+                return ResourceManager.GetString("tdyn_args", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_type {
+            get {
+                return ResourceManager.GetString("tdyn_type", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_comref {
+            get {
+                return ResourceManager.GetString("tdyn_comref", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_comname {
+            get {
+                return ResourceManager.GetString("tdyn_comname", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_comtext {
+            get {
+                return ResourceManager.GetString("tdyn_comtext", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_comreftext {
+            get {
+                return ResourceManager.GetString("tdyn_comreftext", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_pb_showtree {
+            get {
+                return ResourceManager.GetString("tdyn_pb_showtree", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_pb_inline {
+            get {
+                return ResourceManager.GetString("tdyn_pb_inline", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_pb_layout {
+            get {
+                return ResourceManager.GetString("tdyn_pb_layout", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_pb_cells {
+            get {
+                return ResourceManager.GetString("tdyn_pb_cells", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_pb_rows {
+            get {
+                return ResourceManager.GetString("tdyn_pb_rows", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_id {
+            get {
+                return ResourceManager.GetString("tdyn_id", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_pb_width {
+            get {
+                return ResourceManager.GetString("tdyn_pb_width", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_textpara {
+            get {
+                return ResourceManager.GetString("tdyn_textpara", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_uihint {
+            get {
+                return ResourceManager.GetString("tdyn_uihint", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_cond {
+            get {
+                return ResourceManager.GetString("tdyn_cond", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_ass_target {
+            get {
+                return ResourceManager.GetString("tdyn_ass_target", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_ass_source {
+            get {
+                return ResourceManager.GetString("tdyn_ass_source", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_ass_value {
+            get {
+                return ResourceManager.GetString("tdyn_ass_value", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_ass_warning1 {
+            get {
+                return ResourceManager.GetString("tdyn_ass_warning1", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_ass_warning2 {
+            get {
+                return ResourceManager.GetString("tdyn_ass_warning2", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_tchan {
+            get {
+                return ResourceManager.GetString("tdyn_tchan", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_tblock {
+            get {
+                return ResourceManager.GetString("tdyn_tblock", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_tseparator {
+            get {
+                return ResourceManager.GetString("tdyn_tseparator", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_tassign {
+            get {
+                return ResourceManager.GetString("tdyn_tassign", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_tmod {
+            get {
+                return ResourceManager.GetString("tdyn_tmod", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_tselection {
+            get {
+                return ResourceManager.GetString("tdyn_tselection", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_tcond {
+            get {
+                return ResourceManager.GetString("tdyn_tcond", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_tpara {
+            get {
+                return ResourceManager.GetString("tdyn_tpara", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_tcom {
+            get {
+                return ResourceManager.GetString("tdyn_tcom", resourceCulture);
+            }
+        }
+        
+        public static string gen_cut {
+            get {
+                return ResourceManager.GetString("gen_cut", resourceCulture);
+            }
+        }
+        
+        public static string gen_put {
+            get {
+                return ResourceManager.GetString("gen_put", resourceCulture);
+            }
+        }
+        
+        public static string gen_unfold {
+            get {
+                return ResourceManager.GetString("gen_unfold", resourceCulture);
+            }
+        }
+        
+        public static string gen_collapse {
+            get {
+                return ResourceManager.GetString("gen_collapse", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_add_ichan {
+            get {
+                return ResourceManager.GetString("tdyn_add_ichan", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_add_chan {
+            get {
+                return ResourceManager.GetString("tdyn_add_chan", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_add_block {
+            get {
+                return ResourceManager.GetString("tdyn_add_block", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_add_mod {
+            get {
+                return ResourceManager.GetString("tdyn_add_mod", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_add_choose {
+            get {
+                return ResourceManager.GetString("tdyn_add_choose", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_add_para {
+            get {
+                return ResourceManager.GetString("tdyn_add_para", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_add_com {
+            get {
+                return ResourceManager.GetString("tdyn_add_com", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_add_sepa {
+            get {
+                return ResourceManager.GetString("tdyn_add_sepa", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_add_assign {
+            get {
+                return ResourceManager.GetString("tdyn_add_assign", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_add_btn {
+            get {
+                return ResourceManager.GetString("tdyn_add_btn", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_when_def{
+            get {
+                return ResourceManager.GetString("tdyn_when_def", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_when1 {
+            get {
+                return ResourceManager.GetString("tdyn_when1", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_when2 {
+            get {
+                return ResourceManager.GetString("tdyn_when2", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_when3 {
+            get {
+                return ResourceManager.GetString("tdyn_when3", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_when4 {
+            get {
+                return ResourceManager.GetString("tdyn_when4", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_when5 {
+            get {
+                return ResourceManager.GetString("tdyn_when5", resourceCulture);
+            }
+        }
     }
 }

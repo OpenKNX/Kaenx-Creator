@@ -404,25 +404,19 @@ namespace Kaenx.Creator
 
         private void ClickGetValue(object sender, RoutedEventArgs e)
         {
-            Controls.PromptDialog diag = new Controls.PromptDialog("Id des Parameters:", "Wert abfragen");
+            Controls.ProdVParameterDialog diag = new Controls.ProdVParameterDialog("Id des Parameters:", "Wert abfragen", _importer.Modules);
             if(diag.ShowDialog() == true)
             {
-                long id;
-                if(!long.TryParse(diag.Answer, out id))
+                if(values.ContainsKey(diag.Answer))
                 {
-                    MessageBox.Show("Bitte geben Sie eine Ganzzahl ein.", "Eingabefehler");
-                    return;
-                }
-                if(values.ContainsKey(id))
-                {
-                    string value = values[id].Value;
+                    string value = values[diag.Answer].Value;
                     if(value == "x")
-                        MessageBox.Show($"Parameter mit der Id {id} ist aktuell nicht sichtbar.", "Wert abfragen");
+                        MessageBox.Show($"Parameter mit der Id {diag.Answer} ist aktuell nicht sichtbar.", "Wert abfragen");
                     else
-                        MessageBox.Show($"Parameter mit der Id {id} hat den Wert: {value}");
+                        MessageBox.Show($"Parameter mit der Id {diag.Answer} hat den Wert: {value}");
                 }
                 else
-                    MessageBox.Show($"Es wurde kein Parameter mit der Id {id} gefunden.", "Wert abfragen");
+                    MessageBox.Show($"Es wurde kein Parameter mit der Id {diag.Answer} gefunden.", "Wert abfragen");
             }
         }
 

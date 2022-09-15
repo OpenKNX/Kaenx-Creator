@@ -8,5 +8,6 @@ namespace Kaenx.Creator.Viewer
         void StartImport(CatalogContext context);
         List<string> GetLanguages();
         void SetLanguage(string langCode);
+        List<ModuleModel> Modules { get; set; }
     }
 }

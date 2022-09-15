@@ -19,7 +19,8 @@ namespace Kaenx.Creator.Viewer
 
         private Dictionary<string, int> TypeNameToId = new Dictionary<string, int>();
         private Dictionary<long, AppParameter> IdToParameter = new Dictionary<long, AppParameter>();
-        
+
+        public List<ModuleModel> Modules { get; set; } = new List<ModuleModel>();
        
 
 
@@ -381,7 +382,9 @@ namespace Kaenx.Creator.Viewer
                     foreach(Models.Dynamic.IDynWhen when in dcho.Items)
                     {
                         List<ParamCondition> conds2 = conds.ToList();
-                        conds2.Add(ParseCondition(when, dcho.ParameterRefObject.Id));
+                        ParamCondition? pcond = ParseCondition(when, dcho.ParameterRefObject.Id);
+                        if(pcond != null)
+                            conds2.Add(ParseCondition(when, dcho.ParameterRefObject.Id));
                         foreach(Models.Dynamic.IDynItems ditem2 in when.Items)
                             ParseDynamicItem(ditem2, dch, dblock, conds2, args);
                     }
@@ -451,7 +454,8 @@ namespace Kaenx.Creator.Viewer
         {
             ParameterBlock pb = new ParameterBlock() {
                 Id = dpb.Id,
-                Conditions = conds
+                Conditions = conds,
+                HasAccess = dpb.Access != ParamAccess.None
             };
             if(dpb.UseParameterRef)
             {
@@ -480,7 +484,8 @@ namespace Kaenx.Creator.Viewer
                 //check if choose ist ParameterBlock (happens when vd5 gets converted to knxprods)
                 if(test.Parent.Parent is Models.Dynamic.DynParaBlock dpb){
                     if((test.Parent as Models.Dynamic.IDynChoose).ParameterRefObject == dpb.ParameterRefObject)
-                        return cond;
+                        if(test.Parent.Items.Count == 1)
+                            return null;
                 }
 
                 List<string> conds = new List<string>();
@@ -604,6 +609,7 @@ namespace Kaenx.Creator.Viewer
                                 Value = mpara.Value,
                                 Default = mpara.Value,
                                 Conditions = conds,
+                                SuffixText = GetDefaultLang(para.ParameterRefObject.ParameterObject.Suffix),
                                 DisplayOrder = para.ParameterRefObject.DisplayOrder
                         };
                         block.Parameters.Add(pcheck);
@@ -619,6 +625,7 @@ namespace Kaenx.Creator.Viewer
                                 Increment = para.ParameterRefObject.ParameterObject.ParameterTypeObject.Increment,
                                 Minimum = para.ParameterRefObject.ParameterObject.ParameterTypeObject.Min,
                                 Maximum = para.ParameterRefObject.ParameterObject.ParameterTypeObject.Max,
+                                SuffixText = GetDefaultLang(para.ParameterRefObject.ParameterObject.Suffix),
                                 DisplayOrder = para.ParameterRefObject.DisplayOrder
                         };
                         block.Parameters.Add(pslide);
@@ -633,6 +640,7 @@ namespace Kaenx.Creator.Viewer
                                 Increment = para.ParameterRefObject.ParameterObject.ParameterTypeObject.Increment,
                                 Minimum = para.ParameterRefObject.ParameterObject.ParameterTypeObject.Min,
                                 Maximum = para.ParameterRefObject.ParameterObject.ParameterTypeObject.Max,
+                                SuffixText = GetDefaultLang(para.ParameterRefObject.ParameterObject.Suffix),
                                 DisplayOrder = para.ParameterRefObject.DisplayOrder
                         };
                         block.Parameters.Add(pnum);
@@ -650,6 +658,7 @@ namespace Kaenx.Creator.Viewer
                             HasAccess = mpara.Access != AccessType.None,
                             Value = mpara.Value,
                             Conditions = conds,
+                            SuffixText = GetDefaultLang(para.ParameterRefObject.ParameterObject.Suffix),
                             DisplayOrder = para.ParameterRefObject.DisplayOrder
                         };
                         block.Parameters.Add(ptext);
@@ -660,6 +669,7 @@ namespace Kaenx.Creator.Viewer
                             HasAccess = mpara.Access != AccessType.None,
                             Value = mpara.Value,
                             Conditions = conds,
+                            SuffixText = GetDefaultLang(para.ParameterRefObject.ParameterObject.Suffix),
                             DisplayOrder = para.ParameterRefObject.DisplayOrder
                         };
                         block.Parameters.Add(ptext);
@@ -712,7 +722,6 @@ namespace Kaenx.Creator.Viewer
                 if(_version.ParameterRefs.Count > 0)
                 {
                     maxParaId = _version.ParameterRefs.OrderByDescending(p => p.Id).First().Id;
-                    maxParaId++;
                 } else {
                     maxParaId = 1;
                 }
@@ -736,6 +745,7 @@ namespace Kaenx.Creator.Viewer
             }
 
 
+            Modules.Add(new ModuleModel() { Id = $"Modul {mod.Id}", Start = maxParaId });
             System.Diagnostics.Debug.WriteLine($"Module {mod.Id}: {maxParaId} ParaStart - {maxComsId} ComsStart");
             
             Module nmod = CopyModule(mod.ModuleObject, int.Parse(argPara.Value), int.Parse(argComs.Value));
@@ -886,9 +896,11 @@ namespace Kaenx.Creator.Viewer
                 para.Offset += paraOffset;
             }
 
+            long maxParaOffset = maxParaId;
             foreach(ParameterRef pref in bmod.ParameterRefs)
             {
-                pref.Id = maxParaId++;
+                pref.Id = pref.Id + maxParaOffset;
+                maxParaId++;
             }
 
             foreach(ComObject com in bmod.ComObjects)
@@ -900,7 +912,8 @@ namespace Kaenx.Creator.Viewer
             {
                 if(cref.ComObject != -1)
                     cref.ComObjectObject = bmod.ComObjects.SingleOrDefault(c => c.UId == cref.ComObject);
-                cref.Id = (int)maxComsId++; //TODO change to long
+                cref.Id = maxComsId++;
+                
             }
 
 

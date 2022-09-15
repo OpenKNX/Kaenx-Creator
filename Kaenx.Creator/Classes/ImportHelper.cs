@@ -1309,6 +1309,14 @@ namespace Kaenx.Creator.Classes
                             Parent = parent,
                             IsInline = xele.Attribute("Inline")?.Value == "true"
                         };
+                        
+                        dpb.Access = (xele.Attribute("Access")?.Value) switch {
+                            "None" => ParamAccess.None,
+                            "Read" => ParamAccess.Read,
+                            "ReadWrite" => ParamAccess.ReadWrite,
+                            null => ParamAccess.Default,
+                            _ => throw new Exception("Unbekannter AccesType für ParameterBlock: " + xele.Attribute("Access").Value)
+                        };
                         dpb.Layout = xele.Attribute("Layout")?.Value switch {
                             "Table" => BlockLayout.Table,
                             "Grid" => BlockLayout.Grid,

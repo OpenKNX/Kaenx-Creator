@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:p="clr-namespace:Kaenx.Creator.Properties"
     xmlns:System="clr-namespace:System;assembly=mscorlib"
     xmlns:conv="clr-namespace:Kaenx.Creator.Converter"
     xmlns:models="clr-namespace:Kaenx.Creator.Models"
@@ -18,7 +19,7 @@
         <conv:BoolToBrush x:Key="BoolToBrush" TrueValue="Red" FalseValue="Black" />
 
         <ContextMenu x:Key="ListMenu">
-            <MenuItem Header="Löschen" Click="ClickRemove" />
+            <MenuItem Header="{x:Static p:Resources.gen_remove}" Click="ClickRemove" />
         </ContextMenu>
     </UserControl.Resources>
 
@@ -34,7 +35,7 @@
             <ColumnDefinition MinWidth="300" />
         </Grid.ColumnDefinitions>
 
-        <Button Content="Hinzufügen" Margin="0 0 0 2" Click="ClickAdd" />
+        <Button Content="{x:Static p:Resources.gen_add}" Margin="0 0 0 2" Click="ClickAdd" />
 
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
@@ -42,7 +43,7 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
 
-            <TextBlock Text="Filter/ID:" Margin="2 0 2 1" VerticalAlignment="Center" />
+            <TextBlock Text="{x:Static p:Resources.gen_filter}" Margin="2 0 2 1" VerticalAlignment="Center" />
             <TextBox x:Name="query" Grid.Column="1" Margin="1 0 0 2" />
         </Grid>
 
@@ -89,33 +90,33 @@
 
                 
                 <TextBlock Margin="5 0" VerticalAlignment="Center">
-                    <Run Text="UID:" />
+                    <Run Text="{x:Static p:Resources.gen_uid}" />
                     <Run Text="{Binding UId}"/>
                 </TextBlock>
 
                 <Grid Margin="5 0">
                     <TextBlock VerticalAlignment="Center">
-                        <Run Text="ID:" />
+                        <Run Text="{x:Static p:Resources.gen_id}" />
                         <Run Text="{Binding Id}"/>
                     </TextBlock>
                     <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-                        <Button Content="Manuell" Click="ManuelId" />
-                        <Button Content="Automatisch" Click="AutoId" />
-                        <Button Content="Zurücksetzen" Click="ResetId" />
+                        <Button Content="{x:Static p:Resources.gen_id_man}" Click="ManuelId" />
+                        <Button Content="{x:Static p:Resources.gen_id_auto}" Click="AutoId" />
+                        <Button Content="{x:Static p:Resources.gen_id_reset}" Click="ResetId" />
                     </StackPanel>
                 </Grid>
 
-                <TextBlock Text="Dieses ComObjectRef wird nicht im Dynamischen Bereich angezeigt." Foreground="Red" Visibility="{Binding IsNotUsed, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}" Margin="5" />
+                <TextBlock Text="{x:Static p:Resources.tcom_error2}" Foreground="Red" Visibility="{Binding IsNotUsed, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}" Margin="5" />
 
-                <HeaderedContentControl Header="Name">
+                <HeaderedContentControl Header="{x:Static p:Resources.prop_name}">
                     <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
                 </HeaderedContentControl>
 
-                <HeaderedContentControl Header="Kommunikationsobjekt">
+                <HeaderedContentControl Header="{x:Static p:Resources.prop_como}">
                     <ComboBox IsEditable="true" ItemsSource="{Binding Module.ComObjects, ElementName=ViewControl}" DisplayMemberPath="Name" SelectedItem="{Binding ComObjectObject}" />
                 </HeaderedContentControl>
 
-                <HeaderedContentControl Header="Text">
+                <HeaderedContentControl Header="{x:Static p:Resources.gen_text}">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="auto" />
@@ -127,15 +128,15 @@
                             <CheckBox IsEnabled="{Binding OverwriteText}" IsChecked="{Binding TranslationText}" Content="Nur Standardsprache exportieren (keine Translation-Unit)" />
                             <DataGrid IsEnabled="{Binding OverwriteText}" ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
-                                    <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                                    <DataGridTextColumn Header="{x:Static p:Resources.gen_lang}" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                                    <DataGridTextColumn Header="{x:Static p:Resources.gen_text}" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
                                 </DataGrid.Columns>
                             </DataGrid>
                         </StackPanel>
                     </Grid>
                 </HeaderedContentControl>
 
-                <HeaderedContentControl Header="Funktionstext">
+                <HeaderedContentControl Header="{x:Static p:Resources.tcom_func}">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="auto" />
@@ -147,15 +148,15 @@
                             <CheckBox IsEnabled="{Binding OverwriteFunctionText}" IsChecked="{Binding TranslationFunctionText}" Content="Nur Standardsprache exportieren (keine Translation-Unit)" />
                             <DataGrid IsEnabled="{Binding OverwriteFunctionText}" ItemsSource="{Binding FunctionText}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Sprache" Binding="{Binding Language.Text}" IsReadOnly="True" />
-                                    <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                                    <DataGridTextColumn Header="{x:Static p:Resources.gen_lang}" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                                    <DataGridTextColumn Header="{x:Static p:Resources.gen_text}" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
                                 </DataGrid.Columns>
                             </DataGrid>
                         </StackPanel>
                     </Grid>
                 </HeaderedContentControl>
 
-                <HeaderedContentControl Header="DataPointType">
+                <HeaderedContentControl Header="{x:Static p:Resources.tcom_dpt}">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="auto" />
@@ -168,7 +169,7 @@
                 </HeaderedContentControl>
 
 
-                <HeaderedContentControl Header="DataPointSubType" IsEnabled="{Binding OverwriteDpt}">
+                <HeaderedContentControl Header="{x:Static p:Resources.tcom_dpst}" IsEnabled="{Binding OverwriteDpt}">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="auto" />
@@ -180,7 +181,7 @@
                     </Grid>
                 </HeaderedContentControl>
 
-                <HeaderedContentControl Header="Object Size" IsEnabled="{Binding OverwriteDpt, Converter={StaticResource BoolNeg}}">
+                <HeaderedContentControl Header="{x:Static p:Resources.tcom_size}" IsEnabled="{Binding OverwriteDpt, Converter={StaticResource BoolNeg}}">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="auto" />
@@ -208,22 +209,22 @@
                 </HeaderedContentControl>
 
 
-                <HeaderedContentControl Header="Flag Kommunikation" Margin="5 30 5 5">
+                <HeaderedContentControl Header="{x:Static p:Resources.tcom_flag_com}" Margin="5 30 5 5">
                     <ComboBox ItemsSource="{Binding Source={StaticResource dataFromCom}}" SelectedItem="{Binding FlagComm}" />
                 </HeaderedContentControl>
-                <HeaderedContentControl Header="Flag Lesen">
+                <HeaderedContentControl Header="{x:Static p:Resources.tcom_flag_read}">
                     <ComboBox ItemsSource="{Binding Source={StaticResource dataFromCom}}" SelectedItem="{Binding FlagRead}" />
                 </HeaderedContentControl>
-                <HeaderedContentControl Header="Flag Schreiben">
+                <HeaderedContentControl Header="{x:Static p:Resources.tcom_flag_write}">
                     <ComboBox ItemsSource="{Binding Source={StaticResource dataFromCom}}" SelectedItem="{Binding FlagWrite}" />
                 </HeaderedContentControl>
-                <HeaderedContentControl Header="Flag Übertragen">
+                <HeaderedContentControl Header="{x:Static p:Resources.tcom_flag_trans}">
                     <ComboBox ItemsSource="{Binding Source={StaticResource dataFromCom}}" SelectedItem="{Binding FlagTrans}" />
                 </HeaderedContentControl>
-                <HeaderedContentControl Header="Flag Aktualisieren">
+                <HeaderedContentControl Header="{x:Static p:Resources.tcom_flag_update}">
                     <ComboBox ItemsSource="{Binding Source={StaticResource dataFromCom}}" SelectedItem="{Binding FlagUpdate}" />
                 </HeaderedContentControl>
-                <HeaderedContentControl Header="Flag Lesen bei Init">
+                <HeaderedContentControl Header="{x:Static p:Resources.tcom_flag_oninit}">
                     <ComboBox ItemsSource="{Binding Source={StaticResource dataFromCom}}" SelectedItem="{Binding FlagOnInit}" />
                 </HeaderedContentControl>
             </StackPanel>

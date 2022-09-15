@@ -202,22 +202,22 @@
                         </ComboBox>
                     </HeaderedContentControl>
 
-                    <HeaderedContentControl Header="Flag Kommunikation" Margin="5 30 5 5">
+                    <HeaderedContentControl Header="{x:Static p:Resources.tcom_flag_com}" Margin="5 30 5 5">
                         <ComboBox ItemsSource="{Binding Source={StaticResource dataFromCom}}" SelectedItem="{Binding FlagComm}" />
                     </HeaderedContentControl>
-                    <HeaderedContentControl Header="Flag Lesen">
+                    <HeaderedContentControl Header="{x:Static p:Resources.tcom_flag_read}">
                         <ComboBox ItemsSource="{Binding Source={StaticResource dataFromCom}}" SelectedItem="{Binding FlagRead}" />
                     </HeaderedContentControl>
-                    <HeaderedContentControl Header="Flag Schreiben">
+                    <HeaderedContentControl Header="{x:Static p:Resources.tcom_flag_write}">
                         <ComboBox ItemsSource="{Binding Source={StaticResource dataFromCom}}" SelectedItem="{Binding FlagWrite}" />
                     </HeaderedContentControl>
-                    <HeaderedContentControl Header="Flag Übertragen">
+                    <HeaderedContentControl Header="{x:Static p:Resources.tcom_flag_trans}">
                         <ComboBox ItemsSource="{Binding Source={StaticResource dataFromCom}}" SelectedItem="{Binding FlagTrans}" />
                     </HeaderedContentControl>
-                    <HeaderedContentControl Header="Flag Aktualisieren">
+                    <HeaderedContentControl Header="{x:Static p:Resources.tcom_flag_update}">
                         <ComboBox ItemsSource="{Binding Source={StaticResource dataFromCom}}" SelectedItem="{Binding FlagUpdate}" />
                     </HeaderedContentControl>
-                    <HeaderedContentControl Header="Flag Lesen bei Init">
+                    <HeaderedContentControl Header="{x:Static p:Resources.tcom_flag_oninit}">
                         <ComboBox ItemsSource="{Binding Source={StaticResource dataFromCom}}" SelectedItem="{Binding FlagOnInit}" />
                     </HeaderedContentControl>
                 </StackPanel>

@@ -825,4 +825,272 @@
     <value>Object Size</value>
     <comment/>
   </data>
+  <data name="tcom_flag_com" xml:space="preserve">
+    <value>Flag Communication</value>
+    <comment/>
+  </data>
+  <data name="tcom_flag_read" xml:space="preserve">
+    <value>Flag Read</value>
+    <comment/>
+  </data>
+  <data name="tcom_flag_write" xml:space="preserve">
+    <value>Flag Write</value>
+    <comment/>
+  </data>
+  <data name="tcom_flag_trans" xml:space="preserve">
+    <value>Flag Transmit</value>
+    <comment/>
+  </data>
+  <data name="tcom_flag_update" xml:space="preserve">
+    <value>Flag Update</value>
+    <comment/>
+  </data>
+  <data name="tcom_flag_oninit" xml:space="preserve">
+    <value>Flag Read on Init</value>
+    <comment/>
+  </data>
+  <data name="tcom_error2" xml:space="preserve">
+    <value>This ComObjectRef us not used in dynamic</value>
+    <comment/>
+  </data>
+  <data name="prop_como" xml:space="preserve">
+    <value>CommunicationObject</value>
+    <comment/>
+  </data>
+  <data name="tdyn_tmain" xml:space="preserve">
+    <value>This Root-Node will not be exported and can therefor not be edited or removed.</value>
+    <comment/>
+  </data>
+  <data name="tdyn_indchan" xml:space="preserve">
+    <value>An Independent-Channel will not be displayed. All sub ParameterBlocks will be displayed without an channel.</value>
+    <comment/>
+  </data>
+  <data name="tdyn_troot" xml:space="preserve">
+    <value>Root Node</value>
+    <comment/>
+  </data>
+  <data name="tdyn_pararef" xml:space="preserve">
+    <value>Parameter Ref</value>
+    <comment/>
+  </data>
+  <data name="tdyn_paraname" xml:space="preserve">
+    <value>Parameter Name</value>
+    <comment/>
+  </data>
+  <data name="tdyn_paracell" xml:space="preserve">
+    <value>Cell (only ParameterBlock layout grid/table)</value>
+    <comment/>
+  </data>
+  <data name="tdyn_paratext" xml:space="preserve">
+    <value>Parameter Text</value>
+    <comment/>
+  </data>
+  <data name="tdyn_parareftext" xml:space="preserve">
+    <value>Parameterref Text</value>
+    <comment/>
+  </data>
+  <data name="tdyn_mods" xml:space="preserve">
+    <value>Modules</value>
+    <comment/>
+  </data>
+  <data name="tdyn_args" xml:space="preserve">
+    <value>Arguments</value>
+    <comment/>
+  </data>
+  <data name="tdyn_type" xml:space="preserve">
+    <value>Type</value>
+    <comment/>
+  </data>
+  <data name="tdyn_comref" xml:space="preserve">
+    <value>ComObject Ref</value>
+    <comment/>
+  </data>
+  <data name="tdyn_comname" xml:space="preserve">
+    <value>ComObject Name</value>
+    <comment/>
+  </data>
+  <data name="tdyn_comtext" xml:space="preserve">
+    <value>ComObject Text</value>
+    <comment/>
+  </data>
+  <data name="tdyn_comreftext" xml:space="preserve">
+    <value>ComObjectRef Text</value>
+    <comment/>
+  </data>
+  <data name="tdyn_pb_showtree" xml:space="preserve">
+    <value>Show in ComObjectTree</value>
+    <comment/>
+  </data>
+  <data name="tdyn_pb_inline" xml:space="preserve">
+    <value>Is InLine</value>
+    <comment/>
+  </data>
+  <data name="tdyn_pb_layout" xml:space="preserve">
+    <value>Layout</value>
+    <comment/>
+  </data>
+  <data name="tdyn_pb_cells" xml:space="preserve">
+    <value>Cells</value>
+    <comment/>
+  </data>
+  <data name="tdyn_pb_rows" xml:space="preserve">
+    <value>Rows</value>
+    <comment/>
+  </data>
+  <data name="tdyn_id" xml:space="preserve">
+    <value>Id</value>
+    <comment/>
+  </data>
+  <data name="tdyn_pb_width" xml:space="preserve">
+    <value>Width (in %)</value>
+    <comment/>
+  </data>
+  <data name="tdyn_textpara" xml:space="preserve">
+    <value>Text Parameter</value>
+    <comment/>
+  </data>
+  <data name="tdyn_uihint" xml:space="preserve">
+    <value>UIHint</value>
+    <comment/>
+  </data>
+  <data name="tdyn_cond" xml:space="preserve">
+    <value>Condition</value>
+    <comment/>
+  </data>
+  <data name="tdyn_ass_target" xml:space="preserve">
+    <value>Target ParameterRef</value>
+    <comment/>
+  </data>
+  <data name="tdyn_ass_source" xml:space="preserve">
+    <value>Source ParameterRef</value>
+    <comment/>
+  </data>
+  <data name="tdyn_ass_value" xml:space="preserve">
+    <value>Source Value</value>
+    <comment/>
+  </data>
+  <data name="tdyn_ass_warning1" xml:space="preserve">
+    <value>Warning! Set only Source Value OR Source ParameterRef.</value>
+    <comment/>
+  </data>
+  <data name="tdyn_ass_warning2" xml:space="preserve">
+    <value>If value is empty Source ParameterRef will be exported</value>
+    <comment/>
+  </data>
+  <data name="tdyn_chan" xml:space="preserve">
+    <value>Channel</value>
+    <comment/>
+  </data>
+  <data name="tdyn_block" xml:space="preserve">
+    <value>Block</value>
+    <comment/>
+  </data>
+  <data name="tdyn_tseparator" xml:space="preserve">
+    <value>Separator</value>
+    <comment/>
+  </data>
+  <data name="tdyn_tassign" xml:space="preserve">
+    <value>Assign</value>
+    <comment/>
+  </data>
+  <data name="tdyn_tmod" xml:space="preserve">
+    <value>Module</value>
+    <comment/>
+  </data>
+  <data name="tdyn_tselection" xml:space="preserve">
+    <value>Selection</value>
+    <comment/>
+  </data>
+  <data name="tdyn_tcond" xml:space="preserve">
+    <value>Condition</value>
+    <comment/>
+  </data>
+  <data name="tdyn_tpara" xml:space="preserve">
+    <value>Parameter</value>
+    <comment/>
+  </data>
+  <data name="tdyn_tcom" xml:space="preserve">
+    <value>CO</value>
+    <comment/>
+  </data>
+  <data name="gen_cut" xml:space="preserve">
+    <value>Cut</value>
+    <comment/>
+  </data>
+  <data name="gen_put" xml:space="preserve">
+    <value>Insert</value>
+    <comment/>
+  </data>
+  <data name="gen_unfold" xml:space="preserve">
+    <value>Unfold</value>
+    <comment/>
+  </data>
+  <data name="gen_collapse" xml:space="preserve">
+    <value>Collapse</value>
+    <comment/>
+  </data>
+  <data name="tdyn_add_ichan" xml:space="preserve">
+    <value>Add Independent Channel</value>
+    <comment/>
+  </data>
+  <data name="tdyn_add_chan" xml:space="preserve">
+    <value>Add Channel</value>
+    <comment/>
+  </data>
+  <data name="tdyn_add_block" xml:space="preserve">
+    <value>Add Block</value>
+    <comment/>
+  </data>
+  <data name="tdyn_add_mod" xml:space="preserve">
+    <value>Add Module</value>
+    <comment/>
+  </data>
+  <data name="tdyn_add_choose" xml:space="preserve">
+    <value>Add Condition</value>
+    <comment/>
+  </data>
+  <data name="tdyn_add_para" xml:space="preserve">
+    <value>Add Parameter</value>
+    <comment/>
+  </data>
+  <data name="tdyn_add_com" xml:space="preserve">
+    <value>Add ComObject</value>
+    <comment/>
+  </data>
+  <data name="tdyn_adds_epa" xml:space="preserve">
+    <value>Add Separator</value>
+    <comment/>
+  </data>
+  <data name="tdyn_add_assign" xml:space="preserve">
+    <value>Add Assign</value>
+    <comment/>
+  </data>
+  <data name="tdyn_add_btn" xml:space="preserve">
+    <value>Add Button</value>
+    <comment/>
+  </data>
+  <data name="tdyn_when_def" xml:space="preserve">
+    <value>Show only if every other condition fails</value>
+    <comment/>
+  </data>
+  <data name="tdyn_when1" xml:space="preserve">
+    <value>Equals: Value must be the same (Example: =4)</value>
+    <comment/>
+  </data>
+  <data name="tdyn_when2" xml:space="preserve">
+    <value>Not Equals: Put an exclamationmark infront (Example: !=4)</value>
+    <comment/>
+  </data>
+  <data name="tdyn_when3" xml:space="preserve">
+    <value>List: Split values with space (Example: 1 2 3)</value>
+    <comment/>
+  </data>
+  <data name="tdyn_when4" xml:space="preserve">
+    <value>Greather than: &gt; or &gt;= (Example: &gt;5)</value>
+    <comment/>
+  </data>
+  <data name="tdyn_when5" xml:space="preserve">
+    <value>Lower than: &lt; or &lt;= (Example: &lt;=8)</value>
+    <comment/>
+  </data>
 </root>

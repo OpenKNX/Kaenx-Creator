@@ -17,6 +17,8 @@ namespace Kaenx.Creator.Viewer
         private Kaenx.DataContext.Import.Manager.KnxProdFileManager _man;
 
         private Dictionary<string, int> TypeNameToId = new Dictionary<string, int>();
+        
+        public List<ModuleModel> Modules { get; set; } = new List<ModuleModel>();
 
         public ImporterKnxProd(string filePath)
         {
