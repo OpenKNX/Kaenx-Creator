@@ -1026,7 +1026,7 @@
     <comment/>
   </data>
   <data name="gen_collapse" xml:space="preserve">
-    <value>Collapse</value>
+    <value>Fold</value>
     <comment/>
   </data>
   <data name="tdyn_add_ichan" xml:space="preserve">
@@ -1046,7 +1046,7 @@
     <comment/>
   </data>
   <data name="tdyn_add_choose" xml:space="preserve">
-    <value>Add Condition</value>
+    <value>Add Choose</value>
     <comment/>
   </data>
   <data name="tdyn_add_para" xml:space="preserve">
@@ -1095,6 +1095,10 @@
   </data>
   <data name="vgen_ets4" xml:space="preserve">
     <value>Is PreETS4</value>
+    <comment/>
+  </data>
+  <data name="tdyn_add_cond" xml:space="preserve">
+    <value>Add Condition</value>
     <comment/>
   </data>
 </root>

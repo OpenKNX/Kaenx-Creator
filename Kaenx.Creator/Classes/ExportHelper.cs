@@ -986,6 +986,7 @@ namespace Kaenx.Creator.Classes
                         xcref.SetAttributeValue("ObjectSize", cref.ObjectSize + " Bit");
                 }
 
+                //TODO check if appversion iscomautoref active
                 if (cref.ComObjectObject.UseTextParameter)
                 {
                     int nsVersion = int.Parse(currentNamespace.Substring(currentNamespace.LastIndexOf('/')+1));

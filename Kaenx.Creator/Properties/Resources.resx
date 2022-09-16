@@ -1010,7 +1010,7 @@
     <comment/>
   </data>
   <data name="tdyn_add_choose" xml:space="preserve">
-    <value>Bedingung hinzufügen</value>
+    <value>Abfrage hinzufügen</value>
     <comment/>
   </data>
   <data name="tdyn_add_para" xml:space="preserve">
@@ -1059,6 +1059,10 @@
   </data>
   <data name="vgen_ets4" xml:space="preserve">
     <value>Ist PreETS4</value>
+    <comment/>
+  </data>
+  <data name="tdyn_add_cond" xml:space="preserve">
+    <value>Bedingung hinzufügen</value>
     <comment/>
   </data>
 </root>

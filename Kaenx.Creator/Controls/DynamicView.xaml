@@ -403,7 +403,7 @@
                     <MenuItem Header="{x:Static p:Resources.gen_collapse}" Click="ClickCloseDyn" />
                 </ContextMenu>
                 <ContextMenu x:Key="ContextMenuChoose">
-                    <MenuItem Header="Bedingung hinzufügen" Click="ClickAddDynWhen" />
+                    <MenuItem Header="{x:Static p:Resources.tdyn_add_cond}" Click="ClickAddDynWhen" />
                     <MenuItem Header="{x:Static p:Resources.gen_copy}" Click="ClickCopyDyn" />
                     <MenuItem Header="{x:Static p:Resources.gen_cut}" Click="ClickCutDyn" />
                     <MenuItem Header="{x:Static p:Resources.gen_put}" Click="ClickInsertDyn" />

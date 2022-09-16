@@ -938,10 +938,9 @@ namespace Kaenx.Creator.Classes
                 if(xref.Attribute("TextParameterRefId") != null)
                 {
                     long tid = long.Parse(GetLastSplit(xref.Attribute("TextParameterRefId").Value, 2));
-                    cref.ComObjectObject.UseTextParameter = true;
-                    cref.ComObjectObject.ParameterRefObject = vbase.ParameterRefs.Single(p => p.Id == tid);
+                    cref.UseTextParameter = true;
+                    cref.ParameterRefObject = vbase.ParameterRefs.Single(p => p.Id == tid);
                 }
-
 
                 cref.FlagRead = ParseFlagType(xref.Attribute("ReadFlag")?.Value);
                 cref.OverwriteFR = cref.FlagRead == FlagType.Undefined;

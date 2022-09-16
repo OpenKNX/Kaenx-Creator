@@ -131,7 +131,7 @@
                         </StackPanel>
                     </HeaderedContentControl>
 
-                    <HeaderedContentControl Header="{x:Static p:Resources.tcom_para}">
+                    <HeaderedContentControl Header="{x:Static p:Resources.tcom_para}" Visibility="{Binding Version.IsComObjectRefAuto, ElementName=ViewControl, Converter={StaticResource BoolToVis}}">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="auto" />

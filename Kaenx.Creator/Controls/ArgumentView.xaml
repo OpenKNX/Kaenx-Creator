@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:p="clr-namespace:Kaenx.Creator.Properties"
     xmlns:System="clr-namespace:System;assembly=mscorlib"
     xmlns:conv="clr-namespace:Kaenx.Creator.Converter"
     xmlns:models="clr-namespace:Kaenx.Creator.Models"
@@ -24,8 +25,8 @@
             <ColumnDefinition Width="150" />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <Button Content="Hinzufügen" Click="ClickAdd" Margin="0 0 1 2" />
-        <Button Grid.Column="1" Content="Löschen" Click="ClickRemove" Margin="1 0 0 2" />
+        <Button Content="{x:Static p:Resources.gen_add}" Click="ClickAdd" Margin="0 0 1 2" />
+        <Button Grid.Column="1" Content="{x:Static p:Resources.gen_remove}" Click="ClickRemove" Margin="1 0 0 2" />
 
         <ListView x:Name="ArgumentList" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding Arguments}" DisplayMemberPath="Name" />
 
@@ -51,19 +52,19 @@
                 </StackPanel.Resources>
 
                 <TextBlock Margin="5 0" VerticalAlignment="Center">
-                    <Run Text="UID:" />
+                    <Run Text="{x:Static p:Resources.gen_uid}" />
                     <Run Text="{Binding UId}"/>
                 </TextBlock>
 
                 <Grid Margin="5 0">
                     <TextBlock VerticalAlignment="Center">
-                        <Run Text="ID:" />
+                        <Run Text="{x:Static p:Resources.gen_id}" />
                         <Run Text="{Binding Id}"/>
                     </TextBlock>
-                    <Button Content="Zurücksetzen" HorizontalAlignment="Right" Click="ResetId" />
+                    <Button Content="{x:Static p:Resources.gen_id_reset}" HorizontalAlignment="Right" Click="ResetId" />
                 </Grid>
                 
-                <HeaderedContentControl Header="Name">
+                <HeaderedContentControl Header="{x:Static p:Resources.prop_name}">
                     <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
                 </HeaderedContentControl>
             </StackPanel>

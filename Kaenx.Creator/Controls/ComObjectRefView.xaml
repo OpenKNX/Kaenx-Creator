@@ -116,6 +116,18 @@
                     <ComboBox IsEditable="true" ItemsSource="{Binding Module.ComObjects, ElementName=ViewControl}" DisplayMemberPath="Name" SelectedItem="{Binding ComObjectObject}" />
                 </HeaderedContentControl>
 
+                <HeaderedContentControl Header="{x:Static p:Resources.tcom_para}" Visibility="{Binding Version.IsComObjectRefAuto, ElementName=ViewControl, Converter={StaticResource BoolToVis}, ConverterParameter=true}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <CheckBox IsChecked="{Binding UseTextParameter}" VerticalAlignment="Center" />
+                        <ComboBox Grid.Column="1" IsEnabled="{Binding UseTextParameter}" ItemsSource="{Binding Module.ParameterRefs, ElementName=ViewControl}" SelectedItem="{Binding ParameterRefObject, Mode=TwoWay}" DisplayMemberPath="Name" />
+                    </Grid>
+                </HeaderedContentControl>
+
                 <HeaderedContentControl Header="{x:Static p:Resources.gen_text}">
                     <Grid>
                         <Grid.ColumnDefinitions>

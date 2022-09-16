@@ -2084,5 +2084,11 @@ namespace Kaenx.Creator.Properties {
                 return ResourceManager.GetString("vgen_ets4", resourceCulture);
             }
         }
+        
+        public static string tdyn_add_cond {
+            get {
+                return ResourceManager.GetString("tdyn_add_cond", resourceCulture);
+            }
+        }
     }
 }
