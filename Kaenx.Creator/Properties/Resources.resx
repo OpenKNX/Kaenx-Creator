@@ -665,7 +665,7 @@
     <value>Wert</value>
     <comment/>
   </data>
-  <data name="prodv_i" xml:space="preserve">
+  <data name="prodv_id" xml:space="preserve">
     <value>Id</value>
     <comment/>
   </data>
@@ -1055,6 +1055,10 @@
   </data>
   <data name="tdyn_when5" xml:space="preserve">
     <value>Kleiner: &lt; oder &lt;= (Beispiel: &lt;=8)</value>
+    <comment/>
+  </data>
+  <data name="vgen_ets4" xml:space="preserve">
+    <value>Ist PreETS4</value>
     <comment/>
   </data>
 </root>

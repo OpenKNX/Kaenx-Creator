@@ -945,15 +945,23 @@ namespace Kaenx.Creator.Viewer
         
         public string CheckForBindings(string text, BindingTypes type, long targetId, long sourceId, Dictionary<string, string> args)
         {
-            System.Text.RegularExpressions.Regex reg = new System.Text.RegularExpressions.Regex("{{(.*)}}"); //[A-Za-z0-9: -]
-            
-            if(reg.IsMatch(text)){
+            System.Text.RegularExpressions.Regex reg = new System.Text.RegularExpressions.Regex("{{([A-Za-z]*)}}");
+
+            if(args != null && reg.IsMatch(text))
+            {
                 System.Text.RegularExpressions.Match match = reg.Match(text);
                 string g2 = match.Groups[1].Value;
                 if(args != null && args.ContainsKey(g2)) {
                     //Argument von Modul einsetzen
-                    return text.Replace(match.Groups[0].Value, args[g2]);
+                    text = text.Replace(match.Groups[0].Value, args[g2]);
                 }
+            }
+            
+            reg = new System.Text.RegularExpressions.Regex("{{([0-9]{1,99}(:.+)?)}}");
+            
+            if(reg.IsMatch(text)){
+                System.Text.RegularExpressions.Match match = reg.Match(text);
+                string g2 = match.Groups[1].Value;
 
                 ParamBinding bind = new ParamBinding()
                 {
@@ -965,9 +973,9 @@ namespace Kaenx.Creator.Viewer
                 
                 if(g2.Contains(':')){
                     string[] opts = g2.Split(':');
-                    text = text.Replace(match.Groups[0].Value, opts[1]);
                     bind.SourceId = opts[0] == "0" ? -1 : int.Parse(opts[0]);
                     bind.DefaultText = opts[1];
+                    text = text.Replace(match.Groups[0].Value, opts[1]);
                 } else {
                     text = text.Replace(match.Groups[0].Value, "");
                     bind.SourceId = g2 == "0" ? -1 : int.Parse(g2);

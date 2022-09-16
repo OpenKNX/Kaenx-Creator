@@ -130,19 +130,19 @@ namespace Kaenx.Creator.Classes {
                 foreach(ParameterType ptype in vers.ParameterTypes) {
                     long maxsize = (long)Math.Pow(2, ptype.SizeInBit);
         
-                    if(ptype.UIHint == "CheckBox" && (ptype.Min != 0 || ptype.Max != 1 || ptype.SizeInBit != 1))
-                        actions.Add(new PublishAction() { Text = $"    ParameterType Text {ptype.Name} ({ptype.UId}): Wenn UIHint Checkbox ist, ist Min=0 und Max=1 erforderlich, sowie Size=1", State = PublishState.Fail });
+                    if(ptype.UIHint == "CheckBox" && (ptype.Min != 0 || ptype.Max != 1))
+                        actions.Add(new PublishAction() { Text = $"    ParameterType Text {ptype.Name} ({ptype.UId}): Wenn UIHint Checkbox ist, ist Min=0 und Max=1 erforderlich", State = PublishState.Fail, Item = ptype });
                             
                     switch(ptype.Type) {
                         case ParameterTypes.Text:
                             if(!showOnlyErrors && ptype.SizeInBit % 8 != 0)
-                                actions.Add(new PublishAction() { Text = $"    ParameterType Text {ptype.Name} ({ptype.UId}): ist kein vielfaches von 8", State = PublishState.Warning });
+                                actions.Add(new PublishAction() { Text = $"    ParameterType Text {ptype.Name} ({ptype.UId}): ist kein vielfaches von 8", State = PublishState.Fail, Item = ptype });
                             break;
 
                         case ParameterTypes.Enum:
                             var x = ptype.Enums.GroupBy(e => e.Value);
                             foreach(var group in x.Where(g => g.Count() > 1))
-                                actions.Add(new PublishAction() { Text = $"    ParameterType Enum {ptype.Name} ({ptype.UId}): Wert ({group.Key}) wird öfters verwendet", State = PublishState.Fail });
+                                actions.Add(new PublishAction() { Text = $"    ParameterType Enum {ptype.Name} ({ptype.UId}): Wert ({group.Key}) wird öfters verwendet", State = PublishState.Fail, Item = ptype });
                             
                             if(!ptype.IsSizeManual)
                             {
@@ -157,17 +157,17 @@ namespace Kaenx.Creator.Classes {
 
                             foreach(ParameterTypeEnum penum in ptype.Enums){
                                 if(penum.Value >= maxsize)
-                                    actions.Add(new PublishAction() { Text = $"    ParameterType Enum {ptype.Name} ({ptype.UId}): Wert ({penum.Value}) ist größer als maximaler Wert ({maxsize-1})", State = PublishState.Fail });
+                                    actions.Add(new PublishAction() { Text = $"    ParameterType Enum {ptype.Name} ({ptype.UId}): Wert ({penum.Value}) ist größer als maximaler Wert ({maxsize-1})", State = PublishState.Fail, Item = ptype });
 
                                 if(!penum.Translate) {
                                     Translation trans = penum.Text.Single(t => t.Language.CultureCode == vers.DefaultLanguage);
                                     if(string.IsNullOrEmpty(trans.Text))
-                                        actions.Add(new PublishAction() { Text = $"    ParameterType Enum {penum.Name}/{ptype.Name} ({ptype.UId}): Keine Übersetzung vorhanden ({trans.Language.Text})", State = PublishState.Fail });
+                                        actions.Add(new PublishAction() { Text = $"    ParameterType Enum {penum.Name}/{ptype.Name} ({ptype.UId}): Keine Übersetzung vorhanden ({trans.Language.Text})", State = PublishState.Fail, Item = ptype });
                                 } else {
                                     if(!showOnlyErrors)
                                         foreach(Translation trans in penum.Text)
                                             if(string.IsNullOrEmpty(trans.Text))
-                                                actions.Add(new PublishAction() { Text = $"    ParameterType Enum {penum.Name}/{ptype.Name} ({ptype.UId}): Keine Übersetzung vorhanden ({trans.Language.Text})", State = PublishState.Warning });
+                                                actions.Add(new PublishAction() { Text = $"    ParameterType Enum {penum.Name}/{ptype.Name} ({ptype.UId}): Keine Übersetzung vorhanden ({trans.Language.Text})", State = PublishState.Warning, Item = ptype });
                                 }
                             }
                             break;
@@ -179,9 +179,9 @@ namespace Kaenx.Creator.Classes {
                                 ptype.SizeInBit = bin.Length;
                                 maxsize = (int)Math.Pow(2, ptype.SizeInBit);
                             }
-                            if(ptype.Min < 0) actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Min kann nicht kleiner als 0 sein", State = PublishState.Fail });
-                            if(ptype.Min > ptype.Max) actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Min ({ptype.Min}) ist größer als Max ({ptype.Max})", State = PublishState.Fail });
-                            if(ptype.Max >= maxsize) actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Max ({ptype.Max}) kann nicht größer als das Maximum ({maxsize-1}) sein", State = PublishState.Fail });
+                            if(ptype.Min < 0) actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Min kann nicht kleiner als 0 sein", State = PublishState.Fail, Item = ptype });
+                            if(ptype.Min > ptype.Max) actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Min ({ptype.Min}) ist größer als Max ({ptype.Max})", State = PublishState.Fail, Item = ptype });
+                            if(ptype.Max >= maxsize) actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Max ({ptype.Max}) kann nicht größer als das Maximum ({maxsize-1}) sein", State = PublishState.Fail, Item = ptype });
                             break;
 
                         case ParameterTypes.NumberInt:
@@ -197,9 +197,9 @@ namespace Kaenx.Creator.Classes {
                                 ptype.SizeInBit = bin.Length;
                                 maxsize = (int)Math.Pow(2, ptype.SizeInBit);
                             }
-                            if(ptype.Min > ptype.Max) actions.Add(new PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Min ({ptype.Min}) ist größer als Max ({ptype.Max})", State = PublishState.Fail });
-                            if(ptype.Max > ((maxsize)-1)) actions.Add(new PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Max ({ptype.Max}) kann nicht größer als das Maximum ({(maxsize/2)-1}) sein", State = PublishState.Fail });
-                            if(ptype.Min < ((maxsize)*(-1))) actions.Add(new PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Min ({ptype.Min}) kann nicht kleiner als das Minimum ({(maxsize/2)*(-1)}) sein", State = PublishState.Fail });
+                            if(ptype.Min > ptype.Max) actions.Add(new PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Min ({ptype.Min}) ist größer als Max ({ptype.Max})", State = PublishState.Fail, Item = ptype });
+                            if(ptype.Max > ((maxsize)-1)) actions.Add(new PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Max ({ptype.Max}) kann nicht größer als das Maximum ({(maxsize/2)-1}) sein", State = PublishState.Fail, Item = ptype });
+                            if(ptype.Min < ((maxsize)*(-1))) actions.Add(new PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Min ({ptype.Min}) kann nicht kleiner als das Minimum ({(maxsize/2)*(-1)}) sein", State = PublishState.Fail, Item = ptype });
                             break;
 
                         case ParameterTypes.Float_DPT9:
@@ -213,21 +213,23 @@ namespace Kaenx.Creator.Classes {
                             break;
 
                         case ParameterTypes.None:
+                            if(!vers.IsPreETS4)
+                                actions.Add(new PublishAction() { Text = $"    ParameterTyp None {ptype.Name} ({ptype.UId}): Wird eigentlich nur in ETS3 unterstützt. IsPreETS4 aktivieren", State = PublishState.Warning, Item = ptype });
                             break;
 
                         case ParameterTypes.Color:
                             if(ptype.UIHint != "RGB" && ptype.UIHint != "RGBW" && ptype.UIHint != "HSV")
-                                actions.Add(new PublishAction() { Text = $"    ParameterTyp Color {ptype.Name} ({ptype.UId}): Nicht unterstützter Farbraum {ptype.UIHint}", State = PublishState.Fail });
+                                actions.Add(new PublishAction() { Text = $"    ParameterTyp Color {ptype.Name} ({ptype.UId}): Nicht unterstützter Farbraum {ptype.UIHint}", State = PublishState.Fail, Item = ptype });
                             if(ptype.UIHint == "RGBW" && vers.NamespaceVersion < 20)
-                                actions.Add(new PublishAction() { Text = $"    ParameterTyp Color {ptype.Name} ({ptype.UId}): RGBW wird erst ab NamespaceVersion 20 unterstützt", State = PublishState.Fail });
+                                actions.Add(new PublishAction() { Text = $"    ParameterTyp Color {ptype.Name} ({ptype.UId}): RGBW wird erst ab NamespaceVersion 20 unterstützt", State = PublishState.Fail, Item = ptype });
                             break;
 
                         case ParameterTypes.IpAddress:
-                            actions.Add(new PublishAction() { Text = $"    ParameterTyp IpAddress für {ptype.Name} ({ptype.UId}) wird nicht exportiert", State = PublishState.Warning });
+                            actions.Add(new PublishAction() { Text = $"    ParameterTyp IpAddress für {ptype.Name} ({ptype.UId}) wird nicht exportiert", State = PublishState.Warning, Item = ptype });
                             break;
 
                         default:
-                            actions.Add(new PublishAction() { Text = $"    Unbekannter ParameterTyp für {ptype.Name} ({ptype.UId})", State = PublishState.Fail });
+                            actions.Add(new PublishAction() { Text = $"    Unbekannter ParameterTyp für {ptype.Name} ({ptype.UId})", State = PublishState.Fail, Item = ptype });
                             break;
                     }
                 }
@@ -321,28 +323,23 @@ namespace Kaenx.Creator.Classes {
                 } else {
                     if(!showOnlyErrors)
                     {
-                        if(para.Text.Count == para.Text.Count(t => string.IsNullOrEmpty(t.Text)))
-                                actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Keine Übersetzungen für Text vorhanden", State = PublishState.Warning, Item = para, Module = mod });
-                        else
-                            foreach(Translation trans in para.Text)
-                                if(string.IsNullOrEmpty(trans.Text))
-                                    actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Keine Übersetzung für Text vorhanden ({trans.Language.Text})", State = PublishState.Warning, Item = para, Module = mod });
+                        if(para.Text.Any(s => string.IsNullOrEmpty(s.Text)))
+                        {
+                            actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Text nicht in allen Sprachen übersetzt", State = PublishState.Warning, Item = para, Module = mod });
+                        }
                     }
                 }
 
-                if(para.TranslationSuffix) {
-                    Translation trans = para.Suffix.Single(t => t.Language.CultureCode == defaultLang);
-                    if(string.IsNullOrEmpty(trans.Text))
-                        actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Keine Übersetzung für Suffix vorhanden ({trans.Language.Text})", State = PublishState.Fail, Item = para, Module = mod });
-                } else {
+                if(!para.TranslationSuffix) {
                     if(!showOnlyErrors)
                     {
-                        if(para.Suffix.Count == para.Suffix.Count(t => string.IsNullOrEmpty(t.Text)))
-                                actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Keine Übersetzungen für Suffix vorhanden", State = PublishState.Warning, Item = para, Module = mod });
-                        else
-                            foreach(Translation trans in para.Suffix)
-                                if(string.IsNullOrEmpty(trans.Text))
-                                    actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Keine Übersetzung für Suffix vorhanden ({trans.Language.Text})", State = PublishState.Warning, Item = para, Module = mod });
+                        if(!string.IsNullOrEmpty(para.Suffix.Single(t => t.Language.CultureCode == defaultLang).Text))
+                        {
+                            if(para.Suffix.Any(s => string.IsNullOrEmpty(s.Text)))
+                            {
+                                actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Suffix nicht in allen Sprachen übersetzt", State = PublishState.Warning, Item = para, Module = mod });
+                            }
+                        }
                     }
                 }
 
@@ -389,27 +386,22 @@ namespace Kaenx.Creator.Classes {
                         } else {
                             if(!showOnlyErrors)
                             {
-                                if(para.Text.Count == para.Text.Count(t => string.IsNullOrEmpty(t.Text)))
-                                        actions.Add(new PublishAction() { Text = $"    ParameterRef {para.Name} ({para.UId}): Keine Übersetzungen für Text vorhanden", State = PublishState.Warning, Item = para, Module = mod });
-                                else
-                                    foreach(Translation trans in para.Text)
-                                        if(string.IsNullOrEmpty(trans.Text))
-                                            actions.Add(new PublishAction() { Text = $"    ParameterRef {para.Name} ({para.UId}): Keine Übersetzung für Text vorhanden ({trans.Language.Text})", State = PublishState.Warning, Item = para, Module = mod });
+                               if(para.Text.Any(s => string.IsNullOrEmpty(s.Text)))
+                                {
+                                    actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Text nicht in allen Sprachen übersetzt", State = PublishState.Warning, Item = para, Module = mod });
+                                }
                             }
                         }
                     }
 
                     if(para.OverwriteSuffix)
                     {
-                        if(para.ParameterObject.TranslationSuffix) {
-                            Translation trans = para.Suffix.Single(t => t.Language.CultureCode == defaultLang);
-                            if(string.IsNullOrEmpty(trans.Text))
-                                actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Keine Übersetzung für Suffix vorhanden ({trans.Language.Text})", State = PublishState.Fail, Item = para, Module = mod });
-                        } else {
-                            if(!showOnlyErrors)
-                                foreach(Translation trans in para.Suffix)
-                                    if(string.IsNullOrEmpty(trans.Text))
-                                        actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Keine Übersetzung für Suffix vorhanden ({trans.Language.Text})", State = PublishState.Warning, Item = para, Module = mod });
+                        if(!string.IsNullOrEmpty(para.Suffix.Single(t => t.Language.CultureCode == defaultLang).Text))
+                        {
+                            if(para.Suffix.Any(s => string.IsNullOrEmpty(s.Text)))
+                            {
+                                actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Suffix nicht in allen Sprachen übersetzt", State = PublishState.Warning, Item = para, Module = mod });
+                            }
                         }
                     }
 
@@ -586,6 +578,11 @@ namespace Kaenx.Creator.Classes {
 
                 case DynParaBlock dpb:
                 {
+                    if(vbase is AppVersion av)
+                    {
+                        if(!av.IsPreETS4 && dpb.UseParameterRef)
+                            actions.Add(new PublishAction() { Text = $"    DynParaBlock {dpb.Name} ParameterRef wird nur in ETS3 unterstützt. IsPreETS4 aktivieren", State = PublishState.Warning});
+                    }
                     if(dpb.UseParameterRef && dpb.ParameterRefObject == null)
                         actions.Add(new PublishAction() { Text = $"    DynParaBlock {dpb.Name} wurde kein ParameterRef zugeordnet", State = PublishState.Fail});
                         

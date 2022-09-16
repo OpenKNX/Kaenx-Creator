@@ -767,6 +767,7 @@
                                     <CheckBox IsChecked="{Binding IsUnionActive}" Content="{x:Static p:Resources.vgen_union}" />
                                     <CheckBox IsChecked="{Binding IsModulesActive}" Content="{x:Static p:Resources.vgen_mods}" />
                                     <CheckBox IsChecked="{Binding IsMessagesActive}" Content="{x:Static p:Resources.vgen_msg}" />
+                                    <CheckBox IsChecked="{Binding IsPreETS4}" Content="{x:Static p:Resources.vgen_ets4}" />
                                 
                                     <Grid>
                                         <Grid.ColumnDefinitions>

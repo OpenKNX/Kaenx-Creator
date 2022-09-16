@@ -272,7 +272,7 @@ namespace Kaenx.Creator.Classes
                 }
             }
 
-            if(xapp.Attribute("ReplacesVersions") != null) currentVers.ReplacesVersions = xapp.Attribute("ReplacesVersions").Value;
+            if(xapp.Attribute("PreEts4Style") != null || xapp.Attribute("ConvertedFromPreEts4Data") != null) currentVers.IsPreETS4 = true;
             
 #endregion
             XElement xstatic = xapp.Element(Get("Static"));
@@ -559,8 +559,8 @@ namespace Kaenx.Creator.Classes
                             _ => throw new Exception("Unbekannter TypeNumber Type: " + xsub.Attribute("Type").Value)
                         };
                         ptype.SizeInBit = int.Parse(xsub.Attribute("SizeInBit").Value);
-                        ptype.Min = int.Parse(xsub.Attribute("minInclusive").Value);
-                        ptype.Max = int.Parse(xsub.Attribute("maxInclusive").Value);
+                        ptype.Min = float.Parse(xsub.Attribute("minInclusive").Value);
+                        ptype.Max = float.Parse(xsub.Attribute("maxInclusive").Value);
                         if(xsub.Attribute("UIHint") != null)
                             ptype.UIHint = xsub.Attribute("UIHint").Value;
                         if(xsub.Attribute("Increment") != null)
@@ -824,8 +824,20 @@ namespace Kaenx.Creator.Classes
                 };
 
                 string id = GetLastSplit(xcom.Attribute("Id").Value, 2);
-                id = id.Substring(id.LastIndexOf('-') + 1); //Modules haben Id M-00FA_A-0207-23-E298_MD-1_O-2-0
-                com.Id = int.Parse(id);
+                if(id.Contains('-'))
+                {
+                    string[] ids = id.Split('-');
+                    int id1 = 0, id2 = 0;
+                    bool con1 = int.TryParse(ids[0], out id1);
+                    bool con2 = int.TryParse(ids[1], out id2);
+                    if(!con1 || !con2)
+                        throw new Exception("ID kann nicht geparsed werden: " + id);
+                        
+                    com.Id = (id1 << 16) | id2;
+                } else{
+                    com.Id = int.Parse(id);
+                }
+                
 
                 com.Name = xcom.Attribute("Name")?.Value;
                 if(string.IsNullOrEmpty(com.Name))
@@ -906,10 +918,29 @@ namespace Kaenx.Creator.Classes
                 cref.OverwriteText = cref.Text.Any(t => !string.IsNullOrEmpty(t.Text));
 
                 string id = GetLastSplit(xref.Attribute("RefId").Value, 2);
-                id = id.Substring(id.LastIndexOf('-') + 1); //Modules haben Id M-00FA_A-0207-23-E298_MD-1_O-2-0
-                int comId = int.Parse(id);
+                int comId;
+                if(id.Contains('-'))
+                {
+                    string[] ids = id.Split('-');
+                    int id1 = 0, id2 = 0;
+                    bool con1 = int.TryParse(ids[0], out id1);
+                    bool con2 = int.TryParse(ids[1], out id2);
+                    if(!con1 || !con2)
+                        throw new Exception("ID kann nicht geparsed werden: " + id);
+                        
+                    comId = (id1 << 16) | id2;
+                } else{
+                    comId = int.Parse(id);
+                }
                 cref.ComObjectObject = vbase.ComObjects.Single(c => c.Id == comId);
                 cref.Name = cref.ComObjectObject.Name;
+
+                if(xref.Attribute("TextParameterRefId") != null)
+                {
+                    long tid = long.Parse(GetLastSplit(xref.Attribute("TextParameterRefId").Value, 2));
+                    cref.ComObjectObject.UseTextParameter = true;
+                    cref.ComObjectObject.ParameterRefObject = vbase.ParameterRefs.Single(p => p.Id == tid);
+                }
 
 
                 cref.FlagRead = ParseFlagType(xref.Attribute("ReadFlag")?.Value);

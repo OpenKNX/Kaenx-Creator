@@ -15,7 +15,7 @@ using System.Windows.Input;
 
 namespace Kaenx.Creator.Controls
 {
-    public partial class ParameterTypeView : UserControl, INotifyPropertyChanged, IFilterable
+    public partial class ParameterTypeView : UserControl, INotifyPropertyChanged, IFilterable, ISelectable
     {
         public static readonly DependencyProperty BaggagesProperty = DependencyProperty.Register("Baggages", typeof(ObservableCollection<Baggage>), typeof(ParameterTypeView), new PropertyMetadata(null));
         public static readonly DependencyProperty VersionProperty = DependencyProperty.Register("Version", typeof(AppVersion), typeof(ParameterTypeView), new PropertyMetadata(OnVersionChangedCallback));
@@ -47,6 +47,12 @@ namespace Kaenx.Creator.Controls
             _filter.Hide();
             _selectedItem = ListParamTypes.SelectedItem;
             ListParamTypes.SelectedItem = null;
+        }
+
+        public void ShowItem(object item)
+        {
+            ListParamTypes.ScrollIntoView(item);
+            ListParamTypes.SelectedItem = item;
         }
 
         private static void OnVersionChangedCallback(DependencyObject sender, DependencyPropertyChangedEventArgs e)

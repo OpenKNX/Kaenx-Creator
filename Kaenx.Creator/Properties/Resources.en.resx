@@ -1093,4 +1093,8 @@
     <value>Lower than: &lt; or &lt;= (Example: &lt;=8)</value>
     <comment/>
   </data>
+  <data name="vgen_ets4" xml:space="preserve">
+    <value>Is PreETS4</value>
+    <comment/>
+  </data>
 </root>

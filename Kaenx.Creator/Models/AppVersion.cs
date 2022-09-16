@@ -212,6 +212,13 @@ namespace Kaenx.Creator.Models
             set { _procedure = value; Changed("Procedure"); }
         }
 
+        private bool _isPreETS4 = false;
+        public bool IsPreETS4
+        {
+            get { return _isPreETS4; }
+            set { _isPreETS4 = value; Changed("IsPreETS4"); }
+        }
+
         public int LastParameterId { get; set; } = 0;
         public int LastParameterRefId { get; set; } = 0;
         public int LastDynModuleId { get; set; } = 0;
