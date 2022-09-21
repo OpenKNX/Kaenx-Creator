@@ -299,6 +299,9 @@ namespace Kaenx.Creator.Classes
             } else if(list is System.Collections.ObjectModel.ObservableCollection<Message>) {
                 while((list as System.Collections.ObjectModel.ObservableCollection<Message>).Any(i => i.UId == id))
                     id++;
+            } else if(list is System.Collections.ObjectModel.ObservableCollection<Helptext>) {
+                while((list as System.Collections.ObjectModel.ObservableCollection<Helptext>).Any(i => i.UId == id))
+                    id++;
             } else {
                 throw new Exception("Can't get NextFreeUId. Type not implemented.");
             }

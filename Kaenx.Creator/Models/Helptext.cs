@@ -11,7 +11,7 @@ using System.Windows.Media;
 
 namespace Kaenx.Creator.Models
 {
-    public class Message : INotifyPropertyChanged
+    public class Helptext : INotifyPropertyChanged
     {
         private int _uid = -1;
         public int UId
@@ -19,14 +19,6 @@ namespace Kaenx.Creator.Models
             get { return _uid; }
             set { _uid = value; Changed("UId"); }
         }
-
-        private long _id = -1;
-        public long Id
-        {
-            get { return _id; }
-            set { _id = value; Changed("Id"); }
-        }
-
         
         private string _name = "dummy";
         public string Name

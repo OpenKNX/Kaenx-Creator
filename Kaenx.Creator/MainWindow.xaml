@@ -767,6 +767,7 @@
                                     <CheckBox IsChecked="{Binding IsUnionActive}" Content="{x:Static p:Resources.vgen_union}" />
                                     <CheckBox IsChecked="{Binding IsModulesActive}" Content="{x:Static p:Resources.vgen_mods}" />
                                     <CheckBox IsChecked="{Binding IsMessagesActive}" Content="{x:Static p:Resources.vgen_msg}" />
+                                    <CheckBox IsChecked="{Binding IsHelpActive}" Content="{x:Static p:Resources.vgen_help}" />
                                     <CheckBox IsChecked="{Binding IsPreETS4}" Content="{x:Static p:Resources.vgen_ets4}" />
                                 
                                     <Grid>
@@ -1365,14 +1366,17 @@
                     </TabItem>
 
 
-                    <TabItem Header="{x:Static p:Resources.tabs_loadp}" Style="{StaticResource LeftTabItem}">
-                        <ctrl:LoadProcedures Mask="{Binding SelectedItem.Mask, ElementName=AppList}" Version="{Binding SelectedItem, ElementName=VersionList}"/>
-                    </TabItem>
-
                     <TabItem Header="{x:Static p:Resources.tabs_msg}" Visibility="{Binding IsMessagesActive, Converter={StaticResource BoolToVis}}" Style="{StaticResource LeftTabItem}">
                         <ctrl:MessagesView Version="{Binding ElementName=VersionList, Path=SelectedItem}" />
                     </TabItem>
 
+                    <TabItem Header="{x:Static p:Resources.tabs_loadp}" Style="{StaticResource LeftTabItem}">
+                        <ctrl:LoadProcedures Mask="{Binding SelectedItem.Mask, ElementName=AppList}" Version="{Binding SelectedItem, ElementName=VersionList}"/>
+                    </TabItem>
+
+                    <TabItem Header="{x:Static p:Resources.tabs_help}" Visibility="{Binding IsHelpActive, Converter={StaticResource BoolToVis}}" Style="{StaticResource LeftTabItem}">
+                        <ctrl:HelpView Version="{Binding ElementName=VersionList, Path=SelectedItem}" />
+                    </TabItem>
 
                     <TabItem Header="{x:Static p:Resources.tabs_dyn}" Style="{StaticResource LeftTabItem}">
                         <ctrl:DynamicView Version="{Binding ElementName=VersionList, Path=SelectedItem}" Module="{Binding ElementName=VersionList, Path=SelectedItem}" />

@@ -56,11 +56,8 @@
                 <HeaderedContentControl Header="{x:Static p:Resources.tdyn_paracell}">
                     <TextBox Text="{Binding Cell, UpdateSourceTrigger=PropertyChanged}" />
                 </HeaderedContentControl>
-                <HeaderedContentControl Header="{x:Static p:Resources.prop_access}">
-                    <ComboBox ItemsSource="{Binding Source={StaticResource dataFromEnumAccess}}" SelectedItem="{Binding Access, Mode=TwoWay}" />
-                </HeaderedContentControl>
 
-                <HeaderedContentControl Header="{x:Static p:Resources.tdyn_paratext}" IsEnabled="False" Margin="5 30 5 5">
+                <HeaderedContentControl Header="{x:Static p:Resources.tdyn_paratext}" Visibility="{Binding ParameterRefObject.OverwriteText, Converter={StaticResource BoolToVis}, ConverterParameter=true, FallbackValue=Collapsed}" IsEnabled="False" Margin="5 30 5 5">
                     <DataGrid ItemsSource="{Binding ParameterRefObject.ParameterObject.Text}" AutoGenerateColumns="False">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="{x:Static p:Resources.gen_lang}" Binding="{Binding Language.Text}" />
@@ -68,13 +65,24 @@
                         </DataGrid.Columns>
                     </DataGrid>
                 </HeaderedContentControl>
-                <HeaderedContentControl Header="{x:Static p:Resources.tdyn_parareftext}" IsEnabled="False">
+                <HeaderedContentControl Header="{x:Static p:Resources.tdyn_parareftext}" Visibility="{Binding ParameterRefObject.OverwriteText, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}" IsEnabled="False">
                     <DataGrid ItemsSource="{Binding ParameterRefObject.Text}" AutoGenerateColumns="False">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="{x:Static p:Resources.gen_lang}" Binding="{Binding Language.Text}" />
                             <DataGridTextColumn Header="{x:Static p:Resources.gen_text}" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
                         </DataGrid.Columns>
                     </DataGrid>
+                </HeaderedContentControl>
+                <HeaderedContentControl Header="{x:Static p:Resources.tdyn_help}" Visibility="{Binding Version.IsHelpActive, ElementName=ViewControl, Converter={StaticResource BoolToVis}}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <CheckBox IsChecked="{Binding HasHelptext}" VerticalAlignment="Center" />
+                        <ComboBox Grid.Column="1" IsEnabled="{Binding HasHelptext}" ItemsSource="{Binding Version.Helptexts, ElementName=ViewControl}" SelectedItem="{Binding Helptext}" DisplayMemberPath="Name" />
+                    </Grid>
                 </HeaderedContentControl>
             </StackPanel>
         </DataTemplate>
@@ -158,6 +166,9 @@
                 </Grid>
                 <HeaderedContentControl Header="{x:Static p:Resources.prop_name}">
                     <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
+                </HeaderedContentControl>
+                <HeaderedContentControl Header="{x:Static p:Resources.prop_access}">
+                    <ComboBox ItemsSource="{Binding Source={StaticResource dataFromEnumAccess}}" SelectedItem="{Binding Access, Mode=TwoWay}" />
                 </HeaderedContentControl>
                 <CheckBox Content="{x:Static p:Resources.tdyn_pb_showtree}" IsChecked="{Binding ShowInComObjectTree}" />
                 <CheckBox Content="{x:Static p:Resources.tdyn_pb_inline}" IsChecked="{Binding IsInline}" />

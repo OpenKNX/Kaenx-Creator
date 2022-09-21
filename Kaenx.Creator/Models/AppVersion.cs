@@ -21,6 +21,7 @@ namespace Kaenx.Creator.Models
         public ObservableCollection<Message> Messages { get; set; } = new ObservableCollection<Message>();
         public ObservableCollection<Union> Unions { get; set; } = new ObservableCollection<Union>();
         public ObservableCollection<Language> Languages { get; set; } = new ObservableCollection<Language>();
+        public ObservableCollection<Helptext> Helptexts { get; set; } = new ObservableCollection<Helptext>();
         public List<IDynamicMain> Dynamics { get; set; } = new List<IDynamicMain>();
 
         public AppVersion() { }
@@ -203,6 +204,13 @@ namespace Kaenx.Creator.Models
         {
             get { return _isMemSizeAuto; }
             set { _isMemSizeAuto = value; Changed("IsMemSizeAuto"); }
+        }
+
+        private bool _isHelpActive = false;
+        public bool IsHelpActive
+        {
+            get { return _isHelpActive; }
+            set { _isHelpActive = value; Changed("IsHelpActive"); }
         }
 
         private string _procedure = "";

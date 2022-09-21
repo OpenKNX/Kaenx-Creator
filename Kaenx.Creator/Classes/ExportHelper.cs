@@ -109,6 +109,13 @@ namespace Kaenx.Creator.Classes
                 xapp.SetAttributeValue("DynamicTableManagement", "false"); //TODO check when to add
                 xapp.SetAttributeValue("Linkable", "false"); //TODO check when to add
 
+                List<Baggage> baggagesApp = new List<Baggage>();
+                if(ver.IsHelpActive)
+                {
+                    xapp.SetAttributeValue("ContextHelpFile", $"{Manu}_BG--{GetEncoded("HelpFile_" + ver.DefaultLanguage + ".zip")}");
+                    ExportHelptexts(ver, Manu, baggagesManu, baggagesApp);
+                }
+
                 if(ver.IsPreETS4)
                 {
                     xapp.SetAttributeValue("PreEts4Style", "true"); //TODO check when to add
@@ -145,7 +152,6 @@ namespace Kaenx.Creator.Classes
                 ExportSegments(ver, xunderapp);
 
                 #region ParamTypes/Baggages
-                List<Baggage> baggagesApp = new List<Baggage>();
                 Debug.WriteLine($"Exportiere ParameterTypes: {ver.ParameterTypes.Count}x");
                 temp = new XElement(Get("ParameterTypes"));
                 foreach (ParameterType type in ver.ParameterTypes)
@@ -377,7 +383,7 @@ namespace Kaenx.Creator.Classes
                         XElement xmoddyn = new XElement(Get("Dynamic"));
                         xmod.Add(xmoddyn);
 
-                        HandleSubItems(mod.Dynamics[0], xmoddyn);
+                        HandleSubItems(mod.Dynamics[0], xmoddyn, ver);
 
                         appVersionMod = appVersion;
                     }
@@ -714,7 +720,8 @@ namespace Kaenx.Creator.Classes
                     if (!Directory.Exists(GetRelPath("Temp", Manu, "Baggages", bag.TargetPath)))
                         Directory.CreateDirectory(GetRelPath("Temp", Manu, "Baggages", bag.TargetPath));
 
-                    File.WriteAllBytes(GetRelPath("Temp", Manu, "Baggages", bag.TargetPath, bag.Name + bag.Extension), bag.Data);
+                    if(bag.Data != null)
+                        File.WriteAllBytes(GetRelPath("Temp", Manu, "Baggages", bag.TargetPath, bag.Name + bag.Extension), bag.Data);
                 }
 
                 xmanu.Add(xbags);
@@ -728,6 +735,48 @@ namespace Kaenx.Creator.Classes
             #endregion
 
             return true;
+        }
+
+        private void ExportHelptexts(AppVersion ver, string manu, List<Baggage> baggagesManu, List<Baggage> baggagesApp)
+        {
+            if(ver.Helptexts.Count == 0) return;
+            if(System.IO.Directory.Exists("HelpTemp"))
+                System.IO.Directory.Delete("HelpTemp", true);
+            System.IO.Directory.CreateDirectory("HelpTemp");
+
+            foreach(Language lang in ver.Languages)
+            {
+                if(!System.IO.Directory.Exists(System.IO.Path.Combine("HelpTemp", lang.CultureCode)))
+                    System.IO.Directory.CreateDirectory(System.IO.Path.Combine("HelpTemp", lang.CultureCode));
+            }
+
+            foreach(Helptext text in ver.Helptexts)
+            {
+                foreach(Translation trans in text.Text)
+                {
+                    System.IO.File.WriteAllText(System.IO.Path.Combine("HelpTemp", trans.Language.CultureCode, text.Name + ".txt"), trans.Text);
+                }
+            }
+
+
+            if(!System.IO.Directory.Exists(System.IO.Path.Combine("Output", "Temp", manu, "Baggages")))
+                System.IO.Directory.CreateDirectory(System.IO.Path.Combine("Output", "Temp", manu, "Baggages"));
+            
+            foreach(Language lang in ver.Languages)
+            {
+                string destPath = System.IO.Path.Combine("Output", "Temp", manu, "Baggages", "HelpFile_" + lang.CultureCode + ".zip");
+                System.IO.Compression.ZipFile.CreateFromDirectory(System.IO.Path.Combine("HelpTemp", lang.CultureCode), destPath);
+                Baggage bag = new Baggage() {
+                    Name = "HelpFile_" + lang.CultureCode,
+                    Extension = ".zip",
+                    TimeStamp = DateTime.Now
+                };
+                baggagesManu.Add(bag);
+                baggagesApp.Add(bag);
+                AddTranslation(lang.CultureCode, appVersion, "ContextHelpFile", $"{manu}_BG--{GetEncoded("HelpFile_" + lang.CultureCode + ".zip")}");
+            }
+
+            System.IO.Directory.Delete("HelpTemp", true);
         }
 
         private void ExportSegments(AppVersion ver, XElement xparent)
@@ -1106,7 +1155,7 @@ namespace Kaenx.Creator.Classes
                         break;
 
                     case DynParameter dp:
-                        HandleParam(dp, xparent);
+                        HandleParam(dp, xparent, ver);
                         break;
 
                     case IDynChoose dch:
@@ -1138,7 +1187,7 @@ namespace Kaenx.Creator.Classes
                 }
 
                 if (item.Items != null && xitem != null)
-                    HandleSubItems(item, xitem);
+                    HandleSubItems(item, xitem, ver);
             }
         }
 
@@ -1323,13 +1372,18 @@ namespace Kaenx.Creator.Classes
             return block;
         }
 
-        private void HandleParam(DynParameter pa, XElement parent)
+        private void HandleParam(DynParameter pa, XElement parent, AppVersion vbase)
         {
             XElement xpara = new XElement(Get("ParameterRefRef"));
             parent.Add(xpara);
             xpara.SetAttributeValue("RefId", appVersionMod + (pa.ParameterRefObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{pa.ParameterRefObject.ParameterObject.Id}_R-{pa.ParameterRefObject.Id}");
             if(!string.IsNullOrEmpty(pa.Cell))
                 xpara.SetAttributeValue("Cell", pa.Cell);
+
+            if(vbase.IsHelpActive && pa.HasHelptext)
+            {
+                xpara.SetAttributeValue("HelpContext", pa.Helptext.Name);
+            }
         }
         
         

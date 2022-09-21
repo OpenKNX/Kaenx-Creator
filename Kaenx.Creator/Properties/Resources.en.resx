@@ -1101,4 +1101,16 @@
     <value>Add Condition</value>
     <comment/>
   </data>
+  <data name="vgen_help" xml:space="preserve">
+    <value>Activate Help</value>
+    <comment/>
+  </data>
+  <data name="tdyn_help" xml:space="preserve">
+    <value>Helptext</value>
+    <comment/>
+  </data>
+  <data name="tabs_help" xml:space="preserve">
+    <value>Helptexts</value>
+    <comment/>
+  </data>
 </root>

@@ -13,7 +13,7 @@ namespace Kaenx.Creator.Models.Dynamic
         [JsonIgnore]
         public IDynItems Parent { get; set; }
 
-        private bool _isExpanded = false;
+        private bool _isExpanded = true;
         public bool IsExpanded
         {
             get { return _isExpanded; }

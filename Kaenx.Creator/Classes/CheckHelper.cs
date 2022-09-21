@@ -50,7 +50,6 @@ namespace Kaenx.Creator.Classes {
 
                 #region Hardware Check
                 actions.Add(new PublishAction() { Text = "Überprüfe Hardware" });
-                Regex reg = new Regex("^([0-9a-zA-Z_\\-äöüÄÖÜ ]|\\s)+$");
                 List<string> serials = new List<string>();
 
                 var check1 = General.Hardware.GroupBy(h => h.Name).Where(h => h.Count() > 1);
@@ -77,10 +76,6 @@ namespace Kaenx.Creator.Classes {
                     foreach (var group in check2)
                         actions.Add(new PublishAction() { Text = "Hardware '" + group.Name + "' hat Applikation zugeordnet obwohl angegeben ist, dass keine benötigt wird", State = PublishState.Warning });
                 }
-                check2 = General.Hardware.Where(h => !reg.IsMatch(h.Name));
-                foreach (var group in check2)
-                    actions.Add(new PublishAction() { Text = "Hardware '" + group.Name + "' hat ungültige Zeichen im Namen", State = PublishState.Fail });
-                check2 = null;
                 #endregion
 
 
@@ -269,6 +264,7 @@ namespace Kaenx.Creator.Classes {
                 }
             }
             #endregion
+            actions.Add(new PublishAction() { Text = "Ende Check" });
         }
 
         private static void CheckVersion(IVersionBase vbase, ObservableCollection<PublishAction> actions, string defaultLang, int ns, bool showOnlyErrors)

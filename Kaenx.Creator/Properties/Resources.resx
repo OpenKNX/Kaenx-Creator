@@ -1065,4 +1065,16 @@
     <value>Bedingung hinzufügen</value>
     <comment/>
   </data>
+  <data name="vgen_help" xml:space="preserve">
+    <value>Hilfe aktivieren</value>
+    <comment/>
+  </data>
+  <data name="tdyn_help" xml:space="preserve">
+    <value>Hilfetext</value>
+    <comment/>
+  </data>
+  <data name="tabs_help" xml:space="preserve">
+    <value>Hilfetexte</value>
+    <comment/>
+  </data>
 </root>

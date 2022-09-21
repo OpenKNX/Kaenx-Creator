@@ -521,6 +521,10 @@ namespace Kaenx.Creator
                     if(!msg.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
                         msg.Text.Add(new Models.Translation(lang, ""));
                 }
+                foreach(Models.Helptext msg in ver.Helptexts){
+                    if(!msg.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
+                        msg.Text.Add(new Models.Translation(lang, ""));
+                }
 
                 addLangToVersion(ver, lang);
                 addLangToVersion(ver.Dynamics[0], lang);
@@ -552,6 +556,14 @@ namespace Kaenx.Creator
                     if(enu.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
                         enu.Text.Remove(enu.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
                 }
+            }
+            foreach(Models.Message msg in ver.Messages) {
+                if(msg.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
+                    msg.Text.Remove(msg.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
+            }
+            foreach(Models.Helptext msg in ver.Helptexts){
+                if(msg.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
+                    msg.Text.Remove(msg.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
             }
 
             removeLangFromVersion(ver, lang);
@@ -1016,10 +1028,10 @@ namespace Kaenx.Creator
             }
 
             if(mod.Dynamics.Count > 0)
-                LoadSubDyn(mod.Dynamics[0], mod.ParameterRefs.ToList(), mod.ComObjectRefs.ToList(), vbase.Modules.ToList());
+                LoadSubDyn(mod.Dynamics[0], mod.ParameterRefs.ToList(), mod.ComObjectRefs.ToList(), vbase.Modules.ToList(), vbase.Helptexts.ToList());
         }
 
-        private void LoadSubDyn(Models.Dynamic.IDynItems dyn, List<Models.ParameterRef> paras, List<Models.ComObjectRef> coms, List<Models.Module> mods)
+        private void LoadSubDyn(Models.Dynamic.IDynItems dyn, List<Models.ParameterRef> paras, List<Models.ComObjectRef> coms, List<Models.Module> mods, List<Models.Helptext> helps)
         {
             foreach (Models.Dynamic.IDynItems item in dyn.Items)
             {
@@ -1035,6 +1047,8 @@ namespace Kaenx.Creator
                     case Models.Dynamic.DynParameter dp:
                         if (dp._parameter != -1)
                             dp.ParameterRefObject = paras.SingleOrDefault(p => p.UId == dp._parameter);
+                        if(dp.HasHelptext)
+                            dp.Helptext = helps.SingleOrDefault(p => p.UId == dp._helptextId);
                         break;
 
                     case Models.Dynamic.DynChooseBlock dcb:
@@ -1073,7 +1087,7 @@ namespace Kaenx.Creator
                 }
 
                 if (item.Items != null)
-                    LoadSubDyn(item, paras, coms, mods);
+                    LoadSubDyn(item, paras, coms, mods, helps);
             }
         }
 

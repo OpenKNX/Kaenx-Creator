@@ -115,7 +115,7 @@ namespace Kaenx.Creator.Models
             for(int x = 0; x < size; x++)
             {
                 if(Bits[offset + x] != 'o')
-                    throw new Exception("Kein freier Speicherplatz in Byte");
+                    throw new Exception($"Kein freier Speicherplatz in Byte: {union.Name} {offset:X4}-{size}B");
                 
                 Bits[offset + x] = 'x';
             }

@@ -3,21 +3,21 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
-using System.Windows.Controls;
-using System.Windows.Media;
 
-namespace Kaenx.Creator.Models
+namespace Kaenx.Creator.Models.Dynamic
 {
-    public class Message : INotifyPropertyChanged
+    public class DynRename : IDynItems, INotifyPropertyChanged
     {
-        private int _uid = -1;
-        public int UId
+        [JsonIgnore]
+        public IDynItems Parent { get; set; }
+
+        private bool _isExpanded = false;
+        public bool IsExpanded
         {
-            get { return _uid; }
-            set { _uid = value; Changed("UId"); }
+            get { return _isExpanded; }
+            set { _isExpanded = value; Changed("IsExpanded"); }
         }
 
         private long _id = -1;
@@ -27,14 +27,19 @@ namespace Kaenx.Creator.Models
             set { _id = value; Changed("Id"); }
         }
 
-        
-        private string _name = "dummy";
+        private long _refId = -1;
+        public long RefId
+        {
+            get { return _refId; }
+            set { _refId = value; Changed("RefId"); }
+        }
+
+        private string _name = "";
         public string Name
         {
             get { return _name; }
             set { _name = value; Changed("Name"); }
         }
-
 
         public ObservableCollection<Translation> Text {get;set;} = new ObservableCollection<Translation>();
 
@@ -45,10 +50,18 @@ namespace Kaenx.Creator.Models
             set { _transText = value; Changed("TranslationText"); }
         }
 
+        public ObservableCollection<IDynItems> Items { get; set; } = new ObservableCollection<IDynItems>();
         public event PropertyChangedEventHandler PropertyChanged;
         private void Changed(string name)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+
+        public object Copy()
+        {
+            DynRename dyn = (DynRename)this.MemberwiseClone();
+            dyn.Items = new ObservableCollection<IDynItems>();
+            return dyn;
         }
     }
 }

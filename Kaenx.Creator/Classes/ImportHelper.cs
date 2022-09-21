@@ -104,7 +104,7 @@ namespace Kaenx.Creator.Classes
             _general = general;
             DPTs = dpts;
             string manuHex = "";
-            Archive = ZipFile.OpenRead(_path);
+            Archive = ZipFile.Open(_path, ZipArchiveMode.Read, System.Text.Encoding.GetEncoding(850));
             foreach (ZipArchiveEntry entryTemp in Archive.Entries)
             {
                 if (entryTemp.FullName.Contains("M-"))
@@ -135,8 +135,10 @@ namespace Kaenx.Creator.Classes
                 xele = XDocument.Load(entry.Open()).Root;
                 _namespace = xele.Attribute("xmlns").Value;
                 ImportBaggages(manuHex, xele, Archive);
-            } catch{
+            } catch (NullReferenceException ex) {
                 System.Diagnostics.Debug.WriteLine("Keine Baggages gefunden");
+            } catch (Exception ex) {
+                System.Diagnostics.Debug.WriteLine($"Baggage Fehler: {ex.Message}");
             }
 
 
@@ -205,7 +207,7 @@ namespace Kaenx.Creator.Classes
 
         private void ImportApplication(XElement xapp)
         {
-
+            System.Console.WriteLine("----------------Neue Applikation-------------------");
             #region "Create/Get Application and Version"
             currentApp = null;
             currentVers = null;
@@ -275,10 +277,13 @@ namespace Kaenx.Creator.Classes
             if(xapp.Attribute("PreEts4Style") != null || xapp.Attribute("ConvertedFromPreEts4Data") != null) currentVers.IsPreETS4 = true;
             
 #endregion
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
             XElement xstatic = xapp.Element(Get("Static"));
             CheckUniqueRefId(xstatic, xapp.Element(Get("Dynamic")));
             ImportLanguages(xapp.Parent.Parent.Element(Get("Languages")), currentVers.Languages);
             currentVers.Text = GetTranslation(xapp.Attribute("Id").Value, "Name", xapp);
+            ImportHelpFile(xapp);
             ImportSegments(xstatic.Element(Get("Code")));
             ImportParameterTypes(xstatic.Element(Get("ParameterTypes")));
             ImportParameter(xstatic.Element(Get("Parameters")), currentVers);
@@ -307,10 +312,15 @@ namespace Kaenx.Creator.Classes
                 }
                 currentVers.Procedure = xproc.ToString();
             }
+
+            sw.Stop();
+            System.Console.WriteLine($"Total Time: {sw.ElapsedMilliseconds} ms");
         }
 
         private void CheckUniqueRefId(XElement xstatic, XElement xdyn)
         {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
             List<long> ids = new List<long>();
             bool flag1 = false;
             bool flag2 = false;
@@ -347,6 +357,8 @@ namespace Kaenx.Creator.Classes
             }
             
             DynamicRenameRefIds(flag1, flag2, xstatic, xdyn);
+            sw.Stop();
+            System.Console.WriteLine($"CheckUniqueRefId: {sw.ElapsedMilliseconds} ms");
         }
 
         private void DynamicRenameRefIds(bool renameParas, bool renameComs, XElement xstatic, XElement xdyn)
@@ -425,6 +437,9 @@ namespace Kaenx.Creator.Classes
         }
 
         private void ImportLanguages(XElement xlangs, ObservableCollection<Language> langs) {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            System.Console.Write("");
             _translations.Clear();
             if(xlangs == null) return;
             
@@ -448,6 +463,8 @@ namespace Kaenx.Creator.Classes
             }
 
             _defaultLangIsInTrans = xlangs.Elements().Any(x => x.Attribute("Identifier").Value == currentVers.DefaultLanguage);
+            sw.Stop();
+            System.Console.WriteLine($"ImportLanguages: {sw.ElapsedMilliseconds} ms");
         }
 
         private void AddTranslation(string id, string attr, string lang, string value) {
@@ -493,6 +510,63 @@ namespace Kaenx.Creator.Classes
             return translations;
         }
 
+        private void ImportHelpFile(XElement xapp)
+        {
+            if(xapp.Attribute("ContextHelpFile") == null) return;
+            currentVers.IsHelpActive = true;
+        
+            Dictionary<string, Helptext> texts = new Dictionary<string, Helptext>();
+            var x = GetTranslation(xapp.Attribute("Id").Value, "ContextHelpFile", xapp);
+            if(!x.Any(x => x.Language.CultureCode == currentVers.DefaultLanguage))
+                x.Add(new Translation(new Language("", currentVers.DefaultLanguage), xapp.Attribute("ContextHelpFile").Value));
+
+            if(System.IO.Directory.Exists("HelpTemp"))
+                System.IO.Directory.Delete("HelpTemp", true);
+            System.IO.Directory.CreateDirectory("HelpTemp");
+
+            int textCounter = 1;
+            foreach(Translation trans in x)
+            {
+                string[] id = trans.Text.Split('-');
+                string path = id[2];
+                string file = Unescape(id[3]);
+                string fullPath = trans.Text.Substring(0, 6) + "/Baggages/";
+                if(!string.IsNullOrEmpty(path)) fullPath = fullPath + path + "/";
+                fullPath = fullPath + file;
+                ZipArchiveEntry entry = Archive.GetEntry(fullPath);
+                string tempPath = System.IO.Path.Combine("HelpTemp", file);
+                if(!System.IO.File.Exists(tempPath))
+                    using(FileStream stream = System.IO.File.Create(tempPath))
+                        using(Stream zs = entry.Open())
+                            zs.CopyTo(stream);
+                
+                ZipArchive zip = ZipFile.Open(tempPath, ZipArchiveMode.Read, System.Text.Encoding.GetEncoding(850));
+                
+                foreach(ZipArchiveEntry fentry in zip.Entries)
+                {
+                    string fname = System.IO.Path.GetFileNameWithoutExtension(fentry.Name);
+                    if(!texts.ContainsKey(fname))
+                        texts.Add(fname, new Helptext() { Name = fname, UId = textCounter++ });
+
+                    Helptext text = texts[fname];
+                    if(!text.Text.Any(t => t.Language.CultureCode == trans.Language.CultureCode))
+                    {
+                        using(StreamReader reader = new StreamReader(fentry.Open()))
+                        {
+                            text.Text.Add(new Translation(trans.Language, reader.ReadToEnd()));
+                        }
+                    }
+                }
+
+                zip.Dispose();
+            }
+
+            foreach(Helptext text in texts.Values)
+                currentVers.Helptexts.Add(text);
+            
+            System.IO.Directory.Delete("HelpTemp", true);
+        }
+
         private void ImportSegments(XElement xcodes)
         {
             _uidCounter = 1;
@@ -533,6 +607,9 @@ namespace Kaenx.Creator.Classes
 
         private void ImportParameterTypes(XElement xparatypes)
         {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            System.Console.Write("ImportParameterTypes: ");
             _uidCounter = 1;
 
             foreach (XElement xparatype in xparatypes.Elements())
@@ -641,12 +718,16 @@ namespace Kaenx.Creator.Classes
 
                 currentVers.ParameterTypes.Add(ptype);
             }
+            sw.Stop();
+            System.Console.WriteLine($"{sw.ElapsedMilliseconds} ms");
         }
 
         private void ImportParameter(XElement xparas, IVersionBase vbase)
         {
             if(xparas == null) return;
             _uidCounter = 1;
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
             
             foreach(XElement xpara in xparas.Elements(Get("Parameter"))) {
                 ParseParameter(xpara, vbase);
@@ -669,7 +750,7 @@ namespace Kaenx.Creator.Classes
                         union.SavePath = SavePaths.Memory;
                         string memName = GetLastSplit(xmem.Attribute("CodeSegment").Value);
                         union.MemoryObject = currentVers.Memories.SingleOrDefault(m => m.Name.StartsWith(memName));
-                        if(union.MemoryObject == null && memName.Contains("-RS-"))
+                        if(union.MemoryObject == null && memName.Contains("RS-"))
                         {
                             int offset = int.Parse(memName.Split('-')[2], System.Globalization.NumberStyles.HexNumber);
                             union.MemoryObject = currentVers.Memories.Single(m => m.Offset == offset);
@@ -690,6 +771,9 @@ namespace Kaenx.Creator.Classes
             
             if(!currentVers.IsUnionActive && unionCounter > 1)
                 currentVers.IsUnionActive = true;
+
+            sw.Stop();
+            System.Console.WriteLine($"ImportParameter: {sw.ElapsedMilliseconds} ms");
         }
 
         private void ParseParameter(XElement xpara, IVersionBase vbase, Union union = null, XElement xmemory = null)
@@ -772,6 +856,8 @@ namespace Kaenx.Creator.Classes
         {
             if(xrefs == null) return;
             _uidCounter = 1;
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
 
             foreach (XElement xref in xrefs.Elements())
             {
@@ -808,12 +894,17 @@ namespace Kaenx.Creator.Classes
 
                 vbase.ParameterRefs.Add(pref);
             }
+
+            sw.Stop();
+            System.Console.WriteLine($"ImportParameterRefs: {sw.ElapsedMilliseconds} ms");
         }
 
         private void ImportComObjects(XElement xcoms, IVersionBase vbase)
         {
             if(xcoms == null) return;
             _uidCounter = 1;
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
 
             foreach (XElement xcom in xcoms.Elements())
             {
@@ -895,12 +986,16 @@ namespace Kaenx.Creator.Classes
 
                 vbase.ComObjects.Add(com);
             }
+            sw.Stop();
+            System.Console.WriteLine($"ImportComObjects: {sw.ElapsedMilliseconds} ms");
         }
 
         private void ImportComObjectRefs(XElement xrefs, IVersionBase vbase)
         {
             if(xrefs == null) return;
             _uidCounter = 1;
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
 
             foreach (XElement xref in xrefs.Elements())
             {
@@ -1004,11 +1099,16 @@ namespace Kaenx.Creator.Classes
 
                 vbase.ComObjectRefs.Add(cref);
             }
+
+            sw.Stop();
+            System.Console.WriteLine($"ImportComObjectRefs: {sw.ElapsedMilliseconds} ms");
         }
 
         private void ImportMessages(XElement xmsgs)
         {
             if(xmsgs == null) return;
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
 
             currentVers.IsMessagesActive = true;
 
@@ -1024,10 +1124,16 @@ namespace Kaenx.Creator.Classes
                 };
                 currentVers.Messages.Add(msg);
             }
+
+            sw.Stop();
+            System.Console.WriteLine($"ImportMessages: {sw.ElapsedMilliseconds} ms");
         }
 
         private void ImportTables(XElement xstatic)
         {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+
             if(xstatic.Element(Get("AddressTable")) != null)
             {
                 XElement tadd = xstatic.Element(Get("AddressTable"));
@@ -1060,6 +1166,9 @@ namespace Kaenx.Creator.Classes
                 }
                 currentVers.ComObjectTableOffset = int.Parse(tadd.Attribute("Offset")?.Value ?? "0");
             }
+
+            sw.Stop();
+            System.Console.WriteLine($"ImportTables: {sw.ElapsedMilliseconds} ms");
         }
 
         private void ImportModules(XElement xmods) {
@@ -1075,6 +1184,7 @@ namespace Kaenx.Creator.Classes
                     IsParameterRefAuto = false,
                     IsComObjectRefAuto = false
                 };
+                System.Console.WriteLine($"---Import Module {mod.Name}");
 
                 XElement xstatic = xmod.Element(Get("Static"));
                 ImportArguments(xmod.Element(Get("Arguments")), mod);
@@ -1085,6 +1195,7 @@ namespace Kaenx.Creator.Classes
                 ImportDynamic(xmod.Element(Get("Dynamic")), mod);
 
                 currentVers.Modules.Add(mod);
+                System.Console.WriteLine("---End Module");
             }
         }
 
@@ -1292,9 +1403,13 @@ namespace Kaenx.Creator.Classes
 
         private void ImportDynamic(XElement xdyn, IVersionBase vbase)
         {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
             DynamicMain main = new DynamicMain();
             ParseDynamic(main, xdyn, vbase);
             vbase.Dynamics.Add(main);
+            sw.Stop();
+            System.Console.WriteLine($"ImportDynamic: {sw.ElapsedMilliseconds} ms");
         }
 
 
@@ -1454,6 +1569,10 @@ namespace Kaenx.Creator.Classes
                         };
                         long paraId64 = long.Parse(GetLastSplit(xele.Attribute("RefId").Value, 2));
                         dp.ParameterRefObject = vbase.ParameterRefs.Single(p => p.Id == paraId64);
+                        if(xele.Attribute("HelpContext") != null)
+                        {
+                            dp.HasHelptext = true;
+                        }
                         parent.Items.Add(dp);
                         break;
 
@@ -1490,8 +1609,8 @@ namespace Kaenx.Creator.Classes
                         dmo.ModuleObject = currentVers.Modules.Single(m => m.Id == paraId);
                         foreach(XElement xarg in xele.Elements())
                         {
-                            int id = int.Parse(GetLastSplit(xarg.Attribute("RefId").Value, 2));
-                            Argument arg = dmo.ModuleObject.Arguments.Single(a => a.Id == id);
+                            int id1 = int.Parse(GetLastSplit(xarg.Attribute("RefId").Value, 2));
+                            Argument arg = dmo.ModuleObject.Arguments.Single(a => a.Id == id1);
                             DynModuleArg darg = dmo.Arguments.Single(a => a.Argument == arg);
                             darg.Value = xarg.Attribute("Value").Value;
                         }
@@ -1511,6 +1630,18 @@ namespace Kaenx.Creator.Classes
                         }
                         dass.Value = xele.Attribute("Value")?.Value;
                         parent.Items.Add(dass);
+                        break;
+
+                    case "Rename":
+                    case "ParameterBlockRename":
+                        DynRename dpbr = new DynRename() {
+                            Parent = parent,
+                            Name = xele.Attribute("Name")?.Value ?? "",
+                            Id = long.Parse(GetLastSplit(xele.Attribute("Id").Value, 3)),
+                        };
+                        string[] id2 = GetLastSplit(xele.Attribute("RefId").Value).Split('-');
+                        dpbr.RefId = long.Parse(id2[1]);
+                        dpbr.Text = GetTranslation(xele.Attribute("Id").Value, "Text", xele);
                         break;
 
                     case "Rows":

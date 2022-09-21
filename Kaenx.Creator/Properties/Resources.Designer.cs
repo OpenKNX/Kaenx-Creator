@@ -2090,5 +2090,23 @@ namespace Kaenx.Creator.Properties {
                 return ResourceManager.GetString("tdyn_add_cond", resourceCulture);
             }
         }
+        
+        public static string vgen_help {
+            get {
+                return ResourceManager.GetString("vgen_help", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_help {
+            get {
+                return ResourceManager.GetString("tdyn_help", resourceCulture);
+            }
+        }
+        
+        public static string tabs_help {
+            get {
+                return ResourceManager.GetString("tabs_help", resourceCulture);
+            }
+        }
     }
 }

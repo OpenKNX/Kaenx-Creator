@@ -36,10 +36,35 @@ namespace Kaenx.Creator.Models.Dynamic
             get { return ParameterRefObject?.UId ?? -1; }
             set { _parameter = value; }
         }
+        
+        private bool _hasHelptext = false;
+        public bool HasHelptext
+        {
+            get { return _hasHelptext; }
+            set { _hasHelptext = value; Changed("HasHelptext"); }
+        }
+
+        private Helptext _helptext;
+        [JsonIgnore]
+        public Helptext Helptext
+        {
+            get { return _helptext; }
+            set { _helptext = value; Changed("Helptext"); }
+        }
+
+        [JsonIgnore]
+        public int _helptextId;
+        public int HelptextId
+        {
+            get { return Helptext?.UId ?? -1; }
+            set { _helptextId = value; }
+        }
+
 
         public string Cell { get; set; }
 
         public ObservableCollection<IDynItems> Items { get; set; }
+        public ObservableCollection<Translation> HelpText { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void Changed(string name)
