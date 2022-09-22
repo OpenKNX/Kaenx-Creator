@@ -465,15 +465,18 @@ namespace Kaenx.Creator.Classes
                         xele.SetAttributeValue("RefId", langitem.Key);
 
                         foreach(KeyValuePair<string, string> langval in langitem.Value) {
+                            if(langval.Value == "$no_export$") continue;
                             XElement xtrans = new XElement(Get("Translation"));
                             xtrans.SetAttributeValue("AttributeName", langval.Key);
                             xtrans.SetAttributeValue("Text", langval.Value);
                             xele.Add(xtrans);
                         }
 
-                        xunit.Add(xele);
+                        if(xele.HasElements)
+                            xunit.Add(xele);
                     }
-                    xlanguages.Add(xlang);
+                    if(xlang.HasElements)
+                        xlanguages.Add(xlang);
                 }
                 xmanu.Add(xlanguages);
                 #endregion

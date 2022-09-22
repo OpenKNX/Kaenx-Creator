@@ -121,7 +121,22 @@
                     <TextBox Grid.Column="2" IsEnabled="{Binding OverwriteValue}" Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" />
                 </Grid>
             </HeaderedContentControl>
-            
+
+            <HeaderedContentControl Header="{x:Static p:Resources.prop_access}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <CheckBox IsChecked="{Binding OverwriteAccess}" VerticalAlignment="Center" />
+                    <ComboBox Grid.Column="2" IsEnabled="{Binding OverwriteAccess}" ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding Access, Mode=TwoWay}" />
+                </Grid>
+            </HeaderedContentControl>
+            <HeaderedContentControl Header="{x:Static p:Resources.prop_order}">
+                <TextBox Text="{Binding DisplayOrder, UpdateSourceTrigger=PropertyChanged}"/>
+            </HeaderedContentControl>
+
             <HeaderedContentControl Header="{x:Static p:Resources.gen_text}">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -160,21 +175,6 @@
                         </DataGrid>
                     </StackPanel>
                 </Grid>
-            </HeaderedContentControl>
-
-            <HeaderedContentControl Header="{x:Static p:Resources.prop_access}">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="auto" />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-
-                    <CheckBox IsChecked="{Binding OverwriteAccess}" VerticalAlignment="Center" />
-                    <ComboBox Grid.Column="2" IsEnabled="{Binding OverwriteAccess}" ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding Access, Mode=TwoWay}" />
-                </Grid>
-            </HeaderedContentControl>
-            <HeaderedContentControl Header="{x:Static p:Resources.prop_order}">
-                <TextBox Text="{Binding DisplayOrder, UpdateSourceTrigger=PropertyChanged}"/>
             </HeaderedContentControl>
         </StackPanel>
     </Grid>

@@ -118,31 +118,11 @@
                 <HeaderedContentControl Header="{x:Static p:Resources.prop_name}">
                     <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
                 </HeaderedContentControl>
-                <HeaderedContentControl Header="{x:Static p:Resources.gen_text}">
-                    <StackPanel>
-                        <CheckBox IsChecked="{Binding TranslationText}" Content="{x:Static p:Resources.gen_onlydeflang}" />
-                        <DataGrid ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Header="{x:Static p:Resources.gen_lang}" Binding="{Binding Language.Text}" IsReadOnly="True" />
-                                <DataGridTextColumn Header="{x:Static p:Resources.gen_text}" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
-                            </DataGrid.Columns>
-                        </DataGrid>
-                    </StackPanel>
-                </HeaderedContentControl>
-                <HeaderedContentControl Header="{x:Static p:Resources.prop_suffix}">
-                    <StackPanel>
-                        <CheckBox IsChecked="{Binding TranslationSuffix}" Content="{x:Static p:Resources.gen_onlydeflang}" />
-                        <DataGrid ItemsSource="{Binding Suffix}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Header="{x:Static p:Resources.gen_lang}" Binding="{Binding Language.Text}" IsReadOnly="True" />
-                                <DataGridTextColumn Header="{x:Static p:Resources.gen_text}" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
-                            </DataGrid.Columns>
-                        </DataGrid>
-                    </StackPanel>
-                </HeaderedContentControl>
+                
                 <HeaderedContentControl Header="{x:Static p:Resources.prop_value}">
                     <TextBox Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}"/>
                 </HeaderedContentControl>
+
                 <HeaderedContentControl Header="{x:Static p:Resources.prop_access}">
                     <ComboBox ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding Access, Mode=TwoWay}" />
                 </HeaderedContentControl>
@@ -257,6 +237,29 @@
                         </HeaderedContentControl>
                     </StackPanel>
                 </Grid>
+
+                <HeaderedContentControl Header="{x:Static p:Resources.gen_text}">
+                    <StackPanel>
+                        <CheckBox IsChecked="{Binding TranslationText}" Content="{x:Static p:Resources.gen_onlydeflang}" />
+                        <DataGrid ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="{x:Static p:Resources.gen_lang}" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                                <DataGridTextColumn Header="{x:Static p:Resources.gen_text}" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </StackPanel>
+                </HeaderedContentControl>
+                <HeaderedContentControl Header="{x:Static p:Resources.prop_suffix}">
+                    <StackPanel>
+                        <CheckBox IsChecked="{Binding TranslationSuffix}" Content="{x:Static p:Resources.gen_onlydeflang}" />
+                        <DataGrid ItemsSource="{Binding Suffix}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="{x:Static p:Resources.gen_lang}" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                                <DataGridTextColumn Header="{x:Static p:Resources.gen_text}" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </StackPanel>
+                </HeaderedContentControl>
             </StackPanel>
         </ScrollViewer>
     </Grid>

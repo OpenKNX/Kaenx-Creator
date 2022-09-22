@@ -25,7 +25,16 @@ namespace Kaenx.Creator.Models
         public string Text
         {
             get { return _text; }
-            set { _text = value; Changed("Text"); }
+            set { _text = value; Changed("Text"); Changed("Preview"); }
+        }
+
+        public string Preview
+        {
+            get {
+                if(Text.Length < 100)
+                    return Text;
+                return Text.Substring(0, 100) + "...";
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -1077,4 +1077,12 @@
     <value>Hilfetexte</value>
     <comment/>
   </data>
+  <data name="help_edit" xml:space="preserve">
+    <value>Hilfetext bearbeiten</value>
+    <comment/>
+  </data>
+  <data name="help_preview" xml:space="preserve">
+    <value>Hilfetext Vorschau</value>
+    <comment/>
+  </data>
 </root>

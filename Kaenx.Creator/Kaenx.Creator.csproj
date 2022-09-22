@@ -5,11 +5,10 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>FileLogo.ico</ApplicationIcon>
-    <Version>1.2.0.0</Version>
+    <Version>1.3.0.0</Version>
     
-    <!--<PublishSingleFile>true</PublishSingleFile>
-    <SelfContained>true</SelfContained>
-    <RuntimeIdentifier>win-x86</RuntimeIdentifier>-->
+    <PublishSingleFile>true</PublishSingleFile>
+    <PublishReadyToRun>true</PublishReadyToRun>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,6 +23,7 @@
     <PackageReference Include="log4net" Version="2.0.13" />
     <PackageReference Include="AvalonEdit" Version="6.1.2.30" />
     <PackageReference Include="SharpVectors" Version="1.7.7" />
+    <PackageReference Include="MdXaml" Version="1.15.0" />
   </ItemGroup>
 
   <ItemGroup>

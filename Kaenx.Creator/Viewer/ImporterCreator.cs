@@ -939,8 +939,17 @@ namespace Kaenx.Creator.Viewer
         
         public void CheckForBindings(AppComObject com, Models.ComObjectRef dcom, Dictionary<string, string> args)
         {
-            com.Text = CheckForBindings(com.Text, BindingTypes.ComObject, com.Id, ((dcom.ComObjectObject.UseTextParameter && dcom.ComObjectObject.ParameterRefObject != null) ? (int)dcom.ComObjectObject.ParameterRefObject.Id : -1), args);
-            com.FunctionText = CheckForBindings(com.FunctionText, BindingTypes.ComObject, com.Id, ((dcom.ComObjectObject.UseTextParameter && dcom.ComObjectObject.ParameterRefObject != null) ? (int)dcom.ComObjectObject.ParameterRefObject.Id : -1), args);
+            long sourceId = -1;
+            if(_version.IsComObjectRefAuto)
+            {
+                if(dcom.ComObjectObject.UseTextParameter && dcom.ComObjectObject.ParameterRefObject != null)
+                    sourceId = dcom.ComObjectObject.ParameterRefObject.Id;
+            } else {
+                if(dcom.UseTextParameter && dcom.ParameterRefObject != null)
+                    sourceId = dcom.ParameterRefObject.Id;
+            }
+            com.Text = CheckForBindings(com.Text, BindingTypes.ComObject, com.Id, sourceId, args);
+            com.FunctionText = CheckForBindings(com.FunctionText, BindingTypes.ComObject, com.Id, sourceId, args);
         }
         
         public string CheckForBindings(string text, BindingTypes type, long targetId, long sourceId, Dictionary<string, string> args)

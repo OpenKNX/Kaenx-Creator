@@ -311,14 +311,13 @@ namespace Kaenx.Creator.Classes {
                     }
                 }
                 
-
-                if(para.TranslationText) {
-                    Translation trans = para.Text.Single(t => t.Language.CultureCode == defaultLang);
-                    if(string.IsNullOrEmpty(trans.Text))
-                        actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Keine Übersetzung für Text vorhanden ({trans.Language.Text})", State = PublishState.Fail, Item = para, Module = mod });
-                } else {
-                    if(!showOnlyErrors)
-                    {
+                if(!showOnlyErrors)
+                {
+                    if(para.TranslationText) {
+                        Translation trans = para.Text.Single(t => t.Language.CultureCode == defaultLang);
+                        if(string.IsNullOrEmpty(trans.Text))
+                            actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Keine Übersetzung für Text vorhanden ({trans.Language.Text})", State = PublishState.Warning, Item = para, Module = mod });
+                    } else {
                         if(para.Text.Any(s => string.IsNullOrEmpty(s.Text)))
                         {
                             actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Text nicht in allen Sprachen übersetzt", State = PublishState.Warning, Item = para, Module = mod });
@@ -326,15 +325,12 @@ namespace Kaenx.Creator.Classes {
                     }
                 }
 
-                if(!para.TranslationSuffix) {
-                    if(!showOnlyErrors)
+                if(!para.TranslationSuffix && !showOnlyErrors) {
+                    if(!string.IsNullOrEmpty(para.Suffix.Single(t => t.Language.CultureCode == defaultLang).Text))
                     {
-                        if(!string.IsNullOrEmpty(para.Suffix.Single(t => t.Language.CultureCode == defaultLang).Text))
+                        if(para.Suffix.Any(s => string.IsNullOrEmpty(s.Text)))
                         {
-                            if(para.Suffix.Any(s => string.IsNullOrEmpty(s.Text)))
-                            {
-                                actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Suffix nicht in allen Sprachen übersetzt", State = PublishState.Warning, Item = para, Module = mod });
-                            }
+                            actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Suffix nicht in allen Sprachen übersetzt", State = PublishState.Warning, Item = para, Module = mod });
                         }
                     }
                 }

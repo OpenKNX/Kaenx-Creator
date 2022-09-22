@@ -2108,5 +2108,17 @@ namespace Kaenx.Creator.Properties {
                 return ResourceManager.GetString("tabs_help", resourceCulture);
             }
         }
+        
+        public static string help_edit {
+            get {
+                return ResourceManager.GetString("help_edit", resourceCulture);
+            }
+        }
+        
+        public static string help_preview {
+            get {
+                return ResourceManager.GetString("help_preview", resourceCulture);
+            }
+        }
     }
 }

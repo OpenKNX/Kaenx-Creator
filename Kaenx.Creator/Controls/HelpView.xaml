@@ -8,6 +8,7 @@
     xmlns:System="clr-namespace:System;assembly=mscorlib"
     xmlns:conv="clr-namespace:Kaenx.Creator.Converter"
     xmlns:models="clr-namespace:Kaenx.Creator.Models"
+    xmlns:mdxam="clr-namespace:MdXaml;assembly=MdXaml"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400"
@@ -90,13 +91,23 @@
             <HeaderedContentControl Header="{x:Static p:Resources.gen_text}">
                 <StackPanel>
                     <CheckBox IsChecked="{Binding TranslationText}" Content="Nur Standardsprache exportieren (keine Translation-Unit)" />
-                    <DataGrid ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
+                    <DataGrid x:Name="TextGrid" ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" IsReadOnly="True" CanUserSortColumns="False" CanUserResizeRows="False">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="{x:Static p:Resources.gen_lang}" Binding="{Binding Language.Text}" IsReadOnly="True" />
-                            <DataGridTextColumn Header="{x:Static p:Resources.gen_text}" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                            <DataGridTextColumn Header="{x:Static p:Resources.gen_lang}" Binding="{Binding Language.Text}" />
+                            <DataGridTextColumn Header="{x:Static p:Resources.gen_text}" Binding="{Binding Preview, UpdateSourceTrigger=PropertyChanged}"  />
                         </DataGrid.Columns>
                     </DataGrid>
                 </StackPanel>
+            </HeaderedContentControl>
+
+            <HeaderedContentControl Header="{x:Static p:Resources.help_edit}">
+                <TextBox AcceptsReturn="True" MaxHeight="250" Text="{Binding SelectedItem.Text, ElementName=TextGrid, UpdateSourceTrigger=PropertyChanged}" />
+            </HeaderedContentControl>
+            
+            <HeaderedContentControl Header="{x:Static p:Resources.help_preview}">
+                <Border BorderThickness="1" BorderBrush="Gray">
+                    <mdxam:MarkdownScrollViewer Markdown="{Binding SelectedItem.Text, ElementName=TextGrid}" Margin="5" />
+                </Border>
             </HeaderedContentControl>
         </StackPanel>
     </Grid>

@@ -1113,4 +1113,12 @@
     <value>Helptexts</value>
     <comment/>
   </data>
+  <data name="help_edit" xml:space="preserve">
+    <value>Edit Helptext</value>
+    <comment/>
+  </data>
+  <data name="help_preview" xml:space="preserve">
+    <value>Preview Helptext</value>
+    <comment/>
+  </data>
 </root>

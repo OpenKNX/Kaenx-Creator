@@ -468,6 +468,7 @@ namespace Kaenx.Creator.Classes
         }
 
         private void AddTranslation(string id, string attr, string lang, string value) {
+            if(value == "$no_export$") return;
             if(!_translations.ContainsKey(id)) _translations.Add(id, new Dictionary<string, Dictionary<string, string>>());
             if(!_translations[id].ContainsKey(attr)) _translations[id].Add(attr, new Dictionary<string, string>());
             if(!_translations[id][attr].ContainsKey(lang)) _translations[id][attr].Add(lang, value);
@@ -488,9 +489,9 @@ namespace Kaenx.Creator.Classes
             foreach(Language lang in currentVers.Languages) {
                 if(!translations.Any(t => t.Language.CultureCode == lang.CultureCode)) {
                     if(lang.CultureCode == currentVers.DefaultLanguage)
-                        translations.Add(new Translation(lang, xele.Attribute(attr)?.Value ?? ""));
+                        translations.Add(new Translation(lang, xele.Attribute(attr)?.Value ?? "$no_export$"));
                     else
-                        translations.Add(new Translation(lang, ""));
+                        translations.Add(new Translation(lang, "$no_export$"));
                 }
             }
 
@@ -776,6 +777,12 @@ namespace Kaenx.Creator.Classes
             System.Console.WriteLine($"ImportParameter: {sw.ElapsedMilliseconds} ms");
         }
 
+        private bool CheckTranslation(ObservableCollection<Translation> trans)
+        {
+            if(trans.Count <= 1) return false;
+            return trans.Count(t => t.Language.CultureCode != currentVers.DefaultLanguage && (string.IsNullOrEmpty(t.Text) || t.Text == "$no_export$")) >= (trans.Count -1);
+        }
+
         private void ParseParameter(XElement xpara, IVersionBase vbase, Union union = null, XElement xmemory = null)
         {
             Parameter para = new Parameter() {
@@ -792,7 +799,9 @@ namespace Kaenx.Creator.Classes
             para.Id = int.Parse(id);
 
             para.Text = GetTranslation(xpara.Attribute("Id").Value, "Text", xpara);
+            para.TranslationText = CheckTranslation(para.Text);
             para.Suffix = GetTranslation(xpara.Attribute("Id").Value, "SuffixText", xpara);
+            para.TranslationSuffix = CheckTranslation(para.Suffix);
 
             para.Access = (xpara.Attribute("Access")?.Value) switch {
                 "None" => ParamAccess.None,
@@ -1572,6 +1581,7 @@ namespace Kaenx.Creator.Classes
                         if(xele.Attribute("HelpContext") != null)
                         {
                             dp.HasHelptext = true;
+                            dp.Helptext = currentVers.Helptexts.SingleOrDefault(h => h.Name == xele.Attribute("HelpContext").Value);
                         }
                         parent.Items.Add(dp);
                         break;
