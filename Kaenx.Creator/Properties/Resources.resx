@@ -1085,4 +1085,16 @@
     <value>Hilfetext Vorschau</value>
     <comment/>
   </data>
+  <data name="parat_uihint_rgb" xml:space="preserve">
+    <value>RGB</value>
+    <comment/>
+  </data>
+  <data name="parat_uihint_rgbw" xml:space="preserve">
+    <value>RGB+W</value>
+    <comment/>
+  </data>
+  <data name="parat_uihint_hsv" xml:space="preserve">
+    <value>HSV</value>
+    <comment/>
+  </data>
 </root>

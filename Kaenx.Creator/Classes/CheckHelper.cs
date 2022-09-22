@@ -207,7 +207,8 @@ namespace Kaenx.Creator.Classes {
                             break;
 
                         case ParameterTypes.Picture:
-                            //actions.Add(new PublishAction() { Text = $"    ParameterTyp Picture für {ptype.Name} ({ptype.UId}) wird nicht exportiert", State = PublishState.Warning });
+                            if(ptype.BaggageObject == null)
+                                actions.Add(new PublishAction() { Text = $"    ParameterTyp Picture für {ptype.Name} ({ptype.UId}) ist kein Baggage zugeordnet", State = PublishState.Warning });
                             break;
 
                         case ParameterTypes.None:

@@ -919,6 +919,7 @@ namespace Kaenx.Creator
                     foreach(Models.Module mod in ver.Modules)
                         LoadVersion(ver, mod);
 
+                    //TODO doesnt work anymore
                     foreach(Models.ParameterType ptype in ver.ParameterTypes.Where(p => p.Type == Models.ParameterTypes.Picture && p._baggageUId != -1))
                     {
                         ptype.BaggageObject = General.Baggages.SingleOrDefault(b => b.UId == ptype._baggageUId);

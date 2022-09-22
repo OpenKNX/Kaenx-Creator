@@ -114,85 +114,110 @@
 
         <DataTemplate x:Key="TypeEnums">
             <Grid Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}" Margin="0 5">
-                <Grid.RowDefinitions>
-                    <RowDefinition />
-                    <RowDefinition />
-                </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition MaxWidth="550" Width="9*" />
-                    <ColumnDefinition MinWidth="230" MaxWidth="350" Width="3*" />
-                    <ColumnDefinition MaxWidth="120" Width="1*" />
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition MinWidth="300" MaxWidth="500" />
                     <ColumnDefinition Width="50" />
                     <ColumnDefinition Width="50" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="{Binding Text}" Margin="10 0" VerticalAlignment="Center" TextWrapping="Wrap" />
-                <ComboBox Grid.Column="1" IsEnabled="{Binding IsEnabled}" ItemsSource="{Binding Options}" DisplayMemberPath="Text" SelectedValuePath="Value" SelectedValue="{Binding Value, Mode=TwoWay}" VerticalAlignment="Center" HorizontalAlignment="Stretch" />
-                <TextBlock Grid.Column="2" Text="{Binding SuffixText}" Margin="10 0" VerticalAlignment="Center" HorizontalAlignment="Left" />
-                <TextBlock Grid.Column="3" Text="{Binding Value}" Margin="5 0" HorizontalAlignment="Right" />
-                <TextBlock Grid.Column="4" Text="{Binding Id}" Margin="5 0" HorizontalAlignment="Right" />
+
+                
+                <Grid Grid.Column="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <ComboBox IsEnabled="{Binding IsEnabled}" ItemsSource="{Binding Options}" DisplayMemberPath="Text" SelectedValuePath="Value" SelectedValue="{Binding Value, Mode=TwoWay}" VerticalAlignment="Center" HorizontalAlignment="Stretch" />
+                    <TextBlock Grid.Column="1" Text="{Binding SuffixText}" Visibility="{Binding SuffixText, Converter={StaticResource EmptyToVis}}" Margin="10 0" VerticalAlignment="Center" />
+                </Grid>
+
+                <TextBlock Grid.Column="2" Text="{Binding Value}" Margin="5 0" />
+                <TextBlock Grid.Column="3" Text="{Binding Id}" Margin="5 0" />
             </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="TypeEnumsTwo">
             <Grid Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}" Margin="0 5" x:Name="test">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition MaxWidth="550" Width="9*" />
-                    <ColumnDefinition MinWidth="230" MaxWidth="350" Width="3*" />
-                    <ColumnDefinition MaxWidth="120" Width="1*" />
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition MinWidth="300" MaxWidth="500" />
                     <ColumnDefinition Width="50" />
                     <ColumnDefinition Width="50" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="{Binding Text}" Margin="10 0" VerticalAlignment="Center" TextWrapping="Wrap" />
 
-                <StackPanel Grid.Column="1">
-                    <RadioButton IsEnabled="{Binding IsEnabled}" IsChecked="{Binding Selected1, Mode=TwoWay}" Tag="{Binding Option1.Value}" Content="{Binding Option1.Text}" GroupName="{Binding Id}" />
-                    <RadioButton IsEnabled="{Binding IsEnabled}" IsChecked="{Binding Selected2, Mode=TwoWay}" Content="{Binding Option2.Text}" GroupName="{Binding Id}" />
-                </StackPanel>
-                <TextBlock Grid.Column="2" Text="{Binding SuffixText}" Margin="10 0" VerticalAlignment="Center" HorizontalAlignment="Left" />
-                <TextBlock Grid.Column="3" Text="{Binding Value}" Margin="5 0" HorizontalAlignment="Right" />
-                <TextBlock Grid.Column="4" Text="{Binding Id}" Margin="5 0" HorizontalAlignment="Right" />
+                <Grid Grid.Column="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel>
+                        <RadioButton IsEnabled="{Binding IsEnabled}" IsChecked="{Binding Selected1, Mode=TwoWay}" Tag="{Binding Option1.Value}" Content="{Binding Option1.Text}" GroupName="{Binding Id}" />
+                        <RadioButton IsEnabled="{Binding IsEnabled}" IsChecked="{Binding Selected2, Mode=TwoWay}" Content="{Binding Option2.Text}" GroupName="{Binding Id}" />
+                    </StackPanel>
+                    <TextBlock Grid.Column="1" Text="{Binding SuffixText}" Visibility="{Binding SuffixText, Converter={StaticResource EmptyToVis}}" Margin="10 0" VerticalAlignment="Center" />
+                </Grid>
+
+                
+                <TextBlock Grid.Column="2" Text="{Binding Value}" Margin="5 0" />
+                <TextBlock Grid.Column="3" Text="{Binding Id}" Margin="5 0" />
             </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="TypeNumber">
             <Grid Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}" Margin="0 5">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition MaxWidth="550" Width="9*" />
-                    <ColumnDefinition MinWidth="230" MaxWidth="350" Width="3*" />
-                    <ColumnDefinition MaxWidth="120" Width="1*" />
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition MinWidth="300" MaxWidth="500" />
                     <ColumnDefinition Width="50" />
                     <ColumnDefinition Width="50" />
-                    <!--<ColumnDefinition Width="45*" /> MaxWidth="550"-->
-                    <!--<ColumnDefinition Width="50*" />MinWidth="230" MaxWidth="350"-->
-                    <!--<ColumnDefinition Width="5*" />MaxWidth="100"-->
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="{Binding Text}" Margin="10 0" VerticalAlignment="Center" />
 
-                <ctrls:NumberBox Grid.Column="1" IsEnabled="{Binding IsEnabled}" Value="{Binding Value}" ValueOk="{Binding Value, Mode=TwoWay}" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Default="{Binding Default}" Increment="{Binding Increment}" />
-                <TextBlock Grid.Column="2" Text="{Binding SuffixText}" Margin="10 0" VerticalAlignment="Center" HorizontalAlignment="Left" />
-                <TextBlock Grid.Column="3" Text="{Binding Value}" Margin="5 0" HorizontalAlignment="Right" />
-                <TextBlock Grid.Column="4" Text="{Binding Id}" Margin="5 0" HorizontalAlignment="Right" />
+                <Grid Grid.Column="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <ctrls:NumberBox IsEnabled="{Binding IsEnabled}" Value="{Binding Value}" ValueOk="{Binding Value, Mode=TwoWay}" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Default="{Binding Default}" Increment="{Binding Increment}" />
+                    <TextBlock Grid.Column="1" Text="{Binding SuffixText}" Visibility="{Binding SuffixText, Converter={StaticResource EmptyToVis}}" Margin="10 0" VerticalAlignment="Center" />
+                </Grid>
+
+                <TextBlock Grid.Column="2" Text="{Binding Value}" Margin="5 0" />
+                <TextBlock Grid.Column="3" Text="{Binding Id}" Margin="5 0" />
             </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="TypeSlider">
             <Grid Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}" Margin="0 5">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition MaxWidth="550" Width="9*" />
-                    <ColumnDefinition MinWidth="230" MaxWidth="350" Width="3*" />
-                    <ColumnDefinition MaxWidth="120" Width="1*" />
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition MinWidth="300" MaxWidth="500" />
                     <ColumnDefinition Width="50" />
                     <ColumnDefinition Width="50" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="{Binding Text}" Margin="10 0" VerticalAlignment="Center" />
 
-                <ctrls:Slider x:Name="slider" Grid.Column="1" Value="{Binding Value}" ValueOk="{Binding Value, Mode=TwoWay}" Maximum="{Binding Maximum}" Minimum="{Binding Minimum}" Interval="{Binding Invrement}" />
-                <TextBlock Grid.Column="2" Margin="10 0" VerticalAlignment="Center" HorizontalAlignment="Left">
-                    <Run Text="{Binding Value, ElementName=slider}" />
-                    <Run Text="{Binding SuffixText}" />
-                </TextBlock>
-                <TextBlock Grid.Column="3" Text="{Binding Value}" Margin="5 0" HorizontalAlignment="Right" />
-                <TextBlock Grid.Column="4" Text="{Binding Id}" Margin="5 0" HorizontalAlignment="Right" />
+                
+                <Grid Grid.Column="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <ctrls:Slider x:Name="slider" Value="{Binding Value}" ValueOk="{Binding Value, Mode=TwoWay}" Maximum="{Binding Maximum}" Minimum="{Binding Minimum}" Interval="{Binding Invrement}" />
+                    <TextBlock Grid.Column="1" Margin="10 0" VerticalAlignment="Center">
+                        <Run Text="{Binding Value, ElementName=slider}" />
+                        <Run Text="{Binding SuffixText}" />
+                    </TextBlock>
+                </Grid>
+
+                <TextBlock Grid.Column="2" Text="{Binding Value}" Margin="5 0" />
+                <TextBlock Grid.Column="3" Text="{Binding Id}" Margin="5 0" />
             </Grid>
         </DataTemplate>
 
@@ -216,39 +241,47 @@
                     <TextBlock Grid.Column="1" Text="{Binding SuffixText}" Visibility="{Binding SuffixText, Converter={StaticResource EmptyToVis}}" Margin="10 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Left" />
                 </Grid>
                 
-                <TextBlock Grid.Column="3" Text="{Binding Id}" Margin="5 0" HorizontalAlignment="Right" />
+                <TextBlock Grid.Column="3" Text="{Binding Id}" Margin="5 0" />
             </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="TypeCheckBox">
             <Grid Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}" Margin="0 5">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition MaxWidth="550" Width="9*" />
-                    <ColumnDefinition MinWidth="230" MaxWidth="350" Width="3*" />
-                    <ColumnDefinition MaxWidth="120" Width="1*" />
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition MinWidth="300" MaxWidth="500" />
                     <ColumnDefinition Width="50" />
                     <ColumnDefinition Width="50" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="{Binding Text}" Margin="10 0" VerticalAlignment="Center" TextWrapping="Wrap" />
-                <CheckBox Grid.Column="1" IsChecked="{Binding Value, Converter={StaticResource BinToBool}}" />
-                <TextBlock Grid.Column="3" Text="{Binding Value}" Margin="5 0" HorizontalAlignment="Right" />
-                <TextBlock Grid.Column="4" Text="{Binding Id}" Margin="5 0" HorizontalAlignment="Right" />
+
+                <CheckBox Grid.Column="1" Content="{Binding Suffix}" IsChecked="{Binding Value, Converter={StaticResource BinToBool}}" />
+                <TextBlock Grid.Column="2" Text="{Binding Value}" Margin="5 0" />
+                <TextBlock Grid.Column="3" Text="{Binding Id}" Margin="5 0" />
             </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="TypeTextRead">
             <Grid Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}" Margin="0 5">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition MaxWidth="550" Width="9*" />
-                    <ColumnDefinition MinWidth="230" MaxWidth="350" Width="3*" />
-                    <ColumnDefinition MaxWidth="120" Width="1*" />
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition MinWidth="300" MaxWidth="500" />
                     <ColumnDefinition Width="50" />
                     <ColumnDefinition Width="50" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="{Binding Text}" Margin="10 0" VerticalAlignment="Center" TextWrapping="Wrap" />
-                <TextBlock Grid.Column="1" Text="{Binding Value, Mode=TwoWay}" VerticalAlignment="Center" />
-                <TextBlock Grid.Column="2" Text="{Binding SuffixText}" Margin="10 0" VerticalAlignment="Center" HorizontalAlignment="Left" />
-                <TextBlock Grid.Column="4" Text="{Binding Id}" Margin="5 0" HorizontalAlignment="Right" />
+
+                
+                <Grid Grid.Column="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="{Binding Value, Mode=TwoWay}" VerticalAlignment="Center" />
+                    <TextBlock Grid.Column="1" Text="{Binding SuffixText}" Visibility="{Binding SuffixText, Converter={StaticResource EmptyToVis}}" Margin="10 0" VerticalAlignment="Center" />
+                </Grid>
+
+                <TextBlock Grid.Column="3" Text="{Binding Id}" Margin="5 0" />
             </Grid>
         </DataTemplate>
 
@@ -271,7 +304,7 @@
                     <TextBlock Grid.Column="1" Text="{Binding SuffixText}" Visibility="{Binding SuffixText, Converter={StaticResource EmptyToVis}}" Margin="10 0 0 0" VerticalAlignment="Center" />
                 </Grid>
 
-                <TextBlock Grid.Column="3" Text="{Binding Id}" Margin="5 0" HorizontalAlignment="Right" />
+                <TextBlock Grid.Column="3" Text="{Binding Id}" Margin="5 0" />
             </Grid>
         </DataTemplate>
 
@@ -284,17 +317,16 @@
         <DataTemplate x:Key="TypeSeparator">
             <Grid Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}" Margin="0 5">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition MaxWidth="550" Width="45*" />
-                    <ColumnDefinition MinWidth="230" MaxWidth="350" Width="50*" />
-                    <ColumnDefinition MaxWidth="120" Width="5*" />
-                    <ColumnDefinition />
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition MinWidth="300" MaxWidth="500" />
+                    <ColumnDefinition Width="50" />
                     <ColumnDefinition Width="50" />
                 </Grid.ColumnDefinitions>
 
-                <Border Grid.ColumnSpan="4" Margin="10 5" BorderBrush="Gray" BorderThickness="0 1 0 0" Visibility="{Binding IsLineVisible, Converter={StaticResource Bool2Vis}}" />
+                <Border Grid.ColumnSpan="2" Margin="10 5" BorderBrush="Gray" BorderThickness="0 1 0 0" Visibility="{Binding IsLineVisible, Converter={StaticResource Bool2Vis}}" />
                 <!--Visibility="{Binding Text, Converter={StaticResource ConvertStringVisible}}"-->
                 <TextBlock Grid.ColumnSpan="2" Text="{Binding Text}" FontSize="{Binding Hint, Converter={StaticResource HeadlineToSize}}" FontWeight="{Binding Hint, Converter={StaticResource HeadlineToWeight}}" Margin="10 0" VerticalAlignment="Center" TextWrapping="Wrap" />
-                <TextBlock Grid.Column="4" Text="{Binding Id}" Margin="5 0" HorizontalAlignment="Right" />
+                <TextBlock Grid.Column="3" Text="{Binding Id}" Margin="5 0" />
             </Grid>
         </DataTemplate>
 
@@ -313,7 +345,7 @@
                     <!--<FontIcon FontFamily="Segoe MDL2 Assets" Glyph="{Binding IsError, Converter={StaticResource ConvertBoolToIcon}}" />-->
                     <Image Height="20" Source="{Binding Hint, Converter={StaticResource HintToIcon}}" />
                     <TextBlock Grid.Column="1" Text="{Binding Text}" Margin="10 3 0 3" VerticalAlignment="Center" TextWrapping="Wrap" />
-                    <TextBlock Grid.Column="2" Text="{Binding Id}" Margin="5 0" HorizontalAlignment="Right" />
+                    <TextBlock Grid.Column="2" Text="{Binding Id}" Margin="5 0" />
                 </Grid>
             </Border>
         </DataTemplate>
@@ -321,44 +353,55 @@
         <DataTemplate x:Key="TypeColor">
             <Grid Visibility="{Binding IsVisible, Converter={StaticResource ConvertBoolToVisible}}" Margin="0 5">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition MaxWidth="550" Width="9*" />
-                    <ColumnDefinition MinWidth="230" MaxWidth="350" Width="3*" />
-                    <ColumnDefinition MaxWidth="120" Width="1*" />
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition MinWidth="300" MaxWidth="500" />
                     <ColumnDefinition Width="50" />
                     <ColumnDefinition Width="50" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="{Binding Text}" Margin="10 0" VerticalAlignment="Center" />
 
+
+                
                 <Grid Grid.Column="1">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
-                        <ColumnDefinition />
                         <ColumnDefinition Width="auto" />
                     </Grid.ColumnDefinitions>
+                    
+                    <Grid Grid.Column="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="auto" />
+                        </Grid.ColumnDefinitions>
+    
+                        <TextBox x:Name="InCol" Text="{Binding Value, Mode=TwoWay}" MaxLength="6" />
+                        <Border Grid.Column="1" BorderThickness="0 1">
+                            <Border.BorderBrush>
+                                <SolidColorBrush Color="#A3000000" />
+                            </Border.BorderBrush>
+                            <Border.Background>
+                                <SolidColorBrush Color="{Binding Color}" />
+                            </Border.Background>
+                        </Border>
+                        <Button Grid.Column="2" Content="Picker" BorderThickness="0 1 1 1">
+                            <Button.BorderBrush>
+                                <SolidColorBrush Color="#A3000000" />
+                            </Button.BorderBrush>
+                            <!--<Button.Flyout>
+                                <Flyout Index>
+                                    <ColorPicker x:Name="ColorPickerFlyout" Color="{Binding Color, Mode=TwoWay}" IsMoreButtonVisible="True"/>
+                                    <TextBlock Text="Hier kommt ColorPicker" />
+                                </Flyout>
+                            </Button.Flyout>-->
+                        </Button>
+                    </Grid>
 
-                    <TextBox x:Name="InCol" Text="{Binding Value, Mode=TwoWay}" MaxLength="6" />
-                    <Border Grid.Column="1" BorderThickness="0 1">
-                        <Border.BorderBrush>
-                            <SolidColorBrush Color="#A3000000" />
-                        </Border.BorderBrush>
-                        <Border.Background>
-                            <SolidColorBrush Color="{Binding Color}" />
-                        </Border.Background>
-                    </Border>
-                    <Button Grid.Column="2" Content="Picker" BorderThickness="0 1 1 1">
-                        <Button.BorderBrush>
-                            <SolidColorBrush Color="#A3000000" />
-                        </Button.BorderBrush>
-                        <!--<Button.Flyout>
-                            <Flyout Index>
-                                <ColorPicker x:Name="ColorPickerFlyout" Color="{Binding Color, Mode=TwoWay}" IsMoreButtonVisible="True"/>
-                                <TextBlock Text="Hier kommt ColorPicker" />
-                            </Flyout>
-                        </Button.Flyout>-->
-                    </Button>
+                    <TextBlock Grid.Column="1" Text="{Binding SuffixText}" Visibility="{Binding SuffixText, Converter={StaticResource EmptyToVis}}" Margin="10 0 0 0" VerticalAlignment="Center" />
                 </Grid>
-                
-                <TextBlock Grid.Column="4" Text="{Binding Id}" Margin="5 0" HorizontalAlignment="Right" />
+
+                <TextBlock Grid.Column="2" Text="{Binding Value}" Margin="5 0" />
+                <TextBlock Grid.Column="3" Text="{Binding Id}" Margin="5 0" />
             </Grid>
         </DataTemplate>
         
