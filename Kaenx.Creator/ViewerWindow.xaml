@@ -14,9 +14,10 @@
     mc:Ignorable="d" Icon="/FileLogo.ico" x:Name="ParaControl" Title="Kaenx-Creator ProdViewer" Height="700" Width="1300">
     <Window.Resources>
         <conv:BoolToVisibility x:Key="Bool2Vis" />
+        <conv:EmptyToVisibility x:Key="EmptyToVis" />
         <conv:IsHeadlineToObject x:Key="HeadlineToSize" TrueValue="14" FalseValue="12" />
         <conv:IsHeadlineToObject x:Key="HeadlineToWeight" TrueValue="Bold" FalseValue="Normal" />
-        <conv:SeparatorHintToObject x:Key="HintToIcon" InformationValue="/Assets/information.png" ErrorValue="/Assets/error.png" />
+        <conv:SeparatorHintToObject x:Key="HintToIcon" InformationValue="/Assets/Viewer/information.png" ErrorValue="/Assets/Viewer/error.png" />
         <conv:SeparatorHintToObject x:Key="HintToBrush" InformationValue="Aquamarine" ErrorValue="Red" />
         <conv:BinaryToBool x:Key="BinToBool" />
 
@@ -198,15 +199,23 @@
         <DataTemplate x:Key="TypePicture">
             <Grid Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}" Margin="0 5">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition MaxWidth="550" Width="9*" />
-                    <ColumnDefinition MinWidth="230" MaxWidth="350" Width="3*" />
-                    <ColumnDefinition MaxWidth="120" Width="1*" />
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition MinWidth="300" MaxWidth="500" />
+                    <ColumnDefinition Width="50" />
                     <ColumnDefinition Width="50" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="{Binding Text}" Margin="10 0" VerticalAlignment="Center" />
 
-                <Image Grid.Column="1" Source="{Binding Image}" />
-                <TextBlock Grid.Column="2" Text="{Binding SuffixText}" Margin="10 0" VerticalAlignment="Center" HorizontalAlignment="Left" />
+                <Grid Grid.Column="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Image Source="{Binding Image}" Stretch="Uniform" MaxHeight="300" />
+                    <TextBlock Grid.Column="1" Text="{Binding SuffixText}" Visibility="{Binding SuffixText, Converter={StaticResource EmptyToVis}}" Margin="10 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Left" />
+                </Grid>
+                
                 <TextBlock Grid.Column="3" Text="{Binding Id}" Margin="5 0" HorizontalAlignment="Right" />
             </Grid>
         </DataTemplate>
@@ -246,16 +255,23 @@
         <DataTemplate x:Key="TypeText">
             <Grid Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}" Margin="0 5">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition MaxWidth="550" Width="9*" />
-                    <ColumnDefinition MinWidth="230" MaxWidth="350" Width="3*" />
-                    <ColumnDefinition MaxWidth="120" Width="1*" />
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition MinWidth="300" MaxWidth="500" />
                     <ColumnDefinition Width="50" />
                     <ColumnDefinition Width="50" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="{Binding Text}" Margin="10 0" VerticalAlignment="Center" TextWrapping="Wrap" />
-                <TextBox Height="22" VerticalContentAlignment="Center" Grid.Column="1" IsEnabled="{Binding IsEnabled}" MaxLength="{Binding MaxLength}" Text="{Binding Value, Mode=TwoWay}" VerticalAlignment="Center" />
-                <TextBlock Grid.Column="2" Text="{Binding SuffixText}" Margin="10 0" VerticalAlignment="Center" HorizontalAlignment="Left" />
-                <TextBlock Grid.Column="4" Text="{Binding Id}" Margin="5 0" HorizontalAlignment="Right" />
+
+                <Grid Grid.Column="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBox Height="22" VerticalContentAlignment="Center" IsEnabled="{Binding IsEnabled}" MaxLength="{Binding MaxLength}" Text="{Binding Value, Mode=TwoWay}" VerticalAlignment="Center" />
+                    <TextBlock Grid.Column="1" Text="{Binding SuffixText}" Visibility="{Binding SuffixText, Converter={StaticResource EmptyToVis}}" Margin="10 0 0 0" VerticalAlignment="Center" />
+                </Grid>
+
+                <TextBlock Grid.Column="3" Text="{Binding Id}" Margin="5 0" HorizontalAlignment="Right" />
             </Grid>
         </DataTemplate>
 
@@ -374,15 +390,10 @@
 
     <Grid Grid.Row="2">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="auto" MinWidth="80" MaxWidth="300" />
+            <ColumnDefinition Width="auto" MinWidth="100" MaxWidth="300" />
             <ColumnDefinition />
-            <ColumnDefinition MaxWidth="400" />
+            <ColumnDefinition Width="auto"/>
         </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition MinHeight="300" />
-            <RowDefinition Height="10" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
 
         
         <ScrollViewer Grid.RowSpan="3" VerticalScrollBarVisibility="Auto">
@@ -392,9 +403,8 @@
 
         <Grid Grid.RowSpan="3" Grid.Column="1" Margin="0 5">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition MaxWidth="550" Width="9*" />
-                <ColumnDefinition MinWidth="230" MaxWidth="350" Width="3*" />
-                <ColumnDefinition MaxWidth="120" Width="1*" />
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition MinWidth="300" MaxWidth="500" />
                 <ColumnDefinition Width="50" />
                 <ColumnDefinition Width="50" />
             </Grid.ColumnDefinitions>
@@ -405,33 +415,51 @@
 
             <TextBlock Text="{x:Static p:Resources.prodv_text}" Margin="5 0" HorizontalAlignment="Center" />
             <TextBlock Grid.Column="1" Grid.ColumnSpan="2" Text="{x:Static p:Resources.prodv_settings}" Margin="5 0" HorizontalAlignment="Center" />
-            <TextBlock Grid.Column="3" Text="{x:Static p:Resources.prodv_value}" Margin="5 0" HorizontalAlignment="Center" />
-            <TextBlock Grid.Column="4" Text="{x:Static p:Resources.prodv_id}" Margin="5 0" HorizontalAlignment="Center" />
+            <TextBlock Grid.Column="2" Text="{x:Static p:Resources.prodv_value}" Margin="5 0" HorizontalAlignment="Center" />
+            <TextBlock Grid.Column="3" Text="{x:Static p:Resources.prodv_id}" Margin="5 0" HorizontalAlignment="Center" />
             
             <ScrollViewer Grid.Row="1" Grid.ColumnSpan="5">
                 <ItemsControl ItemTemplateSelector="{StaticResource ParaTypeSelector}" ItemsSource="{Binding SelectedBlock.Parameters}" />
             </ScrollViewer>
         </Grid>
 
-        <DataGrid Grid.Column="2" ItemsSource="{Binding ComObjects}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False">
-            <DataGrid.Columns>
+        <Expander Grid.Column="2" ExpandDirection="Right">
+            <Expander.Header>
+                <TextBlock Text="Kommunikationsobjekte und Logger">
+                    <TextBlock.LayoutTransform>
+                        <RotateTransform Angle="90" />
+                    </TextBlock.LayoutTransform>
+                </TextBlock>
+            </Expander.Header>
 
-                <DataGridTextColumn Header="{x:Static p:Resources.prop_number}" Binding="{Binding Number}" SortDirection="Ascending" />
-                <DataGridTextColumn Header="{x:Static p:Resources.prop_name}" Binding="{Binding Name}" />
-                <DataGridTextColumn Header="{x:Static p:Resources.prop_function}" Binding="{Binding Function}" />
+            <Grid Width="400">
+                <Grid.RowDefinitions>
+                    <RowDefinition MinHeight="300" />
+                    <RowDefinition Height="10" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
 
-            </DataGrid.Columns>
-        </DataGrid>
-
-        <GridSplitter Grid.Row="1" Grid.Column="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
-
-        <Grid Grid.Row="2" Grid.Column="2">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="auto" />
-                <RowDefinition />
-            </Grid.RowDefinitions>
-            <Button Content="{x:Static p:Resources.prodv_getval}" Click="ClickGetValue" />
-            <TextBlock Grid.Row="1" x:Name="LogViewer" />
-        </Grid>
+                <DataGrid ItemsSource="{Binding ComObjects}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False">
+                    <DataGrid.Columns>
+        
+                        <DataGridTextColumn Header="{x:Static p:Resources.prop_number}" Binding="{Binding Number}" SortDirection="Ascending" />
+                        <DataGridTextColumn Header="{x:Static p:Resources.prop_name}" Binding="{Binding Name}" />
+                        <DataGridTextColumn Header="{x:Static p:Resources.prop_function}" Binding="{Binding Function}" />
+        
+                    </DataGrid.Columns>
+                </DataGrid>
+        
+                <GridSplitter Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+        
+                <Grid Grid.Row="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Button Content="{x:Static p:Resources.prodv_getval}" Click="ClickGetValue" />
+                    <TextBlock Grid.Row="1" x:Name="LogViewer" />
+                </Grid>
+            </Grid>
+        </Expander>
     </Grid>
 </Window>

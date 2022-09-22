@@ -15,6 +15,7 @@
     x:Name="ViewControl">
     <UserControl.Resources>
         <conv:EmptyToBool x:Key="EmptyToBool" />
+        <conv:EmptyToVisibility x:Key="EmptyToVis" />
         <conv:EnumToVisibility x:Key="EnumToVis" />
         <conv:BoolToVisibility x:Key="BoolToVis" />
         <conv:BoolNegation x:Key="BoolNeg" />
@@ -100,11 +101,11 @@
                 </StackPanel>
             </HeaderedContentControl>
 
-            <HeaderedContentControl Header="{x:Static p:Resources.help_edit}">
+            <HeaderedContentControl Header="{x:Static p:Resources.help_edit}" Visibility="{Binding SelectedItem.Text, ElementName=TextGrid, Converter={StaticResource EmptyToVis}, FallbackValue=Collapsed}">
                 <TextBox AcceptsReturn="True" MaxHeight="250" Text="{Binding SelectedItem.Text, ElementName=TextGrid, UpdateSourceTrigger=PropertyChanged}" />
             </HeaderedContentControl>
             
-            <HeaderedContentControl Header="{x:Static p:Resources.help_preview}">
+            <HeaderedContentControl Header="{x:Static p:Resources.help_preview}" Visibility="{Binding SelectedItem.Text, ElementName=TextGrid, Converter={StaticResource EmptyToVis}, FallbackValue=Collapsed}">
                 <Border BorderThickness="1" BorderBrush="Gray">
                     <mdxam:MarkdownScrollViewer Markdown="{Binding SelectedItem.Text, ElementName=TextGrid}" Margin="5" />
                 </Border>

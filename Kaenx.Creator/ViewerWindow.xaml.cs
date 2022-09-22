@@ -43,6 +43,7 @@ namespace Kaenx.Creator
 
 
         private Dictionary<long, IValues> values = new Dictionary<long, IValues>();
+        private Dictionary<string, Kaenx.DataContext.Catalog.Baggage> Baggages = new Dictionary<string, Kaenx.DataContext.Catalog.Baggage>();
         private List<ComBinding> _comBindings;
         private List<AppComObject> _comObjects;
         private List<AssignParameter> Assignments;
@@ -105,6 +106,7 @@ namespace Kaenx.Creator
                 context.Hardware2App.RemoveRange(context.Hardware2App.ToList());
                 context.Sections.RemoveRange(context.Sections.ToList());
                 context.Devices.RemoveRange(context.Devices.ToList());
+                context.Baggages.RemoveRange(context.Baggages.ToList());
 
                 var x = _importer.GetLanguages();
                 string threadCulture = System.Threading.Thread.CurrentThread.CurrentUICulture.IetfLanguageTag;
@@ -126,6 +128,11 @@ namespace Kaenx.Creator
                 await System.Threading.Tasks.Task.Run(() => _importer.StartImport(context)).WaitAsync(TimeSpan.FromMinutes(60));
 
                 _app = context.Applications.First();
+
+                foreach(var y in context.Baggages)
+                {
+                    Baggages.Add(y.Id, y);
+                }
 
                 adds = context.AppAdditionals.Single(a => a.ApplicationId == _app.Id);
                 _comBindings = FunctionHelper.ByteArrayToObject<List<ComBinding>>(adds.ComsAll, true);
@@ -235,9 +242,15 @@ namespace Kaenx.Creator
             Changed("Channels");
         }
 
-        private object Pc_OnPictureRequest(int BaggageId)
+        private object Pc_OnPictureRequest(string BaggageId)
         {
-            throw new NotImplementedException();
+            Kaenx.DataContext.Catalog.Baggage bag = Baggages[BaggageId];
+            BitmapImage image = new BitmapImage();
+            MemoryStream ms = new MemoryStream(bag.Data);
+            image.BeginInit();
+            image.StreamSource = ms;
+            image.EndInit();
+            return image;
         }
 
         private async void Para_PropertyChanged(object sender, PropertyChangedEventArgs e = null)

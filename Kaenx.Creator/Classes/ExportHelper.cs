@@ -102,7 +102,7 @@ namespace Kaenx.Creator.Classes
                 xapp.SetAttributeValue("ApplicationVersion", ver.Number.ToString());
                 xapp.SetAttributeValue("ProgramType", "ApplicationProgram");
                 xapp.SetAttributeValue("MaskVersion", app.Mask.Id);
-                xapp.SetAttributeValue("Name", ver.Text.Single(e => e.Language.CultureCode == currentLang).Text);
+                xapp.SetAttributeValue("Name", GetDefaultLanguage(ver.Text));
                 xapp.SetAttributeValue("DefaultLanguage", currentLang);
                 xapp.SetAttributeValue("LoadProcedureStyle", $"{app.Mask.Procedure}Procedure");
                 xapp.SetAttributeValue("PeiType", "0");
@@ -222,7 +222,7 @@ namespace Kaenx.Creator.Classes
                             foreach (ParameterTypeEnum enu in type.Enums)
                             {
                                 XElement xenu = new XElement(Get("Enumeration"));
-                                xenu.SetAttributeValue("Text", enu.Text.Single(e => e.Language.CultureCode == currentLang).Text);
+                                xenu.SetAttributeValue("Text", GetDefaultLanguage(enu.Text));
                                 xenu.SetAttributeValue("Value", enu.Value);
                                 xenu.SetAttributeValue("Id", $"{id}_EN-{enu.Value}");
                                 xcontent.Add(xenu);
@@ -336,7 +336,7 @@ namespace Kaenx.Creator.Classes
                     XElement xmsg = new XElement(Get("Message"));
                     xmsg.SetAttributeValue("Id", $"{appVersion}_M-{msg.Id}");
                     xmsg.SetAttributeValue("Name", msg.Name);
-                    xmsg.SetAttributeValue("Text",  msg.Text.Single(p => p.Language.CultureCode == currentLang).Text);
+                    xmsg.SetAttributeValue("Text",  GetDefaultLanguage(msg.Text));
 
                     if(msg.TranslationText)
                         foreach(Translation trans in msg.Text)
@@ -412,7 +412,7 @@ namespace Kaenx.Creator.Classes
                         if (para.OffsetBit > 0) line += ", BitOffset: " + para.OffsetBit;
                         line += $", Size: {para.ParameterTypeObject.SizeInBit} Bit";
                         if (para.ParameterTypeObject.SizeInBit % 8 == 0) line += " (" + (para.ParameterTypeObject.SizeInBit / 8) + " Byte)";
-                        line += $", Module: {dmod.ModuleObject.Name}, Text: {para.Text.Single(p => p.Language.CultureCode == currentLang).Text}";
+                        line += $", Module: {dmod.ModuleObject.Name}, Text: {GetDefaultLanguage(para.Text)}";
                         headers.AppendLine(line);
                     }
 
@@ -421,7 +421,7 @@ namespace Kaenx.Creator.Classes
                     int coffset = int.Parse(dargc.Value);
                     foreach(ComObject com in dmod.ModuleObject.ComObjects)
                     {
-                        string line = $"#define COMOBJ_M{counter}_{com.Name.Replace(' ', '_')} \t{coffset + com.Number}\t//!< Number: {coffset + com.Number}, Module: {dmod.ModuleObject.Name}, Text: {com.Text.Single(c => c.Language.CultureCode == currentLang).Text}, Function: {com.FunctionText.Single(c => c.Language.CultureCode == currentLang).Text}";
+                        string line = $"#define COMOBJ_M{counter}_{com.Name.Replace(' ', '_')} \t{coffset + com.Number}\t//!< Number: {coffset + com.Number}, Module: {dmod.ModuleObject.Name}, Text: {GetDefaultLanguage(com.Text)}, Function: {GetDefaultLanguage(com.FunctionText)}";
                         headers.AppendLine(line);
                         
                     }
@@ -563,7 +563,7 @@ namespace Kaenx.Creator.Classes
                     string pid = hid + "_P-" + GetEncoded(dev.OrderNumber);
                     ProductIds.Add(dev.Name, pid);
                     xprod.SetAttributeValue("Id", pid);
-                    xprod.SetAttributeValue("Text", dev.Text.Single(e => e.Language.CultureCode == currentLang).Text);
+                    xprod.SetAttributeValue("Text", GetDefaultLanguage(dev.Text));
                     xprod.SetAttributeValue("OrderNumber", dev.OrderNumber);
                     xprod.SetAttributeValue("IsRailMounted", dev.IsRailMounted ? "1" : "0");
                     xprod.SetAttributeValue("DefaultLanguage", currentLang);
@@ -891,7 +891,7 @@ namespace Kaenx.Creator.Classes
                     xpref.SetAttributeValue("Value", pref.Value);
                 if(pref.OverwriteText)
                 {
-                    xpref.SetAttributeValue("Text", pref.Text.Single(p => p.Language.CultureCode == currentLang).Text);
+                    xpref.SetAttributeValue("Text", GetDefaultLanguage(pref.Text));
                     if(!pref.ParameterObject.TranslationText)
                     foreach(Models.Translation trans in pref.Text) AddTranslation(trans.Language.CultureCode, id, "SuffixText", trans.Text);
                 }
@@ -935,7 +935,7 @@ namespace Kaenx.Creator.Classes
                 //Debug.WriteLine($"    - ComObject {com.UId} {com.Name}");
                 if(headers != null)
                 {
-                    string line = $"#define COMOBJ_{com.Name.Replace(' ', '_')} \t{com.Number}\t//!< Number: {com.Number}, Text: {com.Text.Single(c => c.Language.CultureCode == currentLang).Text}, Function: {com.FunctionText.Single(c => c.Language.CultureCode == currentLang).Text}";
+                    string line = $"#define COMOBJ_{com.Name.Replace(' ', '_')} \t{com.Number}\t//!< Number: {com.Number}, Text: {GetDefaultLanguage(com.Text)}, Function: {GetDefaultLanguage(com.FunctionText)}";
                     headers.AppendLine(line);
                 }
 
@@ -945,9 +945,9 @@ namespace Kaenx.Creator.Classes
                 id += com.Id;
                 xcom.SetAttributeValue("Id", id);
                 xcom.SetAttributeValue("Name", com.Name);
-                xcom.SetAttributeValue("Text", com.Text.Single(c => c.Language.CultureCode == currentLang).Text);
+                xcom.SetAttributeValue("Text", GetDefaultLanguage(com.Text));
                 xcom.SetAttributeValue("Number", com.Number);
-                xcom.SetAttributeValue("FunctionText", com.FunctionText.Single(c => c.Language.CultureCode == currentLang).Text);
+                xcom.SetAttributeValue("FunctionText", GetDefaultLanguage(com.FunctionText));
                 
                 if(!com.TranslationText)
                     foreach(Models.Translation trans in com.Text) AddTranslation(trans.Language.CultureCode, id, "Text", trans.Text);
@@ -1007,12 +1007,12 @@ namespace Kaenx.Creator.Classes
                 if(cref.OverwriteText) {
                     if(!cref.TranslationText)
                         foreach(Models.Translation trans in cref.Text) AddTranslation(trans.Language.CultureCode, id, "Text", trans.Text);
-                    xcref.SetAttributeValue("Text", cref.Text.Single(c => c.Language.CultureCode == currentLang).Text);
+                    xcref.SetAttributeValue("Text", GetDefaultLanguage(cref.Text));
                 }
                 if(cref.OverwriteFunctionText) {
                     if(!cref.TranslationFunctionText)
                         foreach(Models.Translation trans in cref.FunctionText) AddTranslation(trans.Language.CultureCode, id, "FunctionText", trans.Text);
-                    xcref.SetAttributeValue("FunctionText", cref.FunctionText.Single(c => c.Language.CultureCode == currentLang).Text);
+                    xcref.SetAttributeValue("FunctionText", GetDefaultLanguage(cref.FunctionText));
                 }
 
                 if (cref.OverwriteDpt)
@@ -1066,7 +1066,7 @@ namespace Kaenx.Creator.Classes
                 if (para.OffsetBit > 0) line += ", BitOffset: " + para.OffsetBit;
                 line += $", Size: {para.ParameterTypeObject.SizeInBit} Bit";
                 if (para.ParameterTypeObject.SizeInBit % 8 == 0) line += " (" + (para.ParameterTypeObject.SizeInBit / 8) + " Byte)";
-                line += $", Text: {para.Text.Single(p => p.Language.CultureCode == currentLang).Text}";
+                line += $", Text: {GetDefaultLanguage(para.Text)}";
                 headers.AppendLine(line);
             }
 
@@ -1129,9 +1129,9 @@ namespace Kaenx.Creator.Classes
                     xpara.SetAttributeValue("DefaultUnionParameter", "true");
             }
             
-            xpara.SetAttributeValue("Text", para.Text.Single(p => p.Language.CultureCode == currentLang).Text);
+            xpara.SetAttributeValue("Text", GetDefaultLanguage(para.Text));
             if (para.Access != ParamAccess.Default && para.Access != ParamAccess.ReadWrite) xpara.SetAttributeValue("Access", para.Access);
-            if (para.Suffix.Any(s => !string.IsNullOrWhiteSpace(s.Text))) xpara.SetAttributeValue("SuffixText", para.Text.Single(p => p.Language.CultureCode == currentLang).Text);
+            if (para.Suffix.Any(s => !string.IsNullOrWhiteSpace(s.Text))) xpara.SetAttributeValue("SuffixText", GetDefaultLanguage(para.Text));
             xpara.SetAttributeValue("Value", para.Value);
 
             parent.Add(xpara);
@@ -1207,7 +1207,7 @@ namespace Kaenx.Creator.Classes
                 if (dch.UseTextParameter)
                     channel.SetAttributeValue("TextParameterRefId", appVersionMod + (dch.ParameterRefObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{dch.ParameterRefObject.ParameterObject.Id}_R-{dch.ParameterRefObject.Id}");
 
-                channel.SetAttributeValue("Text", dch.Text.Single(p => p.Language.CultureCode == currentLang).Text);
+                channel.SetAttributeValue("Text", GetDefaultLanguage(dch.Text));
                 if (!dch.TranslationText)
                     foreach (Models.Translation trans in dch.Text) AddTranslation(trans.Language.CultureCode, $"{appVersionMod}_CH-{dch.Number}", "Text", trans.Text);
                 
@@ -1261,7 +1261,7 @@ namespace Kaenx.Creator.Classes
                 sep.Id = separatorCounter++;
             }
             xsep.SetAttributeValue("Id", $"{appVersion}_PS-{sep.Id}");
-            xsep.SetAttributeValue("Text", sep.Text.Single(p => p.Language.CultureCode == currentLang).Text);
+            xsep.SetAttributeValue("Text", GetDefaultLanguage(sep.Text));
             if(sep.Hint != SeparatorHint.None)
             {
                 xsep.SetAttributeValue("UIHint", sep.Hint.ToString());
@@ -1317,7 +1317,7 @@ namespace Kaenx.Creator.Classes
                 else
                 {
                     block.SetAttributeValue("Id", $"{appVersionMod}_PB-{bl.Id}");
-                    string dText = bl.Text.Single(p => p.Language.CultureCode == currentLang).Text;
+                    string dText = GetDefaultLanguage(bl.Text);
                     //Wenn Block InLine ist, kann kein Text angegeben werden
                     if (!string.IsNullOrEmpty(dText))
                     {
@@ -1443,7 +1443,7 @@ namespace Kaenx.Creator.Classes
                         xitem.SetAttributeValue("Id", id);
                     }
 
-                    xitem.SetAttributeValue("Name", item.Text.Single(e => e.Language.CultureCode == currentLang).Text);
+                    xitem.SetAttributeValue("Name", GetDefaultLanguage(item.Text));
                     xitem.SetAttributeValue("Number", item.Number);
                     xitem.SetAttributeValue("DefaultLanguage", currentLang);
                     parent.Add(xitem);
@@ -1477,9 +1477,9 @@ namespace Kaenx.Creator.Classes
                             id += $"_CI-{GetEncoded(dev.OrderNumber)}-{GetEncoded(item.Number)}";
 
                             xitem.SetAttributeValue("Id", id);
-                            xitem.SetAttributeValue("Name", dev.Text.Single(e => e.Language.CultureCode == currentLang).Text);
+                            xitem.SetAttributeValue("Name", GetDefaultLanguage(dev.Text));
                             xitem.SetAttributeValue("Number", item.Number);
-                            xitem.SetAttributeValue("VisibleDescription", dev.Description.Single(e => e.Language.CultureCode == currentLang).Text);
+                            xitem.SetAttributeValue("VisibleDescription", GetDefaultLanguage(dev.Description));
                             xitem.SetAttributeValue("ProductRefId", productIds[dev.Name]);
                             string hardid = item.Hardware.Version + "-" + app.Number + "-" + ver.Number;
                             xitem.SetAttributeValue("Hardware2ProgramRefId", hardwareIds[hardid]);
@@ -1580,6 +1580,12 @@ namespace Kaenx.Creator.Classes
             input = input.Replace("}", ".7D");
             input = input.Replace("°", ".C2.B0");
             return input;
+        }
+
+        public string GetDefaultLanguage(ObservableCollection<Translation> trans)
+        {
+            string text = trans.Single(e => e.Language.CultureCode == currentLang).Text;
+            return text == "$no_export$" ? "" : text;
         }
 
         public string GetRelPath(params string[] path)

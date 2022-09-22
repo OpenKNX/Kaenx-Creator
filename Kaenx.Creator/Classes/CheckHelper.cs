@@ -44,6 +44,9 @@ namespace Kaenx.Creator.Classes {
                 if(General.Catalog[0].Items.Any(c => !c.IsSection ))
                     actions.Add(new PublishAction() { Text = "Katalog muss mindestens eine Unterkategorie haben.", State = PublishState.Fail });
 
+                foreach(CatalogItem citem in General.Catalog[0].Items)
+                    CheckCatalogItem(citem, actions);
+
                 if(General.ManufacturerId <= 0 || General.ManufacturerId > 0xFFFF)
                     actions.Add(new PublishAction() { Text = $"Ungültige HerstellerId angegeben: {General.ManufacturerId:X4}", State = PublishState.Fail });
 
@@ -229,14 +232,14 @@ namespace Kaenx.Creator.Classes {
                     }
                 }
 
-                CheckVersion(vers, actions, vers.DefaultLanguage, vers.NamespaceVersion, showOnlyErrors);
+                CheckVersion(vers, vers, actions, vers.DefaultLanguage, vers.NamespaceVersion, showOnlyErrors);
                 if(General != null)
                     CheckLanguages(vers, actions, General, devices);
 
                 foreach(Module mod in vers.Modules)
                 {
                     actions.Add(new PublishAction() { Text = $"Prüfe Module '{mod.Name}'" });
-                    CheckVersion(mod, actions, vers.DefaultLanguage, vers.NamespaceVersion, showOnlyErrors);
+                    CheckVersion(vers, mod, actions, vers.DefaultLanguage, vers.NamespaceVersion, showOnlyErrors);
                     //TODO check for Argument exist
                 }
 
@@ -267,7 +270,25 @@ namespace Kaenx.Creator.Classes {
             actions.Add(new PublishAction() { Text = "Ende Check" });
         }
 
-        private static void CheckVersion(IVersionBase vbase, ObservableCollection<PublishAction> actions, string defaultLang, int ns, bool showOnlyErrors)
+        private static void CheckCatalogItem(CatalogItem item, ObservableCollection<PublishAction> actions)
+        {
+            if(item.IsSection)
+            {
+                if(string.IsNullOrEmpty(item.Number))
+                    actions.Add(new PublishAction() { Text = $"Katalog {item.Name}: Sektions Nummer ist leer", State = PublishState.Fail });
+
+                foreach(CatalogItem citem in item.Items)
+                    CheckCatalogItem(citem, actions);
+            } else {
+                int number = -1;
+                if(!int.TryParse(item.Number, out number))
+                    actions.Add(new PublishAction() { Text = $"Katalog {item.Name}: Produkt Nummer ist keine Ganzzahl ({item.Number})", State = PublishState.Fail });
+                if(item.Hardware == null)
+                    actions.Add(new PublishAction() { Text = $"Katalog {item.Name}: Es wurde keine Hardware ausgewählt", State = PublishState.Fail });
+            }
+        }
+
+        private static void CheckVersion(AppVersion ver, IVersionBase vbase, ObservableCollection<PublishAction> actions, string defaultLang, int ns, bool showOnlyErrors)
         {
             Module mod = vbase as Module;
             //TODO check languages from Texts
@@ -473,8 +494,8 @@ namespace Kaenx.Creator.Classes {
                     }
                 }
 
-                if(com.UseTextParameter && com.ParameterRefObject == null)
-                    actions.Add(new PublishAction() { Text = $"    ComObjectRef {com.Name} ({com.UId}): Kein TextParameter angegeben", State = PublishState.Fail, Item = com, Module = mod });
+                if(ver.IsComObjectRefAuto && com.UseTextParameter && com.ParameterRefObject == null)
+                    actions.Add(new PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Kein TextParameter angegeben", State = PublishState.Fail, Item = com, Module = mod });
             }
 
             foreach(ComObjectRef rcom in vbase.ComObjectRefs) {
@@ -506,6 +527,9 @@ namespace Kaenx.Creator.Classes {
                                     actions.Add(new PublishAction() { Text = $"    ComObjectRef {rcom.Name} ({rcom.UId}): Keine Übersetzung für FunktionsText vorhanden ({trans.Language.Text})", State = PublishState.Warning, Item = rcom, Module = mod });
                     }
                 }
+
+                if(!ver.IsComObjectRefAuto && rcom.UseTextParameter && rcom.ParameterRefObject == null)
+                    actions.Add(new PublishAction() { Text = $"    ComObjectRef {rcom.Name} ({rcom.UId}): Kein TextParameter angegeben", State = PublishState.Fail, Item = rcom, Module = mod });
             }
         
             //TODO check union size fits parameter+offset

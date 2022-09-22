@@ -19,6 +19,7 @@ namespace Kaenx.Creator.Viewer
 
         private Dictionary<string, int> TypeNameToId = new Dictionary<string, int>();
         private Dictionary<long, AppParameter> IdToParameter = new Dictionary<long, AppParameter>();
+        private List<Kaenx.Creator.Models.Baggage> Baggages = new List<Kaenx.Creator.Models.Baggage>();
 
         public List<ModuleModel> Modules { get; set; } = new List<ModuleModel>();
        
@@ -68,6 +69,7 @@ namespace Kaenx.Creator.Viewer
             ImportParameterTypes();
             ImportParameters(_version, null);
             ImportComObjects(_version, null);
+            ImportBaggages(_version);
 
             ImportDynamic();
 
@@ -140,6 +142,8 @@ namespace Kaenx.Creator.Viewer
                         mtype.Type = ParamTypes.Picture;
                         mtype.Tag1 = ptype.BaggageObject.TargetPath;
                         mtype.Tag2 = ptype.BaggageObject.Name;
+                        if(!Baggages.Contains(ptype.BaggageObject))
+                            Baggages.Add(ptype.BaggageObject);
                         break;
 
                 }
@@ -260,6 +264,32 @@ namespace Kaenx.Creator.Viewer
             }
         }
 
+        private void ImportBaggages(AppVersion vbase)
+        {
+            foreach(Kaenx.Creator.Models.Baggage bag in Baggages)
+            {
+                Kaenx.DataContext.Catalog.Baggage cbag = new Kaenx.DataContext.Catalog.Baggage();
+                cbag.TimeStamp = bag.TimeStamp;
+                cbag.Id = $"{bag.TargetPath}-{bag.Name}{bag.Extension}";
+                
+                switch(bag.Extension)
+                {
+                    case ".png":
+                        cbag.PictureType = PictureTypes.PNG;
+                        break;
+
+                    case ".jpg":
+                        cbag.PictureType = PictureTypes.JPG;
+                        break;
+
+                    case ".zip":
+                        throw new NotImplementedException("Zips werden noch nicht unterstützt.");
+                }
+
+                cbag.Data = bag.Data;
+                _context.Baggages.Add(cbag);
+            }
+        }
 
         List<IDynChannel> Channels = new List<IDynChannel>();
         Dictionary<long,  Kaenx.DataContext.Import.Values.IValues> values = new Dictionary<long,  Kaenx.DataContext.Import.Values.IValues>();
@@ -415,13 +445,72 @@ namespace Kaenx.Creator.Viewer
 
                 case Models.Dynamic.DynSeparator ds:
                 {
-                    ParamSeparator psep = new ParamSeparator() {
-                        Id = ds.Id,
-                        Text = GetDefaultLang(ds.Text),
-                        HasAccess = true,
-                        Conditions = conds
-                    };
-                    dblock.Parameters.Add(psep);
+                    switch(ds.Hint)
+                    {
+                        case Models.Dynamic.SeparatorHint.None:
+                        {
+                            ParamSeparator psep = new ParamSeparator() {
+                                Id = ds.Id,
+                                Text = GetDefaultLang(ds.Text),
+                                HasAccess = true,
+                                Conditions = conds
+                            };
+                            dblock.Parameters.Add(psep);
+                            break;
+                        }
+                        
+                        case Models.Dynamic.SeparatorHint.HorizontalRuler:
+                        {
+                            ParamSeparator psep = new ParamSeparator() {
+                                Id = ds.Id,
+                                Hint = ParamSeparatorHint.HorizontalRuler,
+                                HasAccess = true,
+                                Conditions = conds
+                            };
+                            dblock.Parameters.Add(psep);
+                            break;
+                        }
+                        
+                        case Models.Dynamic.SeparatorHint.Error:
+                        {
+                            ParamSeparatorBox psep = new ParamSeparatorBox() {
+                                Id = ds.Id,
+                                Text = GetDefaultLang(ds.Text),
+                                Hint = ParamSeparatorHint.Error,
+                                HasAccess = true,
+                                Conditions = conds
+                            };
+                            dblock.Parameters.Add(psep);
+                            break;
+                        }
+                        
+                        case Models.Dynamic.SeparatorHint.Information:
+                        {
+                            ParamSeparatorBox psep = new ParamSeparatorBox() {
+                                Id = ds.Id,
+                                Text = GetDefaultLang(ds.Text),
+                                Hint = ParamSeparatorHint.Information,
+                                HasAccess = true,
+                                Conditions = conds
+                            };
+                            dblock.Parameters.Add(psep);
+                            break;
+                        }
+                        
+                        case Models.Dynamic.SeparatorHint.Headline:
+                        {
+                            ParamSeparator psep = new ParamSeparator() {
+                                Id = ds.Id,
+                                Text = GetDefaultLang(ds.Text),
+                                Hint = ParamSeparatorHint.Headline,
+                                HasAccess = true,
+                                Conditions = conds
+                            };
+                            dblock.Parameters.Add(psep);
+                            break;
+                        }
+                    }
+                    
                     break;
                 }
 
@@ -666,6 +755,7 @@ namespace Kaenx.Creator.Viewer
                         ParamText ptext = new ParamText() {
                             Id = mpara.ParameterId,
                             Text = mpara.Text,
+                            MaxLength = para.ParameterRefObject.ParameterObject.ParameterTypeObject.SizeInBit / 8,
                             HasAccess = mpara.Access != AccessType.None,
                             Value = mpara.Value,
                             Conditions = conds,
@@ -679,14 +769,15 @@ namespace Kaenx.Creator.Viewer
 
                 case ParameterTypes.Picture:
                 {
+                    Kaenx.Creator.Models.Baggage bag = para.ParameterRefObject.ParameterObject.ParameterTypeObject.BaggageObject;
                     ParamPicture ppic = new ParamPicture(){
                         Id = mpara.ParameterId,
-                        BaggageId = para.ParameterRefObject.ParameterObject.ParameterTypeObject.BaggageUId,
+                        BaggageId = $"{bag.TargetPath}-{bag.Name}{bag.Extension}",
                         Text = mpara.Text,
                         HasAccess = mpara.Access != AccessType.None,
                         Value = mpara.Value,
                         Conditions = conds,
-                            DisplayOrder = para.ParameterRefObject.DisplayOrder
+                        DisplayOrder = para.ParameterRefObject.DisplayOrder
                     };
                     block.Parameters.Add(ppic);
                     break;
@@ -920,10 +1011,11 @@ namespace Kaenx.Creator.Viewer
             return bmod;
         }
 
-        private string GetDefaultLang(ObservableCollection<Translation> text)
+        private string GetDefaultLang(ObservableCollection<Translation> trans)
         {
-            if(text == null) return "";
-            return text.Single(t => t.Language.CultureCode == _langCode).Text;
+            if(trans == null) return "";
+            string text = trans.Single(t => t.Language.CultureCode == _langCode).Text;
+            return text == "$no_export$" ? "" : text;
         }
 
 

@@ -40,6 +40,9 @@
     <Resource Include="Assets\Images\OpenKNX.png" />
     <Resource Include="Assets\Images\Controls\ArrowUp.png" />
     <Resource Include="Assets\Images\Controls\ArrowDown.png" />
+    <Resource Include="Assets\Viewer\error.png" />
+    <Resource Include="Assets\Viewer\information.png" />
+
     <Resource Include="logo.ico" />
     <None Update="Templates\Minimal.temp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

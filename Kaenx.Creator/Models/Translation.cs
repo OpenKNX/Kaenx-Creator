@@ -32,8 +32,8 @@ namespace Kaenx.Creator.Models
         {
             get {
                 if(Text.Length < 100)
-                    return Text;
-                return Text.Substring(0, 100) + "...";
+                    return Text.Replace("\r\n", "");
+                return Text.Substring(0, 100).Replace("\r\n", " ") + "...";
             }
         }
 
