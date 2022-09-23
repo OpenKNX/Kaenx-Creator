@@ -101,11 +101,11 @@
                 </StackPanel>
             </HeaderedContentControl>
 
-            <HeaderedContentControl Header="{x:Static p:Resources.help_edit}" Visibility="{Binding SelectedItem.Text, ElementName=TextGrid, Converter={StaticResource EmptyToVis}, FallbackValue=Collapsed}">
+            <HeaderedContentControl Header="{x:Static p:Resources.help_edit}" Visibility="{Binding SelectedItem, ElementName=TextGrid, Converter={StaticResource EmptyToVis}, FallbackValue=Collapsed}">
                 <TextBox AcceptsReturn="True" MaxHeight="250" Text="{Binding SelectedItem.Text, ElementName=TextGrid, UpdateSourceTrigger=PropertyChanged}" />
             </HeaderedContentControl>
             
-            <HeaderedContentControl Header="{x:Static p:Resources.help_preview}" Visibility="{Binding SelectedItem.Text, ElementName=TextGrid, Converter={StaticResource EmptyToVis}, FallbackValue=Collapsed}">
+            <HeaderedContentControl Header="{x:Static p:Resources.help_preview}" Visibility="{Binding SelectedItem, ElementName=TextGrid, Converter={StaticResource EmptyToVis}, FallbackValue=Collapsed}">
                 <Border BorderThickness="1" BorderBrush="Gray">
                     <mdxam:MarkdownScrollViewer Markdown="{Binding SelectedItem.Text, ElementName=TextGrid}" Margin="5" />
                 </Border>
