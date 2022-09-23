@@ -208,7 +208,7 @@ namespace Kaenx.Creator.Classes {
 
                         case ParameterTypes.Picture:
                             if(ptype.BaggageObject == null)
-                                actions.Add(new PublishAction() { Text = $"    ParameterTyp Picture für {ptype.Name} ({ptype.UId}) ist kein Baggage zugeordnet", State = PublishState.Warning });
+                                actions.Add(new PublishAction() { Text = $"    ParameterTyp Picture für {ptype.Name} ({ptype.UId}) ist kein Baggage zugeordnet", State = PublishState.Fail, Item = ptype });
                             break;
 
                         case ParameterTypes.None:
@@ -293,7 +293,8 @@ namespace Kaenx.Creator.Classes {
         {
             Module mod = vbase as Module;
             //TODO check languages from Texts
-            
+            //TODO check hexvalue from parameter with parameertype color
+
             foreach(Parameter para in vbase.Parameters) {
                 if(para.ParameterTypeObject == null) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Kein ParameterTyp ausgewählt", State = PublishState.Fail, Item = para, Module = mod });
                 else {
@@ -329,6 +330,23 @@ namespace Kaenx.Creator.Classes {
                         case ParameterTypes.Picture:
                         case ParameterTypes.None:
                         case ParameterTypes.IpAddress:
+                            break;
+
+                        case ParameterTypes.Color:
+                            Regex reg = null;
+                            switch(para.ParameterTypeObject.UIHint)
+                            {
+                                case "RGB":
+                                case "HSV":
+                                    reg = new Regex("([0-9a-fA-F]{6,6})");
+                                    break;
+                                    
+                                case "RGBW":
+                                    reg = new Regex("([0-9a-fA-F]{8,8})");
+                                    break;
+                            }
+                            if(reg != null && !reg.IsMatch(para.Value))
+                                actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) ist keine gültiger Hexwert für {para.ParameterTypeObject.UIHint}", State = PublishState.Fail, Item = para, Module = mod });
                             break;
                     }
                 }
@@ -408,6 +426,61 @@ namespace Kaenx.Creator.Classes {
                         }
                     }
 
+                    if(para.OverwriteValue)
+                    {
+                        switch(ptype.Type) {
+                            case ParameterTypes.Text:
+                                if((para.Value.Length*8) > ptype.SizeInBit) actions.Add(new PublishAction() { Text = $"    ParameterRef {para.Name} ({para.UId}): Wert benötigt mehr Speicher ({(para.Value.Length*8)}) als verfügbar ({ptype.SizeInBit}) ist", State = PublishState.Fail, Item = para, Module = mod });
+                                break;
+
+                            case ParameterTypes.Enum:
+                                int paraval2;
+                                if(!int.TryParse(para.Value, out paraval2)) actions.Add(new PublishAction() { Text = $"    ParameterRef {para.Name} ({para.UId}): Wert ({para.Value}) ist keine gültige Zahl", State = PublishState.Fail, Item = para, Module = mod });
+                                else {
+                                    if(!ptype.Enums.Any(e => e.Value == paraval2))
+                                        actions.Add(new PublishAction() { Text = $"    ParameterRef {para.Name} ({para.UId}): Wert ({para.Value}) ist nicht als option in Enum vorhanden", State = PublishState.Fail, Item = para, Module = mod });
+                                }
+                                break;
+
+                            case ParameterTypes.NumberUInt:
+                            case ParameterTypes.NumberInt:
+                                int paraval;
+                                if(!int.TryParse(para.Value, out paraval)) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) ist keine gültige Zahl", State = PublishState.Fail, Item = para, Module = mod });
+                                else {
+                                    if(paraval > ptype.Max || paraval < ptype.Min)
+                                        actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) fällt nicht in Bereich {ptype.Min}-{ptype.Max}", State = PublishState.Fail, Item = para, Module = mod });
+                                }
+                                break;
+
+                            case ParameterTypes.Float_DPT9:
+                            case ParameterTypes.Float_IEEE_Single:
+                            case ParameterTypes.Float_IEEE_Double:
+
+
+                            case ParameterTypes.Picture:
+                            case ParameterTypes.None:
+                            case ParameterTypes.IpAddress:
+                                break;
+                                
+                            case ParameterTypes.Color:
+                                Regex reg = null;
+                                switch(para.ParameterObject.ParameterTypeObject.UIHint)
+                                {
+                                    case "RGB":
+                                    case "HSV":
+                                        reg = new Regex("([0-9a-fA-F]{6,6})");
+                                        break;
+                                        
+                                    case "RGBW":
+                                        reg = new Regex("([0-9a-fA-F]{8,8})");
+                                        break;
+                                }
+                                if(reg != null && !reg.IsMatch(para.Value))
+                                    actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) ist keine gültiger Hexwert für {para.ParameterObject.ParameterTypeObject.UIHint}", State = PublishState.Fail, Item = para, Module = mod });
+                                break;
+                        }
+                    }
+
                     if(para.OverwriteSuffix)
                     {
                         if(!string.IsNullOrEmpty(para.Suffix.Single(t => t.Language.CultureCode == defaultLang).Text))
@@ -419,40 +492,7 @@ namespace Kaenx.Creator.Classes {
                         }
                     }
 
-                    switch(ptype.Type) {
-                        case ParameterTypes.Text:
-                            if((para.Value.Length*8) > ptype.SizeInBit) actions.Add(new PublishAction() { Text = $"    ParameterRef {para.Name} ({para.UId}): Wert benötigt mehr Speicher ({(para.Value.Length*8)}) als verfügbar ({ptype.SizeInBit}) ist", State = PublishState.Fail, Item = para, Module = mod });
-                            break;
-
-                        case ParameterTypes.Enum:
-                            int paraval2;
-                            if(!int.TryParse(para.Value, out paraval2)) actions.Add(new PublishAction() { Text = $"    ParameterRef {para.Name} ({para.UId}): Wert ({para.Value}) ist keine gültige Zahl", State = PublishState.Fail, Item = para, Module = mod });
-                            else {
-                                if(!ptype.Enums.Any(e => e.Value == paraval2))
-                                    actions.Add(new PublishAction() { Text = $"    ParameterRef {para.Name} ({para.UId}): Wert ({para.Value}) ist nicht als option in Enum vorhanden", State = PublishState.Fail, Item = para, Module = mod });
-                            }
-                            break;
-
-                        case ParameterTypes.NumberUInt:
-                        case ParameterTypes.NumberInt:
-                            int paraval;
-                            if(!int.TryParse(para.Value, out paraval)) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) ist keine gültige Zahl", State = PublishState.Fail, Item = para, Module = mod });
-                            else {
-                                if(paraval > ptype.Max || paraval < ptype.Min)
-                                    actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) fällt nicht in Bereich {ptype.Min}-{ptype.Max}", State = PublishState.Fail, Item = para, Module = mod });
-                            }
-                            break;
-
-                        case ParameterTypes.Float_DPT9:
-                        case ParameterTypes.Float_IEEE_Single:
-                        case ParameterTypes.Float_IEEE_Double:
-
-
-                        case ParameterTypes.Picture:
-                        case ParameterTypes.None:
-                        case ParameterTypes.IpAddress:
-                            break;
-                    }
+                    
                 }
             }
         
@@ -534,9 +574,6 @@ namespace Kaenx.Creator.Classes {
             }
         
             //TODO check union size fits parameter+offset
-
-            //TODO check ParameterBlockRename only in vers 11
-
 
             CheckDynamicItem(vbase.Dynamics[0], actions, ns, showOnlyErrors, mod);
         }

@@ -33,11 +33,15 @@ namespace Kaenx.Creator.Models
 
         public byte[] Data { get; set; }
 
+        BitmapImage image;
+        MemoryStream ms = null;
+
         public ImageSource Source
         {
             get {
-                BitmapImage image = new BitmapImage();
-                MemoryStream ms = new MemoryStream(Data);
+                if(ms != null) ms.Dispose();
+                ms = new MemoryStream(Data);
+                image = new BitmapImage();
                 image.BeginInit();
                 image.StreamSource = ms;
                 image.EndInit();

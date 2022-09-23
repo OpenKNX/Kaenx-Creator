@@ -1218,7 +1218,8 @@ namespace Kaenx.Creator.Classes
                 Argument arg = new Argument() {
                     UId = _uidCounter++,
                     Name = xarg.Attribute("Name").Value,
-                    Id = int.Parse(GetLastSplit(xarg.Attribute("Id").Value, 2))
+                    Id = int.Parse(GetLastSplit(xarg.Attribute("Id").Value, 2)),
+                    
                 };
                 vbase.Arguments.Add(arg);
             }
@@ -1622,6 +1623,11 @@ namespace Kaenx.Creator.Classes
                             int id1 = int.Parse(GetLastSplit(xarg.Attribute("RefId").Value, 2));
                             Argument arg = dmo.ModuleObject.Arguments.Single(a => a.Id == id1);
                             DynModuleArg darg = dmo.Arguments.Single(a => a.Argument == arg);
+                            darg.Type = xarg.Name.LocalName switch {
+                                "NumericArg" => ArgumentTypes.Numeric,
+                                "TextArg" => ArgumentTypes.Text,
+                                _ => throw new Exception("Not implemented ArgType: " + xarg.Name.LocalName)
+                            };
                             darg.Value = xarg.Attribute("Value").Value;
                         }
                         parent.Items.Add(dmo);

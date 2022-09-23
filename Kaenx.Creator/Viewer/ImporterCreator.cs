@@ -914,6 +914,13 @@ namespace Kaenx.Creator.Viewer
                 case Models.Dynamic.IDynWhen:
                     break;
 
+                case Models.Dynamic.DynAssign da:
+                    if(da._targetUId != -1)
+                        da.TargetObject = vbase.ParameterRefs.SingleOrDefault(p => p.UId == da._targetUId);
+                    if(string.IsNullOrEmpty(da.Value) && da._sourceUId != -1)
+                        da.SourceObject = vbase.ParameterRefs.SingleOrDefault(p => p.UId == da._sourceUId);
+                    break;
+
                 default:
                     throw new Exception("Not implemented copy " + item.GetType().ToString());
 

@@ -123,7 +123,7 @@ namespace Kaenx.Creator
                 Models.ParameterRef => 7,
                 Models.ComObject => 8,
                 Models.ComObjectRef => 9,
-                Models.Dynamic.IDynItems => 12,
+                Models.Dynamic.IDynItems => 13,
                 _ => -1
             };
 
