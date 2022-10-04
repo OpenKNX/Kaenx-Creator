@@ -686,7 +686,7 @@
                         </TextBlock>
 
                         <TextBlock Grid.Row="1" Grid.Column="2" HorizontalAlignment="Center">
-                            <Run Text="{x:Static p:Resources.tapps_loadp}" />
+                            <Run Text="{x:Static p:Resources.tapps_medium}" />
                             <Run Text="{Binding Mask.Mediums, Mode=OneWay}" />
                         </TextBlock>
 

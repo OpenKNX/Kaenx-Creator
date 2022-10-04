@@ -24,7 +24,8 @@ namespace Kaenx.Creator.Models
                 string mediums = "";
                 foreach(string type in MediumTypes.Split(' '))
                 {
-                    mediums += "/" + MediumTypeNames[type];
+                    if(MediumTypeNames.ContainsKey(type))
+                        mediums += "/" + MediumTypeNames[type];
                 }
                 return mediums.Substring(1);
             }

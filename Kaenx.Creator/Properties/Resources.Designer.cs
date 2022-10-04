@@ -614,7 +614,7 @@ namespace Kaenx.Creator.Properties {
         /// </summary>
         public static string tapps_loadp {
             get {
-                return ResourceManager.GetString("tapps_lodap", resourceCulture);
+                return ResourceManager.GetString("tapps_loadp", resourceCulture);
             }
         }
         
@@ -2118,6 +2118,12 @@ namespace Kaenx.Creator.Properties {
         public static string help_preview {
             get {
                 return ResourceManager.GetString("help_preview", resourceCulture);
+            }
+        }
+        
+        public static string tapps_medium {
+            get {
+                return ResourceManager.GetString("tapps_medium", resourceCulture);
             }
         }
     }

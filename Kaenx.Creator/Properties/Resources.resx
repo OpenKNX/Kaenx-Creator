@@ -362,7 +362,7 @@
     <comment/>
   </data>
   <data name="tapps_loadp" xml:space="preserve">
-    <value>Ladeprozedur</value>
+    <value>Ladeprozedur:</value>
     <comment/>
   </data>
   <data name="gen_copy" xml:space="preserve">
@@ -1095,6 +1095,10 @@
   </data>
   <data name="parat_uihint_hsv" xml:space="preserve">
     <value>HSV</value>
+    <comment/>
+  </data>
+  <data name="tapps_medium" xml:space="preserve">
+    <value>Medium:</value>
     <comment/>
   </data>
 </root>

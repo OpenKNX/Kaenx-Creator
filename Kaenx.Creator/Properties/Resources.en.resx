@@ -362,7 +362,7 @@
     <comment/>
   </data>
   <data name="tapps_loadp" xml:space="preserve">
-    <value>Load Procedure</value>
+    <value>Load Procedure:</value>
     <comment/>
   </data>
   <data name="gen_copy" xml:space="preserve">
@@ -1119,6 +1119,10 @@
   </data>
   <data name="help_preview" xml:space="preserve">
     <value>Preview Helptext</value>
+    <comment/>
+  </data>
+  <data name="tapps_medium" xml:space="preserve">
+    <value>Medium:</value>
     <comment/>
   </data>
 </root>

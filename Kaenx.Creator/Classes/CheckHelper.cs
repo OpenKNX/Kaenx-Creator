@@ -111,6 +111,12 @@ namespace Kaenx.Creator.Classes {
             foreach(AppVersion vers in versions) {
                 Application app = apps.Single(a => a.Versions.Contains(vers));
                 actions.Add(new PublishAction() { Text = $"Prüfe Applikation '{app.NameText}' Version '{vers.NameText}'" });
+
+                if(string.IsNullOrEmpty(app.Mask.MediumTypes))
+                {
+                    actions.Add(new PublishAction() { Text = $"Applikation '{app.NameText}': MediumTypes nicht gesetzt. Löschen Sie Data/maskversion.json und starten Sie die Anwendung neu.", State = PublishState.Fail });
+                }
+                    
                 
                 if (vers.NamespaceVersion > highestNS)
                     highestNS = vers.NamespaceVersion;
