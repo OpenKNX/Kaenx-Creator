@@ -229,15 +229,15 @@ namespace Kaenx.Creator.Classes
 
                     case Models.ParameterTypes.NumberUInt:
                     {       
-                        ptype.SizeInBit = (int)Math.Ceiling(Math.Log2(ptype.Max));
+                        ptype.SizeInBit = (int)Math.Ceiling(Math.Log2(uint.Parse(ptype.Max)));
                         break;
                     }
 
                     case Models.ParameterTypes.NumberInt:
                     {
-                        double b = Math.Log2(ptype.Min * (-1));
+                        double b = Math.Log2(int.Parse(ptype.Min) * (-1));
                         int bin1 = (int)Math.Ceiling(b) + 1;
-                        int bin2 = Convert.ToString((int)ptype.Max, 2).Length;
+                        int bin2 = Convert.ToString(int.Parse(ptype.Max), 2).Length;
                         ptype.SizeInBit = (bin1 > bin2) ? bin1 : bin2;
                         break;
                     }

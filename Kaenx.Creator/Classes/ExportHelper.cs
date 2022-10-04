@@ -210,7 +210,7 @@ namespace Kaenx.Creator.Classes
                             }
                             xcontent.SetAttributeValue("minInclusive", type.Min);
                             xcontent.SetAttributeValue("maxInclusive", type.Max);
-                            if(type.Increment != 1)
+                            if(type.Increment != "1")
                                 xcontent.SetAttributeValue("Increment", type.Increment);
                             if(type.UIHint != "None")
                                 xcontent.SetAttributeValue("UIHint", type.UIHint);

@@ -711,9 +711,9 @@ namespace Kaenx.Creator.Viewer
                                 Value = mpara.Value,
                                 Default = mpara.Value,
                                 Conditions = conds,
-                                Increment = para.ParameterRefObject.ParameterObject.ParameterTypeObject.Increment,
-                                Minimum = para.ParameterRefObject.ParameterObject.ParameterTypeObject.Min,
-                                Maximum = para.ParameterRefObject.ParameterObject.ParameterTypeObject.Max,
+                                Increment = double.Parse(para.ParameterRefObject.ParameterObject.ParameterTypeObject.Increment),
+                                Minimum = double.Parse(para.ParameterRefObject.ParameterObject.ParameterTypeObject.Min),
+                                Maximum = double.Parse(para.ParameterRefObject.ParameterObject.ParameterTypeObject.Max),
                                 SuffixText = GetDefaultLang(para.ParameterRefObject.ParameterObject.Suffix),
                                 DisplayOrder = para.ParameterRefObject.DisplayOrder
                         };
@@ -726,9 +726,9 @@ namespace Kaenx.Creator.Viewer
                                 Value = mpara.Value,
                                 Default = mpara.Value,
                                 Conditions = conds,
-                                Increment = para.ParameterRefObject.ParameterObject.ParameterTypeObject.Increment,
-                                Minimum = para.ParameterRefObject.ParameterObject.ParameterTypeObject.Min,
-                                Maximum = para.ParameterRefObject.ParameterObject.ParameterTypeObject.Max,
+                                Increment = double.Parse(para.ParameterRefObject.ParameterObject.ParameterTypeObject.Increment),
+                                Minimum = double.Parse(para.ParameterRefObject.ParameterObject.ParameterTypeObject.Min),
+                                Maximum = double.Parse(para.ParameterRefObject.ParameterObject.ParameterTypeObject.Max),
                                 SuffixText = GetDefaultLang(para.ParameterRefObject.ParameterObject.Suffix),
                                 DisplayOrder = para.ParameterRefObject.DisplayOrder
                         };

@@ -133,7 +133,7 @@ namespace Kaenx.Creator.Classes {
                 foreach(ParameterType ptype in vers.ParameterTypes) {
                     long maxsize = (long)Math.Pow(2, ptype.SizeInBit);
         
-                    if(ptype.UIHint == "CheckBox" && (ptype.Min != 0 || ptype.Max != 1))
+                    if(ptype.UIHint == "CheckBox" && (ptype.Min != "0" || ptype.Max != "1"))
                         actions.Add(new PublishAction() { Text = $"    ParameterType Text {ptype.Name} ({ptype.UId}): Wenn UIHint Checkbox ist, ist Min=0 und Max=1 erforderlich", State = PublishState.Fail, Item = ptype });
                             
                     switch(ptype.Type) {
@@ -176,39 +176,51 @@ namespace Kaenx.Creator.Classes {
                             break;
 
                         case ParameterTypes.NumberUInt:
+                        {
+                            long min, max;
+                            if(!long.TryParse(ptype.Max, out max)) actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Maximum ist keine Ganzzahl", State = PublishState.Fail, Item = ptype });
+                            if(!long.TryParse(ptype.Max, out min)) actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Minimum ist keine Ganzzahl", State = PublishState.Fail, Item = ptype });
+
                             if(!ptype.IsSizeManual)
                             {
-                                string bin = Convert.ToString((int)ptype.Max, 2);
+                                string bin = Convert.ToString(max, 2);
                                 ptype.SizeInBit = bin.Length;
                                 maxsize = (int)Math.Pow(2, ptype.SizeInBit);
                             }
-                            if(ptype.Min < 0) actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Min kann nicht kleiner als 0 sein", State = PublishState.Fail, Item = ptype });
-                            if(ptype.Min > ptype.Max) actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Min ({ptype.Min}) ist größer als Max ({ptype.Max})", State = PublishState.Fail, Item = ptype });
-                            if(ptype.Max >= maxsize) actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Max ({ptype.Max}) kann nicht größer als das Maximum ({maxsize-1}) sein", State = PublishState.Fail, Item = ptype });
+                            if(min < 0) actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Min kann nicht kleiner als 0 sein", State = PublishState.Fail, Item = ptype });
+                            if(min > max) actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Min ({ptype.Min}) ist größer als Max ({ptype.Max})", State = PublishState.Fail, Item = ptype });
+                            if(max >= maxsize) actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Max ({ptype.Max}) kann nicht größer als das Maximum ({maxsize-1}) sein", State = PublishState.Fail, Item = ptype });
                             break;
+                        }
 
                         case ParameterTypes.NumberInt:
+                        {
+                            long min, max;
+                            if(!long.TryParse(ptype.Max, out max)) actions.Add(new PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Maximum ist keine Ganzzahl", State = PublishState.Fail, Item = ptype });
+                            if(!long.TryParse(ptype.Max, out min)) actions.Add(new PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Minimum ist keine Ganzzahl", State = PublishState.Fail, Item = ptype });
+
                             maxsize = (long)Math.Ceiling(maxsize / 2.0);
                             if(!ptype.IsSizeManual)
                             {
-                                int z = ((int)ptype.Min) * (-1);
-                                if(z < (ptype.Max - 1)) z = (int)ptype.Max;
+                                long z = min * (-1);
+                                if(z < (max - 1)) z = min;
                                 string y = z.ToString().Replace("-", "");
                                 string bin = Convert.ToString(int.Parse(y), 2);
-                                if(z == (ptype.Min * (-1))) bin += "1";
+                                if(z == (min * (-1))) bin += "1";
                                 if(!z.ToString().StartsWith("-")) bin = "1" + bin;
                                 ptype.SizeInBit = bin.Length;
                                 maxsize = (int)Math.Pow(2, ptype.SizeInBit);
                             }
-                            if(ptype.Min > ptype.Max) actions.Add(new PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Min ({ptype.Min}) ist größer als Max ({ptype.Max})", State = PublishState.Fail, Item = ptype });
-                            if(ptype.Max > ((maxsize)-1)) actions.Add(new PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Max ({ptype.Max}) kann nicht größer als das Maximum ({(maxsize/2)-1}) sein", State = PublishState.Fail, Item = ptype });
-                            if(ptype.Min < ((maxsize)*(-1))) actions.Add(new PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Min ({ptype.Min}) kann nicht kleiner als das Minimum ({(maxsize/2)*(-1)}) sein", State = PublishState.Fail, Item = ptype });
+                            if(min > max) actions.Add(new PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Min ({ptype.Min}) ist größer als Max ({ptype.Max})", State = PublishState.Fail, Item = ptype });
+                            if(max > ((maxsize)-1)) actions.Add(new PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Max ({ptype.Max}) kann nicht größer als das Maximum ({(maxsize/2)-1}) sein", State = PublishState.Fail, Item = ptype });
+                            if(min < ((maxsize)*(-1))) actions.Add(new PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Min ({ptype.Min}) kann nicht kleiner als das Minimum ({(maxsize/2)*(-1)}) sein", State = PublishState.Fail, Item = ptype });
                             break;
+                        }
 
                         case ParameterTypes.Float_DPT9:
                         case ParameterTypes.Float_IEEE_Single:
                         case ParameterTypes.Float_IEEE_Double:
-
+                            actions.Add(new PublishAction() { Text = $"    ParameterType Float {ptype.Name} ({ptype.UId}): Aktuell keine Überprüfung vorhanden", State = PublishState.Warning, Item = ptype });
                             break;
 
                         case ParameterTypes.Picture:
@@ -322,7 +334,7 @@ namespace Kaenx.Creator.Classes {
                             int paraval;
                             if(!int.TryParse(para.Value, out paraval)) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) ist keine gültige Zahl", State = PublishState.Fail, Item = para, Module = mod });
                             else {
-                                if(paraval > para.ParameterTypeObject.Max || paraval < para.ParameterTypeObject.Min)
+                                if(paraval > long.Parse(para.ParameterTypeObject.Max) || paraval < long.Parse(para.ParameterTypeObject.Min))
                                     actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) fällt nicht in Bereich {para.ParameterTypeObject.Min}-{para.ParameterTypeObject.Max}", State = PublishState.Fail, Item = para, Module = mod });
                             }
                             break;
@@ -449,10 +461,10 @@ namespace Kaenx.Creator.Classes {
 
                             case ParameterTypes.NumberUInt:
                             case ParameterTypes.NumberInt:
-                                int paraval;
-                                if(!int.TryParse(para.Value, out paraval)) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) ist keine gültige Zahl", State = PublishState.Fail, Item = para, Module = mod });
+                                long paraval;
+                                if(!long.TryParse(para.Value, out paraval)) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) ist keine gültige Zahl", State = PublishState.Fail, Item = para, Module = mod });
                                 else {
-                                    if(paraval > ptype.Max || paraval < ptype.Min)
+                                    if(paraval > long.Parse(ptype.Max) || paraval < long.Parse(ptype.Min))
                                         actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) fällt nicht in Bereich {ptype.Min}-{ptype.Max}", State = PublishState.Fail, Item = para, Module = mod });
                                 }
                                 break;

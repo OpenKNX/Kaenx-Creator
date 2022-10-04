@@ -76,9 +76,9 @@ namespace Kaenx.Creator.Models
             set { _baggageUId = value; }
         }
 
-        public float Min { get; set; } = 0;
-        public float Max { get; set; } = 255;
-        public float Increment { get; set; } = 1.0f;
+        public string Min { get; set; } = "0";
+        public string Max { get; set; } = "255";
+        public string Increment { get; set; } = "1";
 
         public ObservableCollection<ParameterTypeEnum> Enums {get;set;} = new ObservableCollection<ParameterTypeEnum>();
 

@@ -637,13 +637,30 @@ namespace Kaenx.Creator.Classes
                             _ => throw new Exception("Unbekannter TypeNumber Type: " + xsub.Attribute("Type").Value)
                         };
                         ptype.SizeInBit = int.Parse(xsub.Attribute("SizeInBit").Value);
-                        ptype.Min = float.Parse(xsub.Attribute("minInclusive").Value);
-                        ptype.Max = float.Parse(xsub.Attribute("maxInclusive").Value);
+                        ptype.Min = xsub.Attribute("minInclusive").Value;
+                        ptype.Max = xsub.Attribute("maxInclusive").Value;
                         if(xsub.Attribute("UIHint") != null)
                             ptype.UIHint = xsub.Attribute("UIHint").Value;
                         if(xsub.Attribute("Increment") != null)
-                            ptype.Increment = int.Parse(xsub.Attribute("Increment").Value);
+                            ptype.Increment = xsub.Attribute("Increment").Value;
                         //TODO displayoffset & displayfactor ab xsd 20
+                        break;
+
+                    case "TypeFloat":
+                        ptype.Type = xsub.Attribute("Encoding").Value switch
+                        {
+                            "DPT 9" => ParameterTypes.Float_DPT9,
+                            "IEEE-754 Single" => ParameterTypes.Float_IEEE_Single,
+                            "IEEE-754 Double" => ParameterTypes.Float_IEEE_Double,
+                            _ => throw new Exception("Unbekannter TypeFloat Type: " + xsub.Attribute("Type").Value)
+                        };
+                        ptype.SizeInBit = 16;
+                        ptype.Min = xsub.Attribute("minInclusive").Value.Replace('.', ',');
+                        ptype.Max = xsub.Attribute("maxInclusive").Value.Replace('.', ',');
+                        if(xsub.Attribute("UIHint") != null)
+                            ptype.UIHint = xsub.Attribute("UIHint").Value;
+                        if(xsub.Attribute("Increment") != null)
+                            ptype.Increment = xsub.Attribute("Increment").Value.Replace('.', ',');
                         break;
 
                     case "TypeRestriction":
@@ -677,23 +694,6 @@ namespace Kaenx.Creator.Classes
                             "IPV6" => 2,
                             _ => 0
                         };
-                        break;
-
-                    case "TypeFloat":
-                        ptype.Type = xsub.Attribute("Encoding").Value switch
-                        {
-                            "DPT 9" => ParameterTypes.Float_DPT9,
-                            "IEEE-754 Single" => ParameterTypes.Float_IEEE_Single,
-                            "IEEE-754 Double" => ParameterTypes.Float_IEEE_Double,
-                            _ => throw new Exception("Unbekannter TypeFloat Type: " + xsub.Attribute("Type").Value)
-                        };
-                        ptype.SizeInBit = 16;
-                        ptype.Min = float.Parse(xsub.Attribute("minInclusive").Value.Replace('.', ','));
-                        ptype.Max = float.Parse(xsub.Attribute("maxInclusive").Value.Replace('.', ','));
-                        if(xsub.Attribute("UIHint") != null)
-                            ptype.UIHint = xsub.Attribute("UIHint").Value;
-                        if(xsub.Attribute("Increment") != null)
-                            ptype.Increment = float.Parse(xsub.Attribute("Increment").Value.Replace('.', ','));
                         break;
 
                     case "TypePicture":
