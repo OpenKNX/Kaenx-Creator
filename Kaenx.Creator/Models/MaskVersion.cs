@@ -6,10 +6,29 @@ namespace Kaenx.Creator.Models
 {
     public class MaskVersion
     {
+        private static Dictionary<string, string> MediumTypeNames = new Dictionary<string, string>() {
+            { "MT-0", "Twisted Pair"},
+            { "MT-1", "PowerLine"},
+            { "MT-2", "KNX RF"},
+            { "MT-5", "KNXnet/IP"}
+        };
+
         public string Id { get; set; }
         public MemoryTypes Memory { get; set; }
         public ProcedureTypes Procedure { get; set; }
         public List<Procedure> Procedures {get;set;} = new List<Procedure>();
+
+        public string MediumTypes { get; set; } = "";
+        public string Mediums {
+            get {
+                string mediums = "";
+                foreach(string type in MediumTypes.Split(' '))
+                {
+                    mediums += "/" + MediumTypeNames[type];
+                }
+                return mediums.Substring(1);
+            }
+        }
     }
 
     public class Procedure {

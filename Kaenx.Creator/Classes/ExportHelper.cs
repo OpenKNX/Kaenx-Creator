@@ -589,7 +589,7 @@ namespace Kaenx.Creator.Classes
 
                         XElement xh2p = new XElement(Get("Hardware2Program"));
                         xh2p.SetAttributeValue("Id", hid + "_HP-" + appidx);
-                        xh2p.SetAttributeValue("MediumTypes", "MT-0");
+                        xh2p.SetAttributeValue("MediumTypes", app.Mask.MediumTypes);
 
                         HardwareIds.Add(hard.Version + "-" + app.Number + "-" + ver.Number, hid + "_HP-" + appidx);
 

@@ -639,9 +639,10 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
                             <ColumnDefinition />
+                            <ColumnDefinition />
                         </Grid.ColumnDefinitions>
 
-                        <StackPanel Grid.ColumnSpan="2">
+                        <StackPanel Grid.ColumnSpan="3">
                             <StackPanel.Resources>
                                 <Style TargetType="HeaderedContentControl">
                                     <Setter Property="Margin" Value="5" />
@@ -684,11 +685,16 @@
                             <Run Text="{Binding Mask.Procedure}" />
                         </TextBlock>
 
-                        <Separator Grid.Row="2" Grid.ColumnSpan="2" Margin="0 10 0 4" />
+                        <TextBlock Grid.Row="1" Grid.Column="2" HorizontalAlignment="Center">
+                            <Run Text="{x:Static p:Resources.tapps_loadp}" />
+                            <Run Text="{Binding Mask.Mediums, Mode=OneWay}" />
+                        </TextBlock>
 
-                        <Button Grid.Row="3" Grid.ColumnSpan="2" Content="{x:Static p:Resources.tapps_addv}" Click="ClickAddVersion" Margin="5 5 5 2" IsEnabled="{Binding Mask, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
+                        <Separator Grid.Row="2" Grid.ColumnSpan="3" Margin="0 10 0 4" />
+
+                        <Button Grid.Row="3" Grid.ColumnSpan="3" Content="{x:Static p:Resources.tapps_addv}" Click="ClickAddVersion" Margin="5 5 5 2" IsEnabled="{Binding Mask, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
                         
-                        <ListView x:Name="VersionList" Grid.Row="4" Grid.ColumnSpan="4" ItemsSource="{Binding Versions}" DisplayMemberPath="NameText" Margin="5 5 5 0">
+                        <ListView x:Name="VersionList" Grid.Row="4" Grid.ColumnSpan="3" ItemsSource="{Binding Versions}" DisplayMemberPath="NameText" Margin="5 5 5 0">
                             <ListView.Resources>
                                 <ContextMenu x:Key="ContextMenu">
                                     <MenuItem Header="{x:Static p:Resources.tapps_openv}" Click="ClickOpenViewer" />

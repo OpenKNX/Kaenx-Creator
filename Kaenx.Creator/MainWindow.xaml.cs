@@ -64,7 +64,6 @@ namespace Kaenx.Creator
             new Models.EtsVersion(12, "ETS 5.0 (12)", "5.0.204.12971"),
             new Models.EtsVersion(13, "ETS 5.1 (13)", "5.1.84.17602"),
             new Models.EtsVersion(14, "ETS 5.6 (14)", "5.6.241.33672"),
-            //new Models.EtsVersion(20, "ETS 5.7 (20)", "5.7.293.38537"),
             new Models.EtsVersion(20, "ETS 5.7 (20)", "5.7"),
             new Models.EtsVersion(21, "ETS 6.0 (21)", "6.0")
         };
@@ -263,6 +262,8 @@ namespace Kaenx.Creator
                 {
                     Models.MaskVersion mask = new Models.MaskVersion();
                     mask.Id = xmask.Attribute("Id").Value;
+                    mask.MediumTypes = xmask.Attribute("MediumTypeRefId").Value;
+                    if(xmask.Attribute("OtherMediumTypeRefId") != null) mask.MediumTypes += " " + xmask.Attribute("OtherMediumTypeRefId").Value;
 
                     string eleStr = xmask.ToString();
                     if (eleStr.Contains("<Procedure ProcedureType=\"Load\""))
