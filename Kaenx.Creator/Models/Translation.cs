@@ -31,6 +31,7 @@ namespace Kaenx.Creator.Models
         public string Preview
         {
             get {
+                if(Text == null) return "";
                 if(Text.Length < 100)
                     return Text.Replace("\r\n", "");
                 return Text.Substring(0, 100).Replace("\r\n", " ") + "...";

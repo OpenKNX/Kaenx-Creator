@@ -734,11 +734,15 @@ namespace Kaenx.Creator.Classes {
 
                         for(int i = 0; i < ver["Parameters"].Count(); i++)
                         {
-                            Parameter para = ver["Parameters"][i].ToObject<Parameter>();
-                            para.Suffix = new ObservableCollection<Translation>();
+                            string oldSuffix = "";
+                            List<Translation> trans = new List<Translation>();
+                            if(!string.IsNullOrEmpty(ver["Parameters"][i]["Suffix"].ToString()))
+                            {
+                                oldSuffix = ver["Parameters"][i]["Suffix"].ToString();
+                            }
                             foreach(Language lang in langs)
-                                para.Suffix.Add(new Translation(lang, ver["Parameters"][i]["Suffix"].Value<string>()));
-                            ver["Parameters"][i] = JObject.FromObject(para);
+                                trans.Add(new Translation(lang, oldSuffix));
+                            ver["Parameters"][i]["Suffix"] = JValue.FromObject(trans);
                         }
                         
                         for(int i = 0; i < ver["ParameterRefs"].Count(); i++)
