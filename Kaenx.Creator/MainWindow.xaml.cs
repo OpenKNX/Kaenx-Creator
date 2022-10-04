@@ -447,9 +447,7 @@ namespace Kaenx.Creator
             Models.Application app = AppList.SelectedItem as Models.Application;
             Models.AppVersion ver = (sender as MenuItem).DataContext as Models.AppVersion;
 
-            string json = Newtonsoft.Json.JsonConvert.SerializeObject(ver, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
-
-            Models.AppVersion copy = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.AppVersion>(json, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
+            Models.AppVersion copy = ver.Copy();
             copy.Number += 1;
             copy.Name += " Kopie";
             app.Versions.Add(copy);

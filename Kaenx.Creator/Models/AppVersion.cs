@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Text;
+using System.Linq;
 
 namespace Kaenx.Creator.Models
 {
@@ -236,6 +236,152 @@ namespace Kaenx.Creator.Models
         public void Changed(string name)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+
+        public AppVersion Copy()
+        {
+            string json = Newtonsoft.Json.JsonConvert.SerializeObject(this, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
+
+            AppVersion clone = Newtonsoft.Json.JsonConvert.DeserializeObject<AppVersion>(json, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
+
+            /*
+        public ObservableCollection<Union> Unions { get; set; } = new ObservableCollection<Union>();
+        public ObservableCollection<Language> Languages { get; set; } = new ObservableCollection<Language>();
+        public ObservableCollection<Helptext> Helptexts { get; set; } = new ObservableCollection<Helptext>();
+        public List<IDynamicMain> Dynamics { get; set; } = new List<IDynamicMain>();
+            */
+            
+            CopyVersion(clone, clone);
+            
+            foreach(Module mod in clone.Modules)
+            {
+                if(mod._parameterBaseOffsetUId != -1)
+                    mod.ParameterBaseOffset = mod.Arguments.Single(a => a.UId == mod._parameterBaseOffsetUId);
+
+                if(mod._comObjectBaseNumberUId != -1)
+                    mod.ComObjectBaseNumber = mod.Arguments.Single(a => a.UId == mod._comObjectBaseNumberUId);
+
+                CopyVersion(mod, clone);
+            }
+
+            return clone;
+        }
+
+        private void CopyVersion(IVersionBase vbase, AppVersion vers)
+        {
+            foreach(Parameter para in vbase.Parameters)
+            {
+                if(para._parameterType != -1)
+                    para.ParameterTypeObject = vers.ParameterTypes.Single(t => t.UId == para._parameterType);
+
+                if(para._memoryId != -1)
+                    para.SaveObject = vers.Memories.Single(m => m.UId == para._memoryId);
+            }
+
+            foreach(ParameterRef para in vbase.ParameterRefs)
+            {
+                if(para._parameter != -1)
+                    para.ParameterObject = vbase.Parameters.Single(t => t.UId == para._parameter);
+            }
+
+            foreach(ComObject com in vbase.ComObjects)
+            {
+                if(vbase.IsComObjectRefAuto && com._parameterRef != -1)
+                    com.ParameterRefObject = vbase.ParameterRefs.Single(p => p.UId == com._parameterRef);
+            }
+
+            foreach(ComObjectRef com in vbase.ComObjectRefs)
+            {
+                if(com._comObject != -1)
+                    com.ComObjectObject = vbase.ComObjects.Single(c => c.UId == com._comObject);
+
+                if(!vbase.IsComObjectRefAuto && com._parameterRef != -1)
+                    com.ParameterRefObject = vbase.ParameterRefs.Single(p => p.UId == com._parameterRef);
+            }
+
+            vbase.Dynamics[0] = (Models.Dynamic.DynamicMain)Dynamics[0].Copy();
+
+            foreach(Models.Dynamic.IDynItems item in vbase.Dynamics[0].Items)
+            {
+                CopyDynamicItem(item, vbase);
+            }
+        }
+
+        //!!!! Also change in ImportCreator.cs
+        private void CopyDynamicItem(Models.Dynamic.IDynItems item, IVersionBase vbase)
+        {
+            switch(item)
+            {
+                case Models.Dynamic.DynChannel dc:
+                {
+                    if(dc.UseTextParameter && dc.ParameterRef != -1)
+                        dc.ParameterRefObject = vbase.ParameterRefs.SingleOrDefault(p => p.UId == dc.ParameterRef);
+                    break;
+                }
+
+                case Models.Dynamic.DynParaBlock dpb:
+                {
+                    if(dpb.UseParameterRef && dpb.ParameterRef != -1)
+                        dpb.ParameterRefObject = vbase.ParameterRefs.SingleOrDefault(p => p.UId == dpb.ParameterRef);
+                    if(dpb.UseTextParameter && dpb.TextRef != -1)
+                        dpb.ParameterRefObject = vbase.ParameterRefs.SingleOrDefault(p => p.UId == dpb.TextRef);
+                    break;
+                }
+
+                case Models.Dynamic.DynChooseBlock dch:
+                {
+                    if(dch.ParameterRef != -1)
+                        dch.ParameterRefObject = vbase.ParameterRefs.SingleOrDefault(p => p.UId == dch.ParameterRef);
+                    break;
+                }
+
+                case Models.Dynamic.DynChooseChannel dch:
+                {
+                    if(dch.ParameterRef != -1)
+                        dch.ParameterRefObject = vbase.ParameterRefs.SingleOrDefault(p => p.UId == dch.ParameterRef);
+                    break;
+                }
+
+                case Models.Dynamic.DynParameter dp:
+                {
+                    if(dp.ParameterRef != -1)
+                        dp.ParameterRefObject = vbase.ParameterRefs.SingleOrDefault(p => p.UId == dp.ParameterRef);
+                    break;
+                }
+
+                case Models.Dynamic.DynComObject dco:
+                {
+                    if(dco.ComObjectRef != -1)
+                        dco.ComObjectRefObject = vbase.ComObjectRefs.SingleOrDefault(c => c.UId == dco.ComObjectRef);
+                    break;
+                }
+
+                case Models.Dynamic.DynSeparator dse:
+                {
+                    if(dse.TextRef != -1)
+                        dse.TextRefObject = vbase.ParameterRefs.SingleOrDefault(p => p.UId == dse.TextRef);
+                    break;
+                }
+
+                case Models.Dynamic.DynChannelIndependent:
+                case Models.Dynamic.IDynWhen:
+                    break;
+
+                case Models.Dynamic.DynAssign da:
+                    if(da._targetUId != -1)
+                        da.TargetObject = vbase.ParameterRefs.SingleOrDefault(p => p.UId == da._targetUId);
+                    if(string.IsNullOrEmpty(da.Value) && da._sourceUId != -1)
+                        da.SourceObject = vbase.ParameterRefs.SingleOrDefault(p => p.UId == da._sourceUId);
+                    break;
+
+                default:
+                    throw new Exception("Not implemented copy " + item.GetType().ToString());
+
+            }
+
+            if(item.Items == null) return;
+            foreach(Models.Dynamic.IDynItems ditem in item.Items)
+                CopyDynamicItem(ditem, vbase);
         }
     }
 }

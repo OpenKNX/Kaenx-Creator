@@ -856,6 +856,7 @@ namespace Kaenx.Creator.Viewer
             }
         }
 
+        //!!!!! Also change in AppVersion.cs
         private void CopyDynamicItem(Models.Dynamic.IDynItems item, IVersionBase vbase)
         {
             switch(item)
@@ -911,6 +912,7 @@ namespace Kaenx.Creator.Viewer
                     break;
                 }
 
+                case Models.Dynamic.DynChannelIndependent:
                 case Models.Dynamic.IDynWhen:
                     break;
 
