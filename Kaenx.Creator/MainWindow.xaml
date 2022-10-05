@@ -722,7 +722,7 @@
                 </TabItem.Header>
 
                 <TabControl x:Name="VersionTabs" SelectionChanged="TabChanged" TabStripPlacement="Left" Style="{StaticResource LeftTabControl}">
-                    <TabItem Header="{x:Static p:Resources.tabs_gen}" BorderThickness="0 0 4 0" Style="{StaticResource LeftTabItem}">
+                    <TabItem Header="{x:Static p:Resources.tabs_gen}" Style="{StaticResource LeftTabItem}">
                         <StackPanel>
                             <StackPanel.Resources>
                                 <Style TargetType="HeaderedContentControl">
@@ -768,13 +768,13 @@
                                         </DataGrid>
                                     </HeaderedContentControl>
                                     
-                                    <CheckBox IsChecked="{Binding IsParameterRefAuto}" Content="{x:Static p:Resources.vgen_autopara}" />
-                                    <CheckBox IsChecked="{Binding IsComObjectRefAuto}" Content="{x:Static p:Resources.vgen_autocom}" />
-                                    <CheckBox IsChecked="{Binding IsUnionActive}" Content="{x:Static p:Resources.vgen_union}" />
-                                    <CheckBox IsChecked="{Binding IsModulesActive}" Content="{x:Static p:Resources.vgen_mods}" />
-                                    <CheckBox IsChecked="{Binding IsMessagesActive}" Content="{x:Static p:Resources.vgen_msg}" />
-                                    <CheckBox IsChecked="{Binding IsHelpActive}" Content="{x:Static p:Resources.vgen_help}" />
-                                    <CheckBox IsChecked="{Binding IsPreETS4}" Content="{x:Static p:Resources.vgen_ets4}" />
+                                    <CheckBox IsChecked="{Binding IsParameterRefAuto}" Content="{x:Static p:Resources.vgen_autopara}" HorizontalAlignment="Left" />
+                                    <CheckBox IsChecked="{Binding IsComObjectRefAuto}" Content="{x:Static p:Resources.vgen_autocom}" HorizontalAlignment="Left" />
+                                    <CheckBox IsChecked="{Binding IsUnionActive}" Content="{x:Static p:Resources.vgen_union}" HorizontalAlignment="Left" />
+                                    <CheckBox IsChecked="{Binding IsModulesActive}" Content="{x:Static p:Resources.vgen_mods}" HorizontalAlignment="Left" />
+                                    <CheckBox IsChecked="{Binding IsMessagesActive}" Content="{x:Static p:Resources.vgen_msg}" HorizontalAlignment="Left" />
+                                    <CheckBox IsChecked="{Binding IsHelpActive}" Content="{x:Static p:Resources.vgen_help}" HorizontalAlignment="Left" />
+                                    <CheckBox IsChecked="{Binding IsPreETS4}" Content="{x:Static p:Resources.vgen_ets4}" HorizontalAlignment="Left" />
                                 
                                     <Grid>
                                         <Grid.ColumnDefinitions>
@@ -1398,7 +1398,7 @@
                 </TabItem.Header>
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
+                        <ColumnDefinition MaxWidth="400" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>

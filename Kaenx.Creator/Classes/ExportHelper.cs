@@ -239,6 +239,7 @@ namespace Kaenx.Creator.Classes
                             break;
 
                         case ParameterTypes.IpAddress:
+                            xcontent = new XElement(Get("TypeIPAddress"));
                             xcontent.SetAttributeValue("AddressType", type.UIHint);
                             if(type.SizeInBit != 0)
                             {
@@ -261,7 +262,7 @@ namespace Kaenx.Creator.Classes
                         xcontent.Name.LocalName != "TypeNone" &&
                         xcontent.Name.LocalName != "TypePicture" &&
                         xcontent.Name.LocalName != "TypeColor" &&
-                        xcontent.Name.LocalName != "IpAddress")
+                        xcontent.Name.LocalName != "TypeIPAddress")
                     {
                         xcontent.SetAttributeValue("SizeInBit", type.SizeInBit);
                     }

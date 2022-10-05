@@ -1,18 +1,22 @@
-# Languages
+## Languages
 This application is availible in: English, Deutsch  
 You want to contribute and add a new Language?  
 Then edit the Resource files in "Properties/Resource.\[language-code\].resx"  
 and create a Pull-Request with the new file.
 
+## Wiki
+There is a detailed [Wiki](/OpenKNX/Kaenx-Creator/wikie).  
+It's availible only in english for now.
+
 # Kaenx-Creator
 Kaenx-Creator ist eine Open Source Entwicklungstol um eigene Produktdatenbanken für seine DIY-Geräte  
 zu erstellen, oder bereits vorhandene Produktdatenbanken zu ändern.
   
-# Aktueller Stand
+## Aktueller Stand
 Die Anwendung ist für Windows entwickelt und nutzt WPF.  
 Eine Umrüstung auf eine CrossPlatform ist möglich, aktuell aber nicht geplant.  
   
-# Installation
+## Installation
 Es gibt 2 Möglichkeiten die Anwendung zu installieren:  
  - Release Dateien  
     Hier werden nur größere Releases veröffentlicht
@@ -21,8 +25,8 @@ Es gibt 2 Möglichkeiten die Anwendung zu installieren:
     Zusätzlich wird das Repo https://github.com/thewhobox/Kaenx.DataContext benötigt.
     Danach kann die Anwendung debugt oder selbst ein Release erstellt werden.
 
-# Bilder
+## Bilder
 [![Kaenx-Connect Ansicht Dynamic](/Images/Dynamic.png)](/Images/)
   
-# Datenschutz
+## Datenschutz
 Die App sammelt keine Daten über Nutzungsverhalten oder Abstürze.

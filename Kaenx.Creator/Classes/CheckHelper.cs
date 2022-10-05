@@ -183,6 +183,9 @@ namespace Kaenx.Creator.Classes {
 
                         case ParameterTypes.NumberUInt:
                         {
+                            if(ptype.UIHint == "ProgressBar" && vers.NamespaceVersion < 20)
+                                actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Progressbar wird erst ab /20 unterstützt", State = PublishState.Fail, Item = ptype });
+
                             long min, max;
                             if(!long.TryParse(ptype.Max, out max)) actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Maximum ist keine Ganzzahl", State = PublishState.Fail, Item = ptype });
                             if(!long.TryParse(ptype.Max, out min)) actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Minimum ist keine Ganzzahl", State = PublishState.Fail, Item = ptype });
@@ -201,6 +204,9 @@ namespace Kaenx.Creator.Classes {
 
                         case ParameterTypes.NumberInt:
                         {
+                            if(ptype.UIHint == "Progressbar" && vers.NamespaceVersion < 20)
+                                actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Progressbar wird erst ab /20 unterstützt", State = PublishState.Fail, Item = ptype });
+
                             long min, max;
                             if(!long.TryParse(ptype.Max, out max)) actions.Add(new PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Maximum ist keine Ganzzahl", State = PublishState.Fail, Item = ptype });
                             if(!long.TryParse(ptype.Max, out min)) actions.Add(new PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Minimum ist keine Ganzzahl", State = PublishState.Fail, Item = ptype });
@@ -247,7 +253,8 @@ namespace Kaenx.Creator.Classes {
                             break;
 
                         case ParameterTypes.IpAddress:
-                            actions.Add(new PublishAction() { Text = $"    ParameterTyp IpAddress für {ptype.Name} ({ptype.UId}) wird nicht exportiert", State = PublishState.Warning, Item = ptype });
+                            //actions.Add(new PublishAction() { Text = $"    ParameterTyp IpAddress für {ptype.Name} ({ptype.UId}) wird nicht exportiert", State = PublishState.Warning, Item = ptype });
+                            ptype.SizeInBit = 32;
                             break;
 
                         default:

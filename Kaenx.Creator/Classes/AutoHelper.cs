@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Kaenx.Creator.Models;
+using Kaenx.Creator.Models.Dynamic;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -15,9 +16,6 @@ namespace Kaenx.Creator.Classes
 
         public static void MemoryCalculation(AppVersion ver, Memory mem)
         {
-            //already Calculated by checkhelper
-            //ParameterTypeCalculations(ver);
-
             mem.Sections.Clear();
 
             if(mem.Type == MemoryTypes.Absolute)
@@ -203,66 +201,6 @@ namespace Kaenx.Creator.Classes
                 GetModules(i, mods);
         }
 
-        public static void ParameterTypeCalculations(AppVersion ver)
-        {
-            foreach(Models.ParameterType ptype in ver.ParameterTypes)
-            {
-                if(ptype.IsSizeManual) continue;
-
-                switch(ptype.Type)
-                {
-                    case Models.ParameterTypes.Text:
-                        throw new Exception($"ParameterTyp Größe für Text wurde nicht implementiert: {ptype.Name} ({ptype.UId})");
-                    
-                    case Models.ParameterTypes.Enum:
-                    {
-                        int maxValue = -1;
-                        foreach(Models.ParameterTypeEnum penum in ptype.Enums)
-                            if(penum.Value > maxValue)
-                                maxValue = penum.Value;
-                        if(maxValue >2)
-                            ptype.SizeInBit = (int)Math.Ceiling(Math.Log2(maxValue));
-                        else
-                            ptype.SizeInBit = Convert.ToString(maxValue, 2).Length;
-                        break;
-                    }
-
-                    case Models.ParameterTypes.NumberUInt:
-                    {       
-                        ptype.SizeInBit = (int)Math.Ceiling(Math.Log2(uint.Parse(ptype.Max)));
-                        break;
-                    }
-
-                    case Models.ParameterTypes.NumberInt:
-                    {
-                        double b = Math.Log2(int.Parse(ptype.Min) * (-1));
-                        int bin1 = (int)Math.Ceiling(b) + 1;
-                        int bin2 = Convert.ToString(int.Parse(ptype.Max), 2).Length;
-                        ptype.SizeInBit = (bin1 > bin2) ? bin1 : bin2;
-                        break;
-                    }
-
-                    case Models.ParameterTypes.Float_DPT9:
-                    case Models.ParameterTypes.Float_IEEE_Double:
-                    case Models.ParameterTypes.Float_IEEE_Single:
-                        throw new Exception($"ParameterTyp Größe für Float wurde nicht implementiert: {ptype.Name} ({ptype.UId})");
-                    
-                    case Models.ParameterTypes.Picture:
-                        ptype.SizeInBit = 0;
-                        break;
-                    
-                    case Models.ParameterTypes.None:
-                        throw new Exception($"ParameterTyp Größe für None kann nicht berechnet werden: {ptype.Name} ({ptype.UId})");
-                    
-                    case Models.ParameterTypes.IpAddress:
-                        throw new Exception($"ParameterTyp Größe für IpAddress kann nicht berechnet werden: {ptype.Name} ({ptype.UId})");
-                    
-                    default:
-                        throw new Exception($"Unbekannter ParameterTyp zum Berechnen der Größe: {ptype.Name} ({ptype.UId})");
-                }
-            }
-        }
-
         public static int GetNextFreeUId(object list, int start = 1) {
             int id = start;
 
@@ -339,12 +277,19 @@ namespace Kaenx.Creator.Classes
     
         public static void CheckIds(AppVersion version)
         {
+            counterBlock = 1;
+            counterSeparator = 1;
+
             CheckIdsModule(version, version);
+            CheckDynamicIds(version.Dynamics[0]);
 
             foreach(Module mod in version.Modules)
             {
                 if(mod.Id == -1) mod.Id = GetNextFreeId(version, "Modules");
+                counterBlock = 1;
+                counterSeparator = 1;
                 CheckIdsModule(version, mod);
+                CheckDynamicIds(mod.Dynamics[0]);
             }
         }
 
@@ -366,6 +311,29 @@ namespace Kaenx.Creator.Classes
             {
                 foreach(Argument arg in mod.Arguments)
                     if(arg.Id == -1) arg.Id = GetNextFreeId(vbase, "Arguments");
+            }
+        }
+
+
+        private static int counterBlock = 1;
+        private static int counterSeparator = 1;
+        public static void CheckDynamicIds(IDynItems parent)
+        {
+            foreach(IDynItems item in parent.Items)
+            {
+                switch(item)
+                {
+                    case DynParaBlock dpb:
+                        dpb.Id = counterBlock++;
+                        break;
+
+                    case DynSeparator ds:
+                        ds.Id = counterSeparator++;
+                        break;
+                }
+
+                if(item.Items != null)
+                    CheckDynamicIds(item);
             }
         }
 
