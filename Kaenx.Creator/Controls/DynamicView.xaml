@@ -65,7 +65,7 @@
                         </DataGrid.Columns>
                     </DataGrid>
                 </HeaderedContentControl>
-                <HeaderedContentControl Header="{x:Static p:Resources.tdyn_parareftext}" Visibility="{Binding ParameterRefObject.OverwriteText, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}" IsEnabled="False">
+                <HeaderedContentControl Header="{x:Static p:Resources.tdyn_parareftext}" Visibility="{Binding ParameterRefObject.OverwriteText, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}" IsEnabled="False" Margin="5 30 5 5">
                     <DataGrid ItemsSource="{Binding ParameterRefObject.Text}" AutoGenerateColumns="False">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="{x:Static p:Resources.gen_lang}" Binding="{Binding Language.Text}" />
@@ -73,6 +73,7 @@
                         </DataGrid.Columns>
                     </DataGrid>
                 </HeaderedContentControl>
+
                 <HeaderedContentControl Header="{x:Static p:Resources.tdyn_help}" Visibility="{Binding Version.IsHelpActive, ElementName=ViewControl, Converter={StaticResource BoolToVis}}">
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -137,7 +138,7 @@
                     <TextBlock Text="{Binding ComObjectRefObject.ComObjectObject.Name}" />
                 </HeaderedContentControl>
 
-                <HeaderedContentControl Header="{x:Static p:Resources.tdyn_comtext}" IsEnabled="False" Margin="5 30 5 5">
+                <HeaderedContentControl Header="{x:Static p:Resources.tdyn_comtext}" IsEnabled="False" Visibility="{Binding ComObjectRefObject.OverwriteText, Converter={StaticResource BoolToVis}, ConverterParameter=true, FallbackValue=Collapsed}" Margin="5 30 5 5">
                     <DataGrid ItemsSource="{Binding ComObjectRefObject.ComObjectObject.Text}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="{x:Static p:Resources.gen_lang}" Binding="{Binding Language.Text}" IsReadOnly="True" />
@@ -145,7 +146,7 @@
                         </DataGrid.Columns>
                     </DataGrid>
                 </HeaderedContentControl>
-                <HeaderedContentControl Header="{x:Static p:Resources.tdyn_comreftext}" IsEnabled="False">
+                <HeaderedContentControl Header="{x:Static p:Resources.tdyn_comreftext}" IsEnabled="False" Visibility="{Binding ComObjectRefObject.OverwriteText, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}" Margin="5 30 5 5">
                     <DataGrid ItemsSource="{Binding ComObjectRefObject.Text}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="{x:Static p:Resources.gen_lang}" Binding="{Binding Language.Text}" IsReadOnly="True" />
@@ -301,7 +302,7 @@
                 <HeaderedContentControl Header="{x:Static p:Resources.gen_text}">
                     <StackPanel>
                         <CheckBox IsChecked="{Binding TranslationText}" Content="Nur Standardsprache exportieren (keine Translation-Unit)" />
-                        <DataGrid IsEnabled="{Binding UseTextParameter, Converter={StaticResource BoolNegate}}"  ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
+                        <DataGrid ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="{x:Static p:Resources.gen_lang}" Binding="{Binding Language.Text}" IsReadOnly="True" />
                                 <DataGridTextColumn Header="{x:Static p:Resources.gen_text}" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
@@ -551,11 +552,6 @@
                             <Run Text="{x:Static p:Resources.tdyn_tcom}" />
                             <Run Text="{Binding Name}" />
                             <Run Text="{Binding ComObjectRefObject.Name}" />
-                        </TextBlock>
-                        <TextBlock Margin="10 0 0 0" VerticalAlignment="Center">
-                            <Run Text="[" />
-                            <Run Text="{Binding ComObjectRefObject.ComObjectObject.Name}" />
-                            <Run Text="]" />
                         </TextBlock>
                     </StackPanel>
                 </DataTemplate>
