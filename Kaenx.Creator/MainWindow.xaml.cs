@@ -1362,5 +1362,10 @@ namespace Kaenx.Creator
                 Properties.Settings.Default.Save();
             }
         }
+
+        private void ClickHelp(object sender, RoutedEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo("https://github.com/OpenKNX/Kaenx-Creator/wiki") { UseShellExecute = true });
+        }
     }
 }

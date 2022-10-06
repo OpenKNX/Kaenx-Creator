@@ -1125,4 +1125,8 @@
     <value>Medium:</value>
     <comment/>
   </data>
+  <data name="menu_info_help" xml:space="preserve">
+    <value>Help</value>
+    <comment/>
+  </data>
 </root>

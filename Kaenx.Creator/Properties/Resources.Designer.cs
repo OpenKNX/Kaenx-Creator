@@ -2126,5 +2126,11 @@ namespace Kaenx.Creator.Properties {
                 return ResourceManager.GetString("tapps_medium", resourceCulture);
             }
         }
+        
+        public static string menu_info_help {
+            get {
+                return ResourceManager.GetString("menu_info_help", resourceCulture);
+            }
+        }
     }
 }
