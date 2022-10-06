@@ -284,9 +284,6 @@ namespace Kaenx.Creator.Controls
                     "DynRepeate",
                     "DynRename" }
             },
-            {"DynModule", 
-                new List<string>()
-            },
         };
 
 
@@ -333,6 +330,11 @@ namespace Kaenx.Creator.Controls
 
         private void ClickInsertDyn(object sender, RoutedEventArgs e)
         {
+            if(_copyItem == null)
+            {
+                MessageBox.Show("Es wurde kein Element vorher ausgeschnitten", "Element einfügen", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
             Models.Dynamic.IDynItems target = (sender as MenuItem).DataContext as Models.Dynamic.IDynItems;
             target.Items.Add(_copyItem);
             _copyItem.Parent = target;
@@ -374,9 +376,9 @@ namespace Kaenx.Creator.Controls
                     
                     if ((finalDropEffect == DragDropEffects.Move) && (_target != null) && (_draggedItem != _target))
                     {
-                        _draggedItem.Parent.Items.Remove(_draggedItem);
                         if(_draggedItem.Parent == _target.Parent)
                         {
+                            _draggedItem.Parent.Items.Remove(_draggedItem);
                             int index = _target.Parent.Items.IndexOf(_target);
                             _target.Parent.Items.Insert(index, _draggedItem);
                             _draggedItem.Parent = _target.Parent;

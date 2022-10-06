@@ -454,27 +454,6 @@
                         </TextBlock>
                     </StackPanel>
                 </HierarchicalDataTemplate>
-                <HierarchicalDataTemplate DataType="{x:Type dyn:DynSeparator}">
-                    <StackPanel Orientation="Horizontal" ContextMenu="{StaticResource ContextMenu}">
-                        <Image Source="{svgc:SvgImage Source=/Assets/Images/Dynamic/Separator.svg, AppName=Kaenx.Creator}" Height="18" Width="18" Margin="4" />
-                        <TextBlock Text="{x:Static p:Resources.tdyn_tseparator}" VerticalAlignment="Center" />
-                    </StackPanel>
-                </HierarchicalDataTemplate>
-                <HierarchicalDataTemplate DataType="{x:Type dyn:DynAssign}">
-                    <StackPanel Orientation="Horizontal" ContextMenu="{StaticResource ContextMenu}">
-                        <Image Source="{svgc:SvgImage Source=/Assets/Images/Dynamic/Assign.svg, AppName=Kaenx.Creator}" Height="18" Width="18" Margin="4" />
-                        <TextBlock Text="{x:Static p:Resources.tdyn_tassign}" VerticalAlignment="Center" />
-                    </StackPanel>
-                </HierarchicalDataTemplate>
-                <HierarchicalDataTemplate DataType="{x:Type dyn:DynModule}">
-                    <StackPanel Orientation="Horizontal" ContextMenu="{StaticResource ContextMenu}">
-                        <Image Source="{svgc:SvgImage Source=/Assets/Images/Dynamic/Block.svg, AppName=Kaenx.Creator}" Height="18" Width="18" Margin="4" />
-                        <TextBlock VerticalAlignment="Center">
-                            <Run Text="{x:Static p:Resources.tdyn_tmod}" />
-                            <Run Text="{Binding Name}" />
-                        </TextBlock>
-                    </StackPanel>
-                </HierarchicalDataTemplate>
                 <HierarchicalDataTemplate DataType="{x:Type dyn:DynChooseChannel}" ItemsSource="{Binding Items}">
                     <StackPanel Orientation="Horizontal">
                         <Image Source="{svgc:SvgImage Source=/Assets/Images/Dynamic/Choose.svg, AppName=Kaenx.Creator}" Height="18" Width="18" Margin="4" />
@@ -552,6 +531,51 @@
                             <Run Text="{x:Static p:Resources.tdyn_tcom}" />
                             <Run Text="{Binding Name}" />
                             <Run Text="{Binding ComObjectRefObject.Name}" />
+                        </TextBlock>
+                    </StackPanel>
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type dyn:DynSeparator}">
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="{x:Static p:Resources.gen_copy}" Click="ClickCopyDyn" />
+                                <MenuItem Header="{x:Static p:Resources.gen_cut}" Click="ClickCutDyn" />
+                                <MenuItem Header="{x:Static p:Resources.gen_put}" Click="ClickInsertDyn" />
+                                <MenuItem Header="{x:Static p:Resources.gen_remove}" Click="ClickRemoveDyn" />
+                            </ContextMenu>
+                        </StackPanel.ContextMenu>
+                        <Image Source="{svgc:SvgImage Source=/Assets/Images/Dynamic/Separator.svg, AppName=Kaenx.Creator}" Height="18" Width="18" Margin="4" />
+                        <TextBlock Text="{x:Static p:Resources.tdyn_tseparator}" VerticalAlignment="Center" />
+                    </StackPanel>
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type dyn:DynAssign}">
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="{x:Static p:Resources.gen_copy}" Click="ClickCopyDyn" />
+                                <MenuItem Header="{x:Static p:Resources.gen_cut}" Click="ClickCutDyn" />
+                                <MenuItem Header="{x:Static p:Resources.gen_put}" Click="ClickInsertDyn" />
+                                <MenuItem Header="{x:Static p:Resources.gen_remove}" Click="ClickRemoveDyn" />
+                            </ContextMenu>
+                        </StackPanel.ContextMenu>
+                        <Image Source="{svgc:SvgImage Source=/Assets/Images/Dynamic/Assign.svg, AppName=Kaenx.Creator}" Height="18" Width="18" Margin="4" />
+                        <TextBlock Text="{x:Static p:Resources.tdyn_tassign}" VerticalAlignment="Center" />
+                    </StackPanel>
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type dyn:DynModule}">
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="{x:Static p:Resources.gen_copy}" Click="ClickCopyDyn" />
+                                <MenuItem Header="{x:Static p:Resources.gen_cut}" Click="ClickCutDyn" />
+                                <MenuItem Header="{x:Static p:Resources.gen_put}" Click="ClickInsertDyn" />
+                                <MenuItem Header="{x:Static p:Resources.gen_remove}" Click="ClickRemoveDyn" />
+                            </ContextMenu>
+                        </StackPanel.ContextMenu>
+                        <Image Source="{svgc:SvgImage Source=/Assets/Images/Dynamic/Block.svg, AppName=Kaenx.Creator}" Height="18" Width="18" Margin="4" />
+                        <TextBlock VerticalAlignment="Center">
+                            <Run Text="{x:Static p:Resources.tdyn_tmod}" />
+                            <Run Text="{Binding Name}" />
                         </TextBlock>
                     </StackPanel>
                 </DataTemplate>

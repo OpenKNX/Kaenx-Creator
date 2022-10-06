@@ -100,7 +100,7 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="{Binding Text}" Margin="10 0" VerticalAlignment="Center" />
 
-                <ctrls:Slider x:Name="slider" Grid.Column="1" Value="{Binding Value}" ValueOk="{Binding Value, Mode=TwoWay}" Maximum="{Binding Maximum}" Minimum="{Binding Minimum}" Interval="{Binding Invrement}" />
+                <ctrls:Slider x:Name="slider" Grid.Column="1" Value="{Binding Value}" ValueOk="{Binding Value, Mode=TwoWay}" Maximum="{Binding Maximum}" Minimum="{Binding Minimum}" Interval="{Binding Increment}" />
                 <TextBlock Grid.Column="2" Margin="10 0" VerticalAlignment="Center" HorizontalAlignment="Left">
                     <Run Text="{Binding Value, ElementName=slider}" />
                     <Run Text="{Binding SuffixText}" />
