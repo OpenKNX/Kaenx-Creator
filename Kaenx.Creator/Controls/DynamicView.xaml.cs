@@ -279,8 +279,10 @@ namespace Kaenx.Creator.Controls
                     "DynParaBlock",
                     "DynSeparator",
                     "DynButton",
+                    "DynChoose",
                     "DynComObject",
                     "DynModule",
+                    "DynAssign",
                     "DynRepeate",
                     "DynRename" }
             },
