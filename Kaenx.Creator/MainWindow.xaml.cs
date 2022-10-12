@@ -39,6 +39,14 @@ namespace Kaenx.Creator
             set { _general = value; Changed("General"); }
         }
 
+        private Models.AppVersionModel _selectedVersionModel;
+        private Models.AppVersion _selectedVersion;
+        public Models.AppVersion SelectedVersion
+        {
+            get { return _selectedVersion; }
+            set { _selectedVersion = value; Changed("SelectedVersion"); }
+        }
+
         private ObservableCollection<Models.MaskVersion> bcus;
         public ObservableCollection<Models.MaskVersion> BCUs
         {
@@ -46,11 +54,11 @@ namespace Kaenx.Creator
             set { bcus = value; Changed("BCUs"); }
         }
 
-        private ObservableCollection<Models.DataPointType> dpts;
-        public ObservableCollection<Models.DataPointType> DPTs
+        private static ObservableCollection<Models.DataPointType> dpts;
+        public static ObservableCollection<Models.DataPointType> DPTs
         {
             get { return dpts; }
-            set { dpts = value; Changed("DPTs"); }
+            set { dpts = value; }
         }
 
         public ObservableCollection<Models.ExportItem> Exports { get; set; } = new ObservableCollection<Models.ExportItem>();
@@ -68,7 +76,7 @@ namespace Kaenx.Creator
             new Models.EtsVersion(21, "ETS 6.0 (21)", "6.0")
         };
         
-        private int VersionCurrent = 1;
+        private int VersionCurrent = 2;
 
 
         public MainWindow()
@@ -414,12 +422,18 @@ namespace Kaenx.Creator
                 newVer.Procedure = "<LoadProcedures>\r\n<LoadProcedure MergeId=\"2\">\r\n<LdCtrlRelSegment  AppliesTo=\"full\" LsmIdx=\"4\" Size=\"1\" Mode=\"0\" Fill=\"0\" />\r\n</LoadProcedure>\r\n<LoadProcedure MergeId=\"4\">\r\n<LdCtrlWriteRelMem ObjIdx=\"4\" Offset=\"0\" Size=\"1\" Verify=\"true\" />\r\n</LoadProcedure>\r\n</LoadProcedures>";
             }
 
-            if(app.Versions.Count > 0){
-                Models.AppVersion ver = app.Versions.OrderByDescending(v => v.Number).ElementAt(0);
+            if(app.Versions.Count > 0) {
+                Models.AppVersionModel ver = app.Versions.OrderByDescending(v => v.Number).ElementAt(0);
                 newVer.Number = ver.Number + 1;
             }
+
+            Models.AppVersionModel model = new Models.AppVersionModel() {
+                Name = newVer.Name,
+                Number = newVer.Number,
+                Version = Newtonsoft.Json.JsonConvert.SerializeObject(newVer, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects })
+            };
             
-            app.Versions.Add(newVer);
+            app.Versions.Add(model);
         }
 
         private void ClickAddMemory(object sender, RoutedEventArgs e)
@@ -438,7 +452,7 @@ namespace Kaenx.Creator
         private void ClickRemoveVersion(object sender, RoutedEventArgs e)
         {
             Models.Application app = AppList.SelectedItem as Models.Application;
-            Models.AppVersion ver = (sender as MenuItem).DataContext as Models.AppVersion;
+            Models.AppVersionModel ver = (sender as MenuItem).DataContext as Models.AppVersionModel;
 
             app.Versions.Remove(ver);
         }
@@ -451,18 +465,50 @@ namespace Kaenx.Creator
             Models.AppVersion copy = ver.Copy();
             copy.Number += 1;
             copy.Name += " Kopie";
-            app.Versions.Add(copy);
+            //app.Versions.Add(copy);
+            //TODO implement
+        }
+
+        private void ClickOpenHere(object sender, RoutedEventArgs e)
+        {
+            long before, after;
+            if(SelectedVersion != null)
+            {
+                SelectedVersion.PropertyChanged -= SelectedVersion_PropertyChanged;
+                _selectedVersionModel.Name = SelectedVersion.Name;
+                _selectedVersionModel.Number = SelectedVersion.Number;
+                _selectedVersionModel.Version = Newtonsoft.Json.JsonConvert.SerializeObject(SelectedVersion, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
+                before = System.GC.GetTotalMemory(false);
+                System.GC.Collect();
+                after = System.GC.GetTotalMemory(false);
+                System.Diagnostics.Debug.WriteLine("Freigemacht: " + (before - after).ToString());
+            }
+            before = System.GC.GetTotalMemory(false);
+            _selectedVersionModel = (sender as MenuItem).DataContext as Models.AppVersionModel;
+            SelectedVersion = AutoHelper.GetAppVersion(General, _selectedVersionModel);
+            SelectedVersion.PropertyChanged += SelectedVersion_PropertyChanged;
+            //TODO auto open TabView Item
+            after = System.GC.GetTotalMemory(false);
+            System.Diagnostics.Debug.WriteLine("Neu verbraucht: " + (after - before).ToString());
+        }
+
+        private async void SelectedVersion_PropertyChanged(object sender, PropertyChangedEventArgs e = null)
+        {
+            if(e.PropertyName != "NameText") return;
+            _selectedVersionModel.Name = SelectedVersion.Name;
+            _selectedVersionModel.Number = SelectedVersion.Number;
         }
 
         private void ClickOpenViewer(object sender, RoutedEventArgs e)
         {
             if(MessageBoxResult.Cancel == MessageBox.Show("Achtung, um den Viewer verwenden zu können, werden die IDs überprüft und ggf. neue vergeben.\r\n\r\nTrotzdem weiter machen?", "ProdViewer öffnen", MessageBoxButton.OKCancel, MessageBoxImage.Question)) return;
             Models.Application app = (Models.Application)AppList.SelectedItem;
-            Models.AppVersion ver = (sender as MenuItem).DataContext as Models.AppVersion;
+            Models.AppVersionModel model = (sender as MenuItem).DataContext as Models.AppVersionModel;
+            Models.AppVersion ver = AutoHelper.GetAppVersion(General, model);
             AutoHelper.CheckIds(ver);
 
             ObservableCollection<Models.PublishAction> actions = new ObservableCollection<Models.PublishAction>();
-            CheckHelper.CheckThis(app, ver, actions);
+            CheckHelper.CheckVersion(General, ver, actions);
             if(actions.Any(a => a.State == Models.PublishState.Fail))
             {
                 MessageBox.Show("Die Applikation enthält Fehler. Bitte korriegieren Sie diese und probieren es danach erneut.", "ProdViewer öffnen", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -813,6 +859,7 @@ namespace Kaenx.Creator
             General = null;
             SetButtons(false);
             MenuSaveBtn.IsEnabled = false;
+            System.GC.Collect();
         }
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
@@ -911,21 +958,6 @@ namespace Kaenx.Creator
 
             foreach(Models.Application app in General.Applications)
             {
-                foreach(Models.AppVersion ver in app.Versions)
-                {
-                    LoadVersion(ver, ver);
-
-                    foreach(Models.Module mod in ver.Modules)
-                        LoadVersion(ver, mod);
-
-                    //TODO doesnt work anymore
-                    foreach(Models.ParameterType ptype in ver.ParameterTypes.Where(p => p.Type == Models.ParameterTypes.Picture && p._baggageUId != -1))
-                    {
-                        ptype.BaggageObject = General.Baggages.SingleOrDefault(b => b.UId == ptype._baggageUId);
-                    }
-                }
-
-
                 string mid = app._maskId;
                 if (string.IsNullOrEmpty(mid)) continue;
 
@@ -950,146 +982,7 @@ namespace Kaenx.Creator
             MenuSave.IsEnabled = true;
         }
 
-        private void LoadVersion(Models.AppVersion vbase, Models.IVersionBase mod)
-        {
-            if(vbase == mod) {
-                if(vbase._addressMemoryId != -1)
-                    vbase.AddressMemoryObject = vbase.Memories.SingleOrDefault(m => m.UId == vbase._addressMemoryId);
-
-                if(vbase._assocMemoryId != -1)
-                    vbase.AssociationMemoryObject = vbase.Memories.SingleOrDefault(m => m.UId == vbase._assocMemoryId);
-                    
-                if(vbase._comMemoryId != -1)
-                    vbase.ComObjectMemoryObject = vbase.Memories.SingleOrDefault(m => m.UId == vbase._comMemoryId);
-            } else {
-                Models.Module modu = mod as Models.Module;
-                if(modu._parameterBaseOffsetUId != -1)
-                    modu.ParameterBaseOffset = modu.Arguments.SingleOrDefault(m => m.UId == modu._parameterBaseOffsetUId);
-                
-                if(modu._comObjectBaseNumberUId != -1)
-                    modu.ComObjectBaseNumber = modu.Arguments.SingleOrDefault(m => m.UId == modu._comObjectBaseNumberUId);
-            }
-
-            foreach(Models.Parameter para in mod.Parameters)
-            {
-                if (para._memoryId != -1)
-                    para.SaveObject = vbase.Memories.SingleOrDefault(m => m.UId == para._memoryId);
-                    
-                if (para._parameterType != -1)
-                    para.ParameterTypeObject = vbase.ParameterTypes.SingleOrDefault(p => p.UId == para._parameterType);
-
-                if(para.IsInUnion && para._unionId != -1)
-                    para.UnionObject = mod.Unions.SingleOrDefault(u => u.UId == para._unionId);
-            }
-
-            foreach(Models.Union union in mod.Unions)
-            {
-                if (union._memoryId != -1)
-                    union.MemoryObject = vbase.Memories.SingleOrDefault(u => u.UId == union._memoryId);
-            }
-
-            foreach(Models.ParameterRef pref in mod.ParameterRefs)
-            {
-                if (pref._parameter != -1)
-                    pref.ParameterObject = mod.Parameters.SingleOrDefault(p => p.UId == pref._parameter);
-            }
-
-            foreach(Models.ComObject com in mod.ComObjects)
-            {
-                if(com._parameterRef != -1)
-                    com.ParameterRefObject = mod.ParameterRefs.SingleOrDefault(p => p.UId == com._parameterRef);
-
-                if (!string.IsNullOrEmpty(com._typeNumber))
-                    com.Type = DPTs.Single(d => d.Number == com._typeNumber);
-                    
-                if(!string.IsNullOrEmpty(com._subTypeNumber) && com.Type != null)
-                    com.SubType = com.Type.SubTypes.Single(d => d.Number == com._subTypeNumber);
-            }
-
-            foreach(Models.ComObjectRef cref in mod.ComObjectRefs)
-            {
-                if (cref._comObject != -1)
-                    cref.ComObjectObject = mod.ComObjects.SingleOrDefault(c => c.UId == cref._comObject);
-
-                if (!string.IsNullOrEmpty(cref._typeNumber))
-                    cref.Type = DPTs.Single(d => d.Number == cref._typeNumber);
-                    
-                if(!string.IsNullOrEmpty(cref._subTypeNumber) && cref.Type != null)
-                    cref.SubType = cref.Type.SubTypes.Single(d => d.Number == cref._subTypeNumber);
-            }
-
-            if(mod is Models.Module mod2)
-            {
-                if(mod2._parameterBaseOffsetUId != -1)
-                    mod2.ParameterBaseOffset = mod2.Arguments.SingleOrDefault(a => a.UId == mod2._parameterBaseOffsetUId);
-
-                if(mod2._comObjectBaseNumberUId != -1)
-                    mod2.ComObjectBaseNumber = mod2.Arguments.SingleOrDefault(a => a.UId == mod2._comObjectBaseNumberUId);
-            }
-
-            if(mod.Dynamics.Count > 0)
-                LoadSubDyn(mod.Dynamics[0], mod.ParameterRefs.ToList(), mod.ComObjectRefs.ToList(), vbase.Modules.ToList(), vbase.Helptexts.ToList());
-        }
-
-        private void LoadSubDyn(Models.Dynamic.IDynItems dyn, List<Models.ParameterRef> paras, List<Models.ComObjectRef> coms, List<Models.Module> mods, List<Models.Helptext> helps)
-        {
-            foreach (Models.Dynamic.IDynItems item in dyn.Items)
-            {
-                item.Parent = dyn;
-
-                switch(item)
-                {
-                    case Models.Dynamic.DynChannel dch:
-                        if(dch.UseTextParameter)
-                            dch.ParameterRefObject = paras.SingleOrDefault(p => p.UId == dch._parameter);
-                        break;
-
-                    case Models.Dynamic.DynParameter dp:
-                        if (dp._parameter != -1)
-                            dp.ParameterRefObject = paras.SingleOrDefault(p => p.UId == dp._parameter);
-                        if(dp.HasHelptext)
-                            dp.Helptext = helps.SingleOrDefault(p => p.UId == dp._helptextId);
-                        break;
-
-                    case Models.Dynamic.DynChooseBlock dcb:
-                        if (dcb._parameterRef != -1)
-                            dcb.ParameterRefObject = paras.SingleOrDefault(p => p.UId == dcb._parameterRef);
-                        break;
-
-                    case Models.Dynamic.DynChooseChannel dcc:
-                        if (dcc._parameterRef != -1)
-                            dcc.ParameterRefObject = paras.SingleOrDefault(p => p.UId == dcc._parameterRef);
-                        break;
-
-                    case Models.Dynamic.DynComObject dco:
-                        if (dco._comObjectRef != -1)
-                            dco.ComObjectRefObject = coms.SingleOrDefault(c => c.UId == dco._comObjectRef);
-                        break;
-
-                    case Models.Dynamic.DynParaBlock dpb:
-                        if(dpb.UseParameterRef && dpb._parameterRef != -1)
-                            dpb.ParameterRefObject = paras.SingleOrDefault(p => p.UId == dpb._parameterRef);
-                        if(dpb.UseTextParameter && dpb._textRef != -1)
-                            dpb.TextRefObject = paras.SingleOrDefault(p => p.UId == dpb._textRef);
-                        break;
-
-                    case Models.Dynamic.DynModule dm:
-                        if(dm._module != -1)
-                        {
-                            dm.ModuleObject = mods.Single(m => m.UId == dm._module);
-                            foreach(Models.Dynamic.DynModuleArg arg in dm.Arguments)
-                            {
-                                if(arg._argId != -1)
-                                    arg.Argument = dm.ModuleObject.Arguments.Single(a => a.UId == arg._argId);
-                            }
-                        }
-                        break;
-                }
-
-                if (item.Items != null)
-                    LoadSubDyn(item, paras, coms, mods, helps);
-            }
-        }
+        
 
 
         private void SetSubCatalogItems(Models.CatalogItem parent)
@@ -1230,16 +1123,16 @@ namespace Kaenx.Creator
                     {
                         if (InPublishOnlyLatest.IsChecked == true)
                         {
-                            Models.AppVersion ver = app.Versions.OrderByDescending(v => v.Number).First();
+                            /*Models.AppVersion ver = app.Versions.OrderByDescending(v => v.Number).First();
                             Models.ExportItem item = new Models.ExportItem();
                             item.Hardware = hard;
                             item.Device = dev;
                             item.App = app;
                             item.Version = ver;
-                            Exports.Add(item);
+                            Exports.Add(item);*/
                         } else
                         {
-                            foreach (Models.AppVersion ver in app.Versions)
+                            /*foreach (Models.AppVersion ver in app.Versions)
                             {
                                 Models.ExportItem item = new Models.ExportItem();
                                 item.Hardware = hard;
@@ -1247,7 +1140,8 @@ namespace Kaenx.Creator
                                 item.App = app;
                                 item.Version = ver;
                                 Exports.Add(item);
-                            }
+                            }*/
+                            //TODO implement
                         }
                     }
                 }
@@ -1277,7 +1171,7 @@ namespace Kaenx.Creator
             List<Models.Hardware> hardware = new List<Models.Hardware>();
             List<Models.Device> devices = new List<Models.Device>();
             List<Models.Application> apps = new List<Models.Application>();
-            List<Models.AppVersion> versions = new List<Models.AppVersion>();
+            List<Models.AppVersionModel> versions = new List<Models.AppVersionModel>();
 
             foreach(Models.ExportItem item in Exports.Where(ex => ex.Selected))
             {

@@ -10,7 +10,6 @@ namespace Kaenx.Creator.Models
 {
     public class AppVersion : INotifyPropertyChanged, IVersionBase
     {
-
         public ObservableCollection<ParameterType> ParameterTypes { get; set; } = new ObservableCollection<ParameterType>();
         public ObservableCollection<Parameter> Parameters { get; set; } = new ObservableCollection<Parameter>();
         public ObservableCollection<ParameterRef> ParameterRefs { get; set; } = new ObservableCollection<ParameterRef>();

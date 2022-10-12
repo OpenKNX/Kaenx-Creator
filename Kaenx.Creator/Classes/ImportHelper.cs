@@ -234,14 +234,15 @@ namespace Kaenx.Creator.Classes
                 _general.Applications.Add(currentApp);
             }
 
-            foreach (AppVersion vers in currentApp.Versions)
+            /*foreach (AppVersion vers in currentApp.Versions)
             {
                 if (vers.Number == versNumber)
                 {
                     currentVers = vers;
                     break;
                 }
-            }
+            }*/
+            //TODO implement
 
             if (currentVers == null)
             {
@@ -253,7 +254,7 @@ namespace Kaenx.Creator.Classes
                     IsComObjectRefAuto = false,
                     IsMemSizeAuto = false
                 };
-                currentApp.Versions.Add(currentVers);
+                //currentApp.Versions.Add(currentVers);
             }
             string ns = xapp.Name.NamespaceName;
             ns = ns.Substring(ns.LastIndexOf('/') + 1);

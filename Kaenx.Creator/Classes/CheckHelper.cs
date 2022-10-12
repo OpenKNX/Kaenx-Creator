@@ -17,18 +17,18 @@ namespace Kaenx.Creator.Classes {
     {
         
         public static void CheckThis(Application app,
-                                    AppVersion version,
+                                    AppVersionModel version,
                                     ObservableCollection<PublishAction> actions,
                                     bool showOnlyErrors = false)
         {
-            CheckThis(null, null, null, new List<Application>() { app }, new List<AppVersion>() { version }, actions, showOnlyErrors);
+            CheckThis(null, null, null, new List<Application>() { app }, new List<AppVersionModel>() { version }, actions, showOnlyErrors);
         }
 
         public static void CheckThis(ModelGeneral General,
                                     List<Hardware> hardware,
                                     List<Device> devices,
                                     List<Application> apps,
-                                    List<AppVersion> versions,
+                                    List<AppVersionModel> versions,
                                     ObservableCollection<PublishAction> actions, bool showOnlyErrors = false)
         {
             if(apps.Count == 0) {
@@ -108,197 +108,205 @@ namespace Kaenx.Creator.Classes {
 
             #region Applikation Check
             int highestNS = 0;
-            foreach(AppVersion vers in versions) {
-                Application app = apps.Single(a => a.Versions.Contains(vers));
-                actions.Add(new PublishAction() { Text = $"Prüfe Applikation '{app.NameText}' Version '{vers.NameText}'" });
-
-                if(string.IsNullOrEmpty(app.Mask.MediumTypes))
-                {
-                    actions.Add(new PublishAction() { Text = $"Applikation '{app.NameText}': MediumTypes nicht gesetzt. Löschen Sie Data/maskversion.json und starten Sie die Anwendung neu.", State = PublishState.Fail });
-                }
-                    
-                
-                if (vers.NamespaceVersion > highestNS)
-                    highestNS = vers.NamespaceVersion;
-
-                if(vers.IsModulesActive && vers.NamespaceVersion < 20)
-                    actions.Add(new PublishAction() { Text = $"Applikation '{app.NameText}': ModuleDefindes werden erst ab Namespace 20 unterstützt.", State = PublishState.Fail });
-
-                if(vers.IsMessagesActive && vers.NamespaceVersion < 14)
-                    actions.Add(new PublishAction() { Text = $"Applikation '{app.NameText}': Messages werden erst ab Namespace 14 unterstützt.", State = PublishState.Fail });
-
-                if(app.Mask.Procedure != ProcedureTypes.Default && string.IsNullOrEmpty(vers.Procedure))
-                    actions.Add(new PublishAction() { Text = $"Applikation '{app.NameText}': Version muss eine Ladeprozedur enthalten.", State = PublishState.Fail });
-
-                if(vers.IsHelpActive && vers.NamespaceVersion == 14)
-                    actions.Add(new PublishAction() { Text = $"Applikation '{app.NameText}': Hilfstexte werden voraussichtlich nicht unterstützt", State = PublishState.Warning });
-                else if(vers.IsHelpActive && vers.NamespaceVersion < 20)
-                    actions.Add(new PublishAction() { Text = $"Applikation '{app.NameText}': Hilfstexte werden erst ab Namespace Version 20 unterstützt", State = PublishState.Fail });
-
-
-                foreach(ParameterType ptype in vers.ParameterTypes) {
-                    long maxsize = (long)Math.Pow(2, ptype.SizeInBit);
-        
-                    if(ptype.UIHint == "CheckBox" && (ptype.Min != "0" || ptype.Max != "1"))
-                        actions.Add(new PublishAction() { Text = $"    ParameterType Text {ptype.Name} ({ptype.UId}): Wenn UIHint Checkbox ist, ist Min=0 und Max=1 erforderlich", State = PublishState.Fail, Item = ptype });
-                            
-                    switch(ptype.Type) {
-                        case ParameterTypes.Text:
-                            if(!showOnlyErrors && ptype.SizeInBit % 8 != 0)
-                                actions.Add(new PublishAction() { Text = $"    ParameterType Text {ptype.Name} ({ptype.UId}): ist kein vielfaches von 8", State = PublishState.Fail, Item = ptype });
-                            break;
-
-                        case ParameterTypes.Enum:
-                            var x = ptype.Enums.GroupBy(e => e.Value);
-                            foreach(var group in x.Where(g => g.Count() > 1))
-                                actions.Add(new PublishAction() { Text = $"    ParameterType Enum {ptype.Name} ({ptype.UId}): Wert ({group.Key}) wird öfters verwendet", State = PublishState.Fail, Item = ptype });
-                            
-                            if(!ptype.IsSizeManual)
-                            {
-                                int maxValue = -1;
-                                foreach(ParameterTypeEnum penum in ptype.Enums)
-                                    if(penum.Value > maxValue)
-                                        maxValue = penum.Value;
-                                string bin = Convert.ToString(maxValue, 2);
-                                ptype.SizeInBit = bin.Length;
-                                maxsize = (int)Math.Pow(2, ptype.SizeInBit);
-                            }
-
-                            foreach(ParameterTypeEnum penum in ptype.Enums){
-                                if(penum.Value >= maxsize)
-                                    actions.Add(new PublishAction() { Text = $"    ParameterType Enum {ptype.Name} ({ptype.UId}): Wert ({penum.Value}) ist größer als maximaler Wert ({maxsize-1})", State = PublishState.Fail, Item = ptype });
-
-                                if(!penum.Translate) {
-                                    Translation trans = penum.Text.Single(t => t.Language.CultureCode == vers.DefaultLanguage);
-                                    if(string.IsNullOrEmpty(trans.Text))
-                                        actions.Add(new PublishAction() { Text = $"    ParameterType Enum {penum.Name}/{ptype.Name} ({ptype.UId}): Keine Übersetzung vorhanden ({trans.Language.Text})", State = PublishState.Fail, Item = ptype });
-                                } else {
-                                    if(!showOnlyErrors)
-                                        foreach(Translation trans in penum.Text)
-                                            if(string.IsNullOrEmpty(trans.Text))
-                                                actions.Add(new PublishAction() { Text = $"    ParameterType Enum {penum.Name}/{ptype.Name} ({ptype.UId}): Keine Übersetzung vorhanden ({trans.Language.Text})", State = PublishState.Warning, Item = ptype });
-                                }
-                            }
-                            break;
-
-                        case ParameterTypes.NumberUInt:
-                        {
-                            if(ptype.UIHint == "ProgressBar" && vers.NamespaceVersion < 20)
-                                actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Progressbar wird erst ab /20 unterstützt", State = PublishState.Fail, Item = ptype });
-
-                            long min, max;
-                            if(!long.TryParse(ptype.Max, out max)) actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Maximum ist keine Ganzzahl", State = PublishState.Fail, Item = ptype });
-                            if(!long.TryParse(ptype.Max, out min)) actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Minimum ist keine Ganzzahl", State = PublishState.Fail, Item = ptype });
-
-                            if(!ptype.IsSizeManual)
-                            {
-                                string bin = Convert.ToString(max, 2);
-                                ptype.SizeInBit = bin.Length;
-                                maxsize = (int)Math.Pow(2, ptype.SizeInBit);
-                            }
-                            if(min < 0) actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Min kann nicht kleiner als 0 sein", State = PublishState.Fail, Item = ptype });
-                            if(min > max) actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Min ({ptype.Min}) ist größer als Max ({ptype.Max})", State = PublishState.Fail, Item = ptype });
-                            if(max >= maxsize) actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Max ({ptype.Max}) kann nicht größer als das Maximum ({maxsize-1}) sein", State = PublishState.Fail, Item = ptype });
-                            break;
-                        }
-
-                        case ParameterTypes.NumberInt:
-                        {
-                            if(ptype.UIHint == "Progressbar" && vers.NamespaceVersion < 20)
-                                actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Progressbar wird erst ab /20 unterstützt", State = PublishState.Fail, Item = ptype });
-
-                            long min, max;
-                            if(!long.TryParse(ptype.Max, out max)) actions.Add(new PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Maximum ist keine Ganzzahl", State = PublishState.Fail, Item = ptype });
-                            if(!long.TryParse(ptype.Max, out min)) actions.Add(new PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Minimum ist keine Ganzzahl", State = PublishState.Fail, Item = ptype });
-
-                            maxsize = (long)Math.Ceiling(maxsize / 2.0);
-                            if(!ptype.IsSizeManual)
-                            {
-                                long z = min * (-1);
-                                if(z < (max - 1)) z = min;
-                                string y = z.ToString().Replace("-", "");
-                                string bin = Convert.ToString(int.Parse(y), 2);
-                                if(z == (min * (-1))) bin += "1";
-                                if(!z.ToString().StartsWith("-")) bin = "1" + bin;
-                                ptype.SizeInBit = bin.Length;
-                                maxsize = (int)Math.Pow(2, ptype.SizeInBit);
-                            }
-                            if(min > max) actions.Add(new PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Min ({ptype.Min}) ist größer als Max ({ptype.Max})", State = PublishState.Fail, Item = ptype });
-                            if(max > ((maxsize)-1)) actions.Add(new PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Max ({ptype.Max}) kann nicht größer als das Maximum ({(maxsize/2)-1}) sein", State = PublishState.Fail, Item = ptype });
-                            if(min < ((maxsize)*(-1))) actions.Add(new PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Min ({ptype.Min}) kann nicht kleiner als das Minimum ({(maxsize/2)*(-1)}) sein", State = PublishState.Fail, Item = ptype });
-                            break;
-                        }
-
-                        case ParameterTypes.Float_DPT9:
-                        case ParameterTypes.Float_IEEE_Single:
-                        case ParameterTypes.Float_IEEE_Double:
-                            actions.Add(new PublishAction() { Text = $"    ParameterType Float {ptype.Name} ({ptype.UId}): Aktuell keine Überprüfung vorhanden", State = PublishState.Warning, Item = ptype });
-                            break;
-
-                        case ParameterTypes.Picture:
-                            if(ptype.BaggageObject == null)
-                                actions.Add(new PublishAction() { Text = $"    ParameterTyp Picture für {ptype.Name} ({ptype.UId}) ist kein Baggage zugeordnet", State = PublishState.Fail, Item = ptype });
-                            break;
-
-                        case ParameterTypes.None:
-                            if(!vers.IsPreETS4)
-                                actions.Add(new PublishAction() { Text = $"    ParameterTyp None {ptype.Name} ({ptype.UId}): Wird eigentlich nur in ETS3 unterstützt. IsPreETS4 aktivieren", State = PublishState.Warning, Item = ptype });
-                            break;
-
-                        case ParameterTypes.Color:
-                            if(ptype.UIHint != "RGB" && ptype.UIHint != "RGBW" && ptype.UIHint != "HSV")
-                                actions.Add(new PublishAction() { Text = $"    ParameterTyp Color {ptype.Name} ({ptype.UId}): Nicht unterstützter Farbraum {ptype.UIHint}", State = PublishState.Fail, Item = ptype });
-                            if(ptype.UIHint == "RGBW" && vers.NamespaceVersion < 20)
-                                actions.Add(new PublishAction() { Text = $"    ParameterTyp Color {ptype.Name} ({ptype.UId}): RGBW wird erst ab NamespaceVersion 20 unterstützt", State = PublishState.Fail, Item = ptype });
-                            break;
-
-                        case ParameterTypes.IpAddress:
-                            //actions.Add(new PublishAction() { Text = $"    ParameterTyp IpAddress für {ptype.Name} ({ptype.UId}) wird nicht exportiert", State = PublishState.Warning, Item = ptype });
-                            ptype.SizeInBit = 32;
-                            break;
-
-                        default:
-                            actions.Add(new PublishAction() { Text = $"    Unbekannter ParameterTyp für {ptype.Name} ({ptype.UId})", State = PublishState.Fail, Item = ptype });
-                            break;
-                    }
-                }
-
-                CheckVersion(vers, vers, actions, vers.DefaultLanguage, vers.NamespaceVersion, showOnlyErrors);
-                if(General != null)
-                    CheckLanguages(vers, actions, General, devices);
-
-                foreach(Module mod in vers.Modules)
-                {
-                    actions.Add(new PublishAction() { Text = $"Prüfe Module '{mod.Name}'" });
-                    CheckVersion(vers, mod, actions, vers.DefaultLanguage, vers.NamespaceVersion, showOnlyErrors);
-                    //TODO check for Argument exist
-                }
-
-                XElement temp = XElement.Parse(vers.Procedure);
-                temp.Attributes().Where((x) => x.IsNamespaceDeclaration).Remove();
-                foreach(XElement xele in temp.Descendants())
-                {
-                    if(xele.Name.LocalName == "OnError")
-                    {
-                        if(!vers.IsMessagesActive)
-                        {
-                            actions.Add(new PublishAction() { Text = $"Ladeprozedur: Es werden Meldungen verwendet, obwohl diese in der Applikation nicht aktiviert sind.", State = PublishState.Fail });
-                            return;
-                        }
-
-                        int id = -1;
-                        if(!int.TryParse(xele.Attribute("MessageRef").Value, out id))
-                            actions.Add(new PublishAction() { Text = $"Ladeprozedur: MessageRef ist kein Integer.", State = PublishState.Fail });
-                        if(id != -1)
-                        {
-                            if(!vers.Messages.Any(m => m.Id == id))
-                                actions.Add(new PublishAction() { Text = $"Ladeprozedur: MessageRef zeigt auf nicht vorhandene Meldung ({id}).", State = PublishState.Fail });
-                        }
-                    }
-                }
+            foreach(AppVersionModel model in versions)
+            {
+                AppVersion version = AutoHelper.GetAppVersion(General, model);
+                CheckVersion(General, version, actions, showOnlyErrors);
             }
             #endregion
             actions.Add(new PublishAction() { Text = "Ende Check" });
+        }
+
+
+        public static void CheckVersion(
+            ModelGeneral General, 
+            AppVersion vers, 
+            ObservableCollection<PublishAction> actions, 
+            bool showOnlyErrors = false)
+        {
+            Application app = null; // apps.Single(a => a.Versions.Contains(vers)); //ODO implement
+            actions.Add(new PublishAction() { Text = $"Prüfe Applikation '{app.NameText}' Version '{vers.NameText}'" });
+
+            if(string.IsNullOrEmpty(app.Mask.MediumTypes))
+            {
+                actions.Add(new PublishAction() { Text = $"Applikation '{app.NameText}': MediumTypes nicht gesetzt. Löschen Sie Data/maskversion.json und starten Sie die Anwendung neu.", State = PublishState.Fail });
+            }
+            
+            if(vers.IsModulesActive && vers.NamespaceVersion < 20)
+                actions.Add(new PublishAction() { Text = $"Applikation '{app.NameText}': ModuleDefindes werden erst ab Namespace 20 unterstützt.", State = PublishState.Fail });
+
+            if(vers.IsMessagesActive && vers.NamespaceVersion < 14)
+                actions.Add(new PublishAction() { Text = $"Applikation '{app.NameText}': Messages werden erst ab Namespace 14 unterstützt.", State = PublishState.Fail });
+
+            if(app.Mask.Procedure != ProcedureTypes.Default && string.IsNullOrEmpty(vers.Procedure))
+                actions.Add(new PublishAction() { Text = $"Applikation '{app.NameText}': Version muss eine Ladeprozedur enthalten.", State = PublishState.Fail });
+
+            if(vers.IsHelpActive && vers.NamespaceVersion == 14)
+                actions.Add(new PublishAction() { Text = $"Applikation '{app.NameText}': Hilfstexte werden voraussichtlich nicht unterstützt", State = PublishState.Warning });
+            else if(vers.IsHelpActive && vers.NamespaceVersion < 20)
+                actions.Add(new PublishAction() { Text = $"Applikation '{app.NameText}': Hilfstexte werden erst ab Namespace Version 20 unterstützt", State = PublishState.Fail });
+
+
+            foreach(ParameterType ptype in vers.ParameterTypes) {
+                long maxsize = (long)Math.Pow(2, ptype.SizeInBit);
+    
+                if(ptype.UIHint == "CheckBox" && (ptype.Min != "0" || ptype.Max != "1"))
+                    actions.Add(new PublishAction() { Text = $"    ParameterType Text {ptype.Name} ({ptype.UId}): Wenn UIHint Checkbox ist, ist Min=0 und Max=1 erforderlich", State = PublishState.Fail, Item = ptype });
+                        
+                switch(ptype.Type) {
+                    case ParameterTypes.Text:
+                        if(!showOnlyErrors && ptype.SizeInBit % 8 != 0)
+                            actions.Add(new PublishAction() { Text = $"    ParameterType Text {ptype.Name} ({ptype.UId}): ist kein vielfaches von 8", State = PublishState.Fail, Item = ptype });
+                        break;
+
+                    case ParameterTypes.Enum:
+                        var x = ptype.Enums.GroupBy(e => e.Value);
+                        foreach(var group in x.Where(g => g.Count() > 1))
+                            actions.Add(new PublishAction() { Text = $"    ParameterType Enum {ptype.Name} ({ptype.UId}): Wert ({group.Key}) wird öfters verwendet", State = PublishState.Fail, Item = ptype });
+                        
+                        if(!ptype.IsSizeManual)
+                        {
+                            int maxValue = -1;
+                            foreach(ParameterTypeEnum penum in ptype.Enums)
+                                if(penum.Value > maxValue)
+                                    maxValue = penum.Value;
+                            string bin = Convert.ToString(maxValue, 2);
+                            ptype.SizeInBit = bin.Length;
+                            maxsize = (int)Math.Pow(2, ptype.SizeInBit);
+                        }
+
+                        foreach(ParameterTypeEnum penum in ptype.Enums){
+                            if(penum.Value >= maxsize)
+                                actions.Add(new PublishAction() { Text = $"    ParameterType Enum {ptype.Name} ({ptype.UId}): Wert ({penum.Value}) ist größer als maximaler Wert ({maxsize-1})", State = PublishState.Fail, Item = ptype });
+
+                            if(!penum.Translate) {
+                                Translation trans = penum.Text.Single(t => t.Language.CultureCode == vers.DefaultLanguage);
+                                if(string.IsNullOrEmpty(trans.Text))
+                                    actions.Add(new PublishAction() { Text = $"    ParameterType Enum {penum.Name}/{ptype.Name} ({ptype.UId}): Keine Übersetzung vorhanden ({trans.Language.Text})", State = PublishState.Fail, Item = ptype });
+                            } else {
+                                if(!showOnlyErrors)
+                                    foreach(Translation trans in penum.Text)
+                                        if(string.IsNullOrEmpty(trans.Text))
+                                            actions.Add(new PublishAction() { Text = $"    ParameterType Enum {penum.Name}/{ptype.Name} ({ptype.UId}): Keine Übersetzung vorhanden ({trans.Language.Text})", State = PublishState.Warning, Item = ptype });
+                            }
+                        }
+                        break;
+
+                    case ParameterTypes.NumberUInt:
+                    {
+                        if(ptype.UIHint == "ProgressBar" && vers.NamespaceVersion < 20)
+                            actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Progressbar wird erst ab /20 unterstützt", State = PublishState.Fail, Item = ptype });
+
+                        long min, max;
+                        if(!long.TryParse(ptype.Max, out max)) actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Maximum ist keine Ganzzahl", State = PublishState.Fail, Item = ptype });
+                        if(!long.TryParse(ptype.Max, out min)) actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Minimum ist keine Ganzzahl", State = PublishState.Fail, Item = ptype });
+
+                        if(!ptype.IsSizeManual)
+                        {
+                            string bin = Convert.ToString(max, 2);
+                            ptype.SizeInBit = bin.Length;
+                            maxsize = (int)Math.Pow(2, ptype.SizeInBit);
+                        }
+                        if(min < 0) actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Min kann nicht kleiner als 0 sein", State = PublishState.Fail, Item = ptype });
+                        if(min > max) actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Min ({ptype.Min}) ist größer als Max ({ptype.Max})", State = PublishState.Fail, Item = ptype });
+                        if(max >= maxsize) actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Max ({ptype.Max}) kann nicht größer als das Maximum ({maxsize-1}) sein", State = PublishState.Fail, Item = ptype });
+                        break;
+                    }
+
+                    case ParameterTypes.NumberInt:
+                    {
+                        if(ptype.UIHint == "Progressbar" && vers.NamespaceVersion < 20)
+                            actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Progressbar wird erst ab /20 unterstützt", State = PublishState.Fail, Item = ptype });
+
+                        long min, max;
+                        if(!long.TryParse(ptype.Max, out max)) actions.Add(new PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Maximum ist keine Ganzzahl", State = PublishState.Fail, Item = ptype });
+                        if(!long.TryParse(ptype.Max, out min)) actions.Add(new PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Minimum ist keine Ganzzahl", State = PublishState.Fail, Item = ptype });
+
+                        maxsize = (long)Math.Ceiling(maxsize / 2.0);
+                        if(!ptype.IsSizeManual)
+                        {
+                            long z = min * (-1);
+                            if(z < (max - 1)) z = min;
+                            string y = z.ToString().Replace("-", "");
+                            string bin = Convert.ToString(int.Parse(y), 2);
+                            if(z == (min * (-1))) bin += "1";
+                            if(!z.ToString().StartsWith("-")) bin = "1" + bin;
+                            ptype.SizeInBit = bin.Length;
+                            maxsize = (int)Math.Pow(2, ptype.SizeInBit);
+                        }
+                        if(min > max) actions.Add(new PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Min ({ptype.Min}) ist größer als Max ({ptype.Max})", State = PublishState.Fail, Item = ptype });
+                        if(max > ((maxsize)-1)) actions.Add(new PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Max ({ptype.Max}) kann nicht größer als das Maximum ({(maxsize/2)-1}) sein", State = PublishState.Fail, Item = ptype });
+                        if(min < ((maxsize)*(-1))) actions.Add(new PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Min ({ptype.Min}) kann nicht kleiner als das Minimum ({(maxsize/2)*(-1)}) sein", State = PublishState.Fail, Item = ptype });
+                        break;
+                    }
+
+                    case ParameterTypes.Float_DPT9:
+                    case ParameterTypes.Float_IEEE_Single:
+                    case ParameterTypes.Float_IEEE_Double:
+                        actions.Add(new PublishAction() { Text = $"    ParameterType Float {ptype.Name} ({ptype.UId}): Aktuell keine Überprüfung vorhanden", State = PublishState.Warning, Item = ptype });
+                        break;
+
+                    case ParameterTypes.Picture:
+                        if(ptype.BaggageObject == null)
+                            actions.Add(new PublishAction() { Text = $"    ParameterTyp Picture für {ptype.Name} ({ptype.UId}) ist kein Baggage zugeordnet", State = PublishState.Fail, Item = ptype });
+                        break;
+
+                    case ParameterTypes.None:
+                        if(!vers.IsPreETS4)
+                            actions.Add(new PublishAction() { Text = $"    ParameterTyp None {ptype.Name} ({ptype.UId}): Wird eigentlich nur in ETS3 unterstützt. IsPreETS4 aktivieren", State = PublishState.Warning, Item = ptype });
+                        break;
+
+                    case ParameterTypes.Color:
+                        if(ptype.UIHint != "RGB" && ptype.UIHint != "RGBW" && ptype.UIHint != "HSV")
+                            actions.Add(new PublishAction() { Text = $"    ParameterTyp Color {ptype.Name} ({ptype.UId}): Nicht unterstützter Farbraum {ptype.UIHint}", State = PublishState.Fail, Item = ptype });
+                        if(ptype.UIHint == "RGBW" && vers.NamespaceVersion < 20)
+                            actions.Add(new PublishAction() { Text = $"    ParameterTyp Color {ptype.Name} ({ptype.UId}): RGBW wird erst ab NamespaceVersion 20 unterstützt", State = PublishState.Fail, Item = ptype });
+                        break;
+
+                    case ParameterTypes.IpAddress:
+                        //actions.Add(new PublishAction() { Text = $"    ParameterTyp IpAddress für {ptype.Name} ({ptype.UId}) wird nicht exportiert", State = PublishState.Warning, Item = ptype });
+                        ptype.SizeInBit = 32;
+                        break;
+
+                    default:
+                        actions.Add(new PublishAction() { Text = $"    Unbekannter ParameterTyp für {ptype.Name} ({ptype.UId})", State = PublishState.Fail, Item = ptype });
+                        break;
+                }
+            }
+
+            CheckVersion(vers, vers, actions, vers.DefaultLanguage, vers.NamespaceVersion, showOnlyErrors);
+            if(General != null)
+                CheckLanguages(vers, actions, General, null);
+
+            foreach(Module mod in vers.Modules)
+            {
+                actions.Add(new PublishAction() { Text = $"Prüfe Module '{mod.Name}'" });
+                CheckVersion(vers, mod, actions, vers.DefaultLanguage, vers.NamespaceVersion, showOnlyErrors);
+                //TODO check for Argument exist
+            }
+
+            XElement temp = XElement.Parse(vers.Procedure);
+            temp.Attributes().Where((x) => x.IsNamespaceDeclaration).Remove();
+            foreach(XElement xele in temp.Descendants())
+            {
+                if(xele.Name.LocalName == "OnError")
+                {
+                    if(!vers.IsMessagesActive)
+                    {
+                        actions.Add(new PublishAction() { Text = $"Ladeprozedur: Es werden Meldungen verwendet, obwohl diese in der Applikation nicht aktiviert sind.", State = PublishState.Fail });
+                        return;
+                    }
+
+                    int id = -1;
+                    if(!int.TryParse(xele.Attribute("MessageRef").Value, out id))
+                        actions.Add(new PublishAction() { Text = $"Ladeprozedur: MessageRef ist kein Integer.", State = PublishState.Fail });
+                    if(id != -1)
+                    {
+                        if(!vers.Messages.Any(m => m.Id == id))
+                            actions.Add(new PublishAction() { Text = $"Ladeprozedur: MessageRef zeigt auf nicht vorhandene Meldung ({id}).", State = PublishState.Fail });
+                    }
+                }
+            }
         }
 
         private static void CheckCatalogItem(CatalogItem item, ObservableCollection<PublishAction> actions)
@@ -620,8 +628,8 @@ namespace Kaenx.Creator.Classes {
             {
                 if(!citem.IsSection)
                 {
-                    Application app = general.Applications.Single(a => a.Versions.Contains(vers));
-                    if(citem.Hardware.Apps.Contains(app))
+                    Application app = general.Applications.Single(a => a.Versions.Any(v => v.Number == vers.Number));
+                    if(devices != null && citem.Hardware.Apps.Contains(app))
                     {
                         foreach(Device dev in citem.Hardware.Devices.Where(d => devices.Contains(d)))
                         {
@@ -633,7 +641,6 @@ namespace Kaenx.Creator.Classes {
                                     actions.Add(new PublishAction() { Text = $"Geräte: Beschreibung enthält nicht alle Sprachen der Applikation.", State = PublishState.Fail });
                             }
                         }
-                        return;
                     }
                 } else {
                     foreach(Language lang in vers.Languages)
@@ -802,6 +809,24 @@ namespace Kaenx.Creator.Classes {
                     }
                 }
             }
+            
+            if(version < 2)
+            {
+                foreach(JObject app in gen["Applications"])
+                {
+                    List<AppVersionModel> newVers = new List<AppVersionModel>();
+                    foreach(JObject ver in app["Versions"])
+                    {
+                        AppVersionModel model = new AppVersionModel();
+                        model.Version = ver.ToString();
+                        model.Number = (int)ver["Number"];
+                        model.Name = ver["Name"].ToString();
+                        newVers.Add(model);
+                    }
+                    app["Versions"] = JValue.FromObject(newVers);
+                }
+            }
+            
             return gen.ToString();
         }
     }

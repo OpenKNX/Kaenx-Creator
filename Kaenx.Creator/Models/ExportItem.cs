@@ -9,7 +9,7 @@ namespace Kaenx.Creator.Models
         public bool Selected { get; set; }
         public Hardware Hardware { get; set; }
         public Application App { get; set; }
-        public AppVersion Version { get; set; }
+        public AppVersionModel Version { get; set; }
         public Device Device { get; set; }
     }
 }
