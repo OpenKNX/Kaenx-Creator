@@ -65,7 +65,7 @@
             </Expander>
         </DataTemplate>
         <DataTemplate x:Key="IndependentTemplate">
-            <ListView ItemsSource="{Binding Blocks}" SelectedItem="{Binding SelectedBlock, ElementName=ParaControl, Mode=TwoWay}" SelectedValue="{Binding SelectedBlockId, ElementName=ParaControl, Mode=TwoWay}" SelectedValuePath="Id">
+            <ListView ItemsSource="{Binding Blocks}" SelectedItem="{Binding SelectedBlock, ElementName=ParaControl, Mode=TwoWay}" SelectedValue="{Binding SelectedBlockId, ElementName=ParaControl, Mode=TwoWay}" SelectedValuePath="Id" BorderThickness="0">
                 <ListView.Resources>
                     <Style x:Key="{x:Type ListViewItem}" TargetType="ListViewItem">
                         <Setter Property="SnapsToDevicePixels" Value="true"/>
@@ -438,7 +438,7 @@
 
         
         <ScrollViewer Grid.RowSpan="3" VerticalScrollBarVisibility="Auto">
-            <ItemsControl ItemsSource="{Binding Channels}" ItemTemplateSelector="{StaticResource ChannelSelector}" />
+            <ItemsControl ItemsSource="{Binding Channels}" ItemTemplateSelector="{StaticResource ChannelSelector}" BorderThickness="0 1 1 0" BorderBrush="LightGray" />
         </ScrollViewer>
 
 
