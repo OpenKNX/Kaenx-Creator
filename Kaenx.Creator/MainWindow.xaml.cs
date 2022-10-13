@@ -545,35 +545,34 @@ namespace Kaenx.Creator
                 MessageBox.Show("Bitte wählen Sie erst eine Sprache aus.");
                 return;
             }
-            Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
             Models.Language lang = LanguagesListVers.SelectedItem as Models.Language;
             
-            if(ver.Languages.Any(l => l.CultureCode == lang.CultureCode))
+            if(SelectedVersion.Languages.Any(l => l.CultureCode == lang.CultureCode))
                 MessageBox.Show("Die Sprache wird bereits unterstützt.");
             else {
-                ver.Languages.Add(lang);
-                if(!ver.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
-                    ver.Text.Add(new Models.Translation(lang, ""));
+                SelectedVersion.Languages.Add(lang);
+                if(!SelectedVersion.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
+                    SelectedVersion.Text.Add(new Models.Translation(lang, ""));
                 
-                foreach(Models.ParameterType type in ver.ParameterTypes) {
+                foreach(Models.ParameterType type in SelectedVersion.ParameterTypes) {
                     if(type.Type != Models.ParameterTypes.Enum) continue;
 
                     foreach(Models.ParameterTypeEnum enu in type.Enums)
                         if(!enu.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
                             enu.Text.Add(new Models.Translation(lang, ""));
                 }
-                foreach(Models.Message msg in ver.Messages) {
+                foreach(Models.Message msg in SelectedVersion.Messages) {
                     if(!msg.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
                         msg.Text.Add(new Models.Translation(lang, ""));
                 }
-                foreach(Models.Helptext msg in ver.Helptexts){
+                foreach(Models.Helptext msg in SelectedVersion.Helptexts){
                     if(!msg.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
                         msg.Text.Add(new Models.Translation(lang, ""));
                 }
 
-                addLangToVersion(ver, lang);
-                addLangToVersion(ver.Dynamics[0], lang);
-                foreach(Models.Module mod in ver.Modules)
+                addLangToVersion(SelectedVersion, lang);
+                addLangToVersion(SelectedVersion.Dynamics[0], lang);
+                foreach(Models.Module mod in SelectedVersion.Modules)
                 {
                     addLangToVersion(mod, lang);
                     addLangToVersion(mod.Dynamics[0], lang);
@@ -586,15 +585,14 @@ namespace Kaenx.Creator
                 MessageBox.Show("Bitte wählen Sie erst oben eine Sprache aus.");
                 return;
             }
-            Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
             Models.Language lang = SupportedLanguagesVers.SelectedItem as Models.Language;
 
-            if(ver.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
-                ver.Text.Remove(ver.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
-            ver.Languages.Remove(ver.Languages.Single(l => l.CultureCode == lang.CultureCode));
+            if(SelectedVersion.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
+                SelectedVersion.Text.Remove(SelectedVersion.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
+            SelectedVersion.Languages.Remove(SelectedVersion.Languages.Single(l => l.CultureCode == lang.CultureCode));
             
 
-            foreach(Models.ParameterType type in ver.ParameterTypes) {
+            foreach(Models.ParameterType type in SelectedVersion.ParameterTypes) {
                 if(type.Type != Models.ParameterTypes.Enum) continue;
 
                 foreach(Models.ParameterTypeEnum enu in type.Enums) {
@@ -602,17 +600,17 @@ namespace Kaenx.Creator
                         enu.Text.Remove(enu.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
                 }
             }
-            foreach(Models.Message msg in ver.Messages) {
+            foreach(Models.Message msg in SelectedVersion.Messages) {
                 if(msg.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
                     msg.Text.Remove(msg.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
             }
-            foreach(Models.Helptext msg in ver.Helptexts){
+            foreach(Models.Helptext msg in SelectedVersion.Helptexts){
                 if(msg.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
                     msg.Text.Remove(msg.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
             }
 
-            removeLangFromVersion(ver, lang);
-            foreach(Models.Module mod in ver.Modules)
+            removeLangFromVersion(SelectedVersion, lang);
+            foreach(Models.Module mod in SelectedVersion.Modules)
                 removeLangFromVersion(mod, lang);
         }
 
@@ -791,23 +789,21 @@ namespace Kaenx.Creator
 
         private void ClickAddModule(object sender, RoutedEventArgs e)
         {
-            Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
-            Models.Module mod = new Models.Module() { UId = AutoHelper.GetNextFreeUId(ver.Modules)};
+            Models.Module mod = new Models.Module() { UId = AutoHelper.GetNextFreeUId(SelectedVersion.Modules)};
             mod.Arguments.Add(new Models.Argument() { Name = "argParas", UId = AutoHelper.GetNextFreeUId(mod.Arguments) });
             mod.Arguments.Add(new Models.Argument() { Name = "argComs", UId = AutoHelper.GetNextFreeUId(mod.Arguments) });
             //mod.Arguments.Add(new Models.Argument() { Name = "argChan", UId = AutoHelper.GetNextFreeUId(mod.Arguments) });
             mod.ParameterBaseOffset = mod.Arguments[0];
             mod.ComObjectBaseNumber = mod.Arguments[1];
             mod.Dynamics.Add(new Models.Dynamic.DynamicModule());
-            ver.Modules.Add(mod);
+            SelectedVersion.Modules.Add(mod);
         }
 
         private void ClickRemoveModule(object sender, RoutedEventArgs e)
-        {
-            Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
+        {;
             Models.Module mod = ModuleList.SelectedItem as Models.Module;
-            ver.Modules.Remove(mod);
-            RemoveModule(ver.Dynamics[0], mod);
+            SelectedVersion.Modules.Remove(mod);
+            RemoveModule(SelectedVersion.Dynamics[0], mod);
         }
 
         private void RemoveModule(Models.Dynamic.IDynItems item, Models.Module mod)
@@ -850,6 +846,7 @@ namespace Kaenx.Creator
 
         private void ClickSave(object sender, RoutedEventArgs e)
         {
+            _selectedVersionModel.Version = Newtonsoft.Json.JsonConvert.SerializeObject(SelectedVersion, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
             string general = Newtonsoft.Json.JsonConvert.SerializeObject(General, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
             System.IO.File.WriteAllText(filePath, general);
         }
@@ -872,6 +869,7 @@ namespace Kaenx.Creator
 
         private void ClickSaveAs(object sender, RoutedEventArgs e)
         {
+            _selectedVersionModel.Version = Newtonsoft.Json.JsonConvert.SerializeObject(SelectedVersion, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
             string general = Newtonsoft.Json.JsonConvert.SerializeObject(General, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
 
             SaveFileDialog diag = new SaveFileDialog();
@@ -908,6 +906,7 @@ namespace Kaenx.Creator
                         continue;
                 }
 
+                _selectedVersionModel.Version = Newtonsoft.Json.JsonConvert.SerializeObject(SelectedVersion, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
                 string general = Newtonsoft.Json.JsonConvert.SerializeObject(General, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
                 System.IO.File.WriteAllText("Templates\\" + diag.Answer + ".temp", general);
                 return;
@@ -1028,8 +1027,7 @@ namespace Kaenx.Creator
         
         private void ClickDoResetParaIds(object sender, RoutedEventArgs e)
         {
-            Models.AppVersion vers = VersionList.SelectedItem as Models.AppVersion;
-            ClearHelper.ResetParameterIds(vers);
+            ClearHelper.ResetParameterIds(SelectedVersion);
         }
 
 
@@ -1089,8 +1087,7 @@ namespace Kaenx.Creator
         private void ClickCalcHeatmap(object sender, RoutedEventArgs e)
         {
             Models.Memory mem = (sender as Button).DataContext as Models.Memory;
-            Models.AppVersion ver = VersionList.SelectedItem as Models.AppVersion;
-            AutoHelper.MemoryCalculation(ver, mem);
+            AutoHelper.MemoryCalculation(SelectedVersion, mem);
         }
 
         private void TabChanged(object sender, SelectionChangedEventArgs e)
@@ -1123,16 +1120,16 @@ namespace Kaenx.Creator
                     {
                         if (InPublishOnlyLatest.IsChecked == true)
                         {
-                            /*Models.AppVersion ver = app.Versions.OrderByDescending(v => v.Number).First();
+                            Models.AppVersionModel ver = app.Versions.OrderByDescending(v => v.Number).First();
                             Models.ExportItem item = new Models.ExportItem();
                             item.Hardware = hard;
                             item.Device = dev;
                             item.App = app;
                             item.Version = ver;
-                            Exports.Add(item);*/
+                            Exports.Add(item);
                         } else
                         {
-                            /*foreach (Models.AppVersion ver in app.Versions)
+                            foreach (Models.AppVersionModel ver in app.Versions)
                             {
                                 Models.ExportItem item = new Models.ExportItem();
                                 item.Hardware = hard;
@@ -1140,8 +1137,7 @@ namespace Kaenx.Creator
                                 item.App = app;
                                 item.Version = ver;
                                 Exports.Add(item);
-                            }*/
-                            //TODO implement
+                            }
                         }
                     }
                 }
@@ -1168,6 +1164,7 @@ namespace Kaenx.Creator
         {
             PublishActions.Clear();
             await Task.Delay(1000);
+            _selectedVersionModel.Version = Newtonsoft.Json.JsonConvert.SerializeObject(SelectedVersion, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
             List<Models.Hardware> hardware = new List<Models.Hardware>();
             List<Models.Device> devices = new List<Models.Device>();
             List<Models.Application> apps = new List<Models.Application>();

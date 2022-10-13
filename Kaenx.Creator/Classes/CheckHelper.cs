@@ -124,7 +124,7 @@ namespace Kaenx.Creator.Classes {
             ObservableCollection<PublishAction> actions, 
             bool showOnlyErrors = false)
         {
-            Application app = null; // apps.Single(a => a.Versions.Contains(vers)); //ODO implement
+            Application app = General.Applications.Single(a => a.Versions.Any(v => v.Number == vers.Number && v.Name == vers.Name));
             actions.Add(new PublishAction() { Text = $"Prüfe Applikation '{app.NameText}' Version '{vers.NameText}'" });
 
             if(string.IsNullOrEmpty(app.Mask.MediumTypes))

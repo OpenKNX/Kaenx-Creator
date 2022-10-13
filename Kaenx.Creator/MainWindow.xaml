@@ -635,6 +635,7 @@
                             <RowDefinition Height="auto" />
                             <RowDefinition Height="auto" />
                             <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
                             <RowDefinition />
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
@@ -695,7 +696,9 @@
 
                         <Button Grid.Row="3" Grid.ColumnSpan="3" Content="{x:Static p:Resources.tapps_addv}" Click="ClickAddVersion" Margin="5 5 5 2" IsEnabled="{Binding Mask, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
                         
-                        <ListView x:Name="VersionList" Grid.Row="4" Grid.ColumnSpan="3" ItemsSource="{Binding Versions}" DisplayMemberPath="NameText" Margin="5 5 5 0">
+                        <TextBlock Grid.Row="4" Margin="5" Grid.ColumnSpan="3" Text="Right click to open Version" />
+
+                        <ListView x:Name="VersionList" Grid.Row="5" Grid.ColumnSpan="3" ItemsSource="{Binding Versions}" DisplayMemberPath="NameText" Margin="5 5 5 0">
                             <ListView.Resources>
                                 <ContextMenu x:Key="ContextMenu">
                                     <MenuItem Header="{x:Static p:Resources.tapps_openh}" Click="ClickOpenHere" />
@@ -1122,8 +1125,8 @@
 
                             <ListView x:Name="ModuleList" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding Modules}" DisplayMemberPath="Name" />
 
-                            <TabControl x:Name="ModuleTabs" Grid.RowSpan="2" Grid.Column="3" TabStripPlacement="Left" Style="{StaticResource LeftTabControl}"  DataContext="{Binding ElementName=ModuleList, Path=SelectedItem}" IsEnabled="{Binding Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
-                                <TabItem Header="{x:Static p:Resources.gen_gen}" Style="{StaticResource LeftTabItem2}"> 
+                            <TabControl x:Name="ModuleTabs" Grid.RowSpan="2" Grid.Column="3" TabStripPlacement="Left" Style="{StaticResource LeftTabControl}" IsEnabled="{Binding ElementName=ModuleList, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
+                                <TabItem Header="{x:Static p:Resources.gen_gen}" Style="{StaticResource LeftTabItem2}" DataContext="{Binding SelectedItem, ElementName=ModuleList}"> 
                                     <ScrollViewer>
                                         <StackPanel Margin="5">
                                             <StackPanel.Resources>
@@ -1327,31 +1330,31 @@
                                 </TabItem>
 
                                 <TabItem Header="{x:Static p:Resources.tabs_arg}" Style="{StaticResource LeftTabItem2}"> 
-                                    <ctrl:ArgumentView Module="{Binding ElementName=ModuleList, Path=SelectedItem}" />
+                                    <ctrl:ArgumentView Module="{Binding SelectedItem, ElementName=ModuleList}" />
                                 </TabItem>
 
                                 <TabItem Header="{x:Static p:Resources.tabs_union}" Visibility="{Binding IsUnionActive, Converter={StaticResource BoolToVis}}" Style="{StaticResource LeftTabItem2}">
-                                    <ctrl:UnionView Version="{Binding .}" Module="{Binding ElementName=ModuleList, Path=SelectedItem}" />
+                                    <ctrl:UnionView Version="{Binding .}" Module="{Binding SelectedItem, ElementName=ModuleList}" />
                                 </TabItem>
 
                                 <TabItem Header="{x:Static p:Resources.tabs_paras}" Style="{StaticResource LeftTabItem2}">
-                                    <ctrl:ParameterView Version="{Binding .}" Module="{Binding ElementName=ModuleList, Path=SelectedItem}" />
+                                    <ctrl:ParameterView Version="{Binding .}" Module="{Binding SelectedItem, ElementName=ModuleList}" />
                                 </TabItem>
 
                                 <TabItem Header="{x:Static p:Resources.tabs_pararefs}" Visibility="{Binding IsParameterRefAuto, Converter={StaticResource BoolToVis}, ConverterParameter=true}" Style="{StaticResource LeftTabItem2}">
-                                    <ctrl:ParameterRefView Version="{Binding .}" Module="{Binding ElementName=ModuleList, Path=SelectedItem}" />
+                                    <ctrl:ParameterRefView Version="{Binding .}" Module="{Binding SelectedItem, ElementName=ModuleList}" />
                                 </TabItem>
 
                                 <TabItem Header="{x:Static p:Resources.tabs_coms}" Style="{StaticResource LeftTabItem2}">
-                                    <ctrl:ComObjectView Version="{Binding .}" Module="{Binding ElementName=ModuleList, Path=SelectedItem}" />
+                                    <ctrl:ComObjectView Version="{Binding .}" Module="{Binding SelectedItem, ElementName=ModuleList}" />
                                 </TabItem>
 
-                                <TabItem Header="{x:Static p:Resources.tabs_comrefs}" Visibility="{Binding SelectedVersion.IsComObjectRefAuto, Converter={StaticResource BoolToVis}, ConverterParameter=true}" Style="{StaticResource LeftTabItem2}">
-                                    <ctrl:ComObjectRefView Version="{Binding .}" Module="{Binding ElementName=ModuleList, Path=SelectedItem}" />
+                                <TabItem Header="{x:Static p:Resources.tabs_comrefs}" Visibility="{Binding IsComObjectRefAuto, Converter={StaticResource BoolToVis}, ConverterParameter=true}" Style="{StaticResource LeftTabItem2}">
+                                    <ctrl:ComObjectRefView Version="{Binding .}" Module="{Binding SelectedItem, ElementName=ModuleList}" />
                                 </TabItem>
 
                                 <TabItem Header="{x:Static p:Resources.tabs_dyn}" Style="{StaticResource LeftTabItem2}">
-                                    <ctrl:DynamicView Version="{Binding .}" Module="{Binding ElementName=ModuleList, Path=SelectedItem}" />
+                                    <ctrl:DynamicView Version="{Binding .}" Module="{Binding SelectedItem, ElementName=ModuleList}" />
                                 </TabItem>
                             </TabControl>
                         </Grid>

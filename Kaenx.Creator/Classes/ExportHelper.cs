@@ -65,9 +65,12 @@ namespace Kaenx.Creator.Classes
             int highestNS = 0;
             foreach (Models.AppVersionModel ver in vers)
             {
-                /*if (ver.NamespaceVersion > highestNS)
-                    highestNS = ver.NamespaceVersion;*/
-                //TODO implement
+                Regex reg = new Regex("NamespaceVersion\":[ ]?([0-9]{2})");
+                Match m = reg.Match(ver.Version);
+                if(!m.Success) continue;
+                int nsv = int.Parse(m.Groups[1].Value);
+                if (nsv > highestNS)
+                    highestNS = nsv;
             }
             currentNamespace = $"http://knx.org/xml/project/{highestNS}";
 
@@ -80,7 +83,7 @@ namespace Kaenx.Creator.Classes
             XElement xmanu = null;
             XElement xlanguages = null;
             foreach(Models.AppVersionModel model in vers) {
-                Models.AppVersion ver = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.AppVersion>(model.Version, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
+                Models.AppVersion ver = AutoHelper.GetAppVersion(general, model);
                 Debug.WriteLine($"Exportiere AppVersion: {ver.Name} {ver.NameText}");
                 languages = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>();
                 xmanu = CreateNewXML(Manu);
@@ -600,7 +603,7 @@ namespace Kaenx.Creator.Classes
 
                         XElement xreginfo = new XElement(Get("RegistrationInfo"));
                         xreginfo.SetAttributeValue("RegistrationStatus", "Registered");
-                        xreginfo.SetAttributeValue("RegistrationNumber", "0001/" + hard.Version + ver.Number);
+                        xreginfo.SetAttributeValue("RegistrationNumber", "0001/" + hard.SerialNumber + ver.Number);
                         xh2p.Add(xreginfo);
                         xasso.Add(xh2p);
 
@@ -1281,7 +1284,7 @@ namespace Kaenx.Creator.Classes
         {
             XElement xcho = new XElement(Get("choose"));
             parent.Add(xcho);
-            xcho.SetAttributeValue("ParamRefId", appVersion + (cho.ParameterRefObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{cho.ParameterRefObject.ParameterObject.Id}_R-{cho.ParameterRefObject.Id}");
+            xcho.SetAttributeValue("ParamRefId", appVersionMod + (cho.ParameterRefObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{cho.ParameterRefObject.ParameterObject.Id}_R-{cho.ParameterRefObject.Id}");
             return xcho;
         }
 
@@ -1326,7 +1329,7 @@ namespace Kaenx.Creator.Classes
                     {
                         block.SetAttributeValue("Text", dText);
                         if (!bl.TranslationText)
-                            foreach (Models.Translation trans in bl.Text) AddTranslation(trans.Language.CultureCode, $"{appVersion}_PB-{bl.Id}", "Text", trans.Text);
+                            foreach (Models.Translation trans in bl.Text) AddTranslation(trans.Language.CultureCode, $"{appVersionMod}_PB-{bl.Id}", "Text", trans.Text);
                     }
                 }
             }

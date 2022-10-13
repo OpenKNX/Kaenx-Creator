@@ -10,7 +10,8 @@
     xmlns:models="clr-namespace:Kaenx.Creator.Models"
     mc:Ignorable="d"
     d:DesignHeight="300"
-    d:DesignWidth="400">
+    d:DesignWidth="400"
+    x:Name="ViewControl">
     <UserControl.Resources>
         <conv:EmptyToBool x:Key="EmptyToBool" />
     </UserControl.Resources>
@@ -28,7 +29,7 @@
         <Button Content="{x:Static p:Resources.gen_add}" Click="ClickAdd" Margin="0 0 1 2" />
         <Button Grid.Column="1" Content="{x:Static p:Resources.gen_remove}" Click="ClickRemove" Margin="1 0 0 2" />
 
-        <ListView x:Name="ArgumentList" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding Arguments}" DisplayMemberPath="Name" />
+        <ListView x:Name="ArgumentList" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding Module.Arguments, ElementName=ViewControl}" DisplayMemberPath="Name" />
 
         <ScrollViewer Grid.Column="3" Grid.RowSpan="2" DataContext="{Binding ElementName=ArgumentList, Path=SelectedItem}" IsEnabled="{Binding Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
             <StackPanel Margin="5">

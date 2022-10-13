@@ -460,10 +460,10 @@ namespace Kaenx.Creator.Classes
                 if(pref.Id == -1) pref.Id = GetNextFreeId(vbase, "ParameterRefs");
 
             foreach(ComObject com in vbase.ComObjects)
-                if(com.Id == -1) com.Id = GetNextFreeId(vbase, "ComObjects");
+                if(com.Id == -1) com.Id = GetNextFreeId(vbase, "ComObjects", 0);
 
             foreach(ComObjectRef cref in vbase.ComObjectRefs)
-                if(cref.Id == -1) cref.Id = GetNextFreeId(vbase, "ComObjectRefs");
+                if(cref.Id == -1) cref.Id = GetNextFreeId(vbase, "ComObjectRefs", 0);
 
             if(vbase is Module mod)
             {
