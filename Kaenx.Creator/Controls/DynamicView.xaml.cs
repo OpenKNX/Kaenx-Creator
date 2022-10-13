@@ -99,6 +99,10 @@ namespace Kaenx.Creator.Controls
             {
                 ((sender as Button).DataContext as Models.Dynamic.DynSeparator).Id = -1;
             }
+            else if ((sender as Button).DataContext is Models.Dynamic.DynModule)
+            {
+                ((sender as Button).DataContext as Models.Dynamic.DynModule).Id = -1;
+            }
             else
             {
                 throw new Exception("Unbekannter Typ zum ID löschen: " + sender.GetType().ToString());
