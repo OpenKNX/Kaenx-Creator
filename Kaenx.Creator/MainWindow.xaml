@@ -635,6 +635,7 @@
                             <RowDefinition Height="auto" />
                             <RowDefinition Height="auto" />
                             <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
                             <RowDefinition />
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
@@ -695,9 +696,12 @@
 
                         <Button Grid.Row="3" Grid.ColumnSpan="3" Content="{x:Static p:Resources.tapps_addv}" Click="ClickAddVersion" Margin="5 5 5 2" IsEnabled="{Binding Mask, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
                         
-                        <ListView x:Name="VersionList" Grid.Row="4" Grid.ColumnSpan="3" ItemsSource="{Binding Versions}" DisplayMemberPath="NameText" Margin="5 5 5 0">
+                        <TextBlock Grid.Row="4" Margin="5" Grid.ColumnSpan="3" Text="Right click to open Version" />
+
+                        <ListView x:Name="VersionList" Grid.Row="5" Grid.ColumnSpan="3" ItemsSource="{Binding Versions}" DisplayMemberPath="NameText" Margin="5 5 5 0">
                             <ListView.Resources>
                                 <ContextMenu x:Key="ContextMenu">
+                                    <MenuItem Header="{x:Static p:Resources.tapps_openh}" Click="ClickOpenHere" />
                                     <MenuItem Header="{x:Static p:Resources.tapps_openv}" Click="ClickOpenViewer" />
                                     <Separator />
                                     <MenuItem Header="{x:Static p:Resources.gen_copy}" Click="ClickCopyVersion" />
@@ -714,7 +718,7 @@
                 </Grid>
             </TabItem>
 
-            <TabItem DataContext="{Binding ElementName=VersionList, Path=SelectedItem}" Style="{StaticResource TopTabItem}" IsEnabled="{Binding ElementName=VersionList, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
+            <TabItem DataContext="{Binding SelectedVersion}" Style="{StaticResource TopTabItem}" IsEnabled="{Binding ., Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
                         <!--<TextBlock FontSize="18" Text="{Binding ElementName=AppList, Path=SelectedItem.Name}" Margin="0 0 5 0" />-->
@@ -878,7 +882,7 @@
                     </TabItem>
 
                     <TabItem Header="{x:Static p:Resources.tabs_check}" Style="{StaticResource LeftTabItem}">
-                        <ctrl:CheckView App="{Binding SelectedItem, ElementName=AppList}" Version="{Binding SelectedItem, ElementName=VersionList}" />
+                        <ctrl:CheckView App="{Binding SelectedItem, ElementName=AppList}" Version="{Binding .}" />
                     </TabItem>
 
                     <TabItem Header="{x:Static p:Resources.tabs_mem}" Style="{StaticResource LeftTabItem}">
@@ -1098,11 +1102,11 @@
                     </TabItem>
 
                     <TabItem Header="{x:Static p:Resources.tabs_parat}" Style="{StaticResource LeftTabItem}">
-                        <ctrl:ParameterTypeView Baggages="{Binding General.Baggages, ElementName=ViewControl}" Version="{Binding ElementName=VersionList, Path=SelectedItem}" />
+                        <ctrl:ParameterTypeView Baggages="{Binding General.Baggages, ElementName=ViewControl}" Version="{Binding .}" />
                     </TabItem>
 
                     <TabItem Header="{x:Static p:Resources.tabs_union}" Visibility="{Binding IsUnionActive, Converter={StaticResource BoolToVis}}" Style="{StaticResource LeftTabItem}">
-                        <ctrl:UnionView Version="{Binding ElementName=VersionList, Path=SelectedItem}" Module="{Binding ElementName=VersionList, Path=SelectedItem}" />
+                        <ctrl:UnionView Version="{Binding .}" Module="{Binding .}" />
                     </TabItem>
 
                     <TabItem Header="{x:Static p:Resources.tabs_module}" Visibility="{Binding IsModulesActive, Converter={StaticResource BoolToVis}}" Style="{StaticResource LeftTabItem}">
@@ -1121,8 +1125,8 @@
 
                             <ListView x:Name="ModuleList" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding Modules}" DisplayMemberPath="Name" />
 
-                            <TabControl x:Name="ModuleTabs" Grid.RowSpan="2" Grid.Column="3" TabStripPlacement="Left" Style="{StaticResource LeftTabControl}"  DataContext="{Binding ElementName=ModuleList, Path=SelectedItem}" IsEnabled="{Binding Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
-                                <TabItem Header="{x:Static p:Resources.gen_gen}" Style="{StaticResource LeftTabItem2}"> 
+                            <TabControl x:Name="ModuleTabs" Grid.RowSpan="2" Grid.Column="3" TabStripPlacement="Left" Style="{StaticResource LeftTabControl}" IsEnabled="{Binding ElementName=ModuleList, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
+                                <TabItem Header="{x:Static p:Resources.gen_gen}" Style="{StaticResource LeftTabItem2}" DataContext="{Binding SelectedItem, ElementName=ModuleList}"> 
                                     <ScrollViewer>
                                         <StackPanel Margin="5">
                                             <StackPanel.Resources>
@@ -1326,67 +1330,67 @@
                                 </TabItem>
 
                                 <TabItem Header="{x:Static p:Resources.tabs_arg}" Style="{StaticResource LeftTabItem2}"> 
-                                    <ctrl:ArgumentView Module="{Binding ElementName=ModuleList, Path=SelectedItem}" />
+                                    <ctrl:ArgumentView Module="{Binding SelectedItem, ElementName=ModuleList}" />
                                 </TabItem>
 
-                                <TabItem Header="{x:Static p:Resources.tabs_union}" Visibility="{Binding SelectedItem.IsUnionActive, ElementName=VersionList, Converter={StaticResource BoolToVis}}" Style="{StaticResource LeftTabItem2}">
-                                    <ctrl:UnionView Version="{Binding ElementName=VersionList, Path=SelectedItem}" Module="{Binding ElementName=ModuleList, Path=SelectedItem}" />
+                                <TabItem Header="{x:Static p:Resources.tabs_union}" Visibility="{Binding IsUnionActive, Converter={StaticResource BoolToVis}}" Style="{StaticResource LeftTabItem2}">
+                                    <ctrl:UnionView Version="{Binding .}" Module="{Binding SelectedItem, ElementName=ModuleList}" />
                                 </TabItem>
 
                                 <TabItem Header="{x:Static p:Resources.tabs_paras}" Style="{StaticResource LeftTabItem2}">
-                                    <ctrl:ParameterView Version="{Binding ElementName=VersionList, Path=SelectedItem}" Module="{Binding ElementName=ModuleList, Path=SelectedItem}" />
+                                    <ctrl:ParameterView Version="{Binding .}" Module="{Binding SelectedItem, ElementName=ModuleList}" />
                                 </TabItem>
 
-                                <TabItem Header="{x:Static p:Resources.tabs_pararefs}" Visibility="{Binding SelectedItem.IsParameterRefAuto, ElementName=VersionList, Converter={StaticResource BoolToVis}, ConverterParameter=true}" Style="{StaticResource LeftTabItem2}">
-                                    <ctrl:ParameterRefView Version="{Binding ElementName=VersionList, Path=SelectedItem}" Module="{Binding ElementName=ModuleList, Path=SelectedItem}" />
+                                <TabItem Header="{x:Static p:Resources.tabs_pararefs}" Visibility="{Binding IsParameterRefAuto, Converter={StaticResource BoolToVis}, ConverterParameter=true}" Style="{StaticResource LeftTabItem2}">
+                                    <ctrl:ParameterRefView Version="{Binding .}" Module="{Binding SelectedItem, ElementName=ModuleList}" />
                                 </TabItem>
 
                                 <TabItem Header="{x:Static p:Resources.tabs_coms}" Style="{StaticResource LeftTabItem2}">
-                                    <ctrl:ComObjectView Version="{Binding ElementName=VersionList, Path=SelectedItem}" Module="{Binding ElementName=ModuleList, Path=SelectedItem}" />
+                                    <ctrl:ComObjectView Version="{Binding .}" Module="{Binding SelectedItem, ElementName=ModuleList}" />
                                 </TabItem>
 
-                                <TabItem Header="{x:Static p:Resources.tabs_comrefs}" Visibility="{Binding SelectedItem.IsComObjectRefAuto, ElementName=VersionList, Converter={StaticResource BoolToVis}, ConverterParameter=true}" Style="{StaticResource LeftTabItem2}">
-                                    <ctrl:ComObjectRefView Version="{Binding ElementName=VersionList, Path=SelectedItem}" Module="{Binding ElementName=ModuleList, Path=SelectedItem}" />
+                                <TabItem Header="{x:Static p:Resources.tabs_comrefs}" Visibility="{Binding IsComObjectRefAuto, Converter={StaticResource BoolToVis}, ConverterParameter=true}" Style="{StaticResource LeftTabItem2}">
+                                    <ctrl:ComObjectRefView Version="{Binding .}" Module="{Binding SelectedItem, ElementName=ModuleList}" />
                                 </TabItem>
 
                                 <TabItem Header="{x:Static p:Resources.tabs_dyn}" Style="{StaticResource LeftTabItem2}">
-                                    <ctrl:DynamicView Version="{Binding ElementName=VersionList, Path=SelectedItem}" Module="{Binding ElementName=ModuleList, Path=SelectedItem}" />
+                                    <ctrl:DynamicView Version="{Binding .}" Module="{Binding SelectedItem, ElementName=ModuleList}" />
                                 </TabItem>
                             </TabControl>
                         </Grid>
                     </TabItem>
 
                     <TabItem Header="{x:Static p:Resources.tabs_paras}" Style="{StaticResource LeftTabItem}">
-                        <ctrl:ParameterView Version="{Binding ElementName=VersionList, Path=SelectedItem}" Module="{Binding ElementName=VersionList, Path=SelectedItem}" />
+                        <ctrl:ParameterView Version="{Binding .}" Module="{Binding .}" />
                     </TabItem>
 
                     <TabItem Header="{x:Static p:Resources.tabs_pararefs}" Visibility="{Binding IsParameterRefAuto, Converter={StaticResource BoolToVis}, ConverterParameter=true}" Style="{StaticResource LeftTabItem}">
-                        <ctrl:ParameterRefView Version="{Binding ElementName=VersionList, Path=SelectedItem}" Module="{Binding ElementName=VersionList, Path=SelectedItem}" />
+                        <ctrl:ParameterRefView Version="{Binding .}" Module="{Binding .}" />
                     </TabItem>
 
                     <TabItem Header="{x:Static p:Resources.tabs_coms}" Style="{StaticResource LeftTabItem}">
-                        <ctrl:ComObjectView Version="{Binding ElementName=VersionList, Path=SelectedItem}" Module="{Binding ElementName=VersionList, Path=SelectedItem}" />
+                        <ctrl:ComObjectView Version="{Binding .}" Module="{Binding .}" />
                     </TabItem>
 
                     <TabItem Header="{x:Static p:Resources.tabs_comrefs}" Visibility="{Binding IsComObjectRefAuto, Converter={StaticResource BoolToVis}, ConverterParameter=true}" Style="{StaticResource LeftTabItem}">
-                        <ctrl:ComObjectRefView Version="{Binding ElementName=VersionList, Path=SelectedItem}" Module="{Binding ElementName=VersionList, Path=SelectedItem}" />
+                        <ctrl:ComObjectRefView Version="{Binding .}" Module="{Binding .}" />
                     </TabItem>
 
 
                     <TabItem Header="{x:Static p:Resources.tabs_msg}" Visibility="{Binding IsMessagesActive, Converter={StaticResource BoolToVis}}" Style="{StaticResource LeftTabItem}">
-                        <ctrl:MessagesView Version="{Binding ElementName=VersionList, Path=SelectedItem}" />
+                        <ctrl:MessagesView Version="{Binding .}" />
                     </TabItem>
 
                     <TabItem Header="{x:Static p:Resources.tabs_loadp}" Style="{StaticResource LeftTabItem}">
-                        <ctrl:LoadProcedures Mask="{Binding SelectedItem.Mask, ElementName=AppList}" Version="{Binding SelectedItem, ElementName=VersionList}"/>
+                        <ctrl:LoadProcedures Mask="{Binding SelectedItem.Mask, ElementName=AppList}" Version="{Binding .}"/>
                     </TabItem>
 
                     <TabItem Header="{x:Static p:Resources.tabs_help}" Visibility="{Binding IsHelpActive, Converter={StaticResource BoolToVis}}" Style="{StaticResource LeftTabItem}">
-                        <ctrl:HelpView Version="{Binding ElementName=VersionList, Path=SelectedItem}" />
+                        <ctrl:HelpView Version="{Binding .}" />
                     </TabItem>
 
                     <TabItem Header="{x:Static p:Resources.tabs_dyn}" Style="{StaticResource LeftTabItem}">
-                        <ctrl:DynamicView Version="{Binding ElementName=VersionList, Path=SelectedItem}" Module="{Binding ElementName=VersionList, Path=SelectedItem}" />
+                        <ctrl:DynamicView Version="{Binding .}" Module="{Binding .}" />
                     </TabItem>
 
 

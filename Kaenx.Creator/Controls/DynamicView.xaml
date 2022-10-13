@@ -385,7 +385,7 @@
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
 
-        <TreeView x:Name="DynamicList" ItemsSource="{Binding Dynamics}" MinWidth="300"
+        <TreeView x:Name="DynamicList" ItemsSource="{Binding Module.Dynamics, ElementName=ViewControl}" MinWidth="300"
             AllowDrop="True" MouseMove="TreeMouseMove" DragOver="TreeDragOver" Drop="TreeDrop">
             <TreeView.ItemContainerStyle>
 				<Style TargetType="TreeViewItem">

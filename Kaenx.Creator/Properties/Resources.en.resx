@@ -1129,4 +1129,8 @@
     <value>Help</value>
     <comment/>
   </data>
+  <data name="tapps_openh" xml:space="preserve">
+    <value>Open</value>
+    <comment/>
+  </data>
 </root>

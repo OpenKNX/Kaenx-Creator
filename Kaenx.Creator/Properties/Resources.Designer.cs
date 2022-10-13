@@ -2132,5 +2132,11 @@ namespace Kaenx.Creator.Properties {
                 return ResourceManager.GetString("menu_info_help", resourceCulture);
             }
         }
+        
+        public static string tapps_openh {
+            get {
+                return ResourceManager.GetString("tapps_openh", resourceCulture);
+            }
+        }
     }
 }

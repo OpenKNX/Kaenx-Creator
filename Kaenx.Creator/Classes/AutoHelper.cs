@@ -14,6 +14,164 @@ namespace Kaenx.Creator.Classes
     public static class AutoHelper
     {
 
+        public static AppVersion GetAppVersion(ModelGeneral general, AppVersionModel model)
+        {
+            AppVersion version = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.AppVersion>(model.Version, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
+            LoadVersion(version, version);
+
+            foreach(Models.Module mod in version.Modules)
+                LoadVersion(version, mod);
+
+            //TODO doesnt work anymore
+            foreach(Models.ParameterType ptype in version.ParameterTypes.Where(p => p.Type == Models.ParameterTypes.Picture && p._baggageUId != -1))
+            {
+                ptype.BaggageObject = general.Baggages.SingleOrDefault(b => b.UId == ptype._baggageUId);
+            }
+
+            return version;
+        }
+
+        private static void LoadVersion(Models.AppVersion vbase, Models.IVersionBase mod)
+        {
+            if(vbase == mod) {
+                if(vbase._addressMemoryId != -1)
+                    vbase.AddressMemoryObject = vbase.Memories.SingleOrDefault(m => m.UId == vbase._addressMemoryId);
+
+                if(vbase._assocMemoryId != -1)
+                    vbase.AssociationMemoryObject = vbase.Memories.SingleOrDefault(m => m.UId == vbase._assocMemoryId);
+                    
+                if(vbase._comMemoryId != -1)
+                    vbase.ComObjectMemoryObject = vbase.Memories.SingleOrDefault(m => m.UId == vbase._comMemoryId);
+            } else {
+                Models.Module modu = mod as Models.Module;
+                if(modu._parameterBaseOffsetUId != -1)
+                    modu.ParameterBaseOffset = modu.Arguments.SingleOrDefault(m => m.UId == modu._parameterBaseOffsetUId);
+                
+                if(modu._comObjectBaseNumberUId != -1)
+                    modu.ComObjectBaseNumber = modu.Arguments.SingleOrDefault(m => m.UId == modu._comObjectBaseNumberUId);
+            }
+
+            foreach(Models.Parameter para in mod.Parameters)
+            {
+                if (para._memoryId != -1)
+                    para.SaveObject = vbase.Memories.SingleOrDefault(m => m.UId == para._memoryId);
+                    
+                if (para._parameterType != -1)
+                    para.ParameterTypeObject = vbase.ParameterTypes.SingleOrDefault(p => p.UId == para._parameterType);
+
+                if(para.IsInUnion && para._unionId != -1)
+                    para.UnionObject = mod.Unions.SingleOrDefault(u => u.UId == para._unionId);
+            }
+
+            foreach(Models.Union union in mod.Unions)
+            {
+                if (union._memoryId != -1)
+                    union.MemoryObject = vbase.Memories.SingleOrDefault(u => u.UId == union._memoryId);
+            }
+
+            foreach(Models.ParameterRef pref in mod.ParameterRefs)
+            {
+                if (pref._parameter != -1)
+                    pref.ParameterObject = mod.Parameters.SingleOrDefault(p => p.UId == pref._parameter);
+            }
+
+            foreach(Models.ComObject com in mod.ComObjects)
+            {
+                if(com._parameterRef != -1)
+                    com.ParameterRefObject = mod.ParameterRefs.SingleOrDefault(p => p.UId == com._parameterRef);
+
+                if (!string.IsNullOrEmpty(com._typeNumber))
+                    com.Type = MainWindow.DPTs.Single(d => d.Number == com._typeNumber);
+                    
+                if(!string.IsNullOrEmpty(com._subTypeNumber) && com.Type != null)
+                    com.SubType = com.Type.SubTypes.Single(d => d.Number == com._subTypeNumber);
+            }
+
+            foreach(Models.ComObjectRef cref in mod.ComObjectRefs)
+            {
+                if (cref._comObject != -1)
+                    cref.ComObjectObject = mod.ComObjects.SingleOrDefault(c => c.UId == cref._comObject);
+
+                if (!string.IsNullOrEmpty(cref._typeNumber))
+                    cref.Type = MainWindow.DPTs.Single(d => d.Number == cref._typeNumber);
+                    
+                if(!string.IsNullOrEmpty(cref._subTypeNumber) && cref.Type != null)
+                    cref.SubType = cref.Type.SubTypes.Single(d => d.Number == cref._subTypeNumber);
+            }
+
+            if(mod is Models.Module mod2)
+            {
+                if(mod2._parameterBaseOffsetUId != -1)
+                    mod2.ParameterBaseOffset = mod2.Arguments.SingleOrDefault(a => a.UId == mod2._parameterBaseOffsetUId);
+
+                if(mod2._comObjectBaseNumberUId != -1)
+                    mod2.ComObjectBaseNumber = mod2.Arguments.SingleOrDefault(a => a.UId == mod2._comObjectBaseNumberUId);
+            }
+
+            if(mod.Dynamics.Count > 0)
+                LoadSubDyn(mod.Dynamics[0], mod.ParameterRefs.ToList(), mod.ComObjectRefs.ToList(), vbase.Modules.ToList(), vbase.Helptexts.ToList());
+        }
+
+        private static void LoadSubDyn(Models.Dynamic.IDynItems dyn, List<Models.ParameterRef> paras, List<Models.ComObjectRef> coms, List<Models.Module> mods, List<Models.Helptext> helps)
+        {
+            foreach (Models.Dynamic.IDynItems item in dyn.Items)
+            {
+                item.Parent = dyn;
+
+                switch(item)
+                {
+                    case Models.Dynamic.DynChannel dch:
+                        if(dch.UseTextParameter)
+                            dch.ParameterRefObject = paras.SingleOrDefault(p => p.UId == dch._parameter);
+                        break;
+
+                    case Models.Dynamic.DynParameter dp:
+                        if (dp._parameter != -1)
+                            dp.ParameterRefObject = paras.SingleOrDefault(p => p.UId == dp._parameter);
+                        if(dp.HasHelptext)
+                            dp.Helptext = helps.SingleOrDefault(p => p.UId == dp._helptextId);
+                        break;
+
+                    case Models.Dynamic.DynChooseBlock dcb:
+                        if (dcb._parameterRef != -1)
+                            dcb.ParameterRefObject = paras.SingleOrDefault(p => p.UId == dcb._parameterRef);
+                        break;
+
+                    case Models.Dynamic.DynChooseChannel dcc:
+                        if (dcc._parameterRef != -1)
+                            dcc.ParameterRefObject = paras.SingleOrDefault(p => p.UId == dcc._parameterRef);
+                        break;
+
+                    case Models.Dynamic.DynComObject dco:
+                        if (dco._comObjectRef != -1)
+                            dco.ComObjectRefObject = coms.SingleOrDefault(c => c.UId == dco._comObjectRef);
+                        break;
+
+                    case Models.Dynamic.DynParaBlock dpb:
+                        if(dpb.UseParameterRef && dpb._parameterRef != -1)
+                            dpb.ParameterRefObject = paras.SingleOrDefault(p => p.UId == dpb._parameterRef);
+                        if(dpb.UseTextParameter && dpb._textRef != -1)
+                            dpb.TextRefObject = paras.SingleOrDefault(p => p.UId == dpb._textRef);
+                        break;
+
+                    case Models.Dynamic.DynModule dm:
+                        if(dm._module != -1)
+                        {
+                            dm.ModuleObject = mods.Single(m => m.UId == dm._module);
+                            foreach(Models.Dynamic.DynModuleArg arg in dm.Arguments)
+                            {
+                                if(arg._argId != -1)
+                                    arg.Argument = dm.ModuleObject.Arguments.Single(a => a.UId == arg._argId);
+                            }
+                        }
+                        break;
+                }
+
+                if (item.Items != null)
+                    LoadSubDyn(item, paras, coms, mods, helps);
+            }
+        }
+
         public static void MemoryCalculation(AppVersion ver, Memory mem)
         {
             mem.Sections.Clear();
@@ -302,10 +460,10 @@ namespace Kaenx.Creator.Classes
                 if(pref.Id == -1) pref.Id = GetNextFreeId(vbase, "ParameterRefs");
 
             foreach(ComObject com in vbase.ComObjects)
-                if(com.Id == -1) com.Id = GetNextFreeId(vbase, "ComObjects");
+                if(com.Id == -1) com.Id = GetNextFreeId(vbase, "ComObjects", 0);
 
             foreach(ComObjectRef cref in vbase.ComObjectRefs)
-                if(cref.Id == -1) cref.Id = GetNextFreeId(vbase, "ComObjectRefs");
+                if(cref.Id == -1) cref.Id = GetNextFreeId(vbase, "ComObjectRefs", 0);
 
             if(vbase is Module mod)
             {

@@ -1,13 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Collections.ObjectModel;
+using Kaenx.Creator.Models.Dynamic;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 
 namespace Kaenx.Creator.Models
 {
-    public class Application : INotifyPropertyChanged
+    public class AppVersionModel : INotifyPropertyChanged
     {
         private string _name = "Dummy";
         public string Name
@@ -16,36 +17,27 @@ namespace Kaenx.Creator.Models
             set { _name = value; Changed("Name"); Changed("NameText"); }
         }
 
-        private int _number = 1;
+        private int _number = 0;
         public int Number
         {
             get { return _number; }
             set { _number = value; Changed("Number"); Changed("NameText"); }
         }
-
+        
         public string NameText
         {
-            get { return Name + " " + Number.ToString("X4"); }
-        }
-
-        private MaskVersion _mask = null;
-        [JsonIgnore]
-        public MaskVersion Mask
-        {
-            get { return _mask; }
-            set { _mask = value; Changed("Mask"); }
-        }
-
-        [JsonIgnore]
-        public string _maskId;
-        public string MaskId
-        {
-            get { return _mask.Id; }
-            set { _maskId = value; }
+            get
+            {
+                int main = (int)Math.Floor((double)Number / 16);
+                int sub = Number - (main * 16);
+                return "V " + main + "." + sub + " " + Name;
+            }
         }
 
 
-        public ObservableCollection<AppVersionModel> Versions { get; set; } = new ObservableCollection<AppVersionModel>();
+        public string Version { get; set; }
+
+
 
         public event PropertyChangedEventHandler PropertyChanged;
 

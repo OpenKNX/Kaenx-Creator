@@ -22,7 +22,7 @@ namespace Kaenx.Creator.Classes
         List<Models.Hardware> hardware;
         List<Models.Device> devices;
         List<Models.Application> apps;
-        List<Models.AppVersion> vers;
+        List<Models.AppVersionModel> vers;
         Models.ModelGeneral general;
         XDocument doc;
         string appVersion;
@@ -30,7 +30,7 @@ namespace Kaenx.Creator.Classes
         string currentNamespace;
         string convPath;
 
-        public ExportHelper(Models.ModelGeneral g, List<Models.Hardware> h, List<Models.Device> d, List<Models.Application> a, List<Models.AppVersion> v, string cp)
+        public ExportHelper(Models.ModelGeneral g, List<Models.Hardware> h, List<Models.Device> d, List<Models.Application> a, List<Models.AppVersionModel> v, string cp)
         {
             hardware = h;
             devices = d;
@@ -63,10 +63,14 @@ namespace Kaenx.Creator.Classes
             System.IO.Directory.CreateDirectory(GetRelPath("Temp", Manu));
 
             int highestNS = 0;
-            foreach (Models.AppVersion ver in vers)
+            foreach (Models.AppVersionModel ver in vers)
             {
-                if (ver.NamespaceVersion > highestNS)
-                    highestNS = ver.NamespaceVersion;
+                Regex reg = new Regex("NamespaceVersion\":[ ]?([0-9]{2})");
+                Match m = reg.Match(ver.Version);
+                if(!m.Success) continue;
+                int nsv = int.Parse(m.Groups[1].Value);
+                if (nsv > highestNS)
+                    highestNS = nsv;
             }
             currentNamespace = $"http://knx.org/xml/project/{highestNS}";
 
@@ -78,13 +82,14 @@ namespace Kaenx.Creator.Classes
             Debug.WriteLine($"Exportiere Applikationen: {vers.Count}x");
             XElement xmanu = null;
             XElement xlanguages = null;
-            foreach(Models.AppVersion ver in vers) {
+            foreach(Models.AppVersionModel model in vers) {
+                Models.AppVersion ver = AutoHelper.GetAppVersion(general, model);
                 Debug.WriteLine($"Exportiere AppVersion: {ver.Name} {ver.NameText}");
                 languages = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>();
                 xmanu = CreateNewXML(Manu);
                 XElement xapps = new XElement(Get("ApplicationPrograms"));
                 xmanu.Add(xapps);
-                Models.Application app = apps.Single(a => a.Versions.Contains(ver));
+                Models.Application app = apps.Single(a => a.Versions.Contains(model));
 
                 appVersion = $"{Manu}_A-{app.Number:X4}-{ver.Number:X2}";
                 appVersion += "-0000";
@@ -582,10 +587,10 @@ namespace Kaenx.Creator.Classes
                 {
                     if (!apps.Contains(app)) continue;
 
-                    foreach (Models.AppVersion ver in app.Versions)
+                    foreach (Models.AppVersionModel ver in app.Versions)
                     {
-                        if (!vers.Contains(ver)) continue;
-
+                        //if (!vers.Contains(ver)) continue;
+                        
                         string appidx = app.Number.ToString("X4") + "-" + ver.Number.ToString("X2") + "-0000";
 
                         XElement xh2p = new XElement(Get("Hardware2Program"));
@@ -598,7 +603,7 @@ namespace Kaenx.Creator.Classes
 
                         XElement xreginfo = new XElement(Get("RegistrationInfo"));
                         xreginfo.SetAttributeValue("RegistrationStatus", "Registered");
-                        xreginfo.SetAttributeValue("RegistrationNumber", "0001/" + hard.Version + ver.Number);
+                        xreginfo.SetAttributeValue("RegistrationNumber", "0001/" + hard.SerialNumber + ver.Number);
                         xh2p.Add(xreginfo);
                         xasso.Add(xh2p);
 
@@ -1279,7 +1284,7 @@ namespace Kaenx.Creator.Classes
         {
             XElement xcho = new XElement(Get("choose"));
             parent.Add(xcho);
-            xcho.SetAttributeValue("ParamRefId", appVersion + (cho.ParameterRefObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{cho.ParameterRefObject.ParameterObject.Id}_R-{cho.ParameterRefObject.Id}");
+            xcho.SetAttributeValue("ParamRefId", appVersionMod + (cho.ParameterRefObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{cho.ParameterRefObject.ParameterObject.Id}_R-{cho.ParameterRefObject.Id}");
             return xcho;
         }
 
@@ -1324,7 +1329,7 @@ namespace Kaenx.Creator.Classes
                     {
                         block.SetAttributeValue("Text", dText);
                         if (!bl.TranslationText)
-                            foreach (Models.Translation trans in bl.Text) AddTranslation(trans.Language.CultureCode, $"{appVersion}_PB-{bl.Id}", "Text", trans.Text);
+                            foreach (Models.Translation trans in bl.Text) AddTranslation(trans.Language.CultureCode, $"{appVersionMod}_PB-{bl.Id}", "Text", trans.Text);
                     }
                 }
             }
@@ -1465,7 +1470,7 @@ namespace Kaenx.Creator.Classes
                     {
                         if (!apps.Contains(app)) continue;
 
-                        foreach (AppVersion ver in app.Versions)
+                        foreach (AppVersionModel ver in app.Versions)
                         {
                             if (!vers.Contains(ver)) continue;
                             XElement xitem = new XElement(Get("CatalogItem"));
