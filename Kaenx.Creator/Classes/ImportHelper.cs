@@ -28,6 +28,7 @@ namespace Kaenx.Creator.Classes
 
         private Application currentApp = null;
         private AppVersion currentVers = null;
+        private AppVersionModel currentVersModel = null;
 
         private Dictionary<string, string> _langTexts = new Dictionary<string, string>() {
             {"cs-CZ", "Tschechisch"},
@@ -211,6 +212,7 @@ namespace Kaenx.Creator.Classes
             #region "Create/Get Application and Version"
             currentApp = null;
             currentVers = null;
+            currentVersModel = null;
             int appNumber = int.Parse(xapp.Attribute("ApplicationNumber").Value);
             int versNumber = int.Parse(xapp.Attribute("ApplicationVersion").Value);
 
@@ -234,28 +236,26 @@ namespace Kaenx.Creator.Classes
                 _general.Applications.Add(currentApp);
             }
 
-            /*foreach (AppVersion vers in currentApp.Versions)
+            foreach (AppVersionModel vers in currentApp.Versions)
             {
                 if (vers.Number == versNumber)
                 {
-                    currentVers = vers;
-                    break;
+                    System.Console.WriteLine("Applikation existiert bereits");
+                    //MessageBox.Show("Applikation '" + vers.NameText + "' ist bereits vorhanden und wird übersprungen");
+                    return;
                 }
-            }*/
+            }
             //TODO implement
 
-            if (currentVers == null)
+            currentVers = new AppVersion()
             {
-                currentVers = new AppVersion()
-                {
-                    Number = versNumber,
-                    Name = "Imported",
-                    IsParameterRefAuto = false,
-                    IsComObjectRefAuto = false,
-                    IsMemSizeAuto = false
-                };
-                //currentApp.Versions.Add(currentVers);
-            }
+                Number = versNumber,
+                Name = "Imported",
+                IsParameterRefAuto = false,
+                IsComObjectRefAuto = false,
+                IsMemSizeAuto = false
+            };
+
             string ns = xapp.Name.NamespaceName;
             ns = ns.Substring(ns.LastIndexOf('/') + 1);
             currentVers.NamespaceVersion = int.Parse(ns);
@@ -316,6 +316,13 @@ namespace Kaenx.Creator.Classes
 
             sw.Stop();
             System.Console.WriteLine($"Total Time: {sw.ElapsedMilliseconds} ms");
+
+            currentVersModel = new AppVersionModel() {
+                Name = currentVers.Name,
+                Number = currentVers.Number,
+                Version = Newtonsoft.Json.JsonConvert.SerializeObject(currentVers, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects })
+            };
+            currentApp.Versions.Add(currentVersModel);
         }
 
         private void CheckUniqueRefId(XElement xstatic, XElement xdyn)
