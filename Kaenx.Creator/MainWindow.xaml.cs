@@ -1164,7 +1164,9 @@ namespace Kaenx.Creator
         {
             PublishActions.Clear();
             await Task.Delay(1000);
-            _selectedVersionModel.Version = Newtonsoft.Json.JsonConvert.SerializeObject(SelectedVersion, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
+            if(SelectedVersion != null)
+                _selectedVersionModel.Version = Newtonsoft.Json.JsonConvert.SerializeObject(SelectedVersion, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
+            
             List<Models.Hardware> hardware = new List<Models.Hardware>();
             List<Models.Device> devices = new List<Models.Device>();
             List<Models.Application> apps = new List<Models.Application>();

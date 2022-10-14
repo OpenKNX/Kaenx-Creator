@@ -603,7 +603,7 @@ namespace Kaenx.Creator.Classes
 
                         XElement xreginfo = new XElement(Get("RegistrationInfo"));
                         xreginfo.SetAttributeValue("RegistrationStatus", "Registered");
-                        xreginfo.SetAttributeValue("RegistrationNumber", "0001/" + hard.SerialNumber + ver.Number);
+                        xreginfo.SetAttributeValue("RegistrationNumber", "0001/" + hard.Version + ver.Number);
                         xh2p.Add(xreginfo);
                         xasso.Add(xh2p);
 
