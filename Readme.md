@@ -5,7 +5,7 @@ Then edit the Resource files in "Properties/Resource.\[language-code\].resx"
 and create a Pull-Request with the new file.
 
 ## Wiki
-There is a detailed [Wiki](/OpenKNX/Kaenx-Creator/wikie).  
+There is a detailed [Wiki](https://github.com/OpenKNX/Kaenx-Creator/wiki).  
 It's availible only in english for now.
 
 # Kaenx-Creator
