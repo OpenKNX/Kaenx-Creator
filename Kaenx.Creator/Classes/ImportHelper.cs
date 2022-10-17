@@ -289,7 +289,8 @@ namespace Kaenx.Creator.Classes
             ImportParameterTypes(xstatic.Element(Get("ParameterTypes")));
             ImportParameter(xstatic.Element(Get("Parameters")), currentVers);
             ImportParameterRefs(xstatic.Element(Get("ParameterRefs")), currentVers);
-            ImportComObjects(xstatic.Element(Get("ComObjectTable")), currentVers);
+            Dictionary<string, long> dic = null;
+            ImportComObjects(xstatic.Element(Get("ComObjectTable")), currentVers, ref dic);
             ImportComObjectRefs(xstatic.Element(Get("ComObjectRefs")), currentVers);
             ImportMessages(xstatic.Element(Get("Messages")));
             ImportTables(xstatic);
@@ -916,12 +917,41 @@ namespace Kaenx.Creator.Classes
             System.Console.WriteLine($"ImportParameterRefs: {sw.ElapsedMilliseconds} ms");
         }
 
-        private void ImportComObjects(XElement xcoms, IVersionBase vbase)
+        private void ImportComObjects(XElement xcoms, IVersionBase vbase, ref Dictionary<string, long> idmapper)
         {
             if(xcoms == null) return;
             _uidCounter = 1;
             Stopwatch sw = new Stopwatch();
             sw.Start();
+
+
+            bool countNew = false;
+            int counter = 0;
+
+            if(vbase is Models.Module)
+            {
+                int firstId = -1;
+                foreach(XElement xref in xcoms.Elements())
+                {
+                    string[] id = xref.Attribute("Id").Value.Split("-");
+                    int currId = int.Parse(id[id.Length - 2]);
+                    if(firstId == -1)
+                    {
+                        firstId = currId;
+                    } else {
+                        if(firstId != currId)
+                        {
+                            //TODO check mapperId
+                            string modName = xcoms.Parent.Parent.Attribute("Name").Value;
+                            System.Windows.MessageBox.Show($"Modul '{modName}' enthält mehrere BaseOffsets für ComObjects.\r\nDas wird nicht von Kaenx-Creator unterstützt.\r\nAlle Ids werden neu zugeordnet.", "Module Warnung", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                            idmapper = new Dictionary<string, long>();
+                            countNew = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
 
             foreach (XElement xcom in xcoms.Elements())
             {
@@ -931,21 +961,16 @@ namespace Kaenx.Creator.Classes
                     UId = _uidCounter++
                 };
 
-                string id = GetLastSplit(xcom.Attribute("Id").Value, 2);
-                if(id.Contains('-'))
-                {
-                    string[] ids = id.Split('-');
-                    int id1 = 0, id2 = 0;
-                    bool con1 = int.TryParse(ids[0], out id1);
-                    bool con2 = int.TryParse(ids[1], out id2);
-                    if(!con1 || !con2)
-                        throw new Exception("ID kann nicht geparsed werden: " + id);
-                        
-                    com.Id = (id1 << 16) | id2;
-                } else{
-                    com.Id = int.Parse(id);
-                }
                 
+                if(countNew)
+                {
+                    com.Id = counter++;
+                    idmapper.Add(xcom.Attribute("Id").Value, com.Id);
+                } else {
+                    string id = xcom.Attribute("Id").Value;
+                    id = id.Substring(id.LastIndexOf("-") + 1);
+                    com.Id = long.Parse(id);
+                }
 
                 com.Name = xcom.Attribute("Name")?.Value;
                 if(string.IsNullOrEmpty(com.Name))
@@ -1007,7 +1032,7 @@ namespace Kaenx.Creator.Classes
             System.Console.WriteLine($"ImportComObjects: {sw.ElapsedMilliseconds} ms");
         }
 
-        private void ImportComObjectRefs(XElement xrefs, IVersionBase vbase)
+        private void ImportComObjectRefs(XElement xrefs, IVersionBase vbase, Dictionary<string, long> idmapper = null)
         {
             if(xrefs == null) return;
             _uidCounter = 1;
@@ -1029,22 +1054,16 @@ namespace Kaenx.Creator.Classes
 
                 cref.OverwriteText = cref.Text.Any(t => !string.IsNullOrEmpty(t.Text));
 
-                string id = GetLastSplit(xref.Attribute("RefId").Value, 2);
-                int comId;
-                if(id.Contains('-'))
+                if(idmapper != null)
                 {
-                    string[] ids = id.Split('-');
-                    int id1 = 0, id2 = 0;
-                    bool con1 = int.TryParse(ids[0], out id1);
-                    bool con2 = int.TryParse(ids[1], out id2);
-                    if(!con1 || !con2)
-                        throw new Exception("ID kann nicht geparsed werden: " + id);
-                        
-                    comId = (id1 << 16) | id2;
-                } else{
-                    comId = int.Parse(id);
+                    long refId = idmapper[xref.Attribute("RefId").Value];
+                    cref.ComObjectObject = vbase.ComObjects.Single(c => c.Id == refId);
+                } else {
+                    string id = xref.Attribute("RefId").Value;
+                    id = id.Substring(id.LastIndexOf("-") + 1);
+                    long comId = long.Parse(id);
+                    cref.ComObjectObject = vbase.ComObjects.Single(c => c.Id == comId);
                 }
-                cref.ComObjectObject = vbase.ComObjects.Single(c => c.Id == comId);
                 cref.Name = cref.ComObjectObject.Name;
 
                 if(xref.Attribute("TextParameterRefId") != null)
@@ -1203,12 +1222,13 @@ namespace Kaenx.Creator.Classes
                 };
                 System.Console.WriteLine($"---Import Module {mod.Name}");
 
+                Dictionary<string, long> idmapper = null;
                 XElement xstatic = xmod.Element(Get("Static"));
                 ImportArguments(xmod.Element(Get("Arguments")), mod);
                 ImportParameter(xstatic.Element(Get("Parameters")), mod);
                 ImportParameterRefs(xstatic.Element(Get("ParameterRefs")), mod);
-                ImportComObjects(xstatic.Element(Get("ComObjects")), mod);
-                ImportComObjectRefs(xstatic.Element(Get("ComObjectRefs")), mod);
+                ImportComObjects(xstatic.Element(Get("ComObjects")), mod, ref idmapper);
+                ImportComObjectRefs(xstatic.Element(Get("ComObjectRefs")), mod, idmapper);
                 ImportDynamic(xmod.Element(Get("Dynamic")), mod);
 
                 currentVers.Modules.Add(mod);
@@ -1614,8 +1634,8 @@ namespace Kaenx.Creator.Classes
                         DynComObject dco = new DynComObject() {
                             Parent = parent
                         };
-                        paraId = int.Parse(GetLastSplit(xele.Attribute("RefId").Value, 2));
-                        dco.ComObjectRefObject = vbase.ComObjectRefs.Single(p => p.Id == paraId);
+                        long comId = long.Parse(GetLastSplit(xele.Attribute("RefId").Value, 2));
+                        dco.ComObjectRefObject = vbase.ComObjectRefs.Single(c => c.Id == comId);
                         parent.Items.Add(dco);
                         break;
 

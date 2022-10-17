@@ -1414,10 +1414,10 @@
                     <DataGrid Grid.RowSpan="2" Name="ExportList" AutoGenerateColumns="False" BorderThickness="0 0 1 0">
                         <DataGrid.Columns>
                             <DataGridCheckBoxColumn Header="Publish" Binding="{Binding Selected}" />
-                            <DataGridTextColumn Header="Gerät" Binding="{Binding Device.Name}" />
-                            <DataGridTextColumn Header="Hardware" Binding="{Binding Hardware.Name}" />
-                            <DataGridTextColumn Header="Applikation" Binding="{Binding App.Name}" />
-                            <DataGridTextColumn Header="Version" Binding="{Binding Version.NameText}" />
+                            <DataGridTextColumn Header="Gerät" Binding="{Binding Device.Name}" IsReadOnly="True" />
+                            <DataGridTextColumn Header="Hardware" Binding="{Binding Hardware.Name}" IsReadOnly="True" />
+                            <DataGridTextColumn Header="Applikation" Binding="{Binding App.Name}" IsReadOnly="True" />
+                            <DataGridTextColumn Header="Version" Binding="{Binding Version.NameText}" IsReadOnly="True" />
                         </DataGrid.Columns>
                     </DataGrid>
 

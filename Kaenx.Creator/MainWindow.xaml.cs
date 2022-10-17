@@ -1061,6 +1061,7 @@ namespace Kaenx.Creator
                         throw new Exception("Unbekannter Dateityp: " + prod);
                 }
             }
+            System.GC.Collect();
         }
 
         private void ClickCatalogContext(object sender, RoutedEventArgs e)

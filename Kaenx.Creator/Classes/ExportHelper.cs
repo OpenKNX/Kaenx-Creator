@@ -135,16 +135,10 @@ namespace Kaenx.Creator.Classes
                         xapp.SetAttributeValue("MinEtsVersion", "4.0");
                         break;
                     case "http://knx.org/xml/project/12":
-                        xapp.SetAttributeValue("MinEtsVersion", "5.0");
-                        break;
                     case "http://knx.org/xml/project/13":
-                        xapp.SetAttributeValue("MinEtsVersion", "5.5");
-                        break;
                     case "http://knx.org/xml/project/14":
-                        xapp.SetAttributeValue("MinEtsVersion", "5.6");
-                        break;
                     case "http://knx.org/xml/project/20":
-                        xapp.SetAttributeValue("MinEtsVersion", "5.7");
+                        xapp.SetAttributeValue("MinEtsVersion", "5.0");
                         break;
                     case "http://knx.org/xml/project/21":
                         xapp.SetAttributeValue("MinEtsVersion", "6.0");
@@ -1137,7 +1131,7 @@ namespace Kaenx.Creator.Classes
             
             xpara.SetAttributeValue("Text", GetDefaultLanguage(para.Text));
             if (para.Access != ParamAccess.Default && para.Access != ParamAccess.ReadWrite) xpara.SetAttributeValue("Access", para.Access);
-            if (para.Suffix.Any(s => !string.IsNullOrWhiteSpace(s.Text))) xpara.SetAttributeValue("SuffixText", GetDefaultLanguage(para.Text));
+            if (!string.IsNullOrWhiteSpace(GetDefaultLanguage(para.Suffix))) xpara.SetAttributeValue("SuffixText", GetDefaultLanguage(para.Suffix));
             xpara.SetAttributeValue("Value", para.Value);
 
             parent.Add(xpara);
