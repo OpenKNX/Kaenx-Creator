@@ -790,7 +790,8 @@ namespace Kaenx.Creator.Classes
             XElement codes = new XElement(Get("Code"));
             foreach (Memory mem in ver.Memories)
             {
-                AutoHelper.MemoryCalculation(ver, mem);
+                if(mem.IsAutoPara)
+                    AutoHelper.MemoryCalculation(ver, mem);
                     
                 XElement xmem = null;
                 string id = "";
