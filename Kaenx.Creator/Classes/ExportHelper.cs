@@ -337,11 +337,13 @@ namespace Kaenx.Creator.Classes
                     xmsg.SetAttributeValue("Id", $"{appVersion}_M-{msg.Id}");
                     xmsg.SetAttributeValue("Name", msg.Name);
                     xmsg.SetAttributeValue("Text",  GetDefaultLanguage(msg.Text));
+                    temp.Add(xmsg);
 
                     if(msg.TranslationText)
                         foreach(Translation trans in msg.Text)
                             AddTranslation(trans.Language.CultureCode, $"{appVersion}_M-{msg.Id}", "Text", trans.Text);
                 }
+                xunderapp.Add(temp);
 
                 #region ModuleDefines
                 if(ver.Modules.Count > 0)

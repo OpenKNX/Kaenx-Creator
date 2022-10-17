@@ -124,28 +124,30 @@ namespace Kaenx.Creator.Classes {
             ObservableCollection<PublishAction> actions, 
             bool showOnlyErrors = false)
         {
-            Application app = General.Applications.Single(a => a.Versions.Any(v => v.Number == vers.Number && v.Name == vers.Name));
-            actions.Add(new PublishAction() { Text = $"Prüfe Applikation '{app.NameText}' Version '{vers.NameText}'" });
-
-            if(string.IsNullOrEmpty(app.Mask.MediumTypes))
+            if(General != null)
             {
-                actions.Add(new PublishAction() { Text = $"Applikation '{app.NameText}': MediumTypes nicht gesetzt. Löschen Sie Data/maskversion.json und starten Sie die Anwendung neu.", State = PublishState.Fail });
+                Application app = General.Applications.Single(a => a.Versions.Any(v => v.Number == vers.Number && v.Name == vers.Name));
+                actions.Add(new PublishAction() { Text = $"Prüfe Applikation '{app.NameText}' Version '{vers.NameText}'" });
+
+                if(string.IsNullOrEmpty(app.Mask.MediumTypes))
+                {
+                    actions.Add(new PublishAction() { Text = $"Applikation '{app.NameText}': MediumTypes nicht gesetzt. Löschen Sie Data/maskversion.json und starten Sie die Anwendung neu.", State = PublishState.Fail });
+                }
+                
+                if(vers.IsModulesActive && vers.NamespaceVersion < 20)
+                    actions.Add(new PublishAction() { Text = $"Applikation '{app.NameText}': ModuleDefindes werden erst ab Namespace 20 unterstützt.", State = PublishState.Fail });
+
+                if(vers.IsMessagesActive && vers.NamespaceVersion < 14)
+                    actions.Add(new PublishAction() { Text = $"Applikation '{app.NameText}': Messages werden erst ab Namespace 14 unterstützt.", State = PublishState.Fail });
+
+                if(app.Mask.Procedure != ProcedureTypes.Default && string.IsNullOrEmpty(vers.Procedure))
+                    actions.Add(new PublishAction() { Text = $"Applikation '{app.NameText}': Version muss eine Ladeprozedur enthalten.", State = PublishState.Fail });
+
+                if(vers.IsHelpActive && vers.NamespaceVersion == 14)
+                    actions.Add(new PublishAction() { Text = $"Applikation '{app.NameText}': Hilfstexte werden voraussichtlich nicht unterstützt", State = PublishState.Warning });
+                else if(vers.IsHelpActive && vers.NamespaceVersion < 20)
+                    actions.Add(new PublishAction() { Text = $"Applikation '{app.NameText}': Hilfstexte werden erst ab Namespace Version 20 unterstützt", State = PublishState.Fail });
             }
-            
-            if(vers.IsModulesActive && vers.NamespaceVersion < 20)
-                actions.Add(new PublishAction() { Text = $"Applikation '{app.NameText}': ModuleDefindes werden erst ab Namespace 20 unterstützt.", State = PublishState.Fail });
-
-            if(vers.IsMessagesActive && vers.NamespaceVersion < 14)
-                actions.Add(new PublishAction() { Text = $"Applikation '{app.NameText}': Messages werden erst ab Namespace 14 unterstützt.", State = PublishState.Fail });
-
-            if(app.Mask.Procedure != ProcedureTypes.Default && string.IsNullOrEmpty(vers.Procedure))
-                actions.Add(new PublishAction() { Text = $"Applikation '{app.NameText}': Version muss eine Ladeprozedur enthalten.", State = PublishState.Fail });
-
-            if(vers.IsHelpActive && vers.NamespaceVersion == 14)
-                actions.Add(new PublishAction() { Text = $"Applikation '{app.NameText}': Hilfstexte werden voraussichtlich nicht unterstützt", State = PublishState.Warning });
-            else if(vers.IsHelpActive && vers.NamespaceVersion < 20)
-                actions.Add(new PublishAction() { Text = $"Applikation '{app.NameText}': Hilfstexte werden erst ab Namespace Version 20 unterstützt", State = PublishState.Fail });
-
 
             foreach(ParameterType ptype in vers.ParameterTypes) {
                 long maxsize = (long)Math.Pow(2, ptype.SizeInBit);

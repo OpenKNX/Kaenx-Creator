@@ -504,7 +504,13 @@ namespace Kaenx.Creator
             if(MessageBoxResult.Cancel == MessageBox.Show("Achtung, um den Viewer verwenden zu können, werden die IDs überprüft und ggf. neue vergeben.\r\n\r\nTrotzdem weiter machen?", "ProdViewer öffnen", MessageBoxButton.OKCancel, MessageBoxImage.Question)) return;
             Models.Application app = (Models.Application)AppList.SelectedItem;
             Models.AppVersionModel model = (sender as MenuItem).DataContext as Models.AppVersionModel;
-            Models.AppVersion ver = AutoHelper.GetAppVersion(General, model);
+            Models.AppVersion ver;
+            if(model == _selectedVersionModel)
+            {
+                ver = SelectedVersion;
+            } else {
+                ver = AutoHelper.GetAppVersion(General, model);
+            }
             AutoHelper.CheckIds(ver);
 
             ObservableCollection<Models.PublishAction> actions = new ObservableCollection<Models.PublishAction>();
@@ -516,13 +522,6 @@ namespace Kaenx.Creator
             }
 
             ViewerWindow viewer = new ViewerWindow(new Viewer.ImporterCreator(ver, app));
-            viewer.Show();
-        }
-
-        private void ClickViewerKnxProd(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show("Diese Funktion lädt eine Statische Datei und ist nur für Entwicklungszwecke eingebaut.");
-            ViewerWindow viewer = new ViewerWindow(new Viewer.ImporterKnxProd(@"C:\Users\u6\Downloads\output.knxprod"));
             viewer.Show();
         }
 
@@ -951,7 +950,12 @@ namespace Kaenx.Creator
                 general = CheckHelper.CheckImportVersion(general, VersionToOpen);
             }
                 
-            General = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.ModelGeneral>(general, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
+            try{
+                General = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.ModelGeneral>(general, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
+            } catch {
+                MessageBox.Show("Die Datei scheint nicht mit der aktuellen Version zusammen zu passen.\r\nEvtl. muss diese vorher konvertiert werden.");
+                return;
+            }
             General.ImportVersion = VersionCurrent;
             filePath = path;
 
