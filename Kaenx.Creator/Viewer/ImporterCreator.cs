@@ -657,7 +657,8 @@ namespace Kaenx.Creator.Viewer
                             Value = mpara.Value,
                             Default = mpara.Value,
                             Conditions = conds,
-                            DisplayOrder = para.ParameterRefObject.DisplayOrder
+                            DisplayOrder = para.ParameterRefObject.DisplayOrder,
+                            Helptext = para.HasHelptext ? GetDefaultLang(para.Helptext.Text) : null
                         };
                         foreach(Models.ParameterTypeEnum ptenu  in para.ParameterRefObject.ParameterObject.ParameterTypeObject.Enums)
                             penu.Options.Add(new ParamEnumOption() { Text = GetDefaultLang(ptenu.Text), Value = ptenu.Value.ToString() });
@@ -670,7 +671,8 @@ namespace Kaenx.Creator.Viewer
                             Value = mpara.Value,
                             Default = mpara.Value,
                             Conditions = conds,
-                            DisplayOrder = para.ParameterRefObject.DisplayOrder
+                            DisplayOrder = para.ParameterRefObject.DisplayOrder,
+                            Helptext = para.HasHelptext ? GetDefaultLang(para.Helptext.Text) : null
                         };
                         penu.Option1 = new ParamEnumOption() {
                             Text = GetDefaultLang(para.ParameterRefObject.ParameterObject.ParameterTypeObject.Enums[0].Text),
@@ -699,7 +701,8 @@ namespace Kaenx.Creator.Viewer
                                 Default = mpara.Value,
                                 Conditions = conds,
                                 SuffixText = GetDefaultLang(para.ParameterRefObject.ParameterObject.Suffix),
-                                DisplayOrder = para.ParameterRefObject.DisplayOrder
+                                DisplayOrder = para.ParameterRefObject.DisplayOrder,
+                                Helptext = para.HasHelptext ? GetDefaultLang(para.Helptext.Text) : null
                         };
                         block.Parameters.Add(pcheck);
                     } else if(para.ParameterRefObject.ParameterObject.ParameterTypeObject.UIHint == "Slider")
@@ -715,7 +718,8 @@ namespace Kaenx.Creator.Viewer
                                 Minimum = double.Parse(para.ParameterRefObject.ParameterObject.ParameterTypeObject.Min),
                                 Maximum = double.Parse(para.ParameterRefObject.ParameterObject.ParameterTypeObject.Max),
                                 SuffixText = GetDefaultLang(para.ParameterRefObject.ParameterObject.Suffix),
-                                DisplayOrder = para.ParameterRefObject.DisplayOrder
+                                DisplayOrder = para.ParameterRefObject.DisplayOrder,
+                                Helptext = para.HasHelptext ? GetDefaultLang(para.Helptext.Text) : null
                         };
                         block.Parameters.Add(pslide);
                     } else {
@@ -730,7 +734,8 @@ namespace Kaenx.Creator.Viewer
                                 Minimum = double.Parse(para.ParameterRefObject.ParameterObject.ParameterTypeObject.Min),
                                 Maximum = double.Parse(para.ParameterRefObject.ParameterObject.ParameterTypeObject.Max),
                                 SuffixText = GetDefaultLang(para.ParameterRefObject.ParameterObject.Suffix),
-                                DisplayOrder = para.ParameterRefObject.DisplayOrder
+                                DisplayOrder = para.ParameterRefObject.DisplayOrder,
+                                Helptext = para.HasHelptext ? GetDefaultLang(para.Helptext.Text) : null
                         };
                         block.Parameters.Add(pnum);
                     }
@@ -748,7 +753,8 @@ namespace Kaenx.Creator.Viewer
                             Value = mpara.Value,
                             Conditions = conds,
                             SuffixText = GetDefaultLang(para.ParameterRefObject.ParameterObject.Suffix),
-                            DisplayOrder = para.ParameterRefObject.DisplayOrder
+                            DisplayOrder = para.ParameterRefObject.DisplayOrder,
+                            Helptext = para.HasHelptext ? GetDefaultLang(para.Helptext.Text) : null
                         };
                         block.Parameters.Add(ptext);
                     } else {
@@ -760,7 +766,8 @@ namespace Kaenx.Creator.Viewer
                             Value = mpara.Value,
                             Conditions = conds,
                             SuffixText = GetDefaultLang(para.ParameterRefObject.ParameterObject.Suffix),
-                            DisplayOrder = para.ParameterRefObject.DisplayOrder
+                            DisplayOrder = para.ParameterRefObject.DisplayOrder,
+                            Helptext = para.HasHelptext ? GetDefaultLang(para.Helptext.Text) : null
                         };
                         block.Parameters.Add(ptext);
                     }
@@ -777,7 +784,8 @@ namespace Kaenx.Creator.Viewer
                         HasAccess = mpara.Access != AccessType.None,
                         Value = mpara.Value,
                         Conditions = conds,
-                        DisplayOrder = para.ParameterRefObject.DisplayOrder
+                        DisplayOrder = para.ParameterRefObject.DisplayOrder,
+                        Helptext = para.HasHelptext ? GetDefaultLang(para.Helptext.Text) : null
                     };
                     block.Parameters.Add(ppic);
                     break;

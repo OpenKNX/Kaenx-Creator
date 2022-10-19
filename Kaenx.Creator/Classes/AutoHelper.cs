@@ -85,6 +85,9 @@ namespace Kaenx.Creator.Classes
                     
                 if(!string.IsNullOrEmpty(com._subTypeNumber) && com.Type != null)
                     com.SubType = com.Type.SubTypes.Single(d => d.Number == com._subTypeNumber);
+                    
+                if(vbase.IsComObjectRefAuto && com.UseTextParameter && com._parameterRef != -1)
+                    com.ParameterRefObject = mod.ParameterRefs.SingleOrDefault(p => p.UId == com._parameterRef);
             }
 
             foreach(Models.ComObjectRef cref in mod.ComObjectRefs)
@@ -97,6 +100,9 @@ namespace Kaenx.Creator.Classes
                     
                 if(!string.IsNullOrEmpty(cref._subTypeNumber) && cref.Type != null)
                     cref.SubType = cref.Type.SubTypes.Single(d => d.Number == cref._subTypeNumber);
+
+                if(!vbase.IsComObjectRefAuto && cref.UseTextParameter && cref._parameterRef != -1)
+                    cref.ParameterRefObject = mod.ParameterRefs.SingleOrDefault(p => p.UId == cref._parameterRef);
             }
 
             if(mod is Models.Module mod2)
@@ -164,6 +170,13 @@ namespace Kaenx.Creator.Classes
                                     arg.Argument = dm.ModuleObject.Arguments.Single(a => a.UId == arg._argId);
                             }
                         }
+                        break;
+
+                    case Models.Dynamic.DynAssign dass:
+                        if(dass._targetUId != -1)
+                            dass.TargetObject = paras.SingleOrDefault(p => p.UId == dass._targetUId);
+                        if(string.IsNullOrEmpty(dass.Value) && dass._sourceUId != -1)
+                            dass.SourceObject = paras.SingleOrDefault(p => p.UId == dass._sourceUId);
                         break;
                 }
 

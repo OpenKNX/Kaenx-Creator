@@ -182,9 +182,12 @@ namespace Kaenx.Creator.Classes
             Directory.CreateDirectory(tempFolder);
 
             List<XElement> xbags = xele.Descendants(Get("Baggage")).ToList();
+
+            int counter = 0;
             foreach(XElement xbag in xbags)
             {
                 Baggage bag = new Baggage();
+                bag.UId = counter++;
                 bag.Name = xbag.Attribute("Name").Value;
                 bag.Extension = bag.Name.Substring(bag.Name.LastIndexOf('.')).ToLower();
                 bag.Name = bag.Name.Substring(0, bag.Name.LastIndexOf('.'));

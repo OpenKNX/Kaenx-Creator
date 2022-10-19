@@ -78,6 +78,17 @@ namespace Kaenx.Creator
             }
         }
 
+        private string _helptext;
+        public string Helptext
+        {
+            get { return _helptext; }
+            set
+            {
+                _helptext = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Helptext"));
+            }
+        }
+
 
 
         public ViewerWindow(IImporter importer)
@@ -251,6 +262,25 @@ namespace Kaenx.Creator
             image.StreamSource = ms;
             image.EndInit();
             return image;
+        }
+
+        private void TypeClicked(object sender, MouseButtonEventArgs e)
+        {
+            IDynParameter para;
+            switch(sender)
+            {
+                case Grid g:
+                {
+                    para = g.DataContext as IDynParameter;
+                    break;
+                }
+
+                default:
+                    throw new Exception("Not supported Helptext Parent: " + sender.GetType().ToString());
+            }
+
+            Helptext = para.Helptext;
+            System.Diagnostics.Debug.WriteLine("Hilfetext: " + para.Helptext);
         }
 
         private async void Para_PropertyChanged(object sender, PropertyChangedEventArgs e = null)

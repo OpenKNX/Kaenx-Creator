@@ -711,6 +711,8 @@ namespace Kaenx.Creator.Classes {
                 {
                     if(dpa.ParameterRefObject == null)
                         actions.Add(new PublishAction() { Text = $"    DynParameter {dpa.Name} wurde kein ParameterRef zugeordnet", State = PublishState.Fail, Item = dpa, Module = vbase });
+                    if(dpa.HasHelptext && dpa.Helptext == null)
+                        actions.Add(new PublishAction() { Text = $"    DynParameter {dpa.Name} wurde kein Hilfetext zugeordnet", State = PublishState.Fail, Item = dpa, Module = vbase });
                     break;
                 }
 

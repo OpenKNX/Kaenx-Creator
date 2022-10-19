@@ -11,6 +11,7 @@
     xmlns:conv="clr-namespace:Kaenx.Creator.Converter" 
     xmlns:selectors="clr-namespace:Kaenx.Creator.Viewer.Selectors" 
     xmlns:ctrls="clr-namespace:Kaenx.Creator.Viewer.Controls" 
+    xmlns:mdxam="clr-namespace:MdXaml;assembly=MdXaml"
     mc:Ignorable="d" Icon="/FileLogo.ico" x:Name="ParaControl" Title="Kaenx-Creator ProdViewer" Height="700" Width="1300">
     <Window.Resources>
         <conv:BoolToVisibility x:Key="Bool2Vis" />
@@ -113,7 +114,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="TypeEnums">
-            <Grid Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}" Margin="0 5">
+            <Grid Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}" Margin="0 5" MouseLeftButtonDown="TypeClicked">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="2*" />
                     <ColumnDefinition MinWidth="300" MaxWidth="500" />
@@ -139,7 +140,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="TypeEnumsTwo">
-            <Grid Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}" Margin="0 5" x:Name="test">
+            <Grid Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}" Margin="0 5" MouseLeftButtonDown="TypeClicked">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="2*" />
                     <ColumnDefinition MinWidth="300" MaxWidth="500" />
@@ -168,7 +169,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="TypeNumber">
-            <Grid Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}" Margin="0 5">
+            <Grid Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}" Margin="0 5" MouseLeftButtonDown="TypeClicked">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="2*" />
                     <ColumnDefinition MinWidth="300" MaxWidth="500" />
@@ -192,7 +193,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="TypeSlider">
-            <Grid Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}" Margin="0 5">
+            <Grid Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}" Margin="0 5" MouseLeftButtonDown="TypeClicked">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="2*" />
                     <ColumnDefinition MinWidth="300" MaxWidth="500" />
@@ -220,7 +221,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="TypePicture">
-            <Grid Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}" Margin="0 5">
+            <Grid Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}" Margin="0 5" MouseLeftButtonDown="TypeClicked">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="2*" />
                     <ColumnDefinition MinWidth="300" MaxWidth="500" />
@@ -244,7 +245,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="TypeCheckBox">
-            <Grid Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}" Margin="0 5">
+            <Grid Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}" Margin="0 5" MouseLeftButtonDown="TypeClicked">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="2*" />
                     <ColumnDefinition MinWidth="300" MaxWidth="500" />
@@ -260,7 +261,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="TypeTextRead">
-            <Grid Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}" Margin="0 5">
+            <Grid Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}" Margin="0 5" MouseLeftButtonDown="TypeClicked">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="2*" />
                     <ColumnDefinition MinWidth="300" MaxWidth="500" />
@@ -284,7 +285,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="TypeText">
-            <Grid Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}" Margin="0 5">
+            <Grid Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}" Margin="0 5" MouseLeftButtonDown="TypeClicked">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="2*" />
                     <ColumnDefinition MinWidth="300" MaxWidth="500" />
@@ -313,7 +314,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="TypeSeparator">
-            <Grid Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}" Margin="0 5">
+            <Grid Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}" Margin="0 5" MouseLeftButtonDown="TypeClicked">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="2*" />
                     <ColumnDefinition MinWidth="300" MaxWidth="500" />
@@ -329,7 +330,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="TypeSeparatorBox">
-            <Border Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}" Margin="10 5" Padding="10" BorderThickness="1" BorderBrush="{Binding Hint, Converter={StaticResource HintToBrush}}">
+            <Border Visibility="{Binding IsVisible, Converter={StaticResource Bool2Vis}}" Margin="10 5" Padding="10" BorderThickness="1" BorderBrush="{Binding Hint, Converter={StaticResource HintToBrush}}" MouseLeftButtonDown="TypeClicked">
                 <Border.Background>
                     <SolidColorBrush Color="{Binding Hint, Converter={StaticResource HintToBrush}}" Opacity="0.2" />
                 </Border.Background>
@@ -349,7 +350,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="TypeColor">
-            <Grid Visibility="{Binding IsVisible, Converter={StaticResource ConvertBoolToVisible}}" Margin="0 5">
+            <Grid Visibility="{Binding IsVisible, Converter={StaticResource ConvertBoolToVisible}}" Margin="0 5" MouseLeftButtonDown="TypeClicked">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="2*" />
                     <ColumnDefinition MinWidth="300" MaxWidth="500" />
@@ -434,6 +435,7 @@
             <ColumnDefinition Width="auto" MinWidth="100" MaxWidth="300" />
             <ColumnDefinition />
             <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="auto" />
         </Grid.ColumnDefinitions>
 
         
@@ -503,5 +505,10 @@
                 </Grid>
             </Grid>
         </Expander>
+
+        <Border Grid.RowSpan="3" Grid.Column="3" BorderThickness="2 0 0 0" BorderBrush="LightGray" Margin="5 0 0 0" Visibility="{Binding Helptext, ElementName=ParaControl, Converter={StaticResource EmptyToVis}}">
+            <mdxam:MarkdownScrollViewer Width="300" Margin="5 0 0 0" Markdown="{Binding Helptext, ElementName=ParaControl}" />
+        </Border>
+        
     </Grid>
 </Window>

@@ -42,6 +42,7 @@ namespace Kaenx.Creator.Controls
             //Search for the object model in first level children (recursively)
             TreeViewItem tvi = ic.ItemContainerGenerator.ContainerFromItem(o) as TreeViewItem;
             if (tvi != null) return tvi;
+            
             //Loop through user object models
             foreach (object i in ic.Items) {
                 //Get the TreeViewItem associated with the iterated object model

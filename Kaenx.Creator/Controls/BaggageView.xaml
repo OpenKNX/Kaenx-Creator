@@ -74,8 +74,6 @@
                     <Run Text="{Binding UId}"/>
                 </TextBlock>
 
-                <TextBlock Text="{x:Static p:Resources.bagg_error}" Foreground="Red" Visibility="{Binding IsNotUsed, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}" Margin="5" />
-
                 <HeaderedContentControl Header="{x:Static p:Resources.prop_name}">
                     <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
                 </HeaderedContentControl>
