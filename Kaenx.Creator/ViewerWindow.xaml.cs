@@ -283,19 +283,11 @@ namespace Kaenx.Creator
             System.Diagnostics.Debug.WriteLine("Hilfetext: " + para.Helptext);
         }
 
-        private async void Para_PropertyChanged(object sender, PropertyChangedEventArgs e = null)
+        private void Para_PropertyChanged(object sender, PropertyChangedEventArgs e = null)
         {
             if (e != null && e.PropertyName != "Value" && e.PropertyName != "ParamVisibility") return;
 
             IDynParameter para = (IDynParameter)sender;
-
-            /*string oldValue = values[para.Id].Value;
-            if(para.Value == oldValue)
-            {
-                System.Diagnostics.Debug.WriteLine("Wert unverändert! " + para.Id + " -> " + para.Value);
-                return;
-            }*/
-
 
             if (e.PropertyName == "Value")
             {

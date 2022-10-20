@@ -492,7 +492,7 @@ namespace Kaenx.Creator
             System.Diagnostics.Debug.WriteLine("Neu verbraucht: " + (after - before).ToString());
         }
 
-        private async void SelectedVersion_PropertyChanged(object sender, PropertyChangedEventArgs e = null)
+        private void SelectedVersion_PropertyChanged(object sender, PropertyChangedEventArgs e = null)
         {
             if(e.PropertyName != "NameText") return;
             _selectedVersionModel.Name = SelectedVersion.Name;

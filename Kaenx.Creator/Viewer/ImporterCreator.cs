@@ -412,7 +412,7 @@ namespace Kaenx.Creator.Viewer
                     foreach(Models.Dynamic.IDynWhen when in dcho.Items)
                     {
                         List<ParamCondition> conds2 = conds.ToList();
-                        ParamCondition? pcond = ParseCondition(when, dcho.ParameterRefObject.Id);
+                        ParamCondition pcond = ParseCondition(when, dcho.ParameterRefObject.Id);
                         if(pcond != null)
                             conds2.Add(ParseCondition(when, dcho.ParameterRefObject.Id));
                         foreach(Models.Dynamic.IDynItems ditem2 in when.Items)

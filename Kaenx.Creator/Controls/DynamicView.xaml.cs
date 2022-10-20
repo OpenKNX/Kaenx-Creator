@@ -422,34 +422,6 @@ namespace Kaenx.Creator.Controls
             if(target.Parent == _draggedItem.Parent) return true;
 
             return false;
-
-            //only allow to reorder in same depth
-
-            string targetType = target.GetType().ToString();
-            targetType = targetType.Substring(targetType.LastIndexOf('.') + 1);
-            if(!SubTypes.ContainsKey(targetType)) return false;
-            string draggedType = _draggedItem.GetType().ToString();
-            draggedType = draggedType.Substring(draggedType.LastIndexOf('.') + 1);
-            if(!SubTypes[targetType].Contains(draggedType)) return false;
-
-
-
-            Models.Dynamic.IDynItems parent = target.Parent;
-            
-            System.Diagnostics.Debug.WriteLine(target.GetType());
-
-            while(parent.GetType() != typeof(Models.Dynamic.DynamicMain) && parent.GetType() != typeof(Models.Dynamic.DynamicModule))
-            {
-                if(parent == _draggedItem.Parent)
-                {
-                    return false;
-                }
-                parent = parent.Parent;
-            }
-
-            System.Diagnostics.Debug.WriteLine(target.GetType());
-
-            return true;
         }
 
         private Models.Dynamic.IDynItems GetNearestContainer(object source)

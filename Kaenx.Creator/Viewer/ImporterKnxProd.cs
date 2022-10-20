@@ -10,10 +10,7 @@ namespace Kaenx.Creator.Viewer
     {
         private string _filePath = "";
 
-        private Application _app;
-        private AppVersion _version;
         private CatalogContext _context;
-        private ApplicationViewModel _model;
         private Kaenx.DataContext.Import.Manager.KnxProdFileManager _man;
 
         private Dictionary<string, int> TypeNameToId = new Dictionary<string, int>();

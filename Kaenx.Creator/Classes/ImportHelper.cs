@@ -136,7 +136,7 @@ namespace Kaenx.Creator.Classes
                 xele = XDocument.Load(entry.Open()).Root;
                 _namespace = xele.Attribute("xmlns").Value;
                 ImportBaggages(manuHex, xele, Archive);
-            } catch (NullReferenceException ex) {
+            } catch (NullReferenceException) {
                 System.Diagnostics.Debug.WriteLine("Keine Baggages gefunden");
             } catch (Exception ex) {
                 System.Diagnostics.Debug.WriteLine($"Baggage Fehler: {ex.Message}");
