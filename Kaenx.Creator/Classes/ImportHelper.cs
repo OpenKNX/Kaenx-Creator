@@ -540,12 +540,22 @@ namespace Kaenx.Creator.Classes
             int textCounter = 1;
             foreach(Translation trans in x)
             {
-                string[] id = trans.Text.Split('-');
-                string path = id[2];
-                string file = Unescape(id[3]);
-                string fullPath = trans.Text.Substring(0, 6) + "/Baggages/";
-                if(!string.IsNullOrEmpty(path)) fullPath = fullPath + path + "/";
-                fullPath = fullPath + file;
+                string file = "";
+                string fullPath = "";
+
+                if(currentVers.NamespaceVersion == 14)
+                {
+                    file = trans.Text;
+                    fullPath = $"{xapp.Attribute("Id").Value.Substring(0, 6):X4}/Baggages/{trans.Text}";
+                } else {
+                    string[] id = trans.Text.Split('-');
+                    string path = id[2];
+                    file = Unescape(id[3]);
+                    fullPath = trans.Text.Substring(0, 6) + "/Baggages/";
+                    if(!string.IsNullOrEmpty(path)) fullPath = fullPath + path + "/";
+                    fullPath = fullPath + file;
+                }
+
                 ZipArchiveEntry entry = Archive.GetEntry(fullPath);
                 string tempPath = System.IO.Path.Combine("HelpTemp", file);
                 if(!System.IO.File.Exists(tempPath))

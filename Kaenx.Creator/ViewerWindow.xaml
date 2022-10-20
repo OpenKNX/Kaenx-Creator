@@ -235,8 +235,8 @@
                         <ColumnDefinition />
                         <ColumnDefinition Width="auto" />
                     </Grid.ColumnDefinitions>
-
-                    <Image Source="{Binding Image}" Stretch="Uniform" MaxHeight="300" />
+                    
+                    <Image Source="{Binding Image}" VerticalAlignment="Center" HorizontalAlignment="Center" />
                     <TextBlock Grid.Column="1" Text="{Binding SuffixText}" Visibility="{Binding SuffixText, Converter={StaticResource EmptyToVis}}" Margin="10 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Left" />
                 </Grid>
                 

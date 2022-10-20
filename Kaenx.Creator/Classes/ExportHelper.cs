@@ -117,7 +117,12 @@ namespace Kaenx.Creator.Classes
                 List<Baggage> baggagesApp = new List<Baggage>();
                 if(ver.IsHelpActive)
                 {
-                    xapp.SetAttributeValue("ContextHelpFile", $"{Manu}_BG--{GetEncoded("HelpFile_" + ver.DefaultLanguage + ".zip")}");
+                    if(ver.NamespaceVersion == 14)
+                    {
+                        xapp.SetAttributeValue("ContextHelpFile", "HelpFile_" + ver.DefaultLanguage + ".zip");
+                    } else {
+                        xapp.SetAttributeValue("ContextHelpFile", $"{Manu}_BG--{GetEncoded("HelpFile_" + ver.DefaultLanguage + ".zip")}");
+                    }
                     ExportHelptexts(ver, Manu, baggagesManu, baggagesApp);
                 }
 
@@ -327,23 +332,26 @@ namespace Kaenx.Creator.Classes
                 xunderapp.Add(temp);
                 #endregion
 
-                temp = new XElement(Get("Messages"));
-                foreach(Message msg in ver.Messages)
+                if(ver.IsMessagesActive && ver.Messages.Count > 0)
                 {
-                    if(msg.Id == -1)
-                        msg.Id = AutoHelper.GetNextFreeId(ver, "Messages");
+                    temp = new XElement(Get("Messages"));
+                    foreach(Message msg in ver.Messages)
+                    {
+                        if(msg.Id == -1)
+                            msg.Id = AutoHelper.GetNextFreeId(ver, "Messages");
 
-                    XElement xmsg = new XElement(Get("Message"));
-                    xmsg.SetAttributeValue("Id", $"{appVersion}_M-{msg.Id}");
-                    xmsg.SetAttributeValue("Name", msg.Name);
-                    xmsg.SetAttributeValue("Text",  GetDefaultLanguage(msg.Text));
-                    temp.Add(xmsg);
+                        XElement xmsg = new XElement(Get("Message"));
+                        xmsg.SetAttributeValue("Id", $"{appVersion}_M-{msg.Id}");
+                        xmsg.SetAttributeValue("Name", msg.Name);
+                        xmsg.SetAttributeValue("Text",  GetDefaultLanguage(msg.Text));
+                        temp.Add(xmsg);
 
-                    if(msg.TranslationText)
-                        foreach(Translation trans in msg.Text)
-                            AddTranslation(trans.Language.CultureCode, $"{appVersion}_M-{msg.Id}", "Text", trans.Text);
+                        if(msg.TranslationText)
+                            foreach(Translation trans in msg.Text)
+                                AddTranslation(trans.Language.CultureCode, $"{appVersion}_M-{msg.Id}", "Text", trans.Text);
+                    }
+                    xunderapp.Add(temp);
                 }
-                xunderapp.Add(temp);
 
                 #region ModuleDefines
                 if(ver.Modules.Count > 0)
@@ -776,9 +784,10 @@ namespace Kaenx.Creator.Classes
                     Extension = ".zip",
                     TimeStamp = DateTime.Now
                 };
-                baggagesManu.Add(bag);
-                baggagesApp.Add(bag);
-                AddTranslation(lang.CultureCode, appVersion, "ContextHelpFile", $"{manu}_BG--{GetEncoded("HelpFile_" + lang.CultureCode + ".zip")}");
+                if(ver.NamespaceVersion == 14)
+                    AddTranslation(lang.CultureCode, appVersion, "ContextHelpFile", "HelpFile_" + lang.CultureCode + ".zip");
+                else
+                    AddTranslation(lang.CultureCode, appVersion, "ContextHelpFile", $"{manu}_BG--{GetEncoded("HelpFile_" + lang.CultureCode + ".zip")}");
             }
 
             System.IO.Directory.Delete("HelpTemp", true);
@@ -1135,7 +1144,11 @@ namespace Kaenx.Creator.Classes
             xpara.SetAttributeValue("Text", GetDefaultLanguage(para.Text));
             if (para.Access != ParamAccess.Default && para.Access != ParamAccess.ReadWrite) xpara.SetAttributeValue("Access", para.Access);
             if (!string.IsNullOrWhiteSpace(GetDefaultLanguage(para.Suffix))) xpara.SetAttributeValue("SuffixText", GetDefaultLanguage(para.Suffix));
-            xpara.SetAttributeValue("Value", para.Value);
+            
+            if(para.ParameterTypeObject.Type == ParameterTypes.Picture)
+                xpara.SetAttributeValue("Value", "");
+            else
+                xpara.SetAttributeValue("Value", para.Value);
 
             parent.Add(xpara);
         }

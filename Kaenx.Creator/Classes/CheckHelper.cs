@@ -139,10 +139,8 @@ namespace Kaenx.Creator.Classes {
             if(app.Mask.Procedure != ProcedureTypes.Default && string.IsNullOrEmpty(vers.Procedure))
                 actions.Add(new PublishAction() { Text = $"Version muss eine Ladeprozedur enthalten.", State = PublishState.Fail });
 
-            if(vers.IsHelpActive && vers.NamespaceVersion == 14)
-                actions.Add(new PublishAction() { Text = $"Hilfstexte werden voraussichtlich nicht unterstützt", State = PublishState.Warning });
-            else if(vers.IsHelpActive && vers.NamespaceVersion < 20)
-                actions.Add(new PublishAction() { Text = $"Hilfstexte werden erst ab Namespace Version 20 unterstützt", State = PublishState.Fail });
+            if(vers.IsHelpActive && vers.NamespaceVersion < 14)
+                actions.Add(new PublishAction() { Text = $"Hilfstexte werden erst ab Namespace Version 14 unterstützt", State = PublishState.Fail });
             
 
             foreach(ParameterType ptype in vers.ParameterTypes) {
