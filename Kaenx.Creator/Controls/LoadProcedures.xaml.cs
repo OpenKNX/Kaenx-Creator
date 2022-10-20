@@ -28,7 +28,6 @@ namespace Kaenx.Creator.Controls
 			InitializeComponent();
             editor.TextArea.TextEntered += EditorEntered;
             editor.TextArea.TextEntering += EditorEntering;
-            this.DataContext = this;
 		}
 
         CompletionWindow completionWindow;

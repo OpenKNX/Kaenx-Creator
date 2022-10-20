@@ -935,6 +935,7 @@
                                         <TextBox Text="{Binding Address, UpdateSourceTrigger=PropertyChanged}"/>
                                     </HeaderedContentControl>
                                     <CheckBox Content="{x:Static p:Resources.vgen_autosize}"  IsChecked="{Binding IsAutoSize}" />
+                                    <CheckBox Content="{x:Static p:Resources.vgen_autoload}"  IsChecked="{Binding IsAutoLoad}" />
                                     <HeaderedContentControl Header="{x:Static p:Resources.prop_size}" IsEnabled="{Binding IsAutoSize, Converter={StaticResource BoolNegate}}">
                                         <TextBox Text="{Binding Size, UpdateSourceTrigger=PropertyChanged}" />
                                     </HeaderedContentControl>

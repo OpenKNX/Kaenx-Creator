@@ -22,11 +22,11 @@
         </Grid.RowDefinitions>
 
         <avalonedit:TextEditor x:Name="editor" ShowLineNumbers="True" Grid.RowSpan="2" SyntaxHighlighting="XML" />
-        <TextBox Text="{Binding Version.Procedure, UpdateSourceTrigger=PropertyChanged, ElementName=ViewControl}" Grid.RowSpan="2" />
+        <TextBox Text="{Binding Version.Procedure, ElementName=ViewControl}" Grid.RowSpan="2" />
 
         <GridSplitter Grid.RowSpan="2" Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
 
-        <ListBox x:Name="MaskList" Grid.Column="2" ItemsSource="{Binding Mask.Procedures}">
+        <ListBox x:Name="MaskList" Grid.Column="2" ItemsSource="{Binding Mask.Procedures, ElementName=ViewControl}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <TextBlock>

@@ -141,7 +141,31 @@ namespace Kaenx.Creator.Classes {
 
             if(vers.IsHelpActive && vers.NamespaceVersion < 14)
                 actions.Add(new PublishAction() { Text = $"Hilfstexte werden erst ab Namespace Version 14 unterstützt", State = PublishState.Fail });
-            
+            if(vers.Memories.Count > 0 && !vers.Memories[0].IsAutoLoad)
+            {
+                XElement xtemp = XElement.Parse(vers.Procedure);
+                foreach(XElement xele in xtemp.Descendants())
+                {
+                    if(xele.Name.LocalName == "LdCtrlRelSegment")
+                    {
+                        if(xele.Attribute("LsmIdx").Value == "4")
+                        {
+                            int memsize = int.Parse(xele.Attribute("Size")?.Value ?? "0");
+                            if(memsize != vers.Memories[0].Size)
+                                actions.Add(new PublishAction() { Text = $"Ladeprozedur {xele.Name.LocalName}: Speichergröße stimmt nicht überein", State = PublishState.Warning });
+                        }
+                    }
+                    if(xele.Name.LocalName == "LdCtrlWriteRelMem")
+                    {
+                        if(xele.Attribute("ObjIdx").Value == "4")
+                        {
+                            int memsize = int.Parse(xele.Attribute("Size")?.Value ?? "0");
+                            if(memsize != vers.Memories[0].Size)
+                                actions.Add(new PublishAction() { Text = $"Ladeprozedur {xele.Name.LocalName}: Speichergröße stimmt nicht überein", State = PublishState.Warning });
+                        }
+                    }
+                }
+            }
 
             foreach(ParameterType ptype in vers.ParameterTypes) {
                 long maxsize = (long)Math.Pow(2, ptype.SizeInBit);

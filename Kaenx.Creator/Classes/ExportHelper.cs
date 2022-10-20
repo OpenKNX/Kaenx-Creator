@@ -318,15 +318,43 @@ namespace Kaenx.Creator.Classes
                 xunderapp.Add(temp);
                 
                 temp = XElement.Parse(ver.Procedure);
+                foreach(XElement xele in temp.Descendants())
+                {
+                    switch(xele.Name.LocalName)
+                    {
+                        case "LdCtrlWriteRelMem":
+                        {
+                            if(xele.Attribute("ObjIdx").Value == "4" && ver.Memories[0].IsAutoLoad)
+                            {
+                                xele.SetAttributeValue("Size", ver.Memories[0].Size);
+                            }
+                            break;
+                        }
+
+                        case "LdCtrlRelSegment":
+                        {
+                            if(xele.Attribute("LsmIdx").Value == "4" && ver.Memories[0].IsAutoLoad)
+                            {
+                                xele.SetAttributeValue("Size", ver.Memories[0].Size);
+                            }
+                            break;
+                        }
+                    }
+                }
+                ver.Procedure = temp.ToString();
                 temp.Attributes().Where((x) => x.IsNamespaceDeclaration).Remove();
                 temp.Name = XName.Get(temp.Name.LocalName, currentNamespace);
                 foreach(XElement xele in temp.Descendants())
                 {
                     xele.Name = XName.Get(xele.Name.LocalName, currentNamespace);
-                    if(xele.Name.LocalName == "OnError")
+                    switch(xele.Name.LocalName)
                     {
-                        string id = xele.Attribute("MessageRef").Value;
-                        xele.SetAttributeValue("MessageRef", $"{appVersion}_M-{id}");
+                        case "OnError":
+                        {
+                            string id = xele.Attribute("MessageRef").Value;
+                            xele.SetAttributeValue("MessageRef", $"{appVersion}_M-{id}");
+                            break;
+                        }
                     }
                 }
                 xunderapp.Add(temp);

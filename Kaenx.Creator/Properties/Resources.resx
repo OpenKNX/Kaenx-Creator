@@ -1109,4 +1109,8 @@
     <value>Öffnen</value>
     <comment/>
   </data>
+  <data name="vgen_autoload" xml:space="preserve">
+    <value>In LadeProzedur automatisch Größe einfügen</value>
+    <comment/>
+  </data>
 </root>

@@ -2138,5 +2138,11 @@ namespace Kaenx.Creator.Properties {
                 return ResourceManager.GetString("tapps_openh", resourceCulture);
             }
         }
+        
+        public static string vgen_autoload {
+            get {
+                return ResourceManager.GetString("vgen_autoload", resourceCulture);
+            }
+        }
     }
 }

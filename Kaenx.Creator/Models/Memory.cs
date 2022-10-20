@@ -72,6 +72,13 @@ namespace Kaenx.Creator.Models
             set { _isAutoSize = value; Changed("IsAutoSize"); }
         }
 
+        private bool _isAutoLoad = true;
+        public bool IsAutoLoad
+        {
+            get { return _isAutoLoad; }
+            set { _isAutoLoad = value; Changed("IsAutoLoad"); }
+        }
+
         private DataGridCellInfo _currentCell;
         [JsonIgnore]
         public DataGridCellInfo CurrentCell
