@@ -784,6 +784,8 @@ namespace Kaenx.Creator.Classes
                     Extension = ".zip",
                     TimeStamp = DateTime.Now
                 };
+                baggagesManu.Add(bag);
+                baggagesApp.Add(bag);
                 if(ver.NamespaceVersion == 14)
                     AddTranslation(lang.CultureCode, appVersion, "ContextHelpFile", "HelpFile_" + lang.CultureCode + ".zip");
                 else
