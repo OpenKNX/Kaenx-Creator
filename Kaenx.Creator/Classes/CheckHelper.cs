@@ -322,7 +322,7 @@ namespace Kaenx.Creator.Classes {
                         actions.Add(new PublishAction() { Text = $"Ladeprozedur: MessageRef ist kein Integer.", State = PublishState.Fail });
                     if(id != -1)
                     {
-                        if(!vers.Messages.Any(m => m.Id == id))
+                        if(!vers.Messages.Any(m => m.UId == id))
                             actions.Add(new PublishAction() { Text = $"Ladeprozedur: MessageRef zeigt auf nicht vorhandene Meldung ({id}).", State = PublishState.Fail });
                     }
                 }

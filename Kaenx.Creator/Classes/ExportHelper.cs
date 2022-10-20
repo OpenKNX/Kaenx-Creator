@@ -351,8 +351,9 @@ namespace Kaenx.Creator.Classes
                     {
                         case "OnError":
                         {
-                            string id = xele.Attribute("MessageRef").Value;
-                            xele.SetAttributeValue("MessageRef", $"{appVersion}_M-{id}");
+                            int id = int.Parse(xele.Attribute("MessageRef").Value);
+                            Message msg = ver.Messages.SingleOrDefault(m => m.UId == id);
+                            xele.SetAttributeValue("MessageRef", $"{appVersion}_M-{msg.Id}");
                             break;
                         }
                     }
