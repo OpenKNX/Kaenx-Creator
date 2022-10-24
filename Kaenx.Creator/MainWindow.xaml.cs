@@ -39,9 +39,8 @@ namespace Kaenx.Creator
             set { _general = value; Changed("General"); }
         }
 
-        private Models.AppVersionModel _selectedVersionModel;
-        private Models.AppVersion _selectedVersion;
-        public Models.AppVersion SelectedVersion
+        private Models.AppVersionModel _selectedVersion;
+        public Models.AppVersionModel SelectedVersion
         {
             get { return _selectedVersion; }
             set { _selectedVersion = value; Changed("SelectedVersion"); }
@@ -247,6 +246,7 @@ namespace Kaenx.Creator
             General.Catalog.Add(new Models.CatalogItem() { Name = "Hauptkategorie (wird nicht exportiert)" });
             SetButtons(true);
             MenuSaveBtn.IsEnabled = false;
+            SelectedVersion = null;
         }
 
         private void Changed(string name)
@@ -475,18 +475,18 @@ namespace Kaenx.Creator
             if(SelectedVersion != null)
             {
                 SelectedVersion.PropertyChanged -= SelectedVersion_PropertyChanged;
-                _selectedVersionModel.Name = SelectedVersion.Name;
-                _selectedVersionModel.Number = SelectedVersion.Number;
-                _selectedVersionModel.Version = Newtonsoft.Json.JsonConvert.SerializeObject(SelectedVersion, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
+                SelectedVersion.Name = SelectedVersion.Model.Name;
+                SelectedVersion.Number = SelectedVersion.Model.Number;
+                SelectedVersion.Version = Newtonsoft.Json.JsonConvert.SerializeObject(SelectedVersion.Model, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
                 before = System.GC.GetTotalMemory(false);
                 System.GC.Collect();
                 after = System.GC.GetTotalMemory(false);
                 System.Diagnostics.Debug.WriteLine("Freigemacht: " + (before - after).ToString());
             }
             before = System.GC.GetTotalMemory(false);
-            _selectedVersionModel = (sender as MenuItem).DataContext as Models.AppVersionModel;
-            SelectedVersion = AutoHelper.GetAppVersion(General, _selectedVersionModel);
-            SelectedVersion.PropertyChanged += SelectedVersion_PropertyChanged;
+            SelectedVersion = (sender as MenuItem).DataContext as Models.AppVersionModel;
+            SelectedVersion.Model = AutoHelper.GetAppVersion(General, SelectedVersion);
+            SelectedVersion.Model.PropertyChanged += SelectedVersion_PropertyChanged;
             //TODO auto open TabView Item
             after = System.GC.GetTotalMemory(false);
             System.Diagnostics.Debug.WriteLine("Neu verbraucht: " + (after - before).ToString());
@@ -495,8 +495,8 @@ namespace Kaenx.Creator
         private void SelectedVersion_PropertyChanged(object sender, PropertyChangedEventArgs e = null)
         {
             if(e.PropertyName != "NameText") return;
-            _selectedVersionModel.Name = SelectedVersion.Name;
-            _selectedVersionModel.Number = SelectedVersion.Number;
+            SelectedVersion.Name = SelectedVersion.Model.Name;
+            SelectedVersion.Number = SelectedVersion.Model.Number;
         }
 
         private void ClickOpenViewer(object sender, RoutedEventArgs e)
@@ -505,9 +505,9 @@ namespace Kaenx.Creator
             Models.Application app = (Models.Application)AppList.SelectedItem;
             Models.AppVersionModel model = (sender as MenuItem).DataContext as Models.AppVersionModel;
             Models.AppVersion ver;
-            if(model == _selectedVersionModel)
+            if(model == SelectedVersion)
             {
-                ver = SelectedVersion;
+                ver = SelectedVersion.Model;
             } else {
                 ver = AutoHelper.GetAppVersion(General, model);
             }
@@ -546,32 +546,32 @@ namespace Kaenx.Creator
             }
             Models.Language lang = LanguagesListVers.SelectedItem as Models.Language;
             
-            if(SelectedVersion.Languages.Any(l => l.CultureCode == lang.CultureCode))
+            if(SelectedVersion.Model.Languages.Any(l => l.CultureCode == lang.CultureCode))
                 MessageBox.Show("Die Sprache wird bereits unterstützt.");
             else {
-                SelectedVersion.Languages.Add(lang);
-                if(!SelectedVersion.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
-                    SelectedVersion.Text.Add(new Models.Translation(lang, ""));
+                SelectedVersion.Model.Languages.Add(lang);
+                if(!SelectedVersion.Model.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
+                    SelectedVersion.Model.Text.Add(new Models.Translation(lang, ""));
                 
-                foreach(Models.ParameterType type in SelectedVersion.ParameterTypes) {
+                foreach(Models.ParameterType type in SelectedVersion.Model.ParameterTypes) {
                     if(type.Type != Models.ParameterTypes.Enum) continue;
 
                     foreach(Models.ParameterTypeEnum enu in type.Enums)
                         if(!enu.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
                             enu.Text.Add(new Models.Translation(lang, ""));
                 }
-                foreach(Models.Message msg in SelectedVersion.Messages) {
+                foreach(Models.Message msg in SelectedVersion.Model.Messages) {
                     if(!msg.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
                         msg.Text.Add(new Models.Translation(lang, ""));
                 }
-                foreach(Models.Helptext msg in SelectedVersion.Helptexts){
+                foreach(Models.Helptext msg in SelectedVersion.Model.Helptexts){
                     if(!msg.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
                         msg.Text.Add(new Models.Translation(lang, ""));
                 }
 
-                addLangToVersion(SelectedVersion, lang);
-                addLangToVersion(SelectedVersion.Dynamics[0], lang);
-                foreach(Models.Module mod in SelectedVersion.Modules)
+                addLangToVersion(SelectedVersion.Model, lang);
+                addLangToVersion(SelectedVersion.Model.Dynamics[0], lang);
+                foreach(Models.Module mod in SelectedVersion.Model.Modules)
                 {
                     addLangToVersion(mod, lang);
                     addLangToVersion(mod.Dynamics[0], lang);
@@ -586,12 +586,12 @@ namespace Kaenx.Creator
             }
             Models.Language lang = SupportedLanguagesVers.SelectedItem as Models.Language;
 
-            if(SelectedVersion.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
-                SelectedVersion.Text.Remove(SelectedVersion.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
-            SelectedVersion.Languages.Remove(SelectedVersion.Languages.Single(l => l.CultureCode == lang.CultureCode));
+            if(SelectedVersion.Model.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
+                SelectedVersion.Model.Text.Remove(SelectedVersion.Model.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
+            SelectedVersion.Model.Languages.Remove(SelectedVersion.Model.Languages.Single(l => l.CultureCode == lang.CultureCode));
             
 
-            foreach(Models.ParameterType type in SelectedVersion.ParameterTypes) {
+            foreach(Models.ParameterType type in SelectedVersion.Model.ParameterTypes) {
                 if(type.Type != Models.ParameterTypes.Enum) continue;
 
                 foreach(Models.ParameterTypeEnum enu in type.Enums) {
@@ -599,17 +599,17 @@ namespace Kaenx.Creator
                         enu.Text.Remove(enu.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
                 }
             }
-            foreach(Models.Message msg in SelectedVersion.Messages) {
+            foreach(Models.Message msg in SelectedVersion.Model.Messages) {
                 if(msg.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
                     msg.Text.Remove(msg.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
             }
-            foreach(Models.Helptext msg in SelectedVersion.Helptexts){
+            foreach(Models.Helptext msg in SelectedVersion.Model.Helptexts){
                 if(msg.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
                     msg.Text.Remove(msg.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
             }
 
-            removeLangFromVersion(SelectedVersion, lang);
-            foreach(Models.Module mod in SelectedVersion.Modules)
+            removeLangFromVersion(SelectedVersion.Model, lang);
+            foreach(Models.Module mod in SelectedVersion.Model.Modules)
                 removeLangFromVersion(mod, lang);
         }
 
@@ -788,21 +788,21 @@ namespace Kaenx.Creator
 
         private void ClickAddModule(object sender, RoutedEventArgs e)
         {
-            Models.Module mod = new Models.Module() { UId = AutoHelper.GetNextFreeUId(SelectedVersion.Modules)};
+            Models.Module mod = new Models.Module() { UId = AutoHelper.GetNextFreeUId(SelectedVersion.Model.Modules)};
             mod.Arguments.Add(new Models.Argument() { Name = "argParas", UId = AutoHelper.GetNextFreeUId(mod.Arguments) });
             mod.Arguments.Add(new Models.Argument() { Name = "argComs", UId = AutoHelper.GetNextFreeUId(mod.Arguments) });
             //mod.Arguments.Add(new Models.Argument() { Name = "argChan", UId = AutoHelper.GetNextFreeUId(mod.Arguments) });
             mod.ParameterBaseOffset = mod.Arguments[0];
             mod.ComObjectBaseNumber = mod.Arguments[1];
             mod.Dynamics.Add(new Models.Dynamic.DynamicModule());
-            SelectedVersion.Modules.Add(mod);
+            SelectedVersion.Model.Modules.Add(mod);
         }
 
         private void ClickRemoveModule(object sender, RoutedEventArgs e)
         {;
             Models.Module mod = ModuleList.SelectedItem as Models.Module;
-            SelectedVersion.Modules.Remove(mod);
-            RemoveModule(SelectedVersion.Dynamics[0], mod);
+            SelectedVersion.Model.Modules.Remove(mod);
+            RemoveModule(SelectedVersion.Model.Dynamics[0], mod);
         }
 
         private void RemoveModule(Models.Dynamic.IDynItems item, Models.Module mod)
@@ -845,7 +845,7 @@ namespace Kaenx.Creator
 
         private void ClickSave(object sender, RoutedEventArgs e)
         {
-            _selectedVersionModel.Version = Newtonsoft.Json.JsonConvert.SerializeObject(SelectedVersion, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
+            SelectedVersion.Version = Newtonsoft.Json.JsonConvert.SerializeObject(SelectedVersion.Model, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
             string general = Newtonsoft.Json.JsonConvert.SerializeObject(General, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
             System.IO.File.WriteAllText(filePath, general);
         }
@@ -856,7 +856,6 @@ namespace Kaenx.Creator
             SetButtons(false);
             MenuSaveBtn.IsEnabled = false;
             SelectedVersion = null;
-            _selectedVersionModel = null;
             System.GC.Collect();
         }
 
@@ -870,7 +869,7 @@ namespace Kaenx.Creator
 
         private void ClickSaveAs(object sender, RoutedEventArgs e)
         {
-            _selectedVersionModel.Version = Newtonsoft.Json.JsonConvert.SerializeObject(SelectedVersion, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
+            SelectedVersion.Version = Newtonsoft.Json.JsonConvert.SerializeObject(SelectedVersion.Model, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
             string general = Newtonsoft.Json.JsonConvert.SerializeObject(General, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
 
             SaveFileDialog diag = new SaveFileDialog();
@@ -907,7 +906,7 @@ namespace Kaenx.Creator
                         continue;
                 }
 
-                _selectedVersionModel.Version = Newtonsoft.Json.JsonConvert.SerializeObject(SelectedVersion, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
+                SelectedVersion.Version = Newtonsoft.Json.JsonConvert.SerializeObject(SelectedVersion.Model, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
                 string general = Newtonsoft.Json.JsonConvert.SerializeObject(General, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
                 System.IO.File.WriteAllText("Templates\\" + diag.Answer + ".temp", general);
                 return;
@@ -958,6 +957,7 @@ namespace Kaenx.Creator
                 MessageBox.Show("Die Datei scheint nicht mit der aktuellen Version zusammen zu passen.\r\nEvtl. muss diese vorher konvertiert werden.");
                 return;
             }
+            SelectedVersion = null;
             General.ImportVersion = VersionCurrent;
             filePath = path;
 
@@ -985,8 +985,6 @@ namespace Kaenx.Creator
 
             SetButtons(true);
             MenuSave.IsEnabled = true;
-            SelectedVersion = null;
-            _selectedVersionModel = null;
         }
 
         
@@ -1035,7 +1033,7 @@ namespace Kaenx.Creator
         
         private void ClickDoResetParaIds(object sender, RoutedEventArgs e)
         {
-            ClearHelper.ResetParameterIds(SelectedVersion);
+            ClearHelper.ResetParameterIds(SelectedVersion.Model);
         }
 
 
@@ -1096,7 +1094,7 @@ namespace Kaenx.Creator
         private void ClickCalcHeatmap(object sender, RoutedEventArgs e)
         {
             Models.Memory mem = (sender as Button).DataContext as Models.Memory;
-            AutoHelper.MemoryCalculation(SelectedVersion, mem);
+            AutoHelper.MemoryCalculation(SelectedVersion.Model, mem);
         }
 
         private void TabChanged(object sender, SelectionChangedEventArgs e)
@@ -1174,7 +1172,7 @@ namespace Kaenx.Creator
             PublishActions.Clear();
             await Task.Delay(1000);
             if(SelectedVersion != null)
-                _selectedVersionModel.Version = Newtonsoft.Json.JsonConvert.SerializeObject(SelectedVersion, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
+                SelectedVersion.Version = Newtonsoft.Json.JsonConvert.SerializeObject(SelectedVersion.Model, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
             
             List<Models.Hardware> hardware = new List<Models.Hardware>();
             List<Models.Device> devices = new List<Models.Device>();

@@ -83,7 +83,7 @@ namespace Kaenx.Creator.Classes
             XElement xmanu = null;
             XElement xlanguages = null;
             foreach(Models.AppVersionModel model in vers) {
-                Models.AppVersion ver = AutoHelper.GetAppVersion(general, model);
+                Models.AppVersion ver = model.Model != null ? model.Model : AutoHelper.GetAppVersion(general, model);
                 Debug.WriteLine($"Exportiere AppVersion: {ver.Name} {ver.NameText}");
                 languages = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>();
                 xmanu = CreateNewXML(Manu);
@@ -483,6 +483,8 @@ namespace Kaenx.Creator.Classes
                 foreach(DynModule dmod in mods)
                 {
                     DynModuleArg dargp = dmod.Arguments.Single(a => a.ArgumentId == dmod.ModuleObject.ParameterBaseOffsetUId);
+                    if(dargp.UseAllocator) continue; //TODO implement allocator
+                    
                     int poffset = int.Parse(dargp.Value);
                     foreach(Parameter para in dmod.ModuleObject.Parameters)
                     {

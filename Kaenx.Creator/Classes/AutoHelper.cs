@@ -349,6 +349,7 @@ namespace Kaenx.Creator.Classes
                     int modSize = dmod.ModuleObject.Memory.GetCount();
                     (int offset, int offsetbit) result = mem.GetFreeOffset(modSize * 8);
                     argParas.Value = result.offset.ToString();
+                    argParas.Argument.Allocates = result.offset;
                     mem.SetBytesUsed(MemoryByteUsage.Module, modSize, result.offset);
                 }
 
@@ -359,6 +360,7 @@ namespace Kaenx.Creator.Classes
                     if(argComs != null)
                     {
                         argComs.Value = (++highestComNumber).ToString();
+                        argComs.Argument.Allocates = highestComNumber + 1;
                         highestComNumber += highestComNumber2;
                     }
                 }

@@ -38,6 +38,13 @@ namespace Kaenx.Creator.Models
         public string Version { get; set; }
 
 
+        private AppVersion _model;
+        [JsonIgnore]
+        public AppVersion Model { 
+            get { return _model; }
+            set { _model = value; Changed("Model"); }
+        }
+
 
         public event PropertyChangedEventHandler PropertyChanged;
 

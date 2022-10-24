@@ -170,6 +170,7 @@ namespace Kaenx.Creator.Classes
             xele = xele.Element(Get("ManufacturerData")).Element(Get("Manufacturer")).Element(Get("Catalog"));
             ImportLanguages(xele.Parent.Element(Get("Languages")), _general.Languages);
             ImportCatalog(xele);
+            Archive.Dispose();
         }
 
         List<string> supportedExtensions = new List<string>() { ".png", ".jpg", ".jpeg" };
@@ -289,6 +290,7 @@ namespace Kaenx.Creator.Classes
             currentVers.Text = GetTranslation(xapp.Attribute("Id").Value, "Name", xapp);
             ImportHelpFile(xapp);
             ImportSegments(xstatic.Element(Get("Code")));
+            ImportAllocators(xstatic.Element(Get("Allocators")), currentVers);
             ImportParameterTypes(xstatic.Element(Get("ParameterTypes")));
             ImportParameter(xstatic.Element(Get("Parameters")), currentVers);
             ImportParameterRefs(xstatic.Element(Get("ParameterRefs")), currentVers);
@@ -1251,11 +1253,23 @@ namespace Kaenx.Creator.Classes
         }
         
 
-        private void ImportAllocators(XElement xallocs, Models.Module vbase)
+        private void ImportAllocators(XElement xallocs, IVersionBase vbase)
         {
             if(xallocs == null) return;
-            
-            throw new Exception("not implemented");
+
+            int counter = 1;
+            foreach(XElement xalloc in xallocs.Elements())
+            {
+                Allocator alloc = new Allocator() {
+                    UId = counter++,
+                    Name = xalloc.Attribute("Name").Value,
+                    Id = int.Parse(GetLastSplit(xalloc.Attribute("Id").Value, 2)),
+                    Start = int.Parse(xalloc.Attribute("Start").Value),
+                    Max = int.Parse(xalloc.Attribute("maxInclusive").Value)
+                };
+
+                vbase.Allocators.Add(alloc);
+            }
         }
 
         private void ImportArguments(XElement xargs, Models.Module vbase)
@@ -1270,6 +1284,11 @@ namespace Kaenx.Creator.Classes
                     Name = xarg.Attribute("Name").Value,
                     Id = int.Parse(GetLastSplit(xarg.Attribute("Id").Value, 2)),
                 };
+
+                if(xarg.Attribute("Allocates") != null)
+                {
+                    arg.Allocates = int.Parse(xarg.Attribute("Allocates").Value);
+                }
                 
                 arg.Type = xarg.Attribute("Type")?.Value switch {
                     "Numeric" => ArgumentTypes.Numeric,
@@ -1678,7 +1697,14 @@ namespace Kaenx.Creator.Classes
                             int id1 = int.Parse(GetLastSplit(xarg.Attribute("RefId").Value, 2));
                             Argument arg = dmo.ModuleObject.Arguments.Single(a => a.Id == id1);
                             DynModuleArg darg = dmo.Arguments.Single(a => a.Argument == arg);
-                            darg.Value = xarg.Attribute("Value").Value;
+                            if(xarg.Attribute("AllocatorRefId") != null)
+                            {
+                                int id3 = int.Parse(GetLastSplit(xarg.Attribute("AllocatorRefId").Value, 2));
+                                darg.Allocator = vbase.Allocators.Single(a => a.Id == id3);
+                                darg.UseAllocator = true;
+                            } else {
+                                darg.Value = xarg.Attribute("Value").Value;
+                            }
                         }
                         parent.Items.Add(dmo);
                         break;
@@ -1712,6 +1738,22 @@ namespace Kaenx.Creator.Classes
 
                     case "Rows":
                     case "Columns":
+                        break;
+
+                    case "Repeat":
+                        DynRepeat drep = new DynRepeat() {
+                            Name = xele.Attribute("Name").Value,
+                            Count = int.Parse(xele.Attribute("Count").Value),
+                            Id = int.Parse(GetLastSplit(xele.Attribute("Id").Value, 2))
+                        };
+                        if(xele.Attribute("ParameterRefId") != null)
+                        {
+                            drep.UseParameterRef = true;
+                            paraId = int.Parse(GetLastSplit(xele.Attribute("ParameterRefId").Value, 2));
+                            drep.ParameterRefObject = vbase.ParameterRefs.Single(p => p.Id == paraId);
+                        }
+                        parent.Items.Add(drep);
+                        ParseDynamic(drep, xele, vbase);
                         break;
 
                     default:

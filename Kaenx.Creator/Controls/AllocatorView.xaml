@@ -52,6 +52,13 @@
                     </Style>
                 </StackPanel.Resources>
 
+
+                <TextBlock Margin="5 0" VerticalAlignment="Center">
+                    <Run Text="{x:Static p:Resources.gen_uid}" />
+                    <Run Text="{Binding UId}"/>
+                </TextBlock>
+
+
                 <Grid Margin="5 0">
                     <TextBlock VerticalAlignment="Center">
                         <Run Text="{x:Static p:Resources.gen_id}" />

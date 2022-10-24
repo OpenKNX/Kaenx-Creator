@@ -108,7 +108,7 @@ namespace Kaenx.Creator.Classes {
 
             foreach(AppVersionModel model in versions)
             {
-                AppVersion version = AutoHelper.GetAppVersion(General, model);
+                AppVersion version = model.Model != null ? model.Model : AutoHelper.GetAppVersion(General, model);
                 Application app = apps.Single(a => a.Versions.Any(v => v.Name == version.Name && v.Number == version.Number));
                 actions.Add(new PublishAction() { Text = $"Prüfe Applikation '{app.NameText}' Version '{version.NameText}'" });
                 CheckVersion(General, app, version, actions, showOnlyErrors);
@@ -355,6 +355,14 @@ namespace Kaenx.Creator.Classes {
 
             if(mod != null && ver.NamespaceVersion < 20 && mod.Allocators.Count > 0)
                 actions.Add(new PublishAction() { Text = $"    Modul ({mod.Name}): Allocators werden erst ab /20 unterstützt", State = PublishState.Fail });
+
+            if(mod != null)
+            {
+                if(mod.ParameterBaseOffset.Type != ArgumentTypes.Numeric)
+                    actions.Add(new PublishAction() { Text = $"    Modul ({mod.Name}): ParameterBaseOffset Argument ist nicht vom Typ Numeric", State = PublishState.Fail });
+                if(mod.ComObjectBaseNumber.Type != ArgumentTypes.Numeric)
+                    actions.Add(new PublishAction() { Text = $"    Modul ({mod.Name}): ComObjectBaseNumber Argument ist nicht vom Typ Numeric", State = PublishState.Fail });
+            }
 
             foreach(Parameter para in vbase.Parameters) {
                 if(para.ParameterTypeObject == null) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Kein ParameterTyp ausgewählt", State = PublishState.Fail, Item = para, Module = mod });
@@ -710,7 +718,7 @@ namespace Kaenx.Creator.Classes {
                     if(dm.ModuleObject == null)
                         actions.Add(new PublishAction() { Text = $"    DynModule {dm.Name} wurde kein Module zugeordnet", State = PublishState.Fail});
                         
-                    if(dm.Arguments.Any(a => string.IsNullOrEmpty(a.Value)))
+                    if(dm.Arguments.Any(a => !a.UseAllocator && string.IsNullOrEmpty(a.Value)))
                         actions.Add(new PublishAction() { Text = $"    DynModule {dm.Name} hat Argumente, die leer sind", State = PublishState.Fail});
                     if(dm.Arguments.Any(a => a.Argument.Type != ArgumentTypes.Numeric && a.UseAllocator))
                         actions.Add(new PublishAction() { Text = $"    DynModule {dm.Name} hat Argumente, die einen Allocator verwenden, aber nicht Numeric sind", State = PublishState.Fail});
