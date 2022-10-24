@@ -382,6 +382,28 @@ namespace Kaenx.Creator.Classes
                     xunderapp.Add(temp);
                 }
 
+                
+                if(ver.Allocators.Count > 0)
+                {
+                    XElement xallocs = new XElement(Get("Allocators"));
+                    xunderapp.Add(xallocs);
+                    
+                    foreach(Models.Allocator alloc in ver.Allocators)
+                    {
+                        XElement xalloc = new XElement(Get("Allocator"));
+
+                        if (alloc.Id == -1)
+                            alloc.Id = AutoHelper.GetNextFreeId(ver, "Allocators");
+                        xalloc.SetAttributeValue("Id", $"{appVersionMod}_L-{alloc.Id}");
+                        xalloc.SetAttributeValue("Name", alloc.Name);
+                        xalloc.SetAttributeValue("Start", alloc.Start);
+                        xalloc.SetAttributeValue("maxInclusive", alloc.Max);
+                        //TODO errormessageid
+                        
+                        xallocs.Add(xalloc);
+                    }
+                }
+
                 #region ModuleDefines
                 if(ver.Modules.Count > 0)
                 {
@@ -403,6 +425,8 @@ namespace Kaenx.Creator.Classes
                                 arg.Id = AutoHelper.GetNextFreeId(mod, "Arguments");
                             xarg.SetAttributeValue("Id", $"{appVersionMod}_A-{arg.Id}");
                             xarg.SetAttributeValue("Name", arg.Name);
+                            if(arg.Allocates != 0)
+                                xarg.SetAttributeValue("Allocates", arg.Allocates);
                             temp.Add(xarg);
                         }
                         XElement xmod = new XElement(Get("ModuleDef"), temp);
@@ -417,6 +441,27 @@ namespace Kaenx.Creator.Classes
                         ExportParameterRefs(mod, xunderstatic);
                         ExportComObjects(mod, xunderstatic, null);
                         ExportComObjectRefs(mod, xunderstatic);
+
+                        if(mod.Allocators.Count > 0)
+                        {
+                            XElement xallocs = new XElement(Get("Allocators"));
+                            xunderstatic.Add(xallocs);
+                            
+                            foreach(Models.Allocator alloc in mod.Allocators)
+                            {
+                                XElement xalloc = new XElement(Get("Allocator"));
+
+                                if (alloc.Id == -1)
+                                    alloc.Id = AutoHelper.GetNextFreeId(mod, "Allocators");
+                                xalloc.SetAttributeValue("Id", $"{appVersionMod}_L-{alloc.Id}");
+                                xalloc.SetAttributeValue("Name", alloc.Name);
+                                xalloc.SetAttributeValue("Start", alloc.Start);
+                                xalloc.SetAttributeValue("maxInclusive", alloc.Max);
+                                //TODO errormessageid
+                                
+                                xallocs.Add(xalloc);
+                            }
+                        }
 
                         
                         XElement xmoddyn = new XElement(Get("Dynamic"));
@@ -1232,6 +1277,10 @@ namespace Kaenx.Creator.Classes
                         HandleAssign(da, xparent);
                         break;
 
+                    case DynRepeat dr:
+                        xitem = HandleRepeat(dr, xparent);
+                        break;
+
                     default:
                         throw new Exception("Nicht behandeltes dynamisches Element: " + item.ToString());
                 }
@@ -1290,9 +1339,15 @@ namespace Kaenx.Creator.Classes
 
             foreach(DynModuleArg arg in mod.Arguments)
             {
-                XElement xarg = new XElement(Get(arg.Type.ToString() + "Arg"));
+                XElement xarg = new XElement(Get(arg.Argument.Type.ToString() + "Arg"));
                 xarg.SetAttributeValue("RefId", $"{appVersion}_MD-{mod.ModuleObject.Id}_A-{arg.Argument.Id}");
-                xarg.SetAttributeValue("Value", arg.Value);
+
+                if(arg.UseAllocator)
+                {
+                    xarg.SetAttributeValue("AllocatorRefId", $"{appVersionMod}_L-{arg.Allocator.Id}");
+                } else {
+                    xarg.SetAttributeValue("Value", arg.Value);
+                }
                 xmod.Add(xarg);
             }
 
@@ -1441,11 +1496,25 @@ namespace Kaenx.Creator.Classes
         {
             XElement xcho = new XElement(Get("Assign"));
             parent.Add(xcho);
-            xcho.SetAttributeValue("TargetParamRefRef", appVersion + (da.TargetObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{da.TargetObject.ParameterObject.Id}_R-{da.TargetObject.Id}");
+            xcho.SetAttributeValue("TargetParamRefRef", appVersionMod + (da.TargetObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{da.TargetObject.ParameterObject.Id}_R-{da.TargetObject.Id}");
             if(string.IsNullOrEmpty(da.Value))
-                xcho.SetAttributeValue("SourceParamRefRef", appVersion + (da.SourceObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{da.SourceObject.ParameterObject.Id}_R-{da.SourceObject.Id}");
+                xcho.SetAttributeValue("SourceParamRefRef", appVersionMod + (da.SourceObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{da.SourceObject.ParameterObject.Id}_R-{da.SourceObject.Id}");
             else
                 xcho.SetAttributeValue("Value", da.Value);
+            return xcho;
+        }
+
+        int repCount = 1;
+        private XElement HandleRepeat(DynRepeat dr, XElement parent)
+        {
+            XElement xcho = new XElement(Get("Repeat"));
+            parent.Add(xcho);
+            dr.Id = repCount++;
+            xcho.SetAttributeValue("Id", $"{appVersionMod}_X-{dr.Id}");
+            xcho.SetAttributeValue("Name", dr.Name);
+            xcho.SetAttributeValue("Count", dr.Count);
+            if(dr.UseParameterRef)
+                xcho.SetAttributeValue("ParameterRefId", appVersionMod + (dr.ParameterRefObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{dr.ParameterRefObject.ParameterObject.Id}_R-{dr.ParameterRefObject.Id}");
             return xcho;
         }
 

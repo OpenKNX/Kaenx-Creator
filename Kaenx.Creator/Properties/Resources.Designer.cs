@@ -2144,5 +2144,47 @@ namespace Kaenx.Creator.Properties {
                 return ResourceManager.GetString("vgen_autoload", resourceCulture);
             }
         }
+        
+        public static string tdyn_add_repeat {
+            get {
+                return ResourceManager.GetString("tdyn_add_repeat", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_trepe {
+            get {
+                return ResourceManager.GetString("tdyn_trepe", resourceCulture);
+            }
+        }
+        
+        public static string prop_count {
+            get {
+                return ResourceManager.GetString("prop_count", resourceCulture);
+            }
+        }
+        
+        public static string prop_start {
+            get {
+                return ResourceManager.GetString("prop_start", resourceCulture);
+            }
+        }
+        
+        public static string prop_max {
+            get {
+                return ResourceManager.GetString("prop_max", resourceCulture);
+            }
+        }
+        
+        public static string tabs_alloc {
+            get {
+                return ResourceManager.GetString("tabs_alloc", resourceCulture);
+            }
+        }
+        
+        public static string tdyn_usealloc {
+            get {
+                return ResourceManager.GetString("tdyn_usealloc", resourceCulture);
+            }
+        }
     }
 }

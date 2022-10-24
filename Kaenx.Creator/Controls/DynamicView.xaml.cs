@@ -223,6 +223,11 @@ namespace Kaenx.Creator.Controls
             item.Items.Add(new Models.Dynamic.DynAssign() { Parent = item });
         }
 
+        private void ClickAddDynRepeat(object sender, RoutedEventArgs e)
+        {
+            Models.Dynamic.IDynItems item = (sender as MenuItem).DataContext as Models.Dynamic.IDynItems;
+            item.Items.Add(new Models.Dynamic.DynRepeat() { Parent = item });
+        }
 
         Dictionary<string, List<string>> SubTypes = new Dictionary<string, List<string>>() {
             {"DynamicMain",
@@ -231,7 +236,7 @@ namespace Kaenx.Creator.Controls
                     "DynChannelIndependent",
                     "DynChoose",
                     "DynModule",
-                    "DynRepeate" }
+                    "DynRepeat" }
             },
             {"DynamicModule",
                 new List<string>() { 
@@ -239,7 +244,7 @@ namespace Kaenx.Creator.Controls
                     "DynChannelIndependent",
                     "DynChoose",
                     "DynModule",
-                    "DynRepeate",
+                    "DynRepeat",
                     "DynParaBlock" }
             },
             {"DynChannelIndependent",
@@ -248,14 +253,14 @@ namespace Kaenx.Creator.Controls
                     "DynComObject",
                     "DynChoose",
                     "DynModule",
-                    "DynRepeate" }
+                    "DynRepeat" }
             },
             {"DynChannel",
                 new List<string>() { 
                     "DynParaBlock",
                     "DynComObject",
                     "DynModule",
-                    "DynRepeate",
+                    "DynRepeat",
                     "DynChoose" }
             },
             {"DynParaBlock",
@@ -267,7 +272,7 @@ namespace Kaenx.Creator.Controls
                     "DynChoose",
                     "DynComObject",
                     "DynModule",
-                    "DynRepeate",
+                    "DynRepeat",
                     "DynAssign",
                     "DynChannel" }
             },
@@ -288,8 +293,14 @@ namespace Kaenx.Creator.Controls
                     "DynComObject",
                     "DynModule",
                     "DynAssign",
-                    "DynRepeate",
+                    "DynRepeat",
                     "DynRename" }
+            },
+            {"DynRepeat",
+                new List<string>() { 
+                    "DynModule",
+                    "DynChoose",
+                    "DynRepeat" }
             },
         };
 
@@ -305,14 +316,15 @@ namespace Kaenx.Creator.Controls
             (menu.Items[0] as MenuItem).IsEnabled = SubTypes[type].Contains("DynChannelIndependent");
             (menu.Items[1] as MenuItem).IsEnabled = SubTypes[type].Contains("DynChannel");
             (menu.Items[2] as MenuItem).IsEnabled = SubTypes[type].Contains("DynParaBlock");
-            (menu.Items[3] as MenuItem).IsEnabled = SubTypes[type].Contains("DynModule");
+            (menu.Items[3] as MenuItem).IsEnabled = Version.IsModulesActive && SubTypes[type].Contains("DynModule");
             (menu.Items[4] as MenuItem).IsEnabled = SubTypes[type].Contains("DynChoose");
             //Separator
             (menu.Items[6] as MenuItem).IsEnabled = SubTypes[type].Contains("DynParameter");
             (menu.Items[7] as MenuItem).IsEnabled = SubTypes[type].Contains("DynComObject");
             (menu.Items[8] as MenuItem).IsEnabled = SubTypes[type].Contains("DynSeparator");
             (menu.Items[9] as MenuItem).IsEnabled = SubTypes[type].Contains("DynAssign");
-            (menu.Items[10] as MenuItem).IsEnabled = SubTypes[type].Contains("DynButton");
+            (menu.Items[10] as MenuItem).IsEnabled = SubTypes[type].Contains("DynRepeat");
+            (menu.Items[11] as MenuItem).IsEnabled = SubTypes[type].Contains("DynButton");
 
 
 

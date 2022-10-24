@@ -1113,4 +1113,32 @@
     <value>In LadeProzedur automatisch Größe einfügen</value>
     <comment/>
   </data>
+  <data name="tdyn_add_repeat" xml:space="preserve">
+    <value>Repeat</value>
+    <comment/>
+  </data>
+  <data name="tdyn_trepe" xml:space="preserve">
+    <value>Repeat</value>
+    <comment/>
+  </data>
+  <data name="prop_count" xml:space="preserve">
+    <value>Anzahl</value>
+    <comment/>
+  </data>
+  <data name="prop_start" xml:space="preserve">
+    <value>Start</value>
+    <comment/>
+  </data>
+  <data name="prop_max" xml:space="preserve">
+    <value>Maximal</value>
+    <comment/>
+  </data>
+  <data name="tabs_alloc" xml:space="preserve">
+    <value>Allocator</value>
+    <comment/>
+  </data>
+  <data name="tdyn_usealloc" xml:space="preserve">
+    <value>Allocator benutzen</value>
+    <comment/>
+  </data>
 </root>

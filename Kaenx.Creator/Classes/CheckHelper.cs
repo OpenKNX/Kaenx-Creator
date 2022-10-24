@@ -353,6 +353,9 @@ namespace Kaenx.Creator.Classes {
             //TODO check languages from Texts
             //TODO check hexvalue from parameter with parameertype color
 
+            if(mod != null && ver.NamespaceVersion < 20 && mod.Allocators.Count > 0)
+                actions.Add(new PublishAction() { Text = $"    Modul ({mod.Name}): Allocators werden erst ab /20 unterstützt", State = PublishState.Fail });
+
             foreach(Parameter para in vbase.Parameters) {
                 if(para.ParameterTypeObject == null) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Kein ParameterTyp ausgewählt", State = PublishState.Fail, Item = para, Module = mod });
                 else {
@@ -709,6 +712,8 @@ namespace Kaenx.Creator.Classes {
                         
                     if(dm.Arguments.Any(a => string.IsNullOrEmpty(a.Value)))
                         actions.Add(new PublishAction() { Text = $"    DynModule {dm.Name} hat Argumente, die leer sind", State = PublishState.Fail});
+                    if(dm.Arguments.Any(a => a.Argument.Type != ArgumentTypes.Numeric && a.UseAllocator))
+                        actions.Add(new PublishAction() { Text = $"    DynModule {dm.Name} hat Argumente, die einen Allocator verwenden, aber nicht Numeric sind", State = PublishState.Fail});
                     break;
                 }
 

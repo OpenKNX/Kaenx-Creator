@@ -1,48 +1,50 @@
+using Kaenx.Creator.Models;
+using Kaenx.Creator.Models.Dynamic;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Collections.ObjectModel;
-using System.Windows.Data;
-using System.Globalization;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.Collections.ObjectModel;
+using System.Text;
 
 namespace Kaenx.Creator.Models
 {
-    public class Argument : INotifyPropertyChanged
-    {   
+    public class Allocator : INotifyPropertyChanged
+    {
         private int _uid = -1;
         public int UId
         {
             get { return _uid; }
             set { _uid = value; Changed("UId"); }
         }
-
+        
         private int _id = -1;
         public int Id
         {
             get { return _id; }
             set { _id = value; Changed("Id"); }
         }
-        
-        private int _alloc = 0;
-        public int Allocates
-        {
-            get { return _alloc; }
-            set { _alloc = value; Changed("Allocates"); }
-        }
-        
+
         private string _name = "dummy";
         public string Name
         {
             get { return _name; }
             set { _name = value; Changed("Name"); }
         }
-        
-        private ArgumentTypes _type = ArgumentTypes.Numeric;
-        public ArgumentTypes Type
+
+        private long _start = 0;
+        public long Start
         {
-            get { return _type; }
-            set { _type = value; Changed("Type"); }
+            get { return _start; }
+            set { _start = value; Changed("Start"); }
+        }
+
+        private long _max = 0;
+        public long Max
+        {
+            get { return _max; }
+            set { _max = value; Changed("Max"); }
         }
 
 
@@ -52,11 +54,4 @@ namespace Kaenx.Creator.Models
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
     }
-
-    public enum ArgumentTypes{
-        Text,
-        Numeric
-    }
 }
-
-

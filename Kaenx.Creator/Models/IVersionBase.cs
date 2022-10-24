@@ -13,6 +13,7 @@ namespace Kaenx.Creator.Models
         public ObservableCollection<ComObject> ComObjects { get; set; }
         public ObservableCollection<ComObjectRef> ComObjectRefs { get; set; }
         public ObservableCollection<Union> Unions { get; set; }
+        public ObservableCollection<Allocator> Allocators { get; set; }
         public List<IDynamicMain> Dynamics { get; set; }
 
         public bool IsParameterRefAuto { get; set; }

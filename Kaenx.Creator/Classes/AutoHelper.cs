@@ -115,10 +115,10 @@ namespace Kaenx.Creator.Classes
             }
 
             if(mod.Dynamics.Count > 0)
-                LoadSubDyn(mod.Dynamics[0], mod.ParameterRefs.ToList(), mod.ComObjectRefs.ToList(), vbase.Modules.ToList(), vbase.Helptexts.ToList());
+                LoadSubDyn(mod.Dynamics[0], vbase, mod);
         }
 
-        private static void LoadSubDyn(Models.Dynamic.IDynItems dyn, List<Models.ParameterRef> paras, List<Models.ComObjectRef> coms, List<Models.Module> mods, List<Models.Helptext> helps)
+        private static void LoadSubDyn(Models.Dynamic.IDynItems dyn, AppVersion vbase, IVersionBase mod)
         {
             foreach (Models.Dynamic.IDynItems item in dyn.Items)
             {
@@ -128,60 +128,67 @@ namespace Kaenx.Creator.Classes
                 {
                     case Models.Dynamic.DynChannel dch:
                         if(dch.UseTextParameter)
-                            dch.ParameterRefObject = paras.SingleOrDefault(p => p.UId == dch._parameter);
+                            dch.ParameterRefObject = mod.ParameterRefs.SingleOrDefault(p => p.UId == dch._parameter);
                         break;
 
                     case Models.Dynamic.DynParameter dp:
                         if (dp._parameter != -1)
-                            dp.ParameterRefObject = paras.SingleOrDefault(p => p.UId == dp._parameter);
+                            dp.ParameterRefObject = mod.ParameterRefs.SingleOrDefault(p => p.UId == dp._parameter);
                         if(dp.HasHelptext)
-                            dp.Helptext = helps.SingleOrDefault(p => p.UId == dp._helptextId);
+                            dp.Helptext = vbase.Helptexts.SingleOrDefault(p => p.UId == dp._helptextId);
                         break;
 
                     case Models.Dynamic.DynChooseBlock dcb:
                         if (dcb._parameterRef != -1)
-                            dcb.ParameterRefObject = paras.SingleOrDefault(p => p.UId == dcb._parameterRef);
+                            dcb.ParameterRefObject = mod.ParameterRefs.SingleOrDefault(p => p.UId == dcb._parameterRef);
                         break;
 
                     case Models.Dynamic.DynChooseChannel dcc:
                         if (dcc._parameterRef != -1)
-                            dcc.ParameterRefObject = paras.SingleOrDefault(p => p.UId == dcc._parameterRef);
+                            dcc.ParameterRefObject = mod.ParameterRefs.SingleOrDefault(p => p.UId == dcc._parameterRef);
                         break;
 
                     case Models.Dynamic.DynComObject dco:
                         if (dco._comObjectRef != -1)
-                            dco.ComObjectRefObject = coms.SingleOrDefault(c => c.UId == dco._comObjectRef);
+                            dco.ComObjectRefObject = mod.ComObjectRefs.SingleOrDefault(c => c.UId == dco._comObjectRef);
                         break;
 
                     case Models.Dynamic.DynParaBlock dpb:
                         if(dpb.UseParameterRef && dpb._parameterRef != -1)
-                            dpb.ParameterRefObject = paras.SingleOrDefault(p => p.UId == dpb._parameterRef);
+                            dpb.ParameterRefObject = mod.ParameterRefs.SingleOrDefault(p => p.UId == dpb._parameterRef);
                         if(dpb.UseTextParameter && dpb._textRef != -1)
-                            dpb.TextRefObject = paras.SingleOrDefault(p => p.UId == dpb._textRef);
+                            dpb.TextRefObject = mod.ParameterRefs.SingleOrDefault(p => p.UId == dpb._textRef);
                         break;
 
                     case Models.Dynamic.DynModule dm:
                         if(dm._module != -1)
                         {
-                            dm.ModuleObject = mods.Single(m => m.UId == dm._module);
+                            dm.ModuleObject = vbase.Modules.Single(m => m.UId == dm._module);
                             foreach(Models.Dynamic.DynModuleArg arg in dm.Arguments)
                             {
                                 if(arg._argId != -1)
                                     arg.Argument = dm.ModuleObject.Arguments.Single(a => a.UId == arg._argId);
+                                if(arg.UseAllocator && arg._allocId != -1)
+                                    arg.Allocator = mod.Allocators.SingleOrDefault(a => a.UId == arg._allocId);
                             }
                         }
                         break;
 
                     case Models.Dynamic.DynAssign dass:
                         if(dass._targetUId != -1)
-                            dass.TargetObject = paras.SingleOrDefault(p => p.UId == dass._targetUId);
+                            dass.TargetObject = mod.ParameterRefs.SingleOrDefault(p => p.UId == dass._targetUId);
                         if(string.IsNullOrEmpty(dass.Value) && dass._sourceUId != -1)
-                            dass.SourceObject = paras.SingleOrDefault(p => p.UId == dass._sourceUId);
+                            dass.SourceObject = mod.ParameterRefs.SingleOrDefault(p => p.UId == dass._sourceUId);
+                        break;
+
+                    case Models.Dynamic.DynRepeat dre:
+                        if(dre.UseParameterRef && dre._parameterUId != -1)
+                            dre.ParameterRefObject = mod.ParameterRefs.SingleOrDefault(p => p.UId == dre._parameterUId);
                         break;
                 }
 
                 if (item.Items != null)
-                    LoadSubDyn(item, paras, coms, mods, helps);
+                    LoadSubDyn(item, vbase, mod);
             }
         }
 
@@ -402,6 +409,9 @@ namespace Kaenx.Creator.Classes
             }else if(list is System.Collections.ObjectModel.ObservableCollection<Argument>) {
                 while((list as System.Collections.ObjectModel.ObservableCollection<Argument>).Any(i => i.UId == id))
                     id++;
+            }else if(list is System.Collections.ObjectModel.ObservableCollection<Allocator>) {
+                while((list as System.Collections.ObjectModel.ObservableCollection<Allocator>).Any(i => i.UId == id))
+                    id++;
             } else if(list is System.Collections.ObjectModel.ObservableCollection<Baggage>) {
                 while((list as System.Collections.ObjectModel.ObservableCollection<Baggage>).Any(i => i.UId == id))
                     id++;
@@ -440,6 +450,9 @@ namespace Kaenx.Creator.Classes
                         id++;
                 }else if(x is System.Collections.ObjectModel.ObservableCollection<Message> ls) {
                     while(ls.Any(i => i.Id == id))
+                        id++;
+                }else if(x is System.Collections.ObjectModel.ObservableCollection<Allocator> lac) {
+                    while(lac.Any(i => i.Id == id))
                         id++;
                 }
                 return id;

@@ -32,22 +32,34 @@ namespace Kaenx.Creator.Models.Dynamic
             set { _value = value; Changed("Value"); }
         }
 
-        private ArgumentTypes _type = ArgumentTypes.Numeric;
-        public ArgumentTypes Type
+        private bool _useAllocator = false;
+        public bool UseAllocator
         {
-            get { return _type; }
-            set { _type = value; Changed("Type"); }
+            get { return _useAllocator; }
+            set { _useAllocator = value; Changed("UseAllocator"); }
         }
+
+        private Models.Allocator _alloc;
+        [JsonIgnore]
+        public Models.Allocator Allocator
+        {
+            get { return _alloc; }
+            set { _alloc = value; Changed("Allocator"); }
+        }
+
+        [JsonIgnore]
+        public int _allocId = -1;
+        public int AllocatorId {
+            get { return Allocator?.UId ?? -1; }
+            set { _allocId = value; }
+        }
+
+
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void Changed(string name)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
-    }
-
-    public enum ArgumentTypes{
-        Text,
-        Numeric
     }
 }

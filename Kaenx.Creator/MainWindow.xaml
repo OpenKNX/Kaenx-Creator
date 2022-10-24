@@ -1109,6 +1109,11 @@
                     <TabItem Header="{x:Static p:Resources.tabs_union}" Visibility="{Binding IsUnionActive, Converter={StaticResource BoolToVis}}" Style="{StaticResource LeftTabItem}">
                         <ctrl:UnionView Version="{Binding .}" Module="{Binding .}" />
                     </TabItem>
+                    
+                    <TabItem Header="{x:Static p:Resources.tabs_alloc}" Visibility="{Binding IsModulesActive, Converter={StaticResource BoolToVis}}" Style="{StaticResource LeftTabItem}"> 
+                        <ctrl:AllocatorView Module="{Binding .}" />
+                    </TabItem>
+
 
                     <TabItem Header="{x:Static p:Resources.tabs_module}" Visibility="{Binding IsModulesActive, Converter={StaticResource BoolToVis}}" Style="{StaticResource LeftTabItem}">
                         <Grid>

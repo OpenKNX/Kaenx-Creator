@@ -21,6 +21,7 @@ namespace Kaenx.Creator.Models
         public ObservableCollection<Union> Unions { get; set; } = new ObservableCollection<Union>();
         public ObservableCollection<Language> Languages { get; set; } = new ObservableCollection<Language>();
         public ObservableCollection<Helptext> Helptexts { get; set; } = new ObservableCollection<Helptext>();
+        public ObservableCollection<Allocator> Allocators { get; set; } = new ObservableCollection<Allocator>();
         public List<IDynamicMain> Dynamics { get; set; } = new List<IDynamicMain>();
 
         public AppVersion() { }

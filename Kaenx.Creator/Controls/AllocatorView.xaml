@@ -1,13 +1,13 @@
 <UserControl
-    x:Class="Kaenx.Creator.Controls.ArgumentView"
+    x:Class="Kaenx.Creator.Controls.AllocatorView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:models="clr-namespace:Kaenx.Creator.Models"
     xmlns:p="clr-namespace:Kaenx.Creator.Properties"
     xmlns:System="clr-namespace:System;assembly=mscorlib"
     xmlns:conv="clr-namespace:Kaenx.Creator.Converter"
+    xmlns:models="clr-namespace:Kaenx.Creator.Models"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400"
@@ -29,9 +29,9 @@
         <Button Content="{x:Static p:Resources.gen_add}" Click="ClickAdd" Margin="0 0 1 2" />
         <Button Grid.Column="1" Content="{x:Static p:Resources.gen_remove}" Click="ClickRemove" Margin="1 0 0 2" />
 
-        <ListView x:Name="ArgumentList" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding Module.Arguments, ElementName=ViewControl}" DisplayMemberPath="Name" />
+        <ListView x:Name="AllocatorList" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding Module.Allocators, ElementName=ViewControl}" DisplayMemberPath="Name" />
 
-        <ScrollViewer Grid.Column="3" Grid.RowSpan="2" DataContext="{Binding ElementName=ArgumentList, Path=SelectedItem}" IsEnabled="{Binding Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
+        <ScrollViewer Grid.Column="3" Grid.RowSpan="2" DataContext="{Binding ElementName=AllocatorList, Path=SelectedItem}" IsEnabled="{Binding Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
             <StackPanel Margin="5">
                 <StackPanel.Resources>
                     <Style TargetType="HeaderedContentControl">
@@ -52,11 +52,6 @@
                     </Style>
                 </StackPanel.Resources>
 
-                <TextBlock Margin="5 0" VerticalAlignment="Center">
-                    <Run Text="{x:Static p:Resources.gen_uid}" />
-                    <Run Text="{Binding UId}"/>
-                </TextBlock>
-
                 <Grid Margin="5 0">
                     <TextBlock VerticalAlignment="Center">
                         <Run Text="{x:Static p:Resources.gen_id}" />
@@ -68,20 +63,13 @@
                 <HeaderedContentControl Header="{x:Static p:Resources.prop_name}">
                     <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
                 </HeaderedContentControl>
-
-                <HeaderedContentControl Header="Type">
-                    <HeaderedContentControl.Resources>
-                        <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
-                            <ObjectDataProvider.MethodParameters>
-                                <x:Type TypeName="models:ArgumentTypes"/>
-                            </ObjectDataProvider.MethodParameters>
-                        </ObjectDataProvider>
-                    </HeaderedContentControl.Resources>
-                    <ComboBox ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding Type}" />
+                
+                <HeaderedContentControl Header="{x:Static p:Resources.prop_start}">
+                    <TextBox Text="{Binding Start, UpdateSourceTrigger=PropertyChanged}"/>
                 </HeaderedContentControl>
-
-                <HeaderedContentControl Header="Allocates"><!--//tood rename-->
-                    <TextBox Text="{Binding Allocates, UpdateSourceTrigger=PropertyChanged}"/>
+                
+                <HeaderedContentControl Header="{x:Static p:Resources.prop_max}">
+                    <TextBox Text="{Binding Max, UpdateSourceTrigger=PropertyChanged}"/>
                 </HeaderedContentControl>
             </StackPanel>
         </ScrollViewer>

@@ -855,6 +855,8 @@ namespace Kaenx.Creator
             General = null;
             SetButtons(false);
             MenuSaveBtn.IsEnabled = false;
+            SelectedVersion = null;
+            _selectedVersionModel = null;
             System.GC.Collect();
         }
 
@@ -983,6 +985,8 @@ namespace Kaenx.Creator
 
             SetButtons(true);
             MenuSave.IsEnabled = true;
+            SelectedVersion = null;
+            _selectedVersionModel = null;
         }
 
         

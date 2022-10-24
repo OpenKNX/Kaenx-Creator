@@ -1238,6 +1238,7 @@ namespace Kaenx.Creator.Classes
                 Dictionary<string, long> idmapper = null;
                 XElement xstatic = xmod.Element(Get("Static"));
                 ImportArguments(xmod.Element(Get("Arguments")), mod);
+                ImportAllocators(xstatic.Element(Get("Allocators")), mod);
                 ImportParameter(xstatic.Element(Get("Parameters")), mod);
                 ImportParameterRefs(xstatic.Element(Get("ParameterRefs")), mod);
                 ImportComObjects(xstatic.Element(Get("ComObjects")), mod, ref idmapper);
@@ -1247,6 +1248,14 @@ namespace Kaenx.Creator.Classes
                 currentVers.Modules.Add(mod);
                 System.Console.WriteLine("---End Module");
             }
+        }
+        
+
+        private void ImportAllocators(XElement xallocs, Models.Module vbase)
+        {
+            if(xallocs == null) return;
+            
+            throw new Exception("not implemented");
         }
 
         private void ImportArguments(XElement xargs, Models.Module vbase)
@@ -1260,7 +1269,12 @@ namespace Kaenx.Creator.Classes
                     UId = _uidCounter++,
                     Name = xarg.Attribute("Name").Value,
                     Id = int.Parse(GetLastSplit(xarg.Attribute("Id").Value, 2)),
-                    
+                };
+                
+                arg.Type = xarg.Attribute("Type")?.Value switch {
+                    "Numeric" => ArgumentTypes.Numeric,
+                    "Text" => ArgumentTypes.Text,
+                    _ => ArgumentTypes.Numeric
                 };
                 vbase.Arguments.Add(arg);
             }
@@ -1664,11 +1678,6 @@ namespace Kaenx.Creator.Classes
                             int id1 = int.Parse(GetLastSplit(xarg.Attribute("RefId").Value, 2));
                             Argument arg = dmo.ModuleObject.Arguments.Single(a => a.Id == id1);
                             DynModuleArg darg = dmo.Arguments.Single(a => a.Argument == arg);
-                            darg.Type = xarg.Name.LocalName switch {
-                                "NumericArg" => ArgumentTypes.Numeric,
-                                "TextArg" => ArgumentTypes.Text,
-                                _ => throw new Exception("Not implemented ArgType: " + xarg.Name.LocalName)
-                            };
                             darg.Value = xarg.Attribute("Value").Value;
                         }
                         parent.Items.Add(dmo);

@@ -103,23 +103,31 @@
                     <ComboBox ItemsSource="{Binding Version.Modules, ElementName=ViewControl}" SelectedItem="{Binding ModuleObject}" DisplayMemberPath="Name" />
                 </HeaderedContentControl>
                 <HeaderedContentControl Header="{x:Static p:Resources.tdyn_args}">
-                    <HeaderedContentControl.Resources>
-                        <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
-                            <ObjectDataProvider.MethodParameters>
-                                <x:Type TypeName="dyn:ArgumentTypes"/>
-                            </ObjectDataProvider.MethodParameters>
-                        </ObjectDataProvider>
-                    </HeaderedContentControl.Resources>
                     <DataGrid ItemsSource="{Binding Arguments}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="{x:Static p:Resources.prop_name}" Binding="{Binding Argument.Name}" IsReadOnly="True" />
-                            <DataGridTextColumn Header="{x:Static p:Resources.prop_value}" Binding="{Binding Value}" />
-                            <DataGridTemplateColumn Header="{x:Static p:Resources.tdyn_type}">
+                            <DataGridTextColumn Header="{x:Static p:Resources.tdyn_type}" Binding="{Binding Argument.Type}" IsReadOnly="True" />
+                            <DataGridCheckBoxColumn Header="{x:Static p:Resources.tdyn_usealloc}" Binding="{Binding UseAllocator}" />
+                            <DataGridTemplateColumn Header="{x:Static p:Resources.prop_value}">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <ComboBox ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding Type}" />
+                                        <Grid>
+                                            <TextBlock Margin="2 0" Text="{Binding Value}" HorizontalAlignment="Center" Visibility="{Binding UseAllocator, Converter={StaticResource BoolToVis}, ConverterParameter=true}" />
+                                            <TextBlock Margin="2 0" Visibility="{Binding UseAllocator, Converter={StaticResource BoolToVis}}">
+                                                <Run Text="Allocator:" />
+                                                <Run Text="{Binding Allocator.Name}" />
+                                            </TextBlock>
+                                        </Grid>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
+                                <DataGridTemplateColumn.CellEditingTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <TextBox Text="{Binding Value}" Visibility="{Binding UseAllocator, Converter={StaticResource BoolToVis}, ConverterParameter=true}" />
+                                            <ComboBox ItemsSource="{Binding Module.Allocators, ElementName=ViewControl}" SelectedItem="{Binding Allocator}" DisplayMemberPath="Name" Visibility="{Binding UseAllocator, Converter={StaticResource BoolToVis}}" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellEditingTemplate>
                             </DataGridTemplateColumn>
                         </DataGrid.Columns>
                     </DataGrid>
@@ -362,7 +370,34 @@
                 </TextBlock>
             </StackPanel>
         </DataTemplate>
-        
+        <DataTemplate x:Key="TempDynRepeat">
+            <StackPanel>
+                <Grid Margin="5 0">
+                    <TextBlock VerticalAlignment="Center">
+                        <Run Text="{x:Static p:Resources.gen_id}" />
+                        <Run Text="{Binding Id}"/>
+                    </TextBlock>
+                    <Button Content="{x:Static p:Resources.gen_id_reset}" HorizontalAlignment="Right" Click="ResetId" />
+                </Grid>
+                <HeaderedContentControl Header="{x:Static p:Resources.prop_name}">
+                    <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
+                </HeaderedContentControl>
+                <HeaderedContentControl Header="{x:Static p:Resources.prop_count}">
+                    <TextBox Text="{Binding Count, UpdateSourceTrigger=PropertyChanged}" />
+                </HeaderedContentControl>
+                <HeaderedContentControl Header="{x:Static p:Resources.tdyn_textpara}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <CheckBox IsChecked="{Binding UseParameterRef}" VerticalAlignment="Center" />
+                        <ComboBox Grid.Column="1" IsEnabled="{Binding UseParameterRef}" ItemsSource="{Binding Version.ParameterRefs, ElementName=ViewControl}" SelectedItem="{Binding ParameterRefObject, Mode=TwoWay}" DisplayMemberPath="Name" />
+                    </Grid>
+                </HeaderedContentControl>
+            </StackPanel>
+        </DataTemplate>
         
         <select:DynSelector x:Key="SelectorDyn"
             DPara="{StaticResource TempDynParameter}"
@@ -376,7 +411,8 @@
             DModule="{StaticResource TempDynModule}"
             DCom="{StaticResource TempDynComObject}"
             DSeparator="{StaticResource TempDynSeparator}"
-            DAssign="{StaticResource TempDynAssign}" />
+            DAssign="{StaticResource TempDynAssign}"
+            DRepeat="{StaticResource TempDynRepeat}" />
     </UserControl.Resources>
 
     <Grid>
@@ -404,6 +440,7 @@
                     <MenuItem Header="{x:Static p:Resources.tdyn_add_com}" Click="ClickAddDynCom" />
                     <MenuItem Header="{x:Static p:Resources.tdyn_add_sepa}" Click="ClickAddDynSep" />
                     <MenuItem Header="{x:Static p:Resources.tdyn_add_assign}" Click="ClickAddDynAssign" />
+                    <MenuItem Header="{x:Static p:Resources.tdyn_add_repeat}" Click="ClickAddDynRepeat" />
                     <MenuItem Header="{x:Static p:Resources.tdyn_add_btn}" />
                     <Separator />
                     <MenuItem Header="{x:Static p:Resources.gen_copy}" Click="ClickCopyDyn" />
@@ -465,9 +502,9 @@
                     </StackPanel>
                 </HierarchicalDataTemplate>
                 <HierarchicalDataTemplate DataType="{x:Type dyn:DynChooseBlock}" ItemsSource="{Binding Items}">
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" ContextMenu="{StaticResource ContextMenuChoose}">
                         <Image Source="{svgc:SvgImage Source=/Assets/Images/Dynamic/Choose.svg, AppName=Kaenx.Creator}" Height="18" Width="18" Margin="4" />
-                        <TextBlock VerticalAlignment="Center" ContextMenu="{StaticResource ContextMenuChoose}">
+                        <TextBlock VerticalAlignment="Center">
                             <Run Text="{x:Static p:Resources.tdyn_tselection}" />
                             <Run Text="{Binding Name}" />
                             <Run Text="{Binding ParameterRefObject.Name}" />
@@ -495,6 +532,15 @@
                             <Run Text="[" />
                             <Run Text="{Binding Condition}" />
                             <Run Text="]" />
+                        </TextBlock>
+                    </StackPanel>
+                </HierarchicalDataTemplate>
+                <HierarchicalDataTemplate DataType="{x:Type dyn:DynRepeat}" ItemsSource="{Binding Items}">
+                    <StackPanel Orientation="Horizontal" ContextMenu="{StaticResource ContextMenu}">
+                        <Image Source="{svgc:SvgImage Source=/Assets/Images/Dynamic/Parameter.svg, AppName=Kaenx.Creator}" Height="18" Width="18" Margin="4" />
+                        <TextBlock VerticalAlignment="Center">
+                            <Run Text="{x:Static p:Resources.tdyn_trepe}" />
+                            <Run Text="{Binding Name}" />
                         </TextBlock>
                     </StackPanel>
                 </HierarchicalDataTemplate>
