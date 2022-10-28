@@ -184,6 +184,17 @@
                 <HeaderedContentControl Header="{x:Static p:Resources.tdyn_pb_layout}">
                     <ComboBox ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding Layout}" />
                 </HeaderedContentControl>
+                <HeaderedContentControl Header="Icon">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <CheckBox IsChecked="{Binding UseIcon}" VerticalAlignment="Center" />
+                        <ComboBox Grid.Column="2" IsEnabled="{Binding UseIcon}" ItemsSource="{Binding Icons, ElementName=ViewControl}" SelectedItem="{Binding IconObject}" DisplayMemberPath="Name" />
+                    </Grid>
+                </HeaderedContentControl>
 
                 <HeaderedContentControl Header="{x:Static p:Resources.tdyn_pb_cells}" Visibility="{Binding Layout, Converter={StaticResource EnumToVis}, ConverterParameter=Grid-Table}">
                     <DataGrid ItemsSource="{Binding Rows}" AutoGenerateColumns="False">
@@ -260,6 +271,17 @@
 
                         <CheckBox IsChecked="{Binding UseTextParameter}" VerticalAlignment="Center" />
                         <ComboBox Grid.Column="1" IsEnabled="{Binding UseTextParameter}" ItemsSource="{Binding Module.ParameterRefs, ElementName=ViewControl}" SelectedItem="{Binding TextRefObject, Mode=TwoWay}" DisplayMemberPath="Name" />
+                    </Grid>
+                </HeaderedContentControl>
+                <HeaderedContentControl Header="Icon">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <CheckBox IsChecked="{Binding UseIcon}" VerticalAlignment="Center" />
+                        <ComboBox Grid.Column="2" IsEnabled="{Binding UseIcon}" ItemsSource="{Binding Icons, ElementName=ViewControl}" SelectedItem="{Binding IconObject}" DisplayMemberPath="Name" />
                     </Grid>
                 </HeaderedContentControl>
                 <HeaderedContentControl Header="{x:Static p:Resources.gen_text}">

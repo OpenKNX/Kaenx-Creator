@@ -209,6 +209,10 @@ namespace Kaenx.Creator.Classes {
                                         if(string.IsNullOrEmpty(trans.Text))
                                             actions.Add(new PublishAction() { Text = $"    ParameterType Enum {penum.Name}/{ptype.Name} ({ptype.UId}): Keine Übersetzung vorhanden ({trans.Language.Text})", State = PublishState.Warning, Item = ptype });
                             }
+
+                            if(penum.UseIcon && penum.IconObject == null)
+                                actions.Add(new PublishAction() { Text = $"    ParameterType Enum {ptype.Name} ({ptype.UId}): Es wurde kein Icon zugewiesen", State = PublishState.Fail, Item = ptype });
+
                         }
                         break;
 
@@ -710,6 +714,9 @@ namespace Kaenx.Creator.Classes {
                         
                     if(dpb.UseTextParameter && dpb.TextRefObject == null)
                         actions.Add(new PublishAction() { Text = $"    DynParaBlock {dpb.Name} wurde kein TextParameterRef zugeordnet", State = PublishState.Fail});
+                    
+                    if(dpb.UseIcon && dpb.IconObject == null)
+                        actions.Add(new PublishAction() { Text = $"    DynParaBlock {dpb.Name} wurde kein Icon zugeordnet", State = PublishState.Fail});
                     break;
                 }
 
@@ -764,6 +771,8 @@ namespace Kaenx.Creator.Classes {
                         actions.Add(new PublishAction() { Text = $"    DynSeparator {dse.Name} wurde kein ParameterRef zugeordnet", State = PublishState.Fail});
                     if(dse.Hint != SeparatorHint.None && ns < 14)
                         actions.Add(new PublishAction() { Text = $"    DynSeparator {dse.Name} UIHint wird erst ab NamespaceVersion 14 unterstützt", State = PublishState.Fail});
+                    if(dse.UseIcon && dse.IconObject == null)
+                        actions.Add(new PublishAction() { Text = $"    DynSeparator {dse.Name} wurde kein Icon zugeordnet", State = PublishState.Fail});
                     break;
                 }
 

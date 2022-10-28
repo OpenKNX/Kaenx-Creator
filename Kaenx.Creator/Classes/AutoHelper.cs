@@ -17,21 +17,31 @@ namespace Kaenx.Creator.Classes
         public static AppVersion GetAppVersion(ModelGeneral general, AppVersionModel model)
         {
             AppVersion version = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.AppVersion>(model.Version, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
-            LoadVersion(version, version);
+            LoadVersion(general, version, version);
 
             foreach(Models.Module mod in version.Modules)
-                LoadVersion(version, mod);
+                LoadVersion(general, version, mod);
 
             //TODO doesnt work anymore
-            foreach(Models.ParameterType ptype in version.ParameterTypes.Where(p => p.Type == Models.ParameterTypes.Picture && p._baggageUId != -1))
+            foreach(Models.ParameterType ptype in version.ParameterTypes)
             {
-                ptype.BaggageObject = general.Baggages.SingleOrDefault(b => b.UId == ptype._baggageUId);
+                if(ptype.Type == Models.ParameterTypes.Picture && ptype._baggageUId != -1)
+                    ptype.BaggageObject = general.Baggages.SingleOrDefault(b => b.UId == ptype._baggageUId);
+
+                if(ptype.Type == Models.ParameterTypes.Enum)
+                {
+                    foreach(ParameterTypeEnum penu in ptype.Enums)
+                    {
+                        if(penu._iconId != -1)
+                            penu.IconObject = general.Icons.SingleOrDefault(i => i.UId == penu._iconId);
+                    }
+                }
             }
 
             return version;
         }
 
-        private static void LoadVersion(Models.AppVersion vbase, Models.IVersionBase mod)
+        private static void LoadVersion(ModelGeneral general, Models.AppVersion vbase, Models.IVersionBase mod)
         {
             if(vbase == mod) {
                 if(vbase._addressMemoryId != -1)
@@ -115,10 +125,10 @@ namespace Kaenx.Creator.Classes
             }
 
             if(mod.Dynamics.Count > 0)
-                LoadSubDyn(mod.Dynamics[0], vbase, mod);
+                LoadSubDyn(general, mod.Dynamics[0], vbase, mod);
         }
 
-        private static void LoadSubDyn(Models.Dynamic.IDynItems dyn, AppVersion vbase, IVersionBase mod)
+        private static void LoadSubDyn(ModelGeneral general, Models.Dynamic.IDynItems dyn, AppVersion vbase, IVersionBase mod)
         {
             foreach (Models.Dynamic.IDynItems item in dyn.Items)
             {
@@ -158,6 +168,13 @@ namespace Kaenx.Creator.Classes
                             dpb.ParameterRefObject = mod.ParameterRefs.SingleOrDefault(p => p.UId == dpb._parameterRef);
                         if(dpb.UseTextParameter && dpb._textRef != -1)
                             dpb.TextRefObject = mod.ParameterRefs.SingleOrDefault(p => p.UId == dpb._textRef);
+                        if(dpb.UseIcon && dpb._iconId != -1)
+                            dpb.IconObject = general.Icons.SingleOrDefault(i => i.UId == dpb._iconId);
+                        break;
+
+                    case Models.Dynamic.DynSeparator ds:
+                        if(ds.UseIcon && ds._iconId != -1)
+                            ds.IconObject = general.Icons.SingleOrDefault(i => i.UId == ds._iconId);
                         break;
 
                     case Models.Dynamic.DynModule dm:
@@ -188,7 +205,7 @@ namespace Kaenx.Creator.Classes
                 }
 
                 if (item.Items != null)
-                    LoadSubDyn(item, vbase, mod);
+                    LoadSubDyn(general, item, vbase, mod);
             }
         }
 
@@ -422,6 +439,9 @@ namespace Kaenx.Creator.Classes
                     id++;
             } else if(list is System.Collections.ObjectModel.ObservableCollection<Helptext>) {
                 while((list as System.Collections.ObjectModel.ObservableCollection<Helptext>).Any(i => i.UId == id))
+                    id++;
+            } else if(list is System.Collections.ObjectModel.ObservableCollection<Icon>) {
+                while((list as System.Collections.ObjectModel.ObservableCollection<Icon>).Any(i => i.UId == id))
                     id++;
             } else {
                 throw new Exception("Can't get NextFreeUId. Type not implemented.");

@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -29,6 +30,7 @@ namespace Kaenx.Creator.Classes
         string appVersionMod;
         string currentNamespace;
         string convPath;
+        List<Icon> iconsApp = new List<Icon>();
 
         public ExportHelper(Models.ModelGeneral g, List<Models.Hardware> h, List<Models.Device> d, List<Models.Application> a, List<Models.AppVersionModel> v, string cp)
         {
@@ -77,6 +79,7 @@ namespace Kaenx.Creator.Classes
             Dictionary<string, string> ProductIds = new Dictionary<string, string>();
             Dictionary<string, string> HardwareIds = new Dictionary<string, string>();
             List<Baggage> baggagesManu = new List<Baggage>();
+            List<Icon> iconsManu = new List<Icon>();
 
             #region XML Applications
             Debug.WriteLine($"Exportiere Applikationen: {vers.Count}x");
@@ -114,6 +117,7 @@ namespace Kaenx.Creator.Classes
                 xapp.SetAttributeValue("DynamicTableManagement", "false"); //TODO check when to add
                 xapp.SetAttributeValue("Linkable", "false"); //TODO check when to add
 
+                iconsApp = new List<Icon>();
                 List<Baggage> baggagesApp = new List<Baggage>();
                 if(ver.IsHelpActive)
                 {
@@ -232,6 +236,12 @@ namespace Kaenx.Creator.Classes
                                 xcontent.Add(xenu);
                                 if(enu.Translate)
                                     foreach(Models.Translation trans in enu.Text) AddTranslation(trans.Language.CultureCode, $"{id}_EN-{enu.Value}", "Text", trans.Text);
+                            
+                                if(enu.UseIcon)
+                                {
+                                    xenu.SetAttributeValue("Icon", enu.IconObject.Name);
+                                    iconsApp.Add(enu.IconObject);
+                                }
                             }
                             break;
 
@@ -299,7 +309,7 @@ namespace Kaenx.Creator.Classes
                 ExportComObjects(ver, xunderapp, headers);
                 ExportComObjectRefs(ver, xunderapp);
 
-                #region Tables
+                #region "Tables / LoadProcedure"
                 temp = new XElement(Get("AddressTable"));
                 if(app.Mask.Memory == MemoryTypes.Absolute)
                 {
@@ -318,6 +328,7 @@ namespace Kaenx.Creator.Classes
                 xunderapp.Add(temp);
                 
                 temp = XElement.Parse(ver.Procedure);
+                //Write correct Memory Size if AutoLoad is activated
                 foreach(XElement xele in temp.Descendants())
                 {
                     switch(xele.Name.LocalName)
@@ -528,13 +539,42 @@ namespace Kaenx.Creator.Classes
                 #endregion
 
 
+                XElement xdyn = new XElement(Get("Dynamic"));
+                HandleSubItems(ver.Dynamics[0], xdyn, ver);
+
+                if(iconsApp.Count > 0)
+                {
+                    Baggage bag = new Baggage() {
+                        Name = "Icons",
+                        Extension = ".zip",
+                        TimeStamp = DateTime.Now
+                    };
+                    baggagesManu.Add(bag);
+                    if(ver.NamespaceVersion == 14)
+                    {
+                        xapp.SetAttributeValue("IconFile", "Icons.zip");
+                    } else {
+                        xapp.SetAttributeValue("IconFile", $"{Manu}_BG--Icons.2Ezip");
+                    }
+
+                    if(xextension == null)
+                        xextension = new XElement(Get("Extension"));
+
+                    XElement xbag = new XElement(Get("Baggage"));
+                    xbag.SetAttributeValue("RefId", $"M-{general.ManufacturerId:X4}_BG--{GetEncoded("Icons.zip")}");
+                    xextension.Add(xbag);
+
+                    foreach(Icon icon in iconsApp)
+                    {
+                        if(!iconsManu.Contains(icon))
+                            iconsManu.Add(icon);
+                    }
+                }
+                
                 if(xextension != null)
                     xunderapp.Add(xextension);
 
-                xunderapp = new XElement(Get("Dynamic"));
-                xapp.Add(xunderapp);
-
-                HandleSubItems(ver.Dynamics[0], xunderapp, ver);
+                xapp.Add(xdyn);
 
 
                 #region Translations
@@ -779,7 +819,7 @@ namespace Kaenx.Creator.Classes
             doc.Save(GetRelPath("Temp", Manu, "Catalog.xml"));
             #endregion
         
-            #region XML Baggages
+            #region XML Baggages/Icons
 
             if(baggagesManu.Count > 0)
             {
@@ -818,6 +858,22 @@ namespace Kaenx.Creator.Classes
             } else
             {
                 Debug.WriteLine($"Exportiere keine Baggages");
+            }
+
+            if(iconsManu.Count > 0)
+            {
+                using (var stream = new FileStream(GetRelPath("Temp", Manu, "Baggages", "Icons.zip"), FileMode.Create))
+                    using (var archive = new ZipArchive(stream , ZipArchiveMode.Create, false,  System.Text.Encoding.GetEncoding(850)))
+                    {
+                        foreach(Icon icon in iconsManu)
+                        {
+                            ZipArchiveEntry entry = archive.CreateEntry(icon.Name + ".png");
+                            using(Stream s = entry.Open())
+                            {
+                                s.Write(icon.Data, 0, icon.Data.Length);
+                            }
+                        }
+                    }
             }
             
 
@@ -860,7 +916,8 @@ namespace Kaenx.Creator.Classes
                     Extension = ".zip",
                     TimeStamp = DateTime.Now
                 };
-                baggagesManu.Add(bag);
+                if(!baggagesManu.Contains(bag))
+                    baggagesManu.Add(bag);
                 baggagesApp.Add(bag);
                 if(ver.NamespaceVersion == 14)
                     AddTranslation(lang.CultureCode, appVersion, "ContextHelpFile", "HelpFile_" + lang.CultureCode + ".zip");
@@ -1372,6 +1429,14 @@ namespace Kaenx.Creator.Classes
             }
             if(!string.IsNullOrEmpty(sep.Cell))
                 xsep.SetAttributeValue("Cell", sep.Cell);
+            
+            if(sep.UseIcon)
+            {
+                xsep.SetAttributeValue("Icon", sep.IconObject.Name);
+                if(!iconsApp.Contains(sep.IconObject))
+                    iconsApp.Add(sep.IconObject);
+            }
+
             parent.Add(xsep);
 
             if(!sep.TranslationText)
@@ -1475,6 +1540,13 @@ namespace Kaenx.Creator.Classes
 
             if(bl.ShowInComObjectTree)
                 block.SetAttributeValue("ShowInComObjectTree", "true");
+
+            if(bl.UseIcon)
+            {
+                block.SetAttributeValue("Icon", bl.IconObject.Name);
+                if(!iconsApp.Contains(bl.IconObject))
+                    iconsApp.Add(bl.IconObject);
+            }
 
             return block;
         }

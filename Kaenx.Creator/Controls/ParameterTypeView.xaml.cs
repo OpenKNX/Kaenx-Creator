@@ -18,6 +18,7 @@ namespace Kaenx.Creator.Controls
     public partial class ParameterTypeView : UserControl, INotifyPropertyChanged, IFilterable, ISelectable
     {
         public static readonly DependencyProperty BaggagesProperty = DependencyProperty.Register("Baggages", typeof(ObservableCollection<Baggage>), typeof(ParameterTypeView), new PropertyMetadata(null));
+        public static readonly DependencyProperty IconsProperty = DependencyProperty.Register("Icons", typeof(ObservableCollection<Icon>), typeof(ParameterTypeView), new PropertyMetadata(null));
         public static readonly DependencyProperty VersionProperty = DependencyProperty.Register("Version", typeof(AppVersion), typeof(ParameterTypeView), new PropertyMetadata(OnVersionChangedCallback));
         public AppVersion Version {
             get { return (AppVersion)GetValue(VersionProperty); }
@@ -26,6 +27,10 @@ namespace Kaenx.Creator.Controls
         public ObservableCollection<Baggage> Baggages {
             get { return (ObservableCollection<Baggage>)GetValue(BaggagesProperty); }
             set { SetValue(BaggagesProperty, value); }
+        }
+        public ObservableCollection<Icon> Icons {
+            get { return (ObservableCollection<Icon>)GetValue(IconsProperty); }
+            set { SetValue(IconsProperty, value); }
         }
 
         public ParameterTypeView()

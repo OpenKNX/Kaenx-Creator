@@ -15,6 +15,7 @@ namespace Kaenx.Creator.Models
         public ObservableCollection<Hardware> Hardware { get; set; } = new ObservableCollection<Hardware>();
         public ObservableCollection<Language> Languages { get; set; } = new ObservableCollection<Language>();
         public ObservableCollection<Baggage> Baggages { get; set; } = new ObservableCollection<Baggage>();
+        public ObservableCollection<Icon> Icons { get; set; } = new ObservableCollection<Icon>();
 
         public int ImportVersion { get; set; }
 

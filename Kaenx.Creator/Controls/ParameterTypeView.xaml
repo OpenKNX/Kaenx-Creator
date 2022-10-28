@@ -111,28 +111,48 @@
             </HeaderedContentControl>
 
 
-            <Grid Margin="5 20 5 5"  Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Enum, FallbackValue=Collapsed}">
+            <Button Content="{x:Static p:Resources.parat_add}" Click="ClickAddParamEnum" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Enum, FallbackValue=Collapsed}" />
+        
+
+            <Grid Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Enum, FallbackValue=Collapsed}">
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="330" />
                     <ColumnDefinition />
-                    <ColumnDefinition Width="auto" />
                 </Grid.ColumnDefinitions>
 
-                <DataGrid x:Name="ptypeList" ItemsSource="{Binding Enums}" MaxHeight="200" AutoGenerateColumns="False" CanUserAddRows="False">
+                <DataGrid x:Name="ptypeList" Margin="5" ItemsSource="{Binding Enums}" AutoGenerateColumns="False" CanUserAddRows="False">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="{x:Static p:Resources.prop_name}" Binding="{Binding Name}" Width="*" />
                         <DataGridTextColumn Header="{x:Static p:Resources.prop_value}" Binding="{Binding Value}" MinWidth="50" />
                         <DataGridCheckBoxColumn Header="{x:Static p:Resources.prop_trans}" Binding="{Binding Translate}" MinWidth="50" />
                     </DataGrid.Columns>
                 </DataGrid>
-                <Button Grid.Column="1" Content="{x:Static p:Resources.parat_add}" Width="30" Click="ClickAddParamEnum" />
+
+                <StackPanel Grid.Column="1" DataContext="{Binding SelectedItem, ElementName=ptypeList}">
+                    <HeaderedContentControl Header="Icon">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+
+                            <CheckBox IsChecked="{Binding UseIcon}" VerticalAlignment="Center" />
+                            <ComboBox Grid.Column="2" IsEnabled="{Binding UseIcon}" ItemsSource="{Binding Icons, ElementName=ViewControl}" SelectedItem="{Binding IconObject}" DisplayMemberPath="Name" />
+                        </Grid>
+                    </HeaderedContentControl>
+
+                    <DataGrid ItemsSource="{Binding Text}" Margin="5" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="{x:Static p:Resources.gen_lang}" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                            <DataGridTextColumn Header="{x:Static p:Resources.gen_text}" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </StackPanel>
             </Grid>
 
-            <DataGrid ItemsSource="{Binding SelectedItem.Text, ElementName=ptypeList}" Margin="5" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Enum, FallbackValue=Collapsed}">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="{x:Static p:Resources.gen_lang}" Binding="{Binding Language.Text}" IsReadOnly="True" />
-                    <DataGridTextColumn Header="{x:Static p:Resources.gen_text}" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
-                </DataGrid.Columns>
-            </DataGrid>
+            
+
+            
                 
             <StackPanel Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=NumberUInt-NumberInt-Float_DPT9-Float_IEEE_Single-Float_IEEE_Double, FallbackValue=Collapsed}">
                 <HeaderedContentControl Header="{x:Static p:Resources.parat_min}">

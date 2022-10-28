@@ -613,6 +613,10 @@
                 <ctrl:BaggageView General="{Binding General}" />
             </TabItem>
 
+            <TabItem Header="{x:Static p:Resources.tabs_icon}" Style="{StaticResource TopTabItem}">
+                <ctrl:IconView General="{Binding General}" />
+            </TabItem>
+
             <TabItem Header="{x:Static p:Resources.tabs_apps}" Style="{StaticResource TopTabItem}">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -1103,7 +1107,7 @@
                     </TabItem>
 
                     <TabItem Header="{x:Static p:Resources.tabs_parat}" Style="{StaticResource LeftTabItem}">
-                        <ctrl:ParameterTypeView Baggages="{Binding General.Baggages, ElementName=ViewControl}" Version="{Binding .}" />
+                        <ctrl:ParameterTypeView Baggages="{Binding General.Baggages, ElementName=ViewControl}" Icons="{Binding General.Icons, ElementName=ViewControl}" Version="{Binding .}" />
                     </TabItem>
 
                     <TabItem Header="{x:Static p:Resources.tabs_union}" Visibility="{Binding IsUnionActive, Converter={StaticResource BoolToVis}}" Style="{StaticResource LeftTabItem}">
@@ -1396,7 +1400,7 @@
                     </TabItem>
 
                     <TabItem Header="{x:Static p:Resources.tabs_dyn}" Style="{StaticResource LeftTabItem}">
-                        <ctrl:DynamicView Version="{Binding .}" Module="{Binding .}" />
+                        <ctrl:DynamicView Version="{Binding .}" Module="{Binding .}" Icons="{Binding General.Icons, ElementName=ViewControl}" />
                     </TabItem>
 
 

@@ -566,7 +566,7 @@
     <comment/>
   </data>
   <data name="parat_add" xml:space="preserve">
-    <value>+</value>
+    <value>Aufzählung hinzufügen</value>
     <comment/>
   </data>
   <data name="parat_min" xml:space="preserve">
@@ -1139,6 +1139,10 @@
   </data>
   <data name="tdyn_usealloc" xml:space="preserve">
     <value>Allocator benutzen</value>
+    <comment/>
+  </data>
+  <data name="tabs_icon" xml:space="preserve">
+    <value>Icons</value>
     <comment/>
   </data>
 </root>

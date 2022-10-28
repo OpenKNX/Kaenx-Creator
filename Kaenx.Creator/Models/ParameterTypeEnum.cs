@@ -1,16 +1,61 @@
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 
 namespace Kaenx.Creator.Models
 {
-    public class ParameterTypeEnum
+    public class ParameterTypeEnum : INotifyPropertyChanged
     {
-        public string Name {get;set;}
-        public int Value {get;set;}
-        public string Icon {get;set;}
+        private string _name = "dummy";
+        public string Name
+        {
+            get { return _name; }
+            set { _name = value; Changed("Name"); }
+        }
+
+        private int _value = 1;
+        public int Value
+        {
+            get { return _value; }
+            set { _value = value; Changed("Value"); }
+        }
+
+        private bool _useIcon = false;
+        public bool UseIcon
+        {
+            get { return _useIcon; }
+            set { 
+                _useIcon = value; 
+                Changed("UseIcon"); 
+            }
+        }
+
+        [JsonIgnore]
+        public int _iconId = -1;
+        public int IconId{
+            get { return IconObject?.UId ?? -1; }
+            set { _iconId = value; }
+        }
+
+        private Icon _icon;
+        [JsonIgnore]
+        public Icon IconObject
+        {
+            get { return _icon; }
+            set { _icon = value; Changed("IconObject"); }
+        }
+
         public bool Translate {get;set;} = true;
         public ObservableCollection<Translation> Text {get;set;} = new ObservableCollection<Translation>();
+
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void Changed(string name)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
     }
 }

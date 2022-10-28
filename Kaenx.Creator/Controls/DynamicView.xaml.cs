@@ -16,6 +16,7 @@ namespace Kaenx.Creator.Controls
     {
         public static readonly DependencyProperty VersionProperty = DependencyProperty.Register("Version", typeof(AppVersion), typeof(DynamicView), new PropertyMetadata());
         public static readonly DependencyProperty ModuleProperty = DependencyProperty.Register("Module", typeof(IVersionBase), typeof(DynamicView), new PropertyMetadata());
+        public static readonly DependencyProperty IconsProperty = DependencyProperty.Register("Icons", typeof(ObservableCollection<Icon>), typeof(DynamicView), new PropertyMetadata());
         public AppVersion Version
         {
             get { return (AppVersion)GetValue(VersionProperty); }
@@ -26,6 +27,13 @@ namespace Kaenx.Creator.Controls
             get { return (IVersionBase)GetValue(ModuleProperty); }
             set { SetValue(ModuleProperty, value); }
         }
+        public ObservableCollection<Icon> Icons
+        {
+            get { return (ObservableCollection<Icon>)GetValue(IconsProperty); }
+            set { SetValue(IconsProperty, value); }
+        }
+
+        
 
         public DynamicView()
         {

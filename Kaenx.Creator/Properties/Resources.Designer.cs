@@ -2186,5 +2186,11 @@ namespace Kaenx.Creator.Properties {
                 return ResourceManager.GetString("tdyn_usealloc", resourceCulture);
             }
         }
+        
+        public static string tabs_icon {
+            get {
+                return ResourceManager.GetString("tabs_icon", resourceCulture);
+            }
+        }
     }
 }

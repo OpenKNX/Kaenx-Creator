@@ -39,6 +39,7 @@ namespace Kaenx.Creator.Models.Dynamic
             get { return _condition; }
             set { _condition = value; Changed("Condition"); }
         }
+        
 
         public ObservableCollection<IDynItems> Items { get; set; } = new ObservableCollection<IDynItems>();
         public event PropertyChangedEventHandler PropertyChanged;

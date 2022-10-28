@@ -695,7 +695,8 @@ namespace Kaenx.Creator.Classes
                             ptype.Enums.Add(new ParameterTypeEnum()
                             {
                                 Name = xenum.Attribute("Text")?.Value ?? "",
-                                Icon = xenum.Attribute("Icon")?.Value ?? "",
+                                //TODO
+                                //Icon = xenum.Attribute("Icon")?.Value ?? "",
                                 Text = GetTranslation(xenum.Attribute("Id").Value, "Text", xenum),
                                 Value = int.Parse(xenum.Attribute("Value").Value)
                             });

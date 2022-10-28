@@ -465,8 +465,6 @@ namespace Kaenx.Creator
             Models.AppVersion copy = ver.Copy();
             copy.Number += 1;
             copy.Name += " Kopie";
-            //app.Versions.Add(copy);
-            //TODO implement
         }
 
         private void ClickOpenHere(object sender, RoutedEventArgs e)
@@ -906,7 +904,9 @@ namespace Kaenx.Creator
                         continue;
                 }
 
-                SelectedVersion.Version = Newtonsoft.Json.JsonConvert.SerializeObject(SelectedVersion.Model, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
+                if(SelectedVersion?.Model != null)
+                    SelectedVersion.Version = Newtonsoft.Json.JsonConvert.SerializeObject(SelectedVersion.Model, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
+                
                 string general = Newtonsoft.Json.JsonConvert.SerializeObject(General, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
                 System.IO.File.WriteAllText("Templates\\" + diag.Answer + ".temp", general);
                 return;
@@ -1016,8 +1016,8 @@ namespace Kaenx.Creator
             {
                 TabsEdit.Visibility = Visibility.Visible;
                 LogoGrid.Visibility = Visibility.Collapsed;
-                if(TabsEdit.SelectedIndex == 5)
-                    TabsEdit.SelectedIndex = 4;
+                if(TabsEdit.SelectedIndex == 6)
+                    TabsEdit.SelectedIndex = 5;
             } else {
                 TabsEdit.SelectedIndex = 0;
                 TabsEdit.Visibility = Visibility.Collapsed;
