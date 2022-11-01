@@ -663,17 +663,20 @@ namespace Kaenx.Creator.Classes {
             {
                 if(!citem.IsSection)
                 {
-                    Application app = general.Applications.Single(a => a.Versions.Any(v => v.Number == vers.Number));
-                    if(devices != null && citem.Hardware.Apps.Contains(app))
+                    List<Application> appList = general.Applications.ToList().FindAll(a => a.Versions.Any(v => v.Number == vers.Number));
+                    foreach (Application app in appList)
                     {
-                        foreach(Device dev in citem.Hardware.Devices.Where(d => devices.Contains(d)))
+                        if (devices != null && citem.Hardware.Apps.Contains(app))
                         {
-                            foreach(Language lang in vers.Languages)
+                            foreach (Device dev in citem.Hardware.Devices.Where(d => devices.Contains(d)))
                             {
-                                if(!dev.Text.Any(l => l.Language.CultureCode == lang.CultureCode || string.IsNullOrEmpty(l.Text)))
-                                    actions.Add(new PublishAction() { Text = $"Geräte: Text enthält nicht alle Sprachen der Applikation.", State = PublishState.Fail });
-                                if(!dev.Description.Any(l => l.Language.CultureCode == lang.CultureCode || string.IsNullOrEmpty(l.Text)))
-                                    actions.Add(new PublishAction() { Text = $"Geräte: Beschreibung enthält nicht alle Sprachen der Applikation.", State = PublishState.Fail });
+                                foreach (Language lang in vers.Languages)
+                                {
+                                    if (!dev.Text.Any(l => l.Language.CultureCode == lang.CultureCode || string.IsNullOrEmpty(l.Text)))
+                                        actions.Add(new PublishAction() { Text = $"Geräte: Text enthält nicht alle Sprachen der Applikation.", State = PublishState.Fail });
+                                    if (!dev.Description.Any(l => l.Language.CultureCode == lang.CultureCode || string.IsNullOrEmpty(l.Text)))
+                                        actions.Add(new PublishAction() { Text = $"Geräte: Beschreibung enthält nicht alle Sprachen der Applikation.", State = PublishState.Fail });
+                                }
                             }
                         }
                     }
