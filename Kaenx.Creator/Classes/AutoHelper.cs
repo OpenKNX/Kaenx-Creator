@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -271,7 +271,7 @@ namespace Kaenx.Creator.Classes
 
         private static void MemCalcStatics(IVersionBase vbase, Memory mem, int memId)
         {
-            List<Parameter> paras = vbase.Parameters.Where(p => p.MemoryId == memId && p.IsInUnion == false).ToList();
+            List<Parameter> paras = vbase.Parameters.Where(p => p.MemoryId == memId && p.IsInUnion == false && p.SavePath != SavePaths.Nowhere).ToList();
 
             foreach(Parameter para in paras.Where(p => p.Offset != -1))
             {
@@ -287,7 +287,7 @@ namespace Kaenx.Creator.Classes
                 mem.SetBytesUsed(para);
             }
 
-            foreach (Union union in vbase.Unions.Where(u => u.MemoryId == mem.UId && u.Offset != -1))
+            foreach (Union union in vbase.Unions.Where(u => u.MemoryId == mem.UId && u.Offset != -1 && u.SavePath != SavePaths.Nowhere))
             {
                 if(union.Offset >= mem.GetCount())
                 {
@@ -304,7 +304,7 @@ namespace Kaenx.Creator.Classes
 
         private static void MemCalcAuto(IVersionBase vbase, Memory mem, int memId)
         {
-            List<Parameter> paras = vbase.Parameters.Where(p => p.MemoryId == memId && p.IsInUnion == false).ToList();
+            List<Parameter> paras = vbase.Parameters.Where(p => p.MemoryId == memId && p.IsInUnion == false && p.SavePath != SavePaths.Nowhere).ToList();
             IEnumerable<Parameter> list1;
             if(mem.IsAutoOrder) list1 = paras.ToList();
             else list1 = paras.Where(p => p.Offset == -1);
@@ -317,7 +317,7 @@ namespace Kaenx.Creator.Classes
             }
 
             IEnumerable<Union> list2;
-            if(mem.IsAutoOrder) list2 = vbase.Unions.Where(u => u.MemoryId == memId);
+            if(mem.IsAutoOrder) list2 = vbase.Unions.Where(u => u.MemoryId == memId && u.SavePath != SavePaths.Nowhere);
             else list2 = vbase.Unions.Where(u => u.MemoryId == memId && u.Offset == -1);
             foreach (Union union in list2)
             {
