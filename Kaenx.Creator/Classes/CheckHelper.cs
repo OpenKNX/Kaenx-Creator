@@ -310,25 +310,28 @@ namespace Kaenx.Creator.Classes {
                 //TODO check for Argument exist
             }
 
-            XElement temp = XElement.Parse(vers.Procedure);
-            temp.Attributes().Where((x) => x.IsNamespaceDeclaration).Remove();
-            foreach(XElement xele in temp.Descendants())
+            if (app.Mask.Procedure != ProcedureTypes.Default)
             {
-                if(xele.Name.LocalName == "OnError")
+                XElement temp = XElement.Parse(vers.Procedure);
+                temp.Attributes().Where((x) => x.IsNamespaceDeclaration).Remove();
+                foreach (XElement xele in temp.Descendants())
                 {
-                    if(!vers.IsMessagesActive)
+                    if (xele.Name.LocalName == "OnError")
                     {
-                        actions.Add(new PublishAction() { Text = $"Ladeprozedur: Es werden Meldungen verwendet, obwohl diese in der Applikation nicht aktiviert sind.", State = PublishState.Fail });
-                        return;
-                    }
+                        if (!vers.IsMessagesActive)
+                        {
+                            actions.Add(new PublishAction() { Text = $"Ladeprozedur: Es werden Meldungen verwendet, obwohl diese in der Applikation nicht aktiviert sind.", State = PublishState.Fail });
+                            return;
+                        }
 
-                    int id = -1;
-                    if(!int.TryParse(xele.Attribute("MessageRef").Value, out id))
-                        actions.Add(new PublishAction() { Text = $"Ladeprozedur: MessageRef ist kein Integer.", State = PublishState.Fail });
-                    if(id != -1)
-                    {
-                        if(!vers.Messages.Any(m => m.UId == id))
-                            actions.Add(new PublishAction() { Text = $"Ladeprozedur: MessageRef zeigt auf nicht vorhandene Meldung ({id}).", State = PublishState.Fail });
+                        int id = -1;
+                        if (!int.TryParse(xele.Attribute("MessageRef").Value, out id))
+                            actions.Add(new PublishAction() { Text = $"Ladeprozedur: MessageRef ist kein Integer.", State = PublishState.Fail });
+                        if (id != -1)
+                        {
+                            if (!vers.Messages.Any(m => m.UId == id))
+                                actions.Add(new PublishAction() { Text = $"Ladeprozedur: MessageRef zeigt auf nicht vorhandene Meldung ({id}).", State = PublishState.Fail });
+                        }
                     }
                 }
             }
