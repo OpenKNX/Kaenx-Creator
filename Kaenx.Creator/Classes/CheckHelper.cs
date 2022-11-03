@@ -111,7 +111,7 @@ namespace Kaenx.Creator.Classes {
                 AppVersion version = model.Model != null ? model.Model : AutoHelper.GetAppVersion(General, model);
                 Application app = apps.Single(a => a.Versions.Any(v => v.Name == version.Name && v.Number == version.Number));
                 actions.Add(new PublishAction() { Text = $"Prüfe Applikation '{app.NameText}' Version '{version.NameText}'" });
-                CheckVersion(General, app, version, actions, showOnlyErrors);
+                CheckVersion(General, app, version, devices, actions, showOnlyErrors);
             }
             
             actions.Add(new PublishAction() { Text = "Ende Check" });
@@ -122,6 +122,7 @@ namespace Kaenx.Creator.Classes {
             ModelGeneral General, 
             Application app,
             AppVersion vers, 
+            List<Device> devices,
             ObservableCollection<PublishAction> actions, 
             bool showOnlyErrors = false)
         {
@@ -300,7 +301,7 @@ namespace Kaenx.Creator.Classes {
 
             CheckVersion(vers, vers, actions, vers.DefaultLanguage, vers.NamespaceVersion, showOnlyErrors);
             if(General != null)
-                CheckLanguages(vers, actions, General, null);
+                CheckLanguages(vers, actions, General, devices);
 
             foreach(Module mod in vers.Modules)
             {

@@ -512,7 +512,7 @@ namespace Kaenx.Creator
             AutoHelper.CheckIds(ver);
 
             ObservableCollection<Models.PublishAction> actions = new ObservableCollection<Models.PublishAction>();
-            CheckHelper.CheckVersion(General, app, ver, actions);
+            CheckHelper.CheckVersion(General, app, ver, null, actions);
             if(actions.Any(a => a.State == Models.PublishState.Fail))
             {
                 MessageBox.Show("Die Applikation enthält Fehler. Bitte korriegieren Sie diese und probieren es danach erneut.", "ProdViewer öffnen", MessageBoxButton.OK, MessageBoxImage.Error);

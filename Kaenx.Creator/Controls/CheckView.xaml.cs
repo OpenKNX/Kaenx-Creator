@@ -103,7 +103,7 @@ namespace Kaenx.Creator.Controls
             Actions.Clear();
             bool showOnlyErrors = MessageBoxResult.Yes == MessageBox.Show("Sollen Warnungen ausgeblendet werden?", "Überprüfen", MessageBoxButton.YesNo, MessageBoxImage.Question);
             Actions.Add(new PublishAction() { Text = "Überprüfung wird gestartet"});
-            CheckHelper.CheckVersion(null, App, Version, Actions, showOnlyErrors);
+            CheckHelper.CheckVersion(null, App, Version, null, Actions, showOnlyErrors);
             Actions.Add(new PublishAction() { Text = "Überprüfung beendet"});
         }
         
