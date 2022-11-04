@@ -1,4 +1,4 @@
-﻿using Kaenx.Creator.Models;
+using Kaenx.Creator.Models;
 using Kaenx.Creator.Models.Dynamic;
 using Kaenx.Creator.Signing;
 using System;
@@ -326,33 +326,36 @@ namespace Kaenx.Creator.Classes
                 }
                 temp.SetAttributeValue("MaxEntries", ver.AssociationTableMaxCount);
                 xunderapp.Add(temp);
-                
-                temp = XElement.Parse(ver.Procedure);
-                //Write correct Memory Size if AutoLoad is activated
-                foreach(XElement xele in temp.Descendants())
-                {
-                    switch(xele.Name.LocalName)
-                    {
-                        case "LdCtrlWriteRelMem":
-                        {
-                            if(xele.Attribute("ObjIdx").Value == "4" && ver.Memories[0].IsAutoLoad)
-                            {
-                                xele.SetAttributeValue("Size", ver.Memories[0].Size);
-                            }
-                            break;
-                        }
 
-                        case "LdCtrlRelSegment":
+                if (app.Mask.Procedure != ProcedureTypes.Default)
+                {
+                    temp = XElement.Parse(ver.Procedure);
+                    //Write correct Memory Size if AutoLoad is activated
+                    foreach (XElement xele in temp.Descendants())
+                    {
+                        switch (xele.Name.LocalName)
                         {
-                            if(xele.Attribute("LsmIdx").Value == "4" && ver.Memories[0].IsAutoLoad)
-                            {
-                                xele.SetAttributeValue("Size", ver.Memories[0].Size);
-                            }
-                            break;
+                            case "LdCtrlWriteRelMem":
+                                {
+                                    if (xele.Attribute("ObjIdx").Value == "4" && ver.Memories[0].IsAutoLoad)
+                                    {
+                                        xele.SetAttributeValue("Size", ver.Memories[0].Size);
+                                    }
+                                    break;
+                                }
+
+                            case "LdCtrlRelSegment":
+                                {
+                                    if (xele.Attribute("LsmIdx").Value == "4" && ver.Memories[0].IsAutoLoad)
+                                    {
+                                        xele.SetAttributeValue("Size", ver.Memories[0].Size);
+                                    }
+                                    break;
+                                }
                         }
                     }
+                    ver.Procedure = temp.ToString();
                 }
-                ver.Procedure = temp.ToString();
                 temp.Attributes().Where((x) => x.IsNamespaceDeclaration).Remove();
                 temp.Name = XName.Get(temp.Name.LocalName, currentNamespace);
                 foreach(XElement xele in temp.Descendants())
