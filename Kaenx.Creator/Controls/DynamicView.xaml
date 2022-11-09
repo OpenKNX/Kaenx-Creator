@@ -56,6 +56,17 @@
                 <HeaderedContentControl Header="{x:Static p:Resources.tdyn_paracell}">
                     <TextBox Text="{Binding Cell, UpdateSourceTrigger=PropertyChanged}" />
                 </HeaderedContentControl>
+                <HeaderedContentControl Header="Icon">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <CheckBox IsChecked="{Binding UseIcon}" VerticalAlignment="Center" />
+                        <ComboBox Grid.Column="2" IsEnabled="{Binding UseIcon}" ItemsSource="{Binding Icons, ElementName=ViewControl}" SelectedItem="{Binding IconObject}" DisplayMemberPath="Name" />
+                    </Grid>
+                </HeaderedContentControl>
 
                 <HeaderedContentControl Header="{x:Static p:Resources.tdyn_paratext}" Visibility="{Binding ParameterRefObject.OverwriteText, Converter={StaticResource BoolToVis}, ConverterParameter=true, FallbackValue=Collapsed}" IsEnabled="False" Margin="5 30 5 5">
                     <DataGrid ItemsSource="{Binding ParameterRefObject.ParameterObject.Text}" AutoGenerateColumns="False">
@@ -317,6 +328,17 @@
                 </HeaderedContentControl>
                 <HeaderedContentControl Header="{x:Static p:Resources.prop_number}">
                     <TextBox Text="{Binding Number, UpdateSourceTrigger=PropertyChanged}" />
+                </HeaderedContentControl>
+                <HeaderedContentControl Header="Icon">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <CheckBox IsChecked="{Binding UseIcon}" VerticalAlignment="Center" />
+                        <ComboBox Grid.Column="2" IsEnabled="{Binding UseIcon}" ItemsSource="{Binding Icons, ElementName=ViewControl}" SelectedItem="{Binding IconObject}" DisplayMemberPath="Name" />
+                    </Grid>
                 </HeaderedContentControl>
                 <HeaderedContentControl Header="{x:Static p:Resources.tdyn_textpara}">
                     <Grid>

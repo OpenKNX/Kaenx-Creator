@@ -66,6 +66,33 @@ namespace Kaenx.Creator.Models.Dynamic
             set { _parameter = value; }
         }
 
+        
+        private bool _useIcon = false;
+        public bool UseIcon
+        {
+            get { return _useIcon; }
+            set { 
+                _useIcon = value; 
+                Changed("UseIcon"); 
+            }
+        }
+
+        [JsonIgnore]
+        public int _iconId = -1;
+        public int IconId{
+            get { return IconObject?.UId ?? -1; }
+            set { _iconId = value; }
+        }
+
+        private Icon _icon;
+        [JsonIgnore]
+        public Icon IconObject
+        {
+            get { return _icon; }
+            set { _icon = value; Changed("IconObject"); }
+        }
+
+
 
         public ObservableCollection<IDynItems> Items { get; set; } = new ObservableCollection<IDynItems>();
 

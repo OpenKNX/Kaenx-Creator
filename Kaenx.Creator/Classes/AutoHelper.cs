@@ -139,6 +139,8 @@ namespace Kaenx.Creator.Classes
                     case Models.Dynamic.DynChannel dch:
                         if(dch.UseTextParameter)
                             dch.ParameterRefObject = mod.ParameterRefs.SingleOrDefault(p => p.UId == dch._parameter);
+                        if(dch.UseIcon && dch._iconId != -1)
+                            dch.IconObject = general.Icons.SingleOrDefault(i => i.UId == dch._iconId);
                         break;
 
                     case Models.Dynamic.DynParameter dp:
@@ -146,6 +148,8 @@ namespace Kaenx.Creator.Classes
                             dp.ParameterRefObject = mod.ParameterRefs.SingleOrDefault(p => p.UId == dp._parameter);
                         if(dp.HasHelptext)
                             dp.Helptext = vbase.Helptexts.SingleOrDefault(p => p.UId == dp._helptextId);
+                        if(dp.UseIcon && dp._iconId != -1)
+                            dp.IconObject = general.Icons.SingleOrDefault(i => i.UId == dp._iconId);
                         break;
 
                     case Models.Dynamic.DynChooseBlock dcb:

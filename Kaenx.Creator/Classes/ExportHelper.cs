@@ -1,4 +1,4 @@
-﻿using Kaenx.Creator.Models;
+using Kaenx.Creator.Models;
 using Kaenx.Creator.Models.Dynamic;
 using Kaenx.Creator.Signing;
 using System;
@@ -326,33 +326,36 @@ namespace Kaenx.Creator.Classes
                 }
                 temp.SetAttributeValue("MaxEntries", ver.AssociationTableMaxCount);
                 xunderapp.Add(temp);
-                
-                temp = XElement.Parse(ver.Procedure);
-                //Write correct Memory Size if AutoLoad is activated
-                foreach(XElement xele in temp.Descendants())
-                {
-                    switch(xele.Name.LocalName)
-                    {
-                        case "LdCtrlWriteRelMem":
-                        {
-                            if(xele.Attribute("ObjIdx").Value == "4" && ver.Memories[0].IsAutoLoad)
-                            {
-                                xele.SetAttributeValue("Size", ver.Memories[0].Size);
-                            }
-                            break;
-                        }
 
-                        case "LdCtrlRelSegment":
+                if (app.Mask.Procedure != ProcedureTypes.Default)
+                {
+                    temp = XElement.Parse(ver.Procedure);
+                    //Write correct Memory Size if AutoLoad is activated
+                    foreach (XElement xele in temp.Descendants())
+                    {
+                        switch (xele.Name.LocalName)
                         {
-                            if(xele.Attribute("LsmIdx").Value == "4" && ver.Memories[0].IsAutoLoad)
-                            {
-                                xele.SetAttributeValue("Size", ver.Memories[0].Size);
-                            }
-                            break;
+                            case "LdCtrlWriteRelMem":
+                                {
+                                    if (xele.Attribute("ObjIdx").Value == "4" && ver.Memories[0].IsAutoLoad)
+                                    {
+                                        xele.SetAttributeValue("Size", ver.Memories[0].Size);
+                                    }
+                                    break;
+                                }
+
+                            case "LdCtrlRelSegment":
+                                {
+                                    if (xele.Attribute("LsmIdx").Value == "4" && ver.Memories[0].IsAutoLoad)
+                                    {
+                                        xele.SetAttributeValue("Size", ver.Memories[0].Size);
+                                    }
+                                    break;
+                                }
                         }
                     }
+                    ver.Procedure = temp.ToString();
                 }
-                ver.Procedure = temp.ToString();
                 temp.Attributes().Where((x) => x.IsNamespaceDeclaration).Remove();
                 temp.Name = XName.Get(temp.Name.LocalName, currentNamespace);
                 foreach(XElement xele in temp.Descendants())
@@ -1369,6 +1372,14 @@ namespace Kaenx.Creator.Classes
                 channel.SetAttributeValue("Number", dch.Number);
                 channel.SetAttributeValue("Id", $"{appVersionMod}_CH-{dch.Number}");
                 channel.SetAttributeValue("Name", ch.Name);
+
+                
+                if(dch.UseIcon)
+                {
+                    channel.SetAttributeValue("Icon", dch.IconObject.Name);
+                    if(!iconsApp.Contains(dch.IconObject))
+                        iconsApp.Add(dch.IconObject);
+                }
             }
 
 
@@ -1562,6 +1573,13 @@ namespace Kaenx.Creator.Classes
             if(vbase.IsHelpActive && pa.HasHelptext)
             {
                 xpara.SetAttributeValue("HelpContext", pa.Helptext.Name);
+            }
+
+            if(pa.UseIcon)
+            {
+                xpara.SetAttributeValue("Icon", pa.IconObject.Name);
+                if(!iconsApp.Contains(pa.IconObject))
+                    iconsApp.Add(pa.IconObject);
             }
         }
         
