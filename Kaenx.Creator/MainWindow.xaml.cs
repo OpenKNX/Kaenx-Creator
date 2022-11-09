@@ -1,4 +1,4 @@
-﻿using Kaenx.Creator.Classes;
+using Kaenx.Creator.Classes;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using System;
@@ -103,12 +103,12 @@ namespace Kaenx.Creator
             {
                 VersionTabs.SelectedIndex = 5;
                 int index2 = item switch {
-                    Models.Union => 2,
-                    Models.Parameter => 3,
-                    Models.ParameterRef => 4,
-                    Models.ComObject => 5,
-                    Models.ComObjectRef => 6,
-                    Models.Dynamic.IDynItems => 7,
+                    Models.Union => 4,
+                    Models.Parameter => 7,
+                    Models.ParameterRef => 8,
+                    Models.ComObject => 9,
+                    Models.ComObjectRef => 10,
+                    Models.Dynamic.IDynItems => 14,
                     _ => -1
                 };
 
@@ -125,11 +125,11 @@ namespace Kaenx.Creator
             int index = item switch{
                 Models.ParameterType => 3,
                 Models.Union => 4,
-                Models.Parameter => 6,
-                Models.ParameterRef => 7,
-                Models.ComObject => 8,
-                Models.ComObjectRef => 9,
-                Models.Dynamic.IDynItems => 13,
+                Models.Parameter => 7,
+                Models.ParameterRef => 8,
+                Models.ComObject => 9,
+                Models.ComObjectRef => 10,
+                Models.Dynamic.IDynItems => 14,
                 _ => -1
             };
 
