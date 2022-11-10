@@ -457,9 +457,9 @@ namespace Kaenx.Creator.Classes
             _translations.Clear();
             if(xlangs == null) return;
             
-            if(xlang.Elements().Count() == 0)
+            if(xlangs.Elements().Count() == 0)
             {
-                break;
+                return;
             }
             foreach(XElement xlang in xlangs.Elements()) {
                 string cultureCode = xlang.Attribute("Identifier").Value;
