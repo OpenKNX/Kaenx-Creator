@@ -365,12 +365,13 @@ namespace Kaenx.Creator.Classes
             if(flag1 || flag2)
             {
                 string text = "Parameter-/ComObjectRefIds";
+                string header = "";
                 if(flag1 && !flag2) text = "ParameterRefIds";
                 if(!flag1 && flag2) text = "ComObjectRefIds";
-                System.Windows.MessageBox.Show($"Die Produktdatenbank enthält {text}, die nicht komplett eindeutig sind.\r\n\r\nEin Import führt dazu, dass diese geändert werden. Die importierte Version kann somit nicht mehr als Update verwendet werden.", "RefId nicht eindeutig", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
+                System.Windows.MessageBox.Show($"Die Applikation '{currentApp.Name}' enthält {text}, die nicht komplett eindeutig sind.\r\n\r\nEin Import führt dazu, dass diese geändert werden. Die importierte Version kann somit nicht mehr als Update verwendet werden.", "RefId nicht eindeutig", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
+                DynamicRenameRefIds(flag1, flag2, xstatic, xdyn);
             }
             
-            DynamicRenameRefIds(flag1, flag2, xstatic, xdyn);
             sw.Stop();
             System.Console.WriteLine($"CheckUniqueRefId: {sw.ElapsedMilliseconds} ms");
         }
@@ -393,7 +394,7 @@ namespace Kaenx.Creator.Classes
                     if(xele.Attribute("RefId") != null)
                         xele.Attribute("RefId").Value = "P-x_R-" + newIds[xele.Attribute("RefId").Value];
 
-                foreach(XElement xele in xdyn.Descendants(Get("ComObjectRef")))
+                foreach(XElement xele in xstatic.Descendants(Get("ComObjectRef")))
                     if(xele.Attribute("TextParameterRefId") != null)
                         xele.Attribute("TextParameterRefId").Value = "P-x_R-" + newIds[xele.Attribute("TextParameterRefId").Value];
 
@@ -451,16 +452,13 @@ namespace Kaenx.Creator.Classes
         }
 
         private void ImportLanguages(XElement xlangs, ObservableCollection<Language> langs) {
+            _translations.Clear();
+            if(xlangs == null || xlangs.Elements().Count() == 0) return;
+            
             Stopwatch sw = new Stopwatch();
             sw.Start();
-            System.Console.Write("");
-            _translations.Clear();
-            if(xlangs == null) return;
-            
-            if(xlangs.Elements().Count() == 0)
-            {
-                return;
-            }
+
+
             foreach(XElement xlang in xlangs.Elements()) {
                 string cultureCode = xlang.Attribute("Identifier").Value;
 
