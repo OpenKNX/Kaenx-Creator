@@ -255,16 +255,27 @@ namespace Kaenx.Creator.Classes
                         case ParameterTypes.IpAddress:
                             xcontent = new XElement(Get("TypeIPAddress"));
                             xcontent.SetAttributeValue("AddressType", type.UIHint);
-                            if(type.SizeInBit != 0)
+                            if(type.Increment == "IPv6")
                             {
-                                string version = type.SizeInBit switch { 1 => "IPv4", 2 => "IPv6", _ => throw new NotImplementedException("AddressType export not implemented") };
-                                xcontent.SetAttributeValue("Version", version);
+                                xcontent.SetAttributeValue("Version", type.Increment);
                             }
                             break;
 
                         case ParameterTypes.Color:
                             xcontent = new XElement(Get("TypeColor"));
                             xcontent.SetAttributeValue("Space", type.UIHint);
+                            break;
+
+                        case ParameterTypes.RawData:
+                            xcontent = new XElement(Get("TypeRawData"));
+                            xcontent.SetAttributeValue("MaxSize", type.Max);
+                            break;
+
+                        case ParameterTypes.Date:
+                            xcontent = new XElement(Get("TypeDate"));
+                            xcontent.SetAttributeValue("Encoding", type.UIHint);
+                            if(!type.OtherValue)
+                                xcontent.SetAttributeValue("DisplayTheYear", "false");
                             break;
 
                         default:
@@ -276,6 +287,8 @@ namespace Kaenx.Creator.Classes
                         xcontent.Name.LocalName != "TypeNone" &&
                         xcontent.Name.LocalName != "TypePicture" &&
                         xcontent.Name.LocalName != "TypeColor" &&
+                        xcontent.Name.LocalName != "TypeDate" &&
+                        xcontent.Name.LocalName != "TypeRawData" &&
                         xcontent.Name.LocalName != "TypeIPAddress")
                     {
                         xcontent.SetAttributeValue("SizeInBit", type.SizeInBit);

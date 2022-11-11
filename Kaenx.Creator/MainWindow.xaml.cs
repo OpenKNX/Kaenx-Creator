@@ -75,7 +75,7 @@ namespace Kaenx.Creator
             new Models.EtsVersion(21, "ETS 6.0 (21)", "6.0")
         };
         
-        private int VersionCurrent = 2;
+        private int VersionCurrent = 3;
 
 
         public MainWindow()

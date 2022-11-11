@@ -98,7 +98,7 @@
                 <ComboBox ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding Type, Mode=TwoWay}" />
             </HeaderedContentControl>
             
-            <HeaderedContentControl Header="{x:Static p:Resources.parat_mansize}" Visibility="{Binding Type, Converter={StaticResource EnumToVisNeg}, ConverterParameter=None-IpAddress-Picture-Color}">
+            <HeaderedContentControl Header="{x:Static p:Resources.parat_mansize}" Visibility="{Binding Type, Converter={StaticResource EnumToVisNeg}, ConverterParameter=None-IpAddress-Picture-Color-RawData-Date}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="auto" />
@@ -194,10 +194,10 @@
             </HeaderedContentControl>
             
             <HeaderedContentControl Header="{x:Static p:Resources.parat_vers}" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=IpAddress, FallbackValue=Collapsed}">
-                <ComboBox SelectedValue="{Binding SizeInBit}" SelectedValuePath="Tag">
-                    <ComboBoxItem Content="{x:Static p:Resources.parat_uihint_none}" Tag="0" />
-                    <ComboBoxItem Content="{x:Static p:Resources.parat_uihint_ipv4}" Tag="1" />
-                    <ComboBoxItem Content="{x:Static p:Resources.parat_uihint_ipv6}" Tag="2" />
+                <ComboBox SelectedValue="{Binding Increment}" SelectedValuePath="Tag">
+                    <ComboBoxItem Content="{x:Static p:Resources.parat_uihint_none}" Tag="None" />
+                    <ComboBoxItem Content="{x:Static p:Resources.parat_uihint_ipv4}" Tag="IPv4" />
+                    <ComboBoxItem Content="{x:Static p:Resources.parat_uihint_ipv6}" Tag="IPv6" />
                 </ComboBox>
             </HeaderedContentControl>
             
@@ -212,6 +212,19 @@
                     <ComboBoxItem Content="{x:Static p:Resources.parat_uihint_hsv}" Tag="HSV" />
                 </ComboBox>
             </HeaderedContentControl>
+            
+            <HeaderedContentControl Header="{x:Static p:Resources.parat_max}" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=RawData, FallbackValue=Collapsed}">
+                <TextBox Text="{Binding Max, UpdateSourceTrigger=PropertyChanged}"/>
+            </HeaderedContentControl>
+            
+            <HeaderedContentControl Header="{x:Static p:Resources.parat_date}" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Date, FallbackValue=Collapsed}">
+                <ComboBox SelectedValue="{Binding UIHint, Mode=TwoWay}" SelectedValuePath="Tag">
+                    <ComboBoxItem Content="Leer" Tag="" />
+                    <ComboBoxItem Content="DPT 11" Tag="DPT 11" />
+                </ComboBox>
+            </HeaderedContentControl>
+            
+            <CheckBox IsChecked="{Binding OtherValue}" Content="{x:Static p:Resources.parat_year}" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Date, FallbackValue=Collapsed}" />
         </StackPanel>
     </Grid>
 

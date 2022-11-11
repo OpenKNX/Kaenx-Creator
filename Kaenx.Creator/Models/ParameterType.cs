@@ -23,6 +23,27 @@ namespace Kaenx.Creator.Models
             set { _name = value; Changed("Name"); }
         }
 
+        
+        private ParameterTypes _type = ParameterTypes.Text;
+        public ParameterTypes Type
+        {
+            get { return _type; }
+            set { 
+                _type = value;
+                UIHint = "";
+                SizeInBit = 8;
+                OtherValue = true;
+                Min = "0";
+                Max = "255";
+                Increment = "1"; 
+                Enums.Clear();
+                BaggageObject = null;
+                TranslateEnums = true;
+                Changed("Type");
+            }
+        }
+
+
         private bool _isSizeManual = false;
         public bool IsSizeManual
         {
@@ -44,13 +65,6 @@ namespace Kaenx.Creator.Models
             set { _sizeInBit = value; Changed("SizeInBit"); }
         }
         
-        private ParameterTypes _type = ParameterTypes.Text;
-        public ParameterTypes Type
-        {
-            get { return _type; }
-            set { _type = value; Changed("Type"); }
-        }
-
         private bool _isNotUsed = false;
         [JsonIgnore]
         public bool IsNotUsed
@@ -59,7 +73,21 @@ namespace Kaenx.Creator.Models
             set { _isNotUsed = value; Changed("IsNotUsed"); }
         }
 
-        public string UIHint { get; set; } = "None";
+        private bool _otherValue = true;
+        public bool OtherValue
+        {
+            get { return _otherValue; }
+            set { _otherValue = value; Changed("OtherValue"); }
+        }
+
+        private string _uihint = "None";
+        public string UIHint
+        {
+            get { return _uihint; }
+            set { 
+                _uihint = value; 
+                Changed("UIHint"); }
+        }
 
         private Baggage _baggageObject;
         [JsonIgnore]
@@ -76,9 +104,24 @@ namespace Kaenx.Creator.Models
             set { _baggageUId = value; }
         }
 
-        public string Min { get; set; } = "0";
-        public string Max { get; set; } = "255";
-        public string Increment { get; set; } = "1";
+        private string _min = "0";
+        public string Min
+        {
+            get { return _min; }
+            set { _min = value; Changed("Min"); }
+        }
+        private string _max = "255";
+        public string Max
+        {
+            get { return _max; }
+            set { _max = value; Changed("Max"); }
+        }
+        private string _increment = "1";
+        public string Increment
+        {
+            get { return _increment; }
+            set { _increment = value; Changed("Increment"); }
+        }
 
         public ObservableCollection<ParameterTypeEnum> Enums {get;set;} = new ObservableCollection<ParameterTypeEnum>();
 
@@ -90,16 +133,18 @@ namespace Kaenx.Creator.Models
     }
 
     public enum ParameterTypes {
-        Text,
+        Color,
+        Date,
         Enum,
-        NumberUInt,
-        NumberInt,
         Float_DPT9,
         Float_IEEE_Single,
         Float_IEEE_Double,
-        Picture,
-        None,
         IpAddress,
-        Color
+        None,
+        NumberUInt,
+        NumberInt,
+        Picture,
+        RawData,
+        Text
     }
 }

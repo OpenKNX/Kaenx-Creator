@@ -2192,5 +2192,17 @@ namespace Kaenx.Creator.Properties {
                 return ResourceManager.GetString("tabs_icon", resourceCulture);
             }
         }
+        
+        public static string parat_year {
+            get {
+                return ResourceManager.GetString("parat_year", resourceCulture);
+            }
+        }
+        
+        public static string parat_date {
+            get {
+                return ResourceManager.GetString("parat_date", resourceCulture);
+            }
+        }
     }
 }

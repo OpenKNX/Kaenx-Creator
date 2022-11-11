@@ -176,7 +176,7 @@ namespace Kaenx.Creator.Classes {
                         
                 switch(ptype.Type) {
                     case ParameterTypes.Text:
-                        if(!showOnlyErrors && ptype.SizeInBit % 8 != 0)
+                        if(ptype.SizeInBit % 8 != 0)
                             actions.Add(new PublishAction() { Text = $"    ParameterType Text {ptype.Name} ({ptype.UId}): ist kein vielfaches von 8", State = PublishState.Fail, Item = ptype });
                         break;
 
@@ -224,7 +224,7 @@ namespace Kaenx.Creator.Classes {
 
                         long min, max;
                         if(!long.TryParse(ptype.Max, out max)) actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Maximum ist keine Ganzzahl", State = PublishState.Fail, Item = ptype });
-                        if(!long.TryParse(ptype.Max, out min)) actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Minimum ist keine Ganzzahl", State = PublishState.Fail, Item = ptype });
+                        if(!long.TryParse(ptype.Min, out min)) actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Minimum ist keine Ganzzahl", State = PublishState.Fail, Item = ptype });
 
                         if(!ptype.IsSizeManual)
                         {
@@ -245,7 +245,7 @@ namespace Kaenx.Creator.Classes {
 
                         long min, max;
                         if(!long.TryParse(ptype.Max, out max)) actions.Add(new PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Maximum ist keine Ganzzahl", State = PublishState.Fail, Item = ptype });
-                        if(!long.TryParse(ptype.Max, out min)) actions.Add(new PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Minimum ist keine Ganzzahl", State = PublishState.Fail, Item = ptype });
+                        if(!long.TryParse(ptype.Min, out min)) actions.Add(new PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Minimum ist keine Ganzzahl", State = PublishState.Fail, Item = ptype });
 
                         maxsize = (long)Math.Ceiling(maxsize / 2.0);
                         if(!ptype.IsSizeManual)
@@ -291,7 +291,28 @@ namespace Kaenx.Creator.Classes {
                     case ParameterTypes.IpAddress:
                         //actions.Add(new PublishAction() { Text = $"    ParameterTyp IpAddress für {ptype.Name} ({ptype.UId}) wird nicht exportiert", State = PublishState.Warning, Item = ptype });
                         ptype.SizeInBit = 32;
+                        
+                        if(ptype.UIHint != "HostAddress" && ptype.UIHint != "GatewayAddress" && ptype.UIHint != "UnicastAddress" && ptype.UIHint != "BroadcastAddress" && ptype.UIHint != "MulticastAddress" && ptype.UIHint != "SubnetMask")
+                            actions.Add(new PublishAction() { Text = $"    ParameterTyp IpAddress {ptype.Name} ({ptype.UId}): Keine AddressType ausgewählt", State = PublishState.Fail, Item = ptype });
+                               
+                        if(ptype.Increment != "None" && ptype.Increment != "IPv4" && ptype.Increment != "IPv6")
+                            actions.Add(new PublishAction() { Text = $"    ParameterTyp IpAddress {ptype.Name} ({ptype.UId}): Keine IP Version ausgewählt", State = PublishState.Fail, Item = ptype });
                         break;
+
+                    case ParameterTypes.RawData:
+                    {
+                        long max;
+                        if(!long.TryParse(ptype.Max, out max)) actions.Add(new PublishAction() { Text = $"    ParameterType RawData {ptype.Name} ({ptype.UId}): Maximum ist keine Ganzzahl", State = PublishState.Fail, Item = ptype });
+                        if(max < 1) actions.Add(new PublishAction() { Text = $"    ParameterType RawData {ptype.Name} ({ptype.UId}): Maximum muss 1 oder größer sein", State = PublishState.Fail, Item = ptype });
+                        if(max > 1048572) actions.Add(new PublishAction() { Text = $"    ParameterType RawData {ptype.Name} ({ptype.UId}): Maximum kann nicht größer als 1048572 sein", State = PublishState.Fail, Item = ptype });
+                        break;
+                    }
+
+                    case ParameterTypes.Date:
+                    {
+                        if(string.IsNullOrEmpty(ptype.UIHint))actions.Add(new PublishAction() { Text = $"    ParameterTyp Date {ptype.Name} ({ptype.UId}): Kein Encoding ausgewählt", State = PublishState.Fail, Item = ptype });
+                        break;
+                    }
 
                     default:
                         actions.Add(new PublishAction() { Text = $"    Unbekannter ParameterTyp für {ptype.Name} ({ptype.UId})", State = PublishState.Fail, Item = ptype });
@@ -410,21 +431,46 @@ namespace Kaenx.Creator.Classes {
                             break;
 
                         case ParameterTypes.Color:
+                        {
                             Regex reg = null;
+                            string def = "";
                             switch(para.ParameterTypeObject.UIHint)
                             {
                                 case "RGB":
+                                    reg = new Regex("#([0-9a-fA-F]{6,6})");
+                                    def = "#RRGGBB";
+                                    break;
+
                                 case "HSV":
-                                    reg = new Regex("([0-9a-fA-F]{6,6})");
+                                    reg = new Regex("#([0-9a-fA-F]{6,6})");
+                                    def = "#HHSSVV";
                                     break;
                                     
                                 case "RGBW":
-                                    reg = new Regex("([0-9a-fA-F]{8,8})");
+                                    reg = new Regex("#([0-9a-fA-F]{8,8})");
+                                    def = "#RRGGBBWW";
                                     break;
                             }
                             if(reg != null && !reg.IsMatch(para.Value))
-                                actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) ist keine gültiger Hexwert für {para.ParameterTypeObject.UIHint}", State = PublishState.Fail, Item = para, Module = mod });
+                                actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) ist keine gültiger Hexwert für {para.ParameterTypeObject.UIHint} ({def})", State = PublishState.Fail, Item = para, Module = mod });
                             break;
+                        }
+
+                        case ParameterTypes.RawData:
+                        {
+                            if(para.Value.Length % 2 != 0) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert hat eine ungerade Anzahl an Zeichen", State = PublishState.Fail, Item = para, Module = mod });
+                            else if((para.Value.Length / 2) > long.Parse(para.ParameterTypeObject.Max)) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert benötigt mehr Speicher ({(para.Value.Length / 2)}) als verfügbar ({para.ParameterTypeObject.Max}) ist", State = PublishState.Fail, Item = para, Module = mod });
+                            Regex reg = new Regex("^([0-9A-Fa-f])+$");
+                            if(!reg.IsMatch(para.Value)) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) ist keine gültiger Hexwert für RawData", State = PublishState.Fail, Item = para, Module = mod });
+                            break;
+                        }
+
+                        case ParameterTypes.Date:
+                        {
+                            Regex reg = new Regex("([0-9]{4}-[0-9]{2}-[0-9]{2})");
+                            if(!reg.IsMatch(para.Value))  actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) muss das Format 'YYYY-MM-DD' haben", State = PublishState.Fail, Item = para, Module = mod });
+                            break;                        
+                        }
                     }
                 }
                 
@@ -793,6 +839,10 @@ namespace Kaenx.Creator.Classes {
                     break;
                 }
 
+                case DynamicMain:
+                case DynamicModule:
+                    break;
+
                 default:
                     System.Diagnostics.Debug.WriteLine("Not checked DynElement: " + item.ToString());
                     break;
@@ -877,6 +927,67 @@ namespace Kaenx.Creator.Classes {
                     app["Versions"] = JValue.FromObject(newVers);
                 }
             }
+
+            if(version < 3)
+            {   
+                Dictionary<int, int> newParaTypeList = new Dictionary<int, int>() 
+                {
+                    { 0, 12 },
+                    { 1, 2 },
+                    { 2, 8 },
+                    { 3, 9 },
+                    { 4, 3 },
+                    { 5, 4 },
+                    { 6, 5 },
+                    { 7, 10 },
+                    { 8, 7 },
+                    { 9, 6 },
+                    { 10, 0 }
+                };
+
+                foreach(JObject app in gen["Applications"])
+                {
+                    List<AppVersionModel> newVers = new List<AppVersionModel>();
+                    foreach(JObject ver in app["Versions"])
+                    {
+                        JObject jver = JObject.Parse(ver["Version"].ToString());
+                        foreach(JObject ptype in jver["ParameterTypes"])
+                        {
+                            ptype["Type"] = newParaTypeList[int.Parse(ptype["Type"].ToString())];
+                        }
+                        ver["Version"] = jver.ToString();
+                    }
+                }
+            }
+
+        /*    
+        0Text,
+        1Enum,
+        2NumberUInt,
+        3NumberInt,
+        4Float_DPT9,
+        5Float_IEEE_Single,
+        6Float_IEEE_Double,
+        7Picture,
+        8None,
+        9IpAddress,
+        10Color
+
+        
+        0Color,
+        1Date,
+        2Enum,
+        3Float_DPT9,
+        4Float_IEEE_Single,
+        5Float_IEEE_Double,
+        6IpAddress,
+        7None,
+        8NumberUInt,
+        9NumberInt,
+        10Picture,
+        11RawData,
+        12Text
+        */
             
             return gen.ToString();
         }

@@ -1145,4 +1145,20 @@
     <value>Icons</value>
     <comment/>
   </data>
+  <data name="parat_year" xml:space="preserve">
+    <value>Jahr anzeigen</value>
+    <comment/>
+  </data>
+  <data name="parat_date" xml:space="preserve">
+    <value>Encoding</value>
+    <comment/>
+  </data>
+  <data name="parat_uihint_ipv4" xml:space="preserve">
+    <value>IPv4</value>
+    <comment/>
+  </data>
+  <data name="parat_uihint_ipv6" xml:space="preserve">
+    <value>IPv6</value>
+    <comment/>
+  </data>
 </root>

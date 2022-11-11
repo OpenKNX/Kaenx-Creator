@@ -365,7 +365,6 @@ namespace Kaenx.Creator.Classes
             if(flag1 || flag2)
             {
                 string text = "Parameter-/ComObjectRefIds";
-                string header = "";
                 if(flag1 && !flag2) text = "ParameterRefIds";
                 if(!flag1 && flag2) text = "ComObjectRefIds";
                 System.Windows.MessageBox.Show($"Die Applikation '{currentApp.Name}' enthält {text}, die nicht komplett eindeutig sind.\r\n\r\nEin Import führt dazu, dass diese geändert werden. Die importierte Version kann somit nicht mehr als Update verwendet werden.", "RefId nicht eindeutig", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
@@ -738,6 +737,16 @@ namespace Kaenx.Creator.Classes
                     case "TypeColor":
                         ptype.Type = ParameterTypes.Color;
                         ptype.UIHint = xsub.Attribute("Space").Value;
+                        break;
+
+                    case "TypeRawData":
+                        ptype.Type = ParameterTypes.RawData;
+                        ptype.Max = xsub.Attribute("MaxSize").Value;
+                        break;
+
+                    case "TypeDate":
+                        ptype.Type = ParameterTypes.Date;
+                        ptype.OtherValue = (xsub.Attribute("DisplayTheYear")?.Value ?? "true") == "true"; 
                         break;
 
                     default:
