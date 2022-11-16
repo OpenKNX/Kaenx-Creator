@@ -161,7 +161,7 @@ namespace Kaenx.Creator.Models
             set { _transSuffix = value; Changed("TranslationSuffix"); }
         }
 
-        public ParamAccess Access { get; set; } = ParamAccess.Default;
+        public ParamAccess Access { get; set; } = ParamAccess.ReadWrite;
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void Changed(string name)
@@ -187,7 +187,6 @@ namespace Kaenx.Creator.Models
 
     public enum ParamAccess
     {
-        Default,
         None,
         Read,
         ReadWrite

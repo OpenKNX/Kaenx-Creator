@@ -206,7 +206,6 @@ namespace Kaenx.Creator.Viewer
                 ParamAccess paccess = pref.OverwriteAccess ? pref.Access : pref.ParameterObject.Access;
 
                 mpara.Access = paccess switch {
-                    ParamAccess.Default => AccessType.Null,
                     ParamAccess.None => AccessType.None,
                     ParamAccess.Read => AccessType.Read,
                     ParamAccess.ReadWrite => AccessType.Full,
@@ -1031,8 +1030,7 @@ namespace Kaenx.Creator.Viewer
         private string GetDefaultLang(ObservableCollection<Translation> trans)
         {
             if(trans == null) return "";
-            string text = trans.Single(t => t.Language.CultureCode == _langCode).Text;
-            return text == "$no_export$" ? "" : text;
+            return trans.Single(t => t.Language.CultureCode == _langCode).Text;
         }
 
 

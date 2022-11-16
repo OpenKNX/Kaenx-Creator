@@ -48,7 +48,11 @@ namespace Kaenx.Creator.Models.Dynamic
         public bool UseTextParameter
         {
             get { return _useTextParam; }
-            set { _useTextParam = value; Changed("UseTextParameter"); }
+            set { 
+                _useTextParam = value; 
+                if(!_useTextParam) TextRefObject = null;
+                Changed("UseTextParameter"); 
+            }
         }
 
 
@@ -97,6 +101,8 @@ namespace Kaenx.Creator.Models.Dynamic
 
 
 
+        public ParamAccess Access { get; set; }
+        
         public string Cell { get; set; }
         
         public ObservableCollection<IDynItems> Items { get; set; }

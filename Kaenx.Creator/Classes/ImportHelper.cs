@@ -210,6 +210,38 @@ namespace Kaenx.Creator.Classes
             }
         }
 
+        private void ImportIcons(string path)
+        {
+            string manuHex = Archive.Entries.ElementAt(1).FullName.Substring(0, 6);
+            ZipArchiveEntry bagEntry = Archive.GetEntry($"{manuHex}/Baggages/{path}");
+
+
+
+            ZipArchive zip = new ZipArchive(bagEntry.Open(), ZipArchiveMode.Read, false, System.Text.Encoding.GetEncoding(850));
+                    
+            foreach(ZipArchiveEntry entry in zip.Entries)
+            {
+                Icon icon = new Icon()
+                {
+                    UId = AutoHelper.GetNextFreeUId(_general.Icons),
+                    Name = entry.Name.Substring(0, entry.Name.LastIndexOf("."))
+                };
+
+                using(Stream s = entry.Open())
+                {
+                    using(MemoryStream ms = new MemoryStream())
+                    {
+                        s.CopyTo(ms);
+                        icon.Data = ms.ToArray();
+                    }
+                }
+
+                _general.Icons.Add(icon);
+            }
+
+            zip.Dispose();
+        }
+
         private void ImportApplication(XElement xapp)
         {
             System.Console.WriteLine("----------------Neue Applikation-------------------");
@@ -257,7 +289,8 @@ namespace Kaenx.Creator.Classes
                 Name = "Imported",
                 IsParameterRefAuto = false,
                 IsComObjectRefAuto = false,
-                IsMemSizeAuto = false
+                IsMemSizeAuto = false,
+                ReplacesVersions = xapp.Attribute("ReplacesVersions")?.Value
             };
 
             string ns = xapp.Name.NamespaceName;
@@ -288,6 +321,21 @@ namespace Kaenx.Creator.Classes
             CheckUniqueRefId(xstatic, xapp.Element(Get("Dynamic")));
             ImportLanguages(xapp.Parent.Parent.Element(Get("Languages")), currentVers.Languages);
             currentVers.Text = GetTranslation(xapp.Attribute("Id").Value, "Name", xapp);
+
+            if(xapp.Attribute("IconFile") != null)
+            {
+                if(currentVers.NamespaceVersion < 20)
+                    ImportIcons(xapp.Attribute("IconFile").Value);
+                else {
+                    string[] parts = xapp.Attribute("IconFile").Value.Split('-');
+                    string path = ""; //M-0002_BG--Icons.5F20DD11.2Ezip
+                    if(!string.IsNullOrEmpty(parts[2]))
+                        path = Unescape(parts[2]) + "/";
+                    path += Unescape(parts[3]);
+                    ImportIcons(path);
+                }
+            }
+
             ImportHelpFile(xapp);
             ImportSegments(xstatic.Element(Get("Code")));
             ImportAllocators(xstatic.Element(Get("Allocators")), currentVers);
@@ -483,7 +531,6 @@ namespace Kaenx.Creator.Classes
         }
 
         private void AddTranslation(string id, string attr, string lang, string value) {
-            if(value == "$no_export$") return;
             if(!_translations.ContainsKey(id)) _translations.Add(id, new Dictionary<string, Dictionary<string, string>>());
             if(!_translations[id].ContainsKey(attr)) _translations[id].Add(attr, new Dictionary<string, string>());
             if(!_translations[id][attr].ContainsKey(lang)) _translations[id][attr].Add(lang, value);
@@ -504,9 +551,9 @@ namespace Kaenx.Creator.Classes
             foreach(Language lang in currentVers.Languages) {
                 if(!translations.Any(t => t.Language.CultureCode == lang.CultureCode)) {
                     if(lang.CultureCode == currentVers.DefaultLanguage)
-                        translations.Add(new Translation(lang, xele.Attribute(attr)?.Value ?? "$no_export$"));
+                        translations.Add(new Translation(lang, xele.Attribute(attr)?.Value ?? ""));
                     else
-                        translations.Add(new Translation(lang, "$no_export$"));
+                        translations.Add(new Translation(lang, ""));
                 }
             }
 
@@ -693,14 +740,23 @@ namespace Kaenx.Creator.Classes
                         ptype.SizeInBit = int.Parse(xsub.Attribute("SizeInBit").Value);
                         foreach (XElement xenum in xsub.Elements())
                         {
-                            ptype.Enums.Add(new ParameterTypeEnum()
+
+                            ParameterTypeEnum penum = new ParameterTypeEnum()
                             {
                                 Name = xenum.Attribute("Text")?.Value ?? "",
                                 //TODO
                                 //Icon = xenum.Attribute("Icon")?.Value ?? "",
                                 Text = GetTranslation(xenum.Attribute("Id").Value, "Text", xenum),
                                 Value = int.Parse(xenum.Attribute("Value").Value)
-                            });
+                            };
+                            
+                            if(!string.IsNullOrEmpty(xenum.Attribute("Icon")?.Value))
+                            {
+                                penum.UseIcon = true;
+                                penum.IconObject = _general.Icons.SingleOrDefault(i => i.Name == xenum.Attribute("Icon").Value);
+                            }
+
+                            ptype.Enums.Add(penum);
                             if(ptype.Enums.Any(e => e.Text.Any(l => !string.IsNullOrEmpty(l.Text))))
                                 ptype.TranslateEnums = true;
                         }
@@ -816,7 +872,7 @@ namespace Kaenx.Creator.Classes
         private bool CheckTranslation(ObservableCollection<Translation> trans)
         {
             if(trans.Count <= 1) return false;
-            return trans.Count(t => t.Language.CultureCode != currentVers.DefaultLanguage && (string.IsNullOrEmpty(t.Text) || t.Text == "$no_export$")) >= (trans.Count -1);
+            return trans.Count(t => t.Language.CultureCode != currentVers.DefaultLanguage && string.IsNullOrEmpty(t.Text)) >= (trans.Count -1);
         }
 
         private void ParseParameter(XElement xpara, IVersionBase vbase, Union union = null, XElement xmemory = null)
@@ -843,7 +899,7 @@ namespace Kaenx.Creator.Classes
                 "None" => ParamAccess.None,
                 "Read" => ParamAccess.Read,
                 "ReadWrite" => ParamAccess.ReadWrite,
-                null => ParamAccess.Default,
+                null => ParamAccess.ReadWrite,
                 _ => throw new Exception("Unbekannter AccesType für Parameter: " + xpara.Attribute("Access").Value)
             };
 
@@ -919,7 +975,7 @@ namespace Kaenx.Creator.Classes
                     "None" => ParamAccess.None,
                     "Read" => ParamAccess.Read,
                     "ReadWrite" => ParamAccess.ReadWrite,
-                    null => ParamAccess.Default,
+                    null => ParamAccess.ReadWrite,
                     _ => throw new Exception("Unbekannter Access Typ für ParameterRef: " + xref.Attribute("Access")?.Value)
                 };
                 string id = GetLastSplit(xref.Attribute("RefId").Value, 2);
@@ -970,7 +1026,7 @@ namespace Kaenx.Creator.Classes
                         {
                             //TODO check mapperId
                             string modName = xcoms.Parent.Parent.Attribute("Name").Value;
-                            System.Windows.MessageBox.Show($"Modul '{modName}' enthält mehrere BaseOffsets für ComObjects.\r\nDas wird nicht von Kaenx-Creator unterstützt.\r\nAlle Ids werden neu zugeordnet.", "Module Warnung", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                            System.Windows.MessageBox.Show($"Modul '{modName}' enthält mehrere BaseOffsets für ComObjects.\r\nDas wird nicht von Kaenx-Creator unterstützt.\r\nAlle Ids werden neu zugeordnet.", "Module Warnung", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
                             idmapper = new Dictionary<string, long>();
                             countNew = true;
                             break;
@@ -1525,12 +1581,24 @@ namespace Kaenx.Creator.Classes
                             Number = xele.Attribute("Number")?.Value ?? "",
                             Parent = parent
                         };
-                        if (xele.Attribute("ParamRefId") != null)
+                        if (xele.Attribute("TextParameterRefId") != null)
                         {
                             dc.UseTextParameter = true;
-                            paraId = int.Parse(GetLastSplit(xele.Attribute("ParamRefId").Value, 2));
+                            paraId = int.Parse(GetLastSplit(xele.Attribute("TextParameterRefId").Value, 2));
                             dc.ParameterRefObject = vbase.ParameterRefs.Single(p => p.Id == paraId);
                         }
+                        if(!string.IsNullOrEmpty(xele.Attribute("Icon")?.Value))
+                        {
+                            dc.UseIcon = true;
+                            dc.IconObject = _general.Icons.SingleOrDefault(i => i.Name == xele.Attribute("Icon").Value);
+                        }
+                        dc.Access = (xele.Attribute("Access")?.Value) switch {
+                            "None" => ParamAccess.None,
+                            "Read" => ParamAccess.Read,
+                            "ReadWrite" => ParamAccess.ReadWrite,
+                            null => ParamAccess.ReadWrite,
+                            _ => throw new Exception("Unbekannter AccesType für Channel: " + xele.Attribute("Access").Value)
+                        };
                         parent.Items.Add(dc);
                         ParseDynamic(dc, xele, vbase);
                         break;
@@ -1555,7 +1623,7 @@ namespace Kaenx.Creator.Classes
                             "None" => ParamAccess.None,
                             "Read" => ParamAccess.Read,
                             "ReadWrite" => ParamAccess.ReadWrite,
-                            null => ParamAccess.Default,
+                            null => ParamAccess.ReadWrite,
                             _ => throw new Exception("Unbekannter AccesType für ParameterBlock: " + xele.Attribute("Access").Value)
                         };
                         dpb.Layout = xele.Attribute("Layout")?.Value switch {
@@ -1606,6 +1674,11 @@ namespace Kaenx.Creator.Classes
                             dpb.TextRefObject = vbase.ParameterRefs.Single(p => p.Id == paraId);
                         }
                         dpb.ShowInComObjectTree = xele.Attribute("ShowInComObjectTree")?.Value.ToLower() == "true";
+                        if(!string.IsNullOrEmpty(xele.Attribute("Icon")?.Value))
+                        {
+                            dpb.UseIcon = true;
+                            dpb.IconObject = _general.Icons.SingleOrDefault(i => i.Name == xele.Attribute("Icon").Value);
+                        }
                         parent.Items.Add(dpb);
                         ParseDynamic(dpb, xele, vbase);
                         break;
@@ -1665,10 +1738,15 @@ namespace Kaenx.Creator.Classes
                         };
                         long paraId64 = long.Parse(GetLastSplit(xele.Attribute("RefId").Value, 2));
                         dp.ParameterRefObject = vbase.ParameterRefs.Single(p => p.Id == paraId64);
-                        if(xele.Attribute("HelpContext") != null)
+                        if(xele.Attribute("HelpContext") != null && !string.IsNullOrEmpty(xele.Attribute("HelpContext").Value))
                         {
                             dp.HasHelptext = true;
                             dp.Helptext = currentVers.Helptexts.SingleOrDefault(h => h.Name == xele.Attribute("HelpContext").Value);
+                        }
+                        if(!string.IsNullOrEmpty(xele.Attribute("Icon")?.Value))
+                        {
+                            dp.UseIcon = true;
+                            dp.IconObject = _general.Icons.SingleOrDefault(i => i.Name == xele.Attribute("Icon").Value);
                         }
                         parent.Items.Add(dp);
                         break;
@@ -1685,6 +1763,18 @@ namespace Kaenx.Creator.Classes
                             ds.Hint = (SeparatorHint)Enum.Parse(typeof(SeparatorHint), xele.Attribute("UIHint").Value);
                         else
                             ds.Hint = SeparatorHint.None;
+                        if(!string.IsNullOrEmpty(xele.Attribute("Icon")?.Value))
+                        {
+                            ds.UseIcon = true;
+                            ds.IconObject = _general.Icons.SingleOrDefault(i => i.Name == xele.Attribute("Icon").Value);
+                        }
+                        ds.Access = (xele.Attribute("Access")?.Value) switch {
+                            "None" => ParamAccess.None,
+                            "Read" => ParamAccess.Read,
+                            "ReadWrite" => ParamAccess.ReadWrite,
+                            null => ParamAccess.ReadWrite,
+                            _ => throw new Exception("Unbekannter AccesType für ParameterSeparator: " + xele.Attribute("Access").Value)
+                        };
                         parent.Items.Add(ds);
                         break;
 

@@ -93,6 +93,7 @@ namespace Kaenx.Creator.Models.Dynamic
         }
 
 
+        public ParamAccess Access { get; set; }
 
         public ObservableCollection<IDynItems> Items { get; set; } = new ObservableCollection<IDynItems>();
 

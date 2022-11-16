@@ -2204,5 +2204,11 @@ namespace Kaenx.Creator.Properties {
                 return ResourceManager.GetString("parat_date", resourceCulture);
             }
         }
+        
+        public static string prop_icon {
+            get {
+                return ResourceManager.GetString("prop_icon", resourceCulture);
+            }
+        }
     }
 }

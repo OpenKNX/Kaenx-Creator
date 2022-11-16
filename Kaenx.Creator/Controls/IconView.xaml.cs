@@ -96,9 +96,6 @@ namespace Kaenx.Creator.Controls
                     foreach(Icon icon in x)
                         General.Icons.Add(icon);
                 } else {
-                    if(!System.IO.Directory.Exists("HelpTemp"))
-                        System.IO.Directory.CreateDirectory("HelpTemp");
-
                     ZipArchive zip = ZipFile.Open(diag.FileName, ZipArchiveMode.Read, System.Text.Encoding.GetEncoding(850));
                     
                     foreach(ZipArchiveEntry entry in zip.Entries)
@@ -122,7 +119,6 @@ namespace Kaenx.Creator.Controls
                     }
 
                     zip.Dispose();
-                    System.IO.Directory.Delete("HelpTemp", true);
                 }
                 
             }

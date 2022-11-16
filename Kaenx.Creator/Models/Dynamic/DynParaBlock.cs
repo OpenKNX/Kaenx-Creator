@@ -47,7 +47,11 @@ namespace Kaenx.Creator.Models.Dynamic
         public bool UseParameterRef
         {
             get { return _useParamRef; }
-            set { _useParamRef = value; Changed("UseParameterRef"); }
+            set { 
+                _useParamRef = value; 
+                if(!_useParamRef) ParameterRefObject = null;
+                Changed("UseParameterRef"); 
+            }
         }
         
         private ParameterRef _parameterRefObject;
@@ -72,7 +76,11 @@ namespace Kaenx.Creator.Models.Dynamic
         public bool UseTextParameter
         {
             get { return _useTextParam; }
-            set { _useTextParam = value; Changed("UseTextParameter"); }
+            set { 
+                _useTextParam = value; 
+                if(!_useTextParam) TextRefObject = null;
+                Changed("UseTextParameter"); 
+            }
         }
 
 
@@ -111,6 +119,7 @@ namespace Kaenx.Creator.Models.Dynamic
             get { return _useIcon; }
             set { 
                 _useIcon = value; 
+                if(!_useIcon) IconObject = null;
                 Changed("UseIcon"); 
             }
         }

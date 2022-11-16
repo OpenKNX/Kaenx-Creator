@@ -216,11 +216,11 @@ namespace Kaenx.Creator.Classes
                                 default:
                                     throw new Exception("Unbekannter ParameterType: " + type.Type.ToString());
                             }
-                            xcontent.SetAttributeValue("minInclusive", type.Min);
-                            xcontent.SetAttributeValue("maxInclusive", type.Max);
+                            xcontent.SetAttributeValue("minInclusive", type.Min.Replace(",", "."));
+                            xcontent.SetAttributeValue("maxInclusive", type.Max.Replace(",", "."));
                             if(type.Increment != "1")
-                                xcontent.SetAttributeValue("Increment", type.Increment);
-                            if(type.UIHint != "None")
+                                xcontent.SetAttributeValue("Increment", type.Increment.Replace(",", "."));
+                            if(type.UIHint != "None" && !string.IsNullOrEmpty(type.UIHint))
                                 xcontent.SetAttributeValue("UIHint", type.UIHint);
                             break;
 
@@ -298,11 +298,10 @@ namespace Kaenx.Creator.Classes
                     temp.Add(xtype);
                 }
                 xunderapp.Add(temp);
-                XElement xextension = null;
+                XElement xextension = new XElement(Get("Extension"));
 
                 if (baggagesApp.Count > 0)
                 {
-                    xextension = new XElement(Get("Extension"));
                     foreach(Baggage bag in baggagesApp)
                     {
                         XElement xbag = new XElement(Get("Baggage"));
@@ -320,7 +319,7 @@ namespace Kaenx.Creator.Classes
                 ExportParameters(ver, xunderapp, headers);
                 ExportParameterRefs(ver, xunderapp);
                 ExportComObjects(ver, xunderapp, headers);
-                ExportComObjectRefs(ver, xunderapp);
+                ExportComObjectRefs(ver, ver, xunderapp);
 
                 #region "Tables / LoadProcedure"
                 temp = new XElement(Get("AddressTable"));
@@ -387,6 +386,10 @@ namespace Kaenx.Creator.Classes
                 }
                 xunderapp.Add(temp);
                 #endregion
+
+
+                xunderapp.Add(xextension);
+
 
                 if(ver.IsMessagesActive && ver.Messages.Count > 0)
                 {
@@ -467,7 +470,7 @@ namespace Kaenx.Creator.Classes
                         ExportParameters(mod, xunderstatic, null);
                         ExportParameterRefs(mod, xunderstatic);
                         ExportComObjects(mod, xunderstatic, null);
-                        ExportComObjectRefs(mod, xunderstatic);
+                        ExportComObjectRefs(mod, ver, xunderstatic);
 
                         if(mod.Allocators.Count > 0)
                         {
@@ -573,9 +576,6 @@ namespace Kaenx.Creator.Classes
                         xapp.SetAttributeValue("IconFile", $"{Manu}_BG--Icons.2Ezip");
                     }
 
-                    if(xextension == null)
-                        xextension = new XElement(Get("Extension"));
-
                     XElement xbag = new XElement(Get("Baggage"));
                     xbag.SetAttributeValue("RefId", $"M-{general.ManufacturerId:X4}_BG--{GetEncoded("Icons.zip")}");
                     xextension.Add(xbag);
@@ -587,8 +587,8 @@ namespace Kaenx.Creator.Classes
                     }
                 }
                 
-                if(xextension != null)
-                    xunderapp.Add(xextension);
+                if(!xextension.HasElements)
+                    xextension.Remove();
 
                 xapp.Add(xdyn);
 
@@ -607,7 +607,6 @@ namespace Kaenx.Creator.Classes
                         xele.SetAttributeValue("RefId", langitem.Key);
 
                         foreach(KeyValuePair<string, string> langval in langitem.Value) {
-                            if(langval.Value == "$no_export$") continue;
                             XElement xtrans = new XElement(Get("Translation"));
                             xtrans.SetAttributeValue("AttributeName", langval.Key);
                             xtrans.SetAttributeValue("Text", langval.Value);
@@ -1048,7 +1047,7 @@ namespace Kaenx.Creator.Classes
                 xpref.SetAttributeValue("RefId", id);
                 id += $"_R-{pref.Id}";
                 xpref.SetAttributeValue("Id", id);
-                if(pref.OverwriteAccess && pref.Access != ParamAccess.Default)
+                if(pref.OverwriteAccess && pref.Access != ParamAccess.ReadWrite)
                     xpref.SetAttributeValue("Access", pref.Access.ToString());
                 if (pref.OverwriteValue)
                     xpref.SetAttributeValue("Value", pref.Value);
@@ -1148,7 +1147,7 @@ namespace Kaenx.Creator.Classes
             xparent.Add(xcoms);
         }
 
-        private void ExportComObjectRefs(IVersionBase vbase, XElement xparent)
+        private void ExportComObjectRefs(IVersionBase vbase, AppVersion vers, XElement xparent)
         {
             Debug.WriteLine($"Exportiere ComObjectRefs: {vbase.ComObjectRefs.Count}x");
             if(vbase.ComObjectRefs.Count == 0) return;
@@ -1201,12 +1200,18 @@ namespace Kaenx.Creator.Classes
                         xcref.SetAttributeValue("ObjectSize", cref.ObjectSize + " Bit");
                 }
 
-                //TODO check if appversion iscomautoref active
-                if (cref.ComObjectObject.UseTextParameter)
+
+                if(vers.IsComObjectRefAuto && cref.ComObjectObject.UseTextParameter)
                 {
                     int nsVersion = int.Parse(currentNamespace.Substring(currentNamespace.LastIndexOf('/')+1));
                     xcref.SetAttributeValue("TextParameterRefId", appVersionMod + (cref.ComObjectObject.ParameterRefObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{cref.ComObjectObject.ParameterRefObject.ParameterObject.Id}_R-{cref.ComObjectObject.ParameterRefObject.Id}");
                 }
+                if(!vers.IsComObjectRefAuto && cref.UseTextParameter)
+                {
+                    int nsVersion = int.Parse(currentNamespace.Substring(currentNamespace.LastIndexOf('/')+1));
+                    xcref.SetAttributeValue("TextParameterRefId", appVersionMod + (cref.ParameterRefObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{cref.ParameterRefObject.ParameterObject.Id}_R-{cref.ParameterRefObject.Id}");    
+                }
+                
 
                 xrefs.Add(xcref);
             }
@@ -1293,7 +1298,7 @@ namespace Kaenx.Creator.Classes
             }
             
             xpara.SetAttributeValue("Text", GetDefaultLanguage(para.Text));
-            if (para.Access != ParamAccess.Default && para.Access != ParamAccess.ReadWrite) xpara.SetAttributeValue("Access", para.Access);
+            if (para.Access != ParamAccess.ReadWrite) xpara.SetAttributeValue("Access", para.Access);
             if (!string.IsNullOrWhiteSpace(GetDefaultLanguage(para.Suffix))) xpara.SetAttributeValue("SuffixText", GetDefaultLanguage(para.Suffix));
             
             if(para.ParameterTypeObject.Type == ParameterTypes.Picture)
@@ -1371,9 +1376,8 @@ namespace Kaenx.Creator.Classes
             XElement channel = new XElement(Get("ChannelIndependentBlock"));
             parent.Add(channel);
 
-            if (ch is DynChannel)
+            if (ch is DynChannel dch)
             {
-                DynChannel dch = ch as DynChannel;
                 channel.Name = Get("Channel");
                 if (dch.UseTextParameter)
                     channel.SetAttributeValue("TextParameterRefId", appVersionMod + (dch.ParameterRefObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{dch.ParameterRefObject.ParameterObject.Id}_R-{dch.ParameterRefObject.Id}");
@@ -1393,6 +1397,9 @@ namespace Kaenx.Creator.Classes
                     if(!iconsApp.Contains(dch.IconObject))
                         iconsApp.Add(dch.IconObject);
                 }
+
+                if(dch.Access != ParamAccess.ReadWrite)
+                    channel.SetAttributeValue("Access", dch.Access.ToString());
             }
 
 
@@ -1420,10 +1427,15 @@ namespace Kaenx.Creator.Classes
             xmod.SetAttributeValue("Id", $"{appVersion}_MD-{mod.ModuleObject.Id}_M-{mod.Id}");
             xmod.SetAttributeValue("RefId", $"{appVersion}_MD-{mod.ModuleObject.Id}");
 
+            int argCounter = 1;
             foreach(DynModuleArg arg in mod.Arguments)
             {
                 XElement xarg = new XElement(Get(arg.Argument.Type.ToString() + "Arg"));
                 xarg.SetAttributeValue("RefId", $"{appVersion}_MD-{mod.ModuleObject.Id}_A-{arg.Argument.Id}");
+
+                //M-0002_A-20DE-22-4365-O000A_MD-3_M-18_A-3
+                if(arg.Argument.Type == ArgumentTypes.Text)
+                    xarg.SetAttributeValue("Id", $"{appVersion}_MD-{mod.ModuleObject.Id}_M-{mod.Id}_A-{argCounter}");
 
                 if(arg.UseAllocator)
                 {
@@ -1432,6 +1444,7 @@ namespace Kaenx.Creator.Classes
                     xarg.SetAttributeValue("Value", arg.Value);
                 }
                 xmod.Add(xarg);
+                argCounter++;
             }
 
             parent.Add(xmod);
@@ -1445,7 +1458,7 @@ namespace Kaenx.Creator.Classes
             if(sep.Id == -1) {
                 sep.Id = separatorCounter++;
             }
-            xsep.SetAttributeValue("Id", $"{appVersion}_PS-{sep.Id}");
+            xsep.SetAttributeValue("Id", $"{appVersionMod}_PS-{sep.Id}");
             xsep.SetAttributeValue("Text", GetDefaultLanguage(sep.Text));
             if(sep.Hint != SeparatorHint.None)
             {
@@ -1461,10 +1474,13 @@ namespace Kaenx.Creator.Classes
                     iconsApp.Add(sep.IconObject);
             }
 
+            if(sep.Access != ParamAccess.ReadWrite)
+                xsep.SetAttributeValue("Access", sep.Access.ToString());
+
             parent.Add(xsep);
 
             if(!sep.TranslationText)
-                foreach(Models.Translation trans in sep.Text) AddTranslation(trans.Language.CultureCode, $"{appVersion}_PS-{sep.Id}", "Text", trans.Text);
+                foreach(Models.Translation trans in sep.Text) AddTranslation(trans.Language.CultureCode, $"{appVersionMod}_PS-{sep.Id}", "Text", trans.Text);
         }
 
         private XElement HandleChoose(IDynChoose cho, XElement parent)
@@ -1571,6 +1587,9 @@ namespace Kaenx.Creator.Classes
                 if(!iconsApp.Contains(bl.IconObject))
                     iconsApp.Add(bl.IconObject);
             }
+
+            if(bl.Access != ParamAccess.ReadWrite)
+                block.SetAttributeValue("Access", bl.Access.ToString());
 
             return block;
         }
@@ -1805,8 +1824,7 @@ namespace Kaenx.Creator.Classes
 
         public string GetDefaultLanguage(ObservableCollection<Translation> trans)
         {
-            string text = trans.Single(e => e.Language.CultureCode == currentLang).Text;
-            return text == "$no_export$" ? "" : text;
+            return trans.Single(e => e.Language.CultureCode == currentLang).Text;
         }
 
         public string GetRelPath(params string[] path)
@@ -1833,7 +1851,7 @@ namespace Kaenx.Creator.Classes
 
             XElement knx = new XElement(Get("KNX"));
             knx.SetAttributeValue("CreatedBy", "Kaenx.Creator");
-            knx.SetAttributeValue("ToolVersion", "0.1.0");
+            knx.SetAttributeValue("ToolVersion", Assembly.GetEntryAssembly().GetName().Version.ToString());
             doc = new XDocument(knx);
             doc.Root.Add(new XElement(Get("ManufacturerData"), xmanu));
             return xmanu;

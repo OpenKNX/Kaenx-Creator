@@ -406,7 +406,7 @@
     <comment/>
   </data>
   <data name="tver_comoff" xml:space="preserve">
-    <value>kommunikationsobjekttabelle Offset:</value>
+    <value>Kommunikationsobjekttabelle Offset:</value>
     <comment/>
   </data>
   <data name="prop_versreplace" xml:space="preserve">
@@ -866,19 +866,19 @@
     <comment/>
   </data>
   <data name="tdyn_comref" xml:space="preserve">
-    <value>KommunikationsObjekt Ref</value>
+    <value>Kommunikationsobjekt Ref</value>
     <comment/>
   </data>
   <data name="tdyn_comname" xml:space="preserve">
-    <value>KommunikationsObjekt Name</value>
+    <value>Kommunikationsobjekt Name</value>
     <comment/>
   </data>
   <data name="tdyn_comtext" xml:space="preserve">
-    <value>KommunikationsObjekt Text</value>
+    <value>Kommunikationsobjekt Text</value>
     <comment/>
   </data>
   <data name="tdyn_comreftext" xml:space="preserve">
-    <value>KommunikationsObjectRef Text</value>
+    <value>KommunikationsobjectRef Text</value>
     <comment/>
   </data>
   <data name="tdyn_pb_showtree" xml:space="preserve">
@@ -1159,6 +1159,10 @@
   </data>
   <data name="parat_uihint_ipv6" xml:space="preserve">
     <value>IPv6</value>
+    <comment/>
+  </data>
+  <data name="prop_icon" xml:space="preserve">
+    <value>Icon</value>
     <comment/>
   </data>
 </root>

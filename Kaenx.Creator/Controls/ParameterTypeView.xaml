@@ -141,6 +141,8 @@
                         </Grid>
                     </HeaderedContentControl>
 
+                    <Image Visibility="{Binding UseIcon, Converter={StaticResource BoolToVis}}" Source="{Binding IconObject.Source}" Stretch="None" />
+
                     <DataGrid ItemsSource="{Binding Text}" Margin="5" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="{x:Static p:Resources.gen_lang}" Binding="{Binding Language.Text}" IsReadOnly="True" />
@@ -204,6 +206,8 @@
             <HeaderedContentControl Header="{x:Static p:Resources.parat_bagg}" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Picture, FallbackValue=Collapsed}">
                 <ComboBox ItemsSource="{Binding Baggages, ElementName=ViewControl}" SelectedItem="{Binding BaggageObject}" DisplayMemberPath="Name" Margin="0 5" />
             </HeaderedContentControl>
+
+            <Image Source="{Binding BaggageObject.Source}" Margin="5" Stretch="Uniform" MaxHeight="250"  Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Picture, FallbackValue=Collapsed}" />
 
             <HeaderedContentControl Header="{x:Static p:Resources.parat_hue}" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Color, FallbackValue=Collapsed}">
                 <ComboBox SelectedValue="{Binding UIHint}" SelectedValuePath="Tag" Margin="0 5">

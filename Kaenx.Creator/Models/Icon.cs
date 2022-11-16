@@ -28,7 +28,13 @@ namespace Kaenx.Creator.Models
         }
 
 
-        public byte[] Data { get; set; }
+        private bool _dataChanged = false;
+        private byte[] _data;
+        public byte[] Data
+        {
+            get { return _data; }
+            set { _dataChanged = true; _data = value; }
+        }
 
         BitmapImage image;
         MemoryStream ms = null;
@@ -36,12 +42,17 @@ namespace Kaenx.Creator.Models
         public ImageSource Source
         {
             get {
-                if(ms != null) ms.Dispose();
-                ms = new MemoryStream(Data);
-                image = new BitmapImage();
-                image.BeginInit();
-                image.StreamSource = ms;
-                image.EndInit();
+                if(image == null || _dataChanged)
+                {
+                    if(ms != null) ms.Dispose();
+                    ms = new MemoryStream(Data);
+                    image = new BitmapImage();
+                    image.BeginInit();
+                    image.StreamSource = ms;
+                    image.EndInit();
+                    _dataChanged = false;
+                }
+                
                 return image;
             }
         }

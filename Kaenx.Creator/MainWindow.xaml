@@ -731,6 +731,33 @@
                 </TabItem.Header>
 
                 <TabControl x:Name="VersionTabs" SelectionChanged="TabChanged" TabStripPlacement="Left" Style="{StaticResource LeftTabControl}">
+                    
+                    <TabControl.Template>
+                        <ControlTemplate TargetType="TabControl">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                
+                                <Border BorderBrush="LightGray" BorderThickness="0 0 2 0">
+                                    <ScrollViewer 
+                                        HorizontalScrollBarVisibility="Disabled"  
+                                        VerticalScrollBarVisibility="Auto" 
+                                        FlowDirection="RightToLeft">
+                                            <TabPanel x:Name="HeaderPanel" Panel.ZIndex ="0" KeyboardNavigation.TabIndex="1" IsItemsHost="true" />
+                                    </ScrollViewer>
+                                </Border>
+
+                                <ContentPresenter 
+                                    x:Name="PART_SelectedContentHost"
+                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                    ContentSource="SelectedContent"
+                                    Grid.Column="1" />
+                            </Grid>
+                        </ControlTemplate>
+                    </TabControl.Template>
+
                     <TabItem Header="{x:Static p:Resources.tabs_gen}" Style="{StaticResource LeftTabItem}">
                         <StackPanel>
                             <StackPanel.Resources>

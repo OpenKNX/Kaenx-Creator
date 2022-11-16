@@ -103,7 +103,7 @@ namespace Kaenx.Creator.Models
         }
 
 
-        public ParamAccess Access { get; set; } = ParamAccess.Default;
+        public ParamAccess Access { get; set; } = ParamAccess.ReadWrite;
         public string Value { get; set; } = "";
 
 

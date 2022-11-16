@@ -943,6 +943,13 @@ namespace Kaenx.Creator.Classes {
                     { 8, 7 },
                     { 9, 6 },
                     { 10, 0 }
+                }; 
+                Dictionary<int, int> newAccessList = new Dictionary<int, int>()
+                {
+                    { 0, 2 },
+                    { 1, 0 },
+                    { 2, 1 },
+                    { 3, 2 }
                 };
 
                 foreach(JObject app in gen["Applications"])
@@ -955,6 +962,11 @@ namespace Kaenx.Creator.Classes {
                         {
                             ptype["Type"] = newParaTypeList[int.Parse(ptype["Type"].ToString())];
                         }
+                        
+                        Update3(jver, newAccessList);
+                        foreach(JObject jmod in jver["Modules"])
+                            Update3(jmod, newAccessList);
+                        
                         ver["Version"] = jver.ToString();
                     }
                 }
@@ -990,6 +1002,58 @@ namespace Kaenx.Creator.Classes {
         */
             
             return gen.ToString();
+        }
+
+        private static void Update3(JObject jver, Dictionary<int, int> newAccessList)
+        {
+            foreach(JObject para in jver["Parameters"])
+            {
+                para["Access"] = newAccessList[int.Parse(para["Access"].ToString())];
+            }
+            foreach(JObject para in jver["ParameterRefs"])
+            {
+                para["Access"] = newAccessList[int.Parse(para["Access"].ToString())];
+            }
+
+            foreach(JObject jdyn in jver["Dynamics"])
+            {
+                Update3Dyn(jdyn, newAccessList);
+            }
+        }
+
+        private static void Update3Dyn(JObject jdyn, Dictionary<int, int> newAccessList)
+        {
+            foreach(JObject jitem in jdyn["Items"])
+            {
+                switch(jitem["$type"].ToString())
+                {
+                    case "Kaenx.Creator.Models.Dynamic.DynamicMain, Kaenx.Creator":
+                        Update3Dyn(jitem, newAccessList);
+                        break;
+                    
+                    case "Kaenx.Creator.Models.Dynamic.DynChannelIndependent, Kaenx.Creator":
+                        Update3Dyn(jitem, newAccessList);
+                        break;
+                    
+                    case "Kaenx.Creator.Models.Dynamic.DynChannel, Kaenx.Creator":
+                        if(jitem["Access"] != null)
+                            jitem["Access"] = newAccessList[int.Parse(jitem["Access"].ToString())];
+                        Update3Dyn(jitem, newAccessList);
+                        break;
+                    
+                    case "Kaenx.Creator.Models.Dynamic.DynParaBlock, Kaenx.Creator":
+                        jitem["Access"] = newAccessList[int.Parse(jitem["Access"].ToString())];
+                        Update3Dyn(jitem, newAccessList);
+                        break;
+
+                    case "Kaenx.Creator.Models.Dynamic.DynChooseBlock, Kaenx.Creator":
+                    case "Kaenx.Creator.Models.Dynamic.DynChooseChannel, Kaenx.Creator":
+                    case "Kaenx.Creator.Models.Dynamic.DynWhenBlock, Kaenx.Creator":
+                    case "Kaenx.Creator.Models.Dynamic.DynWhenChannel, Kaenx.Creator":
+                        Update3Dyn(jitem, newAccessList);
+                        break;
+                }
+            }
         }
     }
 }

@@ -41,7 +41,11 @@ namespace Kaenx.Creator.Models.Dynamic
         public bool HasHelptext
         {
             get { return _hasHelptext; }
-            set { _hasHelptext = value; Changed("HasHelptext"); }
+            set { 
+                _hasHelptext = value; 
+                if(!_hasHelptext) Helptext = null;
+                Changed("HasHelptext"); 
+            }
         }
 
         private Helptext _helptext;
@@ -67,6 +71,7 @@ namespace Kaenx.Creator.Models.Dynamic
             get { return _useIcon; }
             set { 
                 _useIcon = value; 
+                if(!_useIcon) IconObject = null;
                 Changed("UseIcon"); 
             }
         }

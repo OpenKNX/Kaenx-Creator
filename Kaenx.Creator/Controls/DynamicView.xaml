@@ -56,15 +56,17 @@
                 <HeaderedContentControl Header="{x:Static p:Resources.tdyn_paracell}">
                     <TextBox Text="{Binding Cell, UpdateSourceTrigger=PropertyChanged}" />
                 </HeaderedContentControl>
-                <HeaderedContentControl Header="Icon">
-                    <Grid>
+                <HeaderedContentControl Header="{x:Static p:Resources.prop_icon}">
+                    <Grid Height="35">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="auto" />
                             <ColumnDefinition />
+                            <ColumnDefinition Width="35" />
                         </Grid.ColumnDefinitions>
 
                         <CheckBox IsChecked="{Binding UseIcon}" VerticalAlignment="Center" />
-                        <ComboBox Grid.Column="2" IsEnabled="{Binding UseIcon}" ItemsSource="{Binding Icons, ElementName=ViewControl}" SelectedItem="{Binding IconObject}" DisplayMemberPath="Name" />
+                        <ComboBox Grid.Column="1" Margin="0 0 5 0" VerticalAlignment="Center" IsEnabled="{Binding UseIcon}" ItemsSource="{Binding Icons, ElementName=ViewControl}" SelectedItem="{Binding IconObject}" DisplayMemberPath="Name" />
+                        <Image Grid.Column="2" Source="{Binding IconObject.Source}" />
                     </Grid>
                 </HeaderedContentControl>
 
@@ -195,15 +197,17 @@
                 <HeaderedContentControl Header="{x:Static p:Resources.tdyn_pb_layout}">
                     <ComboBox ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding Layout}" />
                 </HeaderedContentControl>
-                <HeaderedContentControl Header="Icon">
-                    <Grid>
+                <HeaderedContentControl Header="{x:Static p:Resources.prop_icon}">
+                    <Grid Height="35">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="auto" />
                             <ColumnDefinition />
+                            <ColumnDefinition Width="35" />
                         </Grid.ColumnDefinitions>
 
                         <CheckBox IsChecked="{Binding UseIcon}" VerticalAlignment="Center" />
-                        <ComboBox Grid.Column="2" IsEnabled="{Binding UseIcon}" ItemsSource="{Binding Icons, ElementName=ViewControl}" SelectedItem="{Binding IconObject}" DisplayMemberPath="Name" />
+                        <ComboBox Grid.Column="1" Margin="0 0 5 0" VerticalAlignment="Center" IsEnabled="{Binding UseIcon}" ItemsSource="{Binding Icons, ElementName=ViewControl}" SelectedItem="{Binding IconObject}" DisplayMemberPath="Name" />
+                        <Image Grid.Column="2" Source="{Binding IconObject.Source}" />
                     </Grid>
                 </HeaderedContentControl>
 
@@ -284,15 +288,17 @@
                         <ComboBox Grid.Column="1" IsEnabled="{Binding UseTextParameter}" ItemsSource="{Binding Module.ParameterRefs, ElementName=ViewControl}" SelectedItem="{Binding TextRefObject, Mode=TwoWay}" DisplayMemberPath="Name" />
                     </Grid>
                 </HeaderedContentControl>
-                <HeaderedContentControl Header="Icon">
-                    <Grid>
+                <HeaderedContentControl Header="{x:Static p:Resources.prop_icon}">
+                    <Grid Height="35">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="auto" />
                             <ColumnDefinition />
+                            <ColumnDefinition Width="35" />
                         </Grid.ColumnDefinitions>
 
                         <CheckBox IsChecked="{Binding UseIcon}" VerticalAlignment="Center" />
-                        <ComboBox Grid.Column="2" IsEnabled="{Binding UseIcon}" ItemsSource="{Binding Icons, ElementName=ViewControl}" SelectedItem="{Binding IconObject}" DisplayMemberPath="Name" />
+                        <ComboBox Grid.Column="1" Margin="0 0 5 0" VerticalAlignment="Center" IsEnabled="{Binding UseIcon}" ItemsSource="{Binding Icons, ElementName=ViewControl}" SelectedItem="{Binding IconObject}" DisplayMemberPath="Name" />
+                        <Image Grid.Column="2" Source="{Binding IconObject.Source}" />
                     </Grid>
                 </HeaderedContentControl>
                 <HeaderedContentControl Header="{x:Static p:Resources.gen_text}">
@@ -329,15 +335,17 @@
                 <HeaderedContentControl Header="{x:Static p:Resources.prop_number}">
                     <TextBox Text="{Binding Number, UpdateSourceTrigger=PropertyChanged}" />
                 </HeaderedContentControl>
-                <HeaderedContentControl Header="Icon">
-                    <Grid>
+                <HeaderedContentControl Header="{x:Static p:Resources.prop_icon}">
+                    <Grid Height="35">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="auto" />
                             <ColumnDefinition />
+                            <ColumnDefinition Width="35" />
                         </Grid.ColumnDefinitions>
 
                         <CheckBox IsChecked="{Binding UseIcon}" VerticalAlignment="Center" />
-                        <ComboBox Grid.Column="2" IsEnabled="{Binding UseIcon}" ItemsSource="{Binding Icons, ElementName=ViewControl}" SelectedItem="{Binding IconObject}" DisplayMemberPath="Name" />
+                        <ComboBox Grid.Column="1" Margin="0 0 5 0" VerticalAlignment="Center" IsEnabled="{Binding UseIcon}" ItemsSource="{Binding Icons, ElementName=ViewControl}" SelectedItem="{Binding IconObject}" DisplayMemberPath="Name" />
+                        <Image Grid.Column="2" Source="{Binding IconObject.Source}" />
                     </Grid>
                 </HeaderedContentControl>
                 <HeaderedContentControl Header="{x:Static p:Resources.tdyn_textpara}">
