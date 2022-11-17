@@ -1165,4 +1165,12 @@
     <value>Icon</value>
     <comment/>
   </data>
+  <data name="menu_info_check" xml:space="preserve">
+    <value>Nach Update suchen</value>
+    <comment/>
+  </data>
+  <data name="menu_info_auto" xml:space="preserve">
+    <value>Beim Starten automatisch nach Updates suchen</value>
+    <comment/>
+  </data>
 </root>

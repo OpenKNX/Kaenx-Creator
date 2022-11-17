@@ -357,6 +357,8 @@
                 <MenuItem Header="{x:Static p:Resources.menu_info_vers}" Click="ClickShowVersion" />
                 <MenuItem x:Name="MenuDebug" IsCheckable="True" Header="{x:Static p:Resources.menu_info_debug}" Click="ClickToggleDebug" />
                 <MenuItem Header="{x:Static p:Resources.menu_info_help}" Click="ClickHelp" />
+                <MenuItem Header="{x:Static p:Resources.menu_info_check}" Click="ClickCheckVersion" />
+                <MenuItem x:Name="MenuUpdate" IsCheckable="True" Header="{x:Static p:Resources.menu_info_auto}" Click="ChangeAutoUpdate" />
             </MenuItem>
         </Menu>
 

@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -95,6 +96,21 @@ namespace Kaenx.Creator
 
             
             MenuDebug.IsChecked = Properties.Settings.Default.isDebug;
+            MenuUpdate.IsChecked = Properties.Settings.Default.autoUpdate;
+            if(Properties.Settings.Default.autoUpdate) AutoCheckUpdate();
+        }
+
+        private async void AutoCheckUpdate()
+        {
+            System.Diagnostics.Debug.WriteLine("Checking Auto Update");
+            (bool update, string vers) response = await CheckUpdate();
+            if(response.update)
+            {
+                if(MessageBoxResult.Yes == MessageBox.Show($"Es ist eine neue version verfügbar: v{response.vers}\r\nJetzt zu den Github Releases gehen?", "Update suchen", MessageBoxButton.YesNo, MessageBoxImage.Question))
+                {
+                    Process.Start(new ProcessStartInfo("https://github.com/OpenKNX/Kaenx-Creator/releases/latest") { UseShellExecute = true });
+                }
+            } 
         }
 
         public void GoToItem(object item, object module)
@@ -1255,6 +1271,16 @@ namespace Kaenx.Creator
             }
         }
 
+        private void ChangeAutoUpdate(object sender, RoutedEventArgs e)
+        {
+            if(sender is MenuItem)
+            {
+                Properties.Settings.Default.autoUpdate = (sender as MenuItem).IsChecked;
+                Properties.Settings.Default.Save();
+                CheckLangs();
+            }
+        }
+
         private void ClickToggleDebug(object sender, RoutedEventArgs e)
         {
             if(sender is MenuItem)
@@ -1268,6 +1294,53 @@ namespace Kaenx.Creator
         private void ClickHelp(object sender, RoutedEventArgs e)
         {
             Process.Start(new ProcessStartInfo("https://github.com/OpenKNX/Kaenx-Creator/wiki") { UseShellExecute = true });
+        }
+
+        private async void ClickCheckVersion(object sender, RoutedEventArgs e)
+        {
+            (bool update, string vers) response = await CheckUpdate();
+            if(response.update)
+            {
+                if(MessageBoxResult.Yes == MessageBox.Show($"Es ist eine neue version verfügbar: v{response.vers}\r\nJetzt zu den Github Releases gehen?", "Update suchen", MessageBoxButton.YesNo, MessageBoxImage.Question))
+                {
+                    Process.Start(new ProcessStartInfo("https://github.com/OpenKNX/Kaenx-Creator/releases/latest") { UseShellExecute = true });
+                }
+            } else 
+                MessageBox.Show($"Sie verwenden bereits die neueste version: v{response.vers}", "Update suchen", MessageBoxButton.OK, MessageBoxImage.Information);
+                    
+
+        }
+
+        private async Task<(bool, string)> CheckUpdate()
+        {
+            try{
+                HttpClient client = new HttpClient();
+                    
+                HttpResponseMessage resp = await client.GetAsync("https://github.com/OpenKNX/Kaenx-Creator/releases/latest", HttpCompletionOption.ResponseHeadersRead);
+                string version = resp.RequestMessage.RequestUri.ToString();
+                version = version.Substring(version.LastIndexOf('/') + 2);
+                string[] newVers = version.Split('.');
+                string[] oldVers = System.Reflection.Assembly.GetEntryAssembly().GetName().Version.ToString().Split('.');
+                bool flag = false;
+
+                for(int i = 0; i < 3; i++)
+                {
+                    int comp = newVers[i].CompareTo(oldVers[i]);
+                    if(comp == 1)
+                    {
+                        flag = true;
+                        break;
+                    }
+                    if(comp == -1)
+                    {
+                        break;
+                    }
+                }
+                return (flag, version);
+            } catch {
+                MessageBox.Show("Beim Abfragen der neuesten Version hab es Probleme.", "Update suchen", MessageBoxButton.OK, MessageBoxImage.Error);
+                return (false, "");
+            }
         }
     }
 }

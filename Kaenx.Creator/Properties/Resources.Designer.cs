@@ -2210,5 +2210,17 @@ namespace Kaenx.Creator.Properties {
                 return ResourceManager.GetString("prop_icon", resourceCulture);
             }
         }
+        
+        public static string menu_info_check {
+            get {
+                return ResourceManager.GetString("menu_info_check", resourceCulture);
+            }
+        }
+        
+        public static string menu_info_auto {
+            get {
+                return ResourceManager.GetString("menu_info_auto", resourceCulture);
+            }
+        }
     }
 }

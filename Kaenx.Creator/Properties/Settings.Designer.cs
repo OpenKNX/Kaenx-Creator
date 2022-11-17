@@ -46,5 +46,17 @@ namespace Kaenx.Creator.Properties {
                 this["isDebug"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("false")]
+        public bool autoUpdate {
+            get {
+                return ((bool)(this["autoUpdate"]));
+            }
+            set {
+                this["autoUpdate"] = value;
+            }
+        }
     }
 }
