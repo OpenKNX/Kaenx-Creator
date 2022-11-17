@@ -29,6 +29,7 @@ namespace Kaenx.Creator.Models
             get { return _useIcon; }
             set { 
                 _useIcon = value; 
+                IconObject = null;
                 Changed("UseIcon"); 
             }
         }
