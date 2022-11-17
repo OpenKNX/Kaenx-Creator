@@ -1,8 +1,8 @@
 ## Languages
 This application is availible in: English, Deutsch  
 You want to contribute and add a new Language?  
-Then edit the Resource files in "Properties/Resource.\[language-code\].resx"  
-and create a Pull-Request with the new file.
+Then create a new issue.  
+After that you can edit the language [here](https://crwd.in/kaenx-creator).  
 
 ## Wiki
 There is a detailed [Wiki](https://github.com/OpenKNX/Kaenx-Creator/wiki).  

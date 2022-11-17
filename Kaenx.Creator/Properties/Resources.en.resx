@@ -59,7 +59,7 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
@@ -122,11 +122,11 @@
     <comment/>
   </data>
   <data name="menu_impo_ets" xml:space="preserve">
-    <value>ETS Productdatabase</value>
+    <value>ETS Product database</value>
     <comment/>
   </data>
   <data name="menu_impo_kaenx" xml:space="preserve">
-    <value>Kaenx Productfile</value>
+    <value>Kaenx Projectfile</value>
     <comment/>
   </data>
   <data name="menu_lang" xml:space="preserve">
@@ -178,7 +178,7 @@
     <comment/>
   </data>
   <data name="tabs_bagg" xml:space="preserve">
-    <value>Baggages</value>
+    <value>Attachments</value>
     <comment/>
   </data>
   <data name="menu_impo_xml" xml:space="preserve">
@@ -202,11 +202,11 @@
     <comment/>
   </data>
   <data name="menu_info_vers" xml:space="preserve">
-    <value>Show Version</value>
+    <value>Show version</value>
     <comment/>
   </data>
   <data name="tgen_manu" xml:space="preserve">
-    <value>Manufacturer Id</value>
+    <value>Manufacturer ID</value>
     <comment/>
   </data>
   <data name="tgen_name" xml:space="preserve">
@@ -230,11 +230,11 @@
     <comment/>
   </data>
   <data name="tgen_lang_def" xml:space="preserve">
-    <value>Default Language</value>
+    <value>Default language</value>
     <comment/>
   </data>
   <data name="tcat_add_sub" xml:space="preserve">
-    <value>Add Subitem</value>
+    <value>Add Subcategory</value>
     <comment/>
   </data>
   <data name="prop_name" xml:space="preserve">
@@ -266,7 +266,7 @@
     <comment/>
   </data>
   <data name="prop_serial" xml:space="preserve">
-    <value>Serialnumber</value>
+    <value>Serial Number</value>
     <comment/>
   </data>
   <data name="prop_vers" xml:space="preserve">
@@ -278,7 +278,7 @@
     <comment/>
   </data>
   <data name="prop_haspa" xml:space="preserve">
-    <value>Device has an Physical Address</value>
+    <value>Device has a Physical Address</value>
     <comment/>
   </data>
   <data name="prop_ispower" xml:space="preserve">
@@ -286,19 +286,19 @@
     <comment/>
   </data>
   <data name="prop_iscoupler" xml:space="preserve">
-    <value>Device is a Coupler</value>
+    <value>Device is a coupler</value>
     <comment/>
   </data>
   <data name="prop_ip" xml:space="preserve">
-    <value>Device is IP Enabled</value>
+    <value>Device uses KNX/IPnet</value>
     <comment/>
   </data>
   <data name="prop_hasapp" xml:space="preserve">
-    <value>Device has an Applicationprogram</value>
+    <value>Device has an applicationprogram</value>
     <comment/>
   </data>
   <data name="prop_hasapp2" xml:space="preserve">
-    <value>Device has a second Applicationprogram</value>
+    <value>Device as a second application program</value>
     <comment/>
   </data>
   <data name="thard_devices" xml:space="preserve">
@@ -306,11 +306,11 @@
     <comment/>
   </data>
   <data name="prop_ordernumber" xml:space="preserve">
-    <value>Ordernumber</value>
+    <value>Order Number</value>
     <comment/>
   </data>
   <data name="prop_isreg" xml:space="preserve">
-    <value>Device is REG</value>
+    <value>Device is for REG</value>
     <comment/>
   </data>
   <data name="gen_desc" xml:space="preserve">
@@ -338,7 +338,7 @@
     <comment/>
   </data>
   <data name="bagg_file" xml:space="preserve">
-    <value>Change file</value>
+    <value>Change File</value>
     <comment/>
   </data>
   <data name="bagg_timestamp" xml:space="preserve">
@@ -430,11 +430,11 @@
     <comment/>
   </data>
   <data name="vgen_autopara" xml:space="preserve">
-    <value>Generate ParameterRefs automaticly</value>
+    <value>Generate ParameterRefs automatically</value>
     <comment/>
   </data>
   <data name="vgen_autocom" xml:space="preserve">
-    <value>Generate ComObjectRefs automaticly</value>
+    <value>Generate ComObjectRefs automatically</value>
     <comment/>
   </data>
   <data name="vgen_union" xml:space="preserve">
@@ -458,7 +458,7 @@
     <comment/>
   </data>
   <data name="vgen_autosize" xml:space="preserve">
-    <value>Automaticly calculate size</value>
+    <value>Calculate size automatically</value>
     <comment/>
   </data>
   <data name="prop_offset" xml:space="preserve">
@@ -466,11 +466,11 @@
     <comment/>
   </data>
   <data name="vgen_mautopara" xml:space="preserve">
-    <value>Order Parameters/Unions/Modules automaticly</value>
+    <value>Order Parameters/Unions/Modules automatically</value>
     <comment/>
   </data>
   <data name="vgen_mautoorder" xml:space="preserve">
-    <value>Order automaticly even if they have an address</value>
+    <value>Order automatically even if they have an address</value>
     <comment/>
   </data>
   <data name="vgen_heatmap" xml:space="preserve">
@@ -529,7 +529,7 @@
     <value>Arguments</value>
     <comment/>
   </data>
-  <data name="tmo_pbo" xml:space="preserve">
+  <data name="tmod_pbo" xml:space="preserve">
     <value>ParameterBaseOffset:</value>
     <comment/>
   </data>
@@ -538,7 +538,7 @@
     <comment/>
   </data>
   <data name="tmod_autocbn" xml:space="preserve">
-    <value>Calculate ComObjectBaseNumber automaticly</value>
+    <value>ComObjectBaseNumber will be calculated automatically</value>
     <comment/>
   </data>
   <data name="gen_filter" xml:space="preserve">
@@ -566,7 +566,7 @@
     <comment/>
   </data>
   <data name="parat_add" xml:space="preserve">
-    <value>+</value>
+    <value>Add Item</value>
     <comment/>
   </data>
   <data name="parat_min" xml:space="preserve">
@@ -597,7 +597,7 @@
     <value>CheckBox</value>
     <comment/>
   </data>
-  <data name="parat_uihitn_prog" xml:space="preserve">
+  <data name="parat_uihint_prog" xml:space="preserve">
     <value>ProgressBar</value>
     <comment/>
   </data>
@@ -625,42 +625,6 @@
     <value>SubnetMask</value>
     <comment/>
   </data>
-  <data name="parat_uihint_ipv4" xml:space="preserve">
-    <value>IPv4</value>
-    <comment/>
-  </data>
-  <data name="parat_uihint_ipv6" xml:space="preserve">
-    <value>IPv6</value>
-    <comment/>
-  </data>
-  <data name="parat_uihint_rgb" xml:space="preserve">
-    <value>RGB</value>
-    <comment/>
-  </data>
-  <data name="parat_uihint_rgbw" xml:space="preserve">
-    <value>RGB+W</value>
-    <comment/>
-  </data>
-  <data name="parat_uihint_hsv" xml:space="preserve">
-    <value>HSV</value>
-    <comment/>
-  </data>
-  <data name="parat_addrt" xml:space="preserve">
-    <value>AddressType</value>
-    <comment/>
-  </data>
-  <data name="parat_vers" xml:space="preserve">
-    <value>Version</value>
-    <comment/>
-  </data>
-  <data name="parat_bagg" xml:space="preserve">
-    <value>Baggage</value>
-    <comment/>
-  </data>
-  <data name="parat_hue" xml:space="preserve">
-    <value>Color Space</value>
-    <comment/>
-  </data>
   <data name="uni_error" xml:space="preserve">
     <value>This union is not used by a parameter</value>
     <comment/>
@@ -686,7 +650,7 @@
     <comment/>
   </data>
   <data name="uni_addrauto" xml:space="preserve">
-    <value>Address is set automaticly</value>
+    <value>Address is set automatically</value>
     <comment/>
   </data>
   <data name="prodv_text" xml:space="preserve">
@@ -742,7 +706,7 @@
     <comment/>
   </data>
   <data name="gen_id_auto" xml:space="preserve">
-    <value>Automaticly</value>
+    <value>Automatically</value>
     <comment/>
   </data>
   <data name="gen_id_reset" xml:space="preserve">
@@ -766,7 +730,7 @@
     <comment/>
   </data>
   <data name="tpara_union" xml:space="preserve">
-    <value>Union belonging</value>
+    <value>Union affiliation</value>
     <comment/>
   </data>
   <data name="gen_union" xml:space="preserve">
@@ -774,7 +738,7 @@
     <comment/>
   </data>
   <data name="tpara_infoauto" xml:space="preserve">
-    <value>Address is being set automaticly</value>
+    <value>Address is set automatically</value>
     <comment/>
   </data>
   <data name="prop_propid" xml:space="preserve">
@@ -850,7 +814,7 @@
     <comment/>
   </data>
   <data name="tcom_error2" xml:space="preserve">
-    <value>This ComObjectRef us not used in dynamic</value>
+    <value>This ComObjectRef is not used in dynamic</value>
     <comment/>
   </data>
   <data name="prop_como" xml:space="preserve">
@@ -861,8 +825,8 @@
     <value>This Root-Node will not be exported and can therefor not be edited or removed.</value>
     <comment/>
   </data>
-  <data name="tdyn_indchan" xml:space="preserve">
-    <value>An Independent-Channel will not be displayed. All sub ParameterBlocks will be displayed without an channel.</value>
+  <data name="tdyn_tindchan" xml:space="preserve">
+    <value>An Independent-Channel will not be displayed. All sub ParameterBlocks will be displayed without a channel.</value>
     <comment/>
   </data>
   <data name="tdyn_troot" xml:space="preserve">
@@ -886,7 +850,7 @@
     <comment/>
   </data>
   <data name="tdyn_parareftext" xml:space="preserve">
-    <value>Parameterref Text</value>
+    <value>ParameterRef Text</value>
     <comment/>
   </data>
   <data name="tdyn_mods" xml:space="preserve">
@@ -969,19 +933,19 @@
     <value>Source Value</value>
     <comment/>
   </data>
-  <data name="tdyn_ass_warning1" xml:space="preserve">
+  <data name="tdyn_ass_warnign1" xml:space="preserve">
     <value>Warning! Set only Source Value OR Source ParameterRef.</value>
     <comment/>
   </data>
   <data name="tdyn_ass_warning2" xml:space="preserve">
-    <value>If value is empty Source ParameterRef will be exported</value>
+    <value>Source ParameterRef will be exported if value is empty</value>
     <comment/>
   </data>
-  <data name="tdyn_chan" xml:space="preserve">
+  <data name="tdyn_tchan" xml:space="preserve">
     <value>Channel</value>
     <comment/>
   </data>
-  <data name="tdyn_block" xml:space="preserve">
+  <data name="tdyn_tblock" xml:space="preserve">
     <value>Block</value>
     <comment/>
   </data>
@@ -1026,7 +990,7 @@
     <comment/>
   </data>
   <data name="gen_collapse" xml:space="preserve">
-    <value>Fold</value>
+    <value>Collapse</value>
     <comment/>
   </data>
   <data name="tdyn_add_ichan" xml:space="preserve">
@@ -1057,7 +1021,7 @@
     <value>Add ComObject</value>
     <comment/>
   </data>
-  <data name="tdyn_adds_epa" xml:space="preserve">
+  <data name="tdyn_add_sepa" xml:space="preserve">
     <value>Add Separator</value>
     <comment/>
   </data>
@@ -1078,7 +1042,7 @@
     <comment/>
   </data>
   <data name="tdyn_when2" xml:space="preserve">
-    <value>Not Equals: Put an exclamationmark infront (Example: !=4)</value>
+    <value>Not Equals: Put an exclamation mark in front (Example: !=4)</value>
     <comment/>
   </data>
   <data name="tdyn_when3" xml:space="preserve">
@@ -1086,7 +1050,7 @@
     <comment/>
   </data>
   <data name="tdyn_when4" xml:space="preserve">
-    <value>Greather than: &gt; or &gt;= (Example: &gt;5)</value>
+    <value>Greater than: &gt; or &gt;= (Example: &gt;5)</value>
     <comment/>
   </data>
   <data name="tdyn_when5" xml:space="preserve">
@@ -1121,6 +1085,18 @@
     <value>Preview Helptext</value>
     <comment/>
   </data>
+  <data name="parat_uihint_rgb" xml:space="preserve">
+    <value>RGB</value>
+    <comment/>
+  </data>
+  <data name="parat_uihint_rgbw" xml:space="preserve">
+    <value>RGB+W</value>
+    <comment/>
+  </data>
+  <data name="parat_uihint_hsv" xml:space="preserve">
+    <value>HSV</value>
+    <comment/>
+  </data>
   <data name="tapps_medium" xml:space="preserve">
     <value>Medium:</value>
     <comment/>
@@ -1134,7 +1110,7 @@
     <comment/>
   </data>
   <data name="vgen_autoload" xml:space="preserve">
-    <value>Add size in LoadProcedure automaticly</value>
+    <value>Add size in LoadProcedure automatically</value>
     <comment/>
   </data>
   <data name="tdyn_add_repeat" xml:space="preserve">
@@ -1163,6 +1139,30 @@
   </data>
   <data name="tdyn_usealloc" xml:space="preserve">
     <value>Use Allocator</value>
+    <comment/>
+  </data>
+  <data name="tabs_icon" xml:space="preserve">
+    <value>Icons</value>
+    <comment/>
+  </data>
+  <data name="parat_year" xml:space="preserve">
+    <value>Display Year</value>
+    <comment/>
+  </data>
+  <data name="parat_date" xml:space="preserve">
+    <value>Encoding</value>
+    <comment/>
+  </data>
+  <data name="parat_uihint_ipv4" xml:space="preserve">
+    <value>IPv4</value>
+    <comment/>
+  </data>
+  <data name="parat_uihint_ipv6" xml:space="preserve">
+    <value>IPv6</value>
+    <comment/>
+  </data>
+  <data name="prop_icon" xml:space="preserve">
+    <value>Icon</value>
     <comment/>
   </data>
 </root>
