@@ -24,6 +24,7 @@
                 "/consoleloggerparameters:NoSummary",
                 "-c", "Release",
                 "-r", "win-x86",
+                "--self-contained",
                 "-p:PublishSingleFile=true"
             ],
             "problemMatcher": "$msCompile"
