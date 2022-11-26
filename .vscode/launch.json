@@ -23,31 +23,12 @@
         "request": "launch",
         "preLaunchTask": "publish",
         // If you have changed target frameworks, make sure to update the program path.
-        "program": "${workspaceFolder}/Kaenx.Creator/bin/Debug/net6.0-windows/win-x64/Kaenx.Creator.dll",
+        "program": "${workspaceFolder}/Kaenx.Creator/bin/Release/net6.0-windows/win-x64/Kaenx.Creator.dll",
         "args": ["-c", "Release", "-r", "win-x86", "--self-contained", "true"],
         "cwd": "${workspaceFolder}/Kaenx.Creator",
         // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
         "console": "internalConsole",
         "stopAtEntry": false
-    },
-    {
-        "name": ".NET Core Launch (console) x64",
-        "type": "coreclr",
-        "request": "launch",
-        "preLaunchTask": "build64",
-        // If you have changed target frameworks, make sure to update the program path.
-        "program": "${workspaceFolder}/Kaenx.Creator/bin/Debug/net6.0-windows/Kaenx.Creator.dll",
-        "args": [],
-        "cwd": "${workspaceFolder}/Kaenx.Creator",
-        // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
-        "console": "internalConsole",
-        "stopAtEntry": false
-    },
-        {
-            "name": ".NET Core Attach",
-            "type": "coreclr",
-            "request": "attach",
-            "processId": "${command:pickProcess}"
-        }
+    }
     ]
 }

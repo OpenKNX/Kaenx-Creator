@@ -14,19 +14,6 @@
             "problemMatcher": "$msCompile"
         },
         {
-            "label": "build64",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "build",
-                "-r win-x64",
-                "${workspaceFolder}/Kaenx.Creator/Kaenx.Creator.csproj",
-                "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
-            ],
-            "problemMatcher": "$msCompile"
-        },
-        {
             "label": "publish",
             "command": "dotnet",
             "type": "process",
@@ -35,21 +22,9 @@
                 "${workspaceFolder}/Kaenx.Creator/Kaenx.Creator.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary",
+                "-c", "Release",
                 "-r", "win-x86",
                 "-p:PublishSingleFile=true"
-            ],
-            "problemMatcher": "$msCompile"
-        },
-        {
-            "label": "watch",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "watch",
-                "run",
-                "${workspaceFolder}/Kaenx.Creator/Kaenx.Creator.csproj",
-                "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
             ],
             "problemMatcher": "$msCompile"
         }

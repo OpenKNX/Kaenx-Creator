@@ -316,6 +316,14 @@ namespace Kaenx.Creator.Classes
 
                 StringBuilder headers = new StringBuilder();
 
+                
+                headers.AppendLine("//--------------------Allgemein---------------------------");
+                headers.AppendLine($"#define MAIN_OpenKnxId 0x{(app.Number >> 8):X2}");
+                headers.AppendLine($"#define MAIN_ApplicationNumber {app.Number}");
+                headers.AppendLine($"#define MAIN_ApplicationVersion {ver.Number}");
+                headers.AppendLine($"#define MAIN_OrderNumber \"{hardware.First(h => h.Apps.Contains(app)).Devices.First().OrderNumber}\" //may not work with multiple devices on same hardware or app on different hardware");
+                headers.AppendLine();
+
                 ExportParameters(ver, xunderapp, headers);
                 ExportParameterRefs(ver, xunderapp);
                 ExportComObjects(ver, xunderapp, headers);
@@ -412,7 +420,6 @@ namespace Kaenx.Creator.Classes
                     xunderapp.Add(temp);
                 }
 
-                
                 if(ver.Allocators.Count > 0)
                 {
                     XElement xallocs = new XElement(Get("Allocators"));
@@ -518,7 +525,7 @@ namespace Kaenx.Creator.Classes
                     int poffset = int.Parse(dargp.Value);
                     foreach(Parameter para in dmod.ModuleObject.Parameters)
                     {
-                        string line = $"#define PARAM_M{counter}_{para.Name.Replace(' ', '_')}";
+                        string line = $"#define PARAM_M{counter}_{HeaderNameEscape(para.Name)}";
                         if(para.IsInUnion && para.UnionObject != null)
                         {
                             line += $"\t0x{(poffset + para.UnionObject.Offset + para.Offset).ToString("X4")}\t//!< UnionOffset: {poffset + para.UnionObject.Offset}, ParaOffset: {para.Offset}";
@@ -537,20 +544,13 @@ namespace Kaenx.Creator.Classes
                     int coffset = int.Parse(dargc.Value);
                     foreach(ComObject com in dmod.ModuleObject.ComObjects)
                     {
-                        string line = $"#define COMOBJ_M{counter}_{com.Name.Replace(' ', '_')} \t{coffset + com.Number}\t//!< Number: {coffset + com.Number}, Module: {dmod.ModuleObject.Name}, Text: {GetDefaultLanguage(com.Text)}, Function: {GetDefaultLanguage(com.FunctionText)}";
+                        string line = $"#define COMOBJ_M{counter}_{HeaderNameEscape(com.Name)} \t{coffset + com.Number}\t//!< Number: {coffset + com.Number}, Module: {dmod.ModuleObject.Name}, Text: {GetDefaultLanguage(com.Text)}, Function: {GetDefaultLanguage(com.FunctionText)}";
                         headers.AppendLine(line);
                         
                     }
                     headers.AppendLine();
                     counter++;
                 }
-
-                headers.AppendLine();
-                headers.AppendLine("//--------------------Allgemein---------------------------");
-                headers.AppendLine($"#define MAIN_OpenKnxId 0x{(app.Number >> 8):X2}");
-                headers.AppendLine($"#define MAIN_ApplicationNumber {app.Number}");
-                headers.AppendLine($"#define MAIN_ApplicationVersion {ver.Number}");
-                headers.AppendLine($"#define MAIN_OrderNumber \"{hardware.First(h => h.Apps.Contains(app)).Devices.First().OrderNumber}\" //may not work with multiple devices on same hardware or app on different hardware");
 
                 System.IO.File.WriteAllText(GetRelPath(appVersion + ".h"), headers.ToString());
                 headers = null;
@@ -897,6 +897,11 @@ namespace Kaenx.Creator.Classes
             return true;
         }
 
+        private string HeaderNameEscape(string name)
+        {
+            return name.Replace(' ', '_').Replace('-', '_');
+        }
+
         private void ExportHelptexts(AppVersion ver, string manu, List<Baggage> baggagesManu, List<Baggage> baggagesApp)
         {
             if(ver.Helptexts.Count == 0) return;
@@ -1097,7 +1102,7 @@ namespace Kaenx.Creator.Classes
                 //Debug.WriteLine($"    - ComObject {com.UId} {com.Name}");
                 if(headers != null)
                 {
-                    string line = $"#define COMOBJ_{com.Name.Replace(' ', '_')} \t{com.Number}\t//!< Number: {com.Number}, Text: {GetDefaultLanguage(com.Text)}, Function: {GetDefaultLanguage(com.FunctionText)}";
+                    string line = $"#define COMOBJ_{HeaderNameEscape(com.Name)} \t{com.Number}\t//!< Number: {com.Number}, Text: {GetDefaultLanguage(com.Text)}, Function: {GetDefaultLanguage(com.FunctionText)}";
                     headers.AppendLine(line);
                 }
 
@@ -1224,7 +1229,7 @@ namespace Kaenx.Creator.Classes
             if((headers != null && para.SavePath != SavePaths.Nowhere) || (headers != null && para.IsInUnion && para.UnionObject != null && para.UnionObject.SavePath != SavePaths.Nowhere))
             {
                 int offset = para.Offset;
-                string line = $"#define PARAM_{para.Name.Replace(' ', '_')}";
+                string line = $"#define PARAM_{HeaderNameEscape(para.Name)}";
                 if(para.IsInUnion && para.UnionObject != null)
                 {
                     line += $"\t0x{(para.UnionObject.Offset + para.Offset).ToString("X4")}\t//!< UnionOffset: {para.UnionObject.Offset}, ParaOffset: {para.Offset}";

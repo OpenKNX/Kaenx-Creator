@@ -27,6 +27,7 @@ namespace Kaenx.Creator.Models
                     if(MediumTypeNames.ContainsKey(type))
                         mediums += "/" + MediumTypeNames[type];
                 }
+                if(mediums.Length == 0) return "";
                 return mediums.Substring(1);
             }
         }

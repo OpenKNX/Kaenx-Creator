@@ -39,12 +39,13 @@ namespace Kaenx.Creator.Models
                 Enums.Clear();
                 BaggageObject = null;
                 TranslateEnums = true;
+                IsSizeManual = _type == ParameterTypes.Text;
                 Changed("Type");
             }
         }
 
 
-        private bool _isSizeManual = false;
+        private bool _isSizeManual = true;
         public bool IsSizeManual
         {
             get { return _isSizeManual; }
