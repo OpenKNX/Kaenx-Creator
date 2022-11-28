@@ -1,8 +1,8 @@
 ## Languages
 This application is availible in: English, Deutsch  
 You want to contribute and add a new Language?  
-Then create a new issue.  
-After that you can edit the language [here](https://crwd.in/kaenx-creator).  
+[![Crowdin](https://badges.crowdin.net/kaenx-creator/localized.svg)](https://crowdin.com/project/kaenx-creator) <- Click here   
+If your language isn't listed create an issue.  
 
 ## Wiki
 There is a detailed [Wiki](https://github.com/OpenKNX/Kaenx-Creator/wiki).  
