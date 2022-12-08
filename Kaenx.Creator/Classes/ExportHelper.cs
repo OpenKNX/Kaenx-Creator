@@ -319,8 +319,8 @@ namespace Kaenx.Creator.Classes
                 
                 headers.AppendLine("//--------------------Allgemein---------------------------");
                 headers.AppendLine($"#define MAIN_OpenKnxId 0x{(app.Number >> 8):X2}");
-                headers.AppendLine($"#define MAIN_ApplicationNumber {app.Number}");
-                headers.AppendLine($"#define MAIN_ApplicationVersion {ver.Number}");
+                headers.AppendLine($"#define MAIN_ApplicationNumber 0x{app.Number:X4}");
+                headers.AppendLine($"#define MAIN_ApplicationVersion 0x{ver.Number:X2}");
                 headers.AppendLine($"#define MAIN_OrderNumber \"{hardware.First(h => h.Apps.Contains(app)).Devices.First().OrderNumber}\" //may not work with multiple devices on same hardware or app on different hardware");
                 headers.AppendLine();
 
@@ -510,11 +510,14 @@ namespace Kaenx.Creator.Classes
                     }
                 }
 
-                headers.AppendLine("");
-                headers.AppendLine("//---------------------Modules----------------------------");
-
                 List<DynModule> mods = new List<DynModule>();
                 AutoHelper.GetModules(ver.Dynamics[0], mods);
+
+                if(mods.Count > 0)
+                {
+                    headers.AppendLine("");
+                    headers.AppendLine("//---------------------Modules----------------------------");
+                }
 
                 int counter = 1;
                 foreach(DynModule dmod in mods)
@@ -1229,18 +1232,37 @@ namespace Kaenx.Creator.Classes
             if((headers != null && para.SavePath != SavePaths.Nowhere) || (headers != null && para.IsInUnion && para.UnionObject != null && para.UnionObject.SavePath != SavePaths.Nowhere))
             {
                 int offset = para.Offset;
-                string line = $"#define PARAM_{HeaderNameEscape(para.Name)}";
+
+                string lineComm = "";
+                string linePara = $"#define PARAM_{HeaderNameEscape(para.Name)}";
+                
                 if(para.IsInUnion && para.UnionObject != null)
                 {
-                    line += $"\t0x{(para.UnionObject.Offset + para.Offset).ToString("X4")}\t//!< UnionOffset: {para.UnionObject.Offset}, ParaOffset: {para.Offset}";
+                    lineComm += $"// UnionOffset: {para.UnionObject.Offset}, ParaOffset: {para.Offset}";
+                    linePara += $"\t\t0x{(para.UnionObject.Offset + para.Offset).ToString("X4")}";
                 } else {
-                    line += $"\t0x{para.Offset.ToString("X4")}\t//!< Offset: {para.Offset}";
+                    lineComm += $"// Offset: {para.Offset}";
+                    linePara += $"\t\t0x{para.Offset.ToString("X4")}";
                 }
-                if (para.OffsetBit > 0) line += ", BitOffset: " + para.OffsetBit;
-                line += $", Size: {para.ParameterTypeObject.SizeInBit} Bit";
-                if (para.ParameterTypeObject.SizeInBit % 8 == 0) line += " (" + (para.ParameterTypeObject.SizeInBit / 8) + " Byte)";
-                line += $", Text: {GetDefaultLanguage(para.Text)}";
-                headers.AppendLine(line);
+                
+                if (para.OffsetBit > 0) lineComm += ", BitOffset: " + para.OffsetBit;
+                lineComm += $", Size: {para.ParameterTypeObject.SizeInBit} Bit";
+                if (para.ParameterTypeObject.SizeInBit % 8 == 0) lineComm += " (" + (para.ParameterTypeObject.SizeInBit / 8) + " Byte)";
+                lineComm += $", Text: {GetDefaultLanguage(para.Text)}";
+                headers.AppendLine(lineComm);
+                headers.AppendLine(linePara);
+
+                if (para.OffsetBit > 0 || para.ParameterTypeObject.SizeInBit < 8)
+                {
+                    int mask = 0;
+                    for(int i = 0; i < para.ParameterTypeObject.SizeInBit; i++)
+                        mask += (int)Math.Pow(2, i);
+                        
+                    mask = mask << (8 - para.OffsetBit - (para.ParameterTypeObject.SizeInBit % 8));
+                    headers.AppendLine($"#define PARAM_{HeaderNameEscape(para.Name)}_Mask\t0x{mask:X4}");
+
+                    headers.AppendLine($"#define PARAM_{HeaderNameEscape(para.Name)}_Shift\t{8 - para.OffsetBit - (para.ParameterTypeObject.SizeInBit % 8)}");
+                }
             }
 
             XElement xpara = new XElement(Get("Parameter"));

@@ -16,7 +16,7 @@ namespace Kaenx.Creator.Models
             set { _name = value; Changed("Name"); }
         }
 
-        private int _value = 1;
+        private int _value = 0;
         public int Value
         {
             get { return _value; }

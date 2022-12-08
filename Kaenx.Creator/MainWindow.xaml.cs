@@ -1,4 +1,4 @@
-using Kaenx.Creator.Classes;
+﻿using Kaenx.Creator.Classes;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using System;
@@ -1045,8 +1045,7 @@ namespace Kaenx.Creator
 
         private void ClickShowVersion(object sender, RoutedEventArgs e)
         {
-            var x = System.Reflection.Assembly.GetExecutingAssembly();
-            MessageBox.Show(x.FullName, "Kaenx-Creator Version", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show($"Sie verwenden aktuell die Version: {string.Join('.', System.Reflection.Assembly.GetEntryAssembly().GetName().Version.ToString().Split('.').Take(3))}", "Kaenx-Creator Version", MessageBoxButton.OK, MessageBoxImage.Information);
         }
         
         private void ClickDoResetParaIds(object sender, RoutedEventArgs e)
@@ -1112,6 +1111,8 @@ namespace Kaenx.Creator
         private void ClickCalcHeatmap(object sender, RoutedEventArgs e)
         {
             Models.Memory mem = (sender as Button).DataContext as Models.Memory;
+            Models.Application app = _general.Applications.Single(a => a.Versions.Any(v => v.Name == SelectedVersion.Model.Name && v.Number == SelectedVersion.Model.Number));
+            CheckHelper.CheckVersion(null, app, SelectedVersion.Model, null, new ObservableCollection<Models.PublishAction>());
             AutoHelper.MemoryCalculation(SelectedVersion.Model, mem);
         }
 
@@ -1306,7 +1307,7 @@ namespace Kaenx.Creator
                     Process.Start(new ProcessStartInfo("https://github.com/OpenKNX/Kaenx-Creator/releases/latest") { UseShellExecute = true });
                 }
             } else 
-                MessageBox.Show($"Sie verwenden bereits die neueste version: v{response.vers}", "Update suchen", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show($"Sie verwenden bereits die neueste version: v{string.Join('.', System.Reflection.Assembly.GetEntryAssembly().GetName().Version.ToString().Split('.').Take(3))}", "Update suchen", MessageBoxButton.OK, MessageBoxImage.Information);
                     
 
         }
