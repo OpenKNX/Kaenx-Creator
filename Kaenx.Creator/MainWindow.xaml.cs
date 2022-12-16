@@ -128,12 +128,14 @@ namespace Kaenx.Creator
                     _ => -1
                 };
 
-                ModuleList.ScrollIntoView(module);
+                //TODO Get it back to work
+                /*ModuleList.ScrollIntoView(module);
                 ModuleList.SelectedItem = module;
 
                 if(index2 == -1) return;
                 ModuleTabs.SelectedIndex = index2;
                 ((ModuleTabs.Items[index2] as TabItem).Content as ISelectable).ShowItem(item);
+                */
                 return;
             }
 
@@ -798,35 +800,6 @@ namespace Kaenx.Creator
                         dev.Description.Remove(dev.Description.Single(l => l.Language.CultureCode == lang.CultureCode));
                 } 
             }
-        }
-
-        private void ClickAddModule(object sender, RoutedEventArgs e)
-        {
-            Models.Module mod = new Models.Module() { UId = AutoHelper.GetNextFreeUId(SelectedVersion.Model.Modules)};
-            mod.Arguments.Add(new Models.Argument() { Name = "argParas", UId = AutoHelper.GetNextFreeUId(mod.Arguments) });
-            mod.Arguments.Add(new Models.Argument() { Name = "argComs", UId = AutoHelper.GetNextFreeUId(mod.Arguments) });
-            //mod.Arguments.Add(new Models.Argument() { Name = "argChan", UId = AutoHelper.GetNextFreeUId(mod.Arguments) });
-            mod.ParameterBaseOffset = mod.Arguments[0];
-            mod.ComObjectBaseNumber = mod.Arguments[1];
-            mod.Dynamics.Add(new Models.Dynamic.DynamicModule());
-            SelectedVersion.Model.Modules.Add(mod);
-        }
-
-        private void ClickRemoveModule(object sender, RoutedEventArgs e)
-        {;
-            Models.Module mod = ModuleList.SelectedItem as Models.Module;
-            SelectedVersion.Model.Modules.Remove(mod);
-            RemoveModule(SelectedVersion.Model.Dynamics[0], mod);
-        }
-
-        private void RemoveModule(Models.Dynamic.IDynItems item, Models.Module mod)
-        {
-            if(item is Models.Dynamic.DynModule dm)
-                dm.ModuleObject = null;
-
-            if(item.Items != null)
-                foreach(Models.Dynamic.IDynItems ditem in item.Items)
-                    RemoveModule(ditem, mod);
         }
 
         private void ClickAddHardware(object sender, RoutedEventArgs e)

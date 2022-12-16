@@ -420,95 +420,11 @@ namespace Kaenx.Creator.Classes
                     xunderapp.Add(temp);
                 }
 
-                if(ver.Allocators.Count > 0)
-                {
-                    XElement xallocs = new XElement(Get("Allocators"));
-                    xunderapp.Add(xallocs);
-                    
-                    foreach(Models.Allocator alloc in ver.Allocators)
-                    {
-                        XElement xalloc = new XElement(Get("Allocator"));
+                
+                #region Modules
 
-                        if (alloc.Id == -1)
-                            alloc.Id = AutoHelper.GetNextFreeId(ver, "Allocators");
-                        xalloc.SetAttributeValue("Id", $"{appVersionMod}_L-{alloc.Id}");
-                        xalloc.SetAttributeValue("Name", alloc.Name);
-                        xalloc.SetAttributeValue("Start", alloc.Start);
-                        xalloc.SetAttributeValue("maxInclusive", alloc.Max);
-                        //TODO errormessageid
-                        
-                        xallocs.Add(xalloc);
-                    }
-                }
-
-                #region ModuleDefines
-                if(ver.Modules.Count > 0)
-                {
-                    xunderapp = new XElement(Get("ModuleDefs"));
-                    xapp.Add(xunderapp);
-
-                    foreach (Models.Module mod in ver.Modules)
-                    {
-                        if (mod.Id == -1)
-                            mod.Id = AutoHelper.GetNextFreeId(ver, "Modules");
-
-                        appVersionMod += $"_MD-{mod.Id}";
-
-                        temp = new XElement(Get("Arguments"));
-                        foreach (Models.Argument arg in mod.Arguments)
-                        {
-                            XElement xarg = new XElement(Get("Argument"));
-                            if (arg.Id == -1)
-                                arg.Id = AutoHelper.GetNextFreeId(mod, "Arguments");
-                            xarg.SetAttributeValue("Id", $"{appVersionMod}_A-{arg.Id}");
-                            xarg.SetAttributeValue("Name", arg.Name);
-                            if(arg.Allocates != 0)
-                                xarg.SetAttributeValue("Allocates", arg.Allocates);
-                            temp.Add(xarg);
-                        }
-                        XElement xmod = new XElement(Get("ModuleDef"), temp);
-                        XElement xunderstatic = new XElement(Get("Static"));
-                        xmod.Add(xunderstatic);
-                        xunderapp.Add(xmod);
-
-                        xmod.SetAttributeValue("Id", $"{appVersion}_MD-{mod.Id}");
-                        xmod.SetAttributeValue("Name", mod.Name);
-
-                        ExportParameters(mod, xunderstatic, null);
-                        ExportParameterRefs(mod, xunderstatic);
-                        ExportComObjects(mod, xunderstatic, null);
-                        ExportComObjectRefs(mod, ver, xunderstatic);
-
-                        if(mod.Allocators.Count > 0)
-                        {
-                            XElement xallocs = new XElement(Get("Allocators"));
-                            xunderstatic.Add(xallocs);
-                            
-                            foreach(Models.Allocator alloc in mod.Allocators)
-                            {
-                                XElement xalloc = new XElement(Get("Allocator"));
-
-                                if (alloc.Id == -1)
-                                    alloc.Id = AutoHelper.GetNextFreeId(mod, "Allocators");
-                                xalloc.SetAttributeValue("Id", $"{appVersionMod}_L-{alloc.Id}");
-                                xalloc.SetAttributeValue("Name", alloc.Name);
-                                xalloc.SetAttributeValue("Start", alloc.Start);
-                                xalloc.SetAttributeValue("maxInclusive", alloc.Max);
-                                //TODO errormessageid
-                                
-                                xallocs.Add(xalloc);
-                            }
-                        }
-
-                        
-                        XElement xmoddyn = new XElement(Get("Dynamic"));
-                        xmod.Add(xmoddyn);
-
-                        HandleSubItems(mod.Dynamics[0], xmoddyn, ver);
-
-                        appVersionMod = appVersion;
-                    }
-                }
+                ExportModules(xapp, ver, ver.Modules, appVersion);
+                appVersionMod = appVersion;
 
                 List<DynModule> mods = new List<DynModule>();
                 AutoHelper.GetModules(ver.Dynamics[0], mods);
@@ -903,6 +819,101 @@ namespace Kaenx.Creator.Classes
         private string HeaderNameEscape(string name)
         {
             return name.Replace(' ', '_').Replace('-', '_');
+        }
+
+        private void ExportModules(XElement xparent, AppVersion ver, ObservableCollection<Models.Module> Modules, string modVersion, int depth = 0)
+        {
+            /*if(ver.Allocators.Count > 0)
+            {
+                XElement xallocs = new XElement(Get("Allocators"));
+                xunderapp.Add(xallocs);
+                
+                foreach(Models.Allocator alloc in ver.Allocators)
+                {
+                    XElement xalloc = new XElement(Get("Allocator"));
+
+                    if (alloc.Id == -1)
+                        alloc.Id = AutoHelper.GetNextFreeId(ver, "Allocators");
+                    xalloc.SetAttributeValue("Id", $"{appVersionMod}_L-{alloc.Id}");
+                    xalloc.SetAttributeValue("Name", alloc.Name);
+                    xalloc.SetAttributeValue("Start", alloc.Start);
+                    xalloc.SetAttributeValue("maxInclusive", alloc.Max);
+                    //TODO errormessageid
+                    
+                    xallocs.Add(xalloc);
+                }
+            }*/
+
+            if(Modules.Count > 0)
+            {
+                string subName = depth == 0 ? "ModuleDefs" : "SubModuleDefs";
+                XElement xunderapp = new XElement(Get(subName));
+                xparent.Add(xunderapp);
+
+                foreach (Models.Module mod in Modules)
+                {
+                    //if (mod.Id == -1)
+                    //    mod.Id = AutoHelper.GetNextFreeId(vers, "Modules");
+
+
+                    appVersionMod = $"{modVersion}_{(depth == 0 ? "MD" : "SM")}-{mod.Id}";
+
+                    XElement temp = new XElement(Get("Arguments"));
+                    foreach (Models.Argument arg in mod.Arguments)
+                    {
+                        XElement xarg = new XElement(Get("Argument"));
+                        if (arg.Id == -1)
+                            arg.Id = AutoHelper.GetNextFreeId(mod, "Arguments");
+                        xarg.SetAttributeValue("Id", $"{appVersionMod}_A-{arg.Id}");
+                        xarg.SetAttributeValue("Name", arg.Name);
+                        if(arg.Allocates != 0)
+                            xarg.SetAttributeValue("Allocates", arg.Allocates);
+                        temp.Add(xarg);
+                    }
+                    XElement xmod = new XElement(Get("ModuleDef"), temp);
+                    XElement xunderstatic = new XElement(Get("Static"));
+                    xmod.Add(xunderstatic);
+                    xunderapp.Add(xmod);
+
+                    xmod.SetAttributeValue("Id", $"{appVersion}_MD-{mod.Id}");
+                    xmod.SetAttributeValue("Name", mod.Name);
+
+                    ExportParameters(mod, xunderstatic, null);
+                    ExportParameterRefs(mod, xunderstatic);
+                    ExportComObjects(mod, xunderstatic, null);
+                    ExportComObjectRefs(mod, ver, xunderstatic);
+
+                    if(mod.Allocators.Count > 0)
+                    {
+                        XElement xallocs = new XElement(Get("Allocators"));
+                        xunderstatic.Add(xallocs);
+                        
+                        foreach(Models.Allocator alloc in mod.Allocators)
+                        {
+                            XElement xalloc = new XElement(Get("Allocator"));
+
+                            if (alloc.Id == -1)
+                                alloc.Id = AutoHelper.GetNextFreeId(mod, "Allocators");
+                            xalloc.SetAttributeValue("Id", $"{appVersionMod}_L-{alloc.Id}");
+                            xalloc.SetAttributeValue("Name", alloc.Name);
+                            xalloc.SetAttributeValue("Start", alloc.Start);
+                            xalloc.SetAttributeValue("maxInclusive", alloc.Max);
+                            //TODO errormessageid
+                            
+                            xallocs.Add(xalloc);
+                        }
+                    }
+
+                    ExportModules(xmod, ver, mod.Modules, appVersionMod, ++depth);
+
+                    
+                    XElement xmoddyn = new XElement(Get("Dynamic"));
+                    xmod.Add(xmoddyn);
+
+                    HandleSubItems(mod.Dynamics[0], xmoddyn, ver);
+
+                }
+            }
         }
 
         private void ExportHelptexts(AppVersion ver, string manu, List<Baggage> baggagesManu, List<Baggage> baggagesApp)
