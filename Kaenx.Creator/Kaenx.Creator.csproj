@@ -20,6 +20,7 @@
     <PackageReference Include="log4net" Version="2.0.13" />
     <PackageReference Include="SharpVectors" Version="1.7.7" />
     <PackageReference Include="MdXaml" Version="1.15.0" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.1462.37" />
   </ItemGroup>
 
   <ItemGroup>
@@ -43,6 +44,10 @@
     <None Update="Templates\Minimal.temp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+
+    <Content Include="Data\Monaco\**"> 
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory> 
+    </Content> 
     <None Update="Data\knx_master.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

@@ -1852,9 +1852,12 @@ namespace Kaenx.Creator.Classes
                     case "Repeat":
                         DynRepeat drep = new DynRepeat() {
                             Name = xele.Attribute("Name").Value,
-                            Count = int.Parse(xele.Attribute("Count").Value),
                             Id = int.Parse(GetLastSplit(xele.Attribute("Id").Value, 2))
                         };
+                        if(xele.Attribute("Count") != null)
+                        {
+                            drep.Count = int.Parse(xele.Attribute("Count").Value);
+                        }
                         if(xele.Attribute("ParameterRefId") != null)
                         {
                             drep.UseParameterRef = true;

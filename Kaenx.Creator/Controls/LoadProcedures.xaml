@@ -4,39 +4,40 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400"
     x:Name="ViewControl">
 
-    <Grid>  
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition Width="5" />
-            <ColumnDefinition MaxWidth="600" />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="auto" MaxHeight="250" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
+    <TabControl>
+        <TabItem Header="Eigene Prozedur">
+            <wv2:WebView2 x:Name="monaco" Grid.RowSpan="2" />
+        </TabItem>
 
-        <TextBox Text="{Binding Version.Procedure, ElementName=ViewControl}" Grid.RowSpan="2" AcceptsReturn="True" />
+        <TabItem Header="Prozeduren der Maske">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" MaxHeight="250" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
 
-        <GridSplitter Grid.RowSpan="2" Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
+                <ListBox x:Name="MaskList" Grid.Column="2" ItemsSource="{Binding Mask.Procedures, ElementName=ViewControl}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock>
+                                <Run Text="{Binding Type}" />
+                                <Run Text="-" />
+                                <Run Text="{Binding SubType}" />
+                            </TextBlock>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <ScrollViewer Grid.Row="1" Grid.Column="2">
+                    <TextBox BorderThickness="0" IsReadOnly="true" Text="{Binding SelectedItem.Controls, ElementName=MaskList}" Margin="5" />
+                </ScrollViewer>
+            </Grid>
+        </TabItem>
 
-        <ListBox x:Name="MaskList" Grid.Column="2" ItemsSource="{Binding Mask.Procedures, ElementName=ViewControl}">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock>
-                        <Run Text="{Binding Type}" />
-                        <Run Text="-" />
-                        <Run Text="{Binding SubType}" />
-                    </TextBlock>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-        <ScrollViewer Grid.Row="1" Grid.Column="2">
-            <TextBox BorderThickness="0" IsReadOnly="true" Text="{Binding SelectedItem.Controls, ElementName=MaskList}" Margin="5" />
-        </ScrollViewer>
-    </Grid>
+    </TabControl> 
 </UserControl>

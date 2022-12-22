@@ -26,6 +26,22 @@ namespace Kaenx.Creator.Controls
         public LoadProcedures()
 		{
 			InitializeComponent();
+            monaco.Source = new Uri(System.IO.Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "Data", "Monaco", "index.html"));
+            Load();
 		}
+
+        
+
+
+        private async void Load()
+        {
+            System.Console.WriteLine("Load");
+            await monaco.EnsureCoreWebView2Async();
+            await System.Threading.Tasks.Task.Delay(1000);
+            System.Console.WriteLine("Ausgeführt");
+            string xml = Version.Procedure.Replace("'", "\\'").Replace("\r\n", "\\r\\n");
+            await monaco.ExecuteScriptAsync($"editor.setValue('{xml}');");
+            System.Console.WriteLine($"editor.setValue('{xml}');");
+        }
     }
 }

@@ -19,9 +19,6 @@ namespace Kaenx.Creator.Classes
             AppVersion version = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.AppVersion>(model.Version, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
             LoadVersion(general, version, version);
 
-            foreach(Models.Module mod in version.Modules)
-                LoadVersion(general, version, mod);
-
             //TODO doesnt work anymore
             foreach(Models.ParameterType ptype in version.ParameterTypes)
             {
@@ -123,6 +120,10 @@ namespace Kaenx.Creator.Classes
                 if(mod2._comObjectBaseNumberUId != -1)
                     mod2.ComObjectBaseNumber = mod2.Arguments.SingleOrDefault(a => a.UId == mod2._comObjectBaseNumberUId);
             }
+            
+            foreach(Models.Module mod3 in mod.Modules)
+                LoadVersion(general, vbase, mod3);
+
 
             if(mod.Dynamics.Count > 0)
                 LoadSubDyn(general, mod.Dynamics[0], vbase, mod);
