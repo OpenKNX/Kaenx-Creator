@@ -347,7 +347,7 @@ namespace Kaenx.Creator.Classes
             ImportComObjectRefs(xstatic.Element(Get("ComObjectRefs")), currentVers);
             ImportMessages(xstatic.Element(Get("Messages")));
             ImportTables(xstatic);
-            ImportModules(xapp.Element(Get("ModuleDefs")));
+            ImportModules(currentVers, xapp.Element(Get("ModuleDefs")));
             ImportDynamic(xapp.Element(Get("Dynamic")), currentVers);
 
 
@@ -1290,15 +1290,17 @@ namespace Kaenx.Creator.Classes
             System.Console.WriteLine($"ImportTables: {sw.ElapsedMilliseconds} ms");
         }
 
-        private void ImportModules(XElement xmods) {
+        private void ImportModules(IVersionBase vbase, XElement xmods) {
             if(xmods == null) return;
-            _uidCounter = 1;
-            currentVers.IsModulesActive = true;
+            int _uidCounter2 = 1;
+
+            if(vbase is AppVersion av)
+                av.IsModulesActive = true;
 
             foreach(XElement xmod in xmods.Elements()) {
                 Models.Module mod = new Models.Module() {
                     Name = xmod.Attribute("Name")?.Value ?? "Unbenannt",
-                    UId = _uidCounter++,
+                    UId = _uidCounter2++,
                     Id = int.Parse(GetLastSplit(xmod.Attribute("Id").Value, 3)),
                     IsParameterRefAuto = false,
                     IsComObjectRefAuto = false
@@ -1313,9 +1315,14 @@ namespace Kaenx.Creator.Classes
                 ImportParameterRefs(xstatic.Element(Get("ParameterRefs")), mod);
                 ImportComObjects(xstatic.Element(Get("ComObjects")), mod, ref idmapper);
                 ImportComObjectRefs(xstatic.Element(Get("ComObjectRefs")), mod, idmapper);
+
+                ImportModules(mod, xmod.Element(Get("SubModuleDefs")));
+
                 ImportDynamic(xmod.Element(Get("Dynamic")), mod);
 
-                currentVers.Modules.Add(mod);
+                vbase.Modules.Add(mod);
+                
+
                 System.Console.WriteLine("---End Module");
             }
         }
@@ -1793,7 +1800,7 @@ namespace Kaenx.Creator.Classes
                         };
                         dmo.Id = int.Parse(GetLastSplit(xele.Attribute("Id").Value, 2));
                         paraId = int.Parse(GetLastSplit(xele.Attribute("RefId").Value, 3));
-                        dmo.ModuleObject = currentVers.Modules.Single(m => m.Id == paraId);
+                        dmo.ModuleObject = vbase.Modules.Single(m => m.Id == paraId);
                         foreach(XElement xarg in xele.Elements())
                         {
                             int id1 = int.Parse(GetLastSplit(xarg.Attribute("RefId").Value, 2));
@@ -1856,6 +1863,10 @@ namespace Kaenx.Creator.Classes
                         }
                         parent.Items.Add(drep);
                         ParseDynamic(drep, xele, vbase);
+                        break;
+
+                    case "Button":
+                        //implement button with script section
                         break;
 
                     default:
