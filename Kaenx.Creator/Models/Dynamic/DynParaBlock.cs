@@ -141,7 +141,7 @@ namespace Kaenx.Creator.Models.Dynamic
 
 
 
-        public ParamAccess Access { get; set; }
+        public ParamAccess Access { get; set; } = ParamAccess.ReadWrite;
         public bool ShowInComObjectTree { get; set; } = false;
         public ObservableCollection<IDynItems> Items { get; set; } = new ObservableCollection<IDynItems>();
         public ObservableCollection<ParameterBlockRow> Rows { get; set; } = new ObservableCollection<ParameterBlockRow>();
