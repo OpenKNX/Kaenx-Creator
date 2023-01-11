@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <Resource Include="Assets\Images\Dynamic\Block.svg" />
+    <Resource Include="Assets\Images\Dynamic\Button.svg" />
     <Resource Include="Assets\Images\Dynamic\Choose.svg" />
     <Resource Include="Assets\Images\Dynamic\ComObject.svg" />
     <Resource Include="Assets\Images\Dynamic\Parameter.svg" />

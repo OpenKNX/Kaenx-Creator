@@ -206,6 +206,14 @@ namespace Kaenx.Creator.Classes
                         if(dre.UseParameterRef && dre._parameterUId != -1)
                             dre.ParameterRefObject = mod.ParameterRefs.SingleOrDefault(p => p.UId == dre._parameterUId);
                         break;
+                    
+                    case Models.Dynamic.DynButton db:
+                        if(db.UseTextParameter && db._textRef != -1)
+                            db.TextRefObject = mod.ParameterRefs.SingleOrDefault(p => p.UId == db._textRef);
+                        if(db.UseIcon && db._iconId != -1)
+                            db.IconObject = general.Icons.SingleOrDefault(i => i.UId == db._iconId);
+                        break;
+
                 }
 
                 if (item.Items != null)

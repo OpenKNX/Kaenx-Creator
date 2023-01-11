@@ -2222,5 +2222,41 @@ namespace Kaenx.Creator.Properties {
                 return ResourceManager.GetString("menu_info_auto", resourceCulture);
             }
         }
+        
+        public static string tdyn_tbutton {
+            get {
+                return ResourceManager.GetString("tdyn_tbutton", resourceCulture);
+            }
+        }
+        
+        public static string prop_online {
+            get {
+                return ResourceManager.GetString("prop_online", resourceCulture);
+            }
+        }
+        
+        public static string prop_offline {
+            get {
+                return ResourceManager.GetString("prop_offline", resourceCulture);
+            }
+        }
+        
+        public static string prop_connless {
+            get {
+                return ResourceManager.GetString("prop_connless", resourceCulture);
+            }
+        }
+        
+        public static string prop_connoriented {
+            get {
+                return ResourceManager.GetString("prop_connoriented", resourceCulture);
+            }
+        }
+        
+        public static string prop_handlerparas {
+            get {
+                return ResourceManager.GetString("prop_handlerparas", resourceCulture);
+            }
+        }
     }
 }

@@ -675,6 +675,11 @@ namespace Kaenx.Creator
                     if(!ds.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
                         ds.Text.Add(new Models.Translation(lang, ""));
                     break;
+                    
+                case Models.Dynamic.DynButton db:
+                    if(!db.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
+                        db.Text.Add(new Models.Translation(lang, ""));
+                    break;
             }
 
             if(parent.Items?.Count > 0)
@@ -727,6 +732,11 @@ namespace Kaenx.Creator
                 case Models.Dynamic.DynSeparator ds:
                     if(ds.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
                         ds.Text.Remove(ds.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
+                    break;
+
+                case Models.Dynamic.DynButton db:
+                    if(db.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
+                        db.Text.Remove(db.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
                     break;
             }
 

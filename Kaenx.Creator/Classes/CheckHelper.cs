@@ -839,6 +839,17 @@ namespace Kaenx.Creator.Classes {
                     break;
                 }
 
+                case DynButton dbtn:
+                {
+                    if(string.IsNullOrEmpty(dbtn.Name))
+                        actions.Add(new PublishAction() { Text = $"    DynButton {dbtn.Name} wurde kein Name zugeordnet", State = PublishState.Fail});
+                    if(dbtn.UseTextParameter && dbtn.TextRefObject == null)
+                        actions.Add(new PublishAction() { Text = $"    DynButton {dbtn.Name} wurde kein ParameterRef zugeordnet", State = PublishState.Fail});
+                    if(dbtn.UseIcon && dbtn.IconObject == null)
+                        actions.Add(new PublishAction() { Text = $"    DynButton {dbtn.Name} wurde kein Icon zugeordnet", State = PublishState.Fail});
+                    break;
+                }
+
                 case DynamicMain:
                 case DynamicModule:
                     break;
