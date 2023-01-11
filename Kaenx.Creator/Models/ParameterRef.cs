@@ -43,8 +43,7 @@ namespace Kaenx.Creator.Models
             set { _displayOrder = value; Changed("DisplayOrder"); }
         }
 
-
-        private string _name = "Kurze Beschreibung";
+        private string _name = "";
         public string Name
         {
             get { return _name; }

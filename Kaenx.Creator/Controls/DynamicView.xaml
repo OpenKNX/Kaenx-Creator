@@ -450,6 +450,69 @@
                 </HeaderedContentControl>
             </StackPanel>
         </DataTemplate>
+        <DataTemplate x:Key="TempDynButton">
+            <StackPanel>
+                <HeaderedContentControl Header="{x:Static p:Resources.prop_name}">
+                    <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
+                </HeaderedContentControl>
+                <HeaderedContentControl Header="{x:Static p:Resources.prop_access}">
+                    <ComboBox ItemsSource="{Binding Source={StaticResource dataFromEnumAccess}}" SelectedItem="{Binding Access, Mode=TwoWay}" />
+                </HeaderedContentControl>
+                <HeaderedContentControl Header="{x:Static p:Resources.tdyn_textpara}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <CheckBox IsChecked="{Binding UseTextParameter}" VerticalAlignment="Center" />
+                        <ComboBox Grid.Column="1" IsEditable="true" IsEnabled="{Binding UseTextParameter}" ItemsSource="{Binding Module.ParameterRefs, ElementName=ViewControl}" SelectedItem="{Binding TextRefObject, Mode=TwoWay}" DisplayMemberPath="Name" />
+                    </Grid>
+                </HeaderedContentControl>
+                <HeaderedContentControl Header="{x:Static p:Resources.prop_icon}">
+                    <Grid Height="35">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="35" />
+                        </Grid.ColumnDefinitions>
+
+                        <CheckBox IsChecked="{Binding UseIcon}" VerticalAlignment="Center" />
+                        <ComboBox Grid.Column="1" Margin="0 0 5 0" VerticalAlignment="Center" IsEnabled="{Binding UseIcon}" ItemsSource="{Binding Icons, ElementName=ViewControl}" SelectedItem="{Binding IconObject}" DisplayMemberPath="Name" />
+                        <Image Grid.Column="2" Source="{Binding IconObject.Source}" />
+                    </Grid>
+                </HeaderedContentControl>
+                <HeaderedContentControl Header="{x:Static p:Resources.prop_online}">
+                    <ComboBox SelectedValue="{Binding Online}" SelectedValuePath="Tag">
+                        <ComboBoxItem Tag="" Content="{x:Static p:Resources.prop_offline}" />
+                        <ComboBoxItem Tag="ConnectionLess" Content="{x:Static p:Resources.prop_connless}" />
+                        <ComboBoxItem Tag="ConnectionOriented" Content="{x:Static p:Resources.prop_connoriented}" />
+                    </ComboBox>
+                </HeaderedContentControl>
+                <HeaderedContentControl Header="{x:Static p:Resources.prop_handlerparas}">
+                    <TextBox Text="{Binding EventHandlerParameters, UpdateSourceTrigger=PropertyChanged}"/>
+                </HeaderedContentControl>
+                <HeaderedContentControl Header="{x:Static p:Resources.tdyn_paracell}">
+                    <TextBox Text="{Binding Cell, UpdateSourceTrigger=PropertyChanged}" />
+                </HeaderedContentControl>
+
+
+                <HeaderedContentControl Header="{x:Static p:Resources.gen_text}">
+                    <StackPanel>
+                        <CheckBox IsChecked="{Binding TranslationText}" Content="{x:Static p:Resources.gen_onlydeflang}" />
+                        <DataGrid ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="{x:Static p:Resources.gen_lang}" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                                <DataGridTextColumn Header="{x:Static p:Resources.gen_text}" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </StackPanel>
+                </HeaderedContentControl>
+                <!--<TextBox Text="{Binding Script}" Margin="5 0" AcceptsReturn="True" />-->
+                <Button Margin="5 20 5 0" Content="Change Function" />
+                <TextBlock Margin="5 0" Text="{Binding Script}" />
+            </StackPanel>
+        </DataTemplate>
         
         <select:DynSelector x:Key="SelectorDyn"
             DPara="{StaticResource TempDynParameter}"
@@ -464,7 +527,8 @@
             DCom="{StaticResource TempDynComObject}"
             DSeparator="{StaticResource TempDynSeparator}"
             DAssign="{StaticResource TempDynAssign}"
-            DRepeat="{StaticResource TempDynRepeat}" />
+            DRepeat="{StaticResource TempDynRepeat}"
+            DButton="{StaticResource TempDynButton}" />
     </UserControl.Resources>
 
     <Grid>
@@ -493,7 +557,7 @@
                     <MenuItem Header="{x:Static p:Resources.tdyn_add_sepa}" Click="ClickAddDynSep" />
                     <MenuItem Header="{x:Static p:Resources.tdyn_add_assign}" Click="ClickAddDynAssign" />
                     <MenuItem Header="{x:Static p:Resources.tdyn_add_repeat}" Click="ClickAddDynRepeat" />
-                    <MenuItem Header="{x:Static p:Resources.tdyn_add_btn}" />
+                    <MenuItem Header="{x:Static p:Resources.tdyn_add_btn}" Click="ClickAddDynButton" />
                     <Separator />
                     <MenuItem Header="{x:Static p:Resources.gen_copy}" Click="ClickCopyDyn" />
                     <MenuItem Header="{x:Static p:Resources.gen_cut}" Click="ClickCutDyn" />
@@ -596,6 +660,23 @@
                         </TextBlock>
                     </StackPanel>
                 </HierarchicalDataTemplate>
+                <DataTemplate DataType="{x:Type dyn:DynButton}">
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="{x:Static p:Resources.gen_copy}" Click="ClickCopyDyn" />
+                                <MenuItem Header="{x:Static p:Resources.gen_cut}" Click="ClickCutDyn" />
+                                <MenuItem Header="{x:Static p:Resources.gen_put}" Click="ClickInsertDyn" />
+                                <MenuItem Header="{x:Static p:Resources.gen_remove}" Click="ClickRemoveDyn" />
+                            </ContextMenu>
+                        </StackPanel.ContextMenu>
+                        <Image Source="{svgc:SvgImage Source=/Assets/Images/Dynamic/Button.svg, AppName=Kaenx.Creator}" Height="18" Width="18" Margin="4" />
+                        <TextBlock VerticalAlignment="Center">
+                            <Run Text="{x:Static p:Resources.tdyn_tbutton}" />
+                            <Run Text="{Binding Name}" />
+                        </TextBlock>
+                    </StackPanel>
+                </DataTemplate>
                 <DataTemplate DataType="{x:Type dyn:DynParameter}">
                     <StackPanel Orientation="Horizontal">
                         <StackPanel.ContextMenu>

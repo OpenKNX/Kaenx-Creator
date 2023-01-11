@@ -14,18 +14,16 @@ namespace Kaenx.Creator.Models.Dynamic
         public IDynItems Parent { get; set; }
         public bool IsExpanded { get; set; }
 
+        public string Online { get; set; } = "";
+        public string EventHandlerParameters { get; set; }
+        public string Cell { get; set; }
+        public ParamAccess Access { get; set; } = ParamAccess.ReadWrite;
+
         private long _id = -1;
         public long Id
         {
             get { return _id; }
             set { _id = value; Changed("Id"); }
-        }
-
-        private long _refId = -1;
-        public long RefId
-        {
-            get { return _refId; }
-            set { _refId = value; Changed("RefId"); }
         }
 
         private string _name = "";
@@ -34,6 +32,74 @@ namespace Kaenx.Creator.Models.Dynamic
             get { return _name; }
             set { _name = value; Changed("Name"); }
         }
+
+        private string _script = "";
+        public string Script
+        {
+            get { return _script; }
+            set { _script = value; Changed("Script"); }
+        }
+
+        //TODO add TextParameterRefId
+
+
+
+        private bool _useTextParam = false;
+        public bool UseTextParameter
+        {
+            get { return _useTextParam; }
+            set { 
+                _useTextParam = value; 
+                if(!_useTextParam) TextRefObject = null;
+                Changed("UseTextParameter"); 
+            }
+        }
+
+
+        private ParameterRef _textRefObject;
+        [JsonIgnore]
+        public ParameterRef TextRefObject
+        {
+            get { return _textRefObject; }
+            set { _textRefObject = value; Changed("TextRefObject"); }
+        }
+
+        [JsonIgnore]
+        public int _textRef;
+        public int TextRef
+        {
+            get { return TextRefObject?.UId ?? -1; }
+            set { _textRef = value; }
+        }
+
+
+        private bool _useIcon = false;
+        public bool UseIcon
+        {
+            get { return _useIcon; }
+            set { 
+                _useIcon = value; 
+                if(!_useIcon) IconObject = null;
+                Changed("UseIcon"); 
+            }
+        }
+
+        [JsonIgnore]
+        public int _iconId = -1;
+        public int IconId{
+            get { return IconObject?.UId ?? -1; }
+            set { _iconId = value; }
+        }
+
+        private Icon _icon;
+        [JsonIgnore]
+        public Icon IconObject
+        {
+            get { return _icon; }
+            set { _icon = value; Changed("IconObject"); }
+        }
+
+
 
         public ObservableCollection<Translation> Text {get;set;} = new ObservableCollection<Translation>();
 
@@ -53,7 +119,7 @@ namespace Kaenx.Creator.Models.Dynamic
 
         public object Copy()
         {
-            return this.MemberwiseClone();
+            return (DynButton)this.MemberwiseClone();
         }
     }
 }

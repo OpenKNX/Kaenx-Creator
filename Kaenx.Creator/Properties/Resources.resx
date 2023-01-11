@@ -1173,4 +1173,28 @@
     <value>Beim Starten automatisch nach Updates suchen</value>
     <comment/>
   </data>
+  <data name="tdyn_tbutton" xml:space="preserve">
+    <value>Button</value>
+    <comment/>
+  </data>
+  <data name="prop_handlerparas" xml:space="preserve">
+    <value>EventHandler Parameter</value>
+    <comment/>
+  </data>
+  <data name="prop_offline" xml:space="preserve">
+    <value>Offline</value>
+    <comment/>
+  </data>
+  <data name="prop_connless" xml:space="preserve">
+    <value>Connection Less</value>
+    <comment/>
+  </data>
+  <data name="prop_connoriented" xml:space="preserve">
+    <value>Connection Oriented</value>
+    <comment/>
+  </data>
+  <data name="prop_online" xml:space="preserve">
+    <value>Verbindungstyp</value>
+    <comment/>
+  </data>
 </root>

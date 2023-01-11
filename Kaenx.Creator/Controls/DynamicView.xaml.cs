@@ -237,6 +237,15 @@ namespace Kaenx.Creator.Controls
             item.Items.Add(new Models.Dynamic.DynRepeat() { Parent = item });
         }
 
+        private void ClickAddDynButton(object sender, RoutedEventArgs e)
+        {
+            Models.Dynamic.IDynItems item = (sender as MenuItem).DataContext as Models.Dynamic.IDynItems;
+            Models.Dynamic.DynButton btn = new Models.Dynamic.DynButton() { Parent = item };
+            foreach (Models.Language lang in Version.Languages)
+                btn.Text.Add(new Models.Translation(lang, ""));
+            item.Items.Add(btn);
+        }
+
         Dictionary<string, List<string>> SubTypes = new Dictionary<string, List<string>>() {
             {"DynamicMain",
                 new List<string>() { 

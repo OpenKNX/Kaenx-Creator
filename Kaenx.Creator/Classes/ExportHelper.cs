@@ -31,6 +31,7 @@ namespace Kaenx.Creator.Classes
         string currentNamespace;
         string convPath;
         List<Icon> iconsApp = new List<Icon>();
+        List<string> buttonScripts;
 
         public ExportHelper(Models.ModelGeneral g, List<Models.Hardware> h, List<Models.Device> d, List<Models.Application> a, List<Models.AppVersionModel> v, string cp)
         {
@@ -117,6 +118,7 @@ namespace Kaenx.Creator.Classes
                 xapp.SetAttributeValue("DynamicTableManagement", "false"); //TODO check when to add
                 xapp.SetAttributeValue("Linkable", "false"); //TODO check when to add
 
+                buttonScripts = new List<string>();
                 iconsApp = new List<Icon>();
                 List<Baggage> baggagesApp = new List<Baggage>();
                 if(ver.IsHelpActive)
@@ -420,6 +422,9 @@ namespace Kaenx.Creator.Classes
                     xunderapp.Add(temp);
                 }
 
+                XElement xscript = new XElement(Get("Script"), "");
+                xunderapp.Add(xscript);
+
                 
                 #region Modules
 
@@ -479,6 +484,18 @@ namespace Kaenx.Creator.Classes
 
                 XElement xdyn = new XElement(Get("Dynamic"));
                 HandleSubItems(ver.Dynamics[0], xdyn, ver);
+
+
+                if(buttonScripts.Count > 0)
+                {
+                    string scripts = "";
+                    scripts += string.Join(null, buttonScripts);
+                    xscript.Value += scripts;
+                }
+
+                if(string.IsNullOrEmpty(xscript.Value))
+                    xscript.Remove();
+
 
                 if(iconsApp.Count > 0)
                 {
@@ -1066,6 +1083,9 @@ namespace Kaenx.Creator.Classes
                 xpref.SetAttributeValue("RefId", id);
                 id += $"_R-{pref.Id}";
                 xpref.SetAttributeValue("Id", id);
+                if(!string.IsNullOrEmpty(pref.Name))
+                    xpref.SetAttributeValue("Name", pref.Name);
+
                 if(pref.OverwriteAccess && pref.Access != ParamAccess.ReadWrite)
                     xpref.SetAttributeValue("Access", pref.Access.ToString());
                 if (pref.OverwriteValue)
@@ -1399,6 +1419,10 @@ namespace Kaenx.Creator.Classes
                         xitem = HandleRepeat(dr, xparent);
                         break;
 
+                    case DynButton db:
+                        HandleButton(db, xparent);
+                        break;
+
                     default:
                         throw new Exception("Nicht behandeltes dynamisches Element: " + item.ToString());
                 }
@@ -1653,7 +1677,6 @@ namespace Kaenx.Creator.Classes
             }
         }
         
-        
         private XElement HandleAssign(DynAssign da, XElement parent)
         {
             XElement xcho = new XElement(Get("Assign"));
@@ -1678,6 +1701,47 @@ namespace Kaenx.Creator.Classes
             if(dr.UseParameterRef)
                 xcho.SetAttributeValue("ParameterRefId", appVersionMod + (dr.ParameterRefObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{dr.ParameterRefObject.ParameterObject.Id}_R-{dr.ParameterRefObject.Id}");
             return xcho;
+        }
+
+        int btnCounter = 1;
+
+        private void HandleButton(DynButton db, XElement parent)
+        {
+            XElement xbtn = new XElement(Get("Button"));
+            string id = $"{appVersionMod}_B-{btnCounter++}";
+            xbtn.SetAttributeValue("Id", id);
+            xbtn.SetAttributeValue("Text", GetDefaultLanguage(db.Text));
+            xbtn.SetAttributeValue("EventHandler", $"button{HeaderNameEscape(db.Name)}");
+
+            if(!string.IsNullOrEmpty(db.Cell))
+                xbtn.SetAttributeValue("Cell", db.Cell);
+            if(!string.IsNullOrEmpty(db.EventHandlerParameters))
+                xbtn.SetAttributeValue("EventHandlerParameters", db.EventHandlerParameters);
+            if(!string.IsNullOrEmpty(db.Online))
+                xbtn.SetAttributeValue("Online", db.Online);
+
+            if(db.UseIcon)
+            {
+                xbtn.SetAttributeValue("Icon", db.IconObject.Name);
+                if(!iconsApp.Contains(db.IconObject))
+                    iconsApp.Add(db.IconObject);
+            }
+            if (db.UseTextParameter)
+                xbtn.SetAttributeValue("TextParameterRefId", appVersionMod + (db.TextRefObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{db.TextRefObject.ParameterObject.Id}_R-{db.TextRefObject.Id}");
+
+
+            parent.Add(xbtn);
+
+            if(!db.TranslationText)
+            {
+                foreach(Translation trans in db.Text) AddTranslation(trans.Language.CultureCode, id, "Text", trans.Text);
+            }
+
+            string function = $"function button{HeaderNameEscape(db.Name)}(device, online, progress, context)";
+            function += "\r\n{\r\n";
+            function += db.Script;
+            function += "\r\n}\r\n";
+            buttonScripts.Add(function);
         }
 
         #endregion
