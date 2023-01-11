@@ -1,0 +1,29 @@
+<Window x:Class="Kaenx.Creator.CodeWindow" 
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:local="clr-namespace:Kaenx.Creator" 
+    xmlns:models="clr-namespace:Kaenx.Creator.Models" 
+    xmlns:System="clr-namespace:System;assembly=mscorlib" 
+    xmlns:p="clr-namespace:Kaenx.Creator.Properties" 
+    xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+    mc:Ignorable="d" Icon="/FileLogo.ico" x:Name="ParaControl" Title="Kaenx-Creator CodeEditor" Height="700" Width="1300">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <wv2:WebView2 Grid.ColumnSpan="2" x:Name="monaco" />
+
+        <Button Grid.Row="1" Content="Speichern" Margin="5" Click="ClickSave" />
+        <Button Grid.Row="1" Grid.Column="1" Content="Abbrechen" Margin="5" Click="ClickClose" />
+
+    </Grid>
+</Window>

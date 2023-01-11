@@ -833,7 +833,7 @@ namespace Kaenx.Creator.Classes
             return true;
         }
 
-        private string HeaderNameEscape(string name)
+        public static string HeaderNameEscape(string name)
         {
             return name.Replace(' ', '_').Replace('-', '_');
         }

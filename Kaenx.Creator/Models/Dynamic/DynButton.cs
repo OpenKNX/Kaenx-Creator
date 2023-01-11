@@ -30,7 +30,12 @@ namespace Kaenx.Creator.Models.Dynamic
         public string Name
         {
             get { return _name; }
-            set { _name = value; Changed("Name"); }
+            set { _name = value; Changed("Name"); Changed("NameHeader"); }
+        }
+
+        public string NameHeader
+        {
+            get { return Classes.ExportHelper.HeaderNameEscape(Name); }
         }
 
         private string _script = "";
