@@ -1711,6 +1711,11 @@ namespace Kaenx.Creator.Classes
             string id = $"{appVersionMod}_B-{btnCounter++}";
             xbtn.SetAttributeValue("Id", id);
             xbtn.SetAttributeValue("Text", GetDefaultLanguage(db.Text));
+
+            int ns = int.Parse(currentNamespace.Substring(currentNamespace.LastIndexOf('/') + 1));
+            if(ns > 14)
+                xbtn.SetAttributeValue("Name", db.Name);
+
             xbtn.SetAttributeValue("EventHandler", $"button{HeaderNameEscape(db.Name)}");
 
             if(!string.IsNullOrEmpty(db.Cell))
@@ -1718,7 +1723,7 @@ namespace Kaenx.Creator.Classes
             if(!string.IsNullOrEmpty(db.EventHandlerParameters))
                 xbtn.SetAttributeValue("EventHandlerParameters", db.EventHandlerParameters);
             if(!string.IsNullOrEmpty(db.Online))
-                xbtn.SetAttributeValue("Online", db.Online);
+                xbtn.SetAttributeValue("EventHandlerOnline", db.Online);
 
             if(db.UseIcon)
             {

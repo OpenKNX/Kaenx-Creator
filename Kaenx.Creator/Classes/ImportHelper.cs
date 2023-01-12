@@ -338,6 +338,7 @@ namespace Kaenx.Creator.Classes
 
             ImportHelpFile(xapp);
             ImportSegments(xstatic.Element(Get("Code")));
+            ImportScript(xstatic.Element(Get("Script")));
             ImportAllocators(xstatic.Element(Get("Allocators")), currentVers);
             ImportParameterTypes(xstatic.Element(Get("ParameterTypes")));
             ImportParameter(xstatic.Element(Get("Parameters")), currentVers);
@@ -1327,6 +1328,10 @@ namespace Kaenx.Creator.Classes
             }
         }
         
+        private void ImportScript(XElement xscript)
+        {
+            currentVers.Script = xscript.Value;
+        }
 
         private void ImportAllocators(XElement xallocs, IVersionBase vbase)
         {
@@ -1570,7 +1575,6 @@ namespace Kaenx.Creator.Classes
             sw.Stop();
             System.Console.WriteLine($"ImportDynamic: {sw.ElapsedMilliseconds} ms");
         }
-
 
         private void ParseDynamic(IDynItems parent, XElement xeles, IVersionBase vbase)
         {
@@ -1869,7 +1873,32 @@ namespace Kaenx.Creator.Classes
                         break;
 
                     case "Button":
-                        //implement button with script section
+                        DynButton dbtn = new DynButton() {
+                            EventHandlerParameters = xele.Attribute("EventHandlerParameters")?.Value ?? "",
+                            Online = xele.Attribute("EventHandlerOnline")?.Value ?? ""
+                        };
+                        if(xele.Attribute("Name") != null)
+                            dbtn.Name = xele.Attribute("Name").Value;
+                        else
+                            dbtn.Name = xele.Attribute("EventHandler").Value;
+
+                        if(!string.IsNullOrEmpty(xele.Attribute("Icon")?.Value))
+                        {
+                            dbtn.UseIcon = true;
+                            dbtn.IconObject = _general.Icons.SingleOrDefault(i => i.Name == xele.Attribute("Icon").Value);
+                        }
+                        if(xele.Attribute("TextParameterRefId") != null)
+                        {
+                            dbtn.UseTextParameter = true;
+                            paraId = int.Parse(GetLastSplit(xele.Attribute("TextParameterRefId").Value, 2));
+                            dbtn.TextRefObject = vbase.ParameterRefs.Single(p => p.Id == paraId);
+                        }
+                        Regex regex = new Regex(@"function %handler%[ ]?\(.+\)( ||\n){0,}{([^}]+)}".Replace("%handler%", xele.Attribute("EventHandler").Value));
+                        Match m = regex.Match(currentVers.Script);
+                        dbtn.Script = m.Groups[2].Value;
+                        dbtn.Script = dbtn.Script.Trim(' ', '\r', '\n');
+                        currentVers.Script = regex.Replace(currentVers.Script, "");
+                        parent.Items.Add(dbtn);
                         break;
 
                     default:

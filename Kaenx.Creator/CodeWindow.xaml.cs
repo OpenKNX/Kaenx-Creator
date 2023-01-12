@@ -57,7 +57,8 @@ namespace Kaenx.Creator
 
         private void Closing(object sender, EventArgs e)
         {
-            CodeNew = CodeOld;
+            if(CodeNew == null)
+                CodeNew = CodeOld;
         }
 
         private async void ClickSave(object sender, RoutedEventArgs e)
@@ -65,7 +66,7 @@ namespace Kaenx.Creator
             object code = await monaco.ExecuteScriptAsync($"editor.getValue();");
             CodeNew = code.ToString();
             CodeNew = CodeNew.Substring(1, CodeNew.Length -2);
-            CodeNew = CodeNew.Replace("\\\"", "\"").Replace("\\'", "'").Replace("\\r\\n", "\r\n");
+            CodeNew = CodeNew.Replace("\\\"", "\"").Replace("\\'", "'").Replace("\\r\\n", "\r\n").Replace("\\n", "\r\n");
             this.Close();
         }
 
@@ -78,13 +79,11 @@ namespace Kaenx.Creator
         
         private async void Load()
         {
-            System.Console.WriteLine("Load");
             await monaco.EnsureCoreWebView2Async();
             await System.Threading.Tasks.Task.Delay(1000);
-            System.Console.WriteLine("Ausgeführt");
-            string xml = CodeOld.Replace("'", "\\'").Replace("\r\n", "\\r\\n");
+            string xml = CodeOld.Replace("'", "\\'").Replace("\n", "\\n").Replace("\r", "\\r");
             await monaco.ExecuteScriptAsync($"editor.setValue('{xml}');");
-            System.Console.WriteLine($"editor.setValue('{xml}');");
+            Debug.WriteLine($"editor.setValue('{xml}');");
             CanSave = true;
         }
     }
