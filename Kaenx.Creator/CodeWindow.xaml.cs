@@ -39,12 +39,25 @@ namespace Kaenx.Creator
         public string CodeOld { get; set; }
         public string CodeNew { get; set; }
 
+        private bool _canSave = false;
+        public bool CanSave {
+            get { return _canSave; }
+            set { _canSave = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("CanSave")); }
+        }
+
         public CodeWindow(string page, string code)
         {
 			InitializeComponent();
+            this.DataContext = this;
             CodeOld = code;
             monaco.Source = new Uri(System.IO.Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "Data", "Monaco", page)); //"index.html"));
             Load();
+            this.Closed += Closing;
+        }
+
+        private void Closing(object sender, EventArgs e)
+        {
+            CodeNew = CodeOld;
         }
 
         private async void ClickSave(object sender, RoutedEventArgs e)
@@ -72,6 +85,7 @@ namespace Kaenx.Creator
             string xml = CodeOld.Replace("'", "\\'").Replace("\r\n", "\\r\\n");
             await monaco.ExecuteScriptAsync($"editor.setValue('{xml}');");
             System.Console.WriteLine($"editor.setValue('{xml}');");
+            CanSave = true;
         }
     }
 }
