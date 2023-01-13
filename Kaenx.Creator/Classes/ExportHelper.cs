@@ -1957,8 +1957,11 @@ namespace Kaenx.Creator.Classes
             xmanu.SetAttributeValue("RefId", manu);
 
             XElement knx = new XElement(Get("KNX"));
-            knx.SetAttributeValue("CreatedBy", "Kaenx.Creator");
-            knx.SetAttributeValue("ToolVersion", Assembly.GetEntryAssembly().GetName().Version.ToString());
+            //this makes icons work...
+            knx.SetAttributeValue("CreatedBy", "MT");
+            knx.SetAttributeValue("ToolVersion", "5.7.617.38708");
+            //knx.SetAttributeValue("CreatedBy", "Kaenx.Creator");
+            //knx.SetAttributeValue("ToolVersion", Assembly.GetEntryAssembly().GetName().Version.ToString());
             doc = new XDocument(knx);
             doc.Root.Add(new XElement(Get("ManufacturerData"), xmanu));
             return xmanu;
