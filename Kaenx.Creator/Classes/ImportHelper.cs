@@ -1330,7 +1330,7 @@ namespace Kaenx.Creator.Classes
         
         private void ImportScript(XElement xscript)
         {
-            currentVers.Script = xscript.Value;
+            currentVers.Script = xscript?.Value ?? "";
         }
 
         private void ImportAllocators(XElement xallocs, IVersionBase vbase)
