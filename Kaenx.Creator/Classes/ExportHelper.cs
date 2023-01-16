@@ -428,7 +428,36 @@ namespace Kaenx.Creator.Classes
                 
                 #region Modules
 
-                ExportModules(xapp, ver, ver.Modules, appVersion);
+                if(ver.Allocators.Count > 0)
+                {
+                    XElement xallocs = new XElement(Get("Allocators"));
+                    xunderapp.Add(xallocs);
+                    
+                    foreach(Models.Allocator alloc in ver.Allocators)
+                    {
+                        XElement xalloc = new XElement(Get("Allocator"));
+
+                        if (alloc.Id == -1)
+                            alloc.Id = AutoHelper.GetNextFreeId(ver, "Allocators");
+                        xalloc.SetAttributeValue("Id", $"{appVersionMod}_L-{alloc.Id}");
+                        xalloc.SetAttributeValue("Name", alloc.Name);
+                        xalloc.SetAttributeValue("Start", alloc.Start);
+                        xalloc.SetAttributeValue("maxInclusive", alloc.Max);
+                        //TODO errormessageid
+                        
+                        xallocs.Add(xalloc);
+                    }
+                }
+
+
+
+                if(ver.Modules.Count > 0)
+                {
+                    headers.AppendLine("");
+                    headers.AppendLine("//---------------------Modules----------------------------");
+                }
+
+                ExportModules(xapp, ver, ver.Modules, appVersion, headers);
                 appVersionMod = appVersion;
 
                 List<DynModule> mods = new List<DynModule>();
@@ -838,7 +867,7 @@ namespace Kaenx.Creator.Classes
             return name.Replace(' ', '_').Replace('-', '_');
         }
 
-        private void ExportModules(XElement xparent, AppVersion ver, ObservableCollection<Models.Module> Modules, string modVersion, int depth = 0)
+        private void ExportModules(XElement xparent, AppVersion ver, ObservableCollection<Models.Module> Modules, string modVersion, StringBuilder headers, int depth = 0)
         {
             /*if(ver.Allocators.Count > 0)
             {
@@ -869,6 +898,7 @@ namespace Kaenx.Creator.Classes
 
                 foreach (Models.Module mod in Modules)
                 {
+                    headers.AppendLine("//-----Module: " + mod.Name);
                     //if (mod.Id == -1)
                     //    mod.Id = AutoHelper.GetNextFreeId(vers, "Modules");
 
@@ -895,9 +925,9 @@ namespace Kaenx.Creator.Classes
                     xmod.SetAttributeValue("Id", $"{appVersion}_MD-{mod.Id}");
                     xmod.SetAttributeValue("Name", mod.Name);
 
-                    ExportParameters(mod, xunderstatic, null);
+                    ExportParameters(mod, xunderstatic, headers);
                     ExportParameterRefs(mod, xunderstatic);
-                    ExportComObjects(mod, xunderstatic, null);
+                    ExportComObjects(mod, xunderstatic, headers);
                     ExportComObjectRefs(mod, ver, xunderstatic);
 
                     if(mod.Allocators.Count > 0)
@@ -920,8 +950,7 @@ namespace Kaenx.Creator.Classes
                             xallocs.Add(xalloc);
                         }
                     }
-
-                    ExportModules(xmod, ver, mod.Modules, appVersionMod, ++depth);
+                    ExportModules(xmod, ver, mod.Modules, appVersionMod, headers, depth + 1);
 
                     
                     XElement xmoddyn = new XElement(Get("Dynamic"));
@@ -929,6 +958,7 @@ namespace Kaenx.Creator.Classes
 
                     HandleSubItems(mod.Dynamics[0], xmoddyn, ver);
 
+                    headers.AppendLine("");
                 }
             }
         }
@@ -1264,9 +1294,16 @@ namespace Kaenx.Creator.Classes
             {
                 int offset = para.Offset;
 
+                string lineStart;
                 string lineComm = "";
-                string linePara = $"#define PARAM_{HeaderNameEscape(para.Name)}";
+                if(ver is Models.Module mod)
+                {
+                    lineStart = $"#define PARAM_{HeaderNameEscape(mod.Name)}_{HeaderNameEscape(para.Name)}";
+                } else {
+                    lineStart = $"#define PARAM_{HeaderNameEscape(para.Name)}";
+                }
                 
+                string linePara = lineStart;
                 if(para.IsInUnion && para.UnionObject != null)
                 {
                     lineComm += $"// UnionOffset: {para.UnionObject.Offset}, ParaOffset: {para.Offset}";
@@ -1290,9 +1327,9 @@ namespace Kaenx.Creator.Classes
                         mask += (int)Math.Pow(2, i);
                         
                     mask = mask << (8 - para.OffsetBit - (para.ParameterTypeObject.SizeInBit % 8));
-                    headers.AppendLine($"#define PARAM_{HeaderNameEscape(para.Name)}_Mask\t0x{mask:X4}");
+                    headers.AppendLine($"{lineStart}_Mask\t0x{mask:X4}");
 
-                    headers.AppendLine($"#define PARAM_{HeaderNameEscape(para.Name)}_Shift\t{8 - para.OffsetBit - (para.ParameterTypeObject.SizeInBit % 8)}");
+                    headers.AppendLine($"{lineStart}_Shift\t{8 - para.OffsetBit - (para.ParameterTypeObject.SizeInBit % 8)}");
                 }
             }
 

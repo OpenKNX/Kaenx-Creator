@@ -379,18 +379,18 @@ namespace Kaenx.Creator.Classes
                     int modSize = dmod.ModuleObject.Memory.GetCount();
                     (int offset, int offsetbit) result = mem.GetFreeOffset(modSize * 8);
                     argParas.Value = result.offset.ToString();
-                    argParas.Argument.Allocates = result.offset;
+                    argParas.Argument.Allocates = modSize;
                     mem.SetBytesUsed(MemoryByteUsage.Module, modSize, result.offset);
                 }
 
                 if(dmod.ModuleObject.IsComObjectBaseNumberAuto)
                 {
-                    int highestComNumber2 = dmod.ModuleObject.ComObjects.OrderByDescending(c => c.Number).FirstOrDefault()?.Number ?? 0;
                     Models.Dynamic.DynModuleArg argComs = dmod.Arguments.SingleOrDefault(a => a.ArgumentId == dmod.ModuleObject.ComObjectBaseNumberUId);
+                    int highestComNumber2 = dmod.ModuleObject.ComObjects.OrderByDescending(c => c.Number).FirstOrDefault()?.Number ?? 0;
                     if(argComs != null)
                     {
                         argComs.Value = (++highestComNumber).ToString();
-                        argComs.Argument.Allocates = highestComNumber + 1;
+                        argComs.Argument.Allocates = dmod.ModuleObject.ComObjects.OrderBy((c) => c.Number).Count();
                         highestComNumber += highestComNumber2;
                     }
                 }

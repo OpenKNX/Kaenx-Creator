@@ -38,7 +38,7 @@ namespace Kaenx.Creator.Controls
         public ModuleViewerModel CurrentModule
         {
             get {
-                if(Modules == null || Modules.Count <= CurrentIndex) return null;
+                if(Modules == null || CurrentIndex == -1 || Modules.Count <= CurrentIndex) return null;
                 return Modules[CurrentIndex]; 
             }
             set { CurrentIndex = Modules.IndexOf(value); }
@@ -64,7 +64,8 @@ namespace Kaenx.Creator.Controls
         protected virtual void OnVersionChanged()
         {
             Modules.Clear();
-            Modules.Add(new ModuleViewerModel("HauptModul", Version.Modules));
+            if(Version != null)
+                Modules.Add(new ModuleViewerModel("HauptModul", Version.Modules));
             CurrentIndex = 0;
         }
 
