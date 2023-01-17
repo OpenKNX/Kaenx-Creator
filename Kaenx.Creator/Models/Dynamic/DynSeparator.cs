@@ -101,7 +101,7 @@ namespace Kaenx.Creator.Models.Dynamic
 
 
 
-        public ParamAccess Access { get; set; }
+        public ParamAccess Access { get; set; } = ParamAccess.ReadWrite;
         
         public string Cell { get; set; }
         

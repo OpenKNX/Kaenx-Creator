@@ -400,15 +400,22 @@ namespace Kaenx.Creator.Classes
                 mem.Size = mem.GetCount();
         }
 
-        public static void GetModules(Models.Dynamic.IDynItems item, List<Models.Dynamic.DynModule> mods)
+        public static void GetModules(Models.Dynamic.IDynItems item, List<Models.Dynamic.DynModule> mods, long repeater = 1)
         {
             if(item is Models.Dynamic.DynModule dm)
-                mods.Add(dm);
+            {
+                for(int i = 0; i < repeater; i++)
+                    mods.Add(dm);
+            }
 
             if(item.Items == null) return;
 
+            long srepeat = repeater;
+            if(item is Models.Dynamic.DynRepeat dr)
+                srepeat = dr.Count;
+
             foreach(Models.Dynamic.IDynItems i in item.Items)
-                GetModules(i, mods);
+                GetModules(i, mods, srepeat);
         }
 
         public static int GetNextFreeUId(object list, int start = 1) {

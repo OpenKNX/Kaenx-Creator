@@ -466,44 +466,54 @@ namespace Kaenx.Creator.Classes
                 if(mods.Count > 0)
                 {
                     headers.AppendLine("");
-                    headers.AppendLine("//---------------------Modules----------------------------");
+                    headers.AppendLine("//-----Module specific starts");
                 }
 
-                int counter = 1;
+                Dictionary<string, List<long>> modStartPara = new Dictionary<string, List<long>>();
+                Dictionary<string, List<long>> modStartComs = new Dictionary<string, List<long>>();
+                Dictionary<string, long> allocators = new Dictionary<string, long>();
                 foreach(DynModule dmod in mods)
                 {
+                    if(!modStartPara.ContainsKey(dmod.ModuleObject.Name))
+                        modStartPara.Add(dmod.ModuleObject.Name, new List<long>());
+                    if(!modStartComs.ContainsKey(dmod.ModuleObject.Name))
+                        modStartComs.Add(dmod.ModuleObject.Name, new List<long>());
+
                     DynModuleArg dargp = dmod.Arguments.Single(a => a.ArgumentId == dmod.ModuleObject.ParameterBaseOffsetUId);
-                    if(dargp.UseAllocator) continue; //TODO implement allocator
-                    
-                    int poffset = int.Parse(dargp.Value);
-                    foreach(Parameter para in dmod.ModuleObject.Parameters)
+                    if(dargp.UseAllocator)
                     {
-                        string line = $"#define PARAM_M{counter}_{HeaderNameEscape(para.Name)}";
-                        if(para.IsInUnion && para.UnionObject != null)
-                        {
-                            line += $"\t0x{(poffset + para.UnionObject.Offset + para.Offset).ToString("X4")}\t//!< UnionOffset: {poffset + para.UnionObject.Offset}, ParaOffset: {para.Offset}";
-                        } else {
-                            line += $"\t0x{(poffset + para.Offset).ToString("X4")}\t//!< Offset: {poffset + para.Offset}";
-                        }
-                        if (para.OffsetBit > 0) line += ", BitOffset: " + para.OffsetBit;
-                        line += $", Size: {para.ParameterTypeObject.SizeInBit} Bit";
-                        if (para.ParameterTypeObject.SizeInBit % 8 == 0) line += " (" + (para.ParameterTypeObject.SizeInBit / 8) + " Byte)";
-                        line += $", Module: {dmod.ModuleObject.Name}, Text: {GetDefaultLanguage(para.Text)}";
-                        headers.AppendLine(line);
+                        if(!allocators.ContainsKey(dargp.Allocator.Name))
+                            allocators.Add(dargp.Allocator.Name, dargp.Allocator.Start);
+
+                        modStartPara[dmod.ModuleObject.Name].Add(allocators[dargp.Allocator.Name]);
+
+                        allocators[dargp.Allocator.Name] += dargp.Argument.Allocates;
+                    } else {
+                        long poffset = long.Parse(dargp.Value);
+                        modStartPara[dmod.ModuleObject.Name].Add(poffset);
                     }
+                    
 
                     
                     DynModuleArg dargc = dmod.Arguments.Single(a => a.ArgumentId == dmod.ModuleObject.ComObjectBaseNumberUId);
-                    int coffset = int.Parse(dargc.Value);
-                    foreach(ComObject com in dmod.ModuleObject.ComObjects)
+                    if(dargc.UseAllocator)
                     {
-                        string line = $"#define COMOBJ_M{counter}_{HeaderNameEscape(com.Name)} \t{coffset + com.Number}\t//!< Number: {coffset + com.Number}, Module: {dmod.ModuleObject.Name}, Text: {GetDefaultLanguage(com.Text)}, Function: {GetDefaultLanguage(com.FunctionText)}";
-                        headers.AppendLine(line);
-                        
+                        if(!allocators.ContainsKey(dargc.Allocator.Name))
+                            allocators.Add(dargc.Allocator.Name, dargc.Allocator.Start);
+
+                        modStartComs[dmod.ModuleObject.Name].Add(allocators[dargc.Allocator.Name]);
+
+                        allocators[dargc.Allocator.Name] += dargc.Argument.Allocates;
+                    } else {
+                        int coffset = int.Parse(dargc.Value);
+                        modStartComs[dmod.ModuleObject.Name].Add(coffset);
                     }
-                    headers.AppendLine();
-                    counter++;
                 }
+
+                foreach(KeyValuePair<string, List<long>> item in modStartPara)
+                    headers.AppendLine($"const long mod_{HeaderNameEscape(item.Key)}_para[] = {{ {string.Join(',', item.Value)} }};");
+                foreach(KeyValuePair<string, List<long>> item in modStartComs)
+                    headers.AppendLine($"const long mod_{HeaderNameEscape(item.Key)}_coms[] = {{ {string.Join(',', item.Value)} }};");
 
                 System.IO.File.WriteAllText(GetRelPath(appVersion + ".h"), headers.ToString());
                 headers = null;
@@ -1166,7 +1176,12 @@ namespace Kaenx.Creator.Classes
                 //Debug.WriteLine($"    - ComObject {com.UId} {com.Name}");
                 if(headers != null)
                 {
-                    string line = $"#define COMOBJ_{HeaderNameEscape(com.Name)} \t{com.Number}\t//!< Number: {com.Number}, Text: {GetDefaultLanguage(com.Text)}, Function: {GetDefaultLanguage(com.FunctionText)}";
+                    string line;
+                    if(vbase is Models.Module vmod)
+                        line = $"#define COMOBJ_{HeaderNameEscape(vmod.Name)}_{HeaderNameEscape(com.Name)} ";
+                    else
+                        line = $"#define COMOBJ_{HeaderNameEscape(com.Name)} ";
+                    line += $"\t{com.Number}\t//!< Number: {com.Number}, Text: {GetDefaultLanguage(com.Text)}, Function: {GetDefaultLanguage(com.FunctionText)}";
                     headers.AppendLine(line);
                 }
 
