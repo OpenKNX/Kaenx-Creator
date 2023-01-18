@@ -520,6 +520,8 @@ namespace Kaenx.Creator.Classes {
                             break;
                         }
                     }
+                } else {
+                    if(para.UnionObject == null) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Es wurde kein Union ausgewählt", State = PublishState.Fail, Item = para, Module = mod });
                 }
             }
         

@@ -33,7 +33,7 @@
         <Button Content="{x:Static p:Resources.gen_add}" Click="ClickAddUnion" Margin="0 0 1 2" />
         <Button Grid.Column="1" Content="{x:Static p:Resources.gen_remove}" Click="ClickRemoveUnion" Margin="1 0 0 2" />
 
-        <ListView x:Name="UnionList" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding Unions}">
+        <ListView x:Name="UnionList" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding Module.Unions, ElementName=ViewControl}">
             <ListView.ItemTemplate>
 				<DataTemplate>
 					<TextBlock Text="{Binding Name}" Foreground="{Binding IsNotUsed, Converter={StaticResource BoolToBrush}}" />

@@ -923,8 +923,7 @@ namespace Kaenx.Creator.Classes
                             arg.Id = AutoHelper.GetNextFreeId(mod, "Arguments");
                         xarg.SetAttributeValue("Id", $"{appVersionMod}_A-{arg.Id}");
                         xarg.SetAttributeValue("Name", arg.Name);
-                        if(arg.Allocates != 0)
-                            xarg.SetAttributeValue("Allocates", arg.Allocates);
+                        xarg.SetAttributeValue("Allocates", arg.Allocates);
                         temp.Add(xarg);
                     }
                     XElement xmod = new XElement(Get("ModuleDef"), temp);
@@ -1088,6 +1087,10 @@ namespace Kaenx.Creator.Classes
                         xmem.SetAttributeValue("CodeSegment", memid);
                         xmem.SetAttributeValue("Offset", paras.Key.Offset);
                         xmem.SetAttributeValue("BitOffset", paras.Key.OffsetBit);
+                        if(vbase is Models.Module mod)
+                        {
+                            xmem.SetAttributeValue("BaseOffset", $"{appVersionMod}_A-{mod.ParameterBaseOffset.Id}");
+                        }
                         xunion.Add(xmem);
                         break;
 
@@ -1276,7 +1279,7 @@ namespace Kaenx.Creator.Classes
                     }
                 }
 
-                if(cref.OverwriteOS)
+                if(cref.OverwriteOS || (cref.OverwriteDpt && cref.ObjectSize != cref.ComObjectObject.ObjectSize))
                 {
                     if (cref.ObjectSize > 7)
                         xcref.SetAttributeValue("ObjectSize", (cref.ObjectSize / 8) + " Byte" + ((cref.ObjectSize > 15) ? "s":""));

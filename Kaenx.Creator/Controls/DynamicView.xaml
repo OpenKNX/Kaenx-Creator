@@ -325,6 +325,9 @@
                 <HeaderedContentControl Header="{x:Static p:Resources.tdyn_paracell}">
                     <TextBox Text="{Binding Cell, UpdateSourceTrigger=PropertyChanged}" />
                 </HeaderedContentControl>
+                <HeaderedContentControl Header="{x:Static p:Resources.prop_access}">
+                    <ComboBox ItemsSource="{Binding Source={StaticResource dataFromEnumAccess}}" SelectedItem="{Binding Access, Mode=TwoWay}" />
+                </HeaderedContentControl>
             </StackPanel>
         </DataTemplate>
         <DataTemplate x:Key="TempDynChannel">
