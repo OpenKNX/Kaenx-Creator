@@ -88,7 +88,7 @@
                     <DatePicker SelectedDate="{Binding TimeStamp}" />
                 </HeaderedContentControl>
 
-                <Image Source="{Binding Source}" Margin="5" Stretch="Uniform" ImageFailed="Failed" MaxHeight="250" />
+                <Image Source="{Binding Source}" Margin="5" Stretch="None" MaxHeight="250" MaxWidth="250" />
             </StackPanel>
         </ScrollViewer>
     </Grid>

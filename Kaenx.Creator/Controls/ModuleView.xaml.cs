@@ -15,9 +15,16 @@ namespace Kaenx.Creator.Controls
     public partial class ModuleView : UserControl, INotifyPropertyChanged
     {
         public static readonly System.Windows.DependencyProperty VersionProperty = System.Windows.DependencyProperty.Register("Version", typeof(AppVersion), typeof(ModuleView), new System.Windows.PropertyMetadata(OnVersionChangedCallback));
-        public AppVersion Version {
+        public static readonly DependencyProperty IconsProperty = DependencyProperty.Register("Icons", typeof(ObservableCollection<Icon>), typeof(ModuleView), new PropertyMetadata());
+        public AppVersion Version
+        {
             get { return (AppVersion)GetValue(VersionProperty); }
             set { SetValue(VersionProperty, value); }
+        }
+        public ObservableCollection<Icon> Icons
+        {
+            get { return (ObservableCollection<Icon>)GetValue(IconsProperty); }
+            set { SetValue(IconsProperty, value); }
         }
 
         private int _currentIndex = 0;

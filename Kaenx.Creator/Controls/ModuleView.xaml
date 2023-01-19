@@ -424,7 +424,7 @@
             </TabItem>
 
             <TabItem Header="{x:Static p:Resources.tabs_dyn}" Style="{StaticResource LeftTabItem2}">
-                <ctrl:DynamicView Version="{Binding .}" Module="{Binding SelectedItem, ElementName=ModuleList}" />
+                <ctrl:DynamicView Version="{Binding .}" Module="{Binding SelectedItem, ElementName=ModuleList}" Icons="{Binding Icons, ElementName=ViewControl}" />
             </TabItem>
 
             <TabItem Header="SubModule" Style="{StaticResource LeftTabItem2}">
