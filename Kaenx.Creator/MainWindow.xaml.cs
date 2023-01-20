@@ -98,6 +98,9 @@ namespace Kaenx.Creator
             MenuDebug.IsChecked = Properties.Settings.Default.isDebug;
             MenuUpdate.IsChecked = Properties.Settings.Default.autoUpdate;
             if(Properties.Settings.Default.autoUpdate) AutoCheckUpdate();
+
+            if(!string.IsNullOrEmpty(App.FilePath))
+                DoOpen(App.FilePath);
         }
 
         private async void AutoCheckUpdate()
@@ -937,6 +940,8 @@ namespace Kaenx.Creator
 
         private void DoOpen(string path)
         {
+            if(!File.Exists(path)) return;
+            
             string general = System.IO.File.ReadAllText(path);
 
             System.Text.RegularExpressions.Regex reg = new System.Text.RegularExpressions.Regex("\"ImportVersion\":[ ]?([0-9]+)");
