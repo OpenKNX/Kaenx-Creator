@@ -74,8 +74,12 @@
                     <Run Text="{Binding UId}"/>
                 </TextBlock>
 
+                <HeaderedContentControl Header="Zuletzt geändert am:">
+                    <TextBlock Text="{Binding LastModifiedDisplay}" />
+                </HeaderedContentControl>
+        
                 <HeaderedContentControl Header="{x:Static p:Resources.prop_name}">
-                    <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
                 </HeaderedContentControl>
 
                 <Button Content="{x:Static p:Resources.bagg_file}" Click="ClickChangeFile" />

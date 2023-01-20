@@ -621,6 +621,21 @@ namespace Kaenx.Creator.Classes {
                 }
             }
         
+            
+            var x = vbase.ComObjects.GroupBy((c) => c.Number);
+            if(x.Any((c) => c.Count() > 1))
+            {
+                actions.Add(new PublishAction() { Text = $"    Kommunikationsobjekt-Nummern sind nicht eindeutig. IDs werden aufsteigend vergeben.", State = PublishState.Warning });
+            } else 
+            {
+                foreach(ComObject com in vbase.ComObjects)
+                {
+                    com.Id = com.Number;
+                }
+            }
+
+
+
             foreach(ComObject com in vbase.ComObjects) {
                 if(com.HasDpt && com.Type == null) actions.Add(new PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Kein DataPointType angegeben", State = PublishState.Fail, Item = com, Module = mod });
                 if(com.HasDpt && com.Type != null && com.Type.Number == "0") actions.Add(new PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Keine Angabe des DPT nur bei Refs", State = PublishState.Fail, Item = com, Module = mod });
@@ -984,36 +999,16 @@ namespace Kaenx.Creator.Classes {
                     }
                 }
             }
-
-        /*    
-        0Text,
-        1Enum,
-        2NumberUInt,
-        3NumberInt,
-        4Float_DPT9,
-        5Float_IEEE_Single,
-        6Float_IEEE_Double,
-        7Picture,
-        8None,
-        9IpAddress,
-        10Color
-
-        
-        0Color,
-        1Date,
-        2Enum,
-        3Float_DPT9,
-        4Float_IEEE_Single,
-        5Float_IEEE_Double,
-        6IpAddress,
-        7None,
-        8NumberUInt,
-        9NumberInt,
-        10Picture,
-        11RawData,
-        12Text
-        */
             
+            if(version < 4)
+            {
+                gen["Guid"] = Guid.NewGuid().ToString();
+                foreach(JObject icon in gen["Icons"])
+                {
+                    icon["LastModified"] = DateTime.Now.ToString("o");
+                }
+            }
+
             return gen.ToString();
         }
 

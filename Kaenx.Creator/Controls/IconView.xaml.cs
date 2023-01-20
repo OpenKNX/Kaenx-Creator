@@ -120,7 +120,6 @@ namespace Kaenx.Creator.Controls
 
                     zip.Dispose();
                 }
-                
             }
         }
 
@@ -153,11 +152,6 @@ namespace Kaenx.Creator.Controls
                 }
                 
             }
-        }
-        
-        private void Failed(object sender, System.Windows.ExceptionRoutedEventArgs e)
-        {
-
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

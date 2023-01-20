@@ -318,6 +318,9 @@
                             <Setter Property="Margin" Value="5" />
                         </Style>
                     </StackPanel.Resources>
+                    <HeaderedContentControl Header="Aktuelle GUID">
+                        <TextBlock Text="{Binding General.Guid}" />
+                    </HeaderedContentControl>
                     <HeaderedContentControl Header="{x:Static p:Resources.tgen_manu}">
                         <TextBox Text="{Binding General.ManufacturerId, UpdateSourceTrigger=PropertyChanged}" />
                     </HeaderedContentControl>
@@ -1088,7 +1091,7 @@
 
 
                     <TabItem Header="{x:Static p:Resources.tabs_module}" Visibility="{Binding IsModulesActive, Converter={StaticResource BoolToVis}}" Style="{StaticResource LeftTabItem}">
-                        <ctrl:ModuleView Version="{Binding .}" />
+                        <ctrl:ModuleView Version="{Binding .}" Icons="{Binding General.Icons, ElementName=ViewControl}" />
                     </TabItem>
 
                     <TabItem Header="{x:Static p:Resources.tabs_paras}" Style="{StaticResource LeftTabItem}">

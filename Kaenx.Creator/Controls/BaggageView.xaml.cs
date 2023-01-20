@@ -76,7 +76,6 @@ namespace Kaenx.Creator.Controls
                 Baggage bag = (sender as Button).DataContext as Baggage;
                 bag.Data = AutoHelper.GetFileBytes(diag.FileName);
                 bag.Extension = Path.GetExtension(diag.FileName).ToLower();
-                bag.TimeStamp = DateTime.Now;
                 System.Windows.MessageBox.Show("Datei wurde erfolgreich geändert.");
                 BaggageList.SelectedItem = null;
                 BaggageList.SelectedItem = bag;

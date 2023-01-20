@@ -74,6 +74,10 @@
                     <Run Text="{Binding UId}"/>
                 </TextBlock>
 
+                <HeaderedContentControl Header="Zuletzt geändert am:">
+                    <TextBlock Text="{Binding LastModifiedDisplay}" />
+                </HeaderedContentControl>
+        
                 <HeaderedContentControl Header="{x:Static p:Resources.prop_name}">
                     <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
                 </HeaderedContentControl>
@@ -84,11 +88,7 @@
 
                 <Button Content="{x:Static p:Resources.bagg_file}" Click="ClickChangeFile" />
 
-                <HeaderedContentControl Header="{x:Static p:Resources.bagg_timestamp}">
-                    <DatePicker SelectedDate="{Binding TimeStamp}" />
-                </HeaderedContentControl>
-
-                <Image Source="{Binding Source}" Margin="5" Stretch="None" MaxHeight="250" MaxWidth="250" />
+                <Image Source="{Binding Source}" Margin="5" Stretch="Uniform" MaxHeight="250" MaxWidth="250" />
             </StackPanel>
         </ScrollViewer>
     </Grid>

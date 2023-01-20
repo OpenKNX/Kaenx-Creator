@@ -196,7 +196,7 @@ namespace Kaenx.Creator.Classes
 
                 if(!supportedExtensions.Contains(bag.Extension) || _general.Baggages.Any(b => b.Name == bag.Name && b.TargetPath == bag.TargetPath)) continue;
 
-                bag.TimeStamp = DateTime.Parse(xbag.Element(Get("FileInfo")).Attribute("TimeInfo").Value);
+                bag.LastModified = DateTime.Parse(xbag.Element(Get("FileInfo")).Attribute("TimeInfo").Value);
                 
                 string path = $"{bag.Name}{bag.Extension}";
                 if(!string.IsNullOrEmpty(bag.TargetPath)) path = $"{bag.TargetPath}/{path}";

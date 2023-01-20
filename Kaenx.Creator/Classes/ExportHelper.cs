@@ -80,7 +80,7 @@ namespace Kaenx.Creator.Classes
             Dictionary<string, string> ProductIds = new Dictionary<string, string>();
             Dictionary<string, string> HardwareIds = new Dictionary<string, string>();
             List<Baggage> baggagesManu = new List<Baggage>();
-            List<Icon> iconsManu = new List<Icon>();
+            bool exportIcons = false;
 
             #region XML Applications
             Debug.WriteLine($"Exportiere Applikationen: {vers.Count}x");
@@ -242,7 +242,8 @@ namespace Kaenx.Creator.Classes
                                 if(enu.UseIcon)
                                 {
                                     xenu.SetAttributeValue("Icon", enu.IconObject.Name);
-                                    iconsApp.Add(enu.IconObject);
+                                    if(!iconsApp.Contains(enu.IconObject))
+                                        iconsApp.Add(enu.IconObject);
                                 }
                             }
                             break;
@@ -538,28 +539,24 @@ namespace Kaenx.Creator.Classes
 
                 if(iconsApp.Count > 0)
                 {
+                    string zipName = "Icons_" + general.GetGuid();
                     Baggage bag = new Baggage() {
-                        Name = "Icons",
+                        Name = zipName,
                         Extension = ".zip",
-                        TimeStamp = DateTime.Now
+                        LastModified = DateTime.Now
                     };
                     baggagesManu.Add(bag);
                     if(ver.NamespaceVersion == 14)
                     {
-                        xapp.SetAttributeValue("IconFile", "Icons.zip");
+                        xapp.SetAttributeValue("IconFile", $"{zipName}.zip");
                     } else {
-                        xapp.SetAttributeValue("IconFile", $"{Manu}_BG--Icons.2Ezip");
+                        xapp.SetAttributeValue("IconFile", $"{Manu}_BG--{GetEncoded($"{zipName}.zip")}");
                     }
 
                     XElement xbag = new XElement(Get("Baggage"));
-                    xbag.SetAttributeValue("RefId", $"M-{general.ManufacturerId:X4}_BG--{GetEncoded("Icons.zip")}");
+                    xbag.SetAttributeValue("RefId", $"M-{general.ManufacturerId:X4}_BG--{GetEncoded($"{zipName}.zip")}");
                     xextension.Add(xbag);
-
-                    foreach(Icon icon in iconsApp)
-                    {
-                        if(!iconsManu.Contains(icon))
-                            iconsManu.Add(icon);
-                    }
+                    exportIcons = true;
                 }
                 
                 if(!xextension.HasElements)
@@ -828,7 +825,7 @@ namespace Kaenx.Creator.Classes
 
                     XElement xinfo = new XElement(Get("FileInfo"));
                     //xinfo.SetAttributeValue("TimeInfo", "2022-01-28T13:55:35.2905057Z");
-                    string time = bag.TimeStamp.ToString("O");
+                    string time = bag.LastModified.ToString("O");
                     if (time.Contains("+"))
                         time = time.Substring(0, time.LastIndexOf("+"));
                     xinfo.SetAttributeValue("TimeInfo", time + "Z");
@@ -840,7 +837,10 @@ namespace Kaenx.Creator.Classes
                         Directory.CreateDirectory(GetRelPath("Temp", Manu, "Baggages", bag.TargetPath));
 
                     if(bag.Data != null)
+                    {
                         File.WriteAllBytes(GetRelPath("Temp", Manu, "Baggages", bag.TargetPath, bag.Name + bag.Extension), bag.Data);
+                        File.SetLastWriteTime(GetRelPath("Temp", Manu, "Baggages", bag.TargetPath, bag.Name + bag.Extension), bag.LastModified);
+                    }
                 }
 
                 xmanu.Add(xbags);
@@ -850,12 +850,13 @@ namespace Kaenx.Creator.Classes
                 Debug.WriteLine($"Exportiere keine Baggages");
             }
 
-            if(iconsManu.Count > 0)
+            if(exportIcons)
             {
-                using (var stream = new FileStream(GetRelPath("Temp", Manu, "Baggages", "Icons.zip"), FileMode.Create))
+                string zipName = "Icons_" + general.GetGuid() + ".zip";
+                using (var stream = new FileStream(GetRelPath("Temp", Manu, "Baggages", zipName), FileMode.Create))
                     using (var archive = new ZipArchive(stream , ZipArchiveMode.Create, false,  System.Text.Encoding.GetEncoding(850)))
                     {
-                        foreach(Icon icon in iconsManu)
+                        foreach(Icon icon in general.Icons)
                         {
                             ZipArchiveEntry entry = archive.CreateEntry(icon.Name + ".png");
                             using(Stream s = entry.Open())
@@ -864,6 +865,9 @@ namespace Kaenx.Creator.Classes
                             }
                         }
                     }
+
+                DateTime last = general.Icons.OrderByDescending(i => i.LastModified).First().LastModified;
+                File.SetLastWriteTime(GetRelPath("Temp", Manu, "Baggages", zipName), last);
             }
             
 
@@ -1004,7 +1008,7 @@ namespace Kaenx.Creator.Classes
                 Baggage bag = new Baggage() {
                     Name = "HelpFile_" + lang.CultureCode,
                     Extension = ".zip",
-                    TimeStamp = DateTime.Now
+                    LastModified = DateTime.Now
                 };
                 if(!baggagesManu.Contains(bag))
                     baggagesManu.Add(bag);

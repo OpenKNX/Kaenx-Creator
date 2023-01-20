@@ -76,7 +76,7 @@ namespace Kaenx.Creator
             new Models.EtsVersion(21, "ETS 6.0 (21)", "6.0")
         };
         
-        private int VersionCurrent = 3;
+        private int VersionCurrent = 4;
 
 
         public MainWindow()
@@ -259,7 +259,7 @@ namespace Kaenx.Creator
 
         private void ClickNew(object sender, RoutedEventArgs e)
         {
-            General = new Models.ModelGeneral() { ImportVersion = VersionCurrent };
+            General = new Models.ModelGeneral() { ImportVersion = VersionCurrent, Guid = Guid.NewGuid().ToString() };
             General.Languages.Add(new Models.Language("Deutsch", "de-DE"));
             General.Catalog.Add(new Models.CatalogItem() { Name = "Hauptkategorie (wird nicht exportiert)" });
             SetButtons(true);

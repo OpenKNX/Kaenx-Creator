@@ -10,7 +10,7 @@ using System.Windows.Media.Imaging;
 
 namespace Kaenx.Creator.Models
 {
-    public class Baggage
+    public class Baggage : INotifyPropertyChanged
     {
         
         private int _uid = -1;
@@ -24,20 +24,38 @@ namespace Kaenx.Creator.Models
         public string Name
         {
             get { return _name; }
-            set { _name = value; Changed("Name"); }
+            set { _name = value; Changed("Name"); LastModified = DateTime.Now; }
         }
 
         public string Extension { get; set; }
-        public string TargetPath { get; set; } = "";
-        public DateTime TimeStamp { get; set; } = DateTime.Now;
+
+        private string _targetPath = "";
+        public string TargetPath
+        {
+            get { return _targetPath; }
+            set { _targetPath = value; Changed("TargetPath"); LastModified = DateTime.Now; }
+        }
 
         private bool _dataChanged;
         private byte[] _data;
         public byte[] Data
         {
             get { return _data; }
-            set { _dataChanged = true; _data = value; }
+            set { _dataChanged = true; _data = value; LastModified = DateTime.Now; }
         }
+        
+        private DateTime _modified;
+        public DateTime LastModified
+        {
+            get { return _modified; }
+            set { _modified = value; Changed("LastModified"); Changed("LastModifiedDisplay"); }
+        }
+
+        public string LastModifiedDisplay
+        {
+            get { return LastModified.ToString("G", System.Threading.Thread.CurrentThread.CurrentCulture); }
+        }
+
 
         BitmapImage image;
         MemoryStream ms = null;
