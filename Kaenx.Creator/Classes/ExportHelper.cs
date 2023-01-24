@@ -910,16 +910,23 @@ namespace Kaenx.Creator.Classes
                 XElement xunderapp = new XElement(Get(subName));
                 xparent.Add(xunderapp);
 
+                int counter = 0;
+
                 foreach (Models.Module mod in Modules)
                 {
+                    counter++;
+                    mod.Id = counter;
                     headers.AppendLine("//-----Module: " + mod.Name);
                     //if (mod.Id == -1)
                     //    mod.Id = AutoHelper.GetNextFreeId(vers, "Modules");
 
+                    XElement temp = new XElement(Get("Arguments"));
+                    XElement xmod = new XElement(Get("ModuleDef"), temp);
+                    xmod.SetAttributeValue("Name", mod.Name);
 
                     appVersionMod = $"{modVersion}_{(depth == 0 ? "MD" : "SM")}-{mod.Id}";
+                    xmod.SetAttributeValue("Id", $"{appVersionMod}");
 
-                    XElement temp = new XElement(Get("Arguments"));
                     foreach (Models.Argument arg in mod.Arguments)
                     {
                         XElement xarg = new XElement(Get("Argument"));
@@ -930,13 +937,10 @@ namespace Kaenx.Creator.Classes
                         xarg.SetAttributeValue("Allocates", arg.Allocates);
                         temp.Add(xarg);
                     }
-                    XElement xmod = new XElement(Get("ModuleDef"), temp);
                     XElement xunderstatic = new XElement(Get("Static"));
                     xmod.Add(xunderstatic);
                     xunderapp.Add(xmod);
 
-                    xmod.SetAttributeValue("Id", $"{appVersion}_MD-{mod.Id}");
-                    xmod.SetAttributeValue("Name", mod.Name);
 
                     ExportParameters(mod, xunderstatic, headers);
                     ExportParameterRefs(mod, xunderstatic);
@@ -1560,7 +1564,7 @@ namespace Kaenx.Creator.Classes
 
                 if(arg.UseAllocator)
                 {
-                    xarg.SetAttributeValue("AllocatorRefId", $"{appVersionMod}_L-{arg.Allocator.Id}");
+                    xarg.SetAttributeValue("AllocatorRefId", $"{appVersion}_L-{arg.Allocator.Id}");
                 } else {
                     xarg.SetAttributeValue("Value", arg.Value);
                 }
@@ -1900,7 +1904,7 @@ namespace Kaenx.Creator.Classes
             }
         }
 
-        public void SignOutput()
+        public async void SignOutput()
         {
             string manu = $"M-{general.ManufacturerId:X4}";
 
@@ -1936,7 +1940,23 @@ namespace Kaenx.Creator.Classes
             CatalogIdPatcher cip = new CatalogIdPatcher(catalogFileInfo, hardware2ProgramIdMapping, convPath, nsVersion);
             cip.Patch();
 
-            File.Copy(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "knx_master.xml"), GetRelPath("Temp", "knx_master.xml"));
+            if(!File.Exists(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "knx_master_" + nsVersion + ".xml")))
+            {
+                try{
+                    System.Net.Http.HttpClient client = new System.Net.Http.HttpClient();
+                    Stream down = await client.GetStreamAsync($"https://update.knx.org/data/XML/project-{nsVersion}/knx_master.xml");
+                    Stream file = File.OpenWrite(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", $"knx_master_{nsVersion}.xml"));
+                    await down.CopyToAsync(file);
+                    file.Close();
+                    file.Dispose();
+                    down.Close();
+                    down.Dispose();
+                } catch{
+                    throw new Exception("knx_master.xml konnte nicht herunter geladen werden.");
+                }
+            }
+
+            File.Copy(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", $"knx_master_{nsVersion}.xml"), GetRelPath("Temp", "knx_master.xml"));
 
             XmlSigning.SignDirectory(GetRelPath("Temp", manu), convPath);
 

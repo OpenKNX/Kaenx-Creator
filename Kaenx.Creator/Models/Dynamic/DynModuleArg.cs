@@ -44,7 +44,7 @@ namespace Kaenx.Creator.Models.Dynamic
         public Models.Allocator Allocator
         {
             get { return _alloc; }
-            set { _alloc = value; Changed("Allocator"); }
+            set { if(value == null) return; _alloc = value; Changed("Allocator"); }
         }
 
         [JsonIgnore]

@@ -427,7 +427,7 @@
                 <ctrl:DynamicView Version="{Binding .}" Module="{Binding SelectedItem, ElementName=ModuleList}" Icons="{Binding Icons, ElementName=ViewControl}" />
             </TabItem>
 
-            <TabItem Header="SubModule" Style="{StaticResource LeftTabItem2}">
+            <TabItem IsEnabled="false" Header="SubModule" Style="{StaticResource LeftTabItem2}">
                 <Button Content="SubModules anzeigen!" Click="OnOpenSubModules" Margin="50" />
             </TabItem>
         </TabControl>

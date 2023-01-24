@@ -505,23 +505,10 @@ namespace Kaenx.Creator.Classes
     
         public static void CheckIds(AppVersion version)
         {
-            counterBlock = 1;
-            counterSeparator = 1;
-
             CheckIdsModule(version, version);
-            CheckDynamicIds(version.Dynamics[0]);
-
-            foreach(Module mod in version.Modules)
-            {
-                if(mod.Id == -1) mod.Id = GetNextFreeId(version, "Modules");
-                counterBlock = 1;
-                counterSeparator = 1;
-                CheckIdsModule(version, mod);
-                CheckDynamicIds(mod.Dynamics[0]);
-            }
         }
 
-        private static void CheckIdsModule(AppVersion version, IVersionBase vbase)
+        private static void CheckIdsModule(AppVersion version, IVersionBase vbase, IVersionBase vparent = null)
         {
             foreach(Parameter para in vbase.Parameters)
                 if(para.Id == -1) para.Id = GetNextFreeId(vbase, "Parameters");
@@ -537,9 +524,19 @@ namespace Kaenx.Creator.Classes
 
             if(vbase is Module mod)
             {
+                if(mod.Id == -1)
+                    mod.Id = GetNextFreeId(vparent, "Modules");
+
                 foreach(Argument arg in mod.Arguments)
                     if(arg.Id == -1) arg.Id = GetNextFreeId(vbase, "Arguments");
             }
+
+            counterBlock = 1;
+            counterSeparator = 1;
+            CheckDynamicIds(version.Dynamics[0]);
+
+            foreach(Models.Module xmod in vbase.Modules)
+                CheckIdsModule(version, xmod, vbase);
         }
 
 

@@ -324,13 +324,6 @@ namespace Kaenx.Creator.Classes {
             if(General != null)
                 CheckLanguages(vers, actions, General, devices);
 
-            foreach(Module mod in vers.Modules)
-            {
-                actions.Add(new PublishAction() { Text = $"Prüfe Module '{mod.Name}'" });
-                CheckVersion(vers, mod, actions, vers.DefaultLanguage, vers.NamespaceVersion, showOnlyErrors);
-                //TODO check for Argument exist
-            }
-
             if (app.Mask.Procedure != ProcedureTypes.Default)
             {
                 XElement temp = XElement.Parse(vers.Procedure);
@@ -716,6 +709,15 @@ namespace Kaenx.Creator.Classes {
             //TODO check union size fits parameter+offset
 
             CheckDynamicItem(vbase.Dynamics[0], actions, ns, showOnlyErrors, mod);
+
+            
+            foreach(Module xmod in vbase.Modules)
+            {
+                actions.Add(new PublishAction() { Text = $"Prüfe Module '{xmod.Name}'" });
+                CheckVersion(ver, xmod, actions, ver.DefaultLanguage, ver.NamespaceVersion, showOnlyErrors);
+                //TODO check for Argument exist
+            }
+
         }
 
         private static void CheckLanguages(AppVersion vers,  ObservableCollection<PublishAction> actions, ModelGeneral general, List<Device> devices)
@@ -797,6 +799,8 @@ namespace Kaenx.Creator.Classes {
                         
                     if(dm.Arguments.Any(a => !a.UseAllocator && string.IsNullOrEmpty(a.Value)))
                         actions.Add(new PublishAction() { Text = $"    DynModule {dm.Name} hat Argumente, die leer sind", State = PublishState.Fail});
+                    if(dm.Arguments.Any(a => a.UseAllocator && a.Allocator == null))
+                        actions.Add(new PublishAction() { Text = $"    DynModule {dm.Name} muss ein Allocator zugewiesen werden", State = PublishState.Fail});
                     if(dm.Arguments.Any(a => a.Argument.Type != ArgumentTypes.Numeric && a.UseAllocator))
                         actions.Add(new PublishAction() { Text = $"    DynModule {dm.Name} hat Argumente, die einen Allocator verwenden, aber nicht Numeric sind", State = PublishState.Fail});
                     break;
