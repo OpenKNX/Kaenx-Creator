@@ -1121,7 +1121,8 @@ namespace Kaenx.Creator
         private void ClickCalcHeatmap(object sender, RoutedEventArgs e)
         {
             Models.Memory mem = (sender as Button).DataContext as Models.Memory;
-            Models.Application app = _general.Applications.Single(a => a.Versions.Any(v => v.Name == SelectedVersion.Model.Name && v.Number == SelectedVersion.Model.Number));
+            //Models.Application app = _general.Applications.Single(a => a.Versions.Any(v => v.Name == SelectedVersion.Model.Name && v.Number == SelectedVersion.Model.Number));
+            Models.Application app = _general.Applications.Single(a => a.Versions.Contains(SelectedVersion));
             CheckHelper.CheckVersion(null, app, SelectedVersion.Model, null, new ObservableCollection<Models.PublishAction>());
             AutoHelper.MemoryCalculation(SelectedVersion.Model, mem);
         }

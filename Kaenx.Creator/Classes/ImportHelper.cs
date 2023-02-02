@@ -286,7 +286,7 @@ namespace Kaenx.Creator.Classes
             currentVers = new AppVersion()
             {
                 Number = versNumber,
-                Name = "Imported",
+                Name = xapp.Attribute("Name")?.Value ?? "Imported",
                 IsParameterRefAuto = false,
                 IsComObjectRefAuto = false,
                 IsMemSizeAuto = false,
