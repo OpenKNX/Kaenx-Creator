@@ -458,7 +458,7 @@ namespace Kaenx.Creator.Classes
                     headers.AppendLine("//---------------------Modules----------------------------");
                 }
 
-                ExportModules(xapp, ver, ver.Modules, appVersion, headers);
+                ExportModules(xapp, ver, ver.Modules, appVersion, headers, appVersion);
                 appVersionMod = appVersion;
 
                 List<DynModule> mods = new List<DynModule>();
@@ -881,7 +881,7 @@ namespace Kaenx.Creator.Classes
             return name.Replace(' ', '_').Replace('-', '_');
         }
 
-        private void ExportModules(XElement xparent, AppVersion ver, ObservableCollection<Models.Module> Modules, string modVersion, StringBuilder headers, int depth = 0)
+        private void ExportModules(XElement xparent, AppVersion ver, ObservableCollection<Models.Module> Modules, string modVersion, StringBuilder headers, string moduleName, int depth = 0)
         {
             /*if(ver.Allocators.Count > 0)
             {
@@ -925,6 +925,7 @@ namespace Kaenx.Creator.Classes
                     xmod.SetAttributeValue("Name", mod.Name);
 
                     appVersionMod = $"{modVersion}_{(depth == 0 ? "MD" : "SM")}-{mod.Id}";
+                    string newModVersion = appVersionMod;
                     xmod.SetAttributeValue("Id", $"{appVersionMod}");
 
                     foreach (Models.Argument arg in mod.Arguments)
@@ -967,8 +968,9 @@ namespace Kaenx.Creator.Classes
                             xallocs.Add(xalloc);
                         }
                     }
-                    ExportModules(xmod, ver, mod.Modules, appVersionMod, headers, depth + 1);
+                    ExportModules(xmod, ver, mod.Modules, appVersionMod, headers, newModVersion, depth + 1);
 
+                    appVersionMod = $"{modVersion}_{(depth == 0 ? "MD" : "SM")}-{mod.Id}";
                     
                     XElement xmoddyn = new XElement(Get("Dynamic"));
                     xmod.Add(xmoddyn);
@@ -976,6 +978,8 @@ namespace Kaenx.Creator.Classes
                     HandleSubItems(mod.Dynamics[0], xmoddyn, ver);
 
                     headers.AppendLine("");
+
+                    appVersionMod = modVersion;
                 }
             }
         }
@@ -1549,8 +1553,8 @@ namespace Kaenx.Creator.Classes
             XElement xmod = new XElement(Get("Module"));
             if(mod.Id == -1)
                 mod.Id = moduleCounter++;
-            xmod.SetAttributeValue("Id", $"{appVersion}_MD-{mod.ModuleObject.Id}_M-{mod.Id}");
-            xmod.SetAttributeValue("RefId", $"{appVersion}_MD-{mod.ModuleObject.Id}");
+            xmod.SetAttributeValue("Id", $"{appVersionMod}_{(appVersionMod.Contains("_MD-") ? "SM":"MD")}-{mod.ModuleObject.Id}_M-{mod.Id}");
+            xmod.SetAttributeValue("RefId", $"{appVersionMod}_MD-{mod.ModuleObject.Id}");
 
             int argCounter = 1;
             foreach(DynModuleArg arg in mod.Arguments)
@@ -1951,7 +1955,10 @@ namespace Kaenx.Creator.Classes
                     file.Dispose();
                     down.Close();
                     down.Dispose();
-                } catch{
+                } catch (Exception ex){
+                    System.Windows.MessageBox.Show(ex.Message, "Fehler beim herunterladen");
+                    if(ex.InnerException != null)
+                        System.Windows.MessageBox.Show(ex.InnerException.Message, "InnerException");
                     throw new Exception("knx_master.xml konnte nicht herunter geladen werden.");
                 }
             }

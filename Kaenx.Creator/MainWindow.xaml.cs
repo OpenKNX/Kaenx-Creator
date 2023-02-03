@@ -1142,8 +1142,7 @@ namespace Kaenx.Creator
                             item.App = app;
                             item.Version = ver;
                             Exports.Add(item);
-                        } else
-                        {
+                        } else {
                             foreach (Models.AppVersionModel ver in app.Versions)
                             {
                                 Models.ExportItem item = new Models.ExportItem();
