@@ -1959,7 +1959,7 @@ namespace Kaenx.Creator.Classes
                     System.Windows.MessageBox.Show(ex.Message, "Fehler beim herunterladen");
                     if(ex.InnerException != null)
                         System.Windows.MessageBox.Show(ex.InnerException.Message, "InnerException");
-                    throw new Exception("knx_master.xml konnte nicht herunter geladen werden.");
+                    throw new Exception("knx_master.xml konnte nicht herunter geladen werden.", ex);
                 }
             }
 

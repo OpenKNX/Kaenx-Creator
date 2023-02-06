@@ -386,6 +386,14 @@ namespace Kaenx.Creator.Classes {
                     actions.Add(new PublishAction() { Text = $"    Modul ({mod.Name}): ComObjectBaseNumber Argument ist nicht vom Typ Numeric", State = PublishState.Fail });
             }
 
+            if(vbase.Dynamics[0].Items.Count == 0)
+            {
+                string name = "AppVersion";
+                if(mod != null)
+                    name = $"Modul {mod.Name}";
+                actions.Add(new PublishAction() { Text = $"    {name}: Dynamic enthält keine Elemente", State = PublishState.Fail });
+            }
+
             foreach(Parameter para in vbase.Parameters) {
                 if(para.ParameterTypeObject == null) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Kein ParameterTyp ausgewählt", State = PublishState.Fail, Item = para, Module = mod });
                 else {
@@ -619,8 +627,7 @@ namespace Kaenx.Creator.Classes {
             if(x.Any((c) => c.Count() > 1))
             {
                 actions.Add(new PublishAction() { Text = $"    Kommunikationsobjekt-Nummern sind nicht eindeutig. IDs werden aufsteigend vergeben.", State = PublishState.Warning });
-            } else 
-            {
+            } else {
                 foreach(ComObject com in vbase.ComObjects)
                 {
                     com.Id = com.Number;

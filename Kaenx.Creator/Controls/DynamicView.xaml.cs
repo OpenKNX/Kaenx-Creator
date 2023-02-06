@@ -354,8 +354,8 @@ namespace Kaenx.Creator.Controls
 
 
 
-            (menu.Items[14] as MenuItem).IsEnabled = _copyItem != null;
-            (menu.Items[15] as MenuItem).IsEnabled = type != "DynamicMain" && type != "DynamicModule";
+            (menu.Items[15] as MenuItem).IsEnabled = _copyItem != null;
+            (menu.Items[16] as MenuItem).IsEnabled = type != "DynamicMain" && type != "DynamicModule";
         }
 
 

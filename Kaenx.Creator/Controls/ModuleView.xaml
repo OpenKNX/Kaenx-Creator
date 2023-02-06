@@ -428,9 +428,28 @@
             </TabItem>
 
             <TabItem Header="SubModule" Style="{StaticResource LeftTabItem2}">
-                <Button Content="SubModules anzeigen!" Click="OnOpenSubModules" Margin="50" />
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+
+                    <Button Content="SubModules bearbeiten" Click="OnOpenSubModules" Margin="50 0" />
+                    
+                    <ItemsControl Grid.Row="1" ItemsSource="{Binding SelectedItem.Modules, ElementName=ModuleList}" Margin="50 20">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Name}" Margin="0 3" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
+                </Grid>
             </TabItem>
         </TabControl>
     </Grid>
-    
 </UserControl>
