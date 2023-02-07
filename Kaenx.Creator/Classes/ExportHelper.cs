@@ -80,7 +80,7 @@ namespace Kaenx.Creator.Classes
             Dictionary<string, string> ProductIds = new Dictionary<string, string>();
             Dictionary<string, string> HardwareIds = new Dictionary<string, string>();
             List<Baggage> baggagesManu = new List<Baggage>();
-            List<Icon> iconsManu = new List<Icon>();
+            bool exportIcons = false;
 
             #region XML Applications
             Debug.WriteLine($"Exportiere Applikationen: {vers.Count}x");
@@ -242,7 +242,8 @@ namespace Kaenx.Creator.Classes
                                 if(enu.UseIcon)
                                 {
                                     xenu.SetAttributeValue("Icon", enu.IconObject.Name);
-                                    iconsApp.Add(enu.IconObject);
+                                    if(!iconsApp.Contains(enu.IconObject))
+                                        iconsApp.Add(enu.IconObject);
                                 }
                             }
                             break;
@@ -425,6 +426,9 @@ namespace Kaenx.Creator.Classes
                 XElement xscript = new XElement(Get("Script"), "");
                 xunderapp.Add(xscript);
 
+                
+                #region Modules
+
                 if(ver.Allocators.Count > 0)
                 {
                     XElement xallocs = new XElement(Get("Allocators"));
@@ -446,74 +450,16 @@ namespace Kaenx.Creator.Classes
                     }
                 }
 
-                #region ModuleDefines
+
+
                 if(ver.Modules.Count > 0)
                 {
-                    xunderapp = new XElement(Get("ModuleDefs"));
-                    xapp.Add(xunderapp);
-
-                    foreach (Models.Module mod in ver.Modules)
-                    {
-                        if (mod.Id == -1)
-                            mod.Id = AutoHelper.GetNextFreeId(ver, "Modules");
-
-                        appVersionMod += $"_MD-{mod.Id}";
-
-                        temp = new XElement(Get("Arguments"));
-                        foreach (Models.Argument arg in mod.Arguments)
-                        {
-                            XElement xarg = new XElement(Get("Argument"));
-                            if (arg.Id == -1)
-                                arg.Id = AutoHelper.GetNextFreeId(mod, "Arguments");
-                            xarg.SetAttributeValue("Id", $"{appVersionMod}_A-{arg.Id}");
-                            xarg.SetAttributeValue("Name", arg.Name);
-                            if(arg.Allocates != 0)
-                                xarg.SetAttributeValue("Allocates", arg.Allocates);
-                            temp.Add(xarg);
-                        }
-                        XElement xmod = new XElement(Get("ModuleDef"), temp);
-                        XElement xunderstatic = new XElement(Get("Static"));
-                        xmod.Add(xunderstatic);
-                        xunderapp.Add(xmod);
-
-                        xmod.SetAttributeValue("Id", $"{appVersion}_MD-{mod.Id}");
-                        xmod.SetAttributeValue("Name", mod.Name);
-
-                        ExportParameters(mod, xunderstatic, null);
-                        ExportParameterRefs(mod, xunderstatic);
-                        ExportComObjects(mod, xunderstatic, null);
-                        ExportComObjectRefs(mod, ver, xunderstatic);
-
-                        if(mod.Allocators.Count > 0)
-                        {
-                            XElement xallocs = new XElement(Get("Allocators"));
-                            xunderstatic.Add(xallocs);
-                            
-                            foreach(Models.Allocator alloc in mod.Allocators)
-                            {
-                                XElement xalloc = new XElement(Get("Allocator"));
-
-                                if (alloc.Id == -1)
-                                    alloc.Id = AutoHelper.GetNextFreeId(mod, "Allocators");
-                                xalloc.SetAttributeValue("Id", $"{appVersionMod}_L-{alloc.Id}");
-                                xalloc.SetAttributeValue("Name", alloc.Name);
-                                xalloc.SetAttributeValue("Start", alloc.Start);
-                                xalloc.SetAttributeValue("maxInclusive", alloc.Max);
-                                //TODO errormessageid
-                                
-                                xallocs.Add(xalloc);
-                            }
-                        }
-
-                        
-                        XElement xmoddyn = new XElement(Get("Dynamic"));
-                        xmod.Add(xmoddyn);
-
-                        HandleSubItems(mod.Dynamics[0], xmoddyn, ver);
-
-                        appVersionMod = appVersion;
-                    }
+                    headers.AppendLine("");
+                    headers.AppendLine("//---------------------Modules----------------------------");
                 }
+
+                ExportModules(xapp, ver, ver.Modules, appVersion, headers, appVersion);
+                appVersionMod = appVersion;
 
                 List<DynModule> mods = new List<DynModule>();
                 AutoHelper.GetModules(ver.Dynamics[0], mods);
@@ -521,44 +467,54 @@ namespace Kaenx.Creator.Classes
                 if(mods.Count > 0)
                 {
                     headers.AppendLine("");
-                    headers.AppendLine("//---------------------Modules----------------------------");
+                    headers.AppendLine("//-----Module specific starts");
                 }
 
-                int counter = 1;
+                Dictionary<string, List<long>> modStartPara = new Dictionary<string, List<long>>();
+                Dictionary<string, List<long>> modStartComs = new Dictionary<string, List<long>>();
+                Dictionary<string, long> allocators = new Dictionary<string, long>();
                 foreach(DynModule dmod in mods)
                 {
+                    if(!modStartPara.ContainsKey(dmod.ModuleObject.Name))
+                        modStartPara.Add(dmod.ModuleObject.Name, new List<long>());
+                    if(!modStartComs.ContainsKey(dmod.ModuleObject.Name))
+                        modStartComs.Add(dmod.ModuleObject.Name, new List<long>());
+
                     DynModuleArg dargp = dmod.Arguments.Single(a => a.ArgumentId == dmod.ModuleObject.ParameterBaseOffsetUId);
-                    if(dargp.UseAllocator) continue; //TODO implement allocator
-                    
-                    int poffset = int.Parse(dargp.Value);
-                    foreach(Parameter para in dmod.ModuleObject.Parameters)
+                    if(dargp.UseAllocator)
                     {
-                        string line = $"#define PARAM_M{counter}_{HeaderNameEscape(para.Name)}";
-                        if(para.IsInUnion && para.UnionObject != null)
-                        {
-                            line += $"\t0x{(poffset + para.UnionObject.Offset + para.Offset).ToString("X4")}\t//!< UnionOffset: {poffset + para.UnionObject.Offset}, ParaOffset: {para.Offset}";
-                        } else {
-                            line += $"\t0x{(poffset + para.Offset).ToString("X4")}\t//!< Offset: {poffset + para.Offset}";
-                        }
-                        if (para.OffsetBit > 0) line += ", BitOffset: " + para.OffsetBit;
-                        line += $", Size: {para.ParameterTypeObject.SizeInBit} Bit";
-                        if (para.ParameterTypeObject.SizeInBit % 8 == 0) line += " (" + (para.ParameterTypeObject.SizeInBit / 8) + " Byte)";
-                        line += $", Module: {dmod.ModuleObject.Name}, Text: {GetDefaultLanguage(para.Text)}";
-                        headers.AppendLine(line);
+                        if(!allocators.ContainsKey(dargp.Allocator.Name))
+                            allocators.Add(dargp.Allocator.Name, dargp.Allocator.Start);
+
+                        modStartPara[dmod.ModuleObject.Name].Add(allocators[dargp.Allocator.Name]);
+
+                        allocators[dargp.Allocator.Name] += dargp.Argument.Allocates;
+                    } else {
+                        long poffset = long.Parse(dargp.Value);
+                        modStartPara[dmod.ModuleObject.Name].Add(poffset);
                     }
+                    
 
                     
                     DynModuleArg dargc = dmod.Arguments.Single(a => a.ArgumentId == dmod.ModuleObject.ComObjectBaseNumberUId);
-                    int coffset = int.Parse(dargc.Value);
-                    foreach(ComObject com in dmod.ModuleObject.ComObjects)
+                    if(dargc.UseAllocator)
                     {
-                        string line = $"#define COMOBJ_M{counter}_{HeaderNameEscape(com.Name)} \t{coffset + com.Number}\t//!< Number: {coffset + com.Number}, Module: {dmod.ModuleObject.Name}, Text: {GetDefaultLanguage(com.Text)}, Function: {GetDefaultLanguage(com.FunctionText)}";
-                        headers.AppendLine(line);
-                        
+                        if(!allocators.ContainsKey(dargc.Allocator.Name))
+                            allocators.Add(dargc.Allocator.Name, dargc.Allocator.Start);
+
+                        modStartComs[dmod.ModuleObject.Name].Add(allocators[dargc.Allocator.Name]);
+
+                        allocators[dargc.Allocator.Name] += dargc.Argument.Allocates;
+                    } else {
+                        int coffset = int.Parse(dargc.Value);
+                        modStartComs[dmod.ModuleObject.Name].Add(coffset);
                     }
-                    headers.AppendLine();
-                    counter++;
                 }
+
+                foreach(KeyValuePair<string, List<long>> item in modStartPara)
+                    headers.AppendLine($"const long mod_{HeaderNameEscape(item.Key)}_para[] = {{ {string.Join(',', item.Value)} }};");
+                foreach(KeyValuePair<string, List<long>> item in modStartComs)
+                    headers.AppendLine($"const long mod_{HeaderNameEscape(item.Key)}_coms[] = {{ {string.Join(',', item.Value)} }};");
 
                 System.IO.File.WriteAllText(GetRelPath(appVersion + ".h"), headers.ToString());
                 headers = null;
@@ -583,28 +539,24 @@ namespace Kaenx.Creator.Classes
 
                 if(iconsApp.Count > 0)
                 {
+                    string zipName = "Icons_" + general.GetGuid();
                     Baggage bag = new Baggage() {
-                        Name = "Icons",
+                        Name = zipName,
                         Extension = ".zip",
-                        TimeStamp = DateTime.Now
+                        LastModified = DateTime.Now
                     };
                     baggagesManu.Add(bag);
                     if(ver.NamespaceVersion == 14)
                     {
-                        xapp.SetAttributeValue("IconFile", "Icons.zip");
+                        xapp.SetAttributeValue("IconFile", $"{zipName}.zip");
                     } else {
-                        xapp.SetAttributeValue("IconFile", $"{Manu}_BG--Icons.2Ezip");
+                        xapp.SetAttributeValue("IconFile", $"{Manu}_BG--{GetEncoded($"{zipName}.zip")}");
                     }
 
                     XElement xbag = new XElement(Get("Baggage"));
-                    xbag.SetAttributeValue("RefId", $"M-{general.ManufacturerId:X4}_BG--{GetEncoded("Icons.zip")}");
+                    xbag.SetAttributeValue("RefId", $"M-{general.ManufacturerId:X4}_BG--{GetEncoded($"{zipName}.zip")}");
                     xextension.Add(xbag);
-
-                    foreach(Icon icon in iconsApp)
-                    {
-                        if(!iconsManu.Contains(icon))
-                            iconsManu.Add(icon);
-                    }
+                    exportIcons = true;
                 }
                 
                 if(!xextension.HasElements)
@@ -873,7 +825,7 @@ namespace Kaenx.Creator.Classes
 
                     XElement xinfo = new XElement(Get("FileInfo"));
                     //xinfo.SetAttributeValue("TimeInfo", "2022-01-28T13:55:35.2905057Z");
-                    string time = bag.TimeStamp.ToString("O");
+                    string time = bag.LastModified.ToString("O");
                     if (time.Contains("+"))
                         time = time.Substring(0, time.LastIndexOf("+"));
                     xinfo.SetAttributeValue("TimeInfo", time + "Z");
@@ -885,7 +837,10 @@ namespace Kaenx.Creator.Classes
                         Directory.CreateDirectory(GetRelPath("Temp", Manu, "Baggages", bag.TargetPath));
 
                     if(bag.Data != null)
+                    {
                         File.WriteAllBytes(GetRelPath("Temp", Manu, "Baggages", bag.TargetPath, bag.Name + bag.Extension), bag.Data);
+                        File.SetLastWriteTime(GetRelPath("Temp", Manu, "Baggages", bag.TargetPath, bag.Name + bag.Extension), bag.LastModified);
+                    }
                 }
 
                 xmanu.Add(xbags);
@@ -895,12 +850,13 @@ namespace Kaenx.Creator.Classes
                 Debug.WriteLine($"Exportiere keine Baggages");
             }
 
-            if(iconsManu.Count > 0)
+            if(exportIcons)
             {
-                using (var stream = new FileStream(GetRelPath("Temp", Manu, "Baggages", "Icons.zip"), FileMode.Create))
+                string zipName = "Icons_" + general.GetGuid() + ".zip";
+                using (var stream = new FileStream(GetRelPath("Temp", Manu, "Baggages", zipName), FileMode.Create))
                     using (var archive = new ZipArchive(stream , ZipArchiveMode.Create, false,  System.Text.Encoding.GetEncoding(850)))
                     {
-                        foreach(Icon icon in iconsManu)
+                        foreach(Icon icon in general.Icons)
                         {
                             ZipArchiveEntry entry = archive.CreateEntry(icon.Name + ".png");
                             using(Stream s = entry.Open())
@@ -909,6 +865,9 @@ namespace Kaenx.Creator.Classes
                             }
                         }
                     }
+
+                DateTime last = general.Icons.OrderByDescending(i => i.LastModified).First().LastModified;
+                File.SetLastWriteTime(GetRelPath("Temp", Manu, "Baggages", zipName), last);
             }
             
 
@@ -917,9 +876,112 @@ namespace Kaenx.Creator.Classes
             return true;
         }
 
-        private string HeaderNameEscape(string name)
+        public static string HeaderNameEscape(string name)
         {
             return name.Replace(' ', '_').Replace('-', '_');
+        }
+
+        private void ExportModules(XElement xparent, AppVersion ver, ObservableCollection<Models.Module> Modules, string modVersion, StringBuilder headers, string moduleName, int depth = 0)
+        {
+            /*if(ver.Allocators.Count > 0)
+            {
+                XElement xallocs = new XElement(Get("Allocators"));
+                xunderapp.Add(xallocs);
+                
+                foreach(Models.Allocator alloc in ver.Allocators)
+                {
+                    XElement xalloc = new XElement(Get("Allocator"));
+
+                    if (alloc.Id == -1)
+                        alloc.Id = AutoHelper.GetNextFreeId(ver, "Allocators");
+                    xalloc.SetAttributeValue("Id", $"{appVersionMod}_L-{alloc.Id}");
+                    xalloc.SetAttributeValue("Name", alloc.Name);
+                    xalloc.SetAttributeValue("Start", alloc.Start);
+                    xalloc.SetAttributeValue("maxInclusive", alloc.Max);
+                    //TODO errormessageid
+                    
+                    xallocs.Add(xalloc);
+                }
+            }*/
+
+            if(Modules.Count > 0)
+            {
+                string subName = depth == 0 ? "ModuleDefs" : "SubModuleDefs";
+                XElement xunderapp = new XElement(Get(subName));
+                xparent.Add(xunderapp);
+
+                int counter = 0;
+
+                foreach (Models.Module mod in Modules)
+                {
+                    counter++;
+                    mod.Id = counter;
+                    headers.AppendLine("//-----Module: " + mod.Name);
+                    //if (mod.Id == -1)
+                    //    mod.Id = AutoHelper.GetNextFreeId(vers, "Modules");
+
+                    XElement temp = new XElement(Get("Arguments"));
+                    XElement xmod = new XElement(Get("ModuleDef"), temp);
+                    xmod.SetAttributeValue("Name", mod.Name);
+
+                    appVersionMod = $"{modVersion}_{(depth == 0 ? "MD" : "SM")}-{mod.Id}";
+                    string newModVersion = appVersionMod;
+                    xmod.SetAttributeValue("Id", $"{appVersionMod}");
+
+                    foreach (Models.Argument arg in mod.Arguments)
+                    {
+                        XElement xarg = new XElement(Get("Argument"));
+                        if (arg.Id == -1)
+                            arg.Id = AutoHelper.GetNextFreeId(mod, "Arguments");
+                        xarg.SetAttributeValue("Id", $"{appVersionMod}_A-{arg.Id}");
+                        xarg.SetAttributeValue("Name", arg.Name);
+                        xarg.SetAttributeValue("Allocates", arg.Allocates);
+                        temp.Add(xarg);
+                    }
+                    XElement xunderstatic = new XElement(Get("Static"));
+                    xmod.Add(xunderstatic);
+                    xunderapp.Add(xmod);
+
+
+                    ExportParameters(mod, xunderstatic, headers);
+                    ExportParameterRefs(mod, xunderstatic);
+                    ExportComObjects(mod, xunderstatic, headers);
+                    ExportComObjectRefs(mod, ver, xunderstatic);
+
+                    if(mod.Allocators.Count > 0)
+                    {
+                        XElement xallocs = new XElement(Get("Allocators"));
+                        xunderstatic.Add(xallocs);
+                        
+                        foreach(Models.Allocator alloc in mod.Allocators)
+                        {
+                            XElement xalloc = new XElement(Get("Allocator"));
+
+                            if (alloc.Id == -1)
+                                alloc.Id = AutoHelper.GetNextFreeId(mod, "Allocators");
+                            xalloc.SetAttributeValue("Id", $"{appVersionMod}_L-{alloc.Id}");
+                            xalloc.SetAttributeValue("Name", alloc.Name);
+                            xalloc.SetAttributeValue("Start", alloc.Start);
+                            xalloc.SetAttributeValue("maxInclusive", alloc.Max);
+                            //TODO errormessageid
+                            
+                            xallocs.Add(xalloc);
+                        }
+                    }
+                    ExportModules(xmod, ver, mod.Modules, appVersionMod, headers, newModVersion, depth + 1);
+
+                    appVersionMod = $"{modVersion}_{(depth == 0 ? "MD" : "SM")}-{mod.Id}";
+                    
+                    XElement xmoddyn = new XElement(Get("Dynamic"));
+                    xmod.Add(xmoddyn);
+
+                    HandleSubItems(mod.Dynamics[0], xmoddyn, ver);
+
+                    headers.AppendLine("");
+
+                    appVersionMod = modVersion;
+                }
+            }
         }
 
         private void ExportHelptexts(AppVersion ver, string manu, List<Baggage> baggagesManu, List<Baggage> baggagesApp)
@@ -954,7 +1016,7 @@ namespace Kaenx.Creator.Classes
                 Baggage bag = new Baggage() {
                     Name = "HelpFile_" + lang.CultureCode,
                     Extension = ".zip",
-                    TimeStamp = DateTime.Now
+                    LastModified = DateTime.Now
                 };
                 if(!baggagesManu.Contains(bag))
                     baggagesManu.Add(bag);
@@ -1037,6 +1099,10 @@ namespace Kaenx.Creator.Classes
                         xmem.SetAttributeValue("CodeSegment", memid);
                         xmem.SetAttributeValue("Offset", paras.Key.Offset);
                         xmem.SetAttributeValue("BitOffset", paras.Key.OffsetBit);
+                        if(vbase is Models.Module mod)
+                        {
+                            xmem.SetAttributeValue("BaseOffset", $"{appVersionMod}_A-{mod.ParameterBaseOffset.Id}");
+                        }
                         xunion.Add(xmem);
                         break;
 
@@ -1125,7 +1191,12 @@ namespace Kaenx.Creator.Classes
                 //Debug.WriteLine($"    - ComObject {com.UId} {com.Name}");
                 if(headers != null)
                 {
-                    string line = $"#define COMOBJ_{HeaderNameEscape(com.Name)} \t{com.Number}\t//!< Number: {com.Number}, Text: {GetDefaultLanguage(com.Text)}, Function: {GetDefaultLanguage(com.FunctionText)}";
+                    string line;
+                    if(vbase is Models.Module vmod)
+                        line = $"#define COMOBJ_{HeaderNameEscape(vmod.Name)}_{HeaderNameEscape(com.Name)} ";
+                    else
+                        line = $"#define COMOBJ_{HeaderNameEscape(com.Name)} ";
+                    line += $"\t{com.Number}\t//!< Number: {com.Number}, Text: {GetDefaultLanguage(com.Text)}, Function: {GetDefaultLanguage(com.FunctionText)}";
                     headers.AppendLine(line);
                 }
 
@@ -1220,7 +1291,7 @@ namespace Kaenx.Creator.Classes
                     }
                 }
 
-                if(cref.OverwriteOS)
+                if(cref.OverwriteOS || (cref.OverwriteDpt && cref.ObjectSize != cref.ComObjectObject.ObjectSize))
                 {
                     if (cref.ObjectSize > 7)
                         xcref.SetAttributeValue("ObjectSize", (cref.ObjectSize / 8) + " Byte" + ((cref.ObjectSize > 15) ? "s":""));
@@ -1253,9 +1324,16 @@ namespace Kaenx.Creator.Classes
             {
                 int offset = para.Offset;
 
+                string lineStart;
                 string lineComm = "";
-                string linePara = $"#define PARAM_{HeaderNameEscape(para.Name)}";
+                if(ver is Models.Module mod)
+                {
+                    lineStart = $"#define PARAM_{HeaderNameEscape(mod.Name)}_{HeaderNameEscape(para.Name)}";
+                } else {
+                    lineStart = $"#define PARAM_{HeaderNameEscape(para.Name)}";
+                }
                 
+                string linePara = lineStart;
                 if(para.IsInUnion && para.UnionObject != null)
                 {
                     lineComm += $"// UnionOffset: {para.UnionObject.Offset}, ParaOffset: {para.Offset}";
@@ -1279,9 +1357,9 @@ namespace Kaenx.Creator.Classes
                         mask += (int)Math.Pow(2, i);
                         
                     mask = mask << (8 - para.OffsetBit - (para.ParameterTypeObject.SizeInBit % 8));
-                    headers.AppendLine($"#define PARAM_{HeaderNameEscape(para.Name)}_Mask\t0x{mask:X4}");
+                    headers.AppendLine($"{lineStart}_Mask\t0x{mask:X4}");
 
-                    headers.AppendLine($"#define PARAM_{HeaderNameEscape(para.Name)}_Shift\t{8 - para.OffsetBit - (para.ParameterTypeObject.SizeInBit % 8)}");
+                    headers.AppendLine($"{lineStart}_Shift\t{8 - para.OffsetBit - (para.ParameterTypeObject.SizeInBit % 8)}");
                 }
             }
 
@@ -1475,8 +1553,8 @@ namespace Kaenx.Creator.Classes
             XElement xmod = new XElement(Get("Module"));
             if(mod.Id == -1)
                 mod.Id = moduleCounter++;
-            xmod.SetAttributeValue("Id", $"{appVersion}_MD-{mod.ModuleObject.Id}_M-{mod.Id}");
-            xmod.SetAttributeValue("RefId", $"{appVersion}_MD-{mod.ModuleObject.Id}");
+            xmod.SetAttributeValue("Id", $"{appVersionMod}_{(appVersionMod.Contains("_MD-") ? "SM":"MD")}-{mod.ModuleObject.Id}_M-{mod.Id}");
+            xmod.SetAttributeValue("RefId", $"{appVersionMod}_MD-{mod.ModuleObject.Id}");
 
             int argCounter = 1;
             foreach(DynModuleArg arg in mod.Arguments)
@@ -1490,7 +1568,7 @@ namespace Kaenx.Creator.Classes
 
                 if(arg.UseAllocator)
                 {
-                    xarg.SetAttributeValue("AllocatorRefId", $"{appVersionMod}_L-{arg.Allocator.Id}");
+                    xarg.SetAttributeValue("AllocatorRefId", $"{appVersion}_L-{arg.Allocator.Id}");
                 } else {
                     xarg.SetAttributeValue("Value", arg.Value);
                 }
@@ -1700,6 +1778,11 @@ namespace Kaenx.Creator.Classes
             string id = $"{appVersionMod}_B-{btnCounter++}";
             xbtn.SetAttributeValue("Id", id);
             xbtn.SetAttributeValue("Text", GetDefaultLanguage(db.Text));
+
+            int ns = int.Parse(currentNamespace.Substring(currentNamespace.LastIndexOf('/') + 1));
+            if(ns > 14)
+                xbtn.SetAttributeValue("Name", db.Name);
+
             xbtn.SetAttributeValue("EventHandler", $"button{HeaderNameEscape(db.Name)}");
 
             if(!string.IsNullOrEmpty(db.Cell))
@@ -1707,7 +1790,7 @@ namespace Kaenx.Creator.Classes
             if(!string.IsNullOrEmpty(db.EventHandlerParameters))
                 xbtn.SetAttributeValue("EventHandlerParameters", db.EventHandlerParameters);
             if(!string.IsNullOrEmpty(db.Online))
-                xbtn.SetAttributeValue("Online", db.Online);
+                xbtn.SetAttributeValue("EventHandlerOnline", db.Online);
 
             if(db.UseIcon)
             {
@@ -1825,7 +1908,7 @@ namespace Kaenx.Creator.Classes
             }
         }
 
-        public void SignOutput()
+        public async void SignOutput()
         {
             string manu = $"M-{general.ManufacturerId:X4}";
 
@@ -1861,7 +1944,26 @@ namespace Kaenx.Creator.Classes
             CatalogIdPatcher cip = new CatalogIdPatcher(catalogFileInfo, hardware2ProgramIdMapping, convPath, nsVersion);
             cip.Patch();
 
-            File.Copy(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "knx_master.xml"), GetRelPath("Temp", "knx_master.xml"));
+            if(!File.Exists(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "knx_master_" + nsVersion + ".xml")))
+            {
+                try{
+                    System.Net.Http.HttpClient client = new System.Net.Http.HttpClient();
+                    Stream down = await client.GetStreamAsync($"https://update.knx.org/data/XML/project-{nsVersion}/knx_master.xml");
+                    Stream file = File.OpenWrite(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", $"knx_master_{nsVersion}.xml"));
+                    await down.CopyToAsync(file);
+                    file.Close();
+                    file.Dispose();
+                    down.Close();
+                    down.Dispose();
+                } catch (Exception ex){
+                    System.Windows.MessageBox.Show(ex.Message, "Fehler beim herunterladen");
+                    if(ex.InnerException != null)
+                        System.Windows.MessageBox.Show(ex.InnerException.Message, "InnerException");
+                    throw new Exception("knx_master.xml konnte nicht herunter geladen werden.", ex);
+                }
+            }
+
+            File.Copy(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", $"knx_master_{nsVersion}.xml"), GetRelPath("Temp", "knx_master.xml"));
 
             XmlSigning.SignDirectory(GetRelPath("Temp", manu), convPath);
 
@@ -1941,8 +2043,11 @@ namespace Kaenx.Creator.Classes
             xmanu.SetAttributeValue("RefId", manu);
 
             XElement knx = new XElement(Get("KNX"));
-            knx.SetAttributeValue("CreatedBy", "Kaenx.Creator");
-            knx.SetAttributeValue("ToolVersion", Assembly.GetEntryAssembly().GetName().Version.ToString());
+            //this makes icons work...
+            knx.SetAttributeValue("CreatedBy", "MT");
+            knx.SetAttributeValue("ToolVersion", "5.7.617.38708");
+            //knx.SetAttributeValue("CreatedBy", "Kaenx.Creator");
+            //knx.SetAttributeValue("ToolVersion", Assembly.GetEntryAssembly().GetName().Version.ToString());
             doc = new XDocument(knx);
             doc.Root.Add(new XElement(Get("ManufacturerData"), xmanu));
             return xmanu;

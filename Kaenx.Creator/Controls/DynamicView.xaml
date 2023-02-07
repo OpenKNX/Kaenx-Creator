@@ -113,7 +113,7 @@
                     <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
                 </HeaderedContentControl>
                 <HeaderedContentControl Header="{x:Static p:Resources.tdyn_mods}">
-                    <ComboBox ItemsSource="{Binding Version.Modules, ElementName=ViewControl}" SelectedItem="{Binding ModuleObject}" DisplayMemberPath="Name" />
+                    <ComboBox ItemsSource="{Binding Module.Modules, ElementName=ViewControl}" SelectedItem="{Binding ModuleObject}" DisplayMemberPath="Name" />
                 </HeaderedContentControl>
                 <HeaderedContentControl Header="{x:Static p:Resources.tdyn_args}">
                     <DataGrid ItemsSource="{Binding Arguments}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
@@ -137,7 +137,7 @@
                                     <DataTemplate>
                                         <Grid>
                                             <TextBox Text="{Binding Value}" Visibility="{Binding UseAllocator, Converter={StaticResource BoolToVis}, ConverterParameter=true}" />
-                                            <ComboBox ItemsSource="{Binding Module.Allocators, ElementName=ViewControl}" SelectedItem="{Binding Allocator}" DisplayMemberPath="Name" Visibility="{Binding UseAllocator, Converter={StaticResource BoolToVis}}" />
+                                            <ComboBox ItemsSource="{Binding Version.Allocators, ElementName=ViewControl}" SelectedItem="{Binding Allocator}" DisplayMemberPath="Name" Visibility="{Binding UseAllocator, Converter={StaticResource BoolToVis}}" />
                                         </Grid>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellEditingTemplate>
@@ -325,6 +325,9 @@
                 <HeaderedContentControl Header="{x:Static p:Resources.tdyn_paracell}">
                     <TextBox Text="{Binding Cell, UpdateSourceTrigger=PropertyChanged}" />
                 </HeaderedContentControl>
+                <HeaderedContentControl Header="{x:Static p:Resources.prop_access}">
+                    <ComboBox ItemsSource="{Binding Source={StaticResource dataFromEnumAccess}}" SelectedItem="{Binding Access, Mode=TwoWay}" />
+                </HeaderedContentControl>
             </StackPanel>
         </DataTemplate>
         <DataTemplate x:Key="TempDynChannel">
@@ -509,8 +512,10 @@
                     </StackPanel>
                 </HeaderedContentControl>
                 <!--<TextBox Text="{Binding Script}" Margin="5 0" AcceptsReturn="True" />-->
-                <Button Margin="5 20 5 0" Content="Change Function" />
-                <TextBlock Margin="5 0" Text="{Binding Script}" />
+                <Button Margin="5 20 5 0" Content="Edit Function" Click="ClickEditButtonFunction" />
+                <TextBlock Margin="5 10 5 0" Text="function buttonXXXX(device, online, progress, context) {" />
+                <TextBlock Margin="20 0 5 0" Text="{Binding Script}" />
+                <TextBlock Margin="5 0" Text="}" />
             </StackPanel>
         </DataTemplate>
         

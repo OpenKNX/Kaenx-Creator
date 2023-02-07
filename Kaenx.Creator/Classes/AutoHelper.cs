@@ -19,9 +19,6 @@ namespace Kaenx.Creator.Classes
             AppVersion version = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.AppVersion>(model.Version, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
             LoadVersion(general, version, version);
 
-            foreach(Models.Module mod in version.Modules)
-                LoadVersion(general, version, mod);
-
             //TODO doesnt work anymore
             foreach(Models.ParameterType ptype in version.ParameterTypes)
             {
@@ -123,6 +120,10 @@ namespace Kaenx.Creator.Classes
                 if(mod2._comObjectBaseNumberUId != -1)
                     mod2.ComObjectBaseNumber = mod2.Arguments.SingleOrDefault(a => a.UId == mod2._comObjectBaseNumberUId);
             }
+            
+            foreach(Models.Module mod3 in mod.Modules)
+                LoadVersion(general, vbase, mod3);
+
 
             if(mod.Dynamics.Count > 0)
                 LoadSubDyn(general, mod.Dynamics[0], vbase, mod);
@@ -378,18 +379,20 @@ namespace Kaenx.Creator.Classes
                     int modSize = dmod.ModuleObject.Memory.GetCount();
                     (int offset, int offsetbit) result = mem.GetFreeOffset(modSize * 8);
                     argParas.Value = result.offset.ToString();
-                    argParas.Argument.Allocates = result.offset;
+                    argParas.Argument.Allocates = modSize;
                     mem.SetBytesUsed(MemoryByteUsage.Module, modSize, result.offset);
                 }
 
                 if(dmod.ModuleObject.IsComObjectBaseNumberAuto)
                 {
-                    int highestComNumber2 = dmod.ModuleObject.ComObjects.OrderByDescending(c => c.Number).FirstOrDefault()?.Number ?? 0;
                     Models.Dynamic.DynModuleArg argComs = dmod.Arguments.SingleOrDefault(a => a.ArgumentId == dmod.ModuleObject.ComObjectBaseNumberUId);
                     if(argComs != null)
                     {
+                        int highestComNumber2 = dmod.ModuleObject.ComObjects.OrderByDescending(c => c.Number).FirstOrDefault()?.Number ?? 0;
+                        int lowestComNumber2 = dmod.ModuleObject.ComObjects.OrderBy(c => c.Number).FirstOrDefault()?.Number ?? 1;
                         argComs.Value = (++highestComNumber).ToString();
-                        argComs.Argument.Allocates = highestComNumber + 1;
+
+                        argComs.Argument.Allocates = highestComNumber2 - lowestComNumber2 + 1;
                         highestComNumber += highestComNumber2;
                     }
                 }
@@ -399,15 +402,22 @@ namespace Kaenx.Creator.Classes
                 mem.Size = mem.GetCount();
         }
 
-        public static void GetModules(Models.Dynamic.IDynItems item, List<Models.Dynamic.DynModule> mods)
+        public static void GetModules(Models.Dynamic.IDynItems item, List<Models.Dynamic.DynModule> mods, long repeater = 1)
         {
             if(item is Models.Dynamic.DynModule dm)
-                mods.Add(dm);
+            {
+                for(int i = 0; i < repeater; i++)
+                    mods.Add(dm);
+            }
 
             if(item.Items == null) return;
 
+            long srepeat = repeater;
+            if(item is Models.Dynamic.DynRepeat dr)
+                srepeat = dr.Count;
+
             foreach(Models.Dynamic.IDynItems i in item.Items)
-                GetModules(i, mods);
+                GetModules(i, mods, srepeat);
         }
 
         public static int GetNextFreeUId(object list, int start = 1) {
@@ -495,23 +505,10 @@ namespace Kaenx.Creator.Classes
     
         public static void CheckIds(AppVersion version)
         {
-            counterBlock = 1;
-            counterSeparator = 1;
-
             CheckIdsModule(version, version);
-            CheckDynamicIds(version.Dynamics[0]);
-
-            foreach(Module mod in version.Modules)
-            {
-                if(mod.Id == -1) mod.Id = GetNextFreeId(version, "Modules");
-                counterBlock = 1;
-                counterSeparator = 1;
-                CheckIdsModule(version, mod);
-                CheckDynamicIds(mod.Dynamics[0]);
-            }
         }
 
-        private static void CheckIdsModule(AppVersion version, IVersionBase vbase)
+        private static void CheckIdsModule(AppVersion version, IVersionBase vbase, IVersionBase vparent = null)
         {
             foreach(Parameter para in vbase.Parameters)
                 if(para.Id == -1) para.Id = GetNextFreeId(vbase, "Parameters");
@@ -527,9 +524,19 @@ namespace Kaenx.Creator.Classes
 
             if(vbase is Module mod)
             {
+                if(mod.Id == -1)
+                    mod.Id = GetNextFreeId(vparent, "Modules");
+
                 foreach(Argument arg in mod.Arguments)
                     if(arg.Id == -1) arg.Id = GetNextFreeId(vbase, "Arguments");
             }
+
+            counterBlock = 1;
+            counterSeparator = 1;
+            CheckDynamicIds(version.Dynamics[0]);
+
+            foreach(Models.Module xmod in vbase.Modules)
+                CheckIdsModule(version, xmod, vbase);
         }
 
 

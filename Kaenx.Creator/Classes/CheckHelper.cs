@@ -324,13 +324,6 @@ namespace Kaenx.Creator.Classes {
             if(General != null)
                 CheckLanguages(vers, actions, General, devices);
 
-            foreach(Module mod in vers.Modules)
-            {
-                actions.Add(new PublishAction() { Text = $"Prüfe Module '{mod.Name}'" });
-                CheckVersion(vers, mod, actions, vers.DefaultLanguage, vers.NamespaceVersion, showOnlyErrors);
-                //TODO check for Argument exist
-            }
-
             if (app.Mask.Procedure != ProcedureTypes.Default)
             {
                 XElement temp = XElement.Parse(vers.Procedure);
@@ -391,6 +384,14 @@ namespace Kaenx.Creator.Classes {
                     actions.Add(new PublishAction() { Text = $"    Modul ({mod.Name}): ParameterBaseOffset Argument ist nicht vom Typ Numeric", State = PublishState.Fail });
                 if(mod.ComObjectBaseNumber.Type != ArgumentTypes.Numeric)
                     actions.Add(new PublishAction() { Text = $"    Modul ({mod.Name}): ComObjectBaseNumber Argument ist nicht vom Typ Numeric", State = PublishState.Fail });
+            }
+
+            if(vbase.Dynamics[0].Items.Count == 0)
+            {
+                string name = "AppVersion";
+                if(mod != null)
+                    name = $"Modul {mod.Name}";
+                actions.Add(new PublishAction() { Text = $"    {name}: Dynamic enthält keine Elemente", State = PublishState.Fail });
             }
 
             foreach(Parameter para in vbase.Parameters) {
@@ -520,6 +521,8 @@ namespace Kaenx.Creator.Classes {
                             break;
                         }
                     }
+                } else {
+                    if(para.UnionObject == null) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Es wurde kein Union ausgewählt", State = PublishState.Fail, Item = para, Module = mod });
                 }
             }
         
@@ -619,6 +622,20 @@ namespace Kaenx.Creator.Classes {
                 }
             }
         
+            
+            var x = vbase.ComObjects.GroupBy((c) => c.Number);
+            if(x.Any((c) => c.Count() > 1))
+            {
+                actions.Add(new PublishAction() { Text = $"    Kommunikationsobjekt-Nummern sind nicht eindeutig. IDs werden aufsteigend vergeben.", State = PublishState.Warning });
+            } else {
+                foreach(ComObject com in vbase.ComObjects)
+                {
+                    com.Id = com.Number;
+                }
+            }
+
+
+
             foreach(ComObject com in vbase.ComObjects) {
                 if(com.HasDpt && com.Type == null) actions.Add(new PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Kein DataPointType angegeben", State = PublishState.Fail, Item = com, Module = mod });
                 if(com.HasDpt && com.Type != null && com.Type.Number == "0") actions.Add(new PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Keine Angabe des DPT nur bei Refs", State = PublishState.Fail, Item = com, Module = mod });
@@ -699,6 +716,15 @@ namespace Kaenx.Creator.Classes {
             //TODO check union size fits parameter+offset
 
             CheckDynamicItem(vbase.Dynamics[0], actions, ns, showOnlyErrors, mod);
+
+            
+            foreach(Module xmod in vbase.Modules)
+            {
+                actions.Add(new PublishAction() { Text = $"Prüfe Module '{xmod.Name}'" });
+                CheckVersion(ver, xmod, actions, ver.DefaultLanguage, ver.NamespaceVersion, showOnlyErrors);
+                //TODO check for Argument exist
+            }
+
         }
 
         private static void CheckLanguages(AppVersion vers,  ObservableCollection<PublishAction> actions, ModelGeneral general, List<Device> devices)
@@ -780,6 +806,8 @@ namespace Kaenx.Creator.Classes {
                         
                     if(dm.Arguments.Any(a => !a.UseAllocator && string.IsNullOrEmpty(a.Value)))
                         actions.Add(new PublishAction() { Text = $"    DynModule {dm.Name} hat Argumente, die leer sind", State = PublishState.Fail});
+                    if(dm.Arguments.Any(a => a.UseAllocator && a.Allocator == null))
+                        actions.Add(new PublishAction() { Text = $"    DynModule {dm.Name} muss ein Allocator zugewiesen werden", State = PublishState.Fail});
                     if(dm.Arguments.Any(a => a.Argument.Type != ArgumentTypes.Numeric && a.UseAllocator))
                         actions.Add(new PublishAction() { Text = $"    DynModule {dm.Name} hat Argumente, die einen Allocator verwenden, aber nicht Numeric sind", State = PublishState.Fail});
                     break;
@@ -982,36 +1010,16 @@ namespace Kaenx.Creator.Classes {
                     }
                 }
             }
-
-        /*    
-        0Text,
-        1Enum,
-        2NumberUInt,
-        3NumberInt,
-        4Float_DPT9,
-        5Float_IEEE_Single,
-        6Float_IEEE_Double,
-        7Picture,
-        8None,
-        9IpAddress,
-        10Color
-
-        
-        0Color,
-        1Date,
-        2Enum,
-        3Float_DPT9,
-        4Float_IEEE_Single,
-        5Float_IEEE_Double,
-        6IpAddress,
-        7None,
-        8NumberUInt,
-        9NumberInt,
-        10Picture,
-        11RawData,
-        12Text
-        */
             
+            if(version < 4)
+            {
+                gen["Guid"] = Guid.NewGuid().ToString();
+                foreach(JObject icon in gen["Icons"])
+                {
+                    icon["LastModified"] = DateTime.Now.ToString("o");
+                }
+            }
+
             return gen.ToString();
         }
 

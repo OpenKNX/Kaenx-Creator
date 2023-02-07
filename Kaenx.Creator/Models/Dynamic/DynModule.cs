@@ -29,28 +29,26 @@ namespace Kaenx.Creator.Models.Dynamic
             set { _name = value; Changed("Name"); }
         }
 
+        private Module _oldModuleObject;
         private Module _moduleObject;
         [JsonIgnore]
         public Module ModuleObject
         {
             get { return _moduleObject; }
             set { 
-                if(_moduleObject != null)
-                    _moduleObject.Arguments.CollectionChanged -= ArgsChanged;
+                if(value == null) return;
 
+                if(_oldModuleObject != null)
+                    _oldModuleObject.Arguments.CollectionChanged -= ArgsChanged;
+
+                _oldModuleObject = _moduleObject;
                 _moduleObject = value;
-                Changed("ModuleObject"); 
-                if(_moduleObject == null)
-                {
-                    Arguments.Clear();
-                } else
-                {
-                    foreach(Argument arg in _moduleObject.Arguments)
-                        if(!Arguments.Any(a => a._argId == arg.UId))
-                            Arguments.Add(new DynModuleArg(arg));
+                foreach(Argument arg in _moduleObject.Arguments)
+                    if(!Arguments.Any(a => a._argId == arg.UId))
+                        Arguments.Add(new DynModuleArg(arg));
 
-                    _moduleObject.Arguments.CollectionChanged += ArgsChanged;
-                }
+                _moduleObject.Arguments.CollectionChanged += ArgsChanged;
+                Changed("ModuleObject"); 
             }
         }
 

@@ -13,11 +13,14 @@ namespace Kaenx.Creator
     /// </summary>
     public partial class App : Application
     {
+        public static string FilePath = "";
+
         public App()
         {
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
 
             this.Dispatcher.UnhandledException += OnDispatcherUnhandledException;
+            this.Startup += Application_Startup;
 
             void OnDispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e) {
                 if (e.Exception is System.Windows.Markup.XamlParseException) return;
@@ -32,5 +35,11 @@ namespace Kaenx.Creator
                 e.Handled = true;
             }
         }
+
+        private void Application_Startup(object sender, StartupEventArgs e)
+		{
+			if(e.Args?.Length > 0)
+                FilePath = e.Args[0];
+		}
     }
 }

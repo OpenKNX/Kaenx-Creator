@@ -63,6 +63,13 @@ namespace Kaenx.Creator.Models
             set { _replaces = value; Changed("ReplacesVersions"); }
         }
 
+        private string _script = "";
+        public string Script
+        {
+            get { return _script; }
+            set { _script = value; Changed("Script"); }
+        }
+
         public string NameText
         {
             get

@@ -196,7 +196,7 @@ namespace Kaenx.Creator.Classes
 
                 if(!supportedExtensions.Contains(bag.Extension) || _general.Baggages.Any(b => b.Name == bag.Name && b.TargetPath == bag.TargetPath)) continue;
 
-                bag.TimeStamp = DateTime.Parse(xbag.Element(Get("FileInfo")).Attribute("TimeInfo").Value);
+                bag.LastModified = DateTime.Parse(xbag.Element(Get("FileInfo")).Attribute("TimeInfo").Value);
                 
                 string path = $"{bag.Name}{bag.Extension}";
                 if(!string.IsNullOrEmpty(bag.TargetPath)) path = $"{bag.TargetPath}/{path}";
@@ -338,6 +338,7 @@ namespace Kaenx.Creator.Classes
 
             ImportHelpFile(xapp);
             ImportSegments(xstatic.Element(Get("Code")));
+            ImportScript(xstatic.Element(Get("Script")));
             ImportAllocators(xstatic.Element(Get("Allocators")), currentVers);
             ImportParameterTypes(xstatic.Element(Get("ParameterTypes")));
             ImportParameter(xstatic.Element(Get("Parameters")), currentVers);
@@ -347,7 +348,7 @@ namespace Kaenx.Creator.Classes
             ImportComObjectRefs(xstatic.Element(Get("ComObjectRefs")), currentVers);
             ImportMessages(xstatic.Element(Get("Messages")));
             ImportTables(xstatic);
-            ImportModules(xapp.Element(Get("ModuleDefs")));
+            ImportModules(currentVers, xapp.Element(Get("ModuleDefs")));
             ImportDynamic(xapp.Element(Get("Dynamic")), currentVers);
 
 
@@ -1290,15 +1291,17 @@ namespace Kaenx.Creator.Classes
             System.Console.WriteLine($"ImportTables: {sw.ElapsedMilliseconds} ms");
         }
 
-        private void ImportModules(XElement xmods) {
+        private void ImportModules(IVersionBase vbase, XElement xmods) {
             if(xmods == null) return;
-            _uidCounter = 1;
-            currentVers.IsModulesActive = true;
+            int _uidCounter2 = 1;
+
+            if(vbase is AppVersion av)
+                av.IsModulesActive = true;
 
             foreach(XElement xmod in xmods.Elements()) {
                 Models.Module mod = new Models.Module() {
                     Name = xmod.Attribute("Name")?.Value ?? "Unbenannt",
-                    UId = _uidCounter++,
+                    UId = _uidCounter2++,
                     Id = int.Parse(GetLastSplit(xmod.Attribute("Id").Value, 3)),
                     IsParameterRefAuto = false,
                     IsComObjectRefAuto = false
@@ -1313,13 +1316,22 @@ namespace Kaenx.Creator.Classes
                 ImportParameterRefs(xstatic.Element(Get("ParameterRefs")), mod);
                 ImportComObjects(xstatic.Element(Get("ComObjects")), mod, ref idmapper);
                 ImportComObjectRefs(xstatic.Element(Get("ComObjectRefs")), mod, idmapper);
+
+                ImportModules(mod, xmod.Element(Get("SubModuleDefs")));
+
                 ImportDynamic(xmod.Element(Get("Dynamic")), mod);
 
-                currentVers.Modules.Add(mod);
+                vbase.Modules.Add(mod);
+                
+
                 System.Console.WriteLine("---End Module");
             }
         }
         
+        private void ImportScript(XElement xscript)
+        {
+            currentVers.Script = xscript?.Value ?? "";
+        }
 
         private void ImportAllocators(XElement xallocs, IVersionBase vbase)
         {
@@ -1564,7 +1576,6 @@ namespace Kaenx.Creator.Classes
             System.Console.WriteLine($"ImportDynamic: {sw.ElapsedMilliseconds} ms");
         }
 
-
         private void ParseDynamic(IDynItems parent, XElement xeles, IVersionBase vbase)
         {
             foreach (XElement xele in xeles.Elements())
@@ -1793,7 +1804,7 @@ namespace Kaenx.Creator.Classes
                         };
                         dmo.Id = int.Parse(GetLastSplit(xele.Attribute("Id").Value, 2));
                         paraId = int.Parse(GetLastSplit(xele.Attribute("RefId").Value, 3));
-                        dmo.ModuleObject = currentVers.Modules.Single(m => m.Id == paraId);
+                        dmo.ModuleObject = vbase.Modules.Single(m => m.Id == paraId);
                         foreach(XElement xarg in xele.Elements())
                         {
                             int id1 = int.Parse(GetLastSplit(xarg.Attribute("RefId").Value, 2));
@@ -1845,9 +1856,12 @@ namespace Kaenx.Creator.Classes
                     case "Repeat":
                         DynRepeat drep = new DynRepeat() {
                             Name = xele.Attribute("Name").Value,
-                            Count = int.Parse(xele.Attribute("Count").Value),
                             Id = int.Parse(GetLastSplit(xele.Attribute("Id").Value, 2))
                         };
+                        if(xele.Attribute("Count") != null)
+                        {
+                            drep.Count = int.Parse(xele.Attribute("Count").Value);
+                        }
                         if(xele.Attribute("ParameterRefId") != null)
                         {
                             drep.UseParameterRef = true;
@@ -1856,6 +1870,35 @@ namespace Kaenx.Creator.Classes
                         }
                         parent.Items.Add(drep);
                         ParseDynamic(drep, xele, vbase);
+                        break;
+
+                    case "Button":
+                        DynButton dbtn = new DynButton() {
+                            EventHandlerParameters = xele.Attribute("EventHandlerParameters")?.Value ?? "",
+                            Online = xele.Attribute("EventHandlerOnline")?.Value ?? ""
+                        };
+                        if(xele.Attribute("Name") != null)
+                            dbtn.Name = xele.Attribute("Name").Value;
+                        else
+                            dbtn.Name = xele.Attribute("EventHandler").Value;
+
+                        if(!string.IsNullOrEmpty(xele.Attribute("Icon")?.Value))
+                        {
+                            dbtn.UseIcon = true;
+                            dbtn.IconObject = _general.Icons.SingleOrDefault(i => i.Name == xele.Attribute("Icon").Value);
+                        }
+                        if(xele.Attribute("TextParameterRefId") != null)
+                        {
+                            dbtn.UseTextParameter = true;
+                            paraId = int.Parse(GetLastSplit(xele.Attribute("TextParameterRefId").Value, 2));
+                            dbtn.TextRefObject = vbase.ParameterRefs.Single(p => p.Id == paraId);
+                        }
+                        Regex regex = new Regex(@"function %handler%[ ]?\(.+\)( ||\n){0,}{([^}]+)}".Replace("%handler%", xele.Attribute("EventHandler").Value));
+                        Match m = regex.Match(currentVers.Script);
+                        dbtn.Script = m.Groups[2].Value;
+                        dbtn.Script = dbtn.Script.Trim(' ', '\r', '\n');
+                        currentVers.Script = regex.Replace(currentVers.Script, "");
+                        parent.Items.Add(dbtn);
                         break;
 
                     default:

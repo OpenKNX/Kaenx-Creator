@@ -268,7 +268,7 @@ namespace Kaenx.Creator.Viewer
             foreach(Kaenx.Creator.Models.Baggage bag in Baggages)
             {
                 Kaenx.DataContext.Catalog.Baggage cbag = new Kaenx.DataContext.Catalog.Baggage();
-                cbag.TimeStamp = bag.TimeStamp;
+                cbag.TimeStamp = bag.LastModified;
                 cbag.Id = $"{bag.TargetPath}-{bag.Name}{bag.Extension}";
                 
                 switch(bag.Extension)

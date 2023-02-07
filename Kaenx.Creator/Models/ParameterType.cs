@@ -31,7 +31,24 @@ namespace Kaenx.Creator.Models
             set { 
                 _type = value;
                 UIHint = "";
-                SizeInBit = 8;
+                switch(value)
+                {
+                    case ParameterTypes.Color:
+                        SizeInBit = 8*3;
+                        break;
+                    case ParameterTypes.Date:
+                        SizeInBit = 8*5; //TODO verify!
+                        break;
+                    case ParameterTypes.IpAddress:
+                        SizeInBit = 8*4;
+                        break;
+                    case ParameterTypes.Picture:
+                        SizeInBit = 0;
+                        break;
+                    default:
+                        SizeInBit = 8;
+                        break;
+                }
                 OtherValue = true;
                 Min = "0";
                 Max = "255";

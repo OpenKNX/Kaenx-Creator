@@ -106,6 +106,7 @@ namespace Kaenx.Creator.Models
         public ObservableCollection<ParameterRef> ParameterRefs { get; set; } = new ObservableCollection<ParameterRef>();
         public ObservableCollection<ComObject> ComObjects { get; set; } = new ObservableCollection<ComObject>();
         public ObservableCollection<ComObjectRef> ComObjectRefs { get; set; } = new ObservableCollection<ComObjectRef>();
+        public ObservableCollection<Module> Modules { get; set; } = new ObservableCollection<Module>();
         public ObservableCollection<Union> Unions { get; set; } = new ObservableCollection<Union>();
         public ObservableCollection<Argument> Arguments { get; set; } = new ObservableCollection<Argument>();
         public ObservableCollection<Allocator> Allocators { get; set; } = new ObservableCollection<Allocator>();

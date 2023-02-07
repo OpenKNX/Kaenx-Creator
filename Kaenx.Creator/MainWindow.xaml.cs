@@ -76,7 +76,7 @@ namespace Kaenx.Creator
             new Models.EtsVersion(21, "ETS 6.0 (21)", "6.0")
         };
         
-        private int VersionCurrent = 3;
+        private int VersionCurrent = 4;
 
 
         public MainWindow()
@@ -98,6 +98,9 @@ namespace Kaenx.Creator
             MenuDebug.IsChecked = Properties.Settings.Default.isDebug;
             MenuUpdate.IsChecked = Properties.Settings.Default.autoUpdate;
             if(Properties.Settings.Default.autoUpdate) AutoCheckUpdate();
+
+            if(!string.IsNullOrEmpty(App.FilePath))
+                DoOpen(App.FilePath);
         }
 
         private async void AutoCheckUpdate()
@@ -128,12 +131,14 @@ namespace Kaenx.Creator
                     _ => -1
                 };
 
-                ModuleList.ScrollIntoView(module);
+                //TODO Get it back to work
+                /*ModuleList.ScrollIntoView(module);
                 ModuleList.SelectedItem = module;
 
                 if(index2 == -1) return;
                 ModuleTabs.SelectedIndex = index2;
                 ((ModuleTabs.Items[index2] as TabItem).Content as ISelectable).ShowItem(item);
+                */
                 return;
             }
 
@@ -257,7 +262,7 @@ namespace Kaenx.Creator
 
         private void ClickNew(object sender, RoutedEventArgs e)
         {
-            General = new Models.ModelGeneral() { ImportVersion = VersionCurrent };
+            General = new Models.ModelGeneral() { ImportVersion = VersionCurrent, Guid = Guid.NewGuid().ToString() };
             General.Languages.Add(new Models.Language("Deutsch", "de-DE"));
             General.Catalog.Add(new Models.CatalogItem() { Name = "Hauptkategorie (wird nicht exportiert)" });
             SetButtons(true);
@@ -810,35 +815,6 @@ namespace Kaenx.Creator
             }
         }
 
-        private void ClickAddModule(object sender, RoutedEventArgs e)
-        {
-            Models.Module mod = new Models.Module() { UId = AutoHelper.GetNextFreeUId(SelectedVersion.Model.Modules)};
-            mod.Arguments.Add(new Models.Argument() { Name = "argParas", UId = AutoHelper.GetNextFreeUId(mod.Arguments) });
-            mod.Arguments.Add(new Models.Argument() { Name = "argComs", UId = AutoHelper.GetNextFreeUId(mod.Arguments) });
-            //mod.Arguments.Add(new Models.Argument() { Name = "argChan", UId = AutoHelper.GetNextFreeUId(mod.Arguments) });
-            mod.ParameterBaseOffset = mod.Arguments[0];
-            mod.ComObjectBaseNumber = mod.Arguments[1];
-            mod.Dynamics.Add(new Models.Dynamic.DynamicModule());
-            SelectedVersion.Model.Modules.Add(mod);
-        }
-
-        private void ClickRemoveModule(object sender, RoutedEventArgs e)
-        {;
-            Models.Module mod = ModuleList.SelectedItem as Models.Module;
-            SelectedVersion.Model.Modules.Remove(mod);
-            RemoveModule(SelectedVersion.Model.Dynamics[0], mod);
-        }
-
-        private void RemoveModule(Models.Dynamic.IDynItems item, Models.Module mod)
-        {
-            if(item is Models.Dynamic.DynModule dm)
-                dm.ModuleObject = null;
-
-            if(item.Items != null)
-                foreach(Models.Dynamic.IDynItems ditem in item.Items)
-                    RemoveModule(ditem, mod);
-        }
-
         private void ClickAddHardware(object sender, RoutedEventArgs e)
         {
             General.Hardware.Add(new Models.Hardware());
@@ -895,7 +871,8 @@ namespace Kaenx.Creator
 
         private void ClickSaveAs(object sender, RoutedEventArgs e)
         {
-            SelectedVersion.Version = Newtonsoft.Json.JsonConvert.SerializeObject(SelectedVersion.Model, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
+            if(SelectedVersion != null)
+                SelectedVersion.Version = Newtonsoft.Json.JsonConvert.SerializeObject(SelectedVersion.Model, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
             string general = Newtonsoft.Json.JsonConvert.SerializeObject(General, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
 
             SaveFileDialog diag = new SaveFileDialog();
@@ -963,6 +940,8 @@ namespace Kaenx.Creator
 
         private void DoOpen(string path)
         {
+            if(!File.Exists(path)) return;
+            
             string general = System.IO.File.ReadAllText(path);
 
             System.Text.RegularExpressions.Regex reg = new System.Text.RegularExpressions.Regex("\"ImportVersion\":[ ]?([0-9]+)");
@@ -1164,8 +1143,7 @@ namespace Kaenx.Creator
                             item.App = app;
                             item.Version = ver;
                             Exports.Add(item);
-                        } else
-                        {
+                        } else {
                             foreach (Models.AppVersionModel ver in app.Versions)
                             {
                                 Models.ExportItem item = new Models.ExportItem();

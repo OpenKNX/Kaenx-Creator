@@ -26,33 +26,19 @@ namespace Kaenx.Creator.Controls
             set { SetValue(ModuleProperty, value); }
         }
 
-        public ObservableCollection<Memory> MemoriesList { get { return Version?.Memories; } }
-
         public UnionView()
 		{
             InitializeComponent();
         }
 
-        private static void OnVersionChangedCallback(DependencyObject sender, DependencyPropertyChangedEventArgs e)
-        {
-            (sender as UnionView)?.OnVersionChanged();
-        }
-
-        protected virtual void OnVersionChanged() {
-            Changed("MemoriesList");
-        }
-        
-
         private void ClickAddUnion(object sender, RoutedEventArgs e)
         {
-            Models.IVersionBase ver = Module as Models.IVersionBase;
-            ver.Unions.Add(new Models.Union() { UId = AutoHelper.GetNextFreeUId(ver.Unions)});
+            Module.Unions.Add(new Models.Union() { UId = AutoHelper.GetNextFreeUId(Module.Unions)});
         }
         
         private void ClickRemoveUnion(object sender, RoutedEventArgs e)
         {
-            Models.IVersionBase ver = Module as Models.IVersionBase;
-            ver.Unions.Remove(UnionList.SelectedItem as Models.Union);
+            Module.Unions.Remove(UnionList.SelectedItem as Models.Union);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

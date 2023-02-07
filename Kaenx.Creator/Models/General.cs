@@ -9,6 +9,12 @@ namespace Kaenx.Creator.Models
     public class ModelGeneral : INotifyPropertyChanged
     {
         public string ProjectName { get; set; } = "Meine erste Applikation";
+        public string Guid { get; set; }
+
+        public string GetGuid()
+        {
+            return Guid.Substring(Guid.Length - 6, 6);
+        }
 
         public ObservableCollection<CatalogItem> Catalog { get; set; } = new ObservableCollection<CatalogItem>();
         public ObservableCollection<Application> Applications { get; set; } = new ObservableCollection<Application>();

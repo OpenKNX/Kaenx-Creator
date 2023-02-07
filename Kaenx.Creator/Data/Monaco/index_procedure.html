@@ -1,0 +1,135 @@
+<!DOCTYPE html> 
+ <html> 
+ <head> 
+     <meta http-equiv="Content-Type" content="text/html;charset=utf-8" /> 
+     <link rel="stylesheet" 
+           data-name="vs/editor/editor.main" 
+           href="./editor/editor.main.css" /> 
+     <style> 
+         html, body { height: 100%; margin: 0; } 
+         #container { height: 100%; } 
+     </style> 
+ </head> 
+ <body> 
+     <div id="container"></div> 
+     <script src="./loader.js"></script> 
+     <script> 
+         require.config({ paths: { 'vs': './' } }); 
+     </script> 
+     <script src="./editor/editor.main.nls.js"></script> 
+     <script src="./editor/editor.main.js"></script> 
+     <script> 
+
+    function createDependencyProposals(range) {
+        // returning a static list of proposals, not even looking at the prefix (filtering is done by the Monaco editor),
+        // here you could do a server side lookup
+        return [
+            {
+                label: 'LdCtrlReadMemory',
+                kind: monaco.languages.CompletionItemKind.Function,
+                documentation: 'The Lodash library exported as Node.js modules.',
+                insertText: 'LdCtrlReadMemory',
+                range: range,
+                commitCharacters: ["="]
+            },
+            {
+                label: 'LdCtrlWriteMemory',
+                kind: monaco.languages.CompletionItemKind.Function,
+                documentation: 'Fast, unopinionated, minimalist web framework',
+                insertText: 'LdCtrlWriteMemory',
+                range: range,
+                commitCharacters: ["="]
+            }
+        ];
+    }
+    
+    function createDependencyProposals2(range) {
+        // returning a static list of proposals, not even looking at the prefix (filtering is done by the Monaco editor),
+        // here you could do a server side lookup
+        return [
+            {
+                label: 'Address',
+                kind: monaco.languages.CompletionItemKind.Property,
+                documentation: 'The Lodash library exported as Node.js modules.',
+                insertText: 'Address=',
+                range: range
+            },
+            {
+                label: 'Size',
+                kind: monaco.languages.CompletionItemKind.Property,
+                documentation: 'Fast, unopinionated, minimalist web framework',
+                insertText: 'Size=',
+                range: range
+            }
+        ];
+    }
+
+
+        monaco.languages.registerCompletionItemProvider('xml', {
+            provideCompletionItems: function (model, position) {
+                // find out if we are completing a property in the 'dependencies' object.
+                var textUntilPosition = model.getValueInRange({
+                    startLineNumber: 1,
+                    startColumn: 1,
+                    endLineNumber: position.lineNumber,
+                    endColumn: position.column
+                });
+                /*var match = textUntilPosition.match(
+                    /"dependencies"\s*:\s*\{\s*("[^"]*"\s*:\s*"[^"]*"\s*,\s*)*([^"]*)?$/
+                );
+                if (!match) {
+                    return { suggestions: [] };
+                }*/
+                var word = model.getWordUntilPosition(position);
+                var range = {
+                    startLineNumber: position.lineNumber,
+                    endLineNumber: position.lineNumber,
+                    startColumn: word.startColumn,
+                    endColumn: word.endColumn
+                };
+                return {
+                    suggestions: createDependencyProposals(range)
+                };
+            },
+            triggerCharacters: ["<"]
+        });
+
+        
+        monaco.languages.registerCompletionItemProvider('xml', {
+            provideCompletionItems: function (model, position) {
+                // find out if we are completing a property in the 'dependencies' object.
+                var textUntilPosition = model.getValueInRange({
+                    startLineNumber: 1,
+                    startColumn: 1,
+                    endLineNumber: position.lineNumber,
+                    endColumn: position.column
+                });
+                /*var match = textUntilPosition.match(
+                    /"dependencies"\s*:\s*\{\s*("[^"]*"\s*:\s*"[^"]*"\s*,\s*)*([^"]*)?$/
+                );
+                if (!match) {
+                    return { suggestions: [] };
+                }*/
+                var word = model.getWordUntilPosition(position);
+                var range = {
+                    startLineNumber: position.lineNumber,
+                    endLineNumber: position.lineNumber,
+                    startColumn: word.startColumn,
+                    endColumn: word.endColumn
+                };
+                return {
+                    suggestions: createDependencyProposals2(range)
+                };
+            },
+            triggerCharacters: [" "]
+        });
+
+
+        var editor = monaco.editor.create(document.getElementById('container'), { 
+            value: '', 
+            language: 'xml',
+            automaticLayout: true
+        }); 
+     </script> 
+ </body> 
+ </html>

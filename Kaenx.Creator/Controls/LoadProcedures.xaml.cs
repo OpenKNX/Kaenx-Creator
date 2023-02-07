@@ -27,5 +27,12 @@ namespace Kaenx.Creator.Controls
 		{
 			InitializeComponent();
 		}
+
+        private void ClickEdit(object sender, RoutedEventArgs e)
+        {
+            CodeWindow code = new CodeWindow("index_procedure.html", Version.Procedure);
+            code.ShowDialog();
+            Version.Procedure = code.CodeNew;
+        }
     }
 }

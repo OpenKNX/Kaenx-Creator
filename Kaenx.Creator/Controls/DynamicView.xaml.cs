@@ -246,6 +246,14 @@ namespace Kaenx.Creator.Controls
             item.Items.Add(btn);
         }
 
+        private void ClickEditButtonFunction(object sender, RoutedEventArgs e)
+        {
+            Models.Dynamic.DynButton item = (sender as Button).DataContext as Models.Dynamic.DynButton;
+            CodeWindow code = new CodeWindow("index_button_script.html", item.Script);
+            code.ShowDialog();
+            item.Script = code.CodeNew;
+        }
+
         Dictionary<string, List<string>> SubTypes = new Dictionary<string, List<string>>() {
             {"DynamicMain",
                 new List<string>() { 
@@ -298,6 +306,7 @@ namespace Kaenx.Creator.Controls
                     "DynParaBlock",
                     "DynComObject",
                     "DynChoose",
+                    "DynModule",
                     "DynRename" }
             },
             {"DynWhenBlock",
@@ -345,8 +354,8 @@ namespace Kaenx.Creator.Controls
 
 
 
-            (menu.Items[14] as MenuItem).IsEnabled = _copyItem != null;
-            (menu.Items[15] as MenuItem).IsEnabled = type != "DynamicMain" && type != "DynamicModule";
+            (menu.Items[15] as MenuItem).IsEnabled = _copyItem != null;
+            (menu.Items[16] as MenuItem).IsEnabled = type != "DynamicMain" && type != "DynamicModule";
         }
 
 
