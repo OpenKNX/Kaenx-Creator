@@ -160,6 +160,13 @@ namespace Kaenx.Creator.Controls
                 if(MessageBoxResult.No == MessageBox.Show("Dieser Parameter wird von mindestens einem ParameterRef benutzt. Wirklich löschen?", "Parameter löschen", MessageBoxButton.YesNo, MessageBoxImage.Warning))
                     return;
 
+                    
+                if(Version.IsParameterRefAuto)
+                {
+                    foreach(ParameterRef pref in Module.ParameterRefs.Where(p => p.ParameterObject == para).ToList())
+                        Module.ParameterRefs.Remove(pref);
+                }
+
                 foreach(ParameterRef pref in Module.ParameterRefs.Where(p => p.ParameterObject == para))
                     pref.ParameterObject = null;
             }
@@ -167,11 +174,6 @@ namespace Kaenx.Creator.Controls
 
             Module.Parameters.Remove(para);
 
-            if(Version.IsParameterRefAuto)
-            {
-                foreach(ParameterRef pref in Module.ParameterRefs.Where(p => p.ParameterObject == para).ToList())
-                    Module.ParameterRefs.Remove(pref);
-            }
         }
 
         private void ResetId(object sender, RoutedEventArgs e)

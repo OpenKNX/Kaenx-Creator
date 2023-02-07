@@ -126,16 +126,18 @@ namespace Kaenx.Creator.Controls
                 if(MessageBoxResult.No == MessageBox.Show("Dieses ComObject wird von mindestens einem ComObjectRef benutzt. Wirklich löschen?", "ComObject löschen", MessageBoxButton.YesNo, MessageBoxImage.Warning))
                     return;
 
+                if(Version.IsComObjectRefAuto){
+                    foreach(ComObjectRef cref in Module.ComObjectRefs.Where(c => c.ComObjectObject == com).ToList())
+                        Module.ComObjectRefs.Remove(cref);
+                }
+
                 foreach(ComObjectRef cref in Module.ComObjectRefs.Where(c => c.ComObjectObject == com))
                     cref.ComObjectObject = null;
             }
 
             Module.ComObjects.Remove(com);
 
-            if(Version.IsComObjectRefAuto){
-                foreach(ComObjectRef cref in Module.ComObjectRefs.Where(c => c.ComObjectObject == com).ToList())
-                    Module.ComObjectRefs.Remove(cref);
-            }
+            
         }
 
         private void ResetId(object sender, RoutedEventArgs e)
