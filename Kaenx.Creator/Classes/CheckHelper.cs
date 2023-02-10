@@ -79,6 +79,15 @@ namespace Kaenx.Creator.Classes {
                     foreach (var group in check2)
                         actions.Add(new PublishAction() { Text = "Hardware '" + group.Name + "' hat Applikation zugeordnet obwohl angegeben ist, dass keine benötigt wird", State = PublishState.Warning });
                 }
+                foreach(Hardware hard in hardware)
+                {
+                    if(!hard.HasIndividualAddress)
+                        actions.Add(new PublishAction() { Text = "Hardware '" + hard.Name + "' wurde angegebn 'kein Individuelle Adresse'", State = PublishState.Fail });
+                    if(!hard.HasApplicationProgram)
+                        actions.Add(new PublishAction() { Text = "Hardware '" + hard.Name + "' wurde angegebn 'kein Applikationsprogramm'", State = PublishState.Fail });
+                    if(!hard.HasApplicationProgram && hard.HasApplicationProgram2)
+                        actions.Add(new PublishAction() { Text = "Hardware '" + hard.Name + "' wurde angegebn 'Applikationsprogramm2', hat aber nicht 'Applikationsprogramm'", State = PublishState.Fail });
+                }
                 #endregion
 
 
@@ -222,9 +231,11 @@ namespace Kaenx.Creator.Classes {
                         if(ptype.UIHint == "ProgressBar" && vers.NamespaceVersion < 20)
                             actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Progressbar wird erst ab /20 unterstützt", State = PublishState.Fail, Item = ptype });
 
-                        long min, max;
+                        long min, max, temp;
                         if(!long.TryParse(ptype.Max, out max)) actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Maximum ist keine Ganzzahl", State = PublishState.Fail, Item = ptype });
                         if(!long.TryParse(ptype.Min, out min)) actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Minimum ist keine Ganzzahl", State = PublishState.Fail, Item = ptype });
+                        if(!long.TryParse(ptype.DisplayOffset, out temp)) actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Anzeige Offset ist keine Ganzzahl", State = PublishState.Fail, Item = ptype });
+                        if(!long.TryParse(ptype.DisplayFactor, out temp)) actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Anzeige Faktor ist keine Ganzzahl", State = PublishState.Fail, Item = ptype });
 
                         if(!ptype.IsSizeManual)
                         {
@@ -243,9 +254,11 @@ namespace Kaenx.Creator.Classes {
                         if(ptype.UIHint == "Progressbar" && vers.NamespaceVersion < 20)
                             actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Progressbar wird erst ab /20 unterstützt", State = PublishState.Fail, Item = ptype });
 
-                        long min, max;
+                        long min, max, temp;
                         if(!long.TryParse(ptype.Max, out max)) actions.Add(new PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Maximum ist keine Ganzzahl", State = PublishState.Fail, Item = ptype });
                         if(!long.TryParse(ptype.Min, out min)) actions.Add(new PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Minimum ist keine Ganzzahl", State = PublishState.Fail, Item = ptype });
+                        if(!long.TryParse(ptype.DisplayOffset, out temp)) actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Anzeige Offset ist keine Ganzzahl", State = PublishState.Fail, Item = ptype });
+                        if(!long.TryParse(ptype.DisplayFactor, out temp)) actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Anzeige Faktor ist keine Ganzzahl", State = PublishState.Fail, Item = ptype });
 
                         maxsize = (long)Math.Ceiling(maxsize / 2.0);
                         if(!ptype.IsSizeManual)

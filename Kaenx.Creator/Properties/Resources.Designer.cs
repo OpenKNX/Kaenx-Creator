@@ -2258,5 +2258,17 @@ namespace Kaenx.Creator.Properties {
                 return ResourceManager.GetString("prop_handlerparas", resourceCulture);
             }
         }
+        
+        public static string parat_doffset {
+            get {
+                return ResourceManager.GetString("parat_doffset", resourceCulture);
+            }
+        }
+        
+        public static string parat_dfactor {
+            get {
+                return ResourceManager.GetString("parat_dfactor", resourceCulture);
+            }
+        }
     }
 }

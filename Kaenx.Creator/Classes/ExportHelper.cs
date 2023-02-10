@@ -224,6 +224,10 @@ namespace Kaenx.Creator.Classes
                                 xcontent.SetAttributeValue("Increment", type.Increment.Replace(",", "."));
                             if(type.UIHint != "None" && !string.IsNullOrEmpty(type.UIHint))
                                 xcontent.SetAttributeValue("UIHint", type.UIHint);
+                            if(type.DisplayOffset != "0")
+                                xcontent.SetAttributeValue("DisplayOffset", type.DisplayOffset);
+                            if(type.DisplayFactor != "1")
+                                xcontent.SetAttributeValue("DisplayFactor", type.DisplayFactor);
                             break;
 
                         case ParameterTypes.Enum:

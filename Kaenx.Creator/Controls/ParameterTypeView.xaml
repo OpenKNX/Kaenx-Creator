@@ -151,11 +151,7 @@
                     </DataGrid>
                 </StackPanel>
             </Grid>
-
-            
-
-            
-                
+   
             <StackPanel Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=NumberUInt-NumberInt-Float_DPT9-Float_IEEE_Single-Float_IEEE_Double, FallbackValue=Collapsed}">
                 <HeaderedContentControl Header="{x:Static p:Resources.parat_min}">
                     <TextBox Text="{Binding Min, UpdateSourceTrigger=PropertyChanged}"/>
@@ -165,6 +161,12 @@
                 </HeaderedContentControl>
                 <HeaderedContentControl Header="{x:Static p:Resources.parat_increment}">
                     <TextBox Text="{Binding Increment, UpdateSourceTrigger=PropertyChanged}"/>
+                </HeaderedContentControl>
+                <HeaderedContentControl Header="{x:Static p:Resources.parat_doffset}">
+                    <TextBox Text="{Binding DisplayOffset, UpdateSourceTrigger=PropertyChanged}"/>
+                </HeaderedContentControl>
+                <HeaderedContentControl Header="{x:Static p:Resources.parat_dfactor}">
+                    <TextBox Text="{Binding DisplayFactor, UpdateSourceTrigger=PropertyChanged}"/>
                 </HeaderedContentControl>
             </StackPanel>
 

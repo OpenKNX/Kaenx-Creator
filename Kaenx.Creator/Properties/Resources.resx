@@ -1197,4 +1197,12 @@
     <value>Verbindungstyp</value>
     <comment/>
   </data>
+  <data name="parat_doffset" xml:space="preserve">
+    <value>Anzeige Offset</value>
+    <comment/>
+  </data>
+  <data name="parat_dfactor" xml:space="preserve">
+    <value>Anzeige Faktor</value>
+    <comment/>
+  </data>
 </root>

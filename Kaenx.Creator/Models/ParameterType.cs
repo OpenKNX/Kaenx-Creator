@@ -45,6 +45,13 @@ namespace Kaenx.Creator.Models
                     case ParameterTypes.Picture:
                         SizeInBit = 0;
                         break;
+                    case ParameterTypes.NumberInt:
+                    case ParameterTypes.NumberUInt:
+                    case ParameterTypes.Float_DPT9:
+                    case ParameterTypes.Float_IEEE_Double:
+                    case ParameterTypes.Float_IEEE_Single:
+                        UIHint = "None";
+                        break;
                     default:
                         SizeInBit = 8;
                         break;
@@ -53,6 +60,8 @@ namespace Kaenx.Creator.Models
                 Min = "0";
                 Max = "255";
                 Increment = "1"; 
+                DisplayOffset = "0";
+                DisplayFactor = "1";
                 Enums.Clear();
                 BaggageObject = null;
                 TranslateEnums = true;
@@ -140,6 +149,21 @@ namespace Kaenx.Creator.Models
             get { return _increment; }
             set { _increment = value; Changed("Increment"); }
         }
+
+        private string _displayOffset = "0";
+        public string DisplayOffset
+        {
+            get { return _displayOffset; }
+            set { _displayOffset = value; Changed("DisplayOffset"); }
+        }
+
+        private string _displayFactor = "1";
+        public string DisplayFactor
+        {
+            get { return _displayFactor; }
+            set { _displayFactor = value; Changed("DisplayFactor"); }
+        }
+
 
         public ObservableCollection<ParameterTypeEnum> Enums {get;set;} = new ObservableCollection<ParameterTypeEnum>();
 
