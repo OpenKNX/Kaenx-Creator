@@ -376,7 +376,7 @@ namespace Kaenx.Creator.Classes {
             } else {
                 int number = -1;
                 if(!int.TryParse(item.Number, out number))
-                    actions.Add(new PublishAction() { Text = $"Katalog {item.Name}: Produkt Nummer ist keine Ganzzahl ({item.Number})", State = PublishState.Fail });
+                    actions.Add(new PublishAction() { Text = $"Katalog {item.Name}: Produkt Nummer ist keine Ganzzahl ({item.Number})", State = PublishState.Fail }); 
                 if(item.Hardware == null)
                     actions.Add(new PublishAction() { Text = $"Katalog {item.Name}: Es wurde keine Hardware ausgewählt", State = PublishState.Fail });
             }
@@ -537,6 +537,8 @@ namespace Kaenx.Creator.Classes {
                 } else {
                     if(para.UnionObject == null) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Es wurde kein Union ausgewählt", State = PublishState.Fail, Item = para, Module = mod });
                 }
+
+                if(para.Suffix.Any(t => t.Text.Length > 20)) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Suffix ist länger als 20 Zeichen", State = PublishState.Fail, Item = para, Module = mod });
             }
         
             foreach(ParameterRef para in vbase.ParameterRefs) {
@@ -633,6 +635,7 @@ namespace Kaenx.Creator.Classes {
 
                     
                 }
+                if(para.Suffix.Any(t => t.Text.Length > 20)) actions.Add(new PublishAction() { Text = $"    ParameterRef {para.Name} ({para.UId}): Suffix ist länger als 20 Zeichen", State = PublishState.Fail, Item = para, Module = mod });
             }
         
             
@@ -688,8 +691,15 @@ namespace Kaenx.Creator.Classes {
                     }
                 }
 
-                if(ver.IsComObjectRefAuto && com.UseTextParameter && com.ParameterRefObject == null)
-                    actions.Add(new PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Kein TextParameter angegeben", State = PublishState.Fail, Item = com, Module = mod });
+                if(ver.IsComObjectRefAuto && com.UseTextParameter)
+                {
+                    if(com.ParameterRefObject == null)
+                        actions.Add(new PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Kein TextParameter angegeben", State = PublishState.Fail, Item = com, Module = mod });
+                    if(com.Text.Any(t => !t.Text.Contains("{{0")))
+                        actions.Add(new PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): TextParameter angegeben, aber kein {{0}} im Text", State = PublishState.Fail, Item = com, Module = mod });
+
+                }
+                
             }
 
             foreach(ComObjectRef rcom in vbase.ComObjectRefs) {
@@ -723,7 +733,12 @@ namespace Kaenx.Creator.Classes {
                 }
 
                 if(!ver.IsComObjectRefAuto && rcom.UseTextParameter && rcom.ParameterRefObject == null)
-                    actions.Add(new PublishAction() { Text = $"    ComObjectRef {rcom.Name} ({rcom.UId}): Kein TextParameter angegeben", State = PublishState.Fail, Item = rcom, Module = mod });
+                {
+                    if(rcom.ParameterRefObject == null)
+                        actions.Add(new PublishAction() { Text = $"    ComObjectRef {rcom.Name} ({rcom.UId}): Kein TextParameter angegeben", State = PublishState.Fail, Item = rcom, Module = mod });
+                    if(rcom.Text.Any(t => !t.Text.Contains("{{0")))
+                        actions.Add(new PublishAction() { Text = $"    ComObjectRef {rcom.Name} ({rcom.UId}): TextParameter angegeben, aber kein {{0}} im Text", State = PublishState.Fail, Item = rcom, Module = mod });
+                }
             }
         
             //TODO check union size fits parameter+offset

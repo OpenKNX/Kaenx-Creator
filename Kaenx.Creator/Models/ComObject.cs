@@ -184,7 +184,12 @@ namespace Kaenx.Creator.Models
         public bool UseTextParameter
         {
             get { return _useTextParam; }
-            set { _useTextParam = value; Changed("UseTextParameter"); }
+            set { 
+                _useTextParam = value; 
+                Changed("UseTextParameter"); 
+                if(!_useTextParam)
+                    ParameterRefObject = null;
+            }
         }
 
         private ParameterRef _parameterRefObject;
@@ -192,10 +197,7 @@ namespace Kaenx.Creator.Models
         public ParameterRef ParameterRefObject
         {
             get { return _parameterRefObject; }
-            set { 
-                _parameterRefObject = value; 
-                Changed("ParameterRefObject"); 
-                }
+            set { _parameterRefObject = value; Changed("ParameterRefObject"); }
         }
 
         [JsonIgnore]
