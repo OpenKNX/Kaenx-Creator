@@ -402,7 +402,7 @@
                         </TreeView.Resources>
                     </TreeView>
 
-                    <StackPanel Grid.Column="1" DataContext="{Binding ElementName=CatalogTree, Path=SelectedItem}" IsEnabled="{Binding ElementName=CatalogTree, Path=SelectedItem.Parent, Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
+                    <StackPanel Grid.Column="1" DataContext="{Binding ElementName=CatalogTree, Path=SelectedItem}" IsEnabled="{Binding ElementName=CatalogTree, Path=SelectedItem.Parent, Converter={StaticResource EmptyToBool}, ConverterParameter=true, FallbackValue=False}">
                         <StackPanel.Resources>
                             <Style TargetType="HeaderedContentControl">
                                 <Setter Property="Margin" Value="5" />
@@ -540,12 +540,12 @@
                                 </Grid.RowDefinitions>
 
                                 <StackPanel Orientation="Horizontal">
-                                    <ComboBox Width="150" Name="InHardApp" Margin="2" ItemsSource="{Binding General.Applications, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" DisplayMemberPath="Name" />
-                                    <Button Content="{x:Static p:Resources.gen_add}" Click="ClickAddHardApp" Margin="2" />
+                                    <ComboBox Width="150" Name="InHardApp" Margin="2" ItemsSource="{Binding General.Applications, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" DisplayMemberPath="NameText" />
+                                    <Button Content="{x:Static p:Resources.gen_add}" Click="ClickAddHardApp" IsEnabled="{Binding ElementName=InHardApp, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" Margin="2" />
                                     <Button Content="{x:Static p:Resources.gen_remove}" Margin="2" Click="ClickRemoveDeviceApp" IsEnabled="{Binding ElementName=DeviceAppList, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
                                 </StackPanel>
 
-                                <ListBox Name="DeviceAppList" Grid.Row="1" ItemsSource="{Binding Apps}" DisplayMemberPath="Name" />
+                                <ListBox Name="DeviceAppList" Grid.Row="1" ItemsSource="{Binding Apps}" DisplayMemberPath="NameText" />
                             </Grid>
                         </TabItem>
                     </TabControl>

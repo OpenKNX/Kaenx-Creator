@@ -418,6 +418,12 @@ namespace Kaenx.Creator
 
         private void ClickAddHardApp(object sender, RoutedEventArgs e)
         {
+            if(InHardApp.SelectedItem == null)
+            {
+                MessageBox.Show("Bitte wählen Sie erst eine Apllikation aus.", "Fehler beim Hinzufügen", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
             Models.Hardware hard = (sender as Button).DataContext as Models.Hardware;
             if(!hard.Apps.Contains(InHardApp.SelectedItem as Models.Application)) {
                 hard.Apps.Add(InHardApp.SelectedItem as Models.Application);
@@ -555,6 +561,12 @@ namespace Kaenx.Creator
 
             Models.Application app = AppList.SelectedItem as Models.Application;
             General.Applications.Remove(app);
+
+            foreach(Models.Hardware h in General.Hardware)
+            {
+                if(h.Apps.Contains(app))
+                    h.Apps.Remove(app);
+            }
         }
 
         private void ClickAddLanguageVers(object sender, RoutedEventArgs e)
