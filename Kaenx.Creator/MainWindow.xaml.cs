@@ -186,7 +186,7 @@ namespace Kaenx.Creator
 
             if(!File.Exists(System.IO.Path.Combine(path, "Knx.Ets.XmlSigning.dll"))) return true;
             FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(System.IO.Path.Combine(path, "Knx.Ets.XmlSigning.dll"));
-            if(Directory.Exists(System.IO.Path.Combine(path, "CV", versionInfo.FileVersion)))
+            if(versionInfo.FileVersion.StartsWith("6.") || Directory.Exists(System.IO.Path.Combine(path, "CV", versionInfo.FileVersion)))
                 return true;
 
             string newVersion = versionInfo.FileVersion;

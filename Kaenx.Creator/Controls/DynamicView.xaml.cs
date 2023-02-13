@@ -170,6 +170,8 @@ namespace Kaenx.Creator.Controls
                     dch = new Models.Dynamic.DynChooseBlock();
                     break;
 
+                case Models.Dynamic.DynamicMain:
+                case Models.Dynamic.DynamicModule:
                 case Models.Dynamic.DynWhenChannel:
                 case Models.Dynamic.IDynChannel:
                     dch = new Models.Dynamic.DynChooseChannel();
