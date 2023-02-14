@@ -190,7 +190,7 @@ namespace Kaenx.Creator
                 return true;
 
             string newVersion = versionInfo.FileVersion;
-            if (versionInfo.FileVersion.Split('.').Length == 2) newVersion = string.Join('.', newVersion.Split('.').Take(2));
+            if (versionInfo.FileVersion.Split('.').Length > 2) newVersion = string.Join('.', newVersion.Split('.').Take(2));
             try {
                 Directory.CreateDirectory(System.IO.Path.Combine(path, "CV", newVersion));
             } catch{
