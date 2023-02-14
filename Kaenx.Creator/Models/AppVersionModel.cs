@@ -30,9 +30,11 @@ namespace Kaenx.Creator.Models
             {
                 int main = (int)Math.Floor((double)Number / 16);
                 int sub = Number - (main * 16);
-                return "V " + main + "." + sub + " " + Name;
+                return $"V {main}.{sub} {Name}  (/{Namespace})";
             }
         }
+
+        public int Namespace { get; set; }
 
 
         public string Version { get; set; }

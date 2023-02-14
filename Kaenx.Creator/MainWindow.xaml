@@ -365,8 +365,8 @@
                                             <models:Language Text="Türkisch" CultureCode="tr-TR" />
                                             <models:Language Text="Chinesisch" CultureCode="zh-CN" />
                                         </ComboBox>
-                                        <Button Content="{x:Static p:Resources.gen_add}" Click="ClickAddLanguageGen" />
-                                        <Button Content="{x:Static p:Resources.gen_remove}" Click="ClickRemoveLanguageGen" />
+                                        <Button Content="{x:Static p:Resources.gen_add}" Click="ClickAddLanguageGen" IsEnabled="{Binding ElementName=SupportedLanguagesGen, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
+                                        <Button Content="{x:Static p:Resources.gen_remove}" Click="ClickRemoveLanguageGen" IsEnabled="{Binding ElementName=SupportedLanguagesGen, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
                                     </StackPanel>
                                 </HeaderedContentControl>
                             </StackPanel>
@@ -844,8 +844,8 @@
                                                 <models:Language Text="Türkisch" CultureCode="tr-TR" />
                                                 <models:Language Text="Chinesisch" CultureCode="zh-CN" />
                                             </ComboBox>
-                                            <Button Content="{x:Static p:Resources.gen_add}" Click="ClickAddLanguageVers" />
-                                            <Button  Content="{x:Static p:Resources.gen_remove}" Click="ClickRemoveLanguageVers" />
+                                            <Button Content="{x:Static p:Resources.gen_add}" Click="ClickAddLanguageVers" IsEnabled="{Binding ElementName=LanguagesListVers, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
+                                            <Button  Content="{x:Static p:Resources.gen_remove}" Click="ClickRemoveLanguageVers" IsEnabled="{Binding ElementName=SupportedLanguagesVers, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
                                         </StackPanel>
                                     </HeaderedContentControl>
                                     <HeaderedContentControl Header="{x:Static p:Resources.tgen_lang_def}">
@@ -1179,11 +1179,15 @@
 
                         <CheckBox x:Name="InPublishOnlyLatest" Content="Nur neueste Applikationversion exportieren" Checked="ChangedPublishOnlyLatest" Unchecked="ChangedPublishOnlyLatest" />
 
-                        <ComboBox x:Name="InPublishTarget" SelectedIndex="0" SelectedValuePath="Tag">
+                        <ComboBox x:Name="InPublishTarget" SelectedIndex="0" SelectedValuePath="Tag" Visibility="Collapsed">
                             <ComboBoxItem Content="ETS" Tag="ets" />
                             <ComboBoxItem Content="Kaenx" Tag="kaenx" IsEnabled="False" />
                         </ComboBox>
                         
+                        <HeaderedContentControl Header="Dateiname:">
+                            <TextBox x:Name="ExportInName" Text="output" />
+                        </HeaderedContentControl>
+
                         <Button Content="Veröffentlichen" Click="Button_Click" />
                     </StackPanel>
 

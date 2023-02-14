@@ -19,7 +19,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Xml.Linq;
 
 namespace Kaenx.Creator
@@ -76,7 +75,7 @@ namespace Kaenx.Creator
             new Models.EtsVersion(21, "ETS 6.0 (21)", "6.0")
         };
         
-        private int VersionCurrent = 4;
+        private int VersionCurrent = 5;
 
 
         public MainWindow()
@@ -457,6 +456,7 @@ namespace Kaenx.Creator
             Models.AppVersionModel model = new Models.AppVersionModel() {
                 Name = newVer.Name,
                 Number = newVer.Number,
+                Namespace = newVer.NamespaceVersion,
                 Version = Newtonsoft.Json.JsonConvert.SerializeObject(newVer, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects })
             };
             
@@ -515,13 +515,15 @@ namespace Kaenx.Creator
             //TODO auto open TabView Item
             after = System.GC.GetTotalMemory(false);
             System.Diagnostics.Debug.WriteLine("Neu verbraucht: " + (after - before).ToString());
+            TabsEdit.SelectedIndex = 6;
         }
 
         private void SelectedVersion_PropertyChanged(object sender, PropertyChangedEventArgs e = null)
         {
-            if(e.PropertyName != "NameText") return;
+            if(e.PropertyName != "NameText" && e.PropertyName != "NamespaceVersion") return;
             SelectedVersion.Name = SelectedVersion.Model.Name;
             SelectedVersion.Number = SelectedVersion.Model.Number;
+            SelectedVersion.Namespace = SelectedVersion.Model.NamespaceVersion;
         }
 
         private void ClickOpenViewer(object sender, RoutedEventArgs e)
@@ -576,6 +578,7 @@ namespace Kaenx.Creator
                 return;
             }
             Models.Language lang = LanguagesListVers.SelectedItem as Models.Language;
+            LanguagesListVers.SelectedItem = null;
             
             if(SelectedVersion.Model.Languages.Any(l => l.CultureCode == lang.CultureCode))
                 MessageBox.Show("Die Sprache wird bereits unterstützt.");
@@ -710,13 +713,13 @@ namespace Kaenx.Creator
                 if(para.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
                     para.Text.Remove(para.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
                 if(para.Suffix.Any(t => t.Language.CultureCode == lang.CultureCode))
-                    para.Suffix.Remove(para.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
+                    para.Suffix.Remove(para.Suffix.Single(l => l.Language.CultureCode == lang.CultureCode));
             } 
             foreach(Models.ParameterRef para in vbase.ParameterRefs) {
                 if(para.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
                     para.Text.Remove(para.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
                 if(para.Suffix.Any(t => t.Language.CultureCode == lang.CultureCode))
-                    para.Suffix.Remove(para.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
+                    para.Suffix.Remove(para.Suffix.Single(l => l.Language.CultureCode == lang.CultureCode));
             } 
             foreach(Models.ComObject com in vbase.ComObjects) {
                 if(com.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
@@ -770,6 +773,7 @@ namespace Kaenx.Creator
                 return;
             }
             Models.Language lang = LanguagesListGen.SelectedItem as Models.Language;
+            LanguagesListGen.SelectedItem = null;
             
             if(_general.Languages.Any(l => l.CultureCode == lang.CultureCode))
                 MessageBox.Show("Die Sprache wird bereits unterstützt.");
@@ -1189,6 +1193,16 @@ namespace Kaenx.Creator
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
+            if(ExportInName.Text.EndsWith(".knxprod"))
+                ExportInName.Text = ExportInName.Text.Substring(0, ExportInName.Text.LastIndexOf('.'));
+
+            if(File.Exists(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Output", ExportInName.Text + ".knxprod")))
+            {
+                if(MessageBoxResult.No == MessageBox.Show($"Es existiert bereits ein Export'{ExportInName.Text}.knxprod'.\r\nSoll dieser Überschrieben werden?", "Datei überschreiben", MessageBoxButton.YesNo, MessageBoxImage.Question))
+                    return;
+            }
+
+
             PublishActions.Clear();
             await Task.Delay(1000);
             if(SelectedVersion != null)
@@ -1229,11 +1243,22 @@ namespace Kaenx.Creator
                 convPath = System.IO.Path.Combine(convPath, "CV", "6.0");
             else
             {
-                //Models.EtsVersion etsVersion = EtsVersions.Single(v => v.Number == highestNS);
-                //convPath = System.IO.Path.Combine(convPath, "CV", etsVersion.FolderPath);
+                if(versions.GroupBy(v => v.Namespace).Count() > 1)
+                {
+                    PublishActions.Add(new Models.PublishAction() { Text = "Produktdatenbank haben unterschiedlichen Namespace", State = Models.PublishState.Fail });
+                    return;
+                }
+
+                Models.EtsVersion etsVersion = EtsVersions.Single(v => v.Number == versions[0].Namespace);
+                if(!etsVersion.IsEnabled)
+                {
+                    PublishActions.Add(new Models.PublishAction() { Text = $"Der gewünschte Namespace /{etsVersion.Number} kann auf diesem System nicht erstellt werden", State = Models.PublishState.Fail });
+                    return;
+                }
+                convPath = System.IO.Path.Combine(convPath, "CV", etsVersion.FolderPath);
             }
 
-            ExportHelper helper = new ExportHelper(General, hardware, devices, apps, versions, convPath);
+            ExportHelper helper = new ExportHelper(General, hardware, devices, apps, versions, convPath, ExportInName.Text);
             switch(InPublishTarget.SelectedValue) {
                 case "ets":
                     bool success = helper.ExportEts(PublishActions);

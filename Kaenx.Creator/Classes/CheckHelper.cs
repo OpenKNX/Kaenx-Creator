@@ -1047,6 +1047,19 @@ namespace Kaenx.Creator.Classes {
                     icon["LastModified"] = DateTime.Now.ToString("o");
                 }
             }
+            
+            if(version < 5)
+            {
+                foreach(JObject app in gen["Applications"])
+                {
+                    foreach(JObject ver in app["Versions"])
+                    {
+                        JObject jver = JObject.Parse(ver["Version"].ToString());
+
+                        ver["Namespace"] = jver["NamespaceVersion"];
+                    }
+                }
+            }
 
             return gen.ToString();
         }

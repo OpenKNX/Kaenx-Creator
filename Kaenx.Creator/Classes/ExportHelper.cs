@@ -30,10 +30,11 @@ namespace Kaenx.Creator.Classes
         string appVersionMod;
         string currentNamespace;
         string convPath;
+        string fileName;
         List<Icon> iconsApp = new List<Icon>();
         List<string> buttonScripts;
 
-        public ExportHelper(Models.ModelGeneral g, List<Models.Hardware> h, List<Models.Device> d, List<Models.Application> a, List<Models.AppVersionModel> v, string cp)
+        public ExportHelper(Models.ModelGeneral g, List<Models.Hardware> h, List<Models.Device> d, List<Models.Application> a, List<Models.AppVersionModel> v, string cp, string fN)
         {
             hardware = h;
             devices = d;
@@ -41,6 +42,7 @@ namespace Kaenx.Creator.Classes
             vers = v;
             general = g;
             convPath = cp;
+            fileName = fN;
         }
 
 
@@ -58,10 +60,10 @@ namespace Kaenx.Creator.Classes
         {
             string Manu = "M-" + general.ManufacturerId.ToString("X4");
 
-            if (System.IO.Directory.Exists(GetRelPath()))
-                System.IO.Directory.Delete(GetRelPath(), true);
-
             System.IO.Directory.CreateDirectory(GetRelPath());
+            if (System.IO.Directory.Exists(GetRelPath("Temp")))
+                System.IO.Directory.Delete(GetRelPath("Temp"), true);
+
             System.IO.Directory.CreateDirectory(GetRelPath("Temp"));
             System.IO.Directory.CreateDirectory(GetRelPath("Temp", Manu));
 
@@ -326,7 +328,7 @@ namespace Kaenx.Creator.Classes
                 
                 headers.AppendLine("//--------------------Allgemein---------------------------");
                 headers.AppendLine($"#define MAIN_OpenKnxId 0x{(app.Number >> 8):X2}");
-                headers.AppendLine($"#define MAIN_ApplicationNumber 0x{app.Number:X4}");
+                headers.AppendLine($"#define MAIN_ApplicationNumber 0x{app.Number & 0xFF:X2}");
                 headers.AppendLine($"#define MAIN_ApplicationVersion 0x{ver.Number:X2}");
                 headers.AppendLine($"#define MAIN_OrderNumber \"{hardware.First(h => h.Apps.Contains(app)).Devices.First().OrderNumber}\" //may not work with multiple devices on same hardware or app on different hardware");
                 headers.AppendLine();
@@ -520,7 +522,7 @@ namespace Kaenx.Creator.Classes
                 foreach(KeyValuePair<string, List<long>> item in modStartComs)
                     headers.AppendLine($"const long mod_{HeaderNameEscape(item.Key)}_coms[] = {{ {string.Join(',', item.Value)} }};");
 
-                System.IO.File.WriteAllText(GetRelPath(appVersion + ".h"), headers.ToString());
+                System.IO.File.WriteAllText(GetRelPath($"knxprod_{app.Number:X4}_{ver.Number:X2}.h"), headers.ToString());
                 headers = null;
 
                 #endregion
@@ -1971,7 +1973,9 @@ namespace Kaenx.Creator.Classes
 
             XmlSigning.SignDirectory(GetRelPath("Temp", manu), convPath);
 
-            System.IO.Compression.ZipFile.CreateFromDirectory(GetRelPath("Temp"), GetRelPath("output.knxprod"));
+            if(File.Exists(GetRelPath($"{fileName}.knxprod")))
+                File.Delete(GetRelPath($"{fileName}.knxprod"));
+            System.IO.Compression.ZipFile.CreateFromDirectory(GetRelPath("Temp"), GetRelPath($"{fileName}.knxprod"));
 
             #if (!DEBUG)
             System.IO.Directory.Delete(GetRelPath("Temp"), true);
