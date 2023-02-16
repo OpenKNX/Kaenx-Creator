@@ -487,11 +487,13 @@ namespace Kaenx.Creator
         private void ClickCopyVersion(object sender, RoutedEventArgs e)
         {
             Models.Application app = AppList.SelectedItem as Models.Application;
-            Models.AppVersion ver = (sender as MenuItem).DataContext as Models.AppVersion;
+            Models.AppVersionModel ver = (sender as MenuItem).DataContext as Models.AppVersionModel;
 
-            Models.AppVersion copy = ver.Copy();
-            copy.Number += 1;
-            copy.Name += " Kopie";
+            //TODO
+            MessageBox.Show("Copy doestn work");
+            //Models.AppVersion copy = ver.Copy();
+            //copy.Number += 1;
+            //copy.Name += " Kopie";
         }
 
         private void ClickOpenHere(object sender, RoutedEventArgs e)

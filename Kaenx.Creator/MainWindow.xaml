@@ -16,6 +16,7 @@
         x:Name="ViewControl"
         Title="Kaenx-Creator" Height="700" Width="1300">
     <Window.Resources>
+        <conv:IntToHex x:Key="IntToHex" />
         <conv:BoolNegation x:Key="BoolNegate" />
         <conv:EmptyOListToBool x:Key="EmptyListToBool" />
         <conv:EmptyToBool x:Key="EmptyToBool" />
@@ -321,8 +322,12 @@
                     <HeaderedContentControl Header="Aktuelle GUID">
                         <TextBlock Text="{Binding General.Guid}" />
                     </HeaderedContentControl>
-                    <HeaderedContentControl Header="{x:Static p:Resources.tgen_manu}">
-                        <TextBox Text="{Binding General.ManufacturerId, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="OpenKNX Projekt" IsChecked="{Binding General.IsOpenKnx}" />
+                    <HeaderedContentControl Header="{x:Static p:Resources.tgen_manu}" Visibility="{Binding General.IsOpenKnx, Converter={StaticResource BoolToVis}, ConverterParameter=true}">
+                        <TextBox Text="{Binding General.ManufacturerId, Converter={StaticResource IntToHex}, ConverterParameter=4}" MaxLength="4" />
+                    </HeaderedContentControl>
+                    <HeaderedContentControl Header="OpenKnxId" Visibility="{Binding General.IsOpenKnx, Converter={StaticResource BoolToVis}}">
+                        <TextBox Text="{Binding General.ManufacturerId, Converter={StaticResource IntToHex}, ConverterParameter=2}" MaxLength="2" />
                     </HeaderedContentControl>
                     <HeaderedContentControl Header="{x:Static p:Resources.tgen_name}">
                         <TextBox Text="{Binding General.ProjectName, UpdateSourceTrigger=PropertyChanged}" />
@@ -575,7 +580,19 @@
                     <Button Content="{x:Static p:Resources.gen_add}" Click="ClickAddApp" Margin="0 0 1 2" />
                     <Button Grid.Column="1" Content="{x:Static p:Resources.gen_remove}" Click="ClickRemoveApp" Margin="1 0 0 2" IsEnabled="{Binding ElementName=AppList, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
 
-                    <ListView x:Name="AppList" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding General.Applications}" DisplayMemberPath="NameText" />
+                    <ListView x:Name="AppList" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding General.Applications}">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel>
+                                    <TextBlock Visibility="{Binding General.IsOpenKnx, ElementName=ViewControl, Converter={StaticResource BoolToVis}, ConverterParameter=true}" Text="{Binding NameText}" />
+                                    <TextBlock Visibility="{Binding General.IsOpenKnx, ElementName=ViewControl, Converter={StaticResource BoolToVis}}">
+                                        <Run Text="{Binding Name}" />
+                                        <Run Text="{Binding Number, Converter={StaticResource IntToHex}}" />
+                                    </TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
 
                     <Grid Grid.Column="2" Grid.RowSpan="2" DataContext="{Binding ElementName=AppList, Path=SelectedItem}" IsEnabled="{Binding ., Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
                         <Grid.RowDefinitions>
@@ -618,7 +635,10 @@
                                 </TextBlock>
                             </HeaderedContentControl>
                             <HeaderedContentControl Header="{x:Static p:Resources.prop_number}">
-                                <TextBox Text="{Binding Number, UpdateSourceTrigger=PropertyChanged}" />
+                                <Grid>
+                                    <TextBox Text="{Binding Number, Converter={StaticResource IntToHex}}" MaxLength="4" Visibility="{Binding General.IsOpenKnx, ElementName=ViewControl, Converter={StaticResource BoolToVis}, ConverterParameter=true}" />
+                                    <TextBox Text="{Binding Number, Converter={StaticResource IntToHex}}" MaxLength="2" Visibility="{Binding General.IsOpenKnx, ElementName=ViewControl, Converter={StaticResource BoolToVis}}" />
+                                </Grid>
                             </HeaderedContentControl>
                             <HeaderedContentControl Header="{x:Static p:Resources.prop_bcu}">
                                 <ComboBox SelectedItem="{Binding Mask, Mode=TwoWay}" Margin="0" DisplayMemberPath="Id" IsEnabled="{Binding Versions.Count, Converter={StaticResource EmptyListToBool}}" ItemsSource="{Binding BCUs, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />

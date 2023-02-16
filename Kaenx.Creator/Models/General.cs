@@ -32,6 +32,16 @@ namespace Kaenx.Creator.Models
             set { _manuId = value; Changed("ManufacturerId"); }
         }
 
+        private bool _isOpenKnx = false;
+        public bool IsOpenKnx
+        {
+            get { return _isOpenKnx; }
+            set { 
+                _isOpenKnx = value; 
+                Changed("IsOpenKnx"); 
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
         public void Changed(string name)
         {

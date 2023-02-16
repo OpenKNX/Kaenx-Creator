@@ -111,6 +111,19 @@ namespace Kaenx.Creator.Classes {
                         actions.Add(new PublishAction() { Text = "Applikation '" + app.NameText + "' verwendet Version " + group.Key + " (" + Math.Floor(group.Key / 16.0) + "." + (group.Key % 16) + ") " + group.Count() + " mal", State = PublishState.Fail });
                 }
                 #endregion
+
+                #region Baggages Check
+
+                foreach(Baggage bag in General.Baggages)
+                {
+                    if(General.IsOpenKnx)
+                    {
+                        if(bag.TargetPath != "root" && bag.TargetPath != "openknxid" && bag.TargetPath != "openknxapp")
+                            actions.Add(new PublishAction() { Text = "Anhang '" + bag.Name + "' hat keinen Zielordner", State = PublishState.Fail });
+                    }
+                }
+
+                #endregion
             }
 
             //TODO check hardware/device/app

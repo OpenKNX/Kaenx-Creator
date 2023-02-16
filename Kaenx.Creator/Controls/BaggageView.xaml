@@ -82,8 +82,16 @@
                     <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
                 </HeaderedContentControl>
 
-                <HeaderedContentControl Header="{x:Static p:Resources.bagg_targetpath}">
+                <HeaderedContentControl Header="{x:Static p:Resources.bagg_targetpath}" Visibility="{Binding General.IsOpenKnx, ElementName=ViewControl, Converter={StaticResource BoolToVis}, ConverterParameter=true}">
                     <TextBox Text="{Binding TargetPath, UpdateSourceTrigger=PropertyChanged}"/>
+                </HeaderedContentControl>
+
+                <HeaderedContentControl Header="{x:Static p:Resources.bagg_targetpath}" Visibility="{Binding General.IsOpenKnx, ElementName=ViewControl, Converter={StaticResource BoolToVis}}">
+                    <ComboBox SelectedValue="{Binding TargetPath}" SelectedValuePath="Tag">
+                        <ComboBoxItem Tag="root" Content="/&#x09;Root (Achtung! Baggages von anderen Erstellern nicht überschreiben!)" />
+                        <ComboBoxItem Tag="openknxid" Content="/AF/&#x09;OpenKnxId Ordner (für Bilder die man in mehreren Applikationen verwendet)" />
+                        <ComboBoxItem Tag="openknxapp" Content="/AF/01/&#x09;OpenKnx Applikation Ordner (empfohlen für Applikation spezielle Bilder)" />
+                    </ComboBox>
                 </HeaderedContentControl>
 
                 <Button Content="{x:Static p:Resources.bagg_file}" Click="ClickChangeFile" />

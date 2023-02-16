@@ -77,6 +77,11 @@ namespace Kaenx.Creator.Models
             }
         }
 
+        public Baggage Copy()
+        {
+            return (Baggage)this.MemberwiseClone();
+        }
+
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void Changed(string name)

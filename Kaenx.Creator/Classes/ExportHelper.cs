@@ -58,7 +58,7 @@ namespace Kaenx.Creator.Classes
 
         public bool ExportEts(ObservableCollection<PublishAction> actions)
         {
-            string Manu = "M-" + general.ManufacturerId.ToString("X4");
+            string Manu = "M-" + GetManuId();
 
             System.IO.Directory.CreateDirectory(GetRelPath());
             if (System.IO.Directory.Exists(GetRelPath("Temp")))
@@ -97,7 +97,7 @@ namespace Kaenx.Creator.Classes
                 xmanu.Add(xapps);
                 Models.Application app = apps.Single(a => a.Versions.Contains(model));
 
-                appVersion = $"{Manu}_A-{app.Number:X4}-{ver.Number:X2}";
+                appVersion = $"{Manu}_A-{GetAppId(app.Number)}-{ver.Number:X2}";
                 appVersion += "-0000";
                 appVersionMod = appVersion;
 
@@ -109,7 +109,9 @@ namespace Kaenx.Creator.Classes
                 XElement xapp = new XElement(Get("ApplicationProgram"), xunderapp);
                 xapps.Add(xapp);
                 xapp.SetAttributeValue("Id", appVersion);
-                xapp.SetAttributeValue("ApplicationNumber", app.Number.ToString());
+                int appnumber = app.Number;
+                if(general.IsOpenKnx) appnumber |= general.ManufacturerId << 8;
+                xapp.SetAttributeValue("ApplicationNumber", appnumber);
                 xapp.SetAttributeValue("ApplicationVersion", ver.Number.ToString());
                 xapp.SetAttributeValue("ProgramType", "ApplicationProgram");
                 xapp.SetAttributeValue("MaskVersion", app.Mask.Id);
@@ -255,11 +257,36 @@ namespace Kaenx.Creator.Classes
                             break;
 
                         case ParameterTypes.Picture:
+                        {
                             xcontent = new XElement(Get("TypePicture"));
-                            xcontent.SetAttributeValue("RefId", $"M-{general.ManufacturerId:X4}_BG-{GetEncoded(type.BaggageObject.TargetPath)}-{GetEncoded(type.BaggageObject.Name + type.BaggageObject.Extension)}");
-                            if (!baggagesApp.Contains(type.BaggageObject))
-                                baggagesApp.Add(type.BaggageObject);
+                            Baggage bag2 = type.BaggageObject.Copy();
+
+                            if(general.IsOpenKnx)
+                            {
+                                switch(type.BaggageObject.TargetPath)
+                                {
+                                    case "root":
+                                        bag2.TargetPath = "";
+                                        break;
+
+                                    case "openknxid":
+                                    {
+                                        bag2.TargetPath = general.ManufacturerId.ToString("X2");
+                                        break;
+                                    }
+
+                                    case "openknxapp":
+                                    {
+                                        bag2.TargetPath = Path.Combine(general.ManufacturerId.ToString("X2"), app.Number.ToString("X2"));
+                                        break;
+                                    }
+                                }
+                            }
+                            xcontent.SetAttributeValue("RefId", $"M-{GetManuId()}_BG-{GetEncoded(bag2.TargetPath)}-{GetEncoded(type.BaggageObject.Name + type.BaggageObject.Extension)}");
+                            if (!baggagesApp.Any(b => b.TargetPath == bag2.TargetPath && b.Name == bag2.Name && b.Extension == bag2.Extension))
+                                baggagesApp.Add(bag2);
                             break;
+                        }
 
                         case ParameterTypes.IpAddress:
                             xcontent = new XElement(Get("TypeIPAddress"));
@@ -314,9 +341,10 @@ namespace Kaenx.Creator.Classes
                     foreach(Baggage bag in baggagesApp)
                     {
                         XElement xbag = new XElement(Get("Baggage"));
-                        xbag.SetAttributeValue("RefId", $"M-{general.ManufacturerId:X4}_BG-{GetEncoded(bag.TargetPath)}-{GetEncoded(bag.Name + bag.Extension)}");
+                        xbag.SetAttributeValue("RefId", $"M-{GetManuId()}_BG-{GetEncoded(bag.TargetPath)}-{GetEncoded(bag.Name + bag.Extension)}");
                         xextension.Add(xbag);
-                        if (!baggagesManu.Contains(bag))
+
+                        if (!baggagesManu.Any(b => b.TargetPath == bag.TargetPath && b.Name == bag.Name && b.Extension == bag.Extension))
                             baggagesManu.Add(bag);
                     }
                 }
@@ -327,8 +355,14 @@ namespace Kaenx.Creator.Classes
 
                 
                 headers.AppendLine("//--------------------Allgemein---------------------------");
-                headers.AppendLine($"#define MAIN_OpenKnxId 0x{(app.Number >> 8):X2}");
-                headers.AppendLine($"#define MAIN_ApplicationNumber 0x{app.Number & 0xFF:X2}");
+                if(general.IsOpenKnx)
+                {
+                    headers.AppendLine($"#define MAIN_OpenKnxId 0x{general.ManufacturerId:X2}");
+                    headers.AppendLine($"#define MAIN_ApplicationNumber 0x{app.Number:X2}");
+                } else {
+                    //headers.AppendLine($"#define MAIN_OpenKnxId 0x{(app.Number >> 8):X2}");
+                    headers.AppendLine($"#define MAIN_ApplicationNumber 0x{app.Number:X4}");
+                }
                 headers.AppendLine($"#define MAIN_ApplicationVersion 0x{ver.Number:X2}");
                 headers.AppendLine($"#define MAIN_OrderNumber \"{hardware.First(h => h.Apps.Contains(app)).Devices.First().OrderNumber}\" //may not work with multiple devices on same hardware or app on different hardware");
                 headers.AppendLine();
@@ -522,7 +556,7 @@ namespace Kaenx.Creator.Classes
                 foreach(KeyValuePair<string, List<long>> item in modStartComs)
                     headers.AppendLine($"const long mod_{HeaderNameEscape(item.Key)}_coms[] = {{ {string.Join(',', item.Value)} }};");
 
-                System.IO.File.WriteAllText(GetRelPath($"knxprod_{app.Number:X4}_{ver.Number:X2}.h"), headers.ToString());
+                System.IO.File.WriteAllText(GetRelPath($"knxprod_{GetAppId(app.Number)}_{ver.Number:X2}.h"), headers.ToString());
                 headers = null;
 
                 #endregion
@@ -560,7 +594,7 @@ namespace Kaenx.Creator.Classes
                     }
 
                     XElement xbag = new XElement(Get("Baggage"));
-                    xbag.SetAttributeValue("RefId", $"M-{general.ManufacturerId:X4}_BG--{GetEncoded($"{zipName}.zip")}");
+                    xbag.SetAttributeValue("RefId", $"M-{GetManuId()}_BG--{GetEncoded($"{zipName}.zip")}");
                     xextension.Add(xbag);
                     exportIcons = true;
                 }
@@ -704,13 +738,13 @@ namespace Kaenx.Creator.Classes
                     {
                         //if (!vers.Contains(ver)) continue;
                         
-                        string appidx = app.Number.ToString("X4") + "-" + ver.Number.ToString("X2") + "-0000";
+                        string appidx = GetAppId(app.Number) + "-" + ver.Number.ToString("X2") + "-0000";
 
                         XElement xh2p = new XElement(Get("Hardware2Program"));
                         xh2p.SetAttributeValue("Id", hid + "_HP-" + appidx);
                         xh2p.SetAttributeValue("MediumTypes", app.Mask.MediumTypes);
 
-                        HardwareIds.Add(hard.Version + "-" + app.Number + "-" + ver.Number, hid + "_HP-" + appidx);
+                        HardwareIds.Add(hard.Version + "-" + GetAppId(app.Number) + "-" + ver.Number, hid + "_HP-" + appidx);
 
                         xh2p.Add(new XElement(Get("ApplicationProgramRef"), new XAttribute("RefId", Manu + "_A-" + appidx)));
 
@@ -825,9 +859,9 @@ namespace Kaenx.Creator.Classes
                 foreach (Baggage bag in baggagesManu)
                 {
                     XElement xbag = new XElement(Get("Baggage"));
-                    xbag.SetAttributeValue("TargetPath", GetEncoded(bag.TargetPath));
+                    xbag.SetAttributeValue("TargetPath", bag.TargetPath);
                     xbag.SetAttributeValue("Name", bag.Name + bag.Extension);
-                    xbag.SetAttributeValue("Id", $"M-{general.ManufacturerId.ToString("X4")}_BG-{GetEncoded(bag.TargetPath)}-{GetEncoded(bag.Name + bag.Extension)}");
+                    xbag.SetAttributeValue("Id", $"M-{GetManuId()}_BG-{GetEncoded(bag.TargetPath)}-{GetEncoded(bag.Name + bag.Extension)}");
 
                     XElement xinfo = new XElement(Get("FileInfo"));
                     //xinfo.SetAttributeValue("TimeInfo", "2022-01-28T13:55:35.2905057Z");
@@ -1853,7 +1887,7 @@ namespace Kaenx.Creator.Classes
                 {
                     if (item.Parent.Parent == null)
                     {
-                        id = $"M-{general.ManufacturerId.ToString("X4")}_CS-" + GetEncoded(item.Number);
+                        id = $"M-{GetManuId()}_CS-" + GetEncoded(item.Number);
                         xitem.SetAttributeValue("Id", id);
                     }
                     else
@@ -1889,9 +1923,9 @@ namespace Kaenx.Creator.Classes
                             if (!vers.Contains(ver)) continue;
                             XElement xitem = new XElement(Get("CatalogItem"));
 
-                            string id = $"M-{general.ManufacturerId.ToString("X4")}";
+                            string id = $"M-{GetManuId()}";
                             id += $"_H-{GetEncoded(item.Hardware.SerialNumber)}-{item.Hardware.Version}";
-                            id += $"_HP-{app.Number.ToString("X4")}-{ver.Number.ToString("X2")}-0000";
+                            id += $"_HP-{GetAppId(app.Number)}-{ver.Number.ToString("X2")}-0000";
                             string parentId = parent.Attribute("Id").Value;
                             parentId = parentId.Substring(parentId.LastIndexOf("_CS-") + 4);
                             id += $"_CI-{GetEncoded(dev.OrderNumber)}-{GetEncoded(item.Number)}";
@@ -1901,7 +1935,7 @@ namespace Kaenx.Creator.Classes
                             xitem.SetAttributeValue("Number", item.Number);
                             xitem.SetAttributeValue("VisibleDescription", GetDefaultLanguage(dev.Description));
                             xitem.SetAttributeValue("ProductRefId", productIds[dev.Name]);
-                            string hardid = item.Hardware.Version + "-" + app.Number + "-" + ver.Number;
+                            string hardid = item.Hardware.Version + "-" + GetAppId(app.Number) + "-" + ver.Number;
                             xitem.SetAttributeValue("Hardware2ProgramRefId", hardwareIds[hardid]);
                             xitem.SetAttributeValue("DefaultLanguage", currentLang);
                             parent.Add(xitem);
@@ -1916,7 +1950,7 @@ namespace Kaenx.Creator.Classes
 
         public async void SignOutput()
         {
-            string manu = $"M-{general.ManufacturerId:X4}";
+            string manu = $"M-{GetManuId()}";
 
             IDictionary<string, string> applProgIdMappings = new Dictionary<string, string>();
             IDictionary<string, string> applProgHashes = new Dictionary<string, string>();
@@ -2059,6 +2093,16 @@ namespace Kaenx.Creator.Classes
             doc = new XDocument(knx);
             doc.Root.Add(new XElement(Get("ManufacturerData"), xmanu));
             return xmanu;
+        }
+
+        private string GetManuId()
+        {
+            return general.IsOpenKnx ? "00FA" : general.ManufacturerId.ToString("X4");
+        }
+
+        private string GetAppId(int number)
+        {
+            return general.IsOpenKnx ? general.ManufacturerId.ToString("X2") + number.ToString("X2") : number.ToString("X4");
         }
     }
 }
