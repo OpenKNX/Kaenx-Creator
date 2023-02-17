@@ -122,6 +122,11 @@ namespace Kaenx.Creator.Classes
                 xapp.SetAttributeValue("DynamicTableManagement", "false"); //TODO check when to add
                 xapp.SetAttributeValue("Linkable", "false"); //TODO check when to add
 
+                if(ver.IsBusInterfaceActive && ver.BusInterfaceCounter > 0)
+                {
+                    xapp.SetAttributeValue("AdditionalAddressesCount", ver.BusInterfaceCounter);
+                }
+
                 buttonScripts = new List<string>();
                 iconsApp = new List<Icon>();
                 List<Baggage> baggagesApp = new List<Baggage>();
@@ -418,24 +423,25 @@ namespace Kaenx.Creator.Classes
                         }
                     }
                     ver.Procedure = temp.ToString();
-                }
-                temp.Attributes().Where((x) => x.IsNamespaceDeclaration).Remove();
-                temp.Name = XName.Get(temp.Name.LocalName, currentNamespace);
-                foreach(XElement xele in temp.Descendants())
-                {
-                    xele.Name = XName.Get(xele.Name.LocalName, currentNamespace);
-                    switch(xele.Name.LocalName)
+
+                    temp.Attributes().Where((x) => x.IsNamespaceDeclaration).Remove();
+                    temp.Name = XName.Get(temp.Name.LocalName, currentNamespace);
+                    foreach(XElement xele in temp.Descendants())
                     {
-                        case "OnError":
+                        xele.Name = XName.Get(xele.Name.LocalName, currentNamespace);
+                        switch(xele.Name.LocalName)
                         {
-                            int id = int.Parse(xele.Attribute("MessageRef").Value);
-                            Message msg = ver.Messages.SingleOrDefault(m => m.UId == id);
-                            xele.SetAttributeValue("MessageRef", $"{appVersion}_M-{msg.Id}");
-                            break;
+                            case "OnError":
+                            {
+                                int id = int.Parse(xele.Attribute("MessageRef").Value);
+                                Message msg = ver.Messages.SingleOrDefault(m => m.UId == id);
+                                xele.SetAttributeValue("MessageRef", $"{appVersion}_M-{msg.Id}");
+                                break;
+                            }
                         }
                     }
+                    xunderapp.Add(temp);
                 }
-                xunderapp.Add(temp);
                 #endregion
 
 
@@ -465,6 +471,37 @@ namespace Kaenx.Creator.Classes
 
                 XElement xscript = new XElement(Get("Script"), "");
                 xunderapp.Add(xscript);
+
+                #region BusInterfaces
+
+                if(ver.IsBusInterfaceActive)
+                {
+                    XElement xbis = new XElement(Get("BusInterfaces"));
+                    xunderapp.Add(xbis);
+
+                    for(int i = 1; i <= ver.BusInterfaceCounter; i++)
+                    {
+                        XElement xbi = new XElement(Get("BusInterface"));
+                        xbi.SetAttributeValue("Id", $"{appVersion}_BI-{i}");
+                        xbi.SetAttributeValue("AddressIndex", i);
+                        xbi.SetAttributeValue("AccessType", "Tunneling");
+                        xbi.SetAttributeValue("Text", "Tunneling Channel " + i);
+                        xbis.Add(xbi);
+                    }
+
+                    if(ver.HasBusInterfaceRouter)
+                    {
+                        XElement xbi = new XElement(Get("BusInterface"));
+                        xbi.SetAttributeValue("Id", $"{appVersion}_BI-0");
+                        xbi.SetAttributeValue("AddressIndex", "0");
+                        xbi.SetAttributeValue("AccessType", "Tunneling");
+                        xbi.SetAttributeValue("Text", "IP Routing");
+                        xbis.Add(xbi);
+                    }
+
+                }
+
+                #endregion
 
                 
                 #region Modules

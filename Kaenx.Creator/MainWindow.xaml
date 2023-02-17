@@ -686,13 +686,12 @@
                 </Grid>
             </TabItem>
 
-            <TabItem DataContext="{Binding SelectedVersion.Model}" Style="{StaticResource TopTabItem}" IsEnabled="{Binding ., Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
-                <TabItem.Header>
+            <TabItem Header="{Binding NameText}" DataContext="{Binding SelectedVersion.Model}" Style="{StaticResource TopTabItem}" IsEnabled="{Binding ., Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
+                <!--<TabItem.Header>
                     <StackPanel Orientation="Horizontal">
-                        <!--<TextBlock FontSize="18" Text="{Binding ElementName=AppList, Path=SelectedItem.Name}" Margin="0 0 5 0" />-->
                         <TextBlock FontSize="18" Text="{Binding NameText}" />
                     </StackPanel>
-                </TabItem.Header>
+                </TabItem.Header>-->
 
                 <TabControl x:Name="VersionTabs" SelectionChanged="TabChanged" TabStripPlacement="Left" Style="{StaticResource LeftTabControl}">
                     
@@ -775,7 +774,13 @@
                                     <CheckBox IsChecked="{Binding IsMessagesActive}" Content="{x:Static p:Resources.vgen_msg}" HorizontalAlignment="Left" />
                                     <CheckBox IsChecked="{Binding IsHelpActive}" Content="{x:Static p:Resources.vgen_help}" HorizontalAlignment="Left" />
                                     <CheckBox IsChecked="{Binding IsPreETS4}" Content="{x:Static p:Resources.vgen_ets4}" HorizontalAlignment="Left" />
+                                    <CheckBox IsChecked="{Binding IsBusInterfaceActive}" Content="BusInterface aktivieren" HorizontalAlignment="Left" />
+                                    <CheckBox IsChecked="{Binding HasBusInterfaceRouter}" Content="BusInterface Router aktivieren" Visibility="{Binding IsBusInterfaceActive, Converter={StaticResource BoolToVis}}" HorizontalAlignment="Left" />
                                 
+                                    <HeaderedContentControl Header="Anzahl an Tunneln" Visibility="{Binding IsBusInterfaceActive, Converter={StaticResource BoolToVis}}">
+                                        <TextBox Text="{Binding BusInterfaceCounter}" Margin="5" />
+                                    </HeaderedContentControl>
+
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition />

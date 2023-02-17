@@ -220,6 +220,16 @@ namespace Kaenx.Creator.Models
             set { _isHelpActive = value; Changed("IsHelpActive"); }
         }
 
+        private bool _isBusInterfaceActive = false;
+        public bool IsBusInterfaceActive
+        {
+            get { return _isBusInterfaceActive; }
+            set { _isBusInterfaceActive = value; Changed("IsBusInterfaceActive"); }
+        }
+
+        public bool HasBusInterfaceRouter { get; set; }
+        public int BusInterfaceCounter { get; set; } = 4;
+
         private string _procedure = "";
         public string Procedure
         {
