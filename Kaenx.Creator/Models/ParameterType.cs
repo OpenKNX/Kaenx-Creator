@@ -23,6 +23,9 @@ namespace Kaenx.Creator.Models
             set { _name = value; Changed("Name"); }
         }
 
+        [JsonIgnore]
+        public string ImportHelperName { get; set; }
+
         
         private ParameterTypes _type = ParameterTypes.Text;
         public ParameterTypes Type
