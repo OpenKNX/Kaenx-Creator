@@ -50,7 +50,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type TabItem}">
-                        <Border Padding="0 0 0 7" Background="Transparent">
+                        <Border Padding="0" Background="Transparent">
                             <VisualStateManager.VisualStateGroups>
                                 <VisualStateGroup x:Name="SelectionStates">
                                     <VisualState x:Name="Unselected">
@@ -98,7 +98,7 @@
                                         <SolidColorBrush x:Name="Backx" Color="Transparent" />
                                     </Border.Background>
                                 </Border>
-                                <ContentPresenter Name="Head" ContentSource="Header" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10" />
+                                <ContentPresenter Name="Head" ContentSource="Header" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="9" />
                             </Grid>
                         </Border>
                     </ControlTemplate>

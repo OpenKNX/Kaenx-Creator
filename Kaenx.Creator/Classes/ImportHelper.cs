@@ -692,8 +692,9 @@ namespace Kaenx.Creator.Classes
                 {
                     Name = xparatype.Attribute("Name").Value,
                     IsSizeManual = true,
-                    UId = _uidCounter++
+                    UId = _uidCounter++,
                 };
+                ptype.ImportHelperName = xparatype.Attribute("Id").Value;
 
                 XElement xsub = xparatype.Elements().ElementAt(0);
                 switch (xsub.Name.LocalName)
@@ -904,8 +905,8 @@ namespace Kaenx.Creator.Classes
                 _ => throw new Exception("Unbekannter AccesType für Parameter: " + xpara.Attribute("Access").Value)
             };
 
-            string typeName = Unescape(GetLastSplit(xpara.Attribute("ParameterType").Value, 3));
-            para.ParameterTypeObject = currentVers.ParameterTypes.Single(t => t.Name == typeName);
+            string typeName = xpara.Attribute("ParameterType").Value;
+            para.ParameterTypeObject = currentVers.ParameterTypes.Single(t => t.ImportHelperName == typeName);
 
             if (xmemory != null || xpara.Elements().Count() > 0)
             {
@@ -1384,6 +1385,11 @@ namespace Kaenx.Creator.Classes
             if(temp != null)
             {
                 string def = temp.Attribute("DefaultLanguage").Value;
+
+                if(!def.Contains("-")){
+                    def = _langTexts.Keys.First(l => l.StartsWith(def + "-"));
+                }
+
                 if(!_general.Languages.Any(l => l.CultureCode == def))
                     _general.Languages.Add(new Language(_langTexts[def], def));
             }
