@@ -67,6 +67,7 @@ namespace Kaenx.Creator
             CodeNew = code.ToString();
             CodeNew = CodeNew.Substring(1, CodeNew.Length -2);
             CodeNew = CodeNew.Replace("\\\"", "\"").Replace("\\'", "'").Replace("\\r\\n", "\r\n").Replace("\\n", "\r\n");
+            CodeNew = System.Text.RegularExpressions.Regex.Unescape(CodeNew);
             this.Close();
         }
 
