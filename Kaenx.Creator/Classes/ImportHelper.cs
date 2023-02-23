@@ -336,6 +336,14 @@ namespace Kaenx.Creator.Classes
                 }
             }
 
+            if(xapp.Attribute("AdditionalAddressesCount") != null)
+            {
+                currentVers.IsBusInterfaceActive = true;
+                IEnumerable<XElement> interfaces = xstatic.Element(Get("BusInterfaces")).Elements();
+                currentVers.BusInterfaceCounter = interfaces.Count(i => i.Attribute("AccessType")?.Value == "Tunneling");
+                currentVers.HasBusInterfaceRouter = interfaces.Any(i => i.Attribute("AccessType")?.Value == "Routing");
+            }
+
             ImportHelpFile(xapp);
             ImportSegments(xstatic.Element(Get("Code")));
             ImportScript(xstatic.Element(Get("Script")));

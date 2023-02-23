@@ -2426,5 +2426,23 @@ namespace Kaenx.Creator.Properties {
                 return ResourceManager.GetString("editor_cancel", resourceCulture);
             }
         }
+        
+        public static string tprod_own {
+            get {
+                return ResourceManager.GetString("tprod_own", resourceCulture);
+            }
+        }
+        
+        public static string tprod_mask {
+            get {
+                return ResourceManager.GetString("tprod_mask", resourceCulture);
+            }
+        }
+        
+        public static string tprod_edit {
+            get {
+                return ResourceManager.GetString("tprod_edit", resourceCulture);
+            }
+        }
     }
 }
