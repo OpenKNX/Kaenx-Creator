@@ -230,16 +230,16 @@
             </StackPanel>
         </DataTemplate>
         <DataTemplate x:Key="MemModule">
-            <TextBlock TextWrapping="Wrap" Text="Hier wird ein Module gespeichert. Um genaueres über die Belegung des Speicherplatzes zu erfahren, schauen Sie bitte in den Einstellungen für das Module nach." />
+            <TextBlock TextWrapping="Wrap" Text="{x:Static p:Resources.vmem_mod}" />
         </DataTemplate>
         <DataTemplate x:Key="MemGATable">
-            <TextBlock TextWrapping="Wrap" Text="Hier wird die Gruppenadresstabelle gespeichert." />
+            <TextBlock TextWrapping="Wrap" Text="{x:Static p:Resources.vmem_gat}" />
         </DataTemplate>
         <DataTemplate x:Key="MemCOTable">
-            <TextBlock TextWrapping="Wrap" Text="Hier wird die Kommunikationsobjekttabelle gespeichert." />
+            <TextBlock TextWrapping="Wrap" Text="{x:Static p:Resources.vmem_cot}" />
         </DataTemplate>
         <DataTemplate x:Key="MemASTable">
-            <TextBlock TextWrapping="Wrap" Text="Hier wird die Assoziationstabelle gespeichert." />
+            <TextBlock TextWrapping="Wrap" Text="{x:Static p:Resources.vmem_ast}" />
         </DataTemplate>
 
         <select:MemorySelector x:Key="MemorySelector"
@@ -293,7 +293,7 @@
                 <MenuItem IsCheckable="True" Header="Deutsch" Tag="de" Click="ChangeLang" />
                 <MenuItem IsCheckable="True" Header="English" Tag="en" Click="ChangeLang" />
             </MenuItem>
-            <MenuItem Header="Info">
+            <MenuItem Header="{x:Static p:Resources.menu_info}">
                 <MenuItem Header="{x:Static p:Resources.menu_info_vers}" Click="ClickShowVersion" />
                 <MenuItem x:Name="MenuDebug" IsCheckable="True" Header="{x:Static p:Resources.menu_info_debug}" Click="ClickToggleDebug" />
                 <MenuItem Header="{x:Static p:Resources.menu_info_help}" Click="ClickHelp" />
@@ -319,14 +319,14 @@
                             <Setter Property="Margin" Value="5" />
                         </Style>
                     </StackPanel.Resources>
-                    <HeaderedContentControl Header="Aktuelle GUID">
+                    <HeaderedContentControl Header="{x:Static p:Resources.tgen_guid}">
                         <TextBlock Text="{Binding General.Guid}" />
                     </HeaderedContentControl>
                     <CheckBox Content="OpenKNX Projekt" IsChecked="{Binding General.IsOpenKnx}" />
                     <HeaderedContentControl Header="{x:Static p:Resources.tgen_manu}" Visibility="{Binding General.IsOpenKnx, Converter={StaticResource BoolToVis}, ConverterParameter=true}">
                         <TextBox Text="{Binding General.ManufacturerId, Converter={StaticResource IntToHex}, ConverterParameter=4}" MaxLength="4" />
                     </HeaderedContentControl>
-                    <HeaderedContentControl Header="OpenKnxId" Visibility="{Binding General.IsOpenKnx, Converter={StaticResource BoolToVis}}">
+                    <HeaderedContentControl Header="{x:Static p:Resources.tgen_openknxid}" Visibility="{Binding General.IsOpenKnx, Converter={StaticResource BoolToVis}}">
                         <TextBox Text="{Binding General.ManufacturerId, Converter={StaticResource IntToHex}, ConverterParameter=2}" MaxLength="2" />
                     </HeaderedContentControl>
                     <HeaderedContentControl Header="{x:Static p:Resources.tgen_name}">
@@ -774,8 +774,8 @@
                                     <CheckBox IsChecked="{Binding IsMessagesActive}" Content="{x:Static p:Resources.vgen_msg}" HorizontalAlignment="Left" />
                                     <CheckBox IsChecked="{Binding IsHelpActive}" Content="{x:Static p:Resources.vgen_help}" HorizontalAlignment="Left" />
                                     <CheckBox IsChecked="{Binding IsPreETS4}" Content="{x:Static p:Resources.vgen_ets4}" HorizontalAlignment="Left" />
-                                    <CheckBox IsChecked="{Binding IsBusInterfaceActive}" Content="BusInterface aktivieren" HorizontalAlignment="Left" />
-                                    <CheckBox IsChecked="{Binding HasBusInterfaceRouter}" Content="BusInterface Router aktivieren" Visibility="{Binding IsBusInterfaceActive, Converter={StaticResource BoolToVis}}" HorizontalAlignment="Left" />
+                                    <CheckBox IsChecked="{Binding IsBusInterfaceActive}" Content="{x:Static p:Resources.vgen_businterface}" HorizontalAlignment="Left" />
+                                    <CheckBox IsChecked="{Binding HasBusInterfaceRouter}" Content="{x:Static p:Resources.vgen_busrouter}" Visibility="{Binding IsBusInterfaceActive, Converter={StaticResource BoolToVis}}" HorizontalAlignment="Left" />
                                 
                                     <HeaderedContentControl Header="Anzahl an Tunneln" Visibility="{Binding IsBusInterfaceActive, Converter={StaticResource BoolToVis}}">
                                         <TextBox Text="{Binding BusInterfaceCounter}" Margin="5" />
@@ -1172,11 +1172,11 @@
 
                     <DataGrid Grid.RowSpan="2" Name="ExportList" AutoGenerateColumns="False" BorderThickness="0 0 1 0">
                         <DataGrid.Columns>
-                            <DataGridCheckBoxColumn Header="Publish" Binding="{Binding Selected}" />
-                            <DataGridTextColumn Header="Gerät" Binding="{Binding Device.Name}" IsReadOnly="True" />
-                            <DataGridTextColumn Header="Hardware" Binding="{Binding Hardware.Name}" IsReadOnly="True" />
-                            <DataGridTextColumn Header="Applikation" Binding="{Binding App.Name}" IsReadOnly="True" />
-                            <DataGridTextColumn Header="Version" Binding="{Binding Version.NameText}" IsReadOnly="True" />
+                            <DataGridCheckBoxColumn Header="{x:Static p:Resources.tpub_publish}" Binding="{Binding Selected}" />
+                            <DataGridTextColumn Header="{x:Static p:Resources.tpub_device}" Binding="{Binding Device.Name}" IsReadOnly="True" />
+                            <DataGridTextColumn Header="{x:Static p:Resources.tpub_hardware}" Binding="{Binding Hardware.Name}" IsReadOnly="True" />
+                            <DataGridTextColumn Header="{x:Static p:Resources.tpub_app}" Binding="{Binding App.Name}" IsReadOnly="True" />
+                            <DataGridTextColumn Header="{x:Static p:Resources.tpub_vers}" Binding="{Binding Version.NameText}" IsReadOnly="True" />
                         </DataGrid.Columns>
                     </DataGrid>
 
@@ -1198,22 +1198,22 @@
                                 <Setter Property="Margin" Value="5" />
                             </Style>
                         </StackPanel.Resources>
-                        <HeaderedContentControl Header="Filtern:">
+                        <HeaderedContentControl Header="{x:Static p:Resources.tpub_filter}">
                             <TextBox x:Name="ExportInFilter" TextChanged="ExportInFilter_TextChanged" />
                         </HeaderedContentControl>
 
-                        <CheckBox x:Name="InPublishOnlyLatest" Content="Nur neueste Applikationversion exportieren" Checked="ChangedPublishOnlyLatest" Unchecked="ChangedPublishOnlyLatest" />
+                        <CheckBox x:Name="InPublishOnlyLatest" Content="{x:Static p:Resources.tpub_onlynew}" Checked="ChangedPublishOnlyLatest" Unchecked="ChangedPublishOnlyLatest" />
 
                         <ComboBox x:Name="InPublishTarget" SelectedIndex="0" SelectedValuePath="Tag" Visibility="Collapsed">
                             <ComboBoxItem Content="ETS" Tag="ets" />
                             <ComboBoxItem Content="Kaenx" Tag="kaenx" IsEnabled="False" />
                         </ComboBox>
                         
-                        <HeaderedContentControl Header="Dateiname:">
+                        <HeaderedContentControl Header="{x:Static p:Resources.tpub_filename}">
                             <TextBox x:Name="ExportInName" Text="output" />
                         </HeaderedContentControl>
 
-                        <Button Content="Veröffentlichen" Click="Button_Click" />
+                        <Button Content="{x:Static p:Resources.tpub_publish}" Click="Button_Click" />
                     </StackPanel>
 
                     <ScrollViewer Grid.Column="1" Grid.Row="1">
@@ -1242,18 +1242,18 @@
                 <RowDefinition Height="150" />
             </Grid.RowDefinitions>
 
-            <TextBlock FontSize="25" HorizontalAlignment="Center" Text="Willkommen bei Kaenx-Creator!" Margin="20" />
+            <TextBlock FontSize="25" HorizontalAlignment="Center" Text="{x:Static p:Resources.main_l1}" Margin="20" />
 
             <TextBlock FontSize="17" HorizontalAlignment="Center" Grid.Row="1">
-                <Run Text="Um ein neues Projekt zu beginnen, oder ein bestehendes zu öffnen" />
+                <Run Text="{x:Static p:Resources.main_l2}" />
                 <LineBreak />
-                <Run Text="wählen Sie oben im Menü 'Projekt' aus." />
+                <Run Text="{x:Static p:Resources.main_l3}" />
             </TextBlock>
 
             <TextBlock Grid.Row="3" HorizontalAlignment="Center">
-                <Run Text="Der Kaenx-Creator ist ein Teil von OpenKNX." />
+                <Run Text="{x:Static p:Resources.main_l4}" />
                 <LineBreak />
-                <Run Text="Mehr Informationen auf " />
+                <Run Text="{x:Static p:Resources.main_l5}" />
                 <Hyperlink NavigateUri="https://github.com/OpenKNX" RequestNavigate="Hyperlink_RequestNavigate">Github</Hyperlink>
             </TextBlock>
 

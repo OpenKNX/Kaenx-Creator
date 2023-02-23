@@ -434,7 +434,7 @@
                         <RowDefinition />
                     </Grid.RowDefinitions>
 
-                    <Button Content="SubModules bearbeiten" Click="OnOpenSubModules" Margin="50 0" />
+                    <Button Content="{x:Static p:Resources.submod_open}" Click="OnOpenSubModules" Margin="50 0" />
                     
                     <ItemsControl Grid.Row="1" ItemsSource="{Binding SelectedItem.Modules, ElementName=ModuleList}" Margin="50 20">
                         <ItemsControl.ItemTemplate>

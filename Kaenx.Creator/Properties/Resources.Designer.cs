@@ -2270,5 +2270,161 @@ namespace Kaenx.Creator.Properties {
                 return ResourceManager.GetString("parat_dfactor", resourceCulture);
             }
         }
+        
+        public static string tgen_guid {
+            get {
+                return ResourceManager.GetString("tgen_guid", resourceCulture);
+            }
+        }
+        
+        public static string tgen_openknxid {
+            get {
+                return ResourceManager.GetString("tgen_openknxid", resourceCulture);
+            }
+        }
+        
+        public static string bagg_changed {
+            get {
+                return ResourceManager.GetString("bagg_changed", resourceCulture);
+            }
+        }
+        
+        public static string vgen_businterface {
+            get {
+                return ResourceManager.GetString("vgen_businterface", resourceCulture);
+            }
+        }
+        
+        public static string vgen_busrouter {
+            get {
+                return ResourceManager.GetString("vgen_busrouter", resourceCulture);
+            }
+        }
+        
+        public static string vmem_mod {
+            get {
+                return ResourceManager.GetString("vmem_mod", resourceCulture);
+            }
+        }
+        
+        public static string vmem_gat {
+            get {
+                return ResourceManager.GetString("vmem_gat", resourceCulture);
+            }
+        }
+        
+        public static string vmem_cot {
+            get {
+                return ResourceManager.GetString("vmem_cot", resourceCulture);
+            }
+        }
+        
+        public static string vmem_ast {
+            get {
+                return ResourceManager.GetString("vmem_ast", resourceCulture);
+            }
+        }
+        
+        public static string submod_open {
+            get {
+                return ResourceManager.GetString("submod_open", resourceCulture);
+            }
+        }
+        
+        public static string tpub_publish {
+            get {
+                return ResourceManager.GetString("tpub_publish", resourceCulture);
+            }
+        }
+        
+        public static string tpub_device {
+            get {
+                return ResourceManager.GetString("tpub_device", resourceCulture);
+            }
+        }
+        
+        public static string tpub_hardware {
+            get {
+                return ResourceManager.GetString("tpub_hardware", resourceCulture);
+            }
+        }
+        
+        public static string tpub_app {
+            get {
+                return ResourceManager.GetString("tpub_app", resourceCulture);
+            }
+        }
+        
+        public static string tpub_vers {
+            get {
+                return ResourceManager.GetString("tpub_vers", resourceCulture);
+            }
+        }
+        
+        public static string tpub_filter {
+            get {
+                return ResourceManager.GetString("tpub_filter", resourceCulture);
+            }
+        }
+        
+        public static string tpub_onlynew {
+            get {
+                return ResourceManager.GetString("tpub_onlynew", resourceCulture);
+            }
+        }
+        
+        public static string tpub_filename {
+            get {
+                return ResourceManager.GetString("tpub_filename", resourceCulture);
+            }
+        }
+        
+        public static string menu_info {
+            get {
+                return ResourceManager.GetString("menu_info", resourceCulture);
+            }
+        }
+        
+        public static string main_l1 {
+            get {
+                return ResourceManager.GetString("main_l1", resourceCulture);
+            }
+        }
+        
+        public static string main_l2 {
+            get {
+                return ResourceManager.GetString("main_l2", resourceCulture);
+            }
+        }
+        
+        public static string main_l3 {
+            get {
+                return ResourceManager.GetString("main_l3", resourceCulture);
+            }
+        }
+        
+        public static string main_l4 {
+            get {
+                return ResourceManager.GetString("main_l4", resourceCulture);
+            }
+        }
+        
+        public static string main_l5 {
+            get {
+                return ResourceManager.GetString("main_l5", resourceCulture);
+            }
+        }
+        
+        public static string editor_save {
+            get {
+                return ResourceManager.GetString("editor_save", resourceCulture);
+            }
+        }
+        
+        public static string editor_cancel {
+            get {
+                return ResourceManager.GetString("editor_cancel", resourceCulture);
+            }
+        }
     }
 }

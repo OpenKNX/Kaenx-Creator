@@ -298,7 +298,7 @@
     <comment/>
   </data>
   <data name="prop_hasapp2" xml:space="preserve">
-    <value>Device as a second application program</value>
+    <value>Device has a second application program</value>
     <comment/>
   </data>
   <data name="thard_devices" xml:space="preserve">
@@ -1163,6 +1163,162 @@
   </data>
   <data name="prop_icon" xml:space="preserve">
     <value>Icon</value>
+    <comment/>
+  </data>
+  <data name="menu_info_check" xml:space="preserve">
+    <value>Check for update</value>
+    <comment/>
+  </data>
+  <data name="menu_info_auto" xml:space="preserve">
+    <value>Check for updates automatically on start</value>
+    <comment/>
+  </data>
+  <data name="tdyn_tbutton" xml:space="preserve">
+    <value>Button</value>
+    <comment/>
+  </data>
+  <data name="prop_handlerparas" xml:space="preserve">
+    <value>EventHandler Parameter</value>
+    <comment/>
+  </data>
+  <data name="prop_offline" xml:space="preserve">
+    <value>Offline</value>
+    <comment/>
+  </data>
+  <data name="prop_connless" xml:space="preserve">
+    <value>Connection Less</value>
+    <comment/>
+  </data>
+  <data name="prop_connoriented" xml:space="preserve">
+    <value>Connection Oriented</value>
+    <comment/>
+  </data>
+  <data name="prop_online" xml:space="preserve">
+    <value>Connection Type</value>
+    <comment/>
+  </data>
+  <data name="parat_doffset" xml:space="preserve">
+    <value>Display Offset</value>
+    <comment/>
+  </data>
+  <data name="parat_dfactor" xml:space="preserve">
+    <value>Display Factor</value>
+    <comment/>
+  </data>
+  <data name="tgen_guid" xml:space="preserve">
+    <value>Current GUID</value>
+    <comment/>
+  </data>
+  <data name="tgen_openknxid" xml:space="preserve">
+    <value>OpenKnxId</value>
+    <comment/>
+  </data>
+  <data name="bagg_changed" xml:space="preserve">
+    <value>Last edited at:</value>
+    <comment/>
+  </data>
+  <data name="vgen_businterface" xml:space="preserve">
+    <value>Activate BusInterface</value>
+    <comment/>
+  </data>
+  <data name="vgen_busrouter" xml:space="preserve">
+    <value>Activate BusInterface Router</value>
+    <comment/>
+  </data>
+  <data name="vmem_mod" xml:space="preserve">
+    <value>Here is a Module. To know more about this memory section go to the module settings.</value>
+    <comment/>
+  </data>
+  <data name="vmem_gat" xml:space="preserve">
+    <value>Here is the GroupAddressTable.</value>
+    <comment/>
+  </data>
+  <data name="vmem_cot" xml:space="preserve">
+    <value>Here is the CommunicationobjectTable.</value>
+    <comment/>
+  </data>
+  <data name="vmem_ast" xml:space="preserve">
+    <value>Here is the AssoziationTable.</value>
+    <comment/>
+  </data>
+  <data name="submod_open" xml:space="preserve">
+    <value>Edit SubModules</value>
+    <comment/>
+  </data>
+  <data name="tpub_publish" xml:space="preserve">
+    <value>Publish</value>
+    <comment/>
+  </data>
+  <data name="tpub_device" xml:space="preserve">
+    <value>Device</value>
+    <comment/>
+  </data>
+  <data name="tpub_hardware" xml:space="preserve">
+    <value>Hardware</value>
+    <comment/>
+  </data>
+  <data name="tpub_app" xml:space="preserve">
+    <value>Application</value>
+    <comment/>
+  </data>
+  <data name="tpub_vers" xml:space="preserve">
+    <value>Version</value>
+    <comment/>
+  </data>
+  <data name="tpub_filter" xml:space="preserve">
+    <value>Filter:</value>
+    <comment/>
+  </data>
+  <data name="tpub_onlynew" xml:space="preserve">
+    <value>Export only the latest version</value>
+    <comment/>
+  </data>
+  <data name="tpub_filename" xml:space="preserve">
+    <value>File Name:</value>
+    <comment/>
+  </data>
+  <data name="main_l1" xml:space="preserve">
+    <value>Welcome to Kaenx-Creator!</value>
+    <comment/>
+  </data>
+  <data name="main_l2" xml:space="preserve">
+    <value>To start with a new project or open one</value>
+    <comment/>
+  </data>
+  <data name="main_l3" xml:space="preserve">
+    <value>select 'Project' in the Top Menu.</value>
+    <comment/>
+  </data>
+  <data name="main_l4" xml:space="preserve">
+    <value>Kaenx-Creator is part of OpenKNX.</value>
+    <comment/>
+  </data>
+  <data name="main_l5" xml:space="preserve">
+    <value>Find more information here </value>
+    <comment/>
+  </data>
+  <data name="menu_info" xml:space="preserve">
+    <value>Info</value>
+    <comment/>
+  </data>
+  <data name="editor_save" xml:space="preserve">
+    <value>Save</value>
+    <comment/>
+  </data>
+  <data name="editor_cancel" xml:space="preserve">
+    <value>Cancel</value>
+    <comment/>
+  </data>
+  <data name="tprod_own" xml:space="preserve">
+    <value>Own Procedure</value>
+    <comment/>
+  </data>
+  <data name="trpod_mask" xml:space="preserve">
+    <value>Mask Procedures</value>
+    <comment/>
+  </data>
+  <data name="trpod_edit" xml:space="preserve">
+    <value>Edit Procedure</value>
     <comment/>
   </data>
 </root>

@@ -74,7 +74,7 @@
                     <Run Text="{Binding UId}"/>
                 </TextBlock>
 
-                <HeaderedContentControl Header="Zuletzt geändert am:">
+                <HeaderedContentControl Header="{x:Static p:Resources.bagg_changed}">
                     <TextBlock Text="{Binding LastModifiedDisplay}" />
                 </HeaderedContentControl>
         

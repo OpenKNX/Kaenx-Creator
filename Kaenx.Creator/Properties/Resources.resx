@@ -1205,4 +1205,120 @@
     <value>Anzeige Faktor</value>
     <comment/>
   </data>
+  <data name="tgen_guid" xml:space="preserve">
+    <value>Aktuelle GUID</value>
+    <comment/>
+  </data>
+  <data name="tgen_openknxid" xml:space="preserve">
+    <value>OpenKnxId</value>
+    <comment/>
+  </data>
+  <data name="bagg_changed" xml:space="preserve">
+    <value>Zuletzt geändert am:</value>
+    <comment/>
+  </data>
+  <data name="vgen_businterface" xml:space="preserve">
+    <value>BusInterface aktivieren</value>
+    <comment/>
+  </data>
+  <data name="vgen_busrouter" xml:space="preserve">
+    <value>BusInterface Router aktivieren</value>
+    <comment/>
+  </data>
+  <data name="vmem_mod" xml:space="preserve">
+    <value>Hier wird ein Module gespeichert. Um genaueres über die Belegung des Speicherplatzes zu erfahren, schauen Sie bitte in den Einstellungen für das Module nach.</value>
+    <comment/>
+  </data>
+  <data name="vmem_gat" xml:space="preserve">
+    <value>Hier wird die Gruppenadresstabelle gespeichert.</value>
+    <comment/>
+  </data>
+  <data name="vmem_cot" xml:space="preserve">
+    <value>Hier wird die Kommunikationsobjekttabelle gespeichert.</value>
+    <comment/>
+  </data>
+  <data name="vmem_ast" xml:space="preserve">
+    <value>Hier wird die Assoziationstabelle gespeichert.</value>
+    <comment/>
+  </data>
+  <data name="submod_open" xml:space="preserve">
+    <value>SubModule bearbeiten</value>
+    <comment/>
+  </data>
+  <data name="tpub_publish" xml:space="preserve">
+    <value>Veröffentlichen</value>
+    <comment/>
+  </data>
+  <data name="tpub_device" xml:space="preserve">
+    <value>Gerät</value>
+    <comment/>
+  </data>
+  <data name="tpub_hardware" xml:space="preserve">
+    <value>Hardware</value>
+    <comment/>
+  </data>
+  <data name="tpub_app" xml:space="preserve">
+    <value>Applikation</value>
+    <comment/>
+  </data>
+  <data name="tpub_vers" xml:space="preserve">
+    <value>Version</value>
+    <comment/>
+  </data>
+  <data name="tpub_filter" xml:space="preserve">
+    <value>Filtern:</value>
+    <comment/>
+  </data>
+  <data name="tpub_onlynew" xml:space="preserve">
+    <value>Nur neueste Applikationversion exportieren</value>
+    <comment/>
+  </data>
+  <data name="tpub_filename" xml:space="preserve">
+    <value>Dateiname:</value>
+    <comment/>
+  </data>
+  <data name="main_l1" xml:space="preserve">
+    <value>Willkommen bei Kaenx-Creator!</value>
+    <comment/>
+  </data>
+  <data name="main_l2" xml:space="preserve">
+    <value>Um ein neues Projekt zu beginnen, oder ein bestehendes zu öffnen</value>
+    <comment/>
+  </data>
+  <data name="main_l3" xml:space="preserve">
+    <value>wählen Sie oben im Menü 'Projekt' aus.</value>
+    <comment/>
+  </data>
+  <data name="main_l4" xml:space="preserve">
+    <value>Der Kaenx-Creator ist ein Teil von OpenKNX.</value>
+    <comment/>
+  </data>
+  <data name="main_l5" xml:space="preserve">
+    <value>Mehr Informationen auf </value>
+    <comment/>
+  </data>
+  <data name="menu_info" xml:space="preserve">
+    <value>Info</value>
+    <comment/>
+  </data>
+  <data name="editor_save" xml:space="preserve">
+    <value>Speichern</value>
+    <comment/>
+  </data>
+  <data name="editor_cancel" xml:space="preserve">
+    <value>Abbrechen</value>
+    <comment/>
+  </data>
+  <data name="tprod_own" xml:space="preserve">
+    <value>Eigene Prozedur</value>
+    <comment/>
+  </data>
+  <data name="trpod_mask" xml:space="preserve">
+    <value>Prozeduren der Maske</value>
+    <comment/>
+  </data>
+  <data name="trpod_edit" xml:space="preserve">
+    <value>Prozedur bearbeiten</value>
+    <comment/>
+  </data>
 </root>
