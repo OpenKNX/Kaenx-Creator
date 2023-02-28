@@ -215,7 +215,7 @@ namespace Kaenx.Creator.Classes {
                                     maxValue = penum.Value;
                             string bin = Convert.ToString(maxValue, 2);
                             ptype.SizeInBit = bin.Length;
-                            maxsize = (int)Math.Pow(2, ptype.SizeInBit);
+                            maxsize = (long)Math.Pow(2, ptype.SizeInBit);
                         }
 
                         foreach(ParameterTypeEnum penum in ptype.Enums){
@@ -254,7 +254,7 @@ namespace Kaenx.Creator.Classes {
                         {
                             string bin = Convert.ToString(max, 2);
                             ptype.SizeInBit = bin.Length;
-                            maxsize = (int)Math.Pow(2, ptype.SizeInBit);
+                            maxsize = (long)Math.Pow(2, ptype.SizeInBit);
                         }
                         if(min < 0) actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Min kann nicht kleiner als 0 sein", State = PublishState.Fail, Item = ptype });
                         if(min > max) actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Min ({ptype.Min}) ist größer als Max ({ptype.Max})", State = PublishState.Fail, Item = ptype });
@@ -279,11 +279,11 @@ namespace Kaenx.Creator.Classes {
                             long z = min * (-1);
                             if(z < (max - 1)) z = min;
                             string y = z.ToString().Replace("-", "");
-                            string bin = Convert.ToString(int.Parse(y), 2);
+                            string bin = Convert.ToString(long.Parse(y), 2);
                             if(z == (min * (-1))) bin += "1";
                             if(!z.ToString().StartsWith("-")) bin = "1" + bin;
                             ptype.SizeInBit = bin.Length;
-                            maxsize = (int)Math.Pow(2, ptype.SizeInBit);
+                            maxsize = (long)Math.Pow(2, ptype.SizeInBit);
                         }
                         if(min > max) actions.Add(new PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Min ({ptype.Min}) ist größer als Max ({ptype.Max})", State = PublishState.Fail, Item = ptype });
                         if(max > ((maxsize)-1)) actions.Add(new PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Max ({ptype.Max}) kann nicht größer als das Maximum ({(maxsize/2)-1}) sein", State = PublishState.Fail, Item = ptype });
