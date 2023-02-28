@@ -53,7 +53,7 @@ namespace Kaenx.Creator.Controls
         public ParameterView()
 		{
             InitializeComponent();
-
+            _filter = new TextFilter(query);
             
             List<ObjectProperty> defaultProperties = new List<ObjectProperty>() {
                 new ObjectProperty(1, "Interface Object Type", "PID_OBJECT_TYPE"),
@@ -100,16 +100,18 @@ namespace Kaenx.Creator.Controls
 
         private static void OnModuleChangedCallback(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
-            (sender as ParameterView)?.OnModuleChanged();
+            (sender as ParameterView)?.OnModuleChanged(e);
         }
 
         protected virtual void OnVersionChanged() {
             
         }
         
-        protected virtual void OnModuleChanged() {
-            if(Module == null) return;
-            _filter = new TextFilter(Module.Parameters, query);
+        protected virtual void OnModuleChanged(DependencyPropertyChangedEventArgs e) {
+            if(e.NewValue != null)
+            {
+                _filter.ChangeView((e.NewValue as IVersionBase).Parameters);
+            }
         }
 
         private void ClickAdd(object sender, RoutedEventArgs e)
@@ -155,22 +157,29 @@ namespace Kaenx.Creator.Controls
         {
             Parameter para = ParamList.SelectedItem as Models.Parameter;
 
-            if(Module.ParameterRefs.Any(p => p.ParameterObject == para))
+            if(Version.IsParameterRefAuto)
             {
-                if(MessageBoxResult.No == MessageBox.Show("Dieser Parameter wird von mindestens einem ParameterRef benutzt. Wirklich löschen?", "Parameter löschen", MessageBoxButton.YesNo, MessageBoxImage.Warning))
-                    return;
-
-                    
-                if(Version.IsParameterRefAuto)
+                ParameterRef pref = Module.ParameterRefs.Single(p => p.ParameterObject == para);
+                List<int> uids = new List<int>();
+                ClearHelper.GetIDs(Module.Dynamics[0], uids, true);
+                if(uids.Contains(pref.UId))
                 {
-                    foreach(ParameterRef pref in Module.ParameterRefs.Where(p => p.ParameterObject == para).ToList())
-                        Module.ParameterRefs.Remove(pref);
+                    if(MessageBoxResult.No == MessageBox.Show("Dieser Parameter wird mindestens einem mal im Dynamic benutzt. Wirklich löschen?", "Parameter löschen", MessageBoxButton.YesNo, MessageBoxImage.Warning))
+                        return;
+                    
+                    Module.ParameterRefs.Remove(pref);
+                    ClearHelper.ClearIDs(Module.Dynamics[0], pref);
                 }
+            } else {
+                if(Module.ParameterRefs.Any(p => p.ParameterObject == para))
+                {
+                    if(MessageBoxResult.No == MessageBox.Show("Dieser Parameter wird von mindestens einem ParameterRef benutzt. Wirklich löschen?", "Parameter löschen", MessageBoxButton.YesNo, MessageBoxImage.Warning))
+                        return;
 
-                foreach(ParameterRef pref in Module.ParameterRefs.Where(p => p.ParameterObject == para))
-                    pref.ParameterObject = null;
+                    foreach(ParameterRef pref in Module.ParameterRefs.Where(p => p.ParameterObject == para))
+                        pref.ParameterObject = null;
+                }
             }
-                
 
             Module.Parameters.Remove(para);
 

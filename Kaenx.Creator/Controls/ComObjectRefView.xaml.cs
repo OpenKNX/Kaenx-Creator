@@ -53,6 +53,7 @@ namespace Kaenx.Creator.Controls
         public ComObjectRefView()
 		{
             InitializeComponent();
+            _filter = new TextFilter(query);
         }
 
         private static void OnModuleChangedCallback(DependencyObject sender, DependencyPropertyChangedEventArgs e)
@@ -62,63 +63,10 @@ namespace Kaenx.Creator.Controls
 
         protected virtual void OnModuleChanged(DependencyPropertyChangedEventArgs e)
         {
-            if(e.OldValue != null)
-                (e.OldValue as IVersionBase).ComObjectRefs.CollectionChanged -= RefsChanged;
-
-            if(e.NewValue != null)
-                (e.NewValue as IVersionBase).ComObjectRefs.CollectionChanged += RefsChanged;
-
             if(Module == null) return;
-            _filter = new TextFilter(Module.ComObjectRefs, query);
+            _filter.ChangeView(Module.ComObjectRefs);
         }
 
-        private void RefsChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if(e.OldItems != null)
-            {
-                foreach(ComObjectRef cref in e.OldItems)
-                    DeleteDynamicRef(Module.Dynamics[0], cref);
-            }
-        }
-
-        private bool CheckDynamicRef(IDynItems item, ComObjectRef cref)
-        {
-            bool flag = false;
-
-            switch(item)
-            {
-                case DynComObject dc:
-                    if(dc.ComObjectRefObject == cref)
-                        flag = true;
-                    break;
-            }
-
-            if(flag)
-                return true;
-
-            if(item.Items != null)
-                foreach(IDynItems ditem in item.Items)
-                    if(CheckDynamicRef(ditem, cref))
-                        flag = true;
-
-            return flag;
-        }
-        
-        private void DeleteDynamicRef(IDynItems item, ComObjectRef cref)
-        {
-            switch(item)
-            {
-                case DynComObject dc:
-                    if(dc.ComObjectRefObject == cref)
-                        dc.ComObjectRefObject = null;
-                    break;
-            }
-
-            if(item.Items != null)
-                foreach(IDynItems ditem in item.Items)
-                    DeleteDynamicRef(ditem, cref);
-        }
-        
         private void ClickAdd(object sender, RoutedEventArgs e)
         {
             Models.ComObjectRef cref = new Models.ComObjectRef() { UId = AutoHelper.GetNextFreeUId(Module.ComObjectRefs) };
@@ -135,11 +83,13 @@ namespace Kaenx.Creator.Controls
         {
             ComObjectRef cref = ComobjectRefList.SelectedItem as Models.ComObjectRef;
 
-             if(CheckDynamicRef(Module.Dynamics[0], cref)
-                && MessageBoxResult.No == MessageBox.Show("Dieser ComObjectRef wird mindestens ein mal im Dynamic benutzt. Wirklich löschen?", "ComObjectRef löschen", MessageBoxButton.YesNo, MessageBoxImage.Warning))
+            List<int> uids = new List<int>();
+            ClearHelper.GetIDs(Module.Dynamics[0], uids, true);
+            if(uids.Contains(cref.UId) && MessageBoxResult.No == MessageBox.Show("Dieser ComObjectRef wird mindestens ein mal im Dynamic benutzt. Wirklich löschen?", "ComObjectRef löschen", MessageBoxButton.YesNo, MessageBoxImage.Warning))
                     return;
 
             Module.ComObjectRefs.Remove(cref);
+            ClearHelper.ClearIDs(Module.Dynamics[0], cref);
         }
 
         private void ResetId(object sender, RoutedEventArgs e)

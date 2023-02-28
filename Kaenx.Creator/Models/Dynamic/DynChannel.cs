@@ -47,7 +47,7 @@ namespace Kaenx.Creator.Models.Dynamic
         public bool UseTextParameter
         {
             get { return _useTextParam; }
-            set { _useTextParam = value; Changed("UseTextParameter"); }
+            set { _useTextParam = value; Changed("UseTextParameter"); if(!value) ParameterRefObject = null; }
         }
 
         private ParameterRef _parameterRefObject;

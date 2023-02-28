@@ -52,6 +52,7 @@ namespace Kaenx.Creator.Controls
         public ComObjectView()
 		{
             InitializeComponent();
+            _filter = new TextFilter(query);
         }
         
         private static void OnVersionChangedCallback(DependencyObject sender, DependencyPropertyChangedEventArgs e)
@@ -67,7 +68,7 @@ namespace Kaenx.Creator.Controls
         protected virtual void OnModuleChanged()
         {
             if(Module == null) return;
-            _filter = new TextFilter(Module.ComObjects, query);
+            _filter.ChangeView(Module.ComObjects);
         }
         
         protected virtual void OnVersionChanged() {
@@ -121,23 +122,31 @@ namespace Kaenx.Creator.Controls
         {
             Models.ComObject com = ComobjectList.SelectedItem as Models.ComObject;
 
-            if(Module.ComObjectRefs.Any(c => c.ComObjectObject == com))
+            if(Version.IsComObjectRefAuto)
             {
-                if(MessageBoxResult.No == MessageBox.Show("Dieses ComObject wird von mindestens einem ComObjectRef benutzt. Wirklich löschen?", "ComObject löschen", MessageBoxButton.YesNo, MessageBoxImage.Warning))
-                    return;
-
-                if(Version.IsComObjectRefAuto){
-                    foreach(ComObjectRef cref in Module.ComObjectRefs.Where(c => c.ComObjectObject == com).ToList())
-                        Module.ComObjectRefs.Remove(cref);
+                ComObjectRef cref = Module.ComObjectRefs.Single(c => c.ComObjectObject == com);
+                List<int> uids = new List<int>();
+                ClearHelper.GetIDs(Module.Dynamics[0], uids, false);
+                if(uids.Contains(cref.UId))
+                {
+                    if(MessageBoxResult.No == MessageBox.Show("Dieses ComObject wird mindestens einem mal im Dynamic benutzt. Wirklich löschen?", "ComObject löschen", MessageBoxButton.YesNo, MessageBoxImage.Warning))
+                        return;
+                    
+                    Module.ComObjectRefs.Remove(cref);
+                    ClearHelper.ClearIDs(Module.Dynamics[0], cref);
                 }
+            } else {
+                if(Module.ComObjectRefs.Any(c => c.ComObjectObject == com))
+                {
+                    if(MessageBoxResult.No == MessageBox.Show("Dieses ComObject wird von mindestens einem ComObjectRef benutzt. Wirklich löschen?", "ComObject löschen", MessageBoxButton.YesNo, MessageBoxImage.Warning))
+                        return;
 
-                foreach(ComObjectRef cref in Module.ComObjectRefs.Where(c => c.ComObjectObject == com))
-                    cref.ComObjectObject = null;
+                    foreach(ComObjectRef cref in Module.ComObjectRefs.Where(c => c.ComObjectObject == com))
+                        cref.ComObjectObject = null;
+                }
             }
-
-            Module.ComObjects.Remove(com);
-
             
+            Module.ComObjects.Remove(com);
         }
 
         private void ResetId(object sender, RoutedEventArgs e)

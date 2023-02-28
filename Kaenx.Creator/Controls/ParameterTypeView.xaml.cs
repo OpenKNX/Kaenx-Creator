@@ -36,6 +36,7 @@ namespace Kaenx.Creator.Controls
         public ParameterTypeView()
 		{
             InitializeComponent();
+            _filter = new TextFilter(query);
         }
 
         private TextFilter _filter;
@@ -68,7 +69,7 @@ namespace Kaenx.Creator.Controls
         protected virtual void OnVersionChanged(DependencyPropertyChangedEventArgs e)
         {
             if(Version == null) return;
-            _filter = new TextFilter(Version.ParameterTypes, query);
+            _filter.ChangeView(Version.ParameterTypes);
         }
 
         private void ClickAddParamType(object sender, RoutedEventArgs e)

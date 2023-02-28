@@ -21,7 +21,15 @@ namespace Kaenx.Creator.Classes
         private string _query { get; set; } = "";
         private ICollectionView view;
 
-        public TextFilter(object list, TextBox query)
+        public TextFilter(TextBox query)
+        {
+            query.TextChanged += (object sender, TextChangedEventArgs e) => {
+                Query = query.Text.ToLower();
+                view.Refresh();
+            };
+        }
+        
+        public void ChangeView(object list)
         {
             view = System.Windows.Data.CollectionViewSource.GetDefaultView(list);
 
@@ -33,11 +41,6 @@ namespace Kaenx.Creator.Classes
                     if(id == Query) return true;
                 }
                 return value.ToLower().Contains(Query);
-            };
-
-            query.TextChanged += (object sender, TextChangedEventArgs e) => {
-                Query = query.Text.ToLower();
-                view.Refresh();
             };
         }
 

@@ -28,6 +28,7 @@ namespace Kaenx.Creator.Models.Dynamic
             get { return _parameterRefObject; }
             set { if(value == null) return; _parameterRefObject = value; Changed("ParameterRefObject"); }
         }
+        public void ResetParameterRefObject() { _parameterRefObject = null; Changed("ParameterRefObject"); }
 
         [JsonIgnore]
         public int _parameter;

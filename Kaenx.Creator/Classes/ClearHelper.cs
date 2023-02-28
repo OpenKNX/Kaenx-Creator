@@ -110,7 +110,8 @@ namespace Kaenx.Creator.Classes
             foreach(ComObjectRef rcom in vbase.ComObjectRefs)
             {
                 rcom.IsNotUsed = !uids.Contains(rcom.UId);
-                if(rcom.IsNotUsed) res.ComObjectRefs++;
+                if(rcom.IsNotUsed) 
+                res.ComObjectRefs++;
             }
         }
 
@@ -128,7 +129,7 @@ namespace Kaenx.Creator.Classes
             }
         }
 
-        private static void GetIDs(IDynItems dyn, List<int> uids, bool isPara)
+        public static void GetIDs(IDynItems dyn, List<int> uids, bool isPara)
         {
             foreach(IDynItems item in dyn.Items)
             {
@@ -136,14 +137,21 @@ namespace Kaenx.Creator.Classes
                 {
                     case DynChannel:
                     case DynChannelIndependent:
-                    case IDynChoose:
                     case IDynWhen:
+                        GetIDs(item, uids, isPara);
+                        break;
+
+                    case IDynChoose dc:
+                        if(isPara && dc.ParameterRefObject != null)
+                            uids.Add(dc.ParameterRefObject.UId);
                         GetIDs(item, uids, isPara);
                         break;
                         
                     case DynParaBlock db:
                         if(isPara && db.UseParameterRef && db.ParameterRefObject != null) 
                             uids.Add(db.ParameterRefObject.UId);
+                        if(isPara && db.UseTextParameter && db.TextRefObject != null) 
+                            uids.Add(db.TextRefObject.UId);
                         GetIDs(item, uids, isPara);
                         break;
 
@@ -157,6 +165,50 @@ namespace Kaenx.Creator.Classes
                 }
             }
         }
+
+        public static void ClearIDs(IDynItems dyn, object ditem)
+        {
+            foreach(IDynItems item in dyn.Items)
+            {
+                switch(item)
+                {
+                    case DynChannelIndependent:
+                    case IDynWhen:
+                        ClearIDs(item, ditem);
+                        break;
+
+                    case DynChannel dch:
+                        if(dch.ParameterRefObject == ditem)
+                            dch.ParameterRefObject = null;
+                        ClearIDs(item, ditem);
+                        break;
+
+                    case IDynChoose dc:
+                        if(dc.ParameterRefObject == ditem)
+                            dc.ParameterRefObject = null;
+                        ClearIDs(item, ditem);
+                        break;
+                        
+                    case DynParaBlock db:
+                        if(db.ParameterRefObject == ditem)
+                            db.ParameterRefObject = null;
+                        if(db.TextRefObject == ditem)
+                            db.TextRefObject = null;
+                        ClearIDs(item, ditem);
+                        break;
+
+                    case DynParameter dp:
+                        if(dp.ParameterRefObject == ditem)
+                            dp.ResetParameterRefObject();
+                        break;
+
+                    case DynComObject dc:
+                        if(dc.ComObjectRefObject == ditem)
+                            dc.ComObjectRefObject = null;
+                        break;
+                }
+            }
+        }
     
         public static void ResetParameterIds(IVersionBase vbase)
         {
@@ -166,9 +218,9 @@ namespace Kaenx.Creator.Classes
             foreach(ParameterRef pref in vbase.ParameterRefs)
                 pref.Id = -1;
 
-            if(vbase is AppVersion ver)
+            if(vbase.Modules.Count > 0)
             {
-                foreach(Module mod in ver.Modules)
+                foreach(Module mod in vbase.Modules)
                     ResetParameterIds(mod);
             }
         }

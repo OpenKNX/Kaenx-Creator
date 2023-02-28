@@ -53,6 +53,7 @@ namespace Kaenx.Creator.Controls
         public ParameterRefView()
 		{
             InitializeComponent();
+            _filter = new TextFilter(query);
         }
 
         private static void OnModuleChangedCallback(DependencyObject sender, DependencyPropertyChangedEventArgs e)
@@ -62,26 +63,13 @@ namespace Kaenx.Creator.Controls
 
         protected virtual void OnModuleChanged(DependencyPropertyChangedEventArgs e)
         {
-            if(e.OldValue != null)
-                (e.OldValue as IVersionBase).ParameterRefs.CollectionChanged -= RefsChanged;
-
             if(e.NewValue != null)
             {
-                (e.NewValue as IVersionBase).ParameterRefs.CollectionChanged += RefsChanged;
-                _filter = new TextFilter((e.NewValue as IVersionBase).ParameterRefs, query);
+                _filter.ChangeView((e.NewValue as IVersionBase).ParameterRefs);
             }
 
         }
         
-        private void RefsChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if(e.OldItems != null && Module != null)
-            {
-                foreach(ParameterRef pref in e.OldItems)
-                    DeleteDynamicRef(Module.Dynamics[0], pref);
-            }
-        }
-
         private void ClickAdd(object sender, RoutedEventArgs e)
         {
             ParameterRef pref = new ParameterRef() { UId = AutoHelper.GetNextFreeUId(Module.ParameterRefs) };
@@ -100,82 +88,13 @@ namespace Kaenx.Creator.Controls
         {
             ParameterRef pref = ParamRefList.SelectedItem as ParameterRef;
 
-            if(CheckDynamicRef(Module.Dynamics[0], pref)
-                && MessageBoxResult.No == MessageBox.Show("Dieser ParameterRef wird mindestens ein mal im Dynamic benutzt. Wirklich löschen?", "ParameterRef löschen", MessageBoxButton.YesNo, MessageBoxImage.Warning))
-                    return;
+            List<int> uids = new List<int>();
+            ClearHelper.GetIDs(Module.Dynamics[0], uids, true);
+            if(uids.Contains(pref.UId) && MessageBoxResult.No == MessageBox.Show("Dieser ParameterRef wird mindestens ein mal im Dynamic benutzt. Wirklich löschen?", "ParameterRef löschen", MessageBoxButton.YesNo, MessageBoxImage.Warning))
+                return;
 
             Module.ParameterRefs.Remove(pref);
-        }
-
-        private bool CheckDynamicRef(IDynItems item, ParameterRef pref)
-        {
-            bool flag = false;
-
-            switch(item)
-            {
-                case DynChannel dc:
-                    if(dc.UseTextParameter && dc.ParameterRefObject == pref)
-                        flag = true;
-                    break;
-
-                case DynParaBlock dpb:
-                    if(dpb.UseParameterRef && dpb.ParameterRefObject == pref)
-                        flag = true;
-                    if(dpb.UseTextParameter && dpb.TextRefObject == pref)
-                        flag = true;
-                    break;
-
-                case DynParameter dp:
-                    if(dp.ParameterRefObject == pref)
-                        flag = true;
-                    break;
-
-                case IDynChoose dch:
-                    if(dch.ParameterRefObject == pref)
-                        flag = true;
-                    break;
-            }
-
-            if(flag) return true;
-
-            if(item.Items != null)
-                foreach(IDynItems ditem in item.Items)
-                    if(CheckDynamicRef(ditem, pref))
-                        flag = true;
-
-            return flag;
-        }
-
-        private void DeleteDynamicRef(IDynItems item, ParameterRef pref)
-        {
-            switch(item)
-            {
-                case DynChannel dc:
-                    if(dc.UseTextParameter && dc.ParameterRefObject == pref)
-                        dc.ParameterRefObject = null;
-                    break;
-
-                case DynParaBlock dpb:
-                    if(dpb.UseParameterRef && dpb.ParameterRefObject == pref)
-                        dpb.ParameterRefObject = null;
-                    if(dpb.UseTextParameter && dpb.TextRefObject == pref)
-                        dpb.TextRefObject = null;
-                    break;
-
-                case DynParameter dp:
-                    if(dp.ParameterRefObject == pref)
-                        dp.ParameterRefObject = null;
-                    break;
-
-                case IDynChoose dch:
-                    if(dch.ParameterRefObject == pref)
-                        dch.ParameterRefObject = null;
-                    break;
-            }
-
-            if(item.Items != null)
-                foreach(IDynItems ditem in item.Items)
-                    DeleteDynamicRef(ditem, pref);
+            ClearHelper.ClearIDs(Module.Dynamics[0], pref);
         }
 
         private void ResetId(object sender, RoutedEventArgs e)

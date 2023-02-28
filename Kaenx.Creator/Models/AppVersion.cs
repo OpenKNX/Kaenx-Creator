@@ -189,21 +189,21 @@ namespace Kaenx.Creator.Models
         public bool IsUnionActive
         {
             get { return _isUnionActive; }
-            set { _isUnionActive = value; Changed("IsUnionActive"); }
+            set { _isUnionActive = value; Changed("IsUnionActive"); if(!value) Unions.Clear(); }
         }
 
         private bool _isModulesActive = false;
         public bool IsModulesActive
         {
             get { return _isModulesActive; }
-            set { _isModulesActive = value; Changed("IsModulesActive"); }
+            set { _isModulesActive = value; Changed("IsModulesActive"); if(!value) Modules.Clear(); }
         }
         
         private bool _isMessagesActive = false;
         public bool IsMessagesActive
         {
             get { return _isMessagesActive; }
-            set { _isMessagesActive = value; Changed("IsMessagesActive"); }
+            set { _isMessagesActive = value; Changed("IsMessagesActive"); if(!value) Messages.Clear(); }
         }
 
         private bool _isMemSizeAuto = true;
