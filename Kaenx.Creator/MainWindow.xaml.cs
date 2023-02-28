@@ -75,7 +75,7 @@ namespace Kaenx.Creator
             new Models.EtsVersion(21, "ETS 6.0 (21)", "6.0")
         };
         
-        private int VersionCurrent = 5;
+        private int VersionCurrent = 6;
 
 
         public MainWindow()
@@ -1000,9 +1000,17 @@ namespace Kaenx.Creator
                 if(string.IsNullOrEmpty(hard._appsString)) continue;
                 
                 foreach(string name in hard._appsString.Split(',')){
-                    try{
-                        hard.Apps.Add(General.Applications.Single(app => app.Name == name));
-                    } catch{}
+                    if(VersionToOpen < 6)
+                    {
+                        try{
+                            hard.Apps.Add(General.Applications.Single(app => app.Name == name));
+                        } catch{
+                            MessageBox.Show("Aufgrund des geänderten Dateiformates können wir die Applikationen für folgende Hardware nicht mehr zuordnen:\r\n\r\n" + hard.Name);
+                        }
+                    } else {
+                        int number = int.Parse(name);
+                        hard.Apps.Add(General.Applications.Single(app => app.Number == number));
+                    }
                 }
             }
 

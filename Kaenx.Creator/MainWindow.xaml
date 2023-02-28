@@ -1170,7 +1170,7 @@
                         <RowDefinition />
                     </Grid.RowDefinitions>
 
-                    <DataGrid Grid.RowSpan="2" Name="ExportList" AutoGenerateColumns="False" BorderThickness="0 0 1 0">
+                    <DataGrid Grid.RowSpan="2" Name="ExportList" CanUserAddRows="False" AutoGenerateColumns="False" BorderThickness="0 0 1 0">
                         <DataGrid.Columns>
                             <DataGridCheckBoxColumn Header="{x:Static p:Resources.tpub_publish}" Binding="{Binding Selected}" />
                             <DataGridTextColumn Header="{x:Static p:Resources.tpub_device}" Binding="{Binding Device.Name}" IsReadOnly="True" />

@@ -39,9 +39,9 @@ namespace Kaenx.Creator.Models
         public string _appsString;
         public string AppsString {
             get {
-                List<string> names = new List<string>();
+                List<int> names = new List<int>();
                 foreach(Application app in Apps)
-                    names.Add(app.Name);
+                    names.Add(app.Number);
                 return string.Join(",", names.ToArray());
             }
             set { _appsString = value; }
