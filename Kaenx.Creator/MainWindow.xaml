@@ -1161,26 +1161,15 @@
                     <TextBlock FontSize="18" Text="{x:Static p:Resources.tabs_pub}" MouseLeftButtonUp="TabItem_MouseLeftButtonUp" />
                 </TabItem.Header>
                 <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition MaxWidth="400" />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition MaxHeight="500" />
+                        <RowDefinition Height="Auto" />
                         <RowDefinition />
                     </Grid.RowDefinitions>
 
-                    <DataGrid Grid.RowSpan="2" Name="ExportList" CanUserAddRows="False" AutoGenerateColumns="False" BorderThickness="0 0 1 0">
-                        <DataGrid.Columns>
-                            <DataGridCheckBoxColumn Header="{x:Static p:Resources.tpub_publish}" Binding="{Binding Selected}" />
-                            <DataGridTextColumn Header="{x:Static p:Resources.tpub_device}" Binding="{Binding Device.Name}" IsReadOnly="True" />
-                            <DataGridTextColumn Header="{x:Static p:Resources.tpub_hardware}" Binding="{Binding Hardware.Name}" IsReadOnly="True" />
-                            <DataGridTextColumn Header="{x:Static p:Resources.tpub_app}" Binding="{Binding App.Name}" IsReadOnly="True" />
-                            <DataGridTextColumn Header="{x:Static p:Resources.tpub_vers}" Binding="{Binding Version.NameText}" IsReadOnly="True" />
-                        </DataGrid.Columns>
-                    </DataGrid>
-
-                    <StackPanel Grid.Column="1">
+                    
+                    <StackPanel>
                         <StackPanel.Resources>
                             <Style TargetType="HeaderedContentControl">
                                 <Setter Property="Margin" Value="5" />
@@ -1203,7 +1192,36 @@
                         </HeaderedContentControl>
 
                         <CheckBox x:Name="InPublishOnlyLatest" Content="{x:Static p:Resources.tpub_onlynew}" Checked="ChangedPublishOnlyLatest" Unchecked="ChangedPublishOnlyLatest" />
+                    </StackPanel>
 
+                    <DataGrid Grid.Row="1" Name="ExportList" CanUserAddRows="False" AutoGenerateColumns="False" BorderThickness="0 0 1 0">
+                        <DataGrid.Columns>
+                            <DataGridCheckBoxColumn Header="{x:Static p:Resources.tpub_publish}" Binding="{Binding Selected}" />
+                            <DataGridTextColumn Header="{x:Static p:Resources.tpub_device}" Binding="{Binding Device.Name}" IsReadOnly="True" />
+                            <DataGridTextColumn Header="{x:Static p:Resources.tpub_hardware}" Binding="{Binding Hardware.Name}" IsReadOnly="True" />
+                            <DataGridTextColumn Header="{x:Static p:Resources.tpub_app}" Binding="{Binding App.Name}" IsReadOnly="True" />
+                            <DataGridTextColumn Header="{x:Static p:Resources.tpub_vers}" Binding="{Binding Version.NameText}" IsReadOnly="True" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <StackPanel Grid.Row="2">
+                        <StackPanel.Resources>
+                            <Style TargetType="HeaderedContentControl">
+                                <Setter Property="Margin" Value="5" />
+                            </Style>
+                            <Style TargetType="CheckBox">
+                                <Setter Property="Margin" Value="5" />
+                            </Style>
+                            <Style TargetType="ComboBox">
+                                <Setter Property="Margin" Value="5" />
+                            </Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Margin" Value="5" />
+                            </Style>
+                            <Style TargetType="ListView">
+                                <Setter Property="Margin" Value="5" />
+                            </Style>
+                        </StackPanel.Resources>
                         <ComboBox x:Name="InPublishTarget" SelectedIndex="0" SelectedValuePath="Tag" Visibility="Collapsed">
                             <ComboBoxItem Content="ETS" Tag="ets" />
                             <ComboBoxItem Content="Kaenx" Tag="kaenx" IsEnabled="False" />
@@ -1216,7 +1234,7 @@
                         <Button Content="{x:Static p:Resources.tpub_publish}" Click="Button_Click" />
                     </StackPanel>
 
-                    <ScrollViewer Grid.Column="1" Grid.Row="1">
+                    <ScrollViewer Grid.Row="3">
                         <ItemsControl ItemsSource="{Binding PublishActions}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>

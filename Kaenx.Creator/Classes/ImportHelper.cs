@@ -383,10 +383,16 @@ namespace Kaenx.Creator.Classes
             currentVersModel = new AppVersionModel() {
                 Name = currentVers.Name,
                 Number = currentVers.Number,
+                Namespace = currentVers.NamespaceVersion,
                 Version = Newtonsoft.Json.JsonConvert.SerializeObject(currentVers, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects })
             };
             currentApp.Versions.Add(currentVersModel);
         }
+
+        private Dictionary<long, Parameter> Paras;
+        private Dictionary<long, ParameterRef> ParaRefs;
+        private Dictionary<long, ComObject> Coms;
+        private Dictionary<long, ComObjectRef> ComRefs;
 
         private void CheckUniqueRefId(XElement xstatic, XElement xdyn)
         {
@@ -827,6 +833,7 @@ namespace Kaenx.Creator.Classes
 
         private void ImportParameter(XElement xparas, IVersionBase vbase)
         {
+            Paras = new Dictionary<long, Parameter>();
             if(xparas == null) return;
             _uidCounter = 1;
             Stopwatch sw = new Stopwatch();
@@ -899,6 +906,8 @@ namespace Kaenx.Creator.Classes
             if (id.StartsWith("-"))
                 id = id.Substring(1);
             para.Id = int.Parse(id);
+
+            Paras.Add(para.Id, para);
 
             para.Text = GetTranslation(xpara.Attribute("Id").Value, "Text", xpara);
             para.TranslationText = CheckTranslation(para.Text);
@@ -991,8 +1000,9 @@ namespace Kaenx.Creator.Classes
                 string id = GetLastSplit(xref.Attribute("RefId").Value, 2);
                 if (id.StartsWith("-"))
                     id = id.Substring(1);
-                int paraId = int.Parse(id);
-                pref.ParameterObject = vbase.Parameters.Single(p => p.Id == paraId);
+                long paraId = long.Parse(id);
+                pref.ParameterObject = Paras[paraId]; vbase.Parameters.Single(p => p.Id == paraId);
+                //pref.ParameterObject = vbase.Parameters.Single(p => p.Id == paraId);
                 pref.Name = pref.ParameterObject.Name;
                 
                 pref.OverwriteText = xref.Attribute("Text") != null;
@@ -1012,6 +1022,8 @@ namespace Kaenx.Creator.Classes
 
         private void ImportComObjects(XElement xcoms, IVersionBase vbase, ref Dictionary<string, long> idmapper)
         {
+            Coms = new Dictionary<long, ComObject>();
+
             if(xcoms == null) return;
             _uidCounter = 1;
             Stopwatch sw = new Stopwatch();
@@ -1054,7 +1066,7 @@ namespace Kaenx.Creator.Classes
                     UId = _uidCounter++
                 };
 
-                
+
                 if(countNew)
                 {
                     com.Id = counter++;
@@ -1064,6 +1076,10 @@ namespace Kaenx.Creator.Classes
                     id = id.Substring(id.LastIndexOf("-") + 1);
                     com.Id = long.Parse(id);
                 }
+
+                Coms.Add(com.Id, com);
+
+
 
                 com.Name = xcom.Attribute("Name")?.Value;
                 if(string.IsNullOrEmpty(com.Name))
@@ -1150,12 +1166,12 @@ namespace Kaenx.Creator.Classes
                 if(idmapper != null)
                 {
                     long refId = idmapper[xref.Attribute("RefId").Value];
-                    cref.ComObjectObject = vbase.ComObjects.Single(c => c.Id == refId);
+                    cref.ComObjectObject = Coms[refId];
                 } else {
                     string id = xref.Attribute("RefId").Value;
                     id = id.Substring(id.LastIndexOf("-") + 1);
                     long comId = long.Parse(id);
-                    cref.ComObjectObject = vbase.ComObjects.Single(c => c.Id == comId);
+                    cref.ComObjectObject = Coms[comId];
                 }
                 cref.Name = cref.ComObjectObject.Name;
 
@@ -1583,6 +1599,15 @@ namespace Kaenx.Creator.Classes
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
+
+            ParaRefs = new Dictionary<long, ParameterRef>();
+            foreach(ParameterRef pref in vbase.ParameterRefs)
+                ParaRefs.Add(pref.Id, pref);
+
+            ComRefs = new Dictionary<long, ComObjectRef>();
+            foreach(ComObjectRef cref in vbase.ComObjectRefs)
+                ComRefs.Add(cref.Id, cref);
+
             DynamicMain main = new DynamicMain();
             ParseDynamic(main, xdyn, vbase);
             vbase.Dynamics.Add(main);
@@ -1594,7 +1619,7 @@ namespace Kaenx.Creator.Classes
         {
             foreach (XElement xele in xeles.Elements())
             {
-                int paraId = 0;
+                long paraId = 0;
 
                 switch (xele.Name.LocalName)
                 {
@@ -1609,8 +1634,8 @@ namespace Kaenx.Creator.Classes
                         if (xele.Attribute("TextParameterRefId") != null)
                         {
                             dc.UseTextParameter = true;
-                            paraId = int.Parse(GetLastSplit(xele.Attribute("TextParameterRefId").Value, 2));
-                            dc.ParameterRefObject = vbase.ParameterRefs.Single(p => p.Id == paraId);
+                            paraId = long.Parse(GetLastSplit(xele.Attribute("TextParameterRefId").Value, 2));
+                            dc.ParameterRefObject = ParaRefs[paraId];
                         }
                         if(!string.IsNullOrEmpty(xele.Attribute("Icon")?.Value))
                         {
@@ -1687,16 +1712,16 @@ namespace Kaenx.Creator.Classes
                         }
                         if(xele.Attribute("ParamRefId") != null) {
                             dpb.UseParameterRef = true;
-                            paraId = int.Parse(GetLastSplit(xele.Attribute("ParamRefId").Value, 2));
-                            dpb.ParameterRefObject = vbase.ParameterRefs.Single(p => p.Id == paraId);
+                            paraId = long.Parse(GetLastSplit(xele.Attribute("ParamRefId").Value, 2));
+                            dpb.ParameterRefObject = ParaRefs[paraId];
                         } else {
                             dpb.Id = int.Parse(GetLastSplit(xele.Attribute("Id").Value, 3));
                         }
                         if(xele.Attribute("TextParameterRefId") != null)
                         {
                             dpb.UseTextParameter = true;
-                            paraId = int.Parse(GetLastSplit(xele.Attribute("TextParameterRefId").Value, 2));
-                            dpb.TextRefObject = vbase.ParameterRefs.Single(p => p.Id == paraId);
+                            paraId = long.Parse(GetLastSplit(xele.Attribute("TextParameterRefId").Value, 2));
+                            dpb.TextRefObject = ParaRefs[paraId];
                         }
                         dpb.ShowInComObjectTree = xele.Attribute("ShowInComObjectTree")?.Value.ToLower() == "true";
                         if(!string.IsNullOrEmpty(xele.Attribute("Icon")?.Value))
@@ -1728,8 +1753,8 @@ namespace Kaenx.Creator.Classes
                                 throw new Exception("Not implemented Parent");
                         }
                         dch.Parent = parent;
-                        long paraId64_2 = long.Parse(GetLastSplit(xele.Attribute("ParamRefId").Value, 2));
-                        dch.ParameterRefObject = vbase.ParameterRefs.Single(p => p.Id == paraId64_2);
+                        paraId = long.Parse(GetLastSplit(xele.Attribute("ParamRefId").Value, 2));
+                        dch.ParameterRefObject = ParaRefs[paraId];
                         parent.Items.Add(dch);
                         ParseDynamic(dch, xele, vbase);
                         break;
@@ -1761,8 +1786,8 @@ namespace Kaenx.Creator.Classes
                             Parent = parent,
                             Cell = xele.Attribute("Cell")?.Value
                         };
-                        long paraId64 = long.Parse(GetLastSplit(xele.Attribute("RefId").Value, 2));
-                        dp.ParameterRefObject = vbase.ParameterRefs.Single(p => p.Id == paraId64);
+                        paraId = long.Parse(GetLastSplit(xele.Attribute("RefId").Value, 2));
+                        dp.ParameterRefObject = ParaRefs[paraId];
                         if(xele.Attribute("HelpContext") != null && !string.IsNullOrEmpty(xele.Attribute("HelpContext").Value))
                         {
                             dp.HasHelptext = true;
@@ -1781,9 +1806,10 @@ namespace Kaenx.Creator.Classes
                             Parent = parent,
                             Cell = xele.Attribute("Cell")?.Value
                         };
-                        paraId = int.Parse(GetLastSplit(xele.Attribute("Id").Value, 3));
-                        ds.Id = paraId;
+                        paraId = long.Parse(GetLastSplit(xele.Attribute("Id").Value, 3));
+                        ds.Id = (int)paraId;
                         ds.Text = GetTranslation(xele.Attribute("Id")?.Value ?? "", "Text", xele);
+                        //TODO use parameterText??
                         if(xele.Attribute("UIHint") != null)
                             ds.Hint = (SeparatorHint)Enum.Parse(typeof(SeparatorHint), xele.Attribute("UIHint").Value);
                         else
@@ -1808,7 +1834,7 @@ namespace Kaenx.Creator.Classes
                             Parent = parent
                         };
                         long comId = long.Parse(GetLastSplit(xele.Attribute("RefId").Value, 2));
-                        dco.ComObjectRefObject = vbase.ComObjectRefs.Single(c => c.Id == comId);
+                        dco.ComObjectRefObject = ComRefs[comId];
                         parent.Items.Add(dco);
                         break;
 
@@ -1840,12 +1866,12 @@ namespace Kaenx.Creator.Classes
                         DynAssign dass = new DynAssign() {
                             Parent = parent
                         };
-                        int targetid = int.Parse(GetLastSplit(xele.Attribute("TargetParamRefRef").Value, 2));
-                        dass.TargetObject = vbase.ParameterRefs.Single(p => p.Id == targetid);
+                        long targetid = long.Parse(GetLastSplit(xele.Attribute("TargetParamRefRef").Value, 2));
+                        dass.TargetObject = ParaRefs[targetid];
                         if(xele.Attribute("SourceParamRefRef") != null)
                         {
-                            int sourceid = int.Parse(GetLastSplit(xele.Attribute("SourceParamRefRef").Value, 2));
-                            dass.SourceObject = vbase.ParameterRefs.Single(p => p.Id == sourceid);
+                            long sourceid = long.Parse(GetLastSplit(xele.Attribute("SourceParamRefRef").Value, 2));
+                            dass.SourceObject = ParaRefs[sourceid];
                         }
                         dass.Value = xele.Attribute("Value")?.Value;
                         parent.Items.Add(dass);
@@ -1879,8 +1905,8 @@ namespace Kaenx.Creator.Classes
                         if(xele.Attribute("ParameterRefId") != null)
                         {
                             drep.UseParameterRef = true;
-                            paraId = int.Parse(GetLastSplit(xele.Attribute("ParameterRefId").Value, 2));
-                            drep.ParameterRefObject = vbase.ParameterRefs.Single(p => p.Id == paraId);
+                            paraId = long.Parse(GetLastSplit(xele.Attribute("ParameterRefId").Value, 2));
+                            drep.ParameterRefObject = ParaRefs[paraId];
                         }
                         parent.Items.Add(drep);
                         ParseDynamic(drep, xele, vbase);
@@ -1904,8 +1930,8 @@ namespace Kaenx.Creator.Classes
                         if(xele.Attribute("TextParameterRefId") != null)
                         {
                             dbtn.UseTextParameter = true;
-                            paraId = int.Parse(GetLastSplit(xele.Attribute("TextParameterRefId").Value, 2));
-                            dbtn.TextRefObject = vbase.ParameterRefs.Single(p => p.Id == paraId);
+                            paraId = long.Parse(GetLastSplit(xele.Attribute("TextParameterRefId").Value, 2));
+                            dbtn.TextRefObject = ParaRefs[paraId];
                         }
                         Regex regex = new Regex(@"function %handler%[ ]?\(.+\)( ||\n){0,}{([^}]+)}".Replace("%handler%", xele.Attribute("EventHandler").Value));
                         Match m = regex.Match(currentVers.Script);

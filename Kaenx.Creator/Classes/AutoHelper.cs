@@ -37,9 +37,32 @@ namespace Kaenx.Creator.Classes
 
             return version;
         }
+        
+        private static Dictionary<long, Parameter> Paras;
+        private static Dictionary<long, ParameterRef> ParaRefs;
+        private static Dictionary<long, ComObject> Coms;
+        private static Dictionary<long, ComObjectRef> ComRefs;
 
         private static void LoadVersion(ModelGeneral general, Models.AppVersion vbase, Models.IVersionBase mod)
         {
+            Paras = new Dictionary<long, Parameter>();
+            foreach(Parameter para in mod.Parameters)
+                Paras.Add(para.UId, para);
+
+            ParaRefs = new Dictionary<long, ParameterRef>();
+            foreach(ParameterRef pref in mod.ParameterRefs)
+                ParaRefs.Add(pref.UId, pref);
+
+            Coms = new Dictionary<long, ComObject>();
+            foreach(ComObject com in mod.ComObjects)
+                Coms.Add(com.UId, com);
+
+            ComRefs = new Dictionary<long, ComObjectRef>();
+            foreach(ComObjectRef cref in mod.ComObjectRefs)
+                ComRefs.Add(cref.UId, cref);
+
+
+
             if(vbase == mod) {
                 if(vbase._addressMemoryId != -1)
                     vbase.AddressMemoryObject = vbase.Memories.SingleOrDefault(m => m.UId == vbase._addressMemoryId);
@@ -79,14 +102,11 @@ namespace Kaenx.Creator.Classes
             foreach(Models.ParameterRef pref in mod.ParameterRefs)
             {
                 if (pref._parameter != -1)
-                    pref.ParameterObject = mod.Parameters.SingleOrDefault(p => p.UId == pref._parameter);
+                    pref.ParameterObject = Paras[pref._parameter];
             }
 
             foreach(Models.ComObject com in mod.ComObjects)
             {
-                if(com._parameterRef != -1)
-                    com.ParameterRefObject = mod.ParameterRefs.SingleOrDefault(p => p.UId == com._parameterRef);
-
                 if (!string.IsNullOrEmpty(com._typeNumber))
                     com.Type = MainWindow.DPTs.Single(d => d.Number == com._typeNumber);
                     
@@ -94,13 +114,13 @@ namespace Kaenx.Creator.Classes
                     com.SubType = com.Type.SubTypes.Single(d => d.Number == com._subTypeNumber);
                     
                 if(vbase.IsComObjectRefAuto && com.UseTextParameter && com._parameterRef != -1)
-                    com.ParameterRefObject = mod.ParameterRefs.SingleOrDefault(p => p.UId == com._parameterRef);
+                    com.ParameterRefObject = ParaRefs[com._parameterRef];
             }
 
             foreach(Models.ComObjectRef cref in mod.ComObjectRefs)
             {
-                if (cref._comObject != -1)
-                    cref.ComObjectObject = mod.ComObjects.SingleOrDefault(c => c.UId == cref._comObject);
+                if(cref._comObject != -1)
+                    cref.ComObjectObject = Coms[cref._comObject];
 
                 if (!string.IsNullOrEmpty(cref._typeNumber))
                     cref.Type = MainWindow.DPTs.Single(d => d.Number == cref._typeNumber);
@@ -109,7 +129,7 @@ namespace Kaenx.Creator.Classes
                     cref.SubType = cref.Type.SubTypes.Single(d => d.Number == cref._subTypeNumber);
 
                 if(!vbase.IsComObjectRefAuto && cref.UseTextParameter && cref._parameterRef != -1)
-                    cref.ParameterRefObject = mod.ParameterRefs.SingleOrDefault(p => p.UId == cref._parameterRef);
+                    cref.ParameterRefObject = ParaRefs[cref._parameterRef];
             }
 
             if(mod is Models.Module mod2)
@@ -120,13 +140,12 @@ namespace Kaenx.Creator.Classes
                 if(mod2._comObjectBaseNumberUId != -1)
                     mod2.ComObjectBaseNumber = mod2.Arguments.SingleOrDefault(a => a.UId == mod2._comObjectBaseNumberUId);
             }
-            
-            foreach(Models.Module mod3 in mod.Modules)
-                LoadVersion(general, vbase, mod3);
-
 
             if(mod.Dynamics.Count > 0)
                 LoadSubDyn(general, mod.Dynamics[0], vbase, mod);
+            
+            foreach(Models.Module mod3 in mod.Modules)
+                LoadVersion(general, vbase, mod3);
         }
 
         private static void LoadSubDyn(ModelGeneral general, Models.Dynamic.IDynItems dyn, AppVersion vbase, IVersionBase mod)
@@ -139,14 +158,14 @@ namespace Kaenx.Creator.Classes
                 {
                     case Models.Dynamic.DynChannel dch:
                         if(dch.UseTextParameter)
-                            dch.ParameterRefObject = mod.ParameterRefs.SingleOrDefault(p => p.UId == dch._parameter);
+                            dch.ParameterRefObject = ParaRefs[dch._parameter];
                         if(dch.UseIcon && dch._iconId != -1)
                             dch.IconObject = general.Icons.SingleOrDefault(i => i.UId == dch._iconId);
                         break;
 
                     case Models.Dynamic.DynParameter dp:
                         if (dp._parameter != -1)
-                            dp.ParameterRefObject = mod.ParameterRefs.SingleOrDefault(p => p.UId == dp._parameter);
+                            dp.ParameterRefObject = ParaRefs[dp._parameter];
                         if(dp.HasHelptext)
                             dp.Helptext = vbase.Helptexts.SingleOrDefault(p => p.UId == dp._helptextId);
                         if(dp.UseIcon && dp._iconId != -1)
@@ -155,24 +174,24 @@ namespace Kaenx.Creator.Classes
 
                     case Models.Dynamic.DynChooseBlock dcb:
                         if (dcb._parameterRef != -1)
-                            dcb.ParameterRefObject = mod.ParameterRefs.SingleOrDefault(p => p.UId == dcb._parameterRef);
+                            dcb.ParameterRefObject = ParaRefs[dcb._parameterRef];
                         break;
 
                     case Models.Dynamic.DynChooseChannel dcc:
                         if (dcc._parameterRef != -1)
-                            dcc.ParameterRefObject = mod.ParameterRefs.SingleOrDefault(p => p.UId == dcc._parameterRef);
+                            dcc.ParameterRefObject = ParaRefs[dcc._parameterRef];
                         break;
 
                     case Models.Dynamic.DynComObject dco:
                         if (dco._comObjectRef != -1)
-                            dco.ComObjectRefObject = mod.ComObjectRefs.SingleOrDefault(c => c.UId == dco._comObjectRef);
+                            dco.ComObjectRefObject = ComRefs[dco._comObjectRef];
                         break;
 
                     case Models.Dynamic.DynParaBlock dpb:
                         if(dpb.UseParameterRef && dpb._parameterRef != -1)
-                            dpb.ParameterRefObject = mod.ParameterRefs.SingleOrDefault(p => p.UId == dpb._parameterRef);
+                            dpb.ParameterRefObject = ParaRefs[dpb._parameterRef];
                         if(dpb.UseTextParameter && dpb._textRef != -1)
-                            dpb.TextRefObject = mod.ParameterRefs.SingleOrDefault(p => p.UId == dpb._textRef);
+                            dpb.TextRefObject = ParaRefs[dpb._textRef];
                         if(dpb.UseIcon && dpb._iconId != -1)
                             dpb.IconObject = general.Icons.SingleOrDefault(i => i.UId == dpb._iconId);
                         break;
@@ -198,19 +217,19 @@ namespace Kaenx.Creator.Classes
 
                     case Models.Dynamic.DynAssign dass:
                         if(dass._targetUId != -1)
-                            dass.TargetObject = mod.ParameterRefs.SingleOrDefault(p => p.UId == dass._targetUId);
+                            dass.TargetObject = ParaRefs[dass._targetUId];
                         if(string.IsNullOrEmpty(dass.Value) && dass._sourceUId != -1)
-                            dass.SourceObject = mod.ParameterRefs.SingleOrDefault(p => p.UId == dass._sourceUId);
+                            dass.SourceObject = ParaRefs[dass._sourceUId];
                         break;
 
                     case Models.Dynamic.DynRepeat dre:
                         if(dre.UseParameterRef && dre._parameterUId != -1)
-                            dre.ParameterRefObject = mod.ParameterRefs.SingleOrDefault(p => p.UId == dre._parameterUId);
+                            dre.ParameterRefObject = ParaRefs[dre._parameterUId];
                         break;
                     
                     case Models.Dynamic.DynButton db:
                         if(db.UseTextParameter && db._textRef != -1)
-                            db.TextRefObject = mod.ParameterRefs.SingleOrDefault(p => p.UId == db._textRef);
+                            db.TextRefObject = ParaRefs[db._textRef];
                         if(db.UseIcon && db._iconId != -1)
                             db.IconObject = general.Icons.SingleOrDefault(i => i.UId == db._iconId);
                         break;
