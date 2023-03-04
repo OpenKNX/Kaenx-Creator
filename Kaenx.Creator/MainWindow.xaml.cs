@@ -1253,19 +1253,22 @@ namespace Kaenx.Creator
                 convPath = System.IO.Path.Combine(convPath, "CV", "6.0");
             else
             {
-                if(versions.GroupBy(v => v.Namespace).Count() > 1)
+                if(!convPath.Contains("ETS6"))
                 {
-                    PublishActions.Add(new Models.PublishAction() { Text = "Produktdatenbank haben unterschiedlichen Namespace", State = Models.PublishState.Fail });
-                    return;
-                }
+                    if(versions.GroupBy(v => v.Namespace).Count() > 1)
+                    {
+                        PublishActions.Add(new Models.PublishAction() { Text = "Produktdatenbank haben unterschiedlichen Namespace", State = Models.PublishState.Fail });
+                        return;
+                    }
 
-                Models.EtsVersion etsVersion = EtsVersions.Single(v => v.Number == versions[0].Namespace);
-                if(!etsVersion.IsEnabled)
-                {
-                    PublishActions.Add(new Models.PublishAction() { Text = $"Der gewünschte Namespace /{etsVersion.Number} kann auf diesem System nicht erstellt werden", State = Models.PublishState.Fail });
-                    return;
+                    Models.EtsVersion etsVersion = EtsVersions.Single(v => v.Number == versions[0].Namespace);
+                    if(!etsVersion.IsEnabled)
+                    {
+                        PublishActions.Add(new Models.PublishAction() { Text = $"Der gewünschte Namespace /{etsVersion.Number} kann auf diesem System nicht erstellt werden", State = Models.PublishState.Fail });
+                        return;
+                    }
+                    convPath = System.IO.Path.Combine(convPath, "CV", etsVersion.FolderPath);
                 }
-                convPath = System.IO.Path.Combine(convPath, "CV", etsVersion.FolderPath);
             }
 
             ExportHelper helper = new ExportHelper(General, hardware, devices, apps, versions, convPath, ExportInName.Text);
