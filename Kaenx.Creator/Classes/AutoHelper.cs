@@ -311,12 +311,13 @@ namespace Kaenx.Creator.Classes
 
             foreach(Parameter para in paras.Where(p => p.Offset != -1))
             {
-                if(para.Offset >= mem.GetCount())
+                int sizeInByte = (int)Math.Ceiling(para.ParameterTypeObject.SizeInBit / 8.0);
+                if((para.Offset + sizeInByte) >= mem.GetCount())
                 {
-                    if(!mem.IsAutoSize) throw new Exception("Parameter liegt außerhalb des Speichers");
+                    if(!mem.IsAutoSize) throw new Exception("Parameter '" + para.Name + "' liegt außerhalb des Speichers");
                     
-                    int toadd = (para.Offset - mem.GetCount()) + 1;
-                    if(para.ParameterTypeObject.SizeInBit > 8) toadd += (para.ParameterTypeObject.SizeInBit / 8) - 1;
+                    int toadd = ((para.Offset + sizeInByte) - mem.GetCount());
+                    //if(para.ParameterTypeObject.SizeInBit > 8) toadd += (para.ParameterTypeObject.SizeInBit / 8) - 1;
                     mem.AddBytes(toadd);
                 }
 

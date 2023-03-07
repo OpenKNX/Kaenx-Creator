@@ -77,14 +77,17 @@ namespace Kaenx.Creator.Models
                     continue;
                 }
 
-                (int size, int offset) usage = mbyte.GetFreeBits();
-                switch(usage.size)
+                switch(mbyte.CheckFreeBits())
                 {
-                    case 0:
+                    case -1:
+                        fillColor.Add(new SolidColorBrush(Colors.Purple));
+                        break;
+
+                    case 1:
                         fillColor.Add(new SolidColorBrush(Colors.Red));
                         break;
 
-                    case 8:
+                    case 0:
                         fillColor.Add(new SolidColorBrush(Colors.Green));
                         break;
 

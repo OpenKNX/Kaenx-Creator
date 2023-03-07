@@ -902,52 +902,61 @@
 
                             <ListView x:Name="ListMemories" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding Memories}" DisplayMemberPath="Name" />
 
-                            <ScrollViewer Grid.Column="3" Grid.RowSpan="2">
-                                <StackPanel Margin="5" DataContext="{Binding ElementName=ListMemories, Path=SelectedItem}" IsEnabled="{Binding Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
-                                    <StackPanel.Resources>
-                                        <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
-                                            <ObjectDataProvider.MethodParameters>
-                                                <x:Type TypeName="models:MemoryTypes"/>
-                                            </ObjectDataProvider.MethodParameters>
-                                        </ObjectDataProvider>
-                                        <Style TargetType="HeaderedContentControl">
-                                            <Setter Property="Margin" Value="5" />
-                                            <Setter Property="IsTabStop" Value="false" />
-                                        </Style>
-                                        <Style TargetType="CheckBox">
-                                            <Setter Property="Margin" Value="5" />
-                                        </Style>
-                                        <Style TargetType="ComboBox">
-                                            <Setter Property="Margin" Value="5" />
-                                        </Style>
-                                        <Style TargetType="Button">
-                                            <Setter Property="Margin" Value="5" />
-                                        </Style>
-                                        <Style TargetType="ListView">
-                                            <Setter Property="Margin" Value="5" />
-                                        </Style>
-                                    </StackPanel.Resources>
 
-                                    <HeaderedContentControl Header="{x:Static p:Resources.prop_name}">
-                                        <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
-                                    </HeaderedContentControl>
-                                    <HeaderedContentControl Header="{x:Static p:Resources.prop_address}" Visibility="{Binding ElementName=AppList, Path=SelectedItem.Mask.Memory, Converter={StaticResource EnumToVis}, ConverterParameter=Absolute}">
-                                        <TextBox Text="{Binding Address, UpdateSourceTrigger=PropertyChanged}"/>
-                                    </HeaderedContentControl>
-                                    <CheckBox Content="{x:Static p:Resources.vgen_autosize}"  IsChecked="{Binding IsAutoSize}" />
-                                    <CheckBox Content="{x:Static p:Resources.vgen_autoload}"  IsChecked="{Binding IsAutoLoad}" />
-                                    <HeaderedContentControl Header="{x:Static p:Resources.prop_size}" IsEnabled="{Binding IsAutoSize, Converter={StaticResource BoolNegate}}">
-                                        <TextBox Text="{Binding Size, UpdateSourceTrigger=PropertyChanged}" />
-                                    </HeaderedContentControl>
-                                    <HeaderedContentControl Header="{x:Static p:Resources.prop_offset}" Visibility="{Binding ElementName=AppList, Path=SelectedItem.Mask.Memory, Converter={StaticResource EnumToVis}, ConverterParameter=Relative}">
-                                        <TextBox Text="{Binding Offset, UpdateSourceTrigger=PropertyChanged}"/>
-                                    </HeaderedContentControl>
-                                    <CheckBox Content="{x:Static p:Resources.vgen_mautopara}" IsChecked="{Binding IsAutoPara}" />
-                                    <CheckBox Content="{x:Static p:Resources.vgen_mautoorder}" IsEnabled="{Binding IsAutoPara}" IsChecked="{Binding IsAutoOrder}" />
+                            <TabControl Grid.Column="2" Grid.RowSpan="3" DataContext="{Binding ElementName=ListMemories, Path=SelectedItem}">
+                                <TabItem Header="Eigenschaften">
+                                    <ScrollViewer Grid.Column="3" Grid.RowSpan="2">
+                                        <StackPanel Margin="5" IsEnabled="{Binding Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
+                                            <StackPanel.Resources>
+                                                <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+                                                    <ObjectDataProvider.MethodParameters>
+                                                        <x:Type TypeName="models:MemoryTypes"/>
+                                                    </ObjectDataProvider.MethodParameters>
+                                                </ObjectDataProvider>
+                                                <Style TargetType="HeaderedContentControl">
+                                                    <Setter Property="Margin" Value="5" />
+                                                    <Setter Property="IsTabStop" Value="false" />
+                                                </Style>
+                                                <Style TargetType="CheckBox">
+                                                    <Setter Property="Margin" Value="5" />
+                                                </Style>
+                                                <Style TargetType="ComboBox">
+                                                    <Setter Property="Margin" Value="5" />
+                                                </Style>
+                                                <Style TargetType="Button">
+                                                    <Setter Property="Margin" Value="5" />
+                                                </Style>
+                                                <Style TargetType="ListView">
+                                                    <Setter Property="Margin" Value="5" />
+                                                </Style>
+                                            </StackPanel.Resources>
+        
+                                            <HeaderedContentControl Header="{x:Static p:Resources.prop_name}">
+                                                <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+                                            </HeaderedContentControl>
+                                            <HeaderedContentControl Header="{x:Static p:Resources.prop_address}" Visibility="{Binding ElementName=AppList, Path=SelectedItem.Mask.Memory, Converter={StaticResource EnumToVis}, ConverterParameter=Absolute}">
+                                                <TextBox Text="{Binding Address, UpdateSourceTrigger=PropertyChanged}"/>
+                                            </HeaderedContentControl>
+                                            <CheckBox Content="{x:Static p:Resources.vgen_autosize}"  IsChecked="{Binding IsAutoSize}" />
+                                            <CheckBox Content="{x:Static p:Resources.vgen_autoload}"  IsChecked="{Binding IsAutoLoad}" />
+                                            <HeaderedContentControl Header="{x:Static p:Resources.prop_size}" IsEnabled="{Binding IsAutoSize, Converter={StaticResource BoolNegate}}">
+                                                <TextBox Text="{Binding Size, UpdateSourceTrigger=PropertyChanged}" />
+                                            </HeaderedContentControl>
+                                            <HeaderedContentControl Header="{x:Static p:Resources.prop_offset}" Visibility="{Binding ElementName=AppList, Path=SelectedItem.Mask.Memory, Converter={StaticResource EnumToVis}, ConverterParameter=Relative}">
+                                                <TextBox Text="{Binding Offset, UpdateSourceTrigger=PropertyChanged}"/>
+                                            </HeaderedContentControl>
+                                            <CheckBox Content="{x:Static p:Resources.vgen_mautopara}" IsChecked="{Binding IsAutoPara}" />
+                                            <CheckBox Content="{x:Static p:Resources.vgen_mautoorder}" IsEnabled="{Binding IsAutoPara}" IsChecked="{Binding IsAutoOrder}" />        
+                                        </StackPanel>
+                                    </ScrollViewer>
+                                </TabItem>
 
-                                    <Button Content="{x:Static p:Resources.vgen_heatmap}" Click="ClickCalcHeatmap" />
-                                    
+                                <TabItem Header="Heatmap">
                                     <Grid Margin="5">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="auto" />
+                                            <RowDefinition />
+                                        </Grid.RowDefinitions>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="auto" />
                                             <ColumnDefinition MinWidth="100" />
@@ -957,8 +966,10 @@
                                                 <TextBlock />
                                             </DataTemplate>
                                         </Grid.Resources>
-                                        
-                                        <DataGrid ItemsSource="{Binding Sections}" AutoGenerateColumns="false" CanUserResizeRows="False" CanUserResizeColumns="False" CurrentCellChanged="CurrentCellChanged"> 
+
+                                        <Button Grid.ColumnSpan="2" Margin="0 0 0 5" Content="{x:Static p:Resources.vgen_heatmap}" Click="ClickCalcHeatmap" />
+                                    
+                                        <DataGrid Grid.Row="1" ItemsSource="{Binding Sections}" AutoGenerateColumns="false" CanUserResizeRows="False" CanUserResizeColumns="False" CurrentCellChanged="CurrentCellChanged"> 
                                             <DataGrid.RowStyle>
                                                 <Style TargetType="{x:Type DataGridRow}">
                                                     <Setter Property="Header" Value="{Binding Name}" />
@@ -1081,7 +1092,7 @@
                                             </DataGrid.Columns>
                                         </DataGrid>
 
-                                        <StackPanel Grid.Column="1" Margin="5 0" DataContext="{Binding CurrentMemoryByte}">
+                                        <StackPanel Grid.Column="1" Grid.Row="1" Margin="5 0" DataContext="{Binding CurrentMemoryByte}">
                                             <TextBlock>
                                                 <Run Text="{x:Static p:Resources.prop_address}" />
                                                 <Run Text="{Binding Name, Mode=OneWay}" />
@@ -1096,9 +1107,9 @@
                                             <ContentPresenter Content="{Binding}" ContentTemplateSelector="{StaticResource MemorySelector}" />
                                         </StackPanel>
                                     </Grid>
-
-                                </StackPanel>
-                            </ScrollViewer>
+                                </TabItem>
+                            </TabControl>
+                            
                         </Grid>
                     </TabItem>
 

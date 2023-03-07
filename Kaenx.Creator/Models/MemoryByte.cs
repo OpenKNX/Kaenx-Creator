@@ -6,6 +6,7 @@ using System.Windows.Data;
 using System.Globalization;
 using System.ComponentModel;
 using System.Windows.Media;
+using System.Linq;
 
 namespace Kaenx.Creator.Models
 {
@@ -33,7 +34,7 @@ namespace Kaenx.Creator.Models
             Offset = offset;
 
             for(int x = 0; x < usedBits; x++)
-                Bits[x] = 'x';
+                Bits[x] += 1;
                 
             Usage = usage;
             ParameterList.Add(para);
@@ -42,16 +43,18 @@ namespace Kaenx.Creator.Models
         public List<MemoryUnion> UnionList { get; set; } = new List<MemoryUnion>();
         public List<Parameter> ParameterList { get; set; } = new List<Parameter>();
 
-        public List<char> Bits {get;set;} = new List<char>() {
-            'o',
-            'o',
-            'o',
-            'o',
-            'o',
-            'o',
-            'o',
-            'o'
-        };
+        public List<uint> Bits {get;set;} = new List<uint>() { 0,0,0,0,0,0,0,0 };
+
+        public int CheckFreeBits()
+        {
+            if(!Bits.Any(b => b != 0))
+                return 0;
+            if(Bits.Any(b => b > 1))
+                return -1;
+            if(Bits.Count(b => b > 0) == 8)
+                return 1;
+            return 2;
+        }
 
         public (int size, int offset) GetFreeBits()
         {
@@ -62,7 +65,7 @@ namespace Kaenx.Creator.Models
 
             for(int i = 0; i < 8; i++)
             {
-                if(Bits[i] == 'o')
+                if(Bits[i] == 0)
                 {
                     currentSize++;
                     if(currentOffset == -1) currentOffset = i;
@@ -88,17 +91,17 @@ namespace Kaenx.Creator.Models
         {
             Usage = usage;
             for(int x = 0; x < 8; x++)
-                Bits[x] = 'x';
+                Bits[x] += 1;
         }
 
         public void SetBitsUsed(Parameter para, int size, int offset)
         {
             for(int x = 0; x < size; x++)
             {
-                if(Bits[offset + x] != 'o')
-                    throw new Exception("Kein freier Speicherplatz in Byte");
+                //if(Bits[offset + x] != 'o')
+                //    throw new Exception("Kein freier Speicherplatz in Byte");
                 
-                Bits[offset + x] = 'x';
+                Bits[offset + x] += 1;
             }
             if(!ParameterList.Contains(para))
                 ParameterList.Add(para);
@@ -114,10 +117,10 @@ namespace Kaenx.Creator.Models
 
             for(int x = 0; x < size; x++)
             {
-                if(Bits[offset + x] != 'o')
-                    throw new Exception($"Kein freier Speicherplatz in Byte: {union.Name} {offset:X4}-{size}B");
+                //if(Bits[offset + x] != 'o')
+                //    throw new Exception($"Kein freier Speicherplatz in Byte: {union.Name} {offset:X4}-{size}B");
                 
-                Bits[offset + x] = 'x';
+                Bits[offset + x] += 1;
             }
         }
 
@@ -130,7 +133,7 @@ namespace Kaenx.Creator.Models
                 bool flag = true;
                 for(int x = 0; x < size; x++)
                 {
-                    if(Bits[i+x] != 'o')
+                    if(Bits[i+x] != 0)
                     {
                         flag = false;
                         break;
@@ -143,7 +146,7 @@ namespace Kaenx.Creator.Models
             if((offset + size) > 8) throw new Exception("Kein freier Speicherplatz in Byte");
 
             for(int x = 0; x < size; x++)
-                Bits[offset+x] = 'x';
+                Bits[offset+x] += 1;
 
             if(!ParameterList.Contains(para))
                 ParameterList.Add(para);
@@ -165,9 +168,14 @@ namespace Kaenx.Creator.Models
         {
             if(fillColor != null) return;
             fillColor = new List<SolidColorBrush>();
-            foreach(char c in Bits)
+            foreach(uint c in Bits)
             {
-                fillColor.Add(new SolidColorBrush(c == 'o' ? Colors.Green : Colors.Red));
+                if(c == 0)
+                    fillColor.Add(new SolidColorBrush(Colors.Green));
+                else if(c == 1)
+                    fillColor.Add(new SolidColorBrush(Colors.Red));
+                else
+                    fillColor.Add(new SolidColorBrush(Colors.Purple));
             }
         }
 
