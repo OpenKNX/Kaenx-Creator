@@ -38,7 +38,14 @@
 
         <ListView x:Name="IconsList" Grid.Row="2" Grid.ColumnSpan="2" ItemsSource="{Binding General.Icons, ElementName=ViewControl}" DisplayMemberPath="Name" />
 
-        <ScrollViewer Grid.Column="3" Grid.RowSpan="3" DataContext="{Binding ElementName=IconsList, Path=SelectedItem}" IsEnabled="{Binding Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
+        <TextBlock Grid.Column="3" Margin="5 0">
+            <Run Text="Copyright free Icons: " />
+            <Hyperlink NavigateUri="https://pictogrammers.com/library/mdi/" RequestNavigate="Hyperlink_RequestNavigate">
+                Pictogrammers
+            </Hyperlink>
+        </TextBlock>
+
+        <ScrollViewer Grid.Column="3" Grid.Row="3" DataContext="{Binding ElementName=IconsList, Path=SelectedItem}" IsEnabled="{Binding Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
             <StackPanel Margin="5">
                 <StackPanel.Resources>
                     <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">

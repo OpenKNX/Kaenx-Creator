@@ -277,7 +277,7 @@ namespace Kaenx.Creator.Classes {
                         if(!ptype.IsSizeManual)
                         {
                             long z = min * (-1);
-                            if(z < (max - 1)) z = min;
+                            if(z < (max - 1)) z = max;
                             string y = z.ToString().Replace("-", "");
                             string bin = Convert.ToString(long.Parse(y), 2);
                             if(z == (min * (-1))) bin += "1";

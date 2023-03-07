@@ -13,6 +13,8 @@ namespace Kaenx.Creator.Models.Dynamic
         public IDynItems Parent { get; set; }
         public bool IsExpanded { get; set; }
 
+        public long uid { get; set; }
+
         private string _name = "";
         public string Name
         {
@@ -53,7 +55,6 @@ namespace Kaenx.Creator.Models.Dynamic
         }
 
         private string _value;
-        [JsonIgnore]
         public string Value
         {
             get { return _value; }

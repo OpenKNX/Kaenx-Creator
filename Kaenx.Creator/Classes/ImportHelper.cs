@@ -825,6 +825,8 @@ namespace Kaenx.Creator.Classes
                         throw new Exception("Unbekannter ParameterType: " + xsub.Name.LocalName);
                 }
 
+                ptype.IsSizeManual = true;
+
                 currentVers.ParameterTypes.Add(ptype);
             }
             sw.Stop();
@@ -1001,7 +1003,7 @@ namespace Kaenx.Creator.Classes
                 if (id.StartsWith("-"))
                     id = id.Substring(1);
                 long paraId = long.Parse(id);
-                pref.ParameterObject = Paras[paraId]; vbase.Parameters.Single(p => p.Id == paraId);
+                pref.ParameterObject = Paras[paraId];
                 //pref.ParameterObject = vbase.Parameters.Single(p => p.Id == paraId);
                 pref.Name = pref.ParameterObject.Name;
                 
@@ -1148,6 +1150,12 @@ namespace Kaenx.Creator.Classes
             Stopwatch sw = new Stopwatch();
             sw.Start();
 
+            
+            ParaRefs = new Dictionary<long, ParameterRef>();
+            foreach(ParameterRef pref in vbase.ParameterRefs)
+                ParaRefs.Add(pref.Id, pref);
+
+
             foreach (XElement xref in xrefs.Elements())
             {
                 ComObjectRef cref = new ComObjectRef();
@@ -1179,7 +1187,7 @@ namespace Kaenx.Creator.Classes
                 {
                     long tid = long.Parse(GetLastSplit(xref.Attribute("TextParameterRefId").Value, 2));
                     cref.UseTextParameter = true;
-                    cref.ParameterRefObject = vbase.ParameterRefs.Single(p => p.Id == tid);
+                    cref.ParameterRefObject = ParaRefs[tid];
                 }
 
                 cref.FlagRead = ParseFlagType(xref.Attribute("ReadFlag")?.Value);
@@ -1615,6 +1623,8 @@ namespace Kaenx.Creator.Classes
             System.Console.WriteLine($"ImportDynamic: {sw.ElapsedMilliseconds} ms");
         }
 
+        private long assigncounter = 1;
+
         private void ParseDynamic(IDynItems parent, XElement xeles, IVersionBase vbase)
         {
             foreach (XElement xele in xeles.Elements())
@@ -1864,7 +1874,8 @@ namespace Kaenx.Creator.Classes
 
                     case "Assign":
                         DynAssign dass = new DynAssign() {
-                            Parent = parent
+                            Parent = parent,
+                            uid = assigncounter++
                         };
                         long targetid = long.Parse(GetLastSplit(xele.Attribute("TargetParamRefRef").Value, 2));
                         dass.TargetObject = ParaRefs[targetid];
@@ -1875,6 +1886,10 @@ namespace Kaenx.Creator.Classes
                         }
                         dass.Value = xele.Attribute("Value")?.Value;
                         parent.Items.Add(dass);
+                        if(dass.TargetObject.Name == "LOG_f1E1Convert")
+                        {
+
+                        }
                         break;
 
                     case "Rename":

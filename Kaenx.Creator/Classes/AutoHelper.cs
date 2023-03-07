@@ -220,6 +220,10 @@ namespace Kaenx.Creator.Classes
                             dass.TargetObject = ParaRefs[dass._targetUId];
                         if(string.IsNullOrEmpty(dass.Value) && dass._sourceUId != -1)
                             dass.SourceObject = ParaRefs[dass._sourceUId];
+                        if(string.IsNullOrEmpty(dass.Value) && dass._sourceUId == -1)
+                        {
+                            
+                        }
                         break;
 
                     case Models.Dynamic.DynRepeat dre:
