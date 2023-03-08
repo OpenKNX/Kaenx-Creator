@@ -430,7 +430,8 @@ namespace Kaenx.Creator.Classes {
 
                         case ParameterTypes.Enum:
                             int paraval2;
-                            if(!int.TryParse(para.Value, out paraval2)) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) ist keine gültige Zahl", State = PublishState.Fail, Item = para, Module = mod });
+                            if(!int.TryParse(para.Value, out paraval2)) 
+                                actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) ist keine gültige Zahl", State = PublishState.Fail, Item = para, Module = mod });
                             else {
                                 if(!para.ParameterTypeObject.Enums.Any(e => e.Value == paraval2))
                                     actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) ist nicht als option in Enum vorhanden", State = PublishState.Fail, Item = para, Module = mod });
@@ -439,11 +440,12 @@ namespace Kaenx.Creator.Classes {
 
                         case ParameterTypes.NumberUInt:
                         case ParameterTypes.NumberInt:
-                            int paraval;
-                            if(!int.TryParse(para.Value, out paraval)) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) ist keine gültige Zahl", State = PublishState.Fail, Item = para, Module = mod });
+                            long paraval;
+                            if(!long.TryParse(para.Value, out paraval)) 
+                                actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) ist keine gültige Zahl", State = PublishState.Fail, Item = para, Module = mod });
                             else {
                                 if(paraval > long.Parse(para.ParameterTypeObject.Max) || paraval < long.Parse(para.ParameterTypeObject.Min))
-                                    actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) fällt nicht in Bereich {para.ParameterTypeObject.Min}-{para.ParameterTypeObject.Max}", State = PublishState.Fail, Item = para, Module = mod });
+                                    actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) fällt nicht in Bereich {para.ParameterTypeObject.Min} bis {para.ParameterTypeObject.Max}", State = PublishState.Fail, Item = para, Module = mod });
                             }
                             break;
 
@@ -599,10 +601,10 @@ namespace Kaenx.Creator.Classes {
                             case ParameterTypes.NumberUInt:
                             case ParameterTypes.NumberInt:
                                 long paraval;
-                                if(!long.TryParse(para.Value, out paraval)) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) ist keine gültige Zahl", State = PublishState.Fail, Item = para, Module = mod });
+                                if(!long.TryParse(para.Value, out paraval)) actions.Add(new PublishAction() { Text = $"    ParameterRef {para.Name} ({para.UId}): Wert ({para.Value}) ist keine gültige Zahl", State = PublishState.Fail, Item = para, Module = mod });
                                 else {
                                     if(paraval > long.Parse(ptype.Max) || paraval < long.Parse(ptype.Min))
-                                        actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) fällt nicht in Bereich {ptype.Min}-{ptype.Max}", State = PublishState.Fail, Item = para, Module = mod });
+                                        actions.Add(new PublishAction() { Text = $"    ParameterRef {para.Name} ({para.UId}): Wert ({para.Value}) fällt nicht in Bereich {ptype.Min} bis {ptype.Max}", State = PublishState.Fail, Item = para, Module = mod });
                                 }
                                 break;
 
