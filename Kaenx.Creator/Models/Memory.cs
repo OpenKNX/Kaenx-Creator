@@ -79,27 +79,6 @@ namespace Kaenx.Creator.Models
             set { _isAutoLoad = value; Changed("IsAutoLoad"); }
         }
 
-        private DataGridCellInfo _currentCell;
-        [JsonIgnore]
-        public DataGridCellInfo CurrentCell
-        {
-            get { return _currentCell; }
-            set { 
-                _currentCell = value; 
-                Changed("CurrentCell"); 
-            }
-        }
-
-
-        private Models.MemoryByte _currentMemoryByte;
-        [JsonIgnore]
-        public Models.MemoryByte CurrentMemoryByte
-        {
-            get { return _currentMemoryByte; }
-            set { _currentMemoryByte = value; Changed("CurrentMemoryByte"); }
-        }
-
-
         private MemoryTypes _type = MemoryTypes.Absolute;
         public MemoryTypes Type
         {
@@ -156,7 +135,7 @@ namespace Kaenx.Creator.Models
             }
         }
 
-        public void SetBytesUsed(MemoryByteUsage usage, int size, int offset = 0)
+        public void SetBytesUsed(MemoryByteUsage usage, int size, int offset = 0, object usedBy = null)
         {
             for(int i = 0; i < size;i++)
             {
@@ -164,7 +143,7 @@ namespace Kaenx.Creator.Models
                 int secAddr = paraAddr - (paraAddr % 16);
                 MemorySection sec = Sections.Single(s => s.Address == secAddr);
                 int byteIndex = paraAddr - secAddr;
-                sec.Bytes[byteIndex].SetByteUsed(usage);
+                sec.Bytes[byteIndex].SetByteUsed(usage, usedBy);
             }
         }
 

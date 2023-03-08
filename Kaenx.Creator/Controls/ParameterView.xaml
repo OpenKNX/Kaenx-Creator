@@ -132,7 +132,7 @@
                         <ColumnDefinition />
                         <ColumnDefinition Width="auto" />
                     </Grid.ColumnDefinitions>
-                    <HeaderedContentControl Header="Type">
+                    <HeaderedContentControl Header="{x:Static p:Resources.prop_type}">
                         <ComboBox x:Name="InType" IsEditable="true" ItemsSource="{Binding Version.ParameterTypes, ElementName=ViewControl}" DisplayMemberPath="Name" SelectedItem="{Binding ParameterTypeObject}" />
                     </HeaderedContentControl>
 

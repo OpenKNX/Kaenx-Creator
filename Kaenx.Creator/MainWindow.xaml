@@ -193,62 +193,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        <DataTemplate x:Key="MemNormal">
-            <StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <Rectangle Height="18" Width="18" Fill="{Binding FillColor[0]}" Margin="2" />
-                    <Rectangle Height="18" Width="18" Fill="{Binding FillColor[1]}" Margin="2" />
-                    <Rectangle Height="18" Width="18" Fill="{Binding FillColor[2]}" Margin="2" />
-                    <Rectangle Height="18" Width="18" Fill="{Binding FillColor[3]}" Margin="2" />
-                    <Rectangle Height="18" Width="18" Fill="{Binding FillColor[4]}" Margin="2" />
-                    <Rectangle Height="18" Width="18" Fill="{Binding FillColor[5]}" Margin="2" />
-                    <Rectangle Height="18" Width="18" Fill="{Binding FillColor[6]}" Margin="2" />
-                    <Rectangle Height="18" Width="18" Fill="{Binding FillColor[7]}" Margin="2" />
-                </StackPanel>
-
-                <HeaderedContentControl Header="Parameter">
-                    <DataGrid ItemsSource="{Binding ParameterList}" AutoGenerateColumns="false" IsReadOnly="True" CanUserAddRows="False" CanUserResizeRows="False" CanUserResizeColumns="False"> 
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
-                            <DataGridTextColumn Header="Offset" Binding="{Binding Offset}" />
-                            <DataGridTextColumn Header="Bit Offset" Binding="{Binding OffsetBit}" />
-                            <DataGridTextColumn Header="Größe in Bits" Binding="{Binding ParameterTypeObject.SizeInBit}" />
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </HeaderedContentControl>
-
-                <HeaderedContentControl Header="Unions">
-                    <DataGrid ItemsSource="{Binding UnionList}" AutoGenerateColumns="false" IsReadOnly="True" CanUserAddRows="False" CanUserResizeRows="False" CanUserResizeColumns="False"> 
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Name" Binding="{Binding UnionObject.Name}" />
-                            <DataGridTextColumn Header="Offset" Binding="{Binding UnionObject.Offset}" />
-                            <DataGridTextColumn Header="Bit Offset" Binding="{Binding UnionObject.OffsetBit}" />
-                            <DataGridTextColumn Header="Größe in Bits" Binding="{Binding UnionObject.SizeInBit}" />
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </HeaderedContentControl>
-            </StackPanel>
-        </DataTemplate>
-        <DataTemplate x:Key="MemModule">
-            <TextBlock TextWrapping="Wrap" Text="{x:Static p:Resources.vmem_mod}" />
-        </DataTemplate>
-        <DataTemplate x:Key="MemGATable">
-            <TextBlock TextWrapping="Wrap" Text="{x:Static p:Resources.vmem_gat}" />
-        </DataTemplate>
-        <DataTemplate x:Key="MemCOTable">
-            <TextBlock TextWrapping="Wrap" Text="{x:Static p:Resources.vmem_cot}" />
-        </DataTemplate>
-        <DataTemplate x:Key="MemASTable">
-            <TextBlock TextWrapping="Wrap" Text="{x:Static p:Resources.vmem_ast}" />
-        </DataTemplate>
-
-        <select:MemorySelector x:Key="MemorySelector"
-                Normal="{StaticResource MemNormal}"
-                Module="{StaticResource MemModule}"
-                GATable="{StaticResource MemGATable}"
-                COTable="{StaticResource MemCOTable}"
-                ASTable="{StaticResource MemASTable}"
-                 />
     </Window.Resources>
     
     <Grid>
@@ -514,8 +458,6 @@
                                                 <ColumnDefinition />
                                             </Grid.ColumnDefinitions>
 
-                                            <!--<TextBlock Text="Hier stehen dinge drin" />-->
-
                                             <TextBlock Grid.Column="1" Text="{x:Static p:Resources.gen_text}" Margin="0 10 0 0" />
                                             <DataGrid Grid.Row="1" Grid.Column="1" Margin="5 5 5 10" ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
                                                 <DataGrid.Columns>
@@ -687,12 +629,6 @@
             </TabItem>
 
             <TabItem Header="{Binding NameText}" DataContext="{Binding SelectedVersion.Model}" Style="{StaticResource TopTabItem}" IsEnabled="{Binding ., Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
-                <!--<TabItem.Header>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock FontSize="18" Text="{Binding NameText}" />
-                    </StackPanel>
-                </TabItem.Header>-->
-
                 <TabControl x:Name="VersionTabs" SelectionChanged="TabChanged" TabStripPlacement="Left" Style="{StaticResource LeftTabControl}">
                     
                     <TabControl.Template>
@@ -904,7 +840,7 @@
 
 
                             <TabControl Grid.Column="2" Grid.RowSpan="3" DataContext="{Binding ElementName=ListMemories, Path=SelectedItem}" IsEnabled="{Binding Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
-                                <TabItem Header="Eigenschaften">
+                                <TabItem Header="{x:Static p:Resources.tmem_settings}">
                                     <ScrollViewer Grid.Column="3" Grid.RowSpan="2">
                                         <StackPanel Margin="5">
                                             <StackPanel.Resources>
@@ -951,161 +887,16 @@
                                     </ScrollViewer>
                                 </TabItem>
 
-                                <TabItem Header="Heatmap">
-                                    <Grid Margin="5">
+                                <TabItem Header="{x:Static p:Resources.tmem_heatmap}">
+                                    <Grid>
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="auto" />
                                             <RowDefinition />
                                         </Grid.RowDefinitions>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="auto" />
-                                            <ColumnDefinition MinWidth="100" />
-                                        </Grid.ColumnDefinitions>
-                                        <Grid.Resources>
-                                            <DataTemplate x:Key="CellTemplate">
-                                                <TextBlock />
-                                            </DataTemplate>
-                                        </Grid.Resources>
 
-                                        <Button Grid.ColumnSpan="2" Margin="0 0 0 5" Content="{x:Static p:Resources.vgen_heatmap}" Click="ClickCalcHeatmap" />
-                                    
-                                        <DataGrid Grid.Row="1" ItemsSource="{Binding Sections}" AutoGenerateColumns="false" CanUserResizeRows="False" CanUserResizeColumns="False" CurrentCellChanged="CurrentCellChanged"> 
-                                            <DataGrid.RowStyle>
-                                                <Style TargetType="{x:Type DataGridRow}">
-                                                    <Setter Property="Header" Value="{Binding Name}" />
-                                                </Style>
-                                            </DataGrid.RowStyle>
-
-                                            <DataGrid.Columns>
-                                                <DataGridTemplateColumn Header="0" CellTemplate="{StaticResource CellTemplate}">
-                                                    <DataGridTemplateColumn.CellStyle>
-                                                        <Style TargetType="{x:Type DataGridCell}">
-                                                            <Setter Property="Background" Value="{Binding FillColor[0]}" />
-                                                        </Style>
-                                                    </DataGridTemplateColumn.CellStyle>
-                                                </DataGridTemplateColumn>
-                                                <DataGridTemplateColumn Header="1">
-                                                    <DataGridTemplateColumn.CellStyle>
-                                                        <Style TargetType="{x:Type DataGridCell}">
-                                                            <Setter Property="Background" Value="{Binding FillColor[1]}" />
-                                                        </Style>
-                                                    </DataGridTemplateColumn.CellStyle>
-                                                </DataGridTemplateColumn>
-                                                <DataGridTemplateColumn Header="2">
-                                                    <DataGridTemplateColumn.CellStyle>
-                                                        <Style TargetType="{x:Type DataGridCell}">
-                                                            <Setter Property="Background" Value="{Binding FillColor[2]}" />
-                                                        </Style>
-                                                    </DataGridTemplateColumn.CellStyle>
-                                                </DataGridTemplateColumn>
-                                                <DataGridTemplateColumn Header="3">
-                                                    <DataGridTemplateColumn.CellStyle>
-                                                        <Style TargetType="{x:Type DataGridCell}">
-                                                            <Setter Property="Background" Value="{Binding FillColor[3]}" />
-                                                        </Style>
-                                                    </DataGridTemplateColumn.CellStyle>
-                                                </DataGridTemplateColumn>
-                                                <DataGridTemplateColumn Header="4">
-                                                    <DataGridTemplateColumn.CellStyle>
-                                                        <Style TargetType="{x:Type DataGridCell}">
-                                                            <Setter Property="Background" Value="{Binding FillColor[4]}" />
-                                                        </Style>
-                                                    </DataGridTemplateColumn.CellStyle>
-                                                </DataGridTemplateColumn>
-                                                <DataGridTemplateColumn Header="5">
-                                                    <DataGridTemplateColumn.CellStyle>
-                                                        <Style TargetType="{x:Type DataGridCell}">
-                                                            <Setter Property="Background" Value="{Binding FillColor[5]}" />
-                                                        </Style>
-                                                    </DataGridTemplateColumn.CellStyle>
-                                                </DataGridTemplateColumn>
-                                                <DataGridTemplateColumn Header="6">
-                                                    <DataGridTemplateColumn.CellStyle>
-                                                        <Style TargetType="{x:Type DataGridCell}">
-                                                            <Setter Property="Background" Value="{Binding FillColor[6]}" />
-                                                        </Style>
-                                                    </DataGridTemplateColumn.CellStyle>
-                                                </DataGridTemplateColumn>
-                                                <DataGridTemplateColumn Header="7">
-                                                    <DataGridTemplateColumn.CellStyle>
-                                                        <Style TargetType="{x:Type DataGridCell}">
-                                                            <Setter Property="Background" Value="{Binding FillColor[7]}" />
-                                                        </Style>
-                                                    </DataGridTemplateColumn.CellStyle>
-                                                </DataGridTemplateColumn>
-                                                <DataGridTemplateColumn Header="8">
-                                                    <DataGridTemplateColumn.CellStyle>
-                                                        <Style TargetType="{x:Type DataGridCell}">
-                                                            <Setter Property="Background" Value="{Binding FillColor[8]}" />
-                                                        </Style>
-                                                    </DataGridTemplateColumn.CellStyle>
-                                                </DataGridTemplateColumn>
-                                                <DataGridTemplateColumn Header="9">
-                                                    <DataGridTemplateColumn.CellStyle>
-                                                        <Style TargetType="{x:Type DataGridCell}">
-                                                            <Setter Property="Background" Value="{Binding FillColor[9]}" />
-                                                        </Style>
-                                                    </DataGridTemplateColumn.CellStyle>
-                                                </DataGridTemplateColumn>
-                                                <DataGridTemplateColumn Header="A">
-                                                    <DataGridTemplateColumn.CellStyle>
-                                                        <Style TargetType="{x:Type DataGridCell}">
-                                                            <Setter Property="Background" Value="{Binding FillColor[10]}" />
-                                                        </Style>
-                                                    </DataGridTemplateColumn.CellStyle>
-                                                </DataGridTemplateColumn>
-                                                <DataGridTemplateColumn Header="B">
-                                                    <DataGridTemplateColumn.CellStyle>
-                                                        <Style TargetType="{x:Type DataGridCell}">
-                                                            <Setter Property="Background" Value="{Binding FillColor[11]}" />
-                                                        </Style>
-                                                    </DataGridTemplateColumn.CellStyle>
-                                                </DataGridTemplateColumn>
-                                                <DataGridTemplateColumn Header="C">
-                                                    <DataGridTemplateColumn.CellStyle>
-                                                        <Style TargetType="{x:Type DataGridCell}">
-                                                            <Setter Property="Background" Value="{Binding FillColor[12]}" />
-                                                        </Style>
-                                                    </DataGridTemplateColumn.CellStyle>
-                                                </DataGridTemplateColumn>
-                                                <DataGridTemplateColumn Header="D">
-                                                    <DataGridTemplateColumn.CellStyle>
-                                                        <Style TargetType="{x:Type DataGridCell}">
-                                                            <Setter Property="Background" Value="{Binding FillColor[13]}" />
-                                                        </Style>
-                                                    </DataGridTemplateColumn.CellStyle>
-                                                </DataGridTemplateColumn>
-                                                <DataGridTemplateColumn Header="E">
-                                                    <DataGridTemplateColumn.CellStyle>
-                                                        <Style TargetType="{x:Type DataGridCell}">
-                                                            <Setter Property="Background" Value="{Binding FillColor[14]}" />
-                                                        </Style>
-                                                    </DataGridTemplateColumn.CellStyle>
-                                                </DataGridTemplateColumn>
-                                                <DataGridTemplateColumn Header="F">
-                                                    <DataGridTemplateColumn.CellStyle>
-                                                        <Style TargetType="{x:Type DataGridCell}">
-                                                            <Setter Property="Background" Value="{Binding FillColor[15]}" />
-                                                        </Style>
-                                                    </DataGridTemplateColumn.CellStyle>
-                                                </DataGridTemplateColumn>
-                                            </DataGrid.Columns>
-                                        </DataGrid>
-
-                                        <StackPanel Grid.Column="1" Grid.Row="1" Margin="5 0" DataContext="{Binding CurrentMemoryByte}">
-                                            <TextBlock>
-                                                <Run Text="{x:Static p:Resources.prop_address}" />
-                                                <Run Text="{Binding Name, Mode=OneWay}" />
-                                                <Run Text=" - " />
-                                                <Run Text="{Binding Address}" />
-                                            </TextBlock> 
-                                            <TextBlock>
-                                                <Run Text="{x:Static p:Resources.prop_offset}" />
-                                                <Run Text="{Binding Offset}" />
-                                            </TextBlock>
-
-                                            <ContentPresenter Content="{Binding}" ContentTemplateSelector="{StaticResource MemorySelector}" />
-                                        </StackPanel>
+                                        <Button Grid.ColumnSpan="2" Margin="5 5 5 0" Content="{x:Static p:Resources.vgen_heatmap}" Click="ClickCalcHeatmap" />
+    
+                                        <ctrl:MemorySectionsView Grid.Row="1" Memory="{Binding .}" Margin="5" />
                                     </Grid>
                                 </TabItem>
                             </TabControl>

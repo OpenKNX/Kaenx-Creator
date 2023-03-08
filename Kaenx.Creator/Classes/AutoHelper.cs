@@ -8,6 +8,7 @@ using Kaenx.Creator.Models;
 using Kaenx.Creator.Models.Dynamic;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows;
 
 namespace Kaenx.Creator.Classes
 {
@@ -314,7 +315,7 @@ namespace Kaenx.Creator.Classes
                 int sizeInByte = (int)Math.Ceiling(para.ParameterTypeObject.SizeInBit / 8.0);
                 if((para.Offset + sizeInByte) >= mem.GetCount())
                 {
-                    if(!mem.IsAutoSize) throw new Exception("Parameter '" + para.Name + "' liegt außerhalb des Speichers");
+                    if(!mem.IsAutoSize) MessageBox.Show($"Parameter '{para.Name}' liegt außerhalb des Speichers", "Speicherbelegung Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
                     
                     int toadd = ((para.Offset + sizeInByte) - mem.GetCount());
                     //if(para.ParameterTypeObject.SizeInBit > 8) toadd += (para.ParameterTypeObject.SizeInBit / 8) - 1;
@@ -328,7 +329,7 @@ namespace Kaenx.Creator.Classes
             {
                 if(union.Offset >= mem.GetCount())
                 {
-                    if(!mem.IsAutoSize) throw new Exception("Parameter liegt außerhalb des Speichers");
+                    if(!mem.IsAutoSize) MessageBox.Show($"Union '{union.Name}' liegt außerhalb des Speichers", "Speicherbelegung Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
 
                     int toadd = 1;
                     if(union.SizeInBit > 8) toadd = (union.Offset - mem.GetCount()) + (union.SizeInBit / 8);
@@ -395,7 +396,7 @@ namespace Kaenx.Creator.Classes
                 {
                     int modSize = dmod.ModuleObject.Memory.GetCount();
                     int start = int.Parse(argParas.Value);
-                    mem.SetBytesUsed(MemoryByteUsage.Module, modSize, start);
+                    mem.SetBytesUsed(MemoryByteUsage.Module, modSize, start, dmod?.ModuleObject);
                 }
 
                 if(mem.IsAutoPara && (string.IsNullOrEmpty(argParas.Value) || mem.IsAutoOrder))
@@ -404,7 +405,7 @@ namespace Kaenx.Creator.Classes
                     (int offset, int offsetbit) result = mem.GetFreeOffset(modSize * 8);
                     argParas.Value = result.offset.ToString();
                     argParas.Argument.Allocates = modSize;
-                    mem.SetBytesUsed(MemoryByteUsage.Module, modSize, result.offset);
+                    mem.SetBytesUsed(MemoryByteUsage.Module, modSize, result.offset, dmod?.ModuleObject);
                 }
 
                 if(dmod.ModuleObject.IsComObjectBaseNumberAuto)

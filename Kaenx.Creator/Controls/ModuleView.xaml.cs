@@ -12,7 +12,7 @@ using System.Windows.Controls;
 
 namespace Kaenx.Creator.Controls
 {
-    public partial class ModuleView : UserControl, INotifyPropertyChanged
+    public partial class ModuleView : UserControl, INotifyPropertyChanged, ISelectable
     {
         public static readonly System.Windows.DependencyProperty VersionProperty = System.Windows.DependencyProperty.Register("Version", typeof(AppVersion), typeof(ModuleView), new System.Windows.PropertyMetadata(OnVersionChangedCallback));
         public static readonly DependencyProperty IconsProperty = DependencyProperty.Register("Icons", typeof(ObservableCollection<Icon>), typeof(ModuleView), new PropertyMetadata());
@@ -76,6 +76,29 @@ namespace Kaenx.Creator.Controls
             CurrentIndex = 0;
         }
 
+        public void ShowItem(object item)
+        {
+            if(item is Module)
+            {
+                ModuleList.ScrollIntoView(item);
+                ModuleList.SelectedItem = item;
+            } else {
+                int index = item switch{
+                    Models.Union => 2,
+                    Models.Parameter => 3,
+                    Models.ParameterRef => 4,
+                    Models.ComObject => 5,
+                    Models.ComObjectRef => 6,
+                    Models.Dynamic.IDynItems => 7,
+                    _ => -1
+                };
+
+                if(index == -1) return;
+                ModuleTabs.SelectedIndex = index;
+                ((ModuleTabs.Items[index] as TabItem).Content as ISelectable).ShowItem(item);
+            }
+        }
+
         
         private void ResetId(object sender, RoutedEventArgs e)
         {
@@ -113,17 +136,6 @@ namespace Kaenx.Creator.Controls
                 foreach(Models.Dynamic.IDynItems ditem in item.Items)
                     RemoveModule(ditem, mod);
             */
-        }
-
-        private void CurrentCellChanged(object sender, EventArgs e)
-        {
-            Models.Memory mem = (sender as DataGrid).DataContext as Models.Memory;
-            if(mem == null) return;
-            DataGridCellInfo cell = (sender as DataGrid).CurrentCell;
-            Models.MemorySection sec = cell.Item as Models.MemorySection;
-            if(!cell.IsValid || (cell.Column.DisplayIndex > (sec.Bytes.Count - 1))) return;
-
-            mem.CurrentMemoryByte = sec.Bytes[cell.Column.DisplayIndex];
         }
 
         private void OnOpenSubModules(object sender, RoutedEventArgs e)

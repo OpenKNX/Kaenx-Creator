@@ -119,7 +119,7 @@ namespace Kaenx.Creator
         {
             if(module != null)
             {
-                VersionTabs.SelectedIndex = 5;
+                VersionTabs.SelectedIndex = 6;
                 int index2 = item switch {
                     Models.Union => 4,
                     Models.Parameter => 7,
@@ -130,14 +130,8 @@ namespace Kaenx.Creator
                     _ => -1
                 };
 
-                //TODO Get it back to work
-                /*ModuleList.ScrollIntoView(module);
-                ModuleList.SelectedItem = module;
-
-                if(index2 == -1) return;
-                ModuleTabs.SelectedIndex = index2;
-                ((ModuleTabs.Items[index2] as TabItem).Content as ISelectable).ShowItem(item);
-                */
+                (VersionTabs.SelectedContent as ISelectable).ShowItem(module);
+                (VersionTabs.SelectedContent as ISelectable).ShowItem(item);
                 return;
             }
 
@@ -145,6 +139,7 @@ namespace Kaenx.Creator
             int index = item switch{
                 Models.ParameterType => 3,
                 Models.Union => 4,
+                Models.Module => 6,
                 Models.Parameter => 7,
                 Models.ParameterRef => 8,
                 Models.ComObject => 9,
@@ -1287,17 +1282,6 @@ namespace Kaenx.Creator
                     throw new NotImplementedException("Dieses Feature wurde noch nicht implementiert");
             }
             System.Windows.MessageBox.Show("Erfolgreich erstellt");
-        }
-
-        private void CurrentCellChanged(object sender, EventArgs e)
-        {
-            Models.Memory mem = (sender as DataGrid).DataContext as Models.Memory;
-            if(mem == null) return;
-            DataGridCellInfo cell = (sender as DataGrid).CurrentCell;
-            Models.MemorySection sec = cell.Item as Models.MemorySection;
-            if(!cell.IsValid || (cell.Column.DisplayIndex > (sec.Bytes.Count - 1))) return;
-
-            mem.CurrentMemoryByte = sec.Bytes[cell.Column.DisplayIndex];
         }
 
         private void ChangeLang(object sender, RoutedEventArgs e)

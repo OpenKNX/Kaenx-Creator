@@ -40,6 +40,7 @@ namespace Kaenx.Creator.Models
             ParameterList.Add(para);
         }
 
+        public object UsedBy { get; set; }
         public List<MemoryUnion> UnionList { get; set; } = new List<MemoryUnion>();
         public List<Parameter> ParameterList { get; set; } = new List<Parameter>();
 
@@ -87,8 +88,9 @@ namespace Kaenx.Creator.Models
             return (maxSize, offset);
         }
 
-        public void SetByteUsed(MemoryByteUsage usage)
+        public void SetByteUsed(MemoryByteUsage usage, object usedBy)
         {
+            UsedBy = usedBy;
             Usage = usage;
             for(int x = 0; x < 8; x++)
                 Bits[x] += 1;
@@ -98,9 +100,6 @@ namespace Kaenx.Creator.Models
         {
             for(int x = 0; x < size; x++)
             {
-                //if(Bits[offset + x] != 'o')
-                //    throw new Exception("Kein freier Speicherplatz in Byte");
-                
                 Bits[offset + x] += 1;
             }
             if(!ParameterList.Contains(para))
@@ -117,9 +116,6 @@ namespace Kaenx.Creator.Models
 
             for(int x = 0; x < size; x++)
             {
-                //if(Bits[offset + x] != 'o')
-                //    throw new Exception($"Kein freier Speicherplatz in Byte: {union.Name} {offset:X4}-{size}B");
-                
                 Bits[offset + x] += 1;
             }
         }

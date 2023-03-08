@@ -69,7 +69,7 @@
                     <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
                 </HeaderedContentControl>
 
-                <HeaderedContentControl Header="Type">
+                <HeaderedContentControl Header="{x:Static p:Resources.prop_type}">
                     <HeaderedContentControl.Resources>
                         <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
                             <ObjectDataProvider.MethodParameters>
@@ -80,7 +80,7 @@
                     <ComboBox ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding Type}" />
                 </HeaderedContentControl>
 
-                <HeaderedContentControl Header="Allocates"><!--//tood rename-->
+                <HeaderedContentControl Header="{x:Static p:Resources.prop_allocs}">
                     <TextBox Text="{Binding Allocates, UpdateSourceTrigger=PropertyChanged}"/>
                 </HeaderedContentControl>
             </StackPanel>

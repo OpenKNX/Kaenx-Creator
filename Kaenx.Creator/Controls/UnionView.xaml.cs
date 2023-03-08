@@ -13,7 +13,7 @@ using System.Windows.Input;
 
 namespace Kaenx.Creator.Controls
 {
-    public partial class UnionView : UserControl, INotifyPropertyChanged
+    public partial class UnionView : UserControl, INotifyPropertyChanged, ISelectable
     {
         public static readonly DependencyProperty VersionProperty = DependencyProperty.Register("Version", typeof(AppVersion), typeof(UnionView), new PropertyMetadata(null));
         public static readonly DependencyProperty ModuleProperty = DependencyProperty.Register("Module", typeof(IVersionBase), typeof(UnionView), new PropertyMetadata(null));
@@ -29,6 +29,12 @@ namespace Kaenx.Creator.Controls
         public UnionView()
 		{
             InitializeComponent();
+        }
+
+        public void ShowItem(object item)
+        {
+            UnionList.ScrollIntoView(item);
+            UnionList.SelectedItem = item;
         }
 
         private void ClickAddUnion(object sender, RoutedEventArgs e)

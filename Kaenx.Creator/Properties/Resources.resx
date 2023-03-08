@@ -550,7 +550,7 @@
     <comment/>
   </data>
   <data name="prop_type" xml:space="preserve">
-    <value>Typ</value>
+    <value>Type</value>
     <comment/>
   </data>
   <data name="parat_mansize" xml:space="preserve">
@@ -1319,6 +1319,46 @@
   </data>
   <data name="trpod_edit" xml:space="preserve">
     <value>Prozedur bearbeiten</value>
+    <comment/>
+  </data>
+  <data name="tmem_settings" xml:space="preserve">
+    <value>Einstellungen</value>
+    <comment/>
+  </data>
+  <data name="tmem_heatmap" xml:space="preserve">
+    <value>Speicherbelegung</value>
+    <comment/>
+  </data>
+  <data name="prop_allocs" xml:space="preserve">
+    <value>Allokiert</value>
+    <comment/>
+  </data>
+  <data name="tabs_sm" xml:space="preserve">
+    <value>SubModule</value>
+    <comment/>
+  </data>
+  <data name="mem_para" xml:space="preserve">
+    <value>Parameter</value>
+    <comment/>
+  </data>
+  <data name="mem_union" xml:space="preserve">
+    <value>Unions</value>
+    <comment/>
+  </data>
+  <data name="mem_module" xml:space="preserve">
+    <value>Hier wird ein Module gespeichert. Um genaueres über die Belegung des Speicherplatzes zu erfahren, schauen Sie bitte in den Einstellungen für das Module nach.</value>
+    <comment/>
+  </data>
+  <data name="mem_gat" xml:space="preserve">
+    <value>Hier wird die Gruppenadresstabelle gespeichert.</value>
+    <comment/>
+  </data>
+  <data name="mem_cot" xml:space="preserve">
+    <value>Hier wird die Kommunikationsobjekttabelle gespeichert.</value>
+    <comment/>
+  </data>
+  <data name="mem_ast" xml:space="preserve">
+    <value>Hier wird die Assoziationstabelle gespeichert.</value>
     <comment/>
   </data>
 </root>

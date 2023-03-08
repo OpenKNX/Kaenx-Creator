@@ -2444,5 +2444,65 @@ namespace Kaenx.Creator.Properties {
                 return ResourceManager.GetString("tprod_edit", resourceCulture);
             }
         }
+        
+        public static string tmem_settings {
+            get {
+                return ResourceManager.GetString("tmem_settings", resourceCulture);
+            }
+        }
+        
+        public static string tmem_heatmap {
+            get {
+                return ResourceManager.GetString("tmem_heatmap", resourceCulture);
+            }
+        }
+        
+        public static string prop_allocs {
+            get {
+                return ResourceManager.GetString("prop_allocs", resourceCulture);
+            }
+        }
+        
+        public static string tabs_sm {
+            get {
+                return ResourceManager.GetString("tabs_sm", resourceCulture);
+            }
+        }
+        
+        public static string mem_para {
+            get {
+                return ResourceManager.GetString("mem_para", resourceCulture);
+            }
+        }
+        
+        public static string mem_union {
+            get {
+                return ResourceManager.GetString("mem_union", resourceCulture);
+            }
+        }
+        
+        public static string mem_module {
+            get {
+                return ResourceManager.GetString("mem_module", resourceCulture);
+            }
+        }
+        
+        public static string mem_gat {
+            get {
+                return ResourceManager.GetString("mem_gat", resourceCulture);
+            }
+        }
+        
+        public static string mem_cot {
+            get {
+                return ResourceManager.GetString("mem_cot", resourceCulture);
+            }
+        }
+        
+        public static string mem_ast {
+            get {
+                return ResourceManager.GetString("mem_ast", resourceCulture);
+            }
+        }
     }
 }
