@@ -1969,6 +1969,7 @@ namespace Kaenx.Creator.Classes
             {
                 "Enabled" => FlagType.Enabled,
                 "Disabled" => FlagType.Disabled,
+                "Undefined" => FlagType.Undefined,
                 null => FlagType.Undefined,
                 _ => throw new Exception("Unbekannter FlagTyp: " + type)
             };

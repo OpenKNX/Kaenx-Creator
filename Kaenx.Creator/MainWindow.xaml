@@ -903,10 +903,10 @@
                             <ListView x:Name="ListMemories" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding Memories}" DisplayMemberPath="Name" />
 
 
-                            <TabControl Grid.Column="2" Grid.RowSpan="3" DataContext="{Binding ElementName=ListMemories, Path=SelectedItem}">
+                            <TabControl Grid.Column="2" Grid.RowSpan="3" DataContext="{Binding ElementName=ListMemories, Path=SelectedItem}" IsEnabled="{Binding Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
                                 <TabItem Header="Eigenschaften">
                                     <ScrollViewer Grid.Column="3" Grid.RowSpan="2">
-                                        <StackPanel Margin="5" IsEnabled="{Binding Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
+                                        <StackPanel Margin="5">
                                             <StackPanel.Resources>
                                                 <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
                                                     <ObjectDataProvider.MethodParameters>

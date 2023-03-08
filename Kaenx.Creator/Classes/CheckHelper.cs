@@ -109,6 +109,12 @@ namespace Kaenx.Creator.Classes {
                     var check5 = app.Versions.GroupBy(v => v.Number).Where(l => l.Count() > 1);
                     foreach (var group in check5)
                         actions.Add(new PublishAction() { Text = "Applikation '" + app.NameText + "' verwendet Version " + group.Key + " (" + Math.Floor(group.Key / 16.0) + "." + (group.Key % 16) + ") " + group.Count() + " mal", State = PublishState.Fail });
+                
+                    if(General.IsOpenKnx)
+                    {
+                        if(app.Number > 0xFF)
+                            actions.Add(new PublishAction() { Text = "Applikation '" + app.NameText + "' ist ein OpenKNX Projekt. Nummer darf somit nicht größer als FF sein", State = PublishState.Fail });
+                    }
                 }
                 #endregion
 
