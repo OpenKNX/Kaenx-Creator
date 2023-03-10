@@ -50,10 +50,16 @@ namespace Kaenx.Creator.Models
                         break;
                     case ParameterTypes.NumberInt:
                     case ParameterTypes.NumberUInt:
+                        UIHint = "None";
+                        break;
                     case ParameterTypes.Float_DPT9:
+                        UIHint = "None";
+                        SizeInBit = 8*2;
+                        break;
                     case ParameterTypes.Float_IEEE_Double:
                     case ParameterTypes.Float_IEEE_Single:
                         UIHint = "None";
+                        SizeInBit = 8*4;
                         break;
                     default:
                         SizeInBit = 8;

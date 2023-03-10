@@ -98,7 +98,7 @@
                 <ComboBox ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding Type, Mode=TwoWay}" />
             </HeaderedContentControl>
             
-            <HeaderedContentControl Header="{x:Static p:Resources.parat_mansize}" Visibility="{Binding Type, Converter={StaticResource EnumToVisNeg}, ConverterParameter=None-IpAddress-Picture-Color-RawData-Date}">
+            <HeaderedContentControl Header="{x:Static p:Resources.parat_mansize}" Visibility="{Binding Type, Converter={StaticResource EnumToVisNeg}, ConverterParameter=None-IpAddress-Picture-Color-RawData-Date-Float_DPT9-Float_IEEE_Double-Float_IEEE_Single}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="auto" />

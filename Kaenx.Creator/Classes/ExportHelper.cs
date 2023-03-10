@@ -1399,8 +1399,6 @@ namespace Kaenx.Creator.Classes
         {
             if((headers != null && para.SavePath != SavePaths.Nowhere) || (headers != null && para.IsInUnion && para.UnionObject != null && para.UnionObject.SavePath != SavePaths.Nowhere))
             {
-                int offset = para.Offset;
-
                 string lineStart;
                 string lineComm = "";
                 if(ver is Models.Module mod)
@@ -1410,13 +1408,16 @@ namespace Kaenx.Creator.Classes
                     lineStart = $"#define PARAM_{HeaderNameEscape(para.Name)}";
                 }
                 
+                int offset = 0;
                 string linePara = lineStart;
                 if(para.IsInUnion && para.UnionObject != null)
                 {
                     lineComm += $"// UnionOffset: {para.UnionObject.Offset}, ParaOffset: {para.Offset}";
-                    linePara += $"\t\t0x{(para.UnionObject.Offset + para.Offset).ToString("X4")}";
+                    offset = para.UnionObject.Offset + para.Offset;
+                    linePara += $"\t\t0x{offset.ToString("X4")}";
                 } else {
                     lineComm += $"// Offset: {para.Offset}";
+                    offset = para.Offset;
                     linePara += $"\t\t0x{para.Offset.ToString("X4")}";
                 }
                 
@@ -1427,17 +1428,76 @@ namespace Kaenx.Creator.Classes
                 headers.AppendLine(lineComm);
                 headers.AppendLine(linePara);
 
-                if (para.OffsetBit > 0 || para.ParameterTypeObject.SizeInBit < 8)
-                {
-                    int mask = 0;
-                    for(int i = 0; i < para.ParameterTypeObject.SizeInBit; i++)
-                        mask += (int)Math.Pow(2, i);
-                        
-                    mask = mask << (8 - para.OffsetBit - (para.ParameterTypeObject.SizeInBit % 8));
-                    headers.AppendLine($"{lineStart}_Mask\t0x{mask:X4}");
+                int mask = 0;
+                for(int i = 0; i < para.ParameterTypeObject.SizeInBit; i++)
+                    mask += (int)Math.Pow(2, i);
+                    
+                mask = mask << (8 - para.OffsetBit - (para.ParameterTypeObject.SizeInBit % 8));
+                headers.AppendLine($"{lineStart}_Mask\t0x{mask:X4}");
 
-                    headers.AppendLine($"{lineStart}_Shift\t{8 - para.OffsetBit - (para.ParameterTypeObject.SizeInBit % 8)}");
+                int shift = 8 - para.OffsetBit - (para.ParameterTypeObject.SizeInBit % 8);
+                headers.AppendLine($"{lineStart}_Shift\t{shift}");
+
+                lineComm = $"{lineStart.Split(' ')[0]} GET{lineStart.Split(' ')[1]} ";
+                
+
+                switch(para.ParameterTypeObject.Type)
+                {
+                    case ParameterTypes.NumberUInt:
+                    case ParameterTypes.NumberInt:
+                    case ParameterTypes.Enum:
+                    {
+                        string ptype = para.ParameterTypeObject.Type == ParameterTypes.NumberInt ? "(int)" : "(uint)";
+
+                        if(para.ParameterTypeObject.SizeInBit == 1)
+                        {
+                            lineComm += $"knx.paramBit({offset}, {para.OffsetBit})";
+                        } else {
+                            string pshift = shift == 0 ? "" : $" >> {lineStart.Split(' ')[1]}_Shift";
+                            string pmask = $" & {lineStart.Split(' ')[1]}_Mask";
+                            string pAccess = "";
+
+                            if(shift == 0 && para.ParameterTypeObject.SizeInBit % 8 == 0) pmask = "";
+
+                            if(para.ParameterTypeObject.SizeInBit <= 8) pAccess = "paramByte";
+                            else if(para.ParameterTypeObject.SizeInBit <= 16) pAccess = "paramWord";
+                            else if(para.ParameterTypeObject.SizeInBit <= 32) pAccess = "paramInt";
+                            else throw new Exception("Size to big for Int/Enum");
+
+                            lineComm += $"({ptype}((knx.{pAccess}({lineStart.Split(' ')[1]}){pshift}){pmask}))";
+                        }
+                        break;
+                    }
+
+                    case ParameterTypes.Float_DPT9:
+                    {
+                        lineComm += $"knx.paramFloat({offset}, Float_Enc_DPT9)";
+                        break;
+                    }
+                    case ParameterTypes.Float_IEEE_Single:
+                    {
+                        lineComm += $"knx.paramFloat({offset}, Float_Enc_IEEE754Single)";
+                        break;
+                    }
+                    case ParameterTypes.Float_IEEE_Double:
+                    {
+                        lineComm += $"knx.paramFloat({offset}, Float_Enc_IEEE754Double)";
+                        break;
+                    }
+
+                    case ParameterTypes.Color:
+                    {
+                        lineComm += $"knx.paramInt({offset})";
+                        break;
+                    }
+
+                    case ParameterTypes.Text:
+                    {
+                        lineComm += $"knx.paramData({offset})";
+                        break;
+                    }
                 }
+                headers.AppendLine(lineComm);
             }
 
             XElement xpara = new XElement(Get("Parameter"));
