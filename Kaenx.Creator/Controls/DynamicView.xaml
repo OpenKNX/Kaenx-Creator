@@ -211,7 +211,7 @@
                     </Grid>
                 </HeaderedContentControl>
 
-                <HeaderedContentControl Header="{x:Static p:Resources.tdyn_pb_cells}" Visibility="{Binding Layout, Converter={StaticResource EnumToVis}, ConverterParameter=Grid-Table}">
+                <HeaderedContentControl Header="{x:Static p:Resources.tdyn_pb_rows}" Visibility="{Binding Layout, Converter={StaticResource EnumToVis}, ConverterParameter=Grid-Table}">
                     <DataGrid ItemsSource="{Binding Rows}" AutoGenerateColumns="False">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="{x:Static p:Resources.tdyn_id}" Binding="{Binding Id}" IsReadOnly="True" />
@@ -220,7 +220,7 @@
                     </DataGrid>
                 </HeaderedContentControl>
 
-                <HeaderedContentControl Header="{x:Static p:Resources.tdyn_pb_rows}" Visibility="{Binding Layout, Converter={StaticResource EnumToVis}, ConverterParameter=Grid-Table}">
+                <HeaderedContentControl Header="{x:Static p:Resources.tdyn_pb_cells}" Visibility="{Binding Layout, Converter={StaticResource EnumToVis}, ConverterParameter=Grid-Table}">
                     <DataGrid ItemsSource="{Binding Columns}" AutoGenerateColumns="False">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="{x:Static p:Resources.tdyn_id}" Binding="{Binding Id}" IsReadOnly="True" />
