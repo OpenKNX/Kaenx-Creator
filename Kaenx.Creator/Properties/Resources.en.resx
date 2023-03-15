@@ -1313,12 +1313,52 @@
     <value>Own Procedure</value>
     <comment/>
   </data>
-  <data name="trpod_mask" xml:space="preserve">
+  <data name="tprod_mask" xml:space="preserve">
     <value>Mask Procedures</value>
     <comment/>
   </data>
-  <data name="trpod_edit" xml:space="preserve">
+  <data name="tprod_edit" xml:space="preserve">
     <value>Edit Procedure</value>
+    <comment/>
+  </data>
+  <data name="tmem_settings" xml:space="preserve">
+    <value>Settings</value>
+    <comment/>
+  </data>
+  <data name="tmem_heatmap" xml:space="preserve">
+    <value>Memory usage</value>
+    <comment/>
+  </data>
+  <data name="prop_allocs" xml:space="preserve">
+    <value>Allocates</value>
+    <comment/>
+  </data>
+  <data name="tabs_sm" xml:space="preserve">
+    <value>SubModules</value>
+    <comment/>
+  </data>
+  <data name="mem_para" xml:space="preserve">
+    <value>Parameters</value>
+    <comment/>
+  </data>
+  <data name="mem_union" xml:space="preserve">
+    <value>Unions</value>
+    <comment/>
+  </data>
+  <data name="mem_module" xml:space="preserve">
+    <value>A Module will be saved here. To get more information go to the modules general page.</value>
+    <comment/>
+  </data>
+  <data name="mem_gat" xml:space="preserve">
+    <value>The GroupAddressTable will be saved here.</value>
+    <comment/>
+  </data>
+  <data name="mem_cot" xml:space="preserve">
+    <value>The ComObjectTable will be saved here.</value>
+    <comment/>
+  </data>
+  <data name="mem_ast" xml:space="preserve">
+    <value>The AssoziationTable will be placed here.</value>
     <comment/>
   </data>
 </root>

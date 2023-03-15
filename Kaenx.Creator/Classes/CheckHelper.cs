@@ -352,8 +352,8 @@ namespace Kaenx.Creator.Classes {
                 }
             }
 
-            if(app.Mask.Memory == MemoryTypes.Relative && vers.Memories.Count > 1)
-                actions.Add(new PublishAction() { Text = $"Die Maskenversion unterstützt nur einen Speicher", State = PublishState.Fail });
+            //if(app.Mask.Memory == MemoryTypes.Relative && vers.Memories.Count > 1)
+            //    actions.Add(new PublishAction() { Text = $"Die Maskenversion unterstützt nur einen Speicher", State = PublishState.Fail });
 
             CheckVersion(vers, vers, actions, vers.DefaultLanguage, vers.NamespaceVersion, showOnlyErrors);
             if(General != null)

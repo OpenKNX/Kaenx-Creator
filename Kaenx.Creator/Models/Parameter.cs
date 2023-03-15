@@ -39,7 +39,14 @@ namespace Kaenx.Creator.Models
         public SavePaths SavePath
         {
             get { return _savePath; }
-            set { _savePath = value; Changed("SavePath"); }
+            set { 
+                _savePath = value; 
+                Changed("SavePath"); 
+                if(_savePath == SavePaths.Property)
+                    SaveObject = new Property() { Offset = 0, OffsetBit = 0 };
+                else
+                    SaveObject = null;
+            }
         }
 
 
@@ -49,8 +56,6 @@ namespace Kaenx.Creator.Models
         public IParameterSavePath SaveObject
         {
             get {
-                if(SavePath == SavePaths.Property && (_saveObject == null || _saveObject is not Property))
-                    _saveObject = new Property();
                 return _saveObject; 
             }
             set { _saveObject = value; Changed("SaveObject"); }

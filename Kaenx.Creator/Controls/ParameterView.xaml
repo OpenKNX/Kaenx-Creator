@@ -230,10 +230,10 @@
                             </ComboBox>
                         </HeaderedContentControl>
                         <HeaderedContentControl Header="{x:Static p:Resources.prop_offset}">
-                            <TextBox Text="{Binding Offset, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBox Text="{Binding SaveObject.Offset, UpdateSourceTrigger=PropertyChanged}" />
                         </HeaderedContentControl>
                         <HeaderedContentControl Header="{x:Static p:Resources.prop_offsetbit}">
-                            <TextBox Text="{Binding OffsetBit, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBox Text="{Binding SaveObject.OffsetBit, UpdateSourceTrigger=PropertyChanged}" />
                         </HeaderedContentControl>
                     </StackPanel>
                 </Grid>

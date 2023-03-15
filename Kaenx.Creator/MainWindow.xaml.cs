@@ -468,7 +468,20 @@ namespace Kaenx.Creator
         private void ClickRemoveMemory(object sender, RoutedEventArgs e)
         {
             Models.AppVersion version = (sender as Button).DataContext as Models.AppVersion;
-            version.Memories.Remove(ListMemories.SelectedItem as Models.Memory);
+            Models.Memory mem = ListMemories.SelectedItem as Models.Memory;
+
+            RecursiveRemoveMemory(version, mem);
+
+            version.Memories.Remove(mem);
+        }
+
+        private void RecursiveRemoveMemory(Models.IVersionBase vbase, Models.Memory mem)
+        {
+            foreach(Models.Parameter para in vbase.Parameters.Where(p => p.SavePath == Models.SavePaths.Memory && p.SaveObject == mem))
+                para.SaveObject = null;
+
+            foreach(Models.Module mod in vbase.Modules)
+                RecursiveRemoveMemory(mod, mem);
         }
 
         private void ClickRemoveVersion(object sender, RoutedEventArgs e)
@@ -969,6 +982,11 @@ namespace Kaenx.Creator
             if(VersionToOpen < VersionCurrent && MessageBox.Show("Diese Datei wurde mit einer älteren Version erstellt. Soll versucht werden die Datei zu konvertieren?", "Altes Dateiformat", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
             {
                 general = CheckHelper.CheckImportVersion(general, VersionToOpen);
+            }
+            if(VersionToOpen > VersionCurrent)
+            {
+                MessageBox.Show("Diese Datei wurde mit einer neueren Version erstellt und kann nicht geöffnet werden.", "Unbekanntes Dateiformat", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
             }
                 
             try{

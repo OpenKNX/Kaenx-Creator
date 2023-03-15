@@ -1313,11 +1313,11 @@
     <value>Eigene Prozedur</value>
     <comment/>
   </data>
-  <data name="trpod_mask" xml:space="preserve">
+  <data name="tprod_mask" xml:space="preserve">
     <value>Prozeduren der Maske</value>
     <comment/>
   </data>
-  <data name="trpod_edit" xml:space="preserve">
+  <data name="tprod_edit" xml:space="preserve">
     <value>Prozedur bearbeiten</value>
     <comment/>
   </data>
