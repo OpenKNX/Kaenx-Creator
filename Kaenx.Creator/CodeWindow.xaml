@@ -20,7 +20,11 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <wv2:WebView2 Grid.ColumnSpan="2" x:Name="monaco" />
+        <wv2:WebView2 Grid.ColumnSpan="2" x:Name="monaco">
+            <!--<wv2:WebView2.CreationProperties>
+                <wv2:CoreWebView2CreationProperties UserDataFolder="C:\Users\mikeg\Desktop\temp"/>
+            </wv2:WebView2.CreationProperties>-->
+        </wv2:WebView2>
 
         <Button Grid.Row="1" IsEnabled="{Binding CanSave}" Content="{x:Static p:Resources.editor_save}" Margin="5" Click="ClickSave" />
         <Button Grid.Row="1" Grid.Column="1" IsEnabled="{Binding CanSave}" Content="{x:Static p:Resources.editor_cancel}" Margin="5" Click="ClickClose" />
