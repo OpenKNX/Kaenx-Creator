@@ -313,7 +313,7 @@ namespace Kaenx.Creator.Classes
             foreach(Parameter para in paras.Where(p => p.Offset != -1))
             {
                 int sizeInByte = (int)Math.Ceiling(para.ParameterTypeObject.SizeInBit / 8.0);
-                if((para.Offset + sizeInByte) >= mem.GetCount())
+                if((para.Offset + sizeInByte) > mem.GetCount())
                 {
                     if(!mem.IsAutoSize) MessageBox.Show($"Parameter '{para.Name}' liegt außerhalb des Speichers", "Speicherbelegung Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
                     
@@ -327,7 +327,8 @@ namespace Kaenx.Creator.Classes
 
             foreach (Union union in vbase.Unions.Where(u => u.MemoryId == mem.UId && u.Offset != -1 && u.SavePath != SavePaths.Nowhere))
             {
-                if(union.Offset >= mem.GetCount())
+                int sizeInByte = (int)Math.Ceiling(union.SizeInBit / 8.0);
+                if(union.Offset + sizeInByte > mem.GetCount())
                 {
                     if(!mem.IsAutoSize) MessageBox.Show($"Union '{union.Name}' liegt außerhalb des Speichers", "Speicherbelegung Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
 

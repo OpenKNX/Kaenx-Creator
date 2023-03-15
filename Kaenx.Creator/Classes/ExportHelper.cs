@@ -1428,16 +1428,12 @@ namespace Kaenx.Creator.Classes
                 headers.AppendLine(lineComm);
                 headers.AppendLine(linePara);
 
-                int mask = 0;
+                int shift = (8 - para.OffsetBit - (para.ParameterTypeObject.SizeInBit % 8)) % 8;
+
+                ulong mask = 0;
                 for(int i = 0; i < para.ParameterTypeObject.SizeInBit; i++)
-                    mask += (int)Math.Pow(2, i);
+                    mask += (ulong)Math.Pow(2, i);
                     
-                mask = mask << (8 - para.OffsetBit - (para.ParameterTypeObject.SizeInBit % 8));
-                headers.AppendLine($"{lineStart}_Mask\t0x{mask:X4}");
-
-                int shift = 8 - para.OffsetBit - (para.ParameterTypeObject.SizeInBit % 8);
-                headers.AppendLine($"{lineStart}_Shift\t{shift}");
-
                 lineComm = $"{lineStart.Split(' ')[0]} GET{lineStart.Split(' ')[1]} ";
                 
 
@@ -1453,11 +1449,20 @@ namespace Kaenx.Creator.Classes
                         {
                             lineComm += $"knx.paramBit({offset}, {para.OffsetBit})";
                         } else {
-                            string pshift = shift == 0 ? "" : $" >> {lineStart.Split(' ')[1]}_Shift";
+                            string pshift;
+                            if(shift == 0 )
+                            {
+                                pshift = "";
+                            } else {
+                                pshift = $" >> {lineStart.Split(' ')[1]}_Shift";
+                                headers.AppendLine($"{lineStart}_Shift\t{shift}");
+                            } 
                             string pmask = $" & {lineStart.Split(' ')[1]}_Mask";
                             string pAccess = "";
 
                             if(shift == 0 && para.ParameterTypeObject.SizeInBit % 8 == 0) pmask = "";
+                            else
+                                headers.AppendLine($"{lineStart}_Mask\t0x{mask:X4}");
 
                             if(para.ParameterTypeObject.SizeInBit <= 8) pAccess = "paramByte";
                             else if(para.ParameterTypeObject.SizeInBit <= 16) pAccess = "paramWord";
