@@ -354,9 +354,14 @@ namespace Kaenx.Creator.Controls
             (menu.Items[10] as MenuItem).IsEnabled = SubTypes[type].Contains("DynRepeat");
             (menu.Items[11] as MenuItem).IsEnabled = SubTypes[type].Contains("DynButton");
 
-
-
-            (menu.Items[15] as MenuItem).IsEnabled = _copyItem != null;
+            if(_copyItem != null)
+            {
+                string copyType = _copyItem.GetType().ToString();
+                copyType = copyType.Substring(copyType.LastIndexOf('.') + 1);
+                (menu.Items[15] as MenuItem).IsEnabled = SubTypes[type].Contains(copyType);
+            } else {
+                (menu.Items[15] as MenuItem).IsEnabled = false;
+            }
             (menu.Items[16] as MenuItem).IsEnabled = type != "DynamicMain" && type != "DynamicModule";
         }
 
@@ -373,6 +378,7 @@ namespace Kaenx.Creator.Controls
         private void ClickCopyDyn(object sender, RoutedEventArgs e)
         {
             _copyItem = (sender as MenuItem).DataContext as Models.Dynamic.IDynItems;
+            _copyItem = (Models.Dynamic.IDynItems)_copyItem.Copy();
         }
 
         private void ClickInsertDyn(object sender, RoutedEventArgs e)

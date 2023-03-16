@@ -81,10 +81,14 @@ namespace Kaenx.Creator
         private async void Load()
         {
             await monaco.EnsureCoreWebView2Async();
-            await System.Threading.Tasks.Task.Delay(1000);
+            string code = "null";
+            while(code == "null")
+            {
+                code = await monaco.ExecuteScriptAsync($"editor.getValue();");
+                await Task.Delay(20);
+            }
             string xml = CodeOld.Replace("'", "\\'").Replace("\n", "\\n").Replace("\r", "\\r");
             await monaco.ExecuteScriptAsync($"editor.setValue('{xml}');");
-            Debug.WriteLine($"editor.setValue('{xml}');");
             CanSave = true;
         }
     }

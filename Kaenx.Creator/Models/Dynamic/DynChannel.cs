@@ -104,12 +104,15 @@ namespace Kaenx.Creator.Models.Dynamic
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
         
-        public object Copy()
+        public IDynItems Copy()
         {
             DynChannel main = (DynChannel)this.MemberwiseClone();
             main.Items = new ObservableCollection<IDynItems>();
             foreach (IDynItems item in this.Items)
                 main.Items.Add((IDynItems)item.Copy());
+            main.Text = new ObservableCollection<Translation>();
+            foreach (Translation translation in this.Text)
+                main.Text.Add(new Translation(translation.Language, translation.Text));  
             return main;
         }
     }

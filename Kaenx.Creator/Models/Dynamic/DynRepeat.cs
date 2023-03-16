@@ -72,7 +72,7 @@ namespace Kaenx.Creator.Models.Dynamic
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
-        public object Copy()
+        public IDynItems Copy()
         {
             DynRepeat dyn = (DynRepeat)this.MemberwiseClone();
             dyn.Items = new ObservableCollection<IDynItems>();

@@ -22,7 +22,7 @@
 
         <wv2:WebView2 Grid.ColumnSpan="2" x:Name="monaco">
             <wv2:WebView2.CreationProperties>
-                <wv2:CoreWebView2CreationProperties UserDataFolder="C:\Users\mikeg\Desktop\temp"/>
+                <wv2:CoreWebView2CreationProperties UserDataFolder="C:\ProgramData\Kaenx-Creator"/>
             </wv2:WebView2.CreationProperties>
         </wv2:WebView2>
 

@@ -105,9 +105,9 @@ namespace Kaenx.Creator.Models.Dynamic
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
         
-        public object Copy()
+        public IDynItems Copy()
         {
-            return this.MemberwiseClone();;
+            return (DynParameter)this.MemberwiseClone();
         }
     }
 }

@@ -671,7 +671,6 @@
                             <ContextMenu>
                                 <MenuItem Header="{x:Static p:Resources.gen_copy}" Click="ClickCopyDyn" />
                                 <MenuItem Header="{x:Static p:Resources.gen_cut}" Click="ClickCutDyn" />
-                                <MenuItem Header="{x:Static p:Resources.gen_put}" Click="ClickInsertDyn" />
                                 <MenuItem Header="{x:Static p:Resources.gen_remove}" Click="ClickRemoveDyn" />
                             </ContextMenu>
                         </StackPanel.ContextMenu>
