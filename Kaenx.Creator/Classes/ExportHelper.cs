@@ -903,7 +903,7 @@ namespace Kaenx.Creator.Classes
                     XElement xinfo = new XElement(Get("FileInfo"));
                     //xinfo.SetAttributeValue("TimeInfo", "2022-01-28T13:55:35.2905057Z");
                     string time = bag.LastModified.ToUniversalTime().ToString("O");
-                    xinfo.SetAttributeValue("TimeInfo", time + "Z");
+                    xinfo.SetAttributeValue("TimeInfo", time);
                     xbag.Add(xinfo);
 
                     xbags.Add(xbag);
