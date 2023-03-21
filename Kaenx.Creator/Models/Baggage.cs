@@ -33,7 +33,7 @@ namespace Kaenx.Creator.Models
         public string TargetPath
         {
             get { return _targetPath; }
-            set { _targetPath = value; Changed("TargetPath"); LastModified = DateTime.Now; }
+            set { _targetPath = value; Changed("TargetPath"); }
         }
 
         private bool _dataChanged;

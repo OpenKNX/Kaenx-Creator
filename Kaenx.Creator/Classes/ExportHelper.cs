@@ -287,6 +287,7 @@ namespace Kaenx.Creator.Classes
                                     }
                                 }
                             }
+                            
                             xcontent.SetAttributeValue("RefId", $"M-{GetManuId()}_BG-{GetEncoded(bag2.TargetPath)}-{GetEncoded(type.BaggageObject.Name + type.BaggageObject.Extension)}");
                             if (!baggagesApp.Any(b => b.TargetPath == bag2.TargetPath && b.Name == bag2.Name && b.Extension == bag2.Extension))
                                 baggagesApp.Add(bag2);

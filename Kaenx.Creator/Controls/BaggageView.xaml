@@ -96,7 +96,7 @@
 
                 <Button Content="{x:Static p:Resources.bagg_file}" Click="ClickChangeFile" />
 
-                <Image Source="{Binding Source}" Margin="5" Stretch="Uniform" MaxHeight="250" MaxWidth="250" />
+                <Image Source="{Binding Source}" Margin="5" Stretch="None" HorizontalAlignment="Center" VerticalAlignment="Center" />
             </StackPanel>
         </ScrollViewer>
     </Grid>
