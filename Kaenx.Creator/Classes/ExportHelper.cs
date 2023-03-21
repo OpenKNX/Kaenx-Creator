@@ -620,7 +620,7 @@ namespace Kaenx.Creator.Classes
                     Baggage bag = new Baggage() {
                         Name = zipName,
                         Extension = ".zip",
-                        LastModified = DateTime.Now
+                        LastModified = general.Icons.OrderByDescending(i => i.LastModified).First().LastModified
                     };
                     baggagesManu.Add(bag);
                     if(ver.NamespaceVersion == 14)
@@ -902,9 +902,7 @@ namespace Kaenx.Creator.Classes
 
                     XElement xinfo = new XElement(Get("FileInfo"));
                     //xinfo.SetAttributeValue("TimeInfo", "2022-01-28T13:55:35.2905057Z");
-                    string time = bag.LastModified.ToString("O");
-                    if (time.Contains("+"))
-                        time = time.Substring(0, time.LastIndexOf("+"));
+                    string time = bag.LastModified.ToUniversalTime().ToString("O");
                     xinfo.SetAttributeValue("TimeInfo", time + "Z");
                     xbag.Add(xinfo);
 
