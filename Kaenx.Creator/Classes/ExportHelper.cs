@@ -462,7 +462,7 @@ namespace Kaenx.Creator.Classes
                         xmsg.SetAttributeValue("Text",  GetDefaultLanguage(msg.Text));
                         temp.Add(xmsg);
 
-                        if(msg.TranslationText)
+                        if(!msg.TranslationText)
                             foreach(Translation trans in msg.Text)
                                 AddTranslation(trans.Language.CultureCode, $"{appVersion}_M-{msg.Id}", "Text", trans.Text);
                     }
