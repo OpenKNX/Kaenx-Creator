@@ -1425,7 +1425,7 @@ namespace Kaenx.Creator.Classes
                 if(ver is Models.Module mod2)
                 {
                     lineComm += "(X)";
-                    offsetOut = $"(mod_{HeaderNameEscape(mod2.Name)}_para[X] + {lineStart.Split(" ")[1]})";
+                    offsetOut = $"(mod_{HeaderNameEscape(mod2.Name)}_para[X] + {offset})";
                 }
 
                 lineComm += " ";
