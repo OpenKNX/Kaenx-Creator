@@ -1484,11 +1484,6 @@ namespace Kaenx.Creator.Classes
                     }
 
                     case ParameterTypes.Color:
-                    {
-                        lineComm += $"knx.paramInt({offsetOut})";
-                        break;
-                    }
-
                     case ParameterTypes.Text:
                     {
                         lineComm += $"knx.paramData({offsetOut})";
