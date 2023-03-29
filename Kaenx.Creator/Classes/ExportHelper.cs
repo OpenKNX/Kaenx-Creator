@@ -358,6 +358,8 @@ namespace Kaenx.Creator.Classes
                 #endregion
 
                 StringBuilder headers = new StringBuilder();
+                headers.AppendLine("#pragma once");
+                headers.AppendLine();
 
                 
                 headers.AppendLine("//--------------------Allgemein---------------------------");
@@ -536,9 +538,6 @@ namespace Kaenx.Creator.Classes
                     headers.AppendLine("//---------------------Modules----------------------------");
                 }
 
-                ExportModules(xapp, ver, ver.Modules, appVersion, headers, appVersion);
-                appVersionMod = appVersion;
-
                 List<DynModule> mods = new List<DynModule>();
                 AutoHelper.GetModules(ver.Dynamics[0], mods);
 
@@ -593,6 +592,14 @@ namespace Kaenx.Creator.Classes
                     headers.AppendLine($"const long mod_{HeaderNameEscape(item.Key)}_para[] = {{ {string.Join(',', item.Value)} }};");
                 foreach(KeyValuePair<string, List<long>> item in modStartComs)
                     headers.AppendLine($"const long mod_{HeaderNameEscape(item.Key)}_coms[] = {{ {string.Join(',', item.Value)} }};");
+    
+                headers.AppendLine();
+
+                ExportModules(xapp, ver, ver.Modules, appVersion, headers, appVersion);
+                appVersionMod = appVersion;
+
+
+
 
                 System.IO.File.WriteAllText(GetRelPath($"knxprod_{GetAppId(app.Number)}_{ver.Number:X2}.h"), headers.ToString());
                 headers = null;
@@ -959,27 +966,6 @@ namespace Kaenx.Creator.Classes
 
         private void ExportModules(XElement xparent, AppVersion ver, ObservableCollection<Models.Module> Modules, string modVersion, StringBuilder headers, string moduleName, int depth = 0)
         {
-            /*if(ver.Allocators.Count > 0)
-            {
-                XElement xallocs = new XElement(Get("Allocators"));
-                xunderapp.Add(xallocs);
-                
-                foreach(Models.Allocator alloc in ver.Allocators)
-                {
-                    XElement xalloc = new XElement(Get("Allocator"));
-
-                    if (alloc.Id == -1)
-                        alloc.Id = AutoHelper.GetNextFreeId(ver, "Allocators");
-                    xalloc.SetAttributeValue("Id", $"{appVersionMod}_L-{alloc.Id}");
-                    xalloc.SetAttributeValue("Name", alloc.Name);
-                    xalloc.SetAttributeValue("Start", alloc.Start);
-                    xalloc.SetAttributeValue("maxInclusive", alloc.Max);
-                    //TODO errormessageid
-                    
-                    xallocs.Add(xalloc);
-                }
-            }*/
-
             if(Modules.Count > 0)
             {
                 string subName = depth == 0 ? "ModuleDefs" : "SubModuleDefs";
@@ -1433,8 +1419,16 @@ namespace Kaenx.Creator.Classes
                 for(int i = 0; i < para.ParameterTypeObject.SizeInBit; i++)
                     mask += (ulong)Math.Pow(2, i);
                     
-                lineComm = $"{lineStart.Split(' ')[0]} GET{lineStart.Split(' ')[1]} ";
+                lineComm = $"{lineStart.Split(' ')[0]} GET{lineStart.Split(' ')[1]}";
                 
+                string offsetOut = offset.ToString();
+                if(ver is Models.Module mod2)
+                {
+                    lineComm += "(X)";
+                    offsetOut = $"(mod_{HeaderNameEscape(mod2.Name)}_para[X] + {offset})";
+                }
+
+                lineComm += " ";
 
                 switch(para.ParameterTypeObject.Type)
                 {
@@ -1446,7 +1440,7 @@ namespace Kaenx.Creator.Classes
 
                         if(para.ParameterTypeObject.SizeInBit == 1)
                         {
-                            lineComm += $"knx.paramBit({offset}, {para.OffsetBit})";
+                            lineComm += $"knx.paramBit({offsetOut}, {para.OffsetBit})";
                         } else {
                             string pshift;
                             if(shift == 0 )
@@ -1468,36 +1462,31 @@ namespace Kaenx.Creator.Classes
                             else if(para.ParameterTypeObject.SizeInBit <= 32) pAccess = "paramInt";
                             else throw new Exception("Size to big for Int/Enum");
 
-                            lineComm += $"({ptype}((knx.{pAccess}({lineStart.Split(' ')[1]}){pshift}){pmask}))";
+                            lineComm += $"({ptype}((knx.{pAccess}({offsetOut}){pshift}){pmask}))";
                         }
                         break;
                     }
 
                     case ParameterTypes.Float_DPT9:
                     {
-                        lineComm += $"knx.paramFloat({offset}, Float_Enc_DPT9)";
+                        lineComm += $"knx.paramFloat({offsetOut}, Float_Enc_DPT9)";
                         break;
                     }
                     case ParameterTypes.Float_IEEE_Single:
                     {
-                        lineComm += $"knx.paramFloat({offset}, Float_Enc_IEEE754Single)";
+                        lineComm += $"knx.paramFloat({offsetOut}, Float_Enc_IEEE754Single)";
                         break;
                     }
                     case ParameterTypes.Float_IEEE_Double:
                     {
-                        lineComm += $"knx.paramFloat({offset}, Float_Enc_IEEE754Double)";
+                        lineComm += $"knx.paramFloat({offsetOut}, Float_Enc_IEEE754Double)";
                         break;
                     }
 
                     case ParameterTypes.Color:
-                    {
-                        lineComm += $"knx.paramInt({offset})";
-                        break;
-                    }
-
                     case ParameterTypes.Text:
                     {
-                        lineComm += $"knx.paramData({offset})";
+                        lineComm += $"knx.paramData({offsetOut})";
                         break;
                     }
                 }
