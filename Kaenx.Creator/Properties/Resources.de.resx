@@ -59,7 +59,7 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
@@ -118,67 +118,67 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="menu_impo" xml:space="preserve">
-    <value>Import</value>
+    <value>Importieren</value>
     <comment/>
   </data>
   <data name="menu_impo_ets" xml:space="preserve">
-    <value>ETS Product database</value>
+    <value>ETS Produktdatenbank</value>
     <comment/>
   </data>
   <data name="menu_impo_kaenx" xml:space="preserve">
-    <value>Kaenx Projectfile</value>
+    <value>Kaenx Produktdatei</value>
     <comment/>
   </data>
   <data name="menu_lang" xml:space="preserve">
-    <value>Language</value>
+    <value>Sprache/Language</value>
     <comment/>
   </data>
   <data name="menu_lang_default" xml:space="preserve">
-    <value>System Settings</value>
+    <value>Systemeinstellung</value>
     <comment/>
   </data>
   <data name="menu_proj" xml:space="preserve">
-    <value>Project</value>
+    <value>Projekt</value>
     <comment/>
   </data>
   <data name="menu_proj_close" xml:space="preserve">
-    <value>Close</value>
+    <value>Schließen</value>
     <comment/>
   </data>
   <data name="menu_proj_new" xml:space="preserve">
-    <value>New</value>
+    <value>Neu</value>
     <comment/>
   </data>
   <data name="menu_proj_open" xml:space="preserve">
-    <value>Open</value>
+    <value>Öffnen</value>
     <comment/>
   </data>
   <data name="menu_proj_save" xml:space="preserve">
-    <value>Save</value>
+    <value>Speichern</value>
     <comment/>
   </data>
   <data name="tabs_apps" xml:space="preserve">
-    <value>Applications</value>
+    <value>Applikationen</value>
     <comment/>
   </data>
   <data name="tabs_cat" xml:space="preserve">
-    <value>Catalog</value>
+    <value>Katalog</value>
     <comment/>
   </data>
   <data name="tabs_gen" xml:space="preserve">
-    <value>General</value>
+    <value>Allgemeines</value>
     <comment/>
   </data>
   <data name="tabs_hard" xml:space="preserve">
-    <value>Hardware/Devices</value>
+    <value>Hardware/Geräte</value>
     <comment/>
   </data>
   <data name="tabs_pub" xml:space="preserve">
-    <value>Publish</value>
+    <value>Veröffentlichen</value>
     <comment/>
   </data>
   <data name="tabs_bagg" xml:space="preserve">
-    <value>Attachments</value>
+    <value>Anhänge</value>
     <comment/>
   </data>
   <data name="menu_impo_xml" xml:space="preserve">
@@ -186,55 +186,55 @@
     <comment/>
   </data>
   <data name="menu_save_template" xml:space="preserve">
-    <value>Save as template</value>
+    <value>Speichern als Vorlage</value>
     <comment/>
   </data>
   <data name="menu_save_as" xml:space="preserve">
-    <value>Save as</value>
+    <value>Speichern unter</value>
     <comment/>
   </data>
   <data name="menu_save" xml:space="preserve">
-    <value>Save</value>
+    <value>Speichern</value>
     <comment/>
   </data>
   <data name="menu_temp_empty" xml:space="preserve">
-    <value>Empty</value>
+    <value>Leer</value>
     <comment/>
   </data>
   <data name="menu_info_vers" xml:space="preserve">
-    <value>Show version</value>
+    <value>Version anzeigen</value>
     <comment/>
   </data>
   <data name="tgen_manu" xml:space="preserve">
-    <value>Manufacturer ID</value>
+    <value>Hersteller Id</value>
     <comment/>
   </data>
   <data name="tgen_name" xml:space="preserve">
-    <value>Project Name</value>
+    <value>Projekt Name</value>
     <comment/>
   </data>
   <data name="tgen_lang" xml:space="preserve">
-    <value>Language for Catalog and Hardware</value>
+    <value>Sprache für Katalog und Hardware</value>
     <comment/>
   </data>
   <data name="gen_edit" xml:space="preserve">
-    <value>Edit</value>
+    <value>Bearbeiten</value>
     <comment/>
   </data>
   <data name="gen_add" xml:space="preserve">
-    <value>Add</value>
+    <value>Hinzufügen</value>
     <comment/>
   </data>
   <data name="gen_remove" xml:space="preserve">
-    <value>Remove</value>
+    <value>Entfernen</value>
     <comment/>
   </data>
   <data name="tgen_lang_def" xml:space="preserve">
-    <value>Default language</value>
+    <value>Standard Sprache</value>
     <comment/>
   </data>
   <data name="tcat_add_sub" xml:space="preserve">
-    <value>Add Subcategory</value>
+    <value>Unterkategorie hinzufügen</value>
     <comment/>
   </data>
   <data name="prop_name" xml:space="preserve">
@@ -242,11 +242,11 @@
     <comment/>
   </data>
   <data name="prop_number" xml:space="preserve">
-    <value>Number</value>
+    <value>Nummer</value>
     <comment/>
   </data>
   <data name="tcat_iscat" xml:space="preserve">
-    <value>Element is a category</value>
+    <value>Element ist eine Kategorie</value>
     <comment/>
   </data>
   <data name="gen_text" xml:space="preserve">
@@ -254,7 +254,7 @@
     <comment/>
   </data>
   <data name="gen_lang" xml:space="preserve">
-    <value>Language</value>
+    <value>Sprache</value>
     <comment/>
   </data>
   <data name="gen_hard" xml:space="preserve">
@@ -262,11 +262,11 @@
     <comment/>
   </data>
   <data name="gen_gen" xml:space="preserve">
-    <value>General</value>
+    <value>Allgemein</value>
     <comment/>
   </data>
   <data name="prop_serial" xml:space="preserve">
-    <value>Serial Number</value>
+    <value>Seriennummer</value>
     <comment/>
   </data>
   <data name="prop_vers" xml:space="preserve">
@@ -274,75 +274,75 @@
     <comment/>
   </data>
   <data name="prop_buscurrent" xml:space="preserve">
-    <value>Bus Current</value>
+    <value>Busstrom</value>
     <comment/>
   </data>
   <data name="prop_haspa" xml:space="preserve">
-    <value>Device has a Physical Address</value>
+    <value>Gerät hat eine Physikalische Adresse</value>
     <comment/>
   </data>
   <data name="prop_ispower" xml:space="preserve">
-    <value>Device is a Power Supply</value>
+    <value>Gerät ist eine Spannungsversorgung</value>
     <comment/>
   </data>
   <data name="prop_iscoupler" xml:space="preserve">
-    <value>Device is a coupler</value>
+    <value>Gerät ist ein Koppler</value>
     <comment/>
   </data>
   <data name="prop_ip" xml:space="preserve">
-    <value>Device uses KNX/IPnet</value>
+    <value>Geräte kann KNX/IPnet</value>
     <comment/>
   </data>
   <data name="prop_hasapp" xml:space="preserve">
-    <value>Device has an applicationprogram</value>
+    <value>Gerät hat ein Applikationsprogramm</value>
     <comment/>
   </data>
   <data name="prop_hasapp2" xml:space="preserve">
-    <value>Device has a second application program</value>
+    <value>Gerät hat ein zweites Applikationsprogramm</value>
     <comment/>
   </data>
   <data name="thard_devices" xml:space="preserve">
-    <value>Devices</value>
+    <value>Geräte</value>
     <comment/>
   </data>
   <data name="prop_ordernumber" xml:space="preserve">
-    <value>Order Number</value>
+    <value>Bestellnummer</value>
     <comment/>
   </data>
   <data name="prop_isreg" xml:space="preserve">
-    <value>Device is for REG</value>
+    <value>Gerät ist REG</value>
     <comment/>
   </data>
   <data name="gen_desc" xml:space="preserve">
-    <value>Description</value>
+    <value>Beschreibung</value>
     <comment/>
   </data>
   <data name="thard_apps" xml:space="preserve">
-    <value>Applications</value>
+    <value>Applikationen</value>
     <comment/>
   </data>
   <data name="gen_import" xml:space="preserve">
-    <value>Import</value>
+    <value>Importieren</value>
     <comment/>
   </data>
   <data name="gen_export" xml:space="preserve">
-    <value>Export</value>
+    <value>Exportieren</value>
     <comment/>
   </data>
   <data name="bagg_error" xml:space="preserve">
-    <value>This baggage is not used by a ParameterType</value>
+    <value>Dieses Baggage wird von keinem ParameterType verwendet</value>
     <comment/>
   </data>
   <data name="bagg_targetpath" xml:space="preserve">
-    <value>Target Path</value>
+    <value>Zielpfad</value>
     <comment/>
   </data>
   <data name="bagg_file" xml:space="preserve">
-    <value>Change File</value>
+    <value>Datei ändern</value>
     <comment/>
   </data>
   <data name="bagg_timestamp" xml:space="preserve">
-    <value>Timestamp</value>
+    <value>Zeitstempel</value>
     <comment/>
   </data>
   <data name="gen_uid" xml:space="preserve">
@@ -354,63 +354,63 @@
     <comment/>
   </data>
   <data name="tapps_info" xml:space="preserve">
-    <value>More information to application numbering</value>
+    <value>Mehr Informationen zum Nummerieren von Applikationen</value>
     <comment/>
   </data>
   <data name="tapps_memory" xml:space="preserve">
-    <value>Memory Type:</value>
+    <value>Speicherart:</value>
     <comment/>
   </data>
   <data name="tapps_loadp" xml:space="preserve">
-    <value>Load Procedure:</value>
+    <value>Ladeprozedur:</value>
     <comment/>
   </data>
   <data name="gen_copy" xml:space="preserve">
-    <value>Copy</value>
+    <value>Kopieren</value>
     <comment/>
   </data>
   <data name="tapps_openv" xml:space="preserve">
-    <value>Open in ProdViewer</value>
+    <value>Öffnen in ProdViewer</value>
     <comment/>
   </data>
   <data name="tapps_addv" xml:space="preserve">
-    <value>Add Version</value>
+    <value>Version hinzufügen</value>
     <comment/>
   </data>
   <data name="tver_addrmem" xml:space="preserve">
-    <value>Addresstable Memory:</value>
+    <value>Adresstabelle Speicher:</value>
     <comment/>
   </data>
   <data name="tver_addroff" xml:space="preserve">
-    <value>Addresstable Offset:</value>
+    <value>Adresstabelle Offset:</value>
     <comment/>
   </data>
   <data name="tver_addrmax" xml:space="preserve">
-    <value>Addresstable Max Entries:</value>
+    <value>Addresstabelle max. Einträge:</value>
     <comment/>
   </data>
   <data name="tver_assomem" xml:space="preserve">
-    <value>Associationtable Memory:</value>
+    <value>Assoziationstabelle Speicher:</value>
     <comment/>
   </data>
   <data name="tver_assooff" xml:space="preserve">
-    <value>Associationtable Offset:</value>
+    <value>Assoziationstabelle Offset:</value>
     <comment/>
   </data>
   <data name="tver_assomax" xml:space="preserve">
-    <value>Associationtable Max Entries:</value>
+    <value>Assoziationstabelle max. Einträge:</value>
     <comment/>
   </data>
   <data name="tver_commem" xml:space="preserve">
-    <value>ComObjectTable Memory:</value>
+    <value>Kommunikationsobjekttabelle Speicher:</value>
     <comment/>
   </data>
   <data name="tver_comoff" xml:space="preserve">
-    <value>ComObjectTable Offset:</value>
+    <value>Kommunikationsobjekttabelle Offset:</value>
     <comment/>
   </data>
   <data name="prop_versreplace" xml:space="preserve">
-    <value>Replaces following Versions:</value>
+    <value>Ersetzt folgende Versionen:</value>
     <comment/>
   </data>
   <data name="prop_ns" xml:space="preserve">
@@ -418,47 +418,47 @@
     <comment/>
   </data>
   <data name="gen_langs" xml:space="preserve">
-    <value>Languages</value>
+    <value>Sprach</value>
     <comment/>
   </data>
   <data name="tabs_check" xml:space="preserve">
-    <value>Verify</value>
+    <value>Überprüfen</value>
     <comment/>
   </data>
   <data name="tabs_mem" xml:space="preserve">
-    <value>Memory</value>
+    <value>Speicher</value>
     <comment/>
   </data>
   <data name="vgen_autopara" xml:space="preserve">
-    <value>Generate ParameterRefs automatically</value>
+    <value>ParameterRefs automatisch erstellen</value>
     <comment/>
   </data>
   <data name="vgen_autocom" xml:space="preserve">
-    <value>Generate ComObjectRefs automatically</value>
+    <value>ComObjectRefs automatisch erstellen</value>
     <comment/>
   </data>
   <data name="vgen_union" xml:space="preserve">
-    <value>Activate Unions</value>
+    <value>Unions aktivieren</value>
     <comment/>
   </data>
   <data name="vgen_mods" xml:space="preserve">
-    <value>Activate Modules</value>
+    <value>Module aktivieren</value>
     <comment/>
   </data>
   <data name="vgen_msg" xml:space="preserve">
-    <value>Activate Messages</value>
+    <value>Meldungen aktivieren</value>
     <comment/>
   </data>
   <data name="prop_address" xml:space="preserve">
-    <value>Address</value>
+    <value>Adresse</value>
     <comment/>
   </data>
   <data name="prop_size" xml:space="preserve">
-    <value>Size</value>
+    <value>Größe</value>
     <comment/>
   </data>
   <data name="vgen_autosize" xml:space="preserve">
-    <value>Calculate size automatically</value>
+    <value>Größe automatisch berechnen</value>
     <comment/>
   </data>
   <data name="prop_offset" xml:space="preserve">
@@ -466,15 +466,15 @@
     <comment/>
   </data>
   <data name="vgen_mautopara" xml:space="preserve">
-    <value>Order Parameters/Unions/Modules automatically</value>
+    <value>Parameter/Unions/Module automatisch anordnen</value>
     <comment/>
   </data>
   <data name="vgen_mautoorder" xml:space="preserve">
-    <value>Order automatically even if they have an address</value>
+    <value>Automatisch anordnen, auch wenn sie bereits eine Adresse besitzen</value>
     <comment/>
   </data>
   <data name="vgen_heatmap" xml:space="preserve">
-    <value>Calculate Heatmap</value>
+    <value>Heatmap berechnen</value>
     <comment/>
   </data>
   <data name="tabs_parat" xml:space="preserve">
@@ -486,11 +486,11 @@
     <comment/>
   </data>
   <data name="tabs_module" xml:space="preserve">
-    <value>Modules</value>
+    <value>Module</value>
     <comment/>
   </data>
   <data name="gen_reset" xml:space="preserve">
-    <value>Reset</value>
+    <value>Zurücksetzen</value>
     <comment/>
   </data>
   <data name="gen_id" xml:space="preserve">
@@ -514,19 +514,19 @@
     <comment/>
   </data>
   <data name="tabs_loadp" xml:space="preserve">
-    <value>LoadProcedures</value>
+    <value>Ladeprozedur</value>
     <comment/>
   </data>
   <data name="tabs_dyn" xml:space="preserve">
-    <value>Dynamic</value>
+    <value>Dynamisch</value>
     <comment/>
   </data>
   <data name="tabs_msg" xml:space="preserve">
-    <value>Messages</value>
+    <value>Meldungen</value>
     <comment/>
   </data>
   <data name="tabs_arg" xml:space="preserve">
-    <value>Arguments</value>
+    <value>Argumente</value>
     <comment/>
   </data>
   <data name="tmod_pbo" xml:space="preserve">
@@ -538,7 +538,7 @@
     <comment/>
   </data>
   <data name="tmod_autocbn" xml:space="preserve">
-    <value>ComObjectBaseNumber will be calculated automatically</value>
+    <value>ComObjectBaseNumber automatisch berechnen</value>
     <comment/>
   </data>
   <data name="gen_filter" xml:space="preserve">
@@ -546,7 +546,7 @@
     <comment/>
   </data>
   <data name="parat_error" xml:space="preserve">
-    <value>This ParameterType is not used by a Parameter</value>
+    <value>Dieser ParameterTyp wird von keinem Parameter verwendet</value>
     <comment/>
   </data>
   <data name="prop_type" xml:space="preserve">
@@ -554,19 +554,19 @@
     <comment/>
   </data>
   <data name="parat_mansize" xml:space="preserve">
-    <value>Manually size in bits</value>
+    <value>Manuelle Größe in Bits</value>
     <comment/>
   </data>
   <data name="prop_value" xml:space="preserve">
-    <value>Value</value>
+    <value>Wert</value>
     <comment/>
   </data>
   <data name="prop_trans" xml:space="preserve">
-    <value>Translate</value>
+    <value>Übersetzen</value>
     <comment/>
   </data>
   <data name="parat_add" xml:space="preserve">
-    <value>Add Item</value>
+    <value>Aufzählung hinzufügen</value>
     <comment/>
   </data>
   <data name="parat_min" xml:space="preserve">
@@ -578,7 +578,7 @@
     <comment/>
   </data>
   <data name="parat_increment" xml:space="preserve">
-    <value>Increment</value>
+    <value>Erhöhen</value>
     <comment/>
   </data>
   <data name="parat_uihint" xml:space="preserve">
@@ -626,19 +626,19 @@
     <comment/>
   </data>
   <data name="uni_error" xml:space="preserve">
-    <value>This union is not used by a parameter</value>
+    <value>Diese Union wird von keinem Parameter verwendet</value>
     <comment/>
   </data>
   <data name="prop_sizebit" xml:space="preserve">
-    <value>Size in bits</value>
+    <value>Größe in Bits</value>
     <comment/>
   </data>
   <data name="prop_savepath" xml:space="preserve">
-    <value>Save in</value>
+    <value>Speichern in</value>
     <comment/>
   </data>
   <data name="prop_mem" xml:space="preserve">
-    <value>Select memory</value>
+    <value>Speicher auswählen</value>
     <comment/>
   </data>
   <data name="prop_offsetbit" xml:space="preserve">
@@ -646,11 +646,11 @@
     <comment/>
   </data>
   <data name="uni_error2" xml:space="preserve">
-    <value>Properties are not supported yet</value>
+    <value>Properties werden aktuell noch nicht unterstützt</value>
     <comment/>
   </data>
   <data name="uni_addrauto" xml:space="preserve">
-    <value>Address is set automatically</value>
+    <value>Adresse wird automatisch festgelegt</value>
     <comment/>
   </data>
   <data name="prodv_text" xml:space="preserve">
@@ -658,11 +658,11 @@
     <comment/>
   </data>
   <data name="prodv_settings" xml:space="preserve">
-    <value>Settings</value>
+    <value>Einstellungen</value>
     <comment/>
   </data>
   <data name="prodv_value" xml:space="preserve">
-    <value>Value</value>
+    <value>Wert</value>
     <comment/>
   </data>
   <data name="prodv_id" xml:space="preserve">
@@ -670,51 +670,51 @@
     <comment/>
   </data>
   <data name="prop_function" xml:space="preserve">
-    <value>Function</value>
+    <value>Funktion</value>
     <comment/>
   </data>
   <data name="prodv_getval" xml:space="preserve">
-    <value>Get Parameter Value</value>
+    <value>Parameter Wert abfragen</value>
     <comment/>
   </data>
   <data name="menu_info_debug" xml:space="preserve">
-    <value>Activate Debug Messages</value>
+    <value>Aktiviere Debug Meldungen</value>
     <comment/>
   </data>
   <data name="tcheck_tooltip" xml:space="preserve">
-    <value>Navigate directly to the element</value>
+    <value>Gehe direkt zu Element</value>
     <comment/>
   </data>
   <data name="tcheck_check" xml:space="preserve">
-    <value>Check</value>
+    <value>Überprüfen</value>
     <comment/>
   </data>
   <data name="tcheck_clean1" xml:space="preserve">
-    <value>Mark not used elements</value>
+    <value>Nicht verwendete Elemente markieren</value>
     <comment/>
   </data>
   <data name="tcheck_clean2" xml:space="preserve">
-    <value>Remove not used elements</value>
+    <value>Nicht verwendete Elemente entfernen</value>
     <comment/>
   </data>
   <data name="gen_clone" xml:space="preserve">
-    <value>Clone</value>
+    <value>Klonen</value>
     <comment/>
   </data>
   <data name="gen_id_man" xml:space="preserve">
-    <value>Manual</value>
+    <value>Manuell</value>
     <comment/>
   </data>
   <data name="gen_id_auto" xml:space="preserve">
-    <value>Automatically</value>
+    <value>Automatisch</value>
     <comment/>
   </data>
   <data name="gen_id_reset" xml:space="preserve">
-    <value>Reset</value>
+    <value>Zurücksetzen</value>
     <comment/>
   </data>
   <data name="tpara_error" xml:space="preserve">
-    <value>This Parameter is not used by a ref</value>
+    <value>Der Parameter wird von keinem Ref verwendet</value>
     <comment/>
   </data>
   <data name="prop_suffix" xml:space="preserve">
@@ -722,7 +722,7 @@
     <comment/>
   </data>
   <data name="prop_access" xml:space="preserve">
-    <value>Access</value>
+    <value>Zugriff</value>
     <comment/>
   </data>
   <data name="gen_bit" xml:space="preserve">
@@ -730,7 +730,7 @@
     <comment/>
   </data>
   <data name="tpara_union" xml:space="preserve">
-    <value>Union affiliation</value>
+    <value>Union zugehörigkeit</value>
     <comment/>
   </data>
   <data name="gen_union" xml:space="preserve">
@@ -738,7 +738,7 @@
     <comment/>
   </data>
   <data name="tpara_infoauto" xml:space="preserve">
-    <value>Address is set automatically</value>
+    <value>Adresse wird automatisch festgelegt</value>
     <comment/>
   </data>
   <data name="prop_propid" xml:space="preserve">
@@ -750,11 +750,11 @@
     <comment/>
   </data>
   <data name="gen_onlydeflang" xml:space="preserve">
-    <value>Export only the default language (no Translation-Unit)</value>
+    <value>Nur Standardsprache exportieren (keine Translation-Unit)</value>
     <comment/>
   </data>
   <data name="tpara_error2" xml:space="preserve">
-    <value>This ParameterRef is not used in dynamic</value>
+    <value>Dieser ParameterRef wird im Dynamic nicht verwendet</value>
     <comment/>
   </data>
   <data name="prop_para" xml:space="preserve">
@@ -766,7 +766,7 @@
     <comment/>
   </data>
   <data name="tcom_error" xml:space="preserve">
-    <value>This ComObject is not used by a ref</value>
+    <value>Dieses KomObjekt wird von keinem Ref verwendet</value>
     <comment/>
   </data>
   <data name="tcom_para" xml:space="preserve">
@@ -774,7 +774,7 @@
     <comment/>
   </data>
   <data name="tcom_func" xml:space="preserve">
-    <value>Functiontext</value>
+    <value>Funktionstext</value>
     <comment/>
   </data>
   <data name="tcom_dpt" xml:space="preserve">
@@ -782,55 +782,55 @@
     <comment/>
   </data>
   <data name="tcom_dpst" xml:space="preserve">
-    <value>DatapointSubType</value>
+    <value>DataPointSubType</value>
     <comment/>
   </data>
   <data name="tcom_size" xml:space="preserve">
-    <value>Object Size</value>
+    <value>Objekt Größe</value>
     <comment/>
   </data>
   <data name="tcom_flag_com" xml:space="preserve">
-    <value>Flag Communication</value>
+    <value>Flag Kommunikation</value>
     <comment/>
   </data>
   <data name="tcom_flag_read" xml:space="preserve">
-    <value>Flag Read</value>
+    <value>Flag Lesen</value>
     <comment/>
   </data>
   <data name="tcom_flag_write" xml:space="preserve">
-    <value>Flag Write</value>
+    <value>Flag Schreiben</value>
     <comment/>
   </data>
   <data name="tcom_flag_trans" xml:space="preserve">
-    <value>Flag Transmit</value>
+    <value>Flag Übertragen</value>
     <comment/>
   </data>
   <data name="tcom_flag_update" xml:space="preserve">
-    <value>Flag Update</value>
+    <value>Flag Aktualisieren</value>
     <comment/>
   </data>
   <data name="tcom_flag_oninit" xml:space="preserve">
-    <value>Flag Read on Init</value>
+    <value>Flag Lesen bei Initialisierung</value>
     <comment/>
   </data>
   <data name="tcom_error2" xml:space="preserve">
-    <value>This ComObjectRef is not used in dynamic</value>
+    <value>Dieses KomObjektRef wird im Dynamic nicht verwendet</value>
     <comment/>
   </data>
   <data name="prop_como" xml:space="preserve">
-    <value>CommunicationObject</value>
+    <value>Kommunikationsobjekt</value>
     <comment/>
   </data>
   <data name="tdyn_tmain" xml:space="preserve">
-    <value>This Root-Node will not be exported and can therefor not be edited or removed.</value>
+    <value>Dieser Knotenpunkt wird nicht exportiert und kann somit nicht gelöscht oder geändert werden.</value>
     <comment/>
   </data>
   <data name="tdyn_tindchan" xml:space="preserve">
-    <value>An Independent-Channel will not be displayed. All sub ParameterBlocks will be displayed without a channel.</value>
+    <value>Ein Independent Channel wird selbst nicht dargestellt. Die darunter liegenden Parameterblöcke werden direkt in der Ansicht angezeigt.</value>
     <comment/>
   </data>
   <data name="tdyn_troot" xml:space="preserve">
-    <value>Root Node</value>
+    <value>Root Knoten</value>
     <comment/>
   </data>
   <data name="tdyn_pararef" xml:space="preserve">
@@ -842,7 +842,7 @@
     <comment/>
   </data>
   <data name="tdyn_paracell" xml:space="preserve">
-    <value>Cell (only ParameterBlock layout grid/table)</value>
+    <value>Zelle (nur bei ParameterBlock Layout Grid/Tabelle)</value>
     <comment/>
   </data>
   <data name="tdyn_paratext" xml:space="preserve">
@@ -854,39 +854,39 @@
     <comment/>
   </data>
   <data name="tdyn_mods" xml:space="preserve">
-    <value>Modules</value>
+    <value>Module</value>
     <comment/>
   </data>
   <data name="tdyn_args" xml:space="preserve">
-    <value>Arguments</value>
+    <value>Argumente</value>
     <comment/>
   </data>
   <data name="tdyn_type" xml:space="preserve">
-    <value>Type</value>
+    <value>Typ</value>
     <comment/>
   </data>
   <data name="tdyn_comref" xml:space="preserve">
-    <value>ComObject Ref</value>
+    <value>Kommunikationsobjekt Ref</value>
     <comment/>
   </data>
   <data name="tdyn_comname" xml:space="preserve">
-    <value>ComObject Name</value>
+    <value>Kommunikationsobjekt Name</value>
     <comment/>
   </data>
   <data name="tdyn_comtext" xml:space="preserve">
-    <value>ComObject Text</value>
+    <value>Kommunikationsobjekt Text</value>
     <comment/>
   </data>
   <data name="tdyn_comreftext" xml:space="preserve">
-    <value>ComObjectRef Text</value>
+    <value>KommunikationsobjectRef Text</value>
     <comment/>
   </data>
   <data name="tdyn_pb_showtree" xml:space="preserve">
-    <value>Show in ComObjectTree</value>
+    <value>In KomObjektBaum anzeigen</value>
     <comment/>
   </data>
   <data name="tdyn_pb_inline" xml:space="preserve">
-    <value>Is InLine</value>
+    <value>Ist InLine</value>
     <comment/>
   </data>
   <data name="tdyn_pb_layout" xml:space="preserve">
@@ -894,11 +894,11 @@
     <comment/>
   </data>
   <data name="tdyn_pb_cells" xml:space="preserve">
-    <value>Cells</value>
+    <value>Spalten</value>
     <comment/>
   </data>
   <data name="tdyn_pb_rows" xml:space="preserve">
-    <value>Rows</value>
+    <value>Reihen</value>
     <comment/>
   </data>
   <data name="tdyn_id" xml:space="preserve">
@@ -906,7 +906,7 @@
     <comment/>
   </data>
   <data name="tdyn_pb_width" xml:space="preserve">
-    <value>Width (in %)</value>
+    <value>Breite (in %)</value>
     <comment/>
   </data>
   <data name="tdyn_textpara" xml:space="preserve">
@@ -918,27 +918,27 @@
     <comment/>
   </data>
   <data name="tdyn_cond" xml:space="preserve">
-    <value>Condition</value>
+    <value>Bedingung</value>
     <comment/>
   </data>
   <data name="tdyn_ass_target" xml:space="preserve">
-    <value>Target ParameterRef</value>
+    <value>Ziel ParameterRef</value>
     <comment/>
   </data>
   <data name="tdyn_ass_source" xml:space="preserve">
-    <value>Source ParameterRef</value>
+    <value>Quelle ParameterRef</value>
     <comment/>
   </data>
   <data name="tdyn_ass_value" xml:space="preserve">
-    <value>Source Value</value>
+    <value>Quelle Wert</value>
     <comment/>
   </data>
   <data name="tdyn_ass_warnign1" xml:space="preserve">
-    <value>Warning! Set only Source Value OR Source ParameterRef.</value>
+    <value>ACHTUNG! Entweder Source Value ODER Source Parameter Ref angeben.</value>
     <comment/>
   </data>
   <data name="tdyn_ass_warning2" xml:space="preserve">
-    <value>Source ParameterRef will be exported if value is empty</value>
+    <value>Wenn Value leer ist, wird Source Parameter Ref exportiert</value>
     <comment/>
   </data>
   <data name="tdyn_tchan" xml:space="preserve">
@@ -958,15 +958,15 @@
     <comment/>
   </data>
   <data name="tdyn_tmod" xml:space="preserve">
-    <value>Module</value>
+    <value>Modul</value>
     <comment/>
   </data>
   <data name="tdyn_tselection" xml:space="preserve">
-    <value>Selection</value>
+    <value>Auswahl</value>
     <comment/>
   </data>
   <data name="tdyn_tcond" xml:space="preserve">
-    <value>Condition</value>
+    <value>Bedingung</value>
     <comment/>
   </data>
   <data name="tdyn_tpara" xml:space="preserve">
@@ -974,115 +974,115 @@
     <comment/>
   </data>
   <data name="tdyn_tcom" xml:space="preserve">
-    <value>CO</value>
+    <value>KO</value>
     <comment/>
   </data>
   <data name="gen_cut" xml:space="preserve">
-    <value>Cut</value>
+    <value>Ausschneiden</value>
     <comment/>
   </data>
   <data name="gen_put" xml:space="preserve">
-    <value>Insert</value>
+    <value>Einfügen</value>
     <comment/>
   </data>
   <data name="gen_unfold" xml:space="preserve">
-    <value>Unfold</value>
+    <value>Aufklappen</value>
     <comment/>
   </data>
   <data name="gen_collapse" xml:space="preserve">
-    <value>Collapse</value>
+    <value>Zuklappen</value>
     <comment/>
   </data>
   <data name="tdyn_add_ichan" xml:space="preserve">
-    <value>Add Independent Channel</value>
+    <value>Independent Channel hinzufügen</value>
     <comment/>
   </data>
   <data name="tdyn_add_chan" xml:space="preserve">
-    <value>Add Channel</value>
+    <value>Channel hinzufügen</value>
     <comment/>
   </data>
   <data name="tdyn_add_block" xml:space="preserve">
-    <value>Add Block</value>
+    <value>Block hinzufügen</value>
     <comment/>
   </data>
   <data name="tdyn_add_mod" xml:space="preserve">
-    <value>Add Module</value>
+    <value>Modul hinzufügen</value>
     <comment/>
   </data>
   <data name="tdyn_add_choose" xml:space="preserve">
-    <value>Add Choose</value>
+    <value>Abfrage hinzufügen</value>
     <comment/>
   </data>
   <data name="tdyn_add_para" xml:space="preserve">
-    <value>Add Parameter</value>
+    <value>Parameter hinzufügen</value>
     <comment/>
   </data>
   <data name="tdyn_add_com" xml:space="preserve">
-    <value>Add ComObject</value>
+    <value>KO hinzufügen</value>
     <comment/>
   </data>
   <data name="tdyn_add_sepa" xml:space="preserve">
-    <value>Add Separator</value>
+    <value>Separator hinzufügen</value>
     <comment/>
   </data>
   <data name="tdyn_add_assign" xml:space="preserve">
-    <value>Add Assign</value>
+    <value>Assign hinzufügen</value>
     <comment/>
   </data>
   <data name="tdyn_add_btn" xml:space="preserve">
-    <value>Add Button</value>
+    <value>Button hinzufügen</value>
     <comment/>
   </data>
   <data name="tdyn_when_def" xml:space="preserve">
-    <value>Show only if every other condition fails</value>
+    <value>Anzeigen, wenn alle anderen Bedingungen nicht erfüllt sind</value>
     <comment/>
   </data>
   <data name="tdyn_when1" xml:space="preserve">
-    <value>Equals: Value must be the same (Example: =4)</value>
+    <value>Gleich: Wert mit Istgleichzeichen davor (Beispiel: =4)</value>
     <comment/>
   </data>
   <data name="tdyn_when2" xml:space="preserve">
-    <value>Not Equals: Put an exclamation mark in front (Example: !=4)</value>
+    <value>Ungleich: Wert mit Istgleich- und Ausrufezeichen davor (Beispiel: !=4)</value>
     <comment/>
   </data>
   <data name="tdyn_when3" xml:space="preserve">
-    <value>List: Split values with space (Example: 1 2 3)</value>
+    <value>Liste: Werte durch Leerzeichen getrennt. (Beispiel: 1 2 3)</value>
     <comment/>
   </data>
   <data name="tdyn_when4" xml:space="preserve">
-    <value>Greater than: &gt; or &gt;= (Example: &gt;5)</value>
+    <value>Größer als: &gt; oder &gt;= (Beispiel: &gt;5)</value>
     <comment/>
   </data>
   <data name="tdyn_when5" xml:space="preserve">
-    <value>Lower than: &lt; or &lt;= (Example: &lt;=8)</value>
+    <value>Kleiner: &lt; oder &lt;= (Beispiel: &lt;=8)</value>
     <comment/>
   </data>
   <data name="vgen_ets4" xml:space="preserve">
-    <value>Is PreETS4</value>
+    <value>Ist PreETS4</value>
     <comment/>
   </data>
   <data name="tdyn_add_cond" xml:space="preserve">
-    <value>Add Condition</value>
+    <value>Bedingung hinzufügen</value>
     <comment/>
   </data>
   <data name="vgen_help" xml:space="preserve">
-    <value>Activate Help</value>
+    <value>Hilfe aktivieren</value>
     <comment/>
   </data>
   <data name="tdyn_help" xml:space="preserve">
-    <value>Helptext</value>
+    <value>Hilfetext</value>
     <comment/>
   </data>
   <data name="tabs_help" xml:space="preserve">
-    <value>Helptexts</value>
+    <value>Hilfetexte</value>
     <comment/>
   </data>
   <data name="help_edit" xml:space="preserve">
-    <value>Edit Helptext</value>
+    <value>Hilfetext bearbeiten</value>
     <comment/>
   </data>
   <data name="help_preview" xml:space="preserve">
-    <value>Preview Helptext</value>
+    <value>Hilfetext Vorschau</value>
     <comment/>
   </data>
   <data name="parat_uihint_rgb" xml:space="preserve">
@@ -1102,15 +1102,15 @@
     <comment/>
   </data>
   <data name="menu_info_help" xml:space="preserve">
-    <value>Help</value>
+    <value>Hilfe</value>
     <comment/>
   </data>
   <data name="tapps_openh" xml:space="preserve">
-    <value>Open</value>
+    <value>Öffnen</value>
     <comment/>
   </data>
   <data name="vgen_autoload" xml:space="preserve">
-    <value>Add size in LoadProcedure automatically</value>
+    <value>In LadeProzedur automatisch Größe einfügen</value>
     <comment/>
   </data>
   <data name="tdyn_add_repeat" xml:space="preserve">
@@ -1122,7 +1122,7 @@
     <comment/>
   </data>
   <data name="prop_count" xml:space="preserve">
-    <value>Count</value>
+    <value>Anzahl</value>
     <comment/>
   </data>
   <data name="prop_start" xml:space="preserve">
@@ -1130,7 +1130,7 @@
     <comment/>
   </data>
   <data name="prop_max" xml:space="preserve">
-    <value>Maximum</value>
+    <value>Maximal</value>
     <comment/>
   </data>
   <data name="tabs_alloc" xml:space="preserve">
@@ -1138,7 +1138,7 @@
     <comment/>
   </data>
   <data name="tdyn_usealloc" xml:space="preserve">
-    <value>Use Allocator</value>
+    <value>Allocator benutzen</value>
     <comment/>
   </data>
   <data name="tabs_icon" xml:space="preserve">
@@ -1146,7 +1146,7 @@
     <comment/>
   </data>
   <data name="parat_year" xml:space="preserve">
-    <value>Display Year</value>
+    <value>Jahr anzeigen</value>
     <comment/>
   </data>
   <data name="parat_date" xml:space="preserve">
@@ -1166,11 +1166,11 @@
     <comment/>
   </data>
   <data name="menu_info_check" xml:space="preserve">
-    <value>Check for update</value>
+    <value>Nach Update suchen</value>
     <comment/>
   </data>
   <data name="menu_info_auto" xml:space="preserve">
-    <value>Check for updates automatically on start</value>
+    <value>Beim Starten automatisch nach Updates suchen</value>
     <comment/>
   </data>
   <data name="tdyn_tbutton" xml:space="preserve">
@@ -1194,19 +1194,19 @@
     <comment/>
   </data>
   <data name="prop_online" xml:space="preserve">
-    <value>Connection Type</value>
+    <value>Verbindungstyp</value>
     <comment/>
   </data>
   <data name="parat_doffset" xml:space="preserve">
-    <value>Display Offset</value>
+    <value>Anzeige Offset</value>
     <comment/>
   </data>
   <data name="parat_dfactor" xml:space="preserve">
-    <value>Display Factor</value>
+    <value>Anzeige Faktor</value>
     <comment/>
   </data>
   <data name="tgen_guid" xml:space="preserve">
-    <value>Current GUID</value>
+    <value>Aktuelle GUID</value>
     <comment/>
   </data>
   <data name="tgen_openknxid" xml:space="preserve">
@@ -1214,43 +1214,43 @@
     <comment/>
   </data>
   <data name="bagg_changed" xml:space="preserve">
-    <value>Last edited at:</value>
+    <value>Zuletzt geändert am:</value>
     <comment/>
   </data>
   <data name="vgen_businterface" xml:space="preserve">
-    <value>Activate BusInterface</value>
+    <value>BusInterface aktivieren</value>
     <comment/>
   </data>
   <data name="vgen_busrouter" xml:space="preserve">
-    <value>Activate BusInterface Router</value>
+    <value>BusInterface Router aktivieren</value>
     <comment/>
   </data>
   <data name="vmem_mod" xml:space="preserve">
-    <value>Here is a Module. To know more about this memory section go to the module settings.</value>
+    <value>Hier wird ein Module gespeichert. Um genaueres über die Belegung des Speicherplatzes zu erfahren, schauen Sie bitte in den Einstellungen für das Module nach.</value>
     <comment/>
   </data>
   <data name="vmem_gat" xml:space="preserve">
-    <value>Here is the GroupAddressTable.</value>
+    <value>Hier wird die Gruppenadresstabelle gespeichert.</value>
     <comment/>
   </data>
   <data name="vmem_cot" xml:space="preserve">
-    <value>Here is the CommunicationobjectTable.</value>
+    <value>Hier wird die Kommunikationsobjekttabelle gespeichert.</value>
     <comment/>
   </data>
   <data name="vmem_ast" xml:space="preserve">
-    <value>Here is the AssoziationTable.</value>
+    <value>Hier wird die Assoziationstabelle gespeichert.</value>
     <comment/>
   </data>
   <data name="submod_open" xml:space="preserve">
-    <value>Edit SubModules</value>
+    <value>SubModule bearbeiten</value>
     <comment/>
   </data>
   <data name="tpub_publish" xml:space="preserve">
-    <value>Publish</value>
+    <value>Veröffentlichen</value>
     <comment/>
   </data>
   <data name="tpub_device" xml:space="preserve">
-    <value>Device</value>
+    <value>Gerät</value>
     <comment/>
   </data>
   <data name="tpub_hardware" xml:space="preserve">
@@ -1258,7 +1258,7 @@
     <comment/>
   </data>
   <data name="tpub_app" xml:space="preserve">
-    <value>Application</value>
+    <value>Applikation</value>
     <comment/>
   </data>
   <data name="tpub_vers" xml:space="preserve">
@@ -1266,35 +1266,35 @@
     <comment/>
   </data>
   <data name="tpub_filter" xml:space="preserve">
-    <value>Filter:</value>
+    <value>Filtern:</value>
     <comment/>
   </data>
   <data name="tpub_onlynew" xml:space="preserve">
-    <value>Export only the latest version</value>
+    <value>Nur neueste Applikationversion exportieren</value>
     <comment/>
   </data>
   <data name="tpub_filename" xml:space="preserve">
-    <value>File Name:</value>
+    <value>Dateiname:</value>
     <comment/>
   </data>
   <data name="main_l1" xml:space="preserve">
-    <value>Welcome to Kaenx-Creator!</value>
+    <value>Willkommen bei Kaenx-Creator!</value>
     <comment/>
   </data>
   <data name="main_l2" xml:space="preserve">
-    <value>To start with a new project or open one</value>
+    <value>Um ein neues Projekt zu beginnen, oder ein bestehendes zu öffnen</value>
     <comment/>
   </data>
   <data name="main_l3" xml:space="preserve">
-    <value>select 'Project' in the Top Menu.</value>
+    <value>wählen Sie oben im Menü 'Projekt' aus.</value>
     <comment/>
   </data>
   <data name="main_l4" xml:space="preserve">
-    <value>Kaenx-Creator is part of OpenKNX.</value>
+    <value>Der Kaenx-Creator ist ein Teil von OpenKNX.</value>
     <comment/>
   </data>
   <data name="main_l5" xml:space="preserve">
-    <value>Find more information here </value>
+    <value>Mehr Informationen auf </value>
     <comment/>
   </data>
   <data name="menu_info" xml:space="preserve">
@@ -1302,43 +1302,43 @@
     <comment/>
   </data>
   <data name="editor_save" xml:space="preserve">
-    <value>Save</value>
+    <value>Speichern</value>
     <comment/>
   </data>
   <data name="editor_cancel" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Abbrechen</value>
     <comment/>
   </data>
   <data name="tprod_own" xml:space="preserve">
-    <value>Own Procedure</value>
+    <value>Eigene Prozedur</value>
     <comment/>
   </data>
   <data name="tprod_mask" xml:space="preserve">
-    <value>Mask Procedures</value>
+    <value>Prozeduren der Maske</value>
     <comment/>
   </data>
   <data name="tprod_edit" xml:space="preserve">
-    <value>Edit Procedure</value>
+    <value>Prozedur bearbeiten</value>
     <comment/>
   </data>
   <data name="tmem_settings" xml:space="preserve">
-    <value>Settings</value>
+    <value>Einstellungen</value>
     <comment/>
   </data>
   <data name="tmem_heatmap" xml:space="preserve">
-    <value>Memory usage</value>
+    <value>Speicherbelegung</value>
     <comment/>
   </data>
   <data name="prop_allocs" xml:space="preserve">
-    <value>Allocates</value>
+    <value>Allokiert</value>
     <comment/>
   </data>
   <data name="tabs_sm" xml:space="preserve">
-    <value>SubModules</value>
+    <value>SubModule</value>
     <comment/>
   </data>
   <data name="mem_para" xml:space="preserve">
-    <value>Parameters</value>
+    <value>Parameter</value>
     <comment/>
   </data>
   <data name="mem_union" xml:space="preserve">
@@ -1346,19 +1346,19 @@
     <comment/>
   </data>
   <data name="mem_module" xml:space="preserve">
-    <value>A Module will be saved here. To get more information go to the modules general page.</value>
+    <value>Hier wird ein Module gespeichert. Um genaueres über die Belegung des Speicherplatzes zu erfahren, schauen Sie bitte in den Einstellungen für das Module nach.</value>
     <comment/>
   </data>
   <data name="mem_gat" xml:space="preserve">
-    <value>The GroupAddressTable will be saved here.</value>
+    <value>Hier wird die Gruppenadresstabelle gespeichert.</value>
     <comment/>
   </data>
   <data name="mem_cot" xml:space="preserve">
-    <value>The ComObjectTable will be saved here.</value>
+    <value>Hier wird die Kommunikationsobjekttabelle gespeichert.</value>
     <comment/>
   </data>
   <data name="mem_ast" xml:space="preserve">
-    <value>The AssoziationTable will be placed here.</value>
+    <value>Hier wird die Assoziationstabelle gespeichert.</value>
     <comment/>
   </data>
 </root>

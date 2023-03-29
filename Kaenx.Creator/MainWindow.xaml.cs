@@ -108,7 +108,7 @@ namespace Kaenx.Creator
             (bool update, string vers) response = await CheckUpdate();
             if(response.update)
             {
-                if(MessageBoxResult.Yes == MessageBox.Show($"Es ist eine neue version verfügbar: v{response.vers}\r\nJetzt zu den Github Releases gehen?", "Update suchen", MessageBoxButton.YesNo, MessageBoxImage.Question))
+                if(MessageBoxResult.Yes == MessageBox.Show(string.Format(Properties.Messages.update_new, response.vers), Properties.Messages.update_title, MessageBoxButton.YesNo, MessageBoxImage.Question))
                 {
                     Process.Start(new ProcessStartInfo("https://github.com/OpenKNX/Kaenx-Creator/releases/latest") { UseShellExecute = true });
                 }
@@ -1343,12 +1343,12 @@ namespace Kaenx.Creator
             (bool update, string vers) response = await CheckUpdate();
             if(response.update)
             {
-                if(MessageBoxResult.Yes == MessageBox.Show($"Es ist eine neue version verfügbar: v{response.vers}\r\nJetzt zu den Github Releases gehen?", "Update suchen", MessageBoxButton.YesNo, MessageBoxImage.Question))
+                if(MessageBoxResult.Yes == MessageBox.Show(string.Format(Properties.Messages.update_new, response.vers), Properties.Messages.update_title, MessageBoxButton.YesNo, MessageBoxImage.Question))
                 {
                     Process.Start(new ProcessStartInfo("https://github.com/OpenKNX/Kaenx-Creator/releases/latest") { UseShellExecute = true });
                 }
             } else 
-                MessageBox.Show($"Sie verwenden bereits die neueste version: v{string.Join('.', System.Reflection.Assembly.GetEntryAssembly().GetName().Version.ToString().Split('.').Take(3))}", "Update suchen", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(string.Format(Properties.Messages.update_uptodate, string.Join('.', System.Reflection.Assembly.GetEntryAssembly().GetName().Version.ToString().Split('.').Take(3)), Properties.Messages.update_title, MessageBoxButton.OK, MessageBoxImage.Information));
                     
 
         }

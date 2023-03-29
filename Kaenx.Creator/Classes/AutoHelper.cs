@@ -315,7 +315,7 @@ namespace Kaenx.Creator.Classes
                 int sizeInByte = (int)Math.Ceiling(para.ParameterTypeObject.SizeInBit / 8.0);
                 if((para.Offset + sizeInByte) > mem.GetCount())
                 {
-                    if(!mem.IsAutoSize) MessageBox.Show($"Parameter '{para.Name}' liegt außerhalb des Speichers", "Speicherbelegung Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+                    if(!mem.IsAutoSize) MessageBox.Show(string.Format(Properties.Messages.memcalc_para, para.Name), Properties.Messages.memcalc_title, MessageBoxButton.OK, MessageBoxImage.Error);
                     
                     int toadd = ((para.Offset + sizeInByte) - mem.GetCount());
                     //if(para.ParameterTypeObject.SizeInBit > 8) toadd += (para.ParameterTypeObject.SizeInBit / 8) - 1;
@@ -330,7 +330,7 @@ namespace Kaenx.Creator.Classes
                 int sizeInByte = (int)Math.Ceiling(union.SizeInBit / 8.0);
                 if(union.Offset + sizeInByte > mem.GetCount())
                 {
-                    if(!mem.IsAutoSize) MessageBox.Show($"Union '{union.Name}' liegt außerhalb des Speichers", "Speicherbelegung Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+                    if(!mem.IsAutoSize) MessageBox.Show(string.Format(Properties.Messages.memcalc_union, union.Name), Properties.Messages.memcalc_title, MessageBoxButton.OK, MessageBoxImage.Error);
 
                     int toadd = 1;
                     if(union.SizeInBit > 8) toadd = (union.Offset - mem.GetCount()) + (union.SizeInBit / 8);

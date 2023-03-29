@@ -129,7 +129,7 @@ namespace Kaenx.Creator.Controls
                 ClearHelper.GetIDs(Module.Dynamics[0], uids, false);
                 if(uids.Contains(cref.UId))
                 {
-                    if(MessageBoxResult.No == MessageBox.Show("Dieses ComObject wird mindestens einem mal im Dynamic benutzt. Wirklich löschen?", "ComObject löschen", MessageBoxButton.YesNo, MessageBoxImage.Warning))
+                    if(MessageBoxResult.No == MessageBox.Show(Properties.Messages.com_delete1, Properties.Messages.com_delete_title, MessageBoxButton.YesNo, MessageBoxImage.Warning))
                         return;
                     
                     Module.ComObjectRefs.Remove(cref);
@@ -138,7 +138,7 @@ namespace Kaenx.Creator.Controls
             } else {
                 if(Module.ComObjectRefs.Any(c => c.ComObjectObject == com))
                 {
-                    if(MessageBoxResult.No == MessageBox.Show("Dieses ComObject wird von mindestens einem ComObjectRef benutzt. Wirklich löschen?", "ComObject löschen", MessageBoxButton.YesNo, MessageBoxImage.Warning))
+                    if(MessageBoxResult.No == MessageBox.Show(Properties.Messages.com_delete2, Properties.Messages.com_delete_title, MessageBoxButton.YesNo, MessageBoxImage.Warning))
                         return;
 
                     foreach(ComObjectRef cref in Module.ComObjectRefs.Where(c => c.ComObjectObject == com))
@@ -156,19 +156,19 @@ namespace Kaenx.Creator.Controls
         
         private void ManuelId(object sender, RoutedEventArgs e)
         {
-            PromptDialog diag = new PromptDialog("Neue ComObject ID", "ID Manuell");
+            PromptDialog diag = new PromptDialog(Properties.Messages.com_prompt_id, Properties.Messages.prompt_id);
             if(diag.ShowDialog() == true)
             {
                 long id;
                 if(!long.TryParse(diag.Answer, out id))
                 {
-                    MessageBox.Show("Bitte geben Sie eine Ganzzahl ein.", "Eingabefehler");
+                    MessageBox.Show(Properties.Messages.prompt_error, Properties.Messages.prompt_error_title);
                     return;
                 }
                 ComObject ele = Module.ComObjects.SingleOrDefault(p => p.Id == id);
                 if(ele != null)
                 {
-                    MessageBox.Show($"Die ID {id} wird bereits von ComObject {ele.Name} verwendet.", "Doppelte ID");
+                    MessageBox.Show(string.Format(Properties.Messages.prompt_double, id, ele.Name), Properties.Messages.prompt_double_title);
                     return;
                 }
                 ((sender as Button).DataContext as Models.ComObject).Id = id;
@@ -182,7 +182,7 @@ namespace Kaenx.Creator.Controls
             ele.Id = -1;
             ele.Id = AutoHelper.GetNextFreeId(Module, "ComObjects");
             if(ele.Id == oldId)
-                MessageBox.Show("Das Element hat bereits die erste freie ID", "Automatische ID");
+                MessageBox.Show(Properties.Messages.prompt_auto_error, Properties.Messages.prompt_auto_error_title);
         }
         
         public event PropertyChangedEventHandler PropertyChanged;

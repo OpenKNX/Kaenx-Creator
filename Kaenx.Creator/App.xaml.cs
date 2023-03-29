@@ -30,8 +30,8 @@ namespace Kaenx.Creator
                 if(Kaenx.Creator.Properties.Settings.Default.isDebug)
                     errorMessage += "\r\n\r\n" + e.Exception.StackTrace;
 
-                MessageBox.Show(errorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                MessageBox.Show("Please save your project and close the application.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(errorMessage, Kaenx.Creator.Properties.Messages.global_exception_title, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Kaenx.Creator.Properties.Messages.global_exception, Kaenx.Creator.Properties.Messages.global_exception_title, MessageBoxButton.OK, MessageBoxImage.Error);
                 e.Handled = true;
             }
         }

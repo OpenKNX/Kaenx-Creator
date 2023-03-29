@@ -164,7 +164,7 @@ namespace Kaenx.Creator.Controls
                 ClearHelper.GetIDs(Module.Dynamics[0], uids, true);
                 if(uids.Contains(pref.UId))
                 {
-                    if(MessageBoxResult.No == MessageBox.Show("Dieser Parameter wird mindestens einem mal im Dynamic benutzt. Wirklich löschen?", "Parameter löschen", MessageBoxButton.YesNo, MessageBoxImage.Warning))
+                    if(MessageBoxResult.No == MessageBox.Show(Properties.Messages.para_delete1, Properties.Messages.para_delete_title, MessageBoxButton.YesNo, MessageBoxImage.Warning))
                         return;
                     
                     Module.ParameterRefs.Remove(pref);
@@ -173,7 +173,7 @@ namespace Kaenx.Creator.Controls
             } else {
                 if(Module.ParameterRefs.Any(p => p.ParameterObject == para))
                 {
-                    if(MessageBoxResult.No == MessageBox.Show("Dieser Parameter wird von mindestens einem ParameterRef benutzt. Wirklich löschen?", "Parameter löschen", MessageBoxButton.YesNo, MessageBoxImage.Warning))
+                    if(MessageBoxResult.No == MessageBox.Show(Properties.Messages.para_delete2, Properties.Messages.para_delete_title, MessageBoxButton.YesNo, MessageBoxImage.Warning))
                         return;
 
                     foreach(ParameterRef pref in Module.ParameterRefs.Where(p => p.ParameterObject == para))
@@ -192,19 +192,19 @@ namespace Kaenx.Creator.Controls
 
         private void ManuelId(object sender, RoutedEventArgs e)
         {
-            PromptDialog diag = new PromptDialog("Neue Parameter ID", "ID Manuell");
+            PromptDialog diag = new PromptDialog(Properties.Messages.para_prompt_id, Properties.Messages.prompt_id);
             if(diag.ShowDialog() == true)
             {
                 int id;
                 if(!int.TryParse(diag.Answer, out id))
                 {
-                    MessageBox.Show("Bitte geben Sie eine Ganzzahl ein.", "Eingabefehler");
+                    MessageBox.Show(Properties.Messages.prompt_error, Properties.Messages.prompt_error_title);
                     return;
                 }
                 Parameter para = Module.Parameters.SingleOrDefault(p => p.Id == id);
                 if(para != null)
                 {
-                    MessageBox.Show($"Die ID {id} wird bereits von Parameter {para.Name} verwendet.", "Doppelte ID");
+                    MessageBox.Show(string.Format(Properties.Messages.prompt_double, id, para.Name), Properties.Messages.prompt_double_title);
                     return;
                 }
                 ((sender as Button).DataContext as Models.Parameter).Id = id;
@@ -218,7 +218,7 @@ namespace Kaenx.Creator.Controls
             ele.Id = -1;
             ele.Id = AutoHelper.GetNextFreeId(Module, "Parameters");
             if(ele.Id == oldId)
-                MessageBox.Show("Das Element hat bereits die erste freie ID", "Automatische ID");
+                MessageBox.Show(Properties.Messages.prompt_auto_error, Properties.Messages.prompt_auto_error_title);
         }
 
     

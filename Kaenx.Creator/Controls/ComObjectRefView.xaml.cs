@@ -85,7 +85,7 @@ namespace Kaenx.Creator.Controls
 
             List<int> uids = new List<int>();
             ClearHelper.GetIDs(Module.Dynamics[0], uids, true);
-            if(uids.Contains(cref.UId) && MessageBoxResult.No == MessageBox.Show("Dieser ComObjectRef wird mindestens ein mal im Dynamic benutzt. Wirklich löschen?", "ComObjectRef löschen", MessageBoxButton.YesNo, MessageBoxImage.Warning))
+            if(uids.Contains(cref.UId) && MessageBoxResult.No == MessageBox.Show(Properties.Messages.comref_delete, Properties.Messages.comref_delete_title, MessageBoxButton.YesNo, MessageBoxImage.Warning))
                     return;
 
             Module.ComObjectRefs.Remove(cref);
@@ -99,19 +99,19 @@ namespace Kaenx.Creator.Controls
         
         private void ManuelId(object sender, RoutedEventArgs e)
         {
-            PromptDialog diag = new PromptDialog("Neue ComObjectRef ID", "ID Manuell");
+            PromptDialog diag = new PromptDialog(Properties.Messages.comref_prompt_id, Properties.Messages.prompt_id);
             if(diag.ShowDialog() == true)
             {
                 long id;
                 if(!long.TryParse(diag.Answer, out id))
                 {
-                    MessageBox.Show("Bitte geben Sie eine Ganzzahl ein.", "Eingabefehler");
+                    MessageBox.Show(Properties.Messages.prompt_error, Properties.Messages.prompt_error_title);
                     return;
                 }
                 ComObjectRef ele = Module.ComObjectRefs.SingleOrDefault(p => p.Id == id);
                 if(ele != null)
                 {
-                    MessageBox.Show($"Die ID {id} wird bereits von ComObjectRef {ele.Name} verwendet.", "Doppelte ID");
+                    MessageBox.Show(string.Format(Properties.Messages.prompt_double, id, ele.Name), Properties.Messages.prompt_double_title);
                     return;
                 }
                 ((sender as Button).DataContext as Models.ComObjectRef).Id = id;
@@ -125,7 +125,7 @@ namespace Kaenx.Creator.Controls
             ele.Id = -1;
             ele.Id = AutoHelper.GetNextFreeId(Module, "ComObjectRefs");
             if(ele.Id == oldId)
-                MessageBox.Show("Das Element hat bereits die erste freie ID", "Automatische ID");
+                MessageBox.Show(Properties.Messages.prompt_auto_error, Properties.Messages.prompt_auto_error_title);
         }
 
 

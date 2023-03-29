@@ -56,7 +56,7 @@ namespace Kaenx.Creator.Controls
 //TODO implement
             if(types.Count > 0)
             {
-                var result = MessageBox.Show("Der Anhang wird von " + types.Count + " ParameterTypes verwendet.\r\nTrotzdem löschen?", "Anhang löschen", MessageBoxButton.YesNo);
+                var result = MessageBox.Show(Properties.Messages.baggage_delete_error, Properties.Messages.baggage_delete_error_title, MessageBoxButton.YesNo);
                 if(result == MessageBoxResult.No) return;
             }
 
@@ -69,14 +69,14 @@ namespace Kaenx.Creator.Controls
         private void ClickChangeFile(object sender, System.Windows.RoutedEventArgs e)
         {
             OpenFileDialog diag = new OpenFileDialog();
-            diag.Title = "Baggage ändern";
-            diag.Filter = "Bilder (PNG, JPG)|*.png;*.jpg";
+            diag.Title = Properties.Messages.baggage_change_title;
+            diag.Filter = Properties.Messages.baggage_change_filter + " (PNG, JPG)|*.png;*.jpg";
             if(diag.ShowDialog() == true)
             {
                 Baggage bag = (sender as Button).DataContext as Baggage;
                 bag.Data = AutoHelper.GetFileBytes(diag.FileName);
                 bag.Extension = Path.GetExtension(diag.FileName).ToLower();
-                System.Windows.MessageBox.Show("Datei wurde erfolgreich geändert.");
+                System.Windows.MessageBox.Show(Properties.Messages.baggage_change_success);
                 BaggageList.SelectedItem = null;
                 BaggageList.SelectedItem = bag;
             }
@@ -85,12 +85,12 @@ namespace Kaenx.Creator.Controls
         private void ClickImport(object sender, System.Windows.RoutedEventArgs e)
         {
             OpenFileDialog diag = new OpenFileDialog();
-            diag.Title = "Baggage importieren";
-            diag.Filter = "Baggage Datei (*.ae-baggage)|*.ae-baggage";
+            diag.Title = Properties.Messages.baggage_import_title;
+            diag.Filter = Properties.Messages.baggage_import_filter + " (*.ae-baggage)|*.ae-baggage";
             if(diag.ShowDialog() == true)
             {   
                 var x = Newtonsoft.Json.JsonConvert.DeserializeObject<ObservableCollection<Baggage>>(File.ReadAllText(diag.FileName));
-                if(MessageBox.Show("Vorhandene Anhänge löschen?", "", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                if(MessageBox.Show(Properties.Messages.baggage_import_prompt, "", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                     General.Baggages.Clear();
                 foreach(Baggage bag in x)
                     General.Baggages.Add(bag);
@@ -101,8 +101,8 @@ namespace Kaenx.Creator.Controls
         {
             SaveFileDialog diag = new SaveFileDialog();
             diag.FileName = General.ProjectName;
-            diag.Title = "Baggage exportieren";
-            diag.Filter = "Baggage Datei (*.ae-baggage)|*.ae-baggage";
+            diag.Title = Properties.Messages.baggage_export_title;
+            diag.Filter = Properties.Messages.baggage_export_filter + " (*.ae-baggage)|*.ae-baggage";
             
             if(diag.ShowDialog() == true)
             {

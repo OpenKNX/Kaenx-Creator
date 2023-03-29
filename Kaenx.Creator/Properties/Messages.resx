@@ -1,0 +1,304 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="global_exception" xml:space="preserve">
+    <value>Please save your project and restart the application.</value>
+    <comment/>
+  </data>
+  <data name="global_exception_title" xml:space="preserve">
+    <value>Error</value>
+    <comment/>
+  </data>
+  <data name="update_new" xml:space="preserve">
+    <value>A new version is available: v{0}\r\nWanna checkout github releases?</value>
+    <comment>Versionstring like 1.1.2</comment>
+  </data>
+  <data name="update_title" xml:space="preserve">
+    <value>Searching for update</value>
+    <comment/>
+  </data>
+  <data name="update_uptodate" xml:space="preserve">
+    <value>You already use the latest version: v{0}</value>
+    <comment>Versionstring like 1.1.2</comment>
+  </data>
+  <data name="message_prompt_id" xml:space="preserve">
+    <value>New Message ID</value>
+    <comment/>
+  </data>
+  <data name="prompt_id" xml:space="preserve">
+    <value>ID Manuel</value>
+    <comment/>
+  </data>
+  <data name="prompt_error" xml:space="preserve">
+    <value>Please insert an integer.</value>
+    <comment/>
+  </data>
+  <data name="prompt_error_title" xml:space="preserve">
+    <value>Input error</value>
+    <comment/>
+  </data>
+  <data name="prompt_double" xml:space="preserve">
+    <value>The ID {0} is already used by {1}.</value>
+    <comment>ID; Name of Message</comment>
+  </data>
+  <data name="prompt_double_title" xml:space="preserve">
+    <value>Duplicate ID</value>
+    <comment/>
+  </data>
+  <data name="prompt_auto_error" xml:space="preserve">
+    <value>The element already has the first free ID.</value>
+    <comment/>
+  </data>
+  <data name="prompt_auto_error_title" xml:space="preserve">
+    <value>Automatic ID</value>
+    <comment/>
+  </data>
+  <data name="baggage_delete_error" xml:space="preserve">
+    <value>The baggage is beiung referenced by {0} ParameterTypes.\r\nDelete it anyway?</value>
+    <comment>Count of Items</comment>
+  </data>
+  <data name="baggage_delete_error_title" xml:space="preserve">
+    <value>Delete Baggage</value>
+    <comment/>
+  </data>
+  <data name="baggage_change_title" xml:space="preserve">
+    <value>Edit Baggage</value>
+    <comment/>
+  </data>
+  <data name="baggage_change_success" xml:space="preserve">
+    <value>Baggage was successfully changed</value>
+    <comment/>
+  </data>
+  <data name="baggage_change_filter" xml:space="preserve">
+    <value>Pictures</value>
+    <comment/>
+  </data>
+  <data name="baggage_import_title" xml:space="preserve">
+    <value>Import Baggage</value>
+    <comment/>
+  </data>
+  <data name="baggage_import_filter" xml:space="preserve">
+    <value>Baggage File</value>
+    <comment/>
+  </data>
+  <data name="baggage_import_prompt" xml:space="preserve">
+    <value>Delete existing baggages?</value>
+    <comment/>
+  </data>
+  <data name="baggage_export_title" xml:space="preserve">
+    <value>Export Baggage</value>
+    <comment/>
+  </data>
+  <data name="baggage_export_filter" xml:space="preserve">
+    <value>Baggage File</value>
+    <comment/>
+  </data>
+  <data name="viewer_get_title" xml:space="preserve">
+    <value>Get Value</value>
+    <comment/>
+  </data>
+  <data name="viewer_get_prompt" xml:space="preserve">
+    <value>Id of the Parameter:</value>
+    <comment/>
+  </data>
+  <data name="viewer_get_inactive" xml:space="preserve">
+    <value>Parameter with Id {0} is not visible.</value>
+    <comment>ParameterId</comment>
+  </data>
+  <data name="viewer_get_value" xml:space="preserve">
+    <value>Parameter with Id {0} has the value: {1}</value>
+    <comment>ParameterId; Value</comment>
+  </data>
+  <data name="viewer_get_error" xml:space="preserve">
+    <value>There is no Parameter with Id {0}.</value>
+    <comment>ParameterId</comment>
+  </data>
+  <data name="viewer_logger" xml:space="preserve">
+    <value>Parameter changed: ID={0} Wert={1}</value>
+    <comment>ParameterId; Value</comment>
+  </data>
+  <data name="memcalc_para" xml:space="preserve">
+    <value>Parameter '{0}' is outside of the memory boundaries.</value>
+    <comment>ParameterName</comment>
+  </data>
+  <data name="memcalc_union" xml:space="preserve">
+    <value>Union '{0}' is outside of the memory boundaries.</value>
+    <comment>UnionName</comment>
+  </data>
+  <data name="memcalc_title" xml:space="preserve">
+    <value>Assignment of memory space error</value>
+    <comment/>
+  </data>
+  <data name="comref_delete" xml:space="preserve">
+    <value>This ComObjectRef is used in dynamic at least once. Continue?</value>
+    <comment/>
+  </data>
+  <data name="comref_delete_title" xml:space="preserve">
+    <value>Delete ComObjectRef</value>
+    <comment/>
+  </data>
+  <data name="comref_prompt_id" xml:space="preserve">
+    <value>New ComObjectRef ID</value>
+    <comment/>
+  </data>
+  <data name="com_delete1" xml:space="preserve">
+    <value>This ComObject is used in dynamic at least one. Continue?</value>
+    <comment/>
+  </data>
+  <data name="com_delete2" xml:space="preserve">
+    <value>This ComObject is used by a ComObjectRef at least one. Continue?</value>
+    <comment/>
+  </data>
+  <data name="com_delete_title" xml:space="preserve">
+    <value>Delete ComObject</value>
+    <comment/>
+  </data>
+  <data name="com_prompt_id" xml:space="preserve">
+    <value>New ComObject ID</value>
+    <comment/>
+  </data>
+  <data name="para_delete1" xml:space="preserve">
+    <value>This Parameter is used in dynamic at least one. Continue?</value>
+    <comment/>
+  </data>
+  <data name="para_delete2" xml:space="preserve">
+    <value>This Parameter is used by a ParameterRef at least one. Continue?</value>
+    <comment/>
+  </data>
+  <data name="para_delete_title" xml:space="preserve">
+    <value>Delete Parameter</value>
+    <comment/>
+  </data>
+  <data name="para_prompt_id" xml:space="preserve">
+    <value>New Parameter ID</value>
+    <comment/>
+  </data>
+  <data name="pararef_delete" xml:space="preserve">
+    <value>This ParameterRef is used in dynamic at least one. Continue?</value>
+    <comment/>
+  </data>
+  <data name="pararef_delete_title" xml:space="preserve">
+    <value>Delete ParameterRef</value>
+    <comment/>
+  </data>
+  <data name="pararef_prompt_id" xml:space="preserve">
+    <value>New ParameterRef ID</value>
+    <comment/>
+  </data>
+</root>

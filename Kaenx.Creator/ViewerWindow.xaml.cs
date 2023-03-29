@@ -280,7 +280,6 @@ namespace Kaenx.Creator
             }
 
             Helptext = para.Helptext;
-            System.Diagnostics.Debug.WriteLine("Hilfetext: " + para.Helptext);
         }
 
         private void Para_PropertyChanged(object sender, PropertyChangedEventArgs e = null)
@@ -292,7 +291,7 @@ namespace Kaenx.Creator
             if (e.PropertyName == "Value")
             {
                 System.Diagnostics.Debug.WriteLine("Wert geändert! " + para.Id + " -> " + para.Value);
-                LogViewer.Text = $"Parameter geändert: ID={para.Id} Wert={para.Value}\r\n{LogViewer.Text}";
+                LogViewer.Text = Properties.Messages.viewer_logger + $"\r\n{LogViewer.Text}";
             } else if(e.PropertyName == "ParamVisibility")
             {
                 if(para.Id == 5618)
@@ -439,19 +438,19 @@ namespace Kaenx.Creator
 
         private void ClickGetValue(object sender, RoutedEventArgs e)
         {
-            Controls.ProdVParameterDialog diag = new Controls.ProdVParameterDialog("Id des Parameters:", "Wert abfragen", _importer.Modules);
+            Controls.ProdVParameterDialog diag = new Controls.ProdVParameterDialog(Properties.Messages.viewer_get_prompt, Properties.Messages.viewer_get_title, _importer.Modules);
             if(diag.ShowDialog() == true)
             {
                 if(values.ContainsKey(diag.Answer))
                 {
                     string value = values[diag.Answer].Value;
                     if(value == "x")
-                        MessageBox.Show($"Parameter mit der Id {diag.Answer} ist aktuell nicht sichtbar.", "Wert abfragen");
+                        MessageBox.Show(string.Format(Properties.Messages.viewer_get_inactive, diag.Answer), Properties.Messages.viewer_get_title);
                     else
-                        MessageBox.Show($"Parameter mit der Id {diag.Answer} hat den Wert: {value}");
+                        MessageBox.Show(string.Format(Properties.Messages.viewer_get_value, diag.Answer, value), Properties.Messages.viewer_get_title);
                 }
                 else
-                    MessageBox.Show($"Es wurde kein Parameter mit der Id {diag.Answer} gefunden.", "Wert abfragen");
+                    MessageBox.Show(Properties.Messages.viewer_get_error, Properties.Messages.viewer_get_title);
             }
         }
 
