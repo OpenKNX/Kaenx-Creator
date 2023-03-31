@@ -53,7 +53,7 @@
     <ProjectGuid>5b7e177e-0c9a-4f05-988d-eec75c1ba408</ProjectGuid>
     <TargetPlatformVersion>10.0.22000.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.16299.0</TargetPlatformMinVersion>
-    <DefaultLanguage>de-DE</DefaultLanguage>
+    <DefaultLanguage>en-GB</DefaultLanguage>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
     <NoWarn>$(NoWarn);NU1702</NoWarn>
     <EntryPointProjectUniqueName>..\Kaenx.Creator\Kaenx.Creator.csproj</EntryPointProjectUniqueName>

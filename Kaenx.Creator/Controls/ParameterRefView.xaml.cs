@@ -90,7 +90,7 @@ namespace Kaenx.Creator.Controls
 
             List<int> uids = new List<int>();
             ClearHelper.GetIDs(Module.Dynamics[0], uids, true);
-            if(uids.Contains(pref.UId) && MessageBoxResult.No == MessageBox.Show("Dieser ParameterRef wird mindestens ein mal im Dynamic benutzt. Wirklich löschen?", "ParameterRef löschen", MessageBoxButton.YesNo, MessageBoxImage.Warning))
+            if(uids.Contains(pref.UId) && MessageBoxResult.No == MessageBox.Show(Properties.Messages.pararef_delete, Properties.Messages.pararef_delete_title, MessageBoxButton.YesNo, MessageBoxImage.Warning))
                 return;
 
             Module.ParameterRefs.Remove(pref);
@@ -104,7 +104,7 @@ namespace Kaenx.Creator.Controls
         
         private void ManuelId(object sender, RoutedEventArgs e)
         {
-            PromptDialog diag = new PromptDialog("Neue ParameterRef ID", Properties.Messages.prompt_id);
+            PromptDialog diag = new PromptDialog(Properties.Messages.pararef_prompt_id, Properties.Messages.prompt_id);
             if(diag.ShowDialog() == true)
             {
                 long id;

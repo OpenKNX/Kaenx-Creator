@@ -13,7 +13,7 @@ namespace Kaenx.Creator.Controls
 			InitializeComponent();
             Question.Text = question;
             this.Title = title;
-            mods.Insert(0, new Viewer.ModuleModel() { Id = "Kein Modul", Start = 0 });
+            mods.Insert(0, new Viewer.ModuleModel() { Id = Properties.Messages.prodv_no_mod, Start = 0 });
             this.modList.ItemsSource = mods;
             this.modList.SelectedIndex = 0;
 		}

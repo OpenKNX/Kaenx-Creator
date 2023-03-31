@@ -294,10 +294,6 @@ namespace Kaenx.Creator
                 LogViewer.Text = Properties.Messages.viewer_logger + $"\r\n{LogViewer.Text}";
             } else if(e.PropertyName == "ParamVisibility")
             {
-                if(para.Id == 5618)
-                {
-
-                }
                 System.Diagnostics.Debug.WriteLine("Sichtbarkeit geändert! " + para.Id + " -> " + para.IsVisible);
             }
 
@@ -358,7 +354,7 @@ namespace Kaenx.Creator
                     {
                         ParameterBlock pb = GetDynamicParameterBlock(bind.TargetId);
                         if(pb == null)
-                            throw new Exception("ParameterBlock konnt nicht gefunden werden");
+                            throw new Exception("ParameterBlock could not be found: " + bind.TargetId);
 
                         pb.Text = bind.FullText.Replace("{d}", string.IsNullOrEmpty(para.Value) ? bind.DefaultText : para.Value);
                         break;

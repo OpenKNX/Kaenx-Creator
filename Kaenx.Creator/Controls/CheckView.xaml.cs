@@ -38,7 +38,7 @@ namespace Kaenx.Creator.Controls
             Actions.Clear();
             Models.ClearResult res = ClearHelper.ShowUnusedElements(Version);
 
-            Actions.Add(new PublishAction() { Text = "Folgende Elemente werden nicht verwendet:" });
+            Actions.Add(new PublishAction() { Text = Properties.Messages.checkv_not_used });
             Actions.Add(new PublishAction() { Text = $"{res.ParameterTypes}\tParameterTypes", State = res.ParameterTypes > 0 ? PublishState.Warning : PublishState.Info });
             Actions.Add(new PublishAction() { Text = $"{res.Parameters}\tParameter", State = res.Parameters > 0 ? PublishState.Warning : PublishState.Info });
             Actions.Add(new PublishAction() { Text = $"{res.ParameterRefs}\tParameterRefs", State = res.ParameterRefs > 0 ? PublishState.Warning : PublishState.Info });
@@ -50,7 +50,7 @@ namespace Kaenx.Creator.Controls
         private void ClickDoClean(object sender, RoutedEventArgs e)
         {
             Actions.Clear();
-            var msgRes = MessageBox.Show("Soll die Löschung so lange wiederholt werden, bis alle nicht benötigten Elemente entfernt wurden?", "Bereinigen mit löschen", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+            var msgRes = MessageBox.Show(Properties.Messages.checkv_delete, Properties.Messages.checkv_delete_title, MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
 
             int countParameterTypes = 0;
             int countParameters = 0;
@@ -89,7 +89,7 @@ namespace Kaenx.Creator.Controls
                 return;
             }
 
-            Actions.Add(new PublishAction() { Text = "Folgende Elemente wurden entfernt:" });
+            Actions.Add(new PublishAction() { Text = Properties.Messages.checkv_deleted });
             Actions.Add(new PublishAction() { Text = $"{countParameterTypes}\tParameterTypes", State = countParameterTypes > 0 ? PublishState.Warning : PublishState.Info });
             Actions.Add(new PublishAction() { Text = $"{countParameters}\tParameter", State = countParameters > 0 ? PublishState.Warning : PublishState.Info });
             Actions.Add(new PublishAction() { Text = $"{countParameterRefs}\tParameterRefs", State = countParameterRefs > 0 ? PublishState.Warning : PublishState.Info });
@@ -101,10 +101,10 @@ namespace Kaenx.Creator.Controls
         private void ClickCheckVersion(object sender, RoutedEventArgs e)
         {
             Actions.Clear();
-            bool showOnlyErrors = MessageBoxResult.Yes == MessageBox.Show("Sollen Warnungen ausgeblendet werden?", "Überprüfen", MessageBoxButton.YesNo, MessageBoxImage.Question);
-            Actions.Add(new PublishAction() { Text = "Überprüfung wird gestartet"});
+            bool showOnlyErrors = MessageBoxResult.Yes == MessageBox.Show(Properties.Messages.checkv_warnings, Properties.Messages.checkv_warnings_title, MessageBoxButton.YesNo, MessageBoxImage.Question);
+            Actions.Add(new PublishAction() { Text = Properties.Messages.checkv_started });
             CheckHelper.CheckVersion(null, App, Version, null, Actions, showOnlyErrors);
-            Actions.Add(new PublishAction() { Text = "Überprüfung beendet"});
+            Actions.Add(new PublishAction() { Text = Properties.Messages.checkv_fin });
         }
         
         private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)

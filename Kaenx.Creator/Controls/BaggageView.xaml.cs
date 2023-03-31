@@ -76,7 +76,7 @@ namespace Kaenx.Creator.Controls
                 Baggage bag = (sender as Button).DataContext as Baggage;
                 bag.Data = AutoHelper.GetFileBytes(diag.FileName);
                 bag.Extension = Path.GetExtension(diag.FileName).ToLower();
-                System.Windows.MessageBox.Show(Properties.Messages.baggage_change_success);
+                System.Windows.MessageBox.Show(Properties.Messages.baggage_change_success, Properties.Messages.icon_change_title);
                 BaggageList.SelectedItem = null;
                 BaggageList.SelectedItem = bag;
             }

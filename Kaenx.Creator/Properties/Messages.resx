@@ -170,7 +170,7 @@
     <comment/>
   </data>
   <data name="baggage_delete_error" xml:space="preserve">
-    <value>The baggage is beiung referenced by {0} ParameterTypes.\r\nDelete it anyway?</value>
+    <value>The baggage is being referenced by {0} ParameterTypes.\r\nDelete it anyway?</value>
     <comment>Count of Items</comment>
   </data>
   <data name="baggage_delete_error_title" xml:space="preserve">
@@ -187,6 +187,10 @@
   </data>
   <data name="baggage_change_filter" xml:space="preserve">
     <value>Pictures</value>
+    <comment/>
+  </data>
+  <data name="baggage_add_title" xml:space="preserve">
+    <value>Add Baggage</value>
     <comment/>
   </data>
   <data name="baggage_import_title" xml:space="preserve">
@@ -299,6 +303,202 @@
   </data>
   <data name="pararef_prompt_id" xml:space="preserve">
     <value>New ParameterRef ID</value>
+    <comment/>
+  </data>
+  <data name="dyn_copy_error" xml:space="preserve">
+    <value>You have to cut an item before.</value>
+    <comment/>
+  </data>
+  <data name="dyn_copy_error_title" xml:space="preserve">
+    <value>Paste item</value>
+    <comment/>
+  </data>
+  <data name="icon_delete_error" xml:space="preserve">
+    <value>The is is being referenced by {0} ParameterType(s).\r\nDelete it anyway?</value>
+    <comment>Count of Items</comment>
+  </data>
+  <data name="icon_delete_error_title" xml:space="preserve">
+    <value>Delete Icon</value>
+    <comment/>
+  </data>
+  <data name="icon_change_title" xml:space="preserve">
+    <value>Edit Icon</value>
+    <comment/>
+  </data>
+  <data name="icon_change_success" xml:space="preserve">
+    <value>Icon was successfully changed</value>
+    <comment/>
+  </data>
+  <data name="icon_change_filter" xml:space="preserve">
+    <value>Pictures</value>
+    <comment/>
+  </data>
+  <data name="icon_add_title" xml:space="preserve">
+    <value>Add Icon</value>
+    <comment/>
+  </data>
+  <data name="icon_import_title" xml:space="preserve">
+    <value>Import Icons</value>
+    <comment/>
+  </data>
+  <data name="icon_import_filter" xml:space="preserve">
+    <value>Icon File</value>
+    <comment/>
+  </data>
+  <data name="icon_import_prompt" xml:space="preserve">
+    <value>Delete existing icons?</value>
+    <comment/>
+  </data>
+  <data name="icon_export_title" xml:space="preserve">
+    <value>Export Icons</value>
+    <comment/>
+  </data>
+  <data name="icon_export_filter" xml:space="preserve">
+    <value>Icons File</value>
+    <comment/>
+  </data>
+  <data name="prodv_no_mod" xml:space="preserve">
+    <value>No Module</value>
+    <comment/>
+  </data>
+  <data name="checkv_not_used" xml:space="preserve">
+    <value>Following items are not in use:</value>
+    <comment/>
+  </data>
+  <data name="checkv_delete" xml:space="preserve">
+    <value>Delete all items until there are no unused items left?</value>
+    <comment/>
+  </data>
+  <data name="checkv_delete_title" xml:space="preserve">
+    <value>Clean with removing</value>
+    <comment/>
+  </data>
+  <data name="checkv_deleted" xml:space="preserve">
+    <value>Following items were removed:</value>
+    <comment/>
+  </data>
+  <data name="checkv_warnings" xml:space="preserve">
+    <value>Ignore warnings?</value>
+    <comment/>
+  </data>
+  <data name="checkv_warnings_title" xml:space="preserve">
+    <value>Check application version</value>
+    <comment/>
+  </data>
+  <data name="checkv_started" xml:space="preserve">
+    <value>Started check</value>
+    <comment/>
+  </data>
+  <data name="checkv_fin" xml:space="preserve">
+    <value>Finished check</value>
+    <comment/>
+  </data>
+  <data name="main_newets_title" xml:space="preserve">
+    <value>ETS Version</value>
+    <comment/>
+  </data>
+  <data name="main_newets_found" xml:space="preserve">
+    <value>A new ETS version was found. To use it run this application as admin once.</value>
+    <comment/>
+  </data>
+  <data name="main_newets_added" xml:space="preserve">
+    <value>New ETS version was added successfully.</value>
+    <comment/>
+  </data>
+  <data name="main_def_cat" xml:space="preserve">
+    <value>Main Category (will not be exported)</value>
+    <comment/>
+  </data>
+  <data name="main_empty_dpt" xml:space="preserve">
+    <value>Empty DatapointType (only for ComObjectRefs)</value>
+    <comment/>
+  </data>
+  <data name="main_add_hard_error" xml:space="preserve">
+    <value>Please select an application.</value>
+    <comment/>
+  </data>
+  <data name="main_add_hard_error_title" xml:space="preserve">
+    <value>Add Hardware failed</value>
+    <comment/>
+  </data>
+  <data name="main_open_viewer" xml:space="preserve">
+    <value>Warning! To use the Viewer all IDs will be checked or set. Continue?</value>
+    <comment/>
+  </data>
+  <data name="main_open_viewer_title" xml:space="preserve">
+    <value>Open ProdViewer</value>
+    <comment/>
+  </data>
+  <data name="main_open_viewer_error" xml:space="preserve">
+    <value>The application contains errors. Please fix them and try again.</value>
+    <comment/>
+  </data>
+  <data name="main_lang_select" xml:space="preserve">
+    <value>Please select a language.</value>
+    <comment/>
+  </data>
+  <data name="main_lang_add_error" xml:space="preserve">
+    <value>Language is already supported.</value>
+    <comment/>
+  </data>
+  <data name="main_project_save_title" xml:space="preserve">
+    <value>Save Project</value>
+    <comment/>
+  </data>
+  <data name="main_project_filter" xml:space="preserve">
+    <value>Kaenx Manufacturer Project</value>
+    <comment/>
+  </data>
+  <data name="main_save_template" xml:space="preserve">
+    <value>Name of the template:</value>
+    <comment/>
+  </data>
+  <data name="main_save_template_title" xml:space="preserve">
+    <value>New Template</value>
+    <comment/>
+  </data>
+  <data name="main_save_template_empty" xml:space="preserve">
+    <value>Please insert a name.</value>
+    <comment/>
+  </data>
+  <data name="main_save_template_duplicate" xml:space="preserve">
+    <value>There is already a template with name '{0}'. Overwrite it?</value>
+    <comment/>
+  </data>
+  <data name="main_project_open_title" xml:space="preserve">
+    <value>Open Project</value>
+    <comment/>
+  </data>
+  <data name="main_project_open_format" xml:space="preserve">
+    <value>Other Fileformat</value>
+    <comment/>
+  </data>
+  <data name="main_project_open_old" xml:space="preserve">
+    <value>The project was created with an older version. Wanna try to convert it?</value>
+    <comment/>
+  </data>
+  <data name="main_project_open_new" xml:space="preserve">
+    <value>The project was created with a newer version and can't be opened.</value>
+    <comment/>
+  </data>
+  <data name="main_project_open_error" xml:space="preserve">
+    <value>The project can't be read. Maybe it needs to be converted first.</value>
+    <comment/>
+  </data>
+  <data name="main_project_open_error2" xml:space="preserve">
+    <value>Due to the new fileformat the following hardware needs to readd apps:</value>
+    <comment/>
+  </data>
+  <data name="main_def_category" xml:space="preserve">
+    <value>New Category</value>
+    <comment/>
+  </data>
+  <data name="main_export_duplicate" xml:space="preserve">
+    <value>There is already a file called '{0}'. Overwrite it?</value>
+    <comment/>
+  </data>
+  <data name="main_export_title" xml:space="preserve">
+    <value>Export knxprod</value>
     <comment/>
   </data>
 </root>

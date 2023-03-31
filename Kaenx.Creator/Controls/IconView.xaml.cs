@@ -32,8 +32,8 @@ namespace Kaenx.Creator.Controls
         private void ClickAdd(object sender, System.Windows.RoutedEventArgs e)
         {
             OpenFileDialog diag = new OpenFileDialog();
-            diag.Title = "Baggage hinzufügen";
-            diag.Filter = "Bilder (PNG, JPG)|*.png;*.jpg";
+            diag.Title = Properties.Messages.icon_add_title;
+            diag.Filter = Properties.Messages.icon_change_filter + " (PNG, JPG)|*.png;*.jpg";
             if(diag.ShowDialog() == true)
             {
                 Icon icon = new Icon();
@@ -59,7 +59,7 @@ namespace Kaenx.Creator.Controls
 //TODO implement
             if(types.Count > 0)
             {
-                var result = MessageBox.Show("Der Anhang wird von " + types.Count + " ParameterTypes verwendet.\r\nTrotzdem löschen?", "Anhang löschen", MessageBoxButton.YesNo);
+                var result = MessageBox.Show(string.Format(Properties.Messages.icon_delete_error, types.Count), Properties.Messages.icon_delete_error_title, MessageBoxButton.YesNo);
                 if(result == MessageBoxResult.No) return;
             }
 
@@ -69,13 +69,13 @@ namespace Kaenx.Creator.Controls
         private void ClickChangeFile(object sender, System.Windows.RoutedEventArgs e)
         {
             OpenFileDialog diag = new OpenFileDialog();
-            diag.Title = "Icon ändern";
-            diag.Filter = "Bilder (PNG)|*.png";
+            diag.Title = Properties.Messages.icon_change_title;
+            diag.Filter = Properties.Messages.icon_change_filter + " (PNG)|*.png";
             if(diag.ShowDialog() == true)
             {
                 Icon icon = (sender as Button).DataContext as Icon;
                 icon.Data = System.IO.File.ReadAllBytes(diag.FileName);
-                System.Windows.MessageBox.Show("Datei wurde erfolgreich geändert.");
+                System.Windows.MessageBox.Show(Properties.Messages.icon_change_success, Properties.Messages.icon_change_title);
                 IconsList.SelectedItem = null;
                 IconsList.SelectedItem = icon;
             }
@@ -84,11 +84,11 @@ namespace Kaenx.Creator.Controls
         private void ClickImport(object sender, System.Windows.RoutedEventArgs e)
         {
             OpenFileDialog diag = new OpenFileDialog();
-            diag.Title = "Icons importieren";
-            diag.Filter = "Icon Datei (*.ae-icons)|*.ae-icons|ZIP Datei (*.zip)|*.zip";
+            diag.Title = Properties.Messages.icon_import_title;
+            diag.Filter = Properties.Messages.icon_import_filter + " (*.ae-icons)|*.ae-icons|ZIP Datei (*.zip)|*.zip";
             if(diag.ShowDialog() == true)
             {   
-                if(MessageBox.Show("Vorhandene Icons löschen?", "", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                if(MessageBox.Show(Properties.Messages.icon_import_prompt, "", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                     General.Icons.Clear();
 
                 if(diag.FileName.EndsWith(".ae-icons"))
@@ -129,8 +129,8 @@ namespace Kaenx.Creator.Controls
         {
             SaveFileDialog diag = new SaveFileDialog();
             diag.FileName = General.ProjectName + "_Icons";
-            diag.Title = "Icons exportieren";
-            diag.Filter = "Icons Datei (*.ae-icons)|*.ae-icons|ZIP Datei (*.zip)|*.zip";
+            diag.Title = Properties.Messages.icon_export_title;
+            diag.Filter = Properties.Messages.icon_export_filter + " (*.ae-icons)|*.ae-icons|ZIP Datei (*.zip)|*.zip";
             
             if(diag.ShowDialog() == true)
             {

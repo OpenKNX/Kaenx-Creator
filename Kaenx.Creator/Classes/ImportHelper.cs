@@ -30,7 +30,7 @@ namespace Kaenx.Creator.Classes
         private AppVersion currentVers = null;
         private AppVersionModel currentVersModel = null;
 
-        private Dictionary<string, string> _langTexts = new Dictionary<string, string>() {
+        public static Dictionary<string, string> _langTexts = new Dictionary<string, string>() {
             {"cs-CZ", "Tschechisch"},
             {"da-DK", "Dänisch"},
             {"de-DE", "Deutsch"},

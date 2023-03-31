@@ -114,7 +114,7 @@ namespace Kaenx.Creator.Controls
             }
             else
             {
-                throw new Exception("Unbekannter Typ zum ID löschen: " + sender.GetType().ToString());
+                throw new Exception("Unknown type to delete: " + sender.GetType().ToString());
             }
         }
 
@@ -385,7 +385,7 @@ namespace Kaenx.Creator.Controls
         {
             if(_copyItem == null)
             {
-                MessageBox.Show("Es wurde kein Element vorher ausgeschnitten", "Element einfügen", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Properties.Messages.dyn_copy_error, Properties.Messages.dyn_copy_error_title, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
             Models.Dynamic.IDynItems target = (sender as MenuItem).DataContext as Models.Dynamic.IDynItems;

@@ -234,9 +234,9 @@
                 <MenuItem Header="Please restart Application after changing language" IsEnabled="False" />
                 <Separator />
                 <MenuItem IsCheckable="True" Header="{x:Static p:Resources.menu_lang_default}" Tag="def" Click="ChangeLang" />
-                <MenuItem IsCheckable="True" Header="Deutsch" Tag="de" Click="ChangeLang" />
-                <MenuItem IsCheckable="True" Header="English" Tag="en" Click="ChangeLang" />
-                <MenuItem IsCheckable="True" Header="France" Tag="fr" Click="ChangeLang" />
+                <MenuItem IsCheckable="True" Header="Deutsch" Tag="de-DE" Click="ChangeLang" />
+                <MenuItem IsCheckable="True" Header="English" Tag="en-US" Click="ChangeLang" />
+                <MenuItem IsCheckable="True" Header="France" Tag="fr-FR" Click="ChangeLang" />
             </MenuItem>
             <MenuItem Header="{x:Static p:Resources.menu_info}">
                 <MenuItem Header="{x:Static p:Resources.menu_info_vers}" Click="ClickShowVersion" />

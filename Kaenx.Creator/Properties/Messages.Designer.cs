@@ -338,5 +338,299 @@ namespace Kaenx.Creator.Properties {
             }
         }
         
+        public static string dyn_copy_error {
+            get {
+                return ResourceManager.GetString("dyn_copy_error", resourceCulture);
+            }
+        }
+        
+        public static string dyn_copy_error_title {
+            get {
+                return ResourceManager.GetString("dyn_copy_error_title", resourceCulture);
+            }
+        }
+        
+        public static string icon_delete_error {
+            get {
+                return ResourceManager.GetString("icon_delete_error", resourceCulture);
+            }
+        }
+        
+        public static string icon_delete_error_title {
+            get {
+                return ResourceManager.GetString("icon_delete_error_title", resourceCulture);
+            }
+        }
+        
+        public static string icon_change_title {
+            get {
+                return ResourceManager.GetString("icon_change_title", resourceCulture);
+            }
+        }
+        
+        public static string icon_change_success {
+            get {
+                return ResourceManager.GetString("icon_change_success", resourceCulture);
+            }
+        }
+        
+        public static string icon_change_filter {
+            get {
+                return ResourceManager.GetString("icon_change_filter", resourceCulture);
+            }
+        }
+        
+        public static string icon_add_title {
+            get {
+                return ResourceManager.GetString("icon_add_title", resourceCulture);
+            }
+        }
+        
+        public static string icon_import_title {
+            get {
+                return ResourceManager.GetString("icon_import_title", resourceCulture);
+            }
+        }
+        
+        public static string icon_import_filter {
+            get {
+                return ResourceManager.GetString("icon_import_filter", resourceCulture);
+            }
+        }
+        
+        public static string icon_import_prompt {
+            get {
+                return ResourceManager.GetString("icon_import_prompt", resourceCulture);
+            }
+        }
+        
+        public static string icon_export_title {
+            get {
+                return ResourceManager.GetString("icon_export_title", resourceCulture);
+            }
+        }
+        
+        public static string icon_export_filter {
+            get {
+                return ResourceManager.GetString("icon_export_filter", resourceCulture);
+            }
+        }
+        
+        public static string prodv_no_mod {
+            get {
+                return ResourceManager.GetString("prodv_no_mod", resourceCulture);
+            }
+        }
+        
+        public static string checkv_not_used {
+            get {
+                return ResourceManager.GetString("checkv_not_used", resourceCulture);
+            }
+        }
+        
+        public static string checkv_delete {
+            get {
+                return ResourceManager.GetString("checkv_delete", resourceCulture);
+            }
+        }
+        
+        public static string checkv_delete_title {
+            get {
+                return ResourceManager.GetString("checkv_delete_title", resourceCulture);
+            }
+        }
+        
+        public static string checkv_deleted {
+            get {
+                return ResourceManager.GetString("checkv_deleted", resourceCulture);
+            }
+        }
+        
+        public static string checkv_warnings {
+            get {
+                return ResourceManager.GetString("checkv_warnings", resourceCulture);
+            }
+        }
+        
+        public static string checkv_warnings_title {
+            get {
+                return ResourceManager.GetString("checkv_warnings_title", resourceCulture);
+            }
+        }
+        
+        public static string checkv_started {
+            get {
+                return ResourceManager.GetString("checkv_started", resourceCulture);
+            }
+        }
+        
+        public static string checkv_fin {
+            get {
+                return ResourceManager.GetString("checkv_fin", resourceCulture);
+            }
+        }
+        
+        public static string main_newets_title {
+            get {
+                return ResourceManager.GetString("main_newets_title", resourceCulture);
+            }
+        }
+        
+        public static string main_newets_found {
+            get {
+                return ResourceManager.GetString("main_newets_found", resourceCulture);
+            }
+        }
+        
+        public static string main_newets_added {
+            get {
+                return ResourceManager.GetString("main_newets_added", resourceCulture);
+            }
+        }
+        
+        public static string main_def_cat {
+            get {
+                return ResourceManager.GetString("main_def_cat", resourceCulture);
+            }
+        }
+        
+        public static string main_empty_dpt {
+            get {
+                return ResourceManager.GetString("main_empty_dpt", resourceCulture);
+            }
+        }
+        
+        public static string main_add_hard_error {
+            get {
+                return ResourceManager.GetString("main_add_hard_error", resourceCulture);
+            }
+        }
+        
+        public static string main_add_hard_error_title {
+            get {
+                return ResourceManager.GetString("main_add_hard_error_title", resourceCulture);
+            }
+        }
+        
+        public static string main_open_viewer {
+            get {
+                return ResourceManager.GetString("main_open_viewer", resourceCulture);
+            }
+        }
+        
+        public static string main_open_viewer_title {
+            get {
+                return ResourceManager.GetString("main_open_viewer_title", resourceCulture);
+            }
+        }
+        
+        public static string main_open_viewer_error {
+            get {
+                return ResourceManager.GetString("main_open_viewer_error", resourceCulture);
+            }
+        }
+        
+        public static string main_lang_select {
+            get {
+                return ResourceManager.GetString("main_lang_select", resourceCulture);
+            }
+        }
+        
+        public static string main_lang_add_error {
+            get {
+                return ResourceManager.GetString("main_lang_add_error", resourceCulture);
+            }
+        }
+        
+        public static string main_project_save_title {
+            get {
+                return ResourceManager.GetString("main_project_save_title", resourceCulture);
+            }
+        }
+        
+        public static string main_project_filter {
+            get {
+                return ResourceManager.GetString("main_project_filter", resourceCulture);
+            }
+        }
+        
+        public static string main_save_template {
+            get {
+                return ResourceManager.GetString("main_save_template", resourceCulture);
+            }
+        }
+        
+        public static string main_save_template_title {
+            get {
+                return ResourceManager.GetString("main_save_template_title", resourceCulture);
+            }
+        }
+        
+        public static string main_save_template_empty {
+            get {
+                return ResourceManager.GetString("main_save_template_empty", resourceCulture);
+            }
+        }
+        
+        public static string main_save_template_duplicate {
+            get {
+                return ResourceManager.GetString("main_save_template_duplicate", resourceCulture);
+            }
+        }
+        
+        public static string main_project_open_title {
+            get {
+                return ResourceManager.GetString("main_project_open_title", resourceCulture);
+            }
+        }
+        
+        public static string main_project_open_format {
+            get {
+                return ResourceManager.GetString("main_project_open_format", resourceCulture);
+            }
+        }
+        
+        public static string main_project_open_old {
+            get {
+                return ResourceManager.GetString("main_project_open_old", resourceCulture);
+            }
+        }
+        
+        public static string main_project_open_new {
+            get {
+                return ResourceManager.GetString("main_project_open_new", resourceCulture);
+            }
+        }
+        
+        public static string main_project_open_error {
+            get {
+                return ResourceManager.GetString("main_project_open_error", resourceCulture);
+            }
+        }
+        
+        public static string main_project_open_error2 {
+            get {
+                return ResourceManager.GetString("main_project_open_error2", resourceCulture);
+            }
+        }
+        
+        public static string main_def_category {
+            get {
+                return ResourceManager.GetString("main_def_category", resourceCulture);
+            }
+        }
+        
+        public static string main_export_duplicate {
+            get {
+                return ResourceManager.GetString("main_export_duplicate", resourceCulture);
+            }
+        }
+        
+        public static string main_export_title {
+            get {
+                return ResourceManager.GetString("main_export_title", resourceCulture);
+            }
+        }
+        
     }
 }

@@ -188,7 +188,7 @@ namespace Kaenx.Creator
             try {
                 Directory.CreateDirectory(System.IO.Path.Combine(path, "CV", newVersion));
             } catch{
-                MessageBox.Show("Es wurde eine ETS installation erkannt. Um auch die aktuell Installierte Version bauen zu können, führen Sie die Anwendung einmalig als Admin aus.", "ETS Versionen", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(Properties.Messages.main_newets_found, Properties.Messages.main_newets_title, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return true;
             }
             File.Copy(System.IO.Path.Combine(path, "Knx.Ets.Xml.ObjectModel.dll"), System.IO.Path.Combine(path, "CV", newVersion, "Knx.Ets.Xml.ObjectModel.dll"));
@@ -196,7 +196,7 @@ namespace Kaenx.Creator
             File.Copy(System.IO.Path.Combine(path, "Knx.Ets.Xml.RegistrationRelevanceInformation.dll"), System.IO.Path.Combine(path, "CV", newVersion, "Knx.Ets.Xml.RegistrationRelevanceInformation.dll"));
             File.Copy(System.IO.Path.Combine(path, "Knx.Ets.XmlSigning.dll"), System.IO.Path.Combine(path, "CV", newVersion, "Knx.Ets.XmlSigning.dll"));
             File.Copy(System.IO.Path.Combine(path, "log4net.dll"), System.IO.Path.Combine(path, "CV", newVersion, "log4net.dll"));
-            MessageBox.Show("Es wurde eine neue ETS installation erkannt und hinzugefügt.", "ETS Versionen", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show(Properties.Messages.main_newets_added, Properties.Messages.main_newets_title, MessageBoxButton.OK, MessageBoxImage.Information);
             return true;
         }
 
@@ -257,8 +257,18 @@ namespace Kaenx.Creator
         private void ClickNew(object sender, RoutedEventArgs e)
         {
             General = new Models.ModelGeneral() { ImportVersion = VersionCurrent, Guid = Guid.NewGuid().ToString() };
-            General.Languages.Add(new Models.Language("Deutsch", "de-DE"));
-            General.Catalog.Add(new Models.CatalogItem() { Name = "Hauptkategorie (wird nicht exportiert)" });
+            var currentLang = System.Threading.Thread.CurrentThread.CurrentUICulture.IetfLanguageTag;
+            if(!ImportHelper._langTexts.ContainsKey(currentLang))
+                if(currentLang.Contains("-"))
+                    currentLang = currentLang.Split("-")[0];
+
+            if(!currentLang.Contains("-"))
+            {
+                currentLang = ImportHelper._langTexts.Keys.FirstOrDefault(l => l.Split("-")[0] == currentLang);
+                if(string.IsNullOrEmpty(currentLang)) currentLang = "en-US";
+            }
+            General.Languages.Add(new Models.Language(System.Threading.Thread.CurrentThread.CurrentUICulture.DisplayName, currentLang));
+            General.Catalog.Add(new Models.CatalogItem() { Name = Properties.Messages.main_def_cat });
             SetButtons(true);
             MenuSaveBtn.IsEnabled = false;
             SelectedVersion = null;
@@ -360,7 +370,7 @@ namespace Kaenx.Creator
                 IEnumerable<XElement> xdpts = xdoc.Descendants(XName.Get("DatapointType"));
                 
                 DPTs.Add(new Models.DataPointType() {
-                    Name = "Leeren Datentyp angeben (Nur bei ComRefs)",
+                    Name = Properties.Messages.main_empty_dpt,
                     Number = "0",
                     Size = 0
                 });
@@ -414,7 +424,7 @@ namespace Kaenx.Creator
         {
             if(InHardApp.SelectedItem == null)
             {
-                MessageBox.Show("Bitte wählen Sie erst eine Apllikation aus.", "Fehler beim Hinzufügen", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Properties.Messages.main_add_hard_error, Properties.Messages.main_add_hard_error_title, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
@@ -429,7 +439,17 @@ namespace Kaenx.Creator
         {
             Models.Application app = AppList.SelectedItem as Models.Application;
             Models.AppVersion newVer = new Models.AppVersion() { Name = app.Name };
-            Models.Language lang = new Models.Language("Deutsch", "de-DE");
+            var currentLang = System.Threading.Thread.CurrentThread.CurrentUICulture.IetfLanguageTag;
+            if(!ImportHelper._langTexts.ContainsKey(currentLang))
+                if(currentLang.Contains("-"))
+                    currentLang = currentLang.Split("-")[0];
+
+            if(!currentLang.Contains("-"))
+            {
+                currentLang = ImportHelper._langTexts.Keys.FirstOrDefault(l => l.Split("-")[0] == currentLang);
+                if(string.IsNullOrEmpty(currentLang)) currentLang = "en-US";
+            }
+            Models.Language lang = new Models.Language(System.Threading.Thread.CurrentThread.CurrentUICulture.DisplayName, currentLang);
             newVer.Languages.Add(lang);
             newVer.DefaultLanguage = lang.CultureCode;
             newVer.Text.Add(new Models.Translation(lang, "Dummy"));
@@ -538,7 +558,7 @@ namespace Kaenx.Creator
 
         private void ClickOpenViewer(object sender, RoutedEventArgs e)
         {
-            if(MessageBoxResult.Cancel == MessageBox.Show("Achtung, um den Viewer verwenden zu können, werden die IDs überprüft und ggf. neue vergeben.\r\n\r\nTrotzdem weiter machen?", "ProdViewer öffnen", MessageBoxButton.OKCancel, MessageBoxImage.Question)) return;
+            if(MessageBoxResult.Cancel == MessageBox.Show(Properties.Messages.main_open_viewer, Properties.Messages.main_open_viewer_title, MessageBoxButton.OKCancel, MessageBoxImage.Question)) return;
             Models.Application app = (Models.Application)AppList.SelectedItem;
             Models.AppVersionModel model = (sender as MenuItem).DataContext as Models.AppVersionModel;
             Models.AppVersion ver;
@@ -554,7 +574,7 @@ namespace Kaenx.Creator
             CheckHelper.CheckVersion(General, app, ver, null, actions);
             if(actions.Any(a => a.State == Models.PublishState.Fail))
             {
-                MessageBox.Show("Die Applikation enthält Fehler. Bitte korriegieren Sie diese und probieren es danach erneut.", "ProdViewer öffnen", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Properties.Messages.main_open_viewer_error, Properties.Messages.main_open_viewer_title, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
@@ -584,14 +604,14 @@ namespace Kaenx.Creator
         private void ClickAddLanguageVers(object sender, RoutedEventArgs e)
         {
             if(LanguagesListVers.SelectedItem == null){
-                MessageBox.Show("Bitte wählen Sie erst eine Sprache aus.");
+                MessageBox.Show(Properties.Messages.main_lang_select);
                 return;
             }
             Models.Language lang = LanguagesListVers.SelectedItem as Models.Language;
             LanguagesListVers.SelectedItem = null;
             
             if(SelectedVersion.Model.Languages.Any(l => l.CultureCode == lang.CultureCode))
-                MessageBox.Show("Die Sprache wird bereits unterstützt.");
+                MessageBox.Show(Properties.Messages.main_lang_add_error);
             else {
                 SelectedVersion.Model.Languages.Add(lang);
                 if(!SelectedVersion.Model.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
@@ -625,7 +645,7 @@ namespace Kaenx.Creator
 
         private void ClickRemoveLanguageVers(object sender, RoutedEventArgs e) {
             if(SupportedLanguagesVers.SelectedItem == null){
-                MessageBox.Show("Bitte wählen Sie erst oben eine Sprache aus.");
+                MessageBox.Show(Properties.Messages.main_lang_select);
                 return;
             }
             Models.Language lang = SupportedLanguagesVers.SelectedItem as Models.Language;
@@ -779,14 +799,14 @@ namespace Kaenx.Creator
         private void ClickAddLanguageGen(object sender, RoutedEventArgs e)
         {
             if(LanguagesListGen.SelectedItem == null){
-                MessageBox.Show("Bitte wählen Sie erst eine Sprache aus.");
+                MessageBox.Show(Properties.Messages.main_lang_select);
                 return;
             }
             Models.Language lang = LanguagesListGen.SelectedItem as Models.Language;
             LanguagesListGen.SelectedItem = null;
             
             if(_general.Languages.Any(l => l.CultureCode == lang.CultureCode))
-                MessageBox.Show("Die Sprache wird bereits unterstützt.");
+                MessageBox.Show(Properties.Messages.main_lang_add_error);
             else {
                 _general.Languages.Add(lang);
                 LanguageCatalogItemAdd(_general.Catalog[0], lang);
@@ -823,7 +843,7 @@ namespace Kaenx.Creator
 
         private void ClickRemoveLanguageGen(object sender, RoutedEventArgs e) {
             if(SupportedLanguagesGen.SelectedItem == null){
-                MessageBox.Show("Bitte wählen Sie erst links eine Sprache aus.");
+                MessageBox.Show(Properties.Messages.main_lang_select);
                 return;
             }
             Models.Language lang = SupportedLanguagesGen.SelectedItem as Models.Language;
@@ -903,8 +923,8 @@ namespace Kaenx.Creator
 
             SaveFileDialog diag = new SaveFileDialog();
             diag.FileName = General.ProjectName;
-            diag.Title = "Projekt speichern";
-            diag.Filter = "Kaenx Hersteller Projekt (*.ae-manu)|*.ae-manu";
+            diag.Title = Properties.Messages.main_project_save_title;
+            diag.Filter = Properties.Messages.main_project_filter + " (*.ae-manu)|*.ae-manu";
             
             if(diag.ShowDialog() == true)
             {
@@ -917,20 +937,20 @@ namespace Kaenx.Creator
         private void ClickSaveTemplate(object sender, RoutedEventArgs e)
         {
             while(true) {
-                Controls.PromptDialog diag = new Controls.PromptDialog("Name des Templates:", "Template speichern");
+                Controls.PromptDialog diag = new Controls.PromptDialog(Properties.Messages.main_save_template, Properties.Messages.main_save_template_title);
                 if(diag.ShowDialog() == false) {
                     return;
                 }
 
                 if(string.IsNullOrEmpty(diag.Answer))
                 {
-                    System.Windows.MessageBox.Show($"Bitte geben Sie einen Namen für das Template ein.", "Template speichern", System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Error);
+                    System.Windows.MessageBox.Show(Properties.Messages.main_save_template_empty, Properties.Messages.main_save_template_title, System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Error);
                     continue;
                 }
 
                 if(System.IO.File.Exists("Templates\\" + diag.Answer + ".temp"))
                 {
-                    var res = System.Windows.MessageBox.Show($"Es existiert bereits ein Template mit dem Namen '{diag.Answer}'\r\nWollen Sie es überschreiben?", "Template überschreiben?", System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Warning);
+                    var res = System.Windows.MessageBox.Show(string.Format(Properties.Messages.main_save_template_duplicate, diag.Answer), Properties.Messages.main_save_template_title, System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Warning);
                     if(res == System.Windows.MessageBoxResult.No)
                         continue;
                 }
@@ -954,8 +974,8 @@ namespace Kaenx.Creator
         private void ClickOpen(object sender, RoutedEventArgs e)
         {
             OpenFileDialog diag = new OpenFileDialog();
-            diag.Title = "Projekt öffnen";
-            diag.Filter = "Kaenx Hersteller Projekt (*.ae-manu)|*.ae-manu";
+            diag.Title = Properties.Messages.main_project_open_title;
+            diag.Filter = Properties.Messages.main_project_filter + " (*.ae-manu)|*.ae-manu";
             if(diag.ShowDialog() == true)
             {
                 DoOpen(diag.FileName);
@@ -979,20 +999,20 @@ namespace Kaenx.Creator
                 VersionToOpen = int.Parse(match.Groups[1].Value);
             }
 
-            if(VersionToOpen < VersionCurrent && MessageBox.Show("Diese Datei wurde mit einer älteren Version erstellt. Soll versucht werden die Datei zu konvertieren?", "Altes Dateiformat", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+            if(VersionToOpen < VersionCurrent && MessageBox.Show(Properties.Messages.main_project_open_old, Properties.Messages.main_project_open_format, MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
             {
                 general = CheckHelper.CheckImportVersion(general, VersionToOpen);
             }
             if(VersionToOpen > VersionCurrent)
             {
-                MessageBox.Show("Diese Datei wurde mit einer neueren Version erstellt und kann nicht geöffnet werden.", "Unbekanntes Dateiformat", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Properties.Messages.main_project_open_new, Properties.Messages.main_project_open_format, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
                 
             try{
                 General = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.ModelGeneral>(general, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
             } catch {
-                MessageBox.Show("Die Datei scheint nicht mit der aktuellen Version zusammen zu passen.\r\nEvtl. muss diese vorher konvertiert werden.");
+                MessageBox.Show(Properties.Messages.main_project_open_error, Properties.Messages.main_project_open_format, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
             SelectedVersion = null;
@@ -1018,7 +1038,7 @@ namespace Kaenx.Creator
                         try{
                             hard.Apps.Add(General.Applications.Single(app => app.Name == name));
                         } catch{
-                            MessageBox.Show("Aufgrund des geänderten Dateiformates können wir die Applikationen für folgende Hardware nicht mehr zuordnen:\r\n\r\n" + hard.Name);
+                            MessageBox.Show(Properties.Messages.main_project_open_error2 + "\r\n\r\n" + hard.Name);
                         }
                     } else {
                         int number = int.Parse(name);
@@ -1073,7 +1093,7 @@ namespace Kaenx.Creator
 
         private void ClickShowVersion(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show($"Sie verwenden aktuell die Version: {string.Join('.', System.Reflection.Assembly.GetEntryAssembly().GetName().Version.ToString().Split('.').Take(3))}", "Kaenx-Creator Version", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show(string.Format(Properties.Messages.update_uptodate, string.Join('.', System.Reflection.Assembly.GetEntryAssembly().GetName().Version.ToString().Split('.').Take(3))), Properties.Messages.update_title, MessageBoxButton.OK, MessageBoxImage.Information);
         }
         
         private void ClickDoResetParaIds(object sender, RoutedEventArgs e)
@@ -1118,7 +1138,7 @@ namespace Kaenx.Creator
         private void ClickCatalogContext(object sender, RoutedEventArgs e)
         {
             Models.CatalogItem parent = (sender as MenuItem).DataContext as Models.CatalogItem;
-            Models.CatalogItem item = new Models.CatalogItem() { Name = "Neue Kategorie", Parent = parent };
+            Models.CatalogItem item = new Models.CatalogItem() { Name = Properties.Messages.main_def_category, Parent = parent };
             foreach(Models.Language lang in _general.Languages) {
                 item.Text.Add(new Models.Translation(lang, ""));
             }
@@ -1221,7 +1241,7 @@ namespace Kaenx.Creator
 
             if(File.Exists(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Output", ExportInName.Text + ".knxprod")))
             {
-                if(MessageBoxResult.No == MessageBox.Show($"Es existiert bereits ein Export'{ExportInName.Text}.knxprod'.\r\nSoll dieser Überschrieben werden?", "Datei überschreiben", MessageBoxButton.YesNo, MessageBoxImage.Question))
+                if(MessageBoxResult.No == MessageBox.Show(string.Format(Properties.Messages.main_export_duplicate, ExportInName.Text), Properties.Messages.main_export_title, MessageBoxButton.YesNo, MessageBoxImage.Question))
                     return;
             }
 

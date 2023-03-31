@@ -102,7 +102,7 @@ namespace Kaenx.Creator.Controls
         
         private void ResetId(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException("Nicht implementiert");
+            throw new NotImplementedException("Not Implemented!");
             //((sender as Button).DataContext as Models.Message).Id = -1;
         }
 

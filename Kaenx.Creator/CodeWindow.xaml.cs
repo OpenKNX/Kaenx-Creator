@@ -55,7 +55,7 @@ namespace Kaenx.Creator
             this.Closed += Closing;
         }
 
-        private void Closing(object sender, EventArgs e)
+        new private void Closing(object sender, EventArgs e)
         {
             if(CodeNew == null)
                 CodeNew = CodeOld;
