@@ -198,7 +198,13 @@ namespace Kaenx.Creator.Properties {
             }
         }
         
-        public static string viewer_get_title {
+        public static string baggage_add_title {
+            get {
+                return ResourceManager.GetString("baggage_add_title", resourceCulture);
+            }
+        }
+
+         public static string viewer_get_title {
             get {
                 return ResourceManager.GetString("viewer_get_title", resourceCulture);
             }
@@ -629,6 +635,330 @@ namespace Kaenx.Creator.Properties {
         public static string main_export_title {
             get {
                 return ResourceManager.GetString("main_export_title", resourceCulture);
+            }
+        }
+        
+        public static string paratype_delete {
+            get {
+                return ResourceManager.GetString("paratype_delete", resourceCulture);
+            }
+        }
+        
+        public static string paratype_delete_title {
+            get {
+                return ResourceManager.GetString("paratype_delete_title", resourceCulture);
+            }
+        }
+        
+        public static string check_no_app {
+            get {
+                return ResourceManager.GetString("check_no_app", resourceCulture);
+            }
+        }
+        
+        public static string check_start {
+            get {
+                return ResourceManager.GetString("check_start", resourceCulture);
+            }
+        }
+        
+        public static string check_start_count {
+            get {
+                return ResourceManager.GetString("check_start_count", resourceCulture);
+            }
+        }
+        
+        public static string check_cat_sub {
+            get {
+                return ResourceManager.GetString("check_cat_sub", resourceCulture);
+            }
+        }
+        
+        public static string check_manu_id {
+            get {
+                return ResourceManager.GetString("check_manu_id", resourceCulture);
+            }
+        }
+        
+        public static string check_hard {
+            get {
+                return ResourceManager.GetString("check_hard", resourceCulture);
+            }
+        }
+        
+        public static string check_hard_duplicate_name {
+            get {
+                return ResourceManager.GetString("check_hard_duplicate_name", resourceCulture);
+            }
+        }
+        
+        public static string check_hard_duplicate_serial {
+            get {
+                return ResourceManager.GetString("check_hard_duplicate_serial", resourceCulture);
+            }
+        }
+        
+        public static string check_hard_no_devices {
+            get {
+                return ResourceManager.GetString("check_hard_no_devices", resourceCulture);
+            }
+        }
+        
+        public static string check_hard_no_apps {
+            get {
+                return ResourceManager.GetString("check_hard_no_apps", resourceCulture);
+            }
+        }
+        
+        public static string check_hard_apps {
+            get {
+                return ResourceManager.GetString("check_hard_apps", resourceCulture);
+            }
+        }
+        
+        public static string check_hard_no_physicaladdress {
+            get {
+                return ResourceManager.GetString("check_hard_no_physicaladdress", resourceCulture);
+            }
+        }
+        
+        public static string check_hard_no_app {
+            get {
+                return ResourceManager.GetString("check_hard_no_app", resourceCulture);
+            }
+        }
+        
+        public static string check_hard_no_app2 {
+            get {
+                return ResourceManager.GetString("check_hard_no_app2", resourceCulture);
+            }
+        }
+        
+        public static string check_app {
+            get {
+                return ResourceManager.GetString("check_app", resourceCulture);
+            }
+        }
+        
+        public static string check_app_duplicate_name {
+            get {
+                return ResourceManager.GetString("check_app_duplicate_name", resourceCulture);
+            }
+        }
+        
+        public static string check_app_duplicate_number {
+            get {
+                return ResourceManager.GetString("check_app_duplicate_number", resourceCulture);
+            }
+        }
+        
+        public static string check_app_duplicate_version {
+            get {
+                return ResourceManager.GetString("check_app_duplicate_version", resourceCulture);
+            }
+        }
+        
+        public static string check_app_openknx {
+            get {
+                return ResourceManager.GetString("check_app_openknx", resourceCulture);
+            }
+        }
+        
+        public static string check_baggage_no_target {
+            get {
+                return ResourceManager.GetString("check_baggage_no_target", resourceCulture);
+            }
+        }
+        
+        public static string check_ver {
+            get {
+                return ResourceManager.GetString("check_ver", resourceCulture);
+            }
+        }
+        
+        public static string check_end {
+            get {
+                return ResourceManager.GetString("check_end", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_mediumtypes {
+            get {
+                return ResourceManager.GetString("check_ver_mediumtypes", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_modules {
+            get {
+                return ResourceManager.GetString("check_ver_modules", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_messages {
+            get {
+                return ResourceManager.GetString("check_ver_messages", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_loadprod {
+            get {
+                return ResourceManager.GetString("check_ver_loadprod", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_helptext {
+            get {
+                return ResourceManager.GetString("check_ver_helptext", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_loadprod_size {
+            get {
+                return ResourceManager.GetString("check_ver_loadprod_size", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_parat_checkbox {
+            get {
+                return ResourceManager.GetString("check_ver_parat_checkbox", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_parat_text {
+            get {
+                return ResourceManager.GetString("check_ver_parat_text", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_parat_enum {
+            get {
+                return ResourceManager.GetString("check_ver_parat_enum", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_parat_enum2 {
+            get {
+                return ResourceManager.GetString("check_ver_parat_enum2", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_parat_enum_translation {
+            get {
+                return ResourceManager.GetString("check_ver_parat_enum_translation", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_parat_enum_icon {
+            get {
+                return ResourceManager.GetString("check_ver_parat_enum_icon", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_parat_int_progbar {
+            get {
+                return ResourceManager.GetString("check_ver_parat_int_progbar", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_parat_int_max {
+            get {
+                return ResourceManager.GetString("check_ver_parat_int_max", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_parat_int_min {
+            get {
+                return ResourceManager.GetString("check_ver_parat_int_min", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_parat_int_offset {
+            get {
+                return ResourceManager.GetString("check_ver_parat_int_offset", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_parat_int_factor {
+            get {
+                return ResourceManager.GetString("check_ver_parat_int_factor", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_parat_uint_min2 {
+            get {
+                return ResourceManager.GetString("check_ver_parat_uint_min2", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_parat_int_minmax {
+            get {
+                return ResourceManager.GetString("check_ver_parat_int_minmax", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_parat_int_max2 {
+            get {
+                return ResourceManager.GetString("check_ver_parat_int_max2", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_parat_int_min2 {
+            get {
+                return ResourceManager.GetString("check_ver_parat_int_min2", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_parat_float {
+            get {
+                return ResourceManager.GetString("check_ver_parat_float", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_parat_picture {
+            get {
+                return ResourceManager.GetString("check_ver_parat_picture", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_parat_none {
+            get {
+                return ResourceManager.GetString("check_ver_parat_none", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_parat_color1 {
+            get {
+                return ResourceManager.GetString("check_ver_parat_color1", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_parat_color2 {
+            get {
+                return ResourceManager.GetString("check_ver_parat_color2", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_parat_ip1 {
+            get {
+                return ResourceManager.GetString("check_ver_parat_ip1", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_parat_ip2 {
+            get {
+                return ResourceManager.GetString("check_ver_parat_ip2", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_parat_date {
+            get {
+                return ResourceManager.GetString("check_ver_parat_date", resourceCulture);
+            }
+        }
+        
+        public static string check_ {
+            get {
+                return ResourceManager.GetString("check_", resourceCulture);
             }
         }
         

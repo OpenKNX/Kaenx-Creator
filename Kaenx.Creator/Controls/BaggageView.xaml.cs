@@ -29,8 +29,8 @@ namespace Kaenx.Creator.Controls
         private void ClickAdd(object sender, System.Windows.RoutedEventArgs e)
         {
             OpenFileDialog diag = new OpenFileDialog();
-            diag.Title = "Baggage hinzufügen";
-            diag.Filter = "Bilder (PNG, JPG)|*.png;*.jpg";
+            diag.Title = Properties.Messages.baggage_add_title;
+            diag.Filter = Properties.Messages.baggage_change_filter + " (PNG, JPG)|*.png;*.jpg";
             if(diag.ShowDialog() == true)
             {
                 Baggage bag = new Baggage();

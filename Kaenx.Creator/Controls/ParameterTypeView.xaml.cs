@@ -97,7 +97,7 @@ namespace Kaenx.Creator.Controls
 
             if(CheckType(type))
             {
-                if(MessageBoxResult.No == MessageBox.Show("Dieser ParameterType wird von mindestens einem Parameter verwendet. Wirklich löschen?", "ParameterType löschen", MessageBoxButton.YesNo, MessageBoxImage.Warning))
+                if(MessageBoxResult.No == MessageBox.Show(Properties.Messages.paratype_delete, Properties.Messages.paratype_delete_title, MessageBoxButton.YesNo, MessageBoxImage.Warning))
                     return;
 
                 RemoveType(type);

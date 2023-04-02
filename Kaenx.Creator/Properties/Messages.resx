@@ -501,4 +501,216 @@
     <value>Export knxprod</value>
     <comment/>
   </data>
+  <data name="paratype_delete" xml:space="preserve">
+    <value>This ParameterType is used by a Parameter at least one. Continue?</value>
+    <comment/>
+  </data>
+  <data name="paratype_delete_title" xml:space="preserve">
+    <value>Delete ParameterType</value>
+    <comment/>
+  </data>
+  <data name="check_no_app" xml:space="preserve">
+    <value>No Application was selected</value>
+    <comment/>
+  </data>
+  <data name="check_start" xml:space="preserve">
+    <value>Starting check</value>
+    <comment/>
+  </data>
+  <data name="check_start_count" xml:space="preserve">
+    <value>{0} Devices - {1} Hardware - {2} Applications - {3} Versions</value>
+    <comment/>
+  </data>
+  <data name="check_cat_sub" xml:space="preserve">
+    <value>Catalog has to have one subcategory</value>
+    <comment/>
+  </data>
+  <data name="check_manu_id" xml:space="preserve">
+    <value>Invalid ManufacturerId: {0}</value>
+    <comment/>
+  </data>
+  <data name="check_hard" xml:space="preserve">
+    <value>Checking Hardware</value>
+    <comment/>
+  </data>
+  <data name="check_hard_duplicate_name" xml:space="preserve">
+    <value>Hardwarename '{0}' is used by {1} hardware</value>
+    <comment>Name; Count</comment>
+  </data>
+  <data name="check_hard_duplicate_serial" xml:space="preserve">
+    <value>Hardwareserial '{0}' is used by {1} hardware</value>
+    <comment>Serial; Count</comment>
+  </data>
+  <data name="check_hard_no_devices" xml:space="preserve">
+    <value>Hardware '{0}' has no devices</value>
+    <comment>Name;</comment>
+  </data>
+  <data name="check_hard_no_apps" xml:space="preserve">
+    <value>Hardware '{0}' has no apps</value>
+    <comment>Name;</comment>
+  </data>
+  <data name="check_hard_apps" xml:space="preserve">
+    <value>Hardware '{0}' has apps but option HasApplicationprogram was not checked</value>
+    <comment>Name;</comment>
+  </data>
+  <data name="check_hard_no_physicaladdress" xml:space="preserve">
+    <value>Hardware '{0}' has option HasIndividualAddress not checked</value>
+    <comment>Name;</comment>
+  </data>
+  <data name="check_hard_no_app" xml:space="preserve">
+    <value>Hardware '{0}' has option HasApplicationprogram not checked</value>
+    <comment>Name;</comment>
+  </data>
+  <data name="check_hard_no_app2" xml:space="preserve">
+    <value>Hardware '{0}' has option HasApplicationprogram2 checked but not HasApplicationprogram</value>
+    <comment>Name;</comment>
+  </data>
+  <data name="check_app" xml:space="preserve">
+    <value>Checking Applications</value>
+    <comment/>
+  </data>
+  <data name="check_app_duplicate_name" xml:space="preserve">
+    <value>Applicationname '{0}' is used by {1} applications</value>
+    <comment>Name; Count</comment>
+  </data>
+  <data name="check_app_duplicate_number" xml:space="preserve">
+    <value>Applicationnumber '{0}' is used by {1} applications</value>
+    <comment>Name; Count</comment>
+  </data>
+  <data name="check_app_duplicate_version" xml:space="preserve">
+    <value>Application '{0}' uses version {1}.{2} {3] times</value>
+    <comment>Name; Version High; Version Low</comment>
+  </data>
+  <data name="check_app_openknx" xml:space="preserve">
+    <value>Application '{0}' is an OpenKnx project. Its number can't be greater than FF</value>
+    <comment>Name; Id</comment>
+  </data>
+  <data name="check_baggage_no_target" xml:space="preserve">
+    <value>Baggage '{0}' has no target</value>
+    <comment>Name;</comment>
+  </data>
+  <data name="check_ver" xml:space="preserve">
+    <value>ParameterType IpAddress {0} {(1}): No IP Protocol selected</value>
+    <comment/>
+  </data>
+  <data name="check_end" xml:space="preserve">
+    <value>Finished Check</value>
+    <comment/>
+  </data>
+  <data name="check_ver_mediumtypes" xml:space="preserve">
+    <value>MediumTypes are not set. Delete Data/maskversion.jso and restart application</value>
+    <comment/>
+  </data>
+  <data name="check_ver_modules" xml:space="preserve">
+    <value>ModuleDefines are supported in Namespace 20 or later</value>
+    <comment/>
+  </data>
+  <data name="check_ver_messages" xml:space="preserve">
+    <value>Messages are supported in Namespace 14 or later</value>
+    <comment/>
+  </data>
+  <data name="check_ver_loadprod" xml:space="preserve">
+    <value>Version has to have a loadprocedure</value>
+    <comment/>
+  </data>
+  <data name="check_ver_helptext" xml:space="preserve">
+    <value>Helptexts are supported in Namespace 14 or later</value>
+    <comment/>
+  </data>
+  <data name="check_ver_loadprod_size" xml:space="preserve">
+    <value>Loadprocedure {0}: Memory size does not match</value>
+    <comment/>
+  </data>
+  <data name="check_ver_parat_checkbox" xml:space="preserve">
+    <value>ParameterType Number {0} ({1}): If UIHint is Checkbox minimum has to be 0 and maximum 1</value>
+    <comment/>
+  </data>
+  <data name="check_ver_parat_text" xml:space="preserve">
+    <value>ParameterType Text {0} ({1}): Size {2} is not a multiple of 8</value>
+    <comment/>
+  </data>
+  <data name="check_ver_parat_enum" xml:space="preserve">
+    <value>ParameterType Enum {0} ({1}): Value {2} is used more than once</value>
+    <comment/>
+  </data>
+  <data name="check_ver_parat_enum2" xml:space="preserve">
+    <value>ParameterType Enum {0} ({1}): Value {2} is greater than the maximum {3}</value>
+    <comment/>
+  </data>
+  <data name="check_ver_parat_enum_translation" xml:space="preserve">
+    <value>ParameterType Enum {0}/{1} ({2}): Is not translated in {3}</value>
+    <comment/>
+  </data>
+  <data name="check_ver_parat_enum_icon" xml:space="preserve">
+    <value>ParameterType Enum {0}/{1} ({2}): No icon selected</value>
+    <comment/>
+  </data>
+  <data name="check_ver_parat_int_progbar" xml:space="preserve">
+    <value>ParameterType {0} {1} ({2}): Progressbar is supported in Namespace 20 or later</value>
+    <comment>UInt/Int; Name; UId</comment>
+  </data>
+  <data name="check_ver_parat_int_max" xml:space="preserve">
+    <value>ParameterType {0} {1} ({2}): Maximum is no integer</value>
+    <comment/>
+  </data>
+  <data name="check_ver_parat_int_min" xml:space="preserve">
+    <value>ParameterType {0} {1} ({2}): Minimum is no integer</value>
+    <comment>UInt/Int; Name; UId</comment>
+  </data>
+  <data name="check_ver_parat_int_offset" xml:space="preserve">
+    <value>ParameterType {0} {1} ({2}): Display Offset is no integer</value>
+    <comment>UInt/Int; Name; UId</comment>
+  </data>
+  <data name="check_ver_parat_int_factor" xml:space="preserve">
+    <value>ParameterType {0} {1} ({2}): Display Factor is no integer</value>
+    <comment>UInt/Int; Name; UId</comment>
+  </data>
+  <data name="check_ver_parat_uint_min2" xml:space="preserve">
+    <value>ParameterType UInt {0} ({1}): Min can't be smaller than 0</value>
+    <comment>UInt/Int; Name; UId</comment>
+  </data>
+  <data name="check_ver_parat_int_minmax" xml:space="preserve">
+    <value>ParameterType {0} {1} ({2}): Min is greater than max</value>
+    <comment>UInt/Int; Name; UId</comment>
+  </data>
+  <data name="check_ver_parat_int_max2" xml:space="preserve">
+    <value>ParameterType {0} {1} ({2}): Max can't be greather than {3}</value>
+    <comment>UInt/Int; Name; UId; Max Value</comment>
+  </data>
+  <data name="check_ver_parat_int_min2" xml:space="preserve">
+    <value>ParameterType Int {0} ({1}): Minimum can't be smaller than {2}</value>
+    <comment>UInt/Int; Name; UId; Min Value</comment>
+  </data>
+  <data name="check_ver_parat_float" xml:space="preserve">
+    <value>ParameterType Float {0} ({1}): There is no check yet</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_parat_picture" xml:space="preserve">
+    <value>ParameterType Picture {0} ({1}): No Baggage selected</value>
+    <comment/>
+  </data>
+  <data name="check_ver_parat_none" xml:space="preserve">
+    <value>ParameterType None {0} ({1}): Supported in ETS3. Activate option IsPreETS4</value>
+    <comment/>
+  </data>
+  <data name="check_ver_parat_color1" xml:space="preserve">
+    <value>ParameterType Color {0} ({1}): Not supported colorspectrum {2}</value>
+    <comment/>
+  </data>
+  <data name="check_ver_parat_color2" xml:space="preserve">
+    <value>ParameterType Color {0} ({1}): RGBW is supported in Namespace 20 or later</value>
+    <comment/>
+  </data>
+  <data name="check_ver_parat_ip1" xml:space="preserve">
+    <value>ParameterType IpAddress {0} {(1}): No AddressType selected</value>
+    <comment/>
+  </data>
+  <data name="check_ver_parat_ip2" xml:space="preserve">
+    <value>ParameterType IpAddress {0} {(1}): No IP Protocol selected</value>
+    <comment/>
+  </data>
+  <data name="check_ver_parat_date" xml:space="preserve">
+    <value>ParameterType Date {0} ({1}): No encoding selected</value>
+    <comment/>
+  </data>
 </root>

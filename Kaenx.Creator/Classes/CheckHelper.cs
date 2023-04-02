@@ -32,36 +32,36 @@ namespace Kaenx.Creator.Classes {
                                     ObservableCollection<PublishAction> actions, bool showOnlyErrors = false)
         {
             if(apps.Count == 0) {
-                actions.Add(new PublishAction() { Text = $"Es wurden keine Applikationen ausgewählt.", State = PublishState.Fail });
+                actions.Add(new PublishAction() { Text = Properties.Messages.check_no_app, State = PublishState.Fail });
                 return;
             }
 
-            actions.Add(new PublishAction() { Text = "Starte Check" });
-            actions.Add(new PublishAction() { Text = $"{devices?.Count} Geräte - {hardware?.Count} Hardware - {apps.Count} Applikationen - {versions.Count} Versionen" });
+            actions.Add(new PublishAction() { Text = Properties.Messages.check_start });
+            actions.Add(new PublishAction() { Text = string.Format(Properties.Messages.check_start_count, devices?.Count, hardware?.Count, apps.Count, versions.Count) });
 
             if(General != null)
             {
                 if(General.Catalog[0].Items.Any(c => !c.IsSection ))
-                    actions.Add(new PublishAction() { Text = "Katalog muss mindestens eine Unterkategorie haben.", State = PublishState.Fail });
+                    actions.Add(new PublishAction() { Text = Properties.Messages.check_cat_sub, State = PublishState.Fail });
 
                 foreach(CatalogItem citem in General.Catalog[0].Items)
                     CheckCatalogItem(citem, actions);
 
                 if(General.ManufacturerId <= 0 || General.ManufacturerId > 0xFFFF)
-                    actions.Add(new PublishAction() { Text = $"Ungültige HerstellerId angegeben: {General.ManufacturerId:X4}", State = PublishState.Fail });
+                    actions.Add(new PublishAction() { Text = string.Format(Properties.Messages.check_manu_id, General.ManufacturerId.ToString("X4")), State = PublishState.Fail });
 
 
                 #region Hardware Check
-                actions.Add(new PublishAction() { Text = "Überprüfe Hardware" });
+                actions.Add(new PublishAction() { Text = Properties.Messages.check_hard });
                 List<string> serials = new List<string>();
 
                 var check1 = General.Hardware.GroupBy(h => h.Name).Where(h => h.Count() > 1);
                 foreach(var group in check1)
-                    actions.Add(new PublishAction() { Text = "Hardwarename '" + group.Key + "' wird von " + group.Count() + " Hardware verwendet", State = PublishState.Fail });
+                    actions.Add(new PublishAction() { Text = string.Format(Properties.Messages.check_hard_duplicate_name, group.Key, group.Count()), State = PublishState.Fail });
 
                 check1 = General.Hardware.GroupBy(h => h.SerialNumber).Where(h => h.Count() > 1);
                 foreach (var group in check1)
-                    actions.Add(new PublishAction() { Text = "Hardwareserial '" + group.Key + "' wird von " + group.Count() + " Hardware verwendet", State = PublishState.Fail });
+                    actions.Add(new PublishAction() { Text = string.Format(Properties.Messages.check_hard_duplicate_serial, group.Key, group.Count()), State = PublishState.Fail });
 
                 IEnumerable<Hardware> check2;
                 if(!showOnlyErrors)
@@ -69,51 +69,51 @@ namespace Kaenx.Creator.Classes {
                     check1 = null;
                     check2 = General.Hardware.Where(h => h.Devices.Count == 0);
                     foreach (var group in check2)
-                        actions.Add(new PublishAction() { Text = "Hardware '" + group.Name + "' hat keine Geräte zugeordnet", State = PublishState.Warning });
+                        actions.Add(new PublishAction() { Text = string.Format(Properties.Messages.check_hard_no_devices, group.Name), State = PublishState.Warning });
 
                     check2 = General.Hardware.Where(h => h.HasApplicationProgram && h.Apps.Count == 0);
                     foreach (var group in check2)
-                        actions.Add(new PublishAction() { Text = "Hardware '" + group.Name + "' hat keine Applikation zugeordnet", State = PublishState.Warning });
+                        actions.Add(new PublishAction() { Text = string.Format(Properties.Messages.check_hard_no_apps, group.Name), State = PublishState.Warning });
 
                     check2 = General.Hardware.Where(h => !h.HasApplicationProgram && h.Apps.Count != 0);
                     foreach (var group in check2)
-                        actions.Add(new PublishAction() { Text = "Hardware '" + group.Name + "' hat Applikation zugeordnet obwohl angegeben ist, dass keine benötigt wird", State = PublishState.Warning });
+                        actions.Add(new PublishAction() { Text = string.Format(Properties.Messages.check_hard_apps, group.Name), State = PublishState.Warning });
                 }
                 foreach(Hardware hard in hardware)
                 {
                     if(!hard.HasIndividualAddress)
-                        actions.Add(new PublishAction() { Text = "Hardware '" + hard.Name + "' wurde angegebn 'kein Individuelle Adresse'", State = PublishState.Fail });
+                        actions.Add(new PublishAction() { Text = string.Format(Properties.Messages.check_hard_no_physicaladdress, hard.Name), State = PublishState.Fail });
                     if(!hard.HasApplicationProgram)
-                        actions.Add(new PublishAction() { Text = "Hardware '" + hard.Name + "' wurde angegebn 'kein Applikationsprogramm'", State = PublishState.Fail });
+                        actions.Add(new PublishAction() { Text = string.Format(Properties.Messages.check_hard_no_app, hard.Name), State = PublishState.Fail });
                     if(!hard.HasApplicationProgram && hard.HasApplicationProgram2)
-                        actions.Add(new PublishAction() { Text = "Hardware '" + hard.Name + "' wurde angegebn 'Applikationsprogramm2', hat aber nicht 'Applikationsprogramm'", State = PublishState.Fail });
+                        actions.Add(new PublishAction() { Text = string.Format(Properties.Messages.check_hard_no_app2, hard.Name), State = PublishState.Fail });
                 }
                 #endregion
 
 
                 #region Applikation Check
-                actions.Add(new PublishAction() { Text = "Überprüfe Applikationen" });
+                actions.Add(new PublishAction() { Text = Properties.Messages.check_app });
 
                 var check3 = General.Applications.GroupBy(h => h.Name).Where(h => h.Count() > 1);
                 foreach (var group in check3)
-                    actions.Add(new PublishAction() { Text = "Applikationsname '" + group.Key + "' wird von " + group.Count() + " Applikationen verwendet", State = PublishState.Fail });
+                    actions.Add(new PublishAction() { Text = string.Format(Properties.Messages.check_app_duplicate_name, group.Key, group.Count()), State = PublishState.Fail });
 
                 check3 = null;
                 var check4 = General.Applications.GroupBy(h => h.Number).Where(h => h.Count() > 1);
                 foreach (var group in check4)
-                    actions.Add(new PublishAction() { Text = "Applikations Nummer " + group.Key + " (" + group.Key.ToString("X4") + ") wird von " + group.Count() + " Applikationen verwendet", State = PublishState.Fail });
+                    actions.Add(new PublishAction() { Text = string.Format(Properties.Messages.check_app_duplicate_number, group.Key.ToString("X4"), group.Count()), State = PublishState.Fail });
 
                 check4 = null;
                 foreach(Application app in General.Applications)
                 {
                     var check5 = app.Versions.GroupBy(v => v.Number).Where(l => l.Count() > 1);
                     foreach (var group in check5)
-                        actions.Add(new PublishAction() { Text = "Applikation '" + app.NameText + "' verwendet Version " + group.Key + " (" + Math.Floor(group.Key / 16.0) + "." + (group.Key % 16) + ") " + group.Count() + " mal", State = PublishState.Fail });
+                        actions.Add(new PublishAction() { Text = string.Format(Properties.Messages.check_app_duplicate_version, app.NameText, Math.Floor(group.Key / 16.0), group.Key % 16, group.Count()), State = PublishState.Fail });
                 
                     if(General.IsOpenKnx)
                     {
                         if(app.Number > 0xFF)
-                            actions.Add(new PublishAction() { Text = "Applikation '" + app.NameText + "' ist ein OpenKNX Projekt. Nummer darf somit nicht größer als FF sein", State = PublishState.Fail });
+                            actions.Add(new PublishAction() { Text = string.Format(Properties.Messages.check_app_openknx, app.NameText), State = PublishState.Fail });
                     }
                 }
                 #endregion
@@ -125,7 +125,7 @@ namespace Kaenx.Creator.Classes {
                     if(General.IsOpenKnx)
                     {
                         if(bag.TargetPath != "root" && bag.TargetPath != "openknxid" && bag.TargetPath != "openknxapp")
-                            actions.Add(new PublishAction() { Text = "Anhang '" + bag.Name + "' hat keinen Zielordner", State = PublishState.Fail });
+                            actions.Add(new PublishAction() { Text = string.Format(Properties.Messages.check_baggage_no_target, bag.Name), State = PublishState.Fail });
                     }
                 }
 
@@ -138,11 +138,11 @@ namespace Kaenx.Creator.Classes {
             {
                 AppVersion version = model.Model != null ? model.Model : AutoHelper.GetAppVersion(General, model);
                 Application app = apps.Single(a => a.Versions.Any(v => v.Name == version.Name && v.Number == version.Number));
-                actions.Add(new PublishAction() { Text = $"Prüfe Applikation '{app.NameText}' Version '{version.NameText}'" });
+                actions.Add(new PublishAction() { Text = string.Format(Properties.Messages.check_ver, app.NameText, version.NameText) });
                 CheckVersion(General, app, version, devices, actions, showOnlyErrors);
             }
             
-            actions.Add(new PublishAction() { Text = "Ende Check" });
+            actions.Add(new PublishAction() { Text = Properties.Messages.check_end });
         }
 
 
@@ -156,20 +156,20 @@ namespace Kaenx.Creator.Classes {
         {
             if(string.IsNullOrEmpty(app.Mask.MediumTypes))
             {
-                actions.Add(new PublishAction() { Text = $"MediumTypes nicht gesetzt. Löschen Sie Data/maskversion.json und starten Sie die Anwendung neu.", State = PublishState.Fail });
+                actions.Add(new PublishAction() { Text = Properties.Messages.check_ver_mediumtypes, State = PublishState.Fail });
             }
             
             if(vers.IsModulesActive && vers.NamespaceVersion < 20)
-                actions.Add(new PublishAction() { Text = $"ModuleDefines werden erst ab Namespace 20 unterstützt.", State = PublishState.Fail });
+                actions.Add(new PublishAction() { Text = Properties.Messages.check_ver_modules, State = PublishState.Fail });
 
             if(vers.IsMessagesActive && vers.NamespaceVersion < 14)
-                actions.Add(new PublishAction() { Text = $"Messages werden erst ab Namespace 14 unterstützt.", State = PublishState.Fail });
+                actions.Add(new PublishAction() { Text = Properties.Messages.check_ver_messages, State = PublishState.Fail });
 
             if(app.Mask.Procedure != ProcedureTypes.Default && string.IsNullOrEmpty(vers.Procedure))
-                actions.Add(new PublishAction() { Text = $"Version muss eine Ladeprozedur enthalten.", State = PublishState.Fail });
+                actions.Add(new PublishAction() { Text = Properties.Messages.check_ver_loadprod, State = PublishState.Fail });
 
             if(vers.IsHelpActive && vers.NamespaceVersion < 14)
-                actions.Add(new PublishAction() { Text = $"Hilfstexte werden erst ab Namespace Version 14 unterstützt", State = PublishState.Fail });
+                actions.Add(new PublishAction() { Text = Properties.Messages.check_ver_helptext, State = PublishState.Fail });
             if(vers.Memories.Count > 0 && !vers.Memories[0].IsAutoLoad)
             {
                 XElement xtemp = XElement.Parse(vers.Procedure);
@@ -181,7 +181,7 @@ namespace Kaenx.Creator.Classes {
                         {
                             int memsize = int.Parse(xele.Attribute("Size")?.Value ?? "0");
                             if(memsize != vers.Memories[0].Size)
-                                actions.Add(new PublishAction() { Text = $"Ladeprozedur {xele.Name.LocalName}: Speichergröße stimmt nicht überein", State = PublishState.Warning });
+                                actions.Add(new PublishAction() { Text = string.Format(Properties.Messages.check_ver_loadprod_size, xele.Name.LocalName), State = PublishState.Warning });
                         }
                     }
                     if(xele.Name.LocalName == "LdCtrlWriteRelMem")
@@ -190,7 +190,7 @@ namespace Kaenx.Creator.Classes {
                         {
                             int memsize = int.Parse(xele.Attribute("Size")?.Value ?? "0");
                             if(memsize != vers.Memories[0].Size)
-                                actions.Add(new PublishAction() { Text = $"Ladeprozedur {xele.Name.LocalName}: Speichergröße stimmt nicht überein", State = PublishState.Warning });
+                                actions.Add(new PublishAction() { Text = string.Format(Properties.Messages.check_ver_loadprod_size, xele.Name.LocalName), State = PublishState.Warning });
                         }
                     }
                 }
@@ -200,18 +200,18 @@ namespace Kaenx.Creator.Classes {
                 long maxsize = (long)Math.Pow(2, ptype.SizeInBit);
     
                 if(ptype.UIHint == "CheckBox" && (ptype.Min != "0" || ptype.Max != "1"))
-                    actions.Add(new PublishAction() { Text = $"    ParameterType Text {ptype.Name} ({ptype.UId}): Wenn UIHint Checkbox ist, ist Min=0 und Max=1 erforderlich", State = PublishState.Fail, Item = ptype });
+                    actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_checkbox, ptype.Name, ptype.UId), State = PublishState.Fail, Item = ptype });
                         
                 switch(ptype.Type) {
                     case ParameterTypes.Text:
                         if(ptype.SizeInBit % 8 != 0)
-                            actions.Add(new PublishAction() { Text = $"    ParameterType Text {ptype.Name} ({ptype.UId}): ist kein vielfaches von 8", State = PublishState.Fail, Item = ptype });
+                            actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_text, ptype.Name, ptype.UId, ptype.SizeInBit), State = PublishState.Fail, Item = ptype });
                         break;
 
                     case ParameterTypes.Enum:
                         var x = ptype.Enums.GroupBy(e => e.Value);
                         foreach(var group in x.Where(g => g.Count() > 1))
-                            actions.Add(new PublishAction() { Text = $"    ParameterType Enum {ptype.Name} ({ptype.UId}): Wert ({group.Key}) wird öfters verwendet", State = PublishState.Fail, Item = ptype });
+                            actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_enum, ptype.Name, ptype.UId, group.Key), State = PublishState.Fail, Item = ptype });
                         
                         if(!ptype.IsSizeManual)
                         {
@@ -226,21 +226,21 @@ namespace Kaenx.Creator.Classes {
 
                         foreach(ParameterTypeEnum penum in ptype.Enums){
                             if(penum.Value >= maxsize)
-                                actions.Add(new PublishAction() { Text = $"    ParameterType Enum {ptype.Name} ({ptype.UId}): Wert ({penum.Value}) ist größer als maximaler Wert ({maxsize-1})", State = PublishState.Fail, Item = ptype });
+                                actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_enum2, ptype.Name, ptype.UId, penum.Value, maxsize-1), State = PublishState.Fail, Item = ptype });
 
                             if(!penum.Translate) {
                                 Translation trans = penum.Text.Single(t => t.Language.CultureCode == vers.DefaultLanguage);
                                 if(string.IsNullOrEmpty(trans.Text))
-                                    actions.Add(new PublishAction() { Text = $"    ParameterType Enum {penum.Name}/{ptype.Name} ({ptype.UId}): Keine Übersetzung vorhanden ({trans.Language.Text})", State = PublishState.Fail, Item = ptype });
+                                    actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_enum_translation, penum.Name, ptype.Name, ptype.UId, trans.Language.Text), State = PublishState.Fail, Item = ptype });
                             } else {
                                 if(!showOnlyErrors)
                                     foreach(Translation trans in penum.Text)
                                         if(string.IsNullOrEmpty(trans.Text))
-                                            actions.Add(new PublishAction() { Text = $"    ParameterType Enum {penum.Name}/{ptype.Name} ({ptype.UId}): Keine Übersetzung vorhanden ({trans.Language.Text})", State = PublishState.Warning, Item = ptype });
+                                            actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_enum_translation, penum.Name, ptype.Name, ptype.UId, trans.Language.Text), State = PublishState.Fail, Item = ptype });
                             }
 
                             if(penum.UseIcon && penum.IconObject == null)
-                                actions.Add(new PublishAction() { Text = $"    ParameterType Enum {ptype.Name} ({ptype.UId}): Es wurde kein Icon zugewiesen", State = PublishState.Fail, Item = ptype });
+                                actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_enum_icon, penum.Name, ptype.Name, ptype.UId), State = PublishState.Fail, Item = ptype });
 
                         }
                         break;
@@ -248,13 +248,13 @@ namespace Kaenx.Creator.Classes {
                     case ParameterTypes.NumberUInt:
                     {
                         if(ptype.UIHint == "ProgressBar" && vers.NamespaceVersion < 20)
-                            actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Progressbar wird erst ab /20 unterstützt", State = PublishState.Fail, Item = ptype });
+                            actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_int_progbar, "UInt", ptype.Name, ptype.UId), State = PublishState.Fail, Item = ptype });
 
                         long min, max, temp;
-                        if(!long.TryParse(ptype.Max, out max)) actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Maximum ist keine Ganzzahl", State = PublishState.Fail, Item = ptype });
-                        if(!long.TryParse(ptype.Min, out min)) actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Minimum ist keine Ganzzahl", State = PublishState.Fail, Item = ptype });
-                        if(!long.TryParse(ptype.DisplayOffset, out temp)) actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Anzeige Offset ist keine Ganzzahl", State = PublishState.Fail, Item = ptype });
-                        if(!long.TryParse(ptype.DisplayFactor, out temp)) actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Anzeige Faktor ist keine Ganzzahl", State = PublishState.Fail, Item = ptype });
+                        if(!long.TryParse(ptype.Max, out max)) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_int_max, "UInt", ptype.Name, ptype.UId), State = PublishState.Fail, Item = ptype });
+                        if(!long.TryParse(ptype.Min, out min)) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_int_min, "UInt", ptype.Name, ptype.UId), State = PublishState.Fail, Item = ptype });
+                        if(!long.TryParse(ptype.DisplayOffset, out temp)) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_int_offset, "UInt", ptype.Name, ptype.UId), State = PublishState.Fail, Item = ptype });
+                        if(!long.TryParse(ptype.DisplayFactor, out temp)) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_int_factor, "UInt", ptype.Name, ptype.UId), State = PublishState.Fail, Item = ptype });
 
                         if(!ptype.IsSizeManual)
                         {
@@ -262,22 +262,22 @@ namespace Kaenx.Creator.Classes {
                             ptype.SizeInBit = bin.Length;
                             maxsize = (long)Math.Pow(2, ptype.SizeInBit);
                         }
-                        if(min < 0) actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Min kann nicht kleiner als 0 sein", State = PublishState.Fail, Item = ptype });
-                        if(min > max) actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Min ({ptype.Min}) ist größer als Max ({ptype.Max})", State = PublishState.Fail, Item = ptype });
-                        if(max >= maxsize) actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Max ({ptype.Max}) kann nicht größer als das Maximum ({maxsize-1}) sein", State = PublishState.Fail, Item = ptype });
+                        if(min < 0) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_uint_min2, ptype.Name, ptype.UId), State = PublishState.Fail, Item = ptype });
+                        if(min > max) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_int_minmax, "UInt", ptype.Name, ptype.UId), State = PublishState.Fail, Item = ptype });
+                        if(max >= maxsize) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_int_max2, "UInt", ptype.Name, ptype.UId, maxsize-1), State = PublishState.Fail, Item = ptype });
                         break;
                     }
 
                     case ParameterTypes.NumberInt:
                     {
                         if(ptype.UIHint == "Progressbar" && vers.NamespaceVersion < 20)
-                            actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Progressbar wird erst ab /20 unterstützt", State = PublishState.Fail, Item = ptype });
+                            actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_int_progbar, "UInt", ptype.Name, ptype.UId), State = PublishState.Fail, Item = ptype });
 
                         long min, max, temp;
-                        if(!long.TryParse(ptype.Max, out max)) actions.Add(new PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Maximum ist keine Ganzzahl", State = PublishState.Fail, Item = ptype });
-                        if(!long.TryParse(ptype.Min, out min)) actions.Add(new PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Minimum ist keine Ganzzahl", State = PublishState.Fail, Item = ptype });
-                        if(!long.TryParse(ptype.DisplayOffset, out temp)) actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Anzeige Offset ist keine Ganzzahl", State = PublishState.Fail, Item = ptype });
-                        if(!long.TryParse(ptype.DisplayFactor, out temp)) actions.Add(new PublishAction() { Text = $"    ParameterType UInt {ptype.Name} ({ptype.UId}): Anzeige Faktor ist keine Ganzzahl", State = PublishState.Fail, Item = ptype });
+                        if(!long.TryParse(ptype.Max, out max)) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_int_min, "Int", ptype.Name, ptype.UId), State = PublishState.Fail, Item = ptype });
+                        if(!long.TryParse(ptype.Min, out min)) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_int_max, "Int", ptype.Name, ptype.UId), State = PublishState.Fail, Item = ptype });
+                        if(!long.TryParse(ptype.DisplayOffset, out temp)) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_int_offset, "Int", ptype.Name, ptype.UId), State = PublishState.Fail, Item = ptype });
+                        if(!long.TryParse(ptype.DisplayFactor, out temp)) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_int_factor, "Int", ptype.Name, ptype.UId), State = PublishState.Fail, Item = ptype });
 
                         maxsize = (long)Math.Ceiling(maxsize / 2.0);
                         if(!ptype.IsSizeManual)
@@ -291,33 +291,33 @@ namespace Kaenx.Creator.Classes {
                             ptype.SizeInBit = bin.Length;
                             maxsize = (long)Math.Pow(2, ptype.SizeInBit);
                         }
-                        if(min > max) actions.Add(new PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Min ({ptype.Min}) ist größer als Max ({ptype.Max})", State = PublishState.Fail, Item = ptype });
-                        if(max > ((maxsize)-1)) actions.Add(new PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Max ({ptype.Max}) kann nicht größer als das Maximum ({(maxsize/2)-1}) sein", State = PublishState.Fail, Item = ptype });
-                        if(min < ((maxsize)*(-1))) actions.Add(new PublishAction() { Text = $"    ParameterType Int {ptype.Name} ({ptype.UId}): Min ({ptype.Min}) kann nicht kleiner als das Minimum ({(maxsize/2)*(-1)}) sein", State = PublishState.Fail, Item = ptype });
+                        if(min > max) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_int_minmax, "Int", ptype.Name, ptype.UId), State = PublishState.Fail, Item = ptype });
+                        if(max > ((maxsize)-1)) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_int_max2, "Int", ptype.Name, ptype.UId, (maxsize/2)-1), State = PublishState.Fail, Item = ptype });
+                        if(min < ((maxsize)*(-1))) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_int_min2, ptype.Name, ptype.UId, (maxsize/2)*(-1)), State = PublishState.Fail, Item = ptype });
                         break;
                     }
 
                     case ParameterTypes.Float_DPT9:
                     case ParameterTypes.Float_IEEE_Single:
                     case ParameterTypes.Float_IEEE_Double:
-                        actions.Add(new PublishAction() { Text = $"    ParameterType Float {ptype.Name} ({ptype.UId}): Aktuell keine Überprüfung vorhanden", State = PublishState.Warning, Item = ptype });
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_float, ptype.Name, ptype.UId), State = PublishState.Warning, Item = ptype });
                         break;
 
                     case ParameterTypes.Picture:
                         if(ptype.BaggageObject == null)
-                            actions.Add(new PublishAction() { Text = $"    ParameterTyp Picture für {ptype.Name} ({ptype.UId}) ist kein Baggage zugeordnet", State = PublishState.Fail, Item = ptype });
+                            actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_picture, ptype.Name, ptype.UId), State = PublishState.Fail, Item = ptype });
                         break;
 
                     case ParameterTypes.None:
                         if(!vers.IsPreETS4)
-                            actions.Add(new PublishAction() { Text = $"    ParameterTyp None {ptype.Name} ({ptype.UId}): Wird eigentlich nur in ETS3 unterstützt. IsPreETS4 aktivieren", State = PublishState.Warning, Item = ptype });
+                            actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_none, ptype.Name, ptype.UId), State = PublishState.Warning, Item = ptype });
                         break;
 
                     case ParameterTypes.Color:
                         if(ptype.UIHint != "RGB" && ptype.UIHint != "RGBW" && ptype.UIHint != "HSV")
-                            actions.Add(new PublishAction() { Text = $"    ParameterTyp Color {ptype.Name} ({ptype.UId}): Nicht unterstützter Farbraum {ptype.UIHint}", State = PublishState.Fail, Item = ptype });
+                            actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_color1, ptype.Name, ptype.UId, ptype.UIHint), State = PublishState.Fail, Item = ptype });
                         if(ptype.UIHint == "RGBW" && vers.NamespaceVersion < 20)
-                            actions.Add(new PublishAction() { Text = $"    ParameterTyp Color {ptype.Name} ({ptype.UId}): RGBW wird erst ab NamespaceVersion 20 unterstützt", State = PublishState.Fail, Item = ptype });
+                            actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_color2, ptype.Name, ptype.UId), State = PublishState.Fail, Item = ptype });
                         break;
 
                     case ParameterTypes.IpAddress:
@@ -325,24 +325,24 @@ namespace Kaenx.Creator.Classes {
                         ptype.SizeInBit = 32;
                         
                         if(ptype.UIHint != "HostAddress" && ptype.UIHint != "GatewayAddress" && ptype.UIHint != "UnicastAddress" && ptype.UIHint != "BroadcastAddress" && ptype.UIHint != "MulticastAddress" && ptype.UIHint != "SubnetMask")
-                            actions.Add(new PublishAction() { Text = $"    ParameterTyp IpAddress {ptype.Name} ({ptype.UId}): Keine AddressType ausgewählt", State = PublishState.Fail, Item = ptype });
+                            actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_ip1, ptype.Name, ptype.UId), State = PublishState.Fail, Item = ptype });
                                
                         if(ptype.Increment != "None" && ptype.Increment != "IPv4" && ptype.Increment != "IPv6")
-                            actions.Add(new PublishAction() { Text = $"    ParameterTyp IpAddress {ptype.Name} ({ptype.UId}): Keine IP Version ausgewählt", State = PublishState.Fail, Item = ptype });
+                            actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_ip2, ptype.Name, ptype.UId), State = PublishState.Fail, Item = ptype });
                         break;
 
                     case ParameterTypes.RawData:
                     {
-                        long max;
-                        if(!long.TryParse(ptype.Max, out max)) actions.Add(new PublishAction() { Text = $"    ParameterType RawData {ptype.Name} ({ptype.UId}): Maximum ist keine Ganzzahl", State = PublishState.Fail, Item = ptype });
-                        if(max < 1) actions.Add(new PublishAction() { Text = $"    ParameterType RawData {ptype.Name} ({ptype.UId}): Maximum muss 1 oder größer sein", State = PublishState.Fail, Item = ptype });
-                        if(max > 1048572) actions.Add(new PublishAction() { Text = $"    ParameterType RawData {ptype.Name} ({ptype.UId}): Maximum kann nicht größer als 1048572 sein", State = PublishState.Fail, Item = ptype });
+                        //long max;
+                        //if(!long.TryParse(ptype.Max, out max)) actions.Add(new PublishAction() { Text = $"    ParameterType RawData {ptype.Name} ({ptype.UId}): Maximum ist keine Ganzzahl", State = PublishState.Fail, Item = ptype });
+                        //if(max < 1) actions.Add(new PublishAction() { Text = $"    ParameterType RawData {ptype.Name} ({ptype.UId}): Maximum muss 1 oder größer sein", State = PublishState.Fail, Item = ptype });
+                        //if(max > 1048572) actions.Add(new PublishAction() { Text = $"    ParameterType RawData {ptype.Name} ({ptype.UId}): Maximum kann nicht größer als 1048572 sein", State = PublishState.Fail, Item = ptype });
                         break;
                     }
 
                     case ParameterTypes.Date:
                     {
-                        if(string.IsNullOrEmpty(ptype.UIHint))actions.Add(new PublishAction() { Text = $"    ParameterTyp Date {ptype.Name} ({ptype.UId}): Kein Encoding ausgewählt", State = PublishState.Fail, Item = ptype });
+                        if(string.IsNullOrEmpty(ptype.UIHint))actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_date, ptype.Name, ptype.UId), State = PublishState.Fail, Item = ptype });
                         break;
                     }
 
