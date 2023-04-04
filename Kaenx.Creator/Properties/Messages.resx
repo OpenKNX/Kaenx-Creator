@@ -578,7 +578,7 @@
     <comment>Name; Count</comment>
   </data>
   <data name="check_app_duplicate_version" xml:space="preserve">
-    <value>Application '{0}' uses version {1}.{2} {3] times</value>
+    <value>Application '{0}' uses version {1}.{2} {3} times</value>
     <comment>Name; Version High; Version Low</comment>
   </data>
   <data name="check_app_openknx" xml:space="preserve">
@@ -590,7 +590,7 @@
     <comment>Name;</comment>
   </data>
   <data name="check_ver" xml:space="preserve">
-    <value>ParameterType IpAddress {0} {(1}): No IP Protocol selected</value>
+    <value>ParameterType IpAddress {0} ({1}): No IP Protocol selected</value>
     <comment/>
   </data>
   <data name="check_end" xml:space="preserve">
@@ -619,31 +619,31 @@
   </data>
   <data name="check_ver_loadprod_size" xml:space="preserve">
     <value>Loadprocedure {0}: Memory size does not match</value>
-    <comment/>
+    <comment>Name</comment>
   </data>
   <data name="check_ver_parat_checkbox" xml:space="preserve">
     <value>ParameterType Number {0} ({1}): If UIHint is Checkbox minimum has to be 0 and maximum 1</value>
-    <comment/>
+    <comment>Name; UId</comment>
   </data>
   <data name="check_ver_parat_text" xml:space="preserve">
     <value>ParameterType Text {0} ({1}): Size {2} is not a multiple of 8</value>
-    <comment/>
+    <comment>Name; UId; Size</comment>
   </data>
   <data name="check_ver_parat_enum" xml:space="preserve">
     <value>ParameterType Enum {0} ({1}): Value {2} is used more than once</value>
-    <comment/>
+    <comment>Name; UId; Value</comment>
   </data>
   <data name="check_ver_parat_enum2" xml:space="preserve">
     <value>ParameterType Enum {0} ({1}): Value {2} is greater than the maximum {3}</value>
-    <comment/>
+    <comment>Name; UId; Value; Max</comment>
   </data>
   <data name="check_ver_parat_enum_translation" xml:space="preserve">
     <value>ParameterType Enum {0}/{1} ({2}): Is not translated in {3}</value>
-    <comment/>
+    <comment>Enumname; Name; UId</comment>
   </data>
   <data name="check_ver_parat_enum_icon" xml:space="preserve">
     <value>ParameterType Enum {0}/{1} ({2}): No icon selected</value>
-    <comment/>
+    <comment>Enumname; Name; UId</comment>
   </data>
   <data name="check_ver_parat_int_progbar" xml:space="preserve">
     <value>ParameterType {0} {1} ({2}): Progressbar is supported in Namespace 20 or later</value>
@@ -651,7 +651,7 @@
   </data>
   <data name="check_ver_parat_int_max" xml:space="preserve">
     <value>ParameterType {0} {1} ({2}): Maximum is no integer</value>
-    <comment/>
+    <comment>UInt/Int; Name; UId</comment>
   </data>
   <data name="check_ver_parat_int_min" xml:space="preserve">
     <value>ParameterType {0} {1} ({2}): Minimum is no integer</value>
@@ -687,30 +687,166 @@
   </data>
   <data name="check_ver_parat_picture" xml:space="preserve">
     <value>ParameterType Picture {0} ({1}): No Baggage selected</value>
-    <comment/>
+    <comment>Name; UId</comment>
   </data>
   <data name="check_ver_parat_none" xml:space="preserve">
     <value>ParameterType None {0} ({1}): Supported in ETS3. Activate option IsPreETS4</value>
-    <comment/>
+    <comment>Name; UId</comment>
   </data>
   <data name="check_ver_parat_color1" xml:space="preserve">
     <value>ParameterType Color {0} ({1}): Not supported colorspectrum {2}</value>
-    <comment/>
+    <comment>Name; UId; Colorspace</comment>
   </data>
   <data name="check_ver_parat_color2" xml:space="preserve">
     <value>ParameterType Color {0} ({1}): RGBW is supported in Namespace 20 or later</value>
-    <comment/>
+    <comment>Name; UId</comment>
   </data>
   <data name="check_ver_parat_ip1" xml:space="preserve">
-    <value>ParameterType IpAddress {0} {(1}): No AddressType selected</value>
-    <comment/>
+    <value>ParameterType IpAddress {0} ({1}): No AddressType selected</value>
+    <comment>Name; UId</comment>
   </data>
   <data name="check_ver_parat_ip2" xml:space="preserve">
-    <value>ParameterType IpAddress {0} {(1}): No IP Protocol selected</value>
-    <comment/>
+    <value>ParameterType IpAddress {0} ({1}): No IP Protocol selected</value>
+    <comment>Name; UId</comment>
   </data>
   <data name="check_ver_parat_date" xml:space="preserve">
     <value>ParameterType Date {0} ({1}): No encoding selected</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_parat_unknown" xml:space="preserve">
+    <value>Unknown ParameterType for {0} ({1})</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_loadprod_msg" xml:space="preserve">
+    <value>Loadprocedure: Messages are being used but the option is not active</value>
     <comment/>
+  </data>
+  <data name="check_ver_loadprod_msgref" xml:space="preserve">
+    <value>Loadprocedure: MessageRef is not an integer</value>
+    <comment/>
+  </data>
+  <data name="check_ver_loadprod_msgref_error" xml:space="preserve">
+    <value>Loadprocedure: MessageRef references to a not existing UId ({0})</value>
+    <comment>UId</comment>
+  </data>
+  <data name="check_ver_cat_number" xml:space="preserve">
+    <value>Catalog {0}: Sectionnumber is empty</value>
+    <comment>Name</comment>
+  </data>
+  <data name="check_ver_cat_prodnumber" xml:space="preserve">
+    <value>Catalog {0}: Productnumber is not an integer</value>
+    <comment>Name</comment>
+  </data>
+  <data name="check_ver_cat_hardware" xml:space="preserve">
+    <value>Catalog {0}: No hardware is selected</value>
+    <comment>Name</comment>
+  </data>
+  <data name="check_ver_mod_allocs" xml:space="preserve">
+    <value>Module {0}: Allocators are supported in Namespace 20 or later</value>
+    <comment>Name</comment>
+  </data>
+  <data name="check_ver_mod_paraoff" xml:space="preserve">
+    <value>Module {0}: ParameterBaseOffset Argument is not of type numeric</value>
+    <comment>Name</comment>
+  </data>
+  <data name="check_ver_mod_combase" xml:space="preserve">
+    <value>Module {0}: ComObjectBasenumber Argument is not of type numeric</value>
+    <comment>Name</comment>
+  </data>
+  <data name="check_ver_dyn_items" xml:space="preserve">
+    <value>Dynamic has no elements</value>
+    <comment/>
+  </data>
+  <data name="check_ver_para_type" xml:space="preserve">
+    <value>Parameter {0} ({1}): No ParameterType selected</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_para_text" xml:space="preserve">
+    <value>Parameter {0} ({1}): Value needs more memory ({2}) than his size ({3})</value>
+    <comment>Name; UId; nedded; size</comment>
+  </data>
+  <data name="check_ver_para_enum1" xml:space="preserve">
+    <value>{0} {1} ({2}): Value is not an integer</value>
+    <comment>Parameter/Ref; Name; UId</comment>
+  </data>
+  <data name="check_ver_para_enum2" xml:space="preserve">
+    <value>{0} {1} ({2}): Value ist not availible as an option</value>
+    <comment>Parameter/Ref; Name; UId</comment>
+  </data>
+  <data name="check_ver_para_number1" xml:space="preserve">
+    <value>{0} {1} ({2}): Value is not an integer</value>
+    <comment>Parameter/Ref; Name; UId</comment>
+  </data>
+  <data name="check_ver_para_number2" xml:space="preserve">
+    <value>{0} {1} ({2}): Value is not in the supported range</value>
+    <comment>Parameter/Ref; Name; UId</comment>
+  </data>
+  <data name="check_ver_para_color" xml:space="preserve">
+    <value>{0} {1} ({2}): Value is not in the given format {3}</value>
+    <comment>Parameter/Ref; Name; UId; format</comment>
+  </data>
+  <data name="check_ver_para_raw1" xml:space="preserve">
+    <value>{0} {1} ({2}): Value has an odd number of chars</value>
+    <comment>Parameter/Ref; Name; UId</comment>
+  </data>
+  <data name="check_ver_para_raw2" xml:space="preserve">
+    <value>{0} {1} ({2}): Value needs more memory ({3}) than his size ({4})</value>
+    <comment>Parameter/Ref; Name; UId, needed; size</comment>
+  </data>
+  <data name="check_ver_para_raw3" xml:space="preserve">
+    <value>{0} {1} ({2}): Value is not a valid hex</value>
+    <comment>Parameter/Ref; Name; UId</comment>
+  </data>
+  <data name="check_ver_para_date" xml:space="preserve">
+    <value>{0} {1} ({2}): Value has not the correct date format 'YYYY-MM-DD'</value>
+    <comment>Parameter/Ref; Name; UId</comment>
+  </data>
+  <data name="check_ver_lang_no_translation" xml:space="preserve">
+    <value>{0} {1} ({2}): Is not translated</value>
+    <comment>Parameter/Ref; Name; UId</comment>
+  </data>
+  <data name="check_ver_lang_not_all" xml:space="preserve">
+    <value>{0} {1} ({2}): Is not translated in all languages</value>
+    <comment>Parameter/Ref; Name; UId</comment>
+  </data>
+  <data name="check_ver_lang_suffix" xml:space="preserve">
+    <value>{0} {1} ({2}): Suffix is not translated in all languages</value>
+    <comment>Parameter/Ref; Name; UId</comment>
+  </data>
+  <data name="check_ver_para_save_error" xml:space="preserve">
+    <value>Parameter {0} ({1}): No Memorysegment selected</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_para_save_offset" xml:space="preserve">
+    <value>Parameter {0} ({1}): Offset is not set</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_para_save_offsetbit" xml:space="preserve">
+    <value>Parameter {0} ({1}): Bit Offset is not set</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_para_save_obsolet" xml:space="preserve">
+    <value>Parameter {0} ({1}): Bit Offset can't be greather than 7</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_para_save_objectindex" xml:space="preserve">
+    <value>Parameter {0} ({1}): ObjectIndex is not set</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_para_save_propertyid" xml:space="preserve">
+    <value>Parameter {0} ({1}): PropertyId is not set</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_para_save_union" xml:space="preserve">
+    <value>Parameter {0} ({1}): Union is not set</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_lang_suffix_length" xml:space="preserve">
+    <value>{0} {1} ({2}): Suffix has more than 20 chars</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_pararef_no_para" xml:space="preserve">
+    <value>ParameterRef {0} ({1}): No parameter selected</value>
+    <comment>Name; UId</comment>
   </data>
 </root>

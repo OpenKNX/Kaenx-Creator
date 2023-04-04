@@ -347,7 +347,7 @@ namespace Kaenx.Creator.Classes {
                     }
 
                     default:
-                        actions.Add(new PublishAction() { Text = $"    Unbekannter ParameterTyp für {ptype.Name} ({ptype.UId})", State = PublishState.Fail, Item = ptype });
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_unknown, ptype.Name, ptype.UId), State = PublishState.Fail, Item = ptype });
                         break;
                 }
             }
@@ -369,17 +369,17 @@ namespace Kaenx.Creator.Classes {
                     {
                         if (!vers.IsMessagesActive)
                         {
-                            actions.Add(new PublishAction() { Text = $"Ladeprozedur: Es werden Meldungen verwendet, obwohl diese in der Applikation nicht aktiviert sind.", State = PublishState.Fail });
+                            actions.Add(new PublishAction() { Text = "\t" + Properties.Messages.check_ver_loadprod_msg, State = PublishState.Fail });
                             return;
                         }
 
                         int id = -1;
                         if (!int.TryParse(xele.Attribute("MessageRef").Value, out id))
-                            actions.Add(new PublishAction() { Text = $"Ladeprozedur: MessageRef ist kein Integer.", State = PublishState.Fail });
+                            actions.Add(new PublishAction() { Text = "\t" + Properties.Messages.check_ver_loadprod_msgref, State = PublishState.Fail });
                         if (id != -1)
                         {
                             if (!vers.Messages.Any(m => m.UId == id))
-                                actions.Add(new PublishAction() { Text = $"Ladeprozedur: MessageRef zeigt auf nicht vorhandene Meldung ({id}).", State = PublishState.Fail });
+                                actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_loadprod_msgref_error, id), State = PublishState.Fail });
                         }
                     }
                 }
@@ -391,16 +391,16 @@ namespace Kaenx.Creator.Classes {
             if(item.IsSection)
             {
                 if(string.IsNullOrEmpty(item.Number))
-                    actions.Add(new PublishAction() { Text = $"Katalog {item.Name}: Sektions Nummer ist leer", State = PublishState.Fail });
+                    actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_cat_number, item.Name), State = PublishState.Fail });
 
                 foreach(CatalogItem citem in item.Items)
                     CheckCatalogItem(citem, actions);
             } else {
                 int number = -1;
                 if(!int.TryParse(item.Number, out number))
-                    actions.Add(new PublishAction() { Text = $"Katalog {item.Name}: Produkt Nummer ist keine Ganzzahl ({item.Number})", State = PublishState.Fail }); 
+                    actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_cat_prodnumber, item.Name), State = PublishState.Fail }); 
                 if(item.Hardware == null)
-                    actions.Add(new PublishAction() { Text = $"Katalog {item.Name}: Es wurde keine Hardware ausgewählt", State = PublishState.Fail });
+                    actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_cat_hardware, item.Name), State = PublishState.Fail });
             }
         }
 
@@ -411,14 +411,14 @@ namespace Kaenx.Creator.Classes {
             //TODO check hexvalue from parameter with parameertype color
 
             if(mod != null && ver.NamespaceVersion < 20 && mod.Allocators.Count > 0)
-                actions.Add(new PublishAction() { Text = $"    Modul ({mod.Name}): Allocators werden erst ab /20 unterstützt", State = PublishState.Fail });
+                actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_mod_allocs, mod.Name), State = PublishState.Fail });
 
             if(mod != null)
             {
                 if(mod.ParameterBaseOffset.Type != ArgumentTypes.Numeric)
-                    actions.Add(new PublishAction() { Text = $"    Modul ({mod.Name}): ParameterBaseOffset Argument ist nicht vom Typ Numeric", State = PublishState.Fail });
+                    actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_mod_paraoff, mod.Name), State = PublishState.Fail });
                 if(mod.ComObjectBaseNumber.Type != ArgumentTypes.Numeric)
-                    actions.Add(new PublishAction() { Text = $"    Modul ({mod.Name}): ComObjectBaseNumber Argument ist nicht vom Typ Numeric", State = PublishState.Fail });
+                    actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_mod_combase, mod.Name), State = PublishState.Fail });
             }
 
             if(vbase.Dynamics[0].Items.Count == 0)
@@ -426,90 +426,13 @@ namespace Kaenx.Creator.Classes {
                 string name = "AppVersion";
                 if(mod != null)
                     name = $"Modul {mod.Name}";
-                actions.Add(new PublishAction() { Text = $"    {name}: Dynamic enthält keine Elemente", State = PublishState.Fail });
+                actions.Add(new PublishAction() { Text = $"\t{name}: " + Properties.Messages.check_ver_dyn_items, State = PublishState.Fail });
             }
 
             foreach(Parameter para in vbase.Parameters) {
-                if(para.ParameterTypeObject == null) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Kein ParameterTyp ausgewählt", State = PublishState.Fail, Item = para, Module = mod });
+                if(para.ParameterTypeObject == null) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_para_type, para.Name, para.UId), State = PublishState.Fail, Item = para, Module = mod });
                 else {
-                    switch(para.ParameterTypeObject.Type) {
-                        case ParameterTypes.Text:
-                            if((para.Value.Length*8) > para.ParameterTypeObject.SizeInBit) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert benötigt mehr Speicher ({(para.Value.Length*8)}) als verfügbar ({para.ParameterTypeObject.SizeInBit}) ist", State = PublishState.Fail, Item = para, Module = mod });
-                            break;
-
-                        case ParameterTypes.Enum:
-                            int paraval2;
-                            if(!int.TryParse(para.Value, out paraval2)) 
-                                actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) ist keine gültige Zahl", State = PublishState.Fail, Item = para, Module = mod });
-                            else {
-                                if(!para.ParameterTypeObject.Enums.Any(e => e.Value == paraval2))
-                                    actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) ist nicht als option in Enum vorhanden", State = PublishState.Fail, Item = para, Module = mod });
-                            }
-                            break;
-
-                        case ParameterTypes.NumberUInt:
-                        case ParameterTypes.NumberInt:
-                            long paraval;
-                            if(!long.TryParse(para.Value, out paraval)) 
-                                actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) ist keine gültige Zahl", State = PublishState.Fail, Item = para, Module = mod });
-                            else {
-                                if(paraval > long.Parse(para.ParameterTypeObject.Max) || paraval < long.Parse(para.ParameterTypeObject.Min))
-                                    actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) fällt nicht in Bereich {para.ParameterTypeObject.Min} bis {para.ParameterTypeObject.Max}", State = PublishState.Fail, Item = para, Module = mod });
-                            }
-                            break;
-
-                        case ParameterTypes.Float_DPT9:
-                        case ParameterTypes.Float_IEEE_Single:
-                        case ParameterTypes.Float_IEEE_Double:
-
-
-                        case ParameterTypes.Picture:
-                        case ParameterTypes.None:
-                        case ParameterTypes.IpAddress:
-                            break;
-
-                        case ParameterTypes.Color:
-                        {
-                            Regex reg = null;
-                            string def = "";
-                            switch(para.ParameterTypeObject.UIHint)
-                            {
-                                case "RGB":
-                                    reg = new Regex("#([0-9a-fA-F]{6,6})");
-                                    def = "#RRGGBB";
-                                    break;
-
-                                case "HSV":
-                                    reg = new Regex("#([0-9a-fA-F]{6,6})");
-                                    def = "#HHSSVV";
-                                    break;
-                                    
-                                case "RGBW":
-                                    reg = new Regex("#([0-9a-fA-F]{8,8})");
-                                    def = "#RRGGBBWW";
-                                    break;
-                            }
-                            if(reg != null && !reg.IsMatch(para.Value))
-                                actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) ist keine gültiger Hexwert für {para.ParameterTypeObject.UIHint} ({def})", State = PublishState.Fail, Item = para, Module = mod });
-                            break;
-                        }
-
-                        case ParameterTypes.RawData:
-                        {
-                            if(para.Value.Length % 2 != 0) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert hat eine ungerade Anzahl an Zeichen", State = PublishState.Fail, Item = para, Module = mod });
-                            else if((para.Value.Length / 2) > long.Parse(para.ParameterTypeObject.Max)) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert benötigt mehr Speicher ({(para.Value.Length / 2)}) als verfügbar ({para.ParameterTypeObject.Max}) ist", State = PublishState.Fail, Item = para, Module = mod });
-                            Regex reg = new Regex("^([0-9A-Fa-f])+$");
-                            if(!reg.IsMatch(para.Value)) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) ist keine gültiger Hexwert für RawData", State = PublishState.Fail, Item = para, Module = mod });
-                            break;
-                        }
-
-                        case ParameterTypes.Date:
-                        {
-                            Regex reg = new Regex("([0-9]{4}-[0-9]{2}-[0-9]{2})");
-                            if(!reg.IsMatch(para.Value))  actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) muss das Format 'YYYY-MM-DD' haben", State = PublishState.Fail, Item = para, Module = mod });
-                            break;                        
-                        }
-                    }
+                    CheckValue(para, mod, actions);
                 }
                 
                 if(!showOnlyErrors)
@@ -517,11 +440,11 @@ namespace Kaenx.Creator.Classes {
                     if(para.TranslationText) {
                         Translation trans = para.Text.Single(t => t.Language.CultureCode == defaultLang);
                         if(string.IsNullOrEmpty(trans.Text))
-                            actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Keine Übersetzung für Text vorhanden ({trans.Language.Text})", State = PublishState.Warning, Item = para, Module = mod });
+                            actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_lang_no_translation, "Parameter", para.Name, para.UId), State = PublishState.Warning, Item = para, Module = mod });
                     } else {
                         if(para.Text.Any(s => string.IsNullOrEmpty(s.Text)))
                         {
-                            actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Text nicht in allen Sprachen übersetzt", State = PublishState.Warning, Item = para, Module = mod });
+                            actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_lang_not_all, "Parameter", para.Name, para.UId), State = PublishState.Warning, Item = para, Module = mod });
                         }
                     }
                 }
@@ -531,7 +454,7 @@ namespace Kaenx.Creator.Classes {
                     {
                         if(para.Suffix.Any(s => string.IsNullOrEmpty(s.Text)))
                         {
-                            actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Suffix nicht in allen Sprachen übersetzt", State = PublishState.Warning, Item = para, Module = mod });
+                            actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_lang_suffix, "Parameter", para.Name, para.UId), State = PublishState.Warning, Item = para, Module = mod });
                         }
                     }
                 }
@@ -541,51 +464,50 @@ namespace Kaenx.Creator.Classes {
                         case SavePaths.Memory:
                         {
                             if(para.SaveObject == null)
-                                actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Kein Speichersegment ausgewählt", State = PublishState.Fail, Item = para, Module = mod });
+                                actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_para_save_error, para.Name, para.UId), State = PublishState.Fail, Item = para, Module = mod });
                             else {
-                                if(!(para.SaveObject as Memory).IsAutoPara && para.Offset == -1) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name}: Kein Offset angegeben", State = PublishState.Fail, Item = para, Module = mod });
-                                if(!(para.SaveObject as Memory).IsAutoPara && para.OffsetBit == -1) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name}: Kein Bit Offset angegeben", State = PublishState.Fail, Item = para, Module = mod });
+                                if(!(para.SaveObject as Memory).IsAutoPara && para.Offset == -1) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_para_save_offset, para.Name, para.UId), State = PublishState.Fail, Item = para, Module = mod });
+                                if(!(para.SaveObject as Memory).IsAutoPara && para.OffsetBit == -1) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_para_save_offsetbit, para.Name, para.UId), State = PublishState.Fail, Item = para, Module = mod });
 
                             }
-                            if(para.OffsetBit > 7) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): BitOffset größer als 7 und somit obsolet", State = PublishState.Fail, Item = para, Module = mod });
+                            if(para.OffsetBit > 7) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_para_save_obsolet, para.Name, para.UId), State = PublishState.Fail, Item = para, Module = mod });
                             break;
                         }
 
                         case SavePaths.Property:
                         {
-                            if((para.SaveObject as Property).ObjectIndex == -1) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): ObjectIndex nicht festgelegt", State = PublishState.Fail, Item = para, Module = mod });
-                            if((para.SaveObject as Property).PropertyId == -1) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): PropertyId nicht festgelegt", State = PublishState.Fail, Item = para, Module = mod });
+                            if((para.SaveObject as Property).ObjectIndex == -1) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_para_save_objectindex, para.Name, para.UId), State = PublishState.Fail, Item = para, Module = mod });
+                            if((para.SaveObject as Property).PropertyId == -1) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_para_save_propertyid, para.Name, para.UId), State = PublishState.Fail, Item = para, Module = mod });
                             break;
                         }
                     }
                 } else {
-                    if(para.UnionObject == null) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Es wurde kein Union ausgewählt", State = PublishState.Fail, Item = para, Module = mod });
+                    if(para.UnionObject == null) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_para_save_union, para.Name, para.UId), State = PublishState.Fail, Item = para, Module = mod });
                 }
 
-                if(para.Suffix.Any(t => t.Text.Length > 20)) actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Suffix ist länger als 20 Zeichen", State = PublishState.Fail, Item = para, Module = mod });
+                if(para.Suffix.Any(t => t.Text.Length > 20)) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_lang_suffix_length, para.Name, para.UId), State = PublishState.Fail, Item = para, Module = mod });
             }
         
             foreach(ParameterRef para in vbase.ParameterRefs) {
-                if(para.ParameterObject == null) actions.Add(new PublishAction() { Text = $"    ParameterRef {para.Name} ({para.UId}): Kein Parameter ausgewählt", State = PublishState.Fail, Item = para, Module = mod });
+                if(para.ParameterObject == null) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_pararef_no_para, para.Name, para.UId), State = PublishState.Fail, Item = para, Module = mod });
                 else {
                     if(para.ParameterObject.ParameterTypeObject == null || string.IsNullOrEmpty(para.Value))
                         continue;
                     
-                    //TODO check value overwrite
                     ParameterType ptype = para.ParameterObject.ParameterTypeObject;
 
                     if(para.OverwriteText)
                     {
-                        if(para.ParameterObject.TranslationText) {
+                        if(true) { //Todo para.TranslationText) {
                             Translation trans = para.Text.Single(t => t.Language.CultureCode == defaultLang);
                             if(string.IsNullOrEmpty(trans.Text))
-                                actions.Add(new PublishAction() { Text = $"    ParameterRef {para.Name} ({para.UId}): Keine Übersetzung vorhanden ({trans.Language.Text})", State = PublishState.Fail, Item = para, Module = mod });
+                                actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_lang_no_translation, "ParameterRef", para.Name, para.UId), State = PublishState.Fail, Item = para, Module = mod });
                         } else {
                             if(!showOnlyErrors)
                             {
                                if(para.Text.Any(s => string.IsNullOrEmpty(s.Text)))
                                 {
-                                    actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Text nicht in allen Sprachen übersetzt", State = PublishState.Warning, Item = para, Module = mod });
+                                    actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_lang_not_all, "ParameterRef", para.Name, para.UId), State = PublishState.Warning, Item = para, Module = mod });
                                 }
                             }
                         }
@@ -593,57 +515,7 @@ namespace Kaenx.Creator.Classes {
 
                     if(para.OverwriteValue)
                     {
-                        switch(ptype.Type) {
-                            case ParameterTypes.Text:
-                                if((para.Value.Length*8) > ptype.SizeInBit) actions.Add(new PublishAction() { Text = $"    ParameterRef {para.Name} ({para.UId}): Wert benötigt mehr Speicher ({(para.Value.Length*8)}) als verfügbar ({ptype.SizeInBit}) ist", State = PublishState.Fail, Item = para, Module = mod });
-                                break;
-
-                            case ParameterTypes.Enum:
-                                int paraval2;
-                                if(!int.TryParse(para.Value, out paraval2)) actions.Add(new PublishAction() { Text = $"    ParameterRef {para.Name} ({para.UId}): Wert ({para.Value}) ist keine gültige Zahl", State = PublishState.Fail, Item = para, Module = mod });
-                                else {
-                                    if(!ptype.Enums.Any(e => e.Value == paraval2))
-                                        actions.Add(new PublishAction() { Text = $"    ParameterRef {para.Name} ({para.UId}): Wert ({para.Value}) ist nicht als option in Enum vorhanden", State = PublishState.Fail, Item = para, Module = mod });
-                                }
-                                break;
-
-                            case ParameterTypes.NumberUInt:
-                            case ParameterTypes.NumberInt:
-                                long paraval;
-                                if(!long.TryParse(para.Value, out paraval)) actions.Add(new PublishAction() { Text = $"    ParameterRef {para.Name} ({para.UId}): Wert ({para.Value}) ist keine gültige Zahl", State = PublishState.Fail, Item = para, Module = mod });
-                                else {
-                                    if(paraval > long.Parse(ptype.Max) || paraval < long.Parse(ptype.Min))
-                                        actions.Add(new PublishAction() { Text = $"    ParameterRef {para.Name} ({para.UId}): Wert ({para.Value}) fällt nicht in Bereich {ptype.Min} bis {ptype.Max}", State = PublishState.Fail, Item = para, Module = mod });
-                                }
-                                break;
-
-                            case ParameterTypes.Float_DPT9:
-                            case ParameterTypes.Float_IEEE_Single:
-                            case ParameterTypes.Float_IEEE_Double:
-
-
-                            case ParameterTypes.Picture:
-                            case ParameterTypes.None:
-                            case ParameterTypes.IpAddress:
-                                break;
-                                
-                            case ParameterTypes.Color:
-                                Regex reg = null;
-                                switch(para.ParameterObject.ParameterTypeObject.UIHint)
-                                {
-                                    case "RGB":
-                                    case "HSV":
-                                        reg = new Regex("([0-9a-fA-F]{6,6})");
-                                        break;
-                                        
-                                    case "RGBW":
-                                        reg = new Regex("([0-9a-fA-F]{8,8})");
-                                        break;
-                                }
-                                if(reg != null && !reg.IsMatch(para.Value))
-                                    actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Wert ({para.Value}) ist keine gültiger Hexwert für {para.ParameterObject.ParameterTypeObject.UIHint}", State = PublishState.Fail, Item = para, Module = mod });
-                                break;
-                        }
+                        CheckValue(para, mod, actions);
                     }
 
                     if(para.OverwriteSuffix)
@@ -777,6 +649,108 @@ namespace Kaenx.Creator.Classes {
                 //TODO check for Argument exist
             }
 
+        }
+
+        private static void CheckValue(object item, object mod, ObservableCollection<PublishAction> actions)
+        {
+            ParameterType type = null;
+            string name = "";
+            string value = "";
+            string stype = item.GetType().Name;
+            int uid = 0;
+
+            if(item is Parameter parameter)
+            {
+                name = parameter.Name;
+                uid = parameter.UId;
+                type = parameter.ParameterTypeObject;
+                value = parameter.Value;
+            } else if(item is ParameterRef parameterref)
+            {
+                name = parameterref.Name;
+                uid = parameterref.UId;
+                type = parameterref.ParameterObject.ParameterTypeObject;
+                value = parameterref.Value;
+            }
+
+            switch(type.Type) {
+                case ParameterTypes.Text:
+                    if((value.Length*8) > type.SizeInBit) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_text, stype, value.Length*8, type.SizeInBit), State = PublishState.Fail, Item = item, Module = mod });
+                    break;
+
+                case ParameterTypes.Enum:
+                    int paraval2;
+                    if(!int.TryParse(value, out paraval2)) 
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_para_enum1, stype, name, uid), State = PublishState.Fail, Item = item, Module = mod });
+                    else {
+                        if(!type.Enums.Any(e => e.Value == paraval2))
+                            actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_para_enum2, stype, name, uid), State = PublishState.Fail, Item = item, Module = mod });
+                    }
+                    break;
+
+                case ParameterTypes.NumberUInt:
+                case ParameterTypes.NumberInt:
+                    long paraval;
+                    if(!long.TryParse(value, out paraval)) 
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_para_number1, stype, name, uid), State = PublishState.Fail, Item = item, Module = mod });
+                    else {
+                        if(paraval > long.Parse(type.Max) || paraval < long.Parse(type.Min))
+                            actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_para_number2, stype, name, uid), State = PublishState.Fail, Item = item, Module = mod });
+                    }
+                    break;
+
+                case ParameterTypes.Float_DPT9:
+                case ParameterTypes.Float_IEEE_Single:
+                case ParameterTypes.Float_IEEE_Double:
+
+
+                case ParameterTypes.Picture:
+                case ParameterTypes.None:
+                case ParameterTypes.IpAddress:
+                    break;
+
+                case ParameterTypes.Color:
+                {
+                    Regex reg = null;
+                    string def = "";
+                    switch(type.UIHint)
+                    {
+                        case "RGB":
+                            reg = new Regex("#([0-9a-fA-F]{6,6})");
+                            def = "#RRGGBB";
+                            break;
+
+                        case "HSV":
+                            reg = new Regex("#([0-9a-fA-F]{6,6})");
+                            def = "#HHSSVV";
+                            break;
+                            
+                        case "RGBW":
+                            reg = new Regex("#([0-9a-fA-F]{8,8})");
+                            def = "#RRGGBBWW";
+                            break;
+                    }
+                    if(reg != null && !reg.IsMatch(value))
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_color1, stype, name, uid, def), State = PublishState.Fail, Item = item, Module = mod });
+                    break;
+                }
+
+                case ParameterTypes.RawData:
+                {
+                    if(value.Length % 2 != 0) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_para_raw1, stype, name, uid), State = PublishState.Fail, Item = item, Module = mod });
+                    else if((value.Length / 2) > long.Parse(type.Max)) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_para_raw2, stype, name, uid, value.Length / 2, type.Max), State = PublishState.Fail, Item = item, Module = mod });
+                    Regex reg = new Regex("^([0-9A-Fa-f])+$");
+                    if(!reg.IsMatch(value)) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_para_raw3, stype, name, uid), State = PublishState.Fail, Item = item, Module = mod });
+                    break;
+                }
+
+                case ParameterTypes.Date:
+                {
+                    Regex reg = new Regex("([0-9]{4}-[0-9]{2}-[0-9]{2})");
+                    if(!reg.IsMatch(value))  actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_date, stype, name, uid), State = PublishState.Fail, Item = item, Module = mod });
+                    break;                        
+                }
+            }
         }
 
         private static void CheckLanguages(AppVersion vers,  ObservableCollection<PublishAction> actions, ModelGeneral general, List<Device> devices)

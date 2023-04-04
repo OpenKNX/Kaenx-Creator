@@ -956,6 +956,210 @@ namespace Kaenx.Creator.Properties {
             }
         }
         
+        public static string check_ver_parat_unknown {
+            get {
+                return ResourceManager.GetString("check_ver_parat_unknown", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_loadprod_msg {
+            get {
+                return ResourceManager.GetString("check_ver_loadprod_msg", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_loadprod_msgref {
+            get {
+                return ResourceManager.GetString("check_ver_loadprod_msgref", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_loadprod_msgref_error {
+            get {
+                return ResourceManager.GetString("check_ver_loadprod_msgref_error", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_cat_number {
+            get {
+                return ResourceManager.GetString("check_ver_cat_number", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_cat_prodnumber {
+            get {
+                return ResourceManager.GetString("check_ver_cat_prodnumber", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_cat_hardware {
+            get {
+                return ResourceManager.GetString("check_ver_cat_hardware", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_mod_allocs {
+            get {
+                return ResourceManager.GetString("check_ver_mod_allocs", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_mod_paraoff {
+            get {
+                return ResourceManager.GetString("check_ver_mod_paraoff", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_mod_combase {
+            get {
+                return ResourceManager.GetString("check_ver_mod_combase", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_dyn_items {
+            get {
+                return ResourceManager.GetString("check_ver_dyn_items", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_para_type {
+            get {
+                return ResourceManager.GetString("check_ver_para_type", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_para_text {
+            get {
+                return ResourceManager.GetString("check_ver_para_text", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_para_enum1 {
+            get {
+                return ResourceManager.GetString("check_ver_para_enum1", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_para_enum2 {
+            get {
+                return ResourceManager.GetString("check_ver_para_enum2", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_para_number1 {
+            get {
+                return ResourceManager.GetString("check_ver_para_number1", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_para_number2 {
+            get {
+                return ResourceManager.GetString("check_ver_para_number2", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_para_color {
+            get {
+                return ResourceManager.GetString("check_ver_para_color", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_para_raw1 {
+            get {
+                return ResourceManager.GetString("check_ver_para_raw1", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_para_raw2 {
+            get {
+                return ResourceManager.GetString("check_ver_para_raw2", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_para_raw3 {
+            get {
+                return ResourceManager.GetString("check_ver_para_raw3", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_para_date {
+            get {
+                return ResourceManager.GetString("check_ver_para_date", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_lang_no_translation {
+            get {
+                return ResourceManager.GetString("check_ver_lang_no_translation", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_lang_not_all {
+            get {
+                return ResourceManager.GetString("check_ver_lang_not_all", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_lang_suffix {
+            get {
+                return ResourceManager.GetString("check_ver_lang_suffix", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_para_save_error {
+            get {
+                return ResourceManager.GetString("check_ver_para_save_error", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_para_save_offset {
+            get {
+                return ResourceManager.GetString("check_ver_para_save_offset", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_para_save_offsetbit {
+            get {
+                return ResourceManager.GetString("check_ver_para_save_offsetbit", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_para_save_obsolet {
+            get {
+                return ResourceManager.GetString("check_ver_para_save_obsolet", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_para_save_objectindex {
+            get {
+                return ResourceManager.GetString("check_ver_para_save_objectindex", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_para_save_propertyid {
+            get {
+                return ResourceManager.GetString("check_ver_para_save_propertyid", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_para_save_union {
+            get {
+                return ResourceManager.GetString("check_ver_para_save_union", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_lang_suffix_length {
+            get {
+                return ResourceManager.GetString("check_ver_lang_suffix_length", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_pararef_no_para {
+            get {
+                return ResourceManager.GetString("check_ver_pararef_no_para", resourceCulture);
+            }
+        }
+        
         public static string check_ {
             get {
                 return ResourceManager.GetString("check_", resourceCulture);
