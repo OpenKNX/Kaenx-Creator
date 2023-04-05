@@ -1269,15 +1269,15 @@ namespace Kaenx.Creator
 
             if(PublishActions.Count(pa => pa.State == Models.PublishState.Fail) > 0)
             {
-                PublishActions.Add(new Models.PublishAction() { Text = "Erstellen abgebrochen. Es traten Fehler bei der Überprüfung auf.", State = Models.PublishState.Fail });
+                PublishActions.Add(new Models.PublishAction() { Text = Properties.Messages.main_export_failed, State = Models.PublishState.Fail });
                 return;
             }
             else
-                PublishActions.Add(new Models.PublishAction() { Text = "Überprüfung bestanden", State = Models.PublishState.Success });
+                PublishActions.Add(new Models.PublishAction() { Text = Properties.Messages.main_export_checked, State = Models.PublishState.Success });
 
             await Task.Delay(1000);
 
-            PublishActions.Add(new Models.PublishAction() { Text = "Erstelle Produktdatenbank", State = Models.PublishState.Info });
+            PublishActions.Add(new Models.PublishAction() { Text = Properties.Messages.main_export_create, State = Models.PublishState.Info });
 
             await Task.Delay(1000);
             
@@ -1290,14 +1290,14 @@ namespace Kaenx.Creator
                 {
                     if(versions.GroupBy(v => v.Namespace).Count() > 1)
                     {
-                        PublishActions.Add(new Models.PublishAction() { Text = "Produktdatenbank haben unterschiedlichen Namespace", State = Models.PublishState.Fail });
+                        PublishActions.Add(new Models.PublishAction() { Text = Properties.Messages.main_export_error_prod_namespace, State = Models.PublishState.Fail });
                         return;
                     }
 
                     Models.EtsVersion etsVersion = EtsVersions.Single(v => v.Number == versions[0].Namespace);
                     if(!etsVersion.IsEnabled)
                     {
-                        PublishActions.Add(new Models.PublishAction() { Text = $"Der gewünschte Namespace /{etsVersion.Number} kann auf diesem System nicht erstellt werden", State = Models.PublishState.Fail });
+                        PublishActions.Add(new Models.PublishAction() { Text = string.Format(Properties.Messages.main_export_error_prod_namespace, etsVersion.Number), State = Models.PublishState.Fail });
                         return;
                     }
                     convPath = System.IO.Path.Combine(convPath, "CV", etsVersion.FolderPath);
@@ -1310,7 +1310,7 @@ namespace Kaenx.Creator
                     bool success = helper.ExportEts(PublishActions);
                     if(!success)
                     {
-                        MessageBox.Show("Produktdatenbank konnte nicht veröffentlicht werden.");
+                        MessageBox.Show(Properties.Messages.main_export_error, Properties.Messages.main_export_title);
                         return;
                     }
                     helper.SignOutput();
@@ -1319,7 +1319,7 @@ namespace Kaenx.Creator
                 case "kaenx":
                     throw new NotImplementedException("Dieses Feature wurde noch nicht implementiert");
             }
-            System.Windows.MessageBox.Show("Erfolgreich erstellt");
+            System.Windows.MessageBox.Show(Properties.Messages.main_export_success, Properties.Messages.main_export_title);
         }
 
         private void ChangeLang(object sender, RoutedEventArgs e)
@@ -1400,7 +1400,7 @@ namespace Kaenx.Creator
                 }
                 return (flag, version);
             } catch {
-                MessageBox.Show("Beim Abfragen der neuesten Version hab es Probleme.", "Update suchen", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Properties.Messages.update_new, Properties.Messages.update_title, MessageBoxButton.OK, MessageBoxImage.Error);
                 return (false, "");
             }
         }

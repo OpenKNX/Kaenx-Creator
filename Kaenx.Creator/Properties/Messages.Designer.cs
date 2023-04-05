@@ -1160,9 +1160,267 @@ namespace Kaenx.Creator.Properties {
             }
         }
         
-        public static string check_ {
+        public static string check_ver_com_not_unique {
             get {
-                return ResourceManager.GetString("check_", resourceCulture);
+                return ResourceManager.GetString("check_ver_com_not_unique", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_com_no_dpt {
+            get {
+                return ResourceManager.GetString("check_ver_com_no_dpt", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_com_no_dpt_ref {
+            get {
+                return ResourceManager.GetString("check_ver_com_no_dpt_ref", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_com_no_dpst {
+            get {
+                return ResourceManager.GetString("check_ver_com_no_dpst", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_com_no_textpara {
+            get {
+                return ResourceManager.GetString("check_ver_com_no_textpara", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_com_no_used_textpara {
+            get {
+                return ResourceManager.GetString("check_ver_com_no_used_textpara", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_comref_no_com {
+            get {
+                return ResourceManager.GetString("check_ver_comref_no_com", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_mods {
+            get {
+                return ResourceManager.GetString("check_ver_mods", resourceCulture);
+            }
+        }
+        
+        public static string check_cat_dev_text_not_all {
+            get {
+                return ResourceManager.GetString("check_cat_dev_text_not_all", resourceCulture);
+            }
+        }
+        
+        public static string check_cat_dev_desc_not_all {
+            get {
+                return ResourceManager.GetString("check_cat_dev_desc_not_all", resourceCulture);
+            }
+        }
+        
+        public static string check_cat_cat_text_not_all {
+            get {
+                return ResourceManager.GetString("check_cat_cat_text_not_all", resourceCulture);
+            }
+        }
+        
+        public static string check_dyn_channel_no_number {
+            get {
+                return ResourceManager.GetString("check_dyn_channel_no_number", resourceCulture);
+            }
+        }
+        
+        public static string check_dyn_channel_textpara {
+            get {
+                return ResourceManager.GetString("check_dyn_channel_textpara", resourceCulture);
+            }
+        }
+        
+        public static string check_dyn_block_pref_error {
+            get {
+                return ResourceManager.GetString("check_dyn_block_pref_error", resourceCulture);
+            }
+        }
+        
+        public static string check_dyn_block_no_pref {
+            get {
+                return ResourceManager.GetString("check_dyn_block_no_pref", resourceCulture);
+            }
+        }
+        
+        public static string check_dyn_block_no_textpara {
+            get {
+                return ResourceManager.GetString("check_dyn_block_no_textpara", resourceCulture);
+            }
+        }
+        
+        public static string check_dyn_block_no_icon {
+            get {
+                return ResourceManager.GetString("check_dyn_block_no_icon", resourceCulture);
+            }
+        }
+        
+        public static string check_dyn_mod_no_module {
+            get {
+                return ResourceManager.GetString("check_dyn_mod_no_module", resourceCulture);
+            }
+        }
+        
+        public static string check_dyn_mod_empty_arg {
+            get {
+                return ResourceManager.GetString("check_dyn_mod_empty_arg", resourceCulture);
+            }
+        }
+        
+        public static string check_dyn_mod_no_alloc {
+            get {
+                return ResourceManager.GetString("check_dyn_mod_no_alloc", resourceCulture);
+            }
+        }
+        
+        public static string check_dyn_mod_alloc_error {
+            get {
+                return ResourceManager.GetString("check_dyn_mod_alloc_error", resourceCulture);
+            }
+        }
+        
+        public static string check_dyn_choose_no_pararef {
+            get {
+                return ResourceManager.GetString("check_dyn_choose_no_pararef", resourceCulture);
+            }
+        }
+        
+        public static string check_dyn_when_no_cond {
+            get {
+                return ResourceManager.GetString("check_dyn_when_no_cond", resourceCulture);
+            }
+        }
+        
+        public static string check_dyn_when_default {
+            get {
+                return ResourceManager.GetString("check_dyn_when_default", resourceCulture);
+            }
+        }
+        
+        public static string check_dyn_para_no_ref {
+            get {
+                return ResourceManager.GetString("check_dyn_para_no_ref", resourceCulture);
+            }
+        }
+        
+        public static string check_dyn_para_no_help {
+            get {
+                return ResourceManager.GetString("check_dyn_para_no_help", resourceCulture);
+            }
+        }
+        
+        public static string check_dyn_com_no_ref {
+            get {
+                return ResourceManager.GetString("check_dyn_com_no_ref", resourceCulture);
+            }
+        }
+        
+        public static string check_dyn_sep_no_ref {
+            get {
+                return ResourceManager.GetString("check_dyn_sep_no_ref", resourceCulture);
+            }
+        }
+        
+        public static string check_dyn_sep_uihint {
+            get {
+                return ResourceManager.GetString("check_dyn_sep_uihint", resourceCulture);
+            }
+        }
+        
+        public static string check_dyn_sep_no_icon {
+            get {
+                return ResourceManager.GetString("check_dyn_sep_no_icon", resourceCulture);
+            }
+        }
+        
+        public static string check_dyn_assign_no_target {
+            get {
+                return ResourceManager.GetString("check_dyn_assign_no_target", resourceCulture);
+            }
+        }
+        
+        public static string check_dyn_assign_no_source {
+            get {
+                return ResourceManager.GetString("check_dyn_assign_no_source", resourceCulture);
+            }
+        }
+        
+        public static string check_dyn_btn_no_name {
+            get {
+                return ResourceManager.GetString("check_dyn_btn_no_name", resourceCulture);
+            }
+        }
+        
+        public static string check_dyn_btn_no_ref {
+            get {
+                return ResourceManager.GetString("check_dyn_btn_no_ref", resourceCulture);
+            }
+        }
+        
+        public static string check_dyn_btn_no_icon {
+            get {
+                return ResourceManager.GetString("check_dyn_btn_no_icon", resourceCulture);
+            }
+        }
+        
+        public static string check_com_lang_text {
+            get {
+                return ResourceManager.GetString("check_com_lang_text", resourceCulture);
+            }
+        }
+        
+        public static string check_com_lang_functext {
+            get {
+                return ResourceManager.GetString("check_com_lang_functext", resourceCulture);
+            }
+        }
+        
+        public static string main_export_error {
+            get {
+                return ResourceManager.GetString("main_export_error", resourceCulture);
+            }
+        }
+        
+        public static string main_export_success {
+            get {
+                return ResourceManager.GetString("main_export_success", resourceCulture);
+            }
+        }
+        
+        public static string main_export_error_prod_namespace {
+            get {
+                return ResourceManager.GetString("main_export_error_prod_namespace", resourceCulture);
+            }
+        }
+        
+        public static string main_export_create {
+            get {
+                return ResourceManager.GetString("main_export_create", resourceCulture);
+            }
+        }
+        
+        public static string main_export_checked {
+            get {
+                return ResourceManager.GetString("main_export_checked", resourceCulture);
+            }
+        }
+        
+        public static string main_export_failed {
+            get {
+                return ResourceManager.GetString("main_export_failed", resourceCulture);
+            }
+        }
+        
+        public static string update_error {
+            get {
+                return ResourceManager.GetString("update_error", resourceCulture);
             }
         }
         

@@ -436,28 +436,9 @@ namespace Kaenx.Creator.Classes {
                 }
                 
                 if(!showOnlyErrors)
-                {
-                    if(para.TranslationText) {
-                        Translation trans = para.Text.Single(t => t.Language.CultureCode == defaultLang);
-                        if(string.IsNullOrEmpty(trans.Text))
-                            actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_lang_no_translation, "Parameter", para.Name, para.UId), State = PublishState.Warning, Item = para, Module = mod });
-                    } else {
-                        if(para.Text.Any(s => string.IsNullOrEmpty(s.Text)))
-                        {
-                            actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_lang_not_all, "Parameter", para.Name, para.UId), State = PublishState.Warning, Item = para, Module = mod });
-                        }
-                    }
-                }
+                    CheckText(para, defaultLang, mod, actions);
 
-                if(!para.TranslationSuffix && !showOnlyErrors) {
-                    if(!string.IsNullOrEmpty(para.Suffix.Single(t => t.Language.CultureCode == defaultLang).Text))
-                    {
-                        if(para.Suffix.Any(s => string.IsNullOrEmpty(s.Text)))
-                        {
-                            actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_lang_suffix, "Parameter", para.Name, para.UId), State = PublishState.Warning, Item = para, Module = mod });
-                        }
-                    }
-                }
+                CheckSuffix(para, showOnlyErrors, defaultLang, mod, actions);
 
                 if(!para.IsInUnion) {
                     switch(para.SavePath) {
@@ -484,8 +465,6 @@ namespace Kaenx.Creator.Classes {
                 } else {
                     if(para.UnionObject == null) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_para_save_union, para.Name, para.UId), State = PublishState.Fail, Item = para, Module = mod });
                 }
-
-                if(para.Suffix.Any(t => t.Text.Length > 20)) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_lang_suffix_length, para.Name, para.UId), State = PublishState.Fail, Item = para, Module = mod });
             }
         
             foreach(ParameterRef para in vbase.ParameterRefs) {
@@ -497,48 +476,22 @@ namespace Kaenx.Creator.Classes {
                     ParameterType ptype = para.ParameterObject.ParameterTypeObject;
 
                     if(para.OverwriteText)
-                    {
-                        if(true) { //Todo para.TranslationText) {
-                            Translation trans = para.Text.Single(t => t.Language.CultureCode == defaultLang);
-                            if(string.IsNullOrEmpty(trans.Text))
-                                actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_lang_no_translation, "ParameterRef", para.Name, para.UId), State = PublishState.Fail, Item = para, Module = mod });
-                        } else {
-                            if(!showOnlyErrors)
-                            {
-                               if(para.Text.Any(s => string.IsNullOrEmpty(s.Text)))
-                                {
-                                    actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_lang_not_all, "ParameterRef", para.Name, para.UId), State = PublishState.Warning, Item = para, Module = mod });
-                                }
-                            }
-                        }
-                    }
+                        CheckText(para, defaultLang, mod, actions);
 
                     if(para.OverwriteValue)
-                    {
                         CheckValue(para, mod, actions);
-                    }
 
                     if(para.OverwriteSuffix)
-                    {
-                        if(!string.IsNullOrEmpty(para.Suffix.Single(t => t.Language.CultureCode == defaultLang).Text))
-                        {
-                            if(para.Suffix.Any(s => string.IsNullOrEmpty(s.Text)))
-                            {
-                                actions.Add(new PublishAction() { Text = $"    Parameter {para.Name} ({para.UId}): Suffix nicht in allen Sprachen übersetzt", State = PublishState.Warning, Item = para, Module = mod });
-                            }
-                        }
-                    }
-
-                    
+                        CheckSuffix(para, showOnlyErrors, defaultLang, mod, actions);
                 }
-                if(para.Suffix.Any(t => t.Text.Length > 20)) actions.Add(new PublishAction() { Text = $"    ParameterRef {para.Name} ({para.UId}): Suffix ist länger als 20 Zeichen", State = PublishState.Fail, Item = para, Module = mod });
+                
             }
         
             
             var x = vbase.ComObjects.GroupBy((c) => c.Number);
             if(x.Any((c) => c.Count() > 1))
             {
-                actions.Add(new PublishAction() { Text = $"    Kommunikationsobjekt-Nummern sind nicht eindeutig. IDs werden aufsteigend vergeben.", State = PublishState.Warning });
+                actions.Add(new PublishAction() { Text = "\t" + Properties.Messages.check_ver_com_not_unique, State = PublishState.Warning });
             } else {
                 foreach(ComObject com in vbase.ComObjects)
                 {
@@ -548,25 +501,27 @@ namespace Kaenx.Creator.Classes {
 
 
 
+
+
             foreach(ComObject com in vbase.ComObjects) {
-                if(com.HasDpt && com.Type == null) actions.Add(new PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Kein DataPointType angegeben", State = PublishState.Fail, Item = com, Module = mod });
-                if(com.HasDpt && com.Type != null && com.Type.Number == "0") actions.Add(new PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Keine Angabe des DPT nur bei Refs", State = PublishState.Fail, Item = com, Module = mod });
-                if(com.HasDpt && com.HasDpts && com.SubType == null) actions.Add(new PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Kein DataPointSubType angegeben", State = PublishState.Fail, Item = com, Module = mod });
+                if(com.HasDpt && com.Type == null) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_com_no_dpt, com.Name, com.UId), State = PublishState.Fail, Item = com, Module = mod });
+                if(com.HasDpt && com.Type != null && com.Type.Number == "0") actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_com_no_dpt_ref, com.Name, com.UId), State = PublishState.Fail, Item = com, Module = mod });
+                if(com.HasDpt && com.HasDpts && com.SubType == null) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_com_no_dpst, com.Name, com.UId), State = PublishState.Fail, Item = com, Module = mod });
             
                 //TODO auslagern in Funktion
                 if(com.TranslationText) {
                     Translation trans = com.Text.Single(t => t.Language.CultureCode == defaultLang);
                     if(string.IsNullOrEmpty(trans.Text))
-                        actions.Add(new PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Keine Übersetzung für Text vorhanden ({trans.Language.Text})", State = PublishState.Fail, Item = com, Module = mod });
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_com_lang_text, "ComObject", com.Name, com.UId, trans.Language.Text), State = PublishState.Fail, Item = com, Module = mod });
                 } else {
                     if(!showOnlyErrors)
                     {
                         if(com.Text.Count == com.Text.Count(t => string.IsNullOrEmpty(t.Text)))
-                                actions.Add(new PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Keine Übersetzungen für Text vorhanden", State = PublishState.Warning, Item = com, Module = mod });
+                                actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_com_lang_text, "ComObject", com.Name, com.UId, ""), State = PublishState.Warning, Item = com, Module = mod });
                         else
                             foreach(Translation trans in com.Text)
                                 if(string.IsNullOrEmpty(trans.Text))
-                                    actions.Add(new PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Keine Übersetzung für Text vorhanden ({trans.Language.Text})", State = PublishState.Warning, Item = com, Module = mod });
+                                    actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_com_lang_text, "ComObject", com.Name, com.UId, trans.Language.Text), State = PublishState.Warning, Item = com, Module = mod });
                     }
                 }
                 
@@ -574,32 +529,32 @@ namespace Kaenx.Creator.Classes {
                 if(com.TranslationFunctionText) {
                     Translation trans = com.FunctionText.Single(t => t.Language.CultureCode == defaultLang);
                     if(string.IsNullOrEmpty(trans.Text))
-                        actions.Add(new PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Keine Übersetzung für FunktionsText vorhanden ({trans.Language.Text})", State = PublishState.Fail, Item = com, Module = mod });
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_com_lang_functext, "ComObject", com.Name, com.UId, trans.Language.Text), State = PublishState.Fail, Item = com, Module = mod });
                 } else {
                     if(!showOnlyErrors)
                     {
                         if(com.FunctionText.Count == com.FunctionText.Count(t => string.IsNullOrEmpty(t.Text)))
-                                actions.Add(new PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Keine Übersetzungen für FunktionsText vorhanden", State = PublishState.Warning, Item = com, Module = mod });
+                                actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_com_lang_text, "ComObject", com.Name, com.UId, ""), State = PublishState.Warning, Item = com, Module = mod });
                         else
                             foreach(Translation trans in com.FunctionText)
                                 if(string.IsNullOrEmpty(trans.Text))
-                                    actions.Add(new PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Keine Übersetzung für FunktionsText vorhanden ({trans.Language.Text})", State = PublishState.Warning, Item = com, Module = mod });
+                                    actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_com_lang_text, "ComObject", com.Name, com.UId, trans.Language.Text), State = PublishState.Warning, Item = com, Module = mod });
                     }
                 }
 
                 if(ver.IsComObjectRefAuto && com.UseTextParameter)
                 {
                     if(com.ParameterRefObject == null)
-                        actions.Add(new PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): Kein TextParameter angegeben", State = PublishState.Fail, Item = com, Module = mod });
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_com_no_textpara, "ComObject", com.Name, com.UId), State = PublishState.Fail, Item = com, Module = mod });
                     if(com.Text.Any(t => !t.Text.Contains("{{0")))
-                        actions.Add(new PublishAction() { Text = $"    ComObject {com.Name} ({com.UId}): TextParameter angegeben, aber kein {{0}} im Text", State = PublishState.Fail, Item = com, Module = mod });
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_com_no_used_textpara, "ComObject", com.Name, com.UId), State = PublishState.Fail, Item = com, Module = mod });
 
                 }
                 
             }
 
             foreach(ComObjectRef rcom in vbase.ComObjectRefs) {
-                if(rcom.ComObjectObject == null) actions.Add(new PublishAction() { Text = $"    ComObjectRef {rcom.Name} ({rcom.UId}): Kein KO-Ref angegeben", State = PublishState.Fail, Item = rcom, Module = mod });
+                if(rcom.ComObjectObject == null) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_comref_no_com, rcom.Name, rcom.UId), State = PublishState.Fail, Item = rcom, Module = mod });
                 //if(rcom.HasDpts && rcom.Type == null && rcom.Name.ToLower() != "dummy") actions.Add(new PublishAction() { Text = $"    ComObject {rcom.Name}: Kein DataPointSubType angegeben", State = PublishState.Fail });
 
                 if(rcom.OverwriteText) {
@@ -631,9 +586,9 @@ namespace Kaenx.Creator.Classes {
                 if(!ver.IsComObjectRefAuto && rcom.UseTextParameter && rcom.ParameterRefObject == null)
                 {
                     if(rcom.ParameterRefObject == null)
-                        actions.Add(new PublishAction() { Text = $"    ComObjectRef {rcom.Name} ({rcom.UId}): Kein TextParameter angegeben", State = PublishState.Fail, Item = rcom, Module = mod });
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_com_no_textpara, "ComObjectRef", rcom.Name, rcom.UId), State = PublishState.Fail, Item = rcom, Module = mod });
                     if(rcom.Text.Any(t => !t.Text.Contains("{{0")))
-                        actions.Add(new PublishAction() { Text = $"    ComObjectRef {rcom.Name} ({rcom.UId}): TextParameter angegeben, aber kein {{0}} im Text", State = PublishState.Fail, Item = rcom, Module = mod });
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_com_no_used_textpara, "ComObjectRef", rcom.Name, rcom.UId), State = PublishState.Fail, Item = rcom, Module = mod });
                 }
             }
         
@@ -644,7 +599,7 @@ namespace Kaenx.Creator.Classes {
             
             foreach(Module xmod in vbase.Modules)
             {
-                actions.Add(new PublishAction() { Text = $"Prüfe Module '{xmod.Name}'" });
+                actions.Add(new PublishAction() { Text = string.Format(Properties.Messages.check_ver_mods, xmod.Name) });
                 CheckVersion(ver, xmod, actions, ver.DefaultLanguage, ver.NamespaceVersion, showOnlyErrors);
                 //TODO check for Argument exist
             }
@@ -753,6 +708,79 @@ namespace Kaenx.Creator.Classes {
             }
         }
 
+        private static void CheckText(object item, string defaultLang, object mod, ObservableCollection<PublishAction> actions)
+        {
+            bool translate = false;
+            string name = "";
+            string stype = item.GetType().Name;
+            int uid = 0;
+            ObservableCollection<Translation> text = null;
+
+            if(item is Parameter parameter)
+            {
+                name = parameter.Name;
+                uid = parameter.UId;
+                text = parameter.Suffix;
+                translate = parameter.TranslationText;
+            } else if(item is ParameterRef parameterref)
+            {
+                name = parameterref.Name;
+                uid = parameterref.UId;
+                text = parameterref.Suffix;
+                translate = false; //Todo
+            }
+            
+            if(translate) {
+                Translation trans = text.Single(t => t.Language.CultureCode == defaultLang);
+                if(string.IsNullOrEmpty(trans.Text))
+                    actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_lang_no_translation, stype, name, uid), State = PublishState.Warning, Item = item, Module = mod });
+            } else {
+                if(text.Any(s => string.IsNullOrEmpty(s.Text)))
+                {
+                    actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_lang_not_all, stype, name, uid), State = PublishState.Warning, Item = item, Module = mod });
+                }
+            }
+        }
+
+        private static void CheckSuffix(object item, bool showOnlyErrors, string defaultLang, object mod, ObservableCollection<PublishAction> actions)
+        {
+            bool translate = false;
+            string name = "";
+            string stype = item.GetType().Name;
+            int uid = 0;
+            ObservableCollection<Translation> text = null;
+
+            if(item is Parameter parameter)
+            {
+                name = parameter.Name;
+                uid = parameter.UId;
+                text = parameter.Suffix;
+                translate = parameter.TranslationSuffix;
+            } else if(item is ParameterRef parameterref)
+            {
+                name = parameterref.Name;
+                uid = parameterref.UId;
+                text = parameterref.Suffix;
+                translate = false; //TODO
+            }
+
+            if(!showOnlyErrors)
+            {
+                if(translate) {
+                    Translation trans = text.Single(t => t.Language.CultureCode == defaultLang);
+                    if(string.IsNullOrEmpty(trans.Text))
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_lang_no_translation, stype, name, uid), State = PublishState.Warning, Item = item, Module = mod });
+                } else {
+                    if(text.Any(s => string.IsNullOrEmpty(s.Text)))
+                    {
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_lang_not_all, stype, name, uid), State = PublishState.Warning, Item = item, Module = mod });
+                    }
+                }
+            }
+            
+            if(text.Any(t => t.Text.Length > 20)) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_lang_suffix_length, stype, name, uid), State = PublishState.Fail, Item = item, Module = mod });
+        }
+
         private static void CheckLanguages(AppVersion vers,  ObservableCollection<PublishAction> actions, ModelGeneral general, List<Device> devices)
         {
             List<CatalogItem> toCheck = new List<CatalogItem>();
@@ -775,9 +803,9 @@ namespace Kaenx.Creator.Classes {
                                 foreach (Language lang in vers.Languages)
                                 {
                                     if (!dev.Text.Any(l => l.Language.CultureCode == lang.CultureCode || string.IsNullOrEmpty(l.Text)))
-                                        actions.Add(new PublishAction() { Text = $"Geräte: Text enthält nicht alle Sprachen der Applikation.", State = PublishState.Fail });
+                                        actions.Add(new PublishAction() { Text = string.Format(Properties.Messages.check_cat_dev_text_not_all, dev.Name), State = PublishState.Fail });
                                     if (!dev.Description.Any(l => l.Language.CultureCode == lang.CultureCode || string.IsNullOrEmpty(l.Text)))
-                                        actions.Add(new PublishAction() { Text = $"Geräte: Beschreibung enthält nicht alle Sprachen der Applikation.", State = PublishState.Fail });
+                                        actions.Add(new PublishAction() { Text = string.Format(Properties.Messages.check_cat_dev_desc_not_all), State = PublishState.Fail });
                                 }
                             }
                         }
@@ -786,7 +814,7 @@ namespace Kaenx.Creator.Classes {
                     foreach(Language lang in vers.Languages)
                     {
                         if(!citem.Text.Any(l => l.Language.CultureCode == lang.CultureCode || string.IsNullOrEmpty(l.Text)))
-                            actions.Add(new PublishAction() { Text = $"Katalog: Text enthält nicht alle Sprachen der Applikation.", State = PublishState.Fail });
+                            actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_cat_cat_text_not_all, citem.Name), State = PublishState.Fail });
                     }
                     CheckCatalog(vers, citem, devices, general, actions);
                 }
@@ -800,10 +828,10 @@ namespace Kaenx.Creator.Classes {
                 case DynChannel dc:
                 {
                     if(string.IsNullOrEmpty(dc.Number))
-                        actions.Add(new PublishAction() { Text = $"    DynChannel {dc.Name} hat keine Nummer", State = PublishState.Fail});
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_channel_no_number, dc.Name), State = PublishState.Fail});
 
                     if(dc.UseTextParameter && dc.ParameterRefObject == null)
-                        actions.Add(new PublishAction() { Text = $"    DynChannel {dc.Name} wurde kein Text Parameter zugeordnet", State = PublishState.Fail});
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_channel_textpara), State = PublishState.Fail});
                     break;
                 }
 
@@ -812,95 +840,95 @@ namespace Kaenx.Creator.Classes {
                     if(vbase is AppVersion av)
                     {
                         if(!av.IsPreETS4 && dpb.UseParameterRef)
-                            actions.Add(new PublishAction() { Text = $"    DynParaBlock {dpb.Name} ParameterRef wird nur in ETS3 unterstützt. IsPreETS4 aktivieren", State = PublishState.Warning});
+                            actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_block_pref_error, dpb.Name), State = PublishState.Warning});
                     }
                     if(dpb.UseParameterRef && dpb.ParameterRefObject == null)
-                        actions.Add(new PublishAction() { Text = $"    DynParaBlock {dpb.Name} wurde kein ParameterRef zugeordnet", State = PublishState.Fail});
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_block_no_pref, dpb.Name), State = PublishState.Fail});
                         
                     if(dpb.UseTextParameter && dpb.TextRefObject == null)
-                        actions.Add(new PublishAction() { Text = $"    DynParaBlock {dpb.Name} wurde kein TextParameterRef zugeordnet", State = PublishState.Fail});
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_block_no_textpara, dpb.Name), State = PublishState.Fail});
                     
                     if(dpb.UseIcon && dpb.IconObject == null)
-                        actions.Add(new PublishAction() { Text = $"    DynParaBlock {dpb.Name} wurde kein Icon zugeordnet", State = PublishState.Fail});
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_block_no_icon, dpb.Name), State = PublishState.Fail});
                     break;
                 }
 
                 case DynModule dm:
                 {
                     if(dm.ModuleObject == null)
-                        actions.Add(new PublishAction() { Text = $"    DynModule {dm.Name} wurde kein Module zugeordnet", State = PublishState.Fail});
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_mod_no_module, dm.Name), State = PublishState.Fail});
                         
                     if(dm.Arguments.Any(a => !a.UseAllocator && string.IsNullOrEmpty(a.Value)))
-                        actions.Add(new PublishAction() { Text = $"    DynModule {dm.Name} hat Argumente, die leer sind", State = PublishState.Fail});
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_mod_empty_arg, dm.Name), State = PublishState.Fail});
                     if(dm.Arguments.Any(a => a.UseAllocator && a.Allocator == null))
-                        actions.Add(new PublishAction() { Text = $"    DynModule {dm.Name} muss ein Allocator zugewiesen werden", State = PublishState.Fail});
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_mod_no_alloc, dm.Name), State = PublishState.Fail});
                     if(dm.Arguments.Any(a => a.Argument.Type != ArgumentTypes.Numeric && a.UseAllocator))
-                        actions.Add(new PublishAction() { Text = $"    DynModule {dm.Name} hat Argumente, die einen Allocator verwenden, aber nicht Numeric sind", State = PublishState.Fail});
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_mod_alloc_error), State = PublishState.Fail});
                     break;
                 }
 
                 case IDynChoose dco:
                 {
                     if(dco.ParameterRefObject == null)
-                        actions.Add(new PublishAction() { Text = $"    DynChoose {dco.Name} wurde kein ParameterRef zugeordnet", State = PublishState.Fail});
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_choose_no_pararef, dco.Name), State = PublishState.Fail});
                     break;
                 }
 
                 case IDynWhen dwh:
                 {
                     if(string.IsNullOrEmpty(dwh.Condition) && !dwh.IsDefault)
-                        actions.Add(new PublishAction() { Text = $"    DynWhen {dwh.Name} wurde keine Bedingung angegeben", State = PublishState.Fail});
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_when_no_cond, dwh.Name), State = PublishState.Fail});
                     
                     if(!showOnlyErrors && !string.IsNullOrEmpty(dwh.Condition) && dwh.IsDefault)
-                        actions.Add(new PublishAction() { Text = $"    DynWhen {dwh.Name} ist Default, Bedingung wird ignoriert", State = PublishState.Warning});
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_when_default, dwh.Name), State = PublishState.Warning});
                     break;
                 }
 
                 case DynParameter dpa:
                 {
                     if(dpa.ParameterRefObject == null)
-                        actions.Add(new PublishAction() { Text = $"    DynParameter {dpa.Name} wurde kein ParameterRef zugeordnet", State = PublishState.Fail, Item = dpa, Module = vbase });
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_para_no_ref, dpa.Name), State = PublishState.Fail, Item = dpa, Module = vbase });
                     if(dpa.HasHelptext && dpa.Helptext == null)
-                        actions.Add(new PublishAction() { Text = $"    DynParameter {dpa.Name} wurde kein Hilfetext zugeordnet", State = PublishState.Fail, Item = dpa, Module = vbase });
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_para_no_help, dpa.Name), State = PublishState.Fail, Item = dpa, Module = vbase });
                     break;
                 }
 
                 case DynComObject dco:
                 {
                     if(dco.ComObjectRefObject == null)
-                        actions.Add(new PublishAction() { Text = $"    DynComObject {dco.Name} wurde kein ComObjectRef zugeordnet", State = PublishState.Fail});
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_com_no_ref, dco.Name), State = PublishState.Fail});
                     break;
                 }
 
                 case DynSeparator dse:
                 {
                     if(dse.UseTextParameter && dse.TextRefObject == null)
-                        actions.Add(new PublishAction() { Text = $"    DynSeparator {dse.Name} wurde kein ParameterRef zugeordnet", State = PublishState.Fail});
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_sep_no_ref, dse.Name), State = PublishState.Fail});
                     if(dse.Hint != SeparatorHint.None && ns < 14)
-                        actions.Add(new PublishAction() { Text = $"    DynSeparator {dse.Name} UIHint wird erst ab NamespaceVersion 14 unterstützt", State = PublishState.Fail});
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_sep_uihint, dse.Name), State = PublishState.Fail});
                     if(dse.UseIcon && dse.IconObject == null)
-                        actions.Add(new PublishAction() { Text = $"    DynSeparator {dse.Name} wurde kein Icon zugeordnet", State = PublishState.Fail});
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_sep_no_icon, dse.Name), State = PublishState.Fail});
                     break;
                 }
 
                 case DynAssign das:
                 {
                     if(das.TargetObject == null)
-                        actions.Add(new PublishAction() { Text = $"    DynAssign {das.Name} wurde kein Ziel-Parameter zugeordnet", State = PublishState.Fail});
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_assign_no_target, das.Name), State = PublishState.Fail});
                         
                     if(das.SourceObject == null && string.IsNullOrEmpty(das.Value))
-                        actions.Add(new PublishAction() { Text = $"    DynAssign {das.Name} wurde kein Quell-Parameter/Wert zugeordnet", State = PublishState.Fail});
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_assign_no_source, das.Name), State = PublishState.Fail});
                     break;
                 }
 
                 case DynButton dbtn:
                 {
                     if(string.IsNullOrEmpty(dbtn.Name))
-                        actions.Add(new PublishAction() { Text = $"    DynButton {dbtn.Name} wurde kein Name zugeordnet", State = PublishState.Fail});
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_btn_no_name, dbtn.Name), State = PublishState.Fail});
                     if(dbtn.UseTextParameter && dbtn.TextRefObject == null)
-                        actions.Add(new PublishAction() { Text = $"    DynButton {dbtn.Name} wurde kein ParameterRef zugeordnet", State = PublishState.Fail});
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_btn_no_ref, dbtn.Name), State = PublishState.Fail});
                     if(dbtn.UseIcon && dbtn.IconObject == null)
-                        actions.Add(new PublishAction() { Text = $"    DynButton {dbtn.Name} wurde kein Icon zugeordnet", State = PublishState.Fail});
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_btn_no_icon, dbtn.Name), State = PublishState.Fail});
                     break;
                 }
 

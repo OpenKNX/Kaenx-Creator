@@ -803,7 +803,7 @@
   </data>
   <data name="check_ver_lang_no_translation" xml:space="preserve">
     <value>{0} {1} ({2}): Is not translated</value>
-    <comment>Parameter/Ref; Name; UId</comment>
+    <comment>Parameter/Ref; Name; UId; Text/FunctionText</comment>
   </data>
   <data name="check_ver_lang_not_all" xml:space="preserve">
     <value>{0} {1} ({2}): Is not translated in all languages</value>
@@ -843,10 +843,190 @@
   </data>
   <data name="check_ver_lang_suffix_length" xml:space="preserve">
     <value>{0} {1} ({2}): Suffix has more than 20 chars</value>
-    <comment>Name; UId</comment>
+    <comment>Parameter/Ref; Name; UId</comment>
   </data>
   <data name="check_ver_pararef_no_para" xml:space="preserve">
     <value>ParameterRef {0} ({1}): No parameter selected</value>
     <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_com_not_unique" xml:space="preserve">
+    <value>ComObjectNumbers are not unique. IDs will be counted up</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_com_no_dpt" xml:space="preserve">
+    <value>ComObject {0} ({1}): No DatapointType selected</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_com_no_dpt_ref" xml:space="preserve">
+    <value>ComObject {0} ({1}): No DatapointType is only valid for ComObjectRef</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_com_no_dpst" xml:space="preserve">
+    <value>ComObject {0} ({1}): No DatapointSubType selected</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_com_no_textpara" xml:space="preserve">
+    <value>{0} {1} ({2}): No TextParameter selected</value>
+    <comment>ComObject/Ref; Name; UId</comment>
+  </data>
+  <data name="check_ver_com_no_used_textpara" xml:space="preserve">
+    <value>{0} {1} ({2}): TextParameter is selected but no {{{{0}}}} in text</value>
+    <comment>ComObject/Ref; Name; UId</comment>
+  </data>
+  <data name="check_ver_comref_no_com" xml:space="preserve">
+    <value>ComObjectRef {0} ({1}): No ComObject selected</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_mods" xml:space="preserve">
+    <value>Checking Module '{0}'</value>
+    <comment>Name</comment>
+  </data>
+  <data name="check_cat_dev_text_not_all" xml:space="preserve">
+    <value>Device {0}: Text has not all languages of the application or is not translated</value>
+    <comment/>
+  </data>
+  <data name="check_cat_dev_desc_not_all" xml:space="preserve">
+    <value>Device {0}: Description has not all languages of the application or is not translated</value>
+    <comment/>
+  </data>
+  <data name="check_cat_cat_text_not_all" xml:space="preserve">
+    <value>Catalog {0}: Text has not all languages of the application or is not translated</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_channel_no_number" xml:space="preserve">
+    <value>DynChannel {0}: Number is empty</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_channel_textpara" xml:space="preserve">
+    <value>DynChannel {0}: No TextParameter selected</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_block_pref_error" xml:space="preserve">
+    <value>DynParaBlock {0}: ParameterRef is only supported in ETS3. Activate IsPreETS4</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_block_no_pref" xml:space="preserve">
+    <value>DynParaBlock {0}: No ParameterRef selected</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_block_no_textpara" xml:space="preserve">
+    <value>DynParaBlock {0}: No TextParameter selected</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_block_no_icon" xml:space="preserve">
+    <value>DynParaBlock {0}: No Icon selected</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_mod_no_module" xml:space="preserve">
+    <value>DynModule {0}: No Module selected</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_mod_empty_arg" xml:space="preserve">
+    <value>DynModule {0}: At least one Argument is empty</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_mod_no_alloc" xml:space="preserve">
+    <value>DynModule {0}: An Allocator must be associated</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_mod_alloc_error" xml:space="preserve">
+    <value>DynModule {0}: At least one Argument has an Allocator which is not Numeric</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_choose_no_pararef" xml:space="preserve">
+    <value>DynChoose {0}: No ParameterRef selected</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_when_no_cond" xml:space="preserve">
+    <value>DynWhen {0}: Condition is empty</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_when_default" xml:space="preserve">
+    <value>DynWhen {0}: Set as default. Condition will be ignored</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_para_no_ref" xml:space="preserve">
+    <value>DynParameter {0}: No ParameterRef selected</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_para_no_help" xml:space="preserve">
+    <value>DynParameter {0}: No Helptext selected</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_com_no_ref" xml:space="preserve">
+    <value>DynComObject {0}: No ComObjectRef selected</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_sep_no_ref" xml:space="preserve">
+    <value>DynSeparator {0}: No ParameterRef selected</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_sep_uihint" xml:space="preserve">
+    <value>DynSeparator {0}: UIHint is supported in Namespace 14 or later</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_sep_no_icon" xml:space="preserve">
+    <value>DynSeparator {0}: No Icon selected</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_assign_no_target" xml:space="preserve">
+    <value>DynAssign {0}: No Target selected</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_assign_no_source" xml:space="preserve">
+    <value>DynAssign {0}: No SourceTarget or Value set</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_btn_no_name" xml:space="preserve">
+    <value>DynButton {0}: Name was not set</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_btn_no_ref" xml:space="preserve">
+    <value>DynButton {0}: No ParameterRef selected</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_btn_no_icon" xml:space="preserve">
+    <value>DynButton {0}: No Icon selected</value>
+    <comment/>
+  </data>
+  <data name="check_com_lang_text" xml:space="preserve">
+    <value>{0} {1} ({2}): No translation for text {3}</value>
+    <comment/>
+  </data>
+  <data name="check_com_lang_functext" xml:space="preserve">
+    <value>{0} {1} ({2}): No translation for functiontext {3}</value>
+    <comment/>
+  </data>
+  <data name="main_export_error" xml:space="preserve">
+    <value>KnxProd could not be published</value>
+    <comment/>
+  </data>
+  <data name="main_export_success" xml:space="preserve">
+    <value>KnxProd was successfully created</value>
+    <comment/>
+  </data>
+  <data name="main_export_error_namespace" xml:space="preserve">
+    <value>Namespace /{0} can't be build on this system</value>
+    <comment/>
+  </data>
+  <data name="main_export_error_prod_namespace" xml:space="preserve">
+    <value>KnxProd can't contain different namespaces</value>
+    <comment/>
+  </data>
+  <data name="main_export_create" xml:space="preserve">
+    <value>Creating KnxProd</value>
+    <comment/>
+  </data>
+  <data name="main_export_checked" xml:space="preserve">
+    <value>Passed Check</value>
+    <comment/>
+  </data>
+  <data name="main_export_failed" xml:space="preserve">
+    <value>Build failed. Errors occurred</value>
+    <comment/>
+  </data>
+  <data name="update_error" xml:space="preserve">
+    <value>Could not check for latest version</value>
+    <comment/>
   </data>
 </root>
