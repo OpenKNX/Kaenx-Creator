@@ -314,7 +314,7 @@
     <comment/>
   </data>
   <data name="icon_delete_error" xml:space="preserve">
-    <value>The is is being referenced by {0} ParameterType(s).\r\nDelete it anyway?</value>
+    <value>The icon is being referenced by {0} ParameterType(s).\r\nDelete it anyway?</value>
     <comment>Count of Items</comment>
   </data>
   <data name="icon_delete_error_title" xml:space="preserve">
@@ -750,7 +750,7 @@
     <comment>Name</comment>
   </data>
   <data name="check_ver_mod_combase" xml:space="preserve">
-    <value>Module {0}: ComObjectBasenumber Argument is not of type numeric</value>
+    <value>Module {0}: ComObjectBaseNumber Argument is not of type numeric</value>
     <comment>Name</comment>
   </data>
   <data name="check_ver_dyn_items" xml:space="preserve">
