@@ -59,7 +59,7 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
@@ -122,7 +122,7 @@
     <comment/>
   </data>
   <data name="global_exception_title" xml:space="preserve">
-    <value>Error</value>
+    <value>Fehler</value>
     <comment/>
   </data>
   <data name="update_new" xml:space="preserve">
@@ -149,12 +149,12 @@
     <value>Bitte geben Sie eine Ganzzahl ein.</value>
     <comment/>
   </data>
-  <data name="promt_error_title" xml:space="preserve">
+  <data name="prompt_error_title" xml:space="preserve">
     <value>Eingabefehler</value>
     <comment/>
   </data>
   <data name="prompt_double" xml:space="preserve">
-    <value>Die ID {0} wird bereits von der Nachricht {1} verwendet.</value>
+    <value>Die Id {0} wird bereits von {1} verwendet.</value>
     <comment>ID; Name of Message</comment>
   </data>
   <data name="prompt_double_title" xml:space="preserve">
@@ -170,7 +170,7 @@
     <comment/>
   </data>
   <data name="baggage_delete_error" xml:space="preserve">
-    <value>Der Anhang wird von {0} ParameterTypes verwendet.\r\nTrotzdem löschen?</value>
+    <value>Der Anhang wird von dem ParameterType {0} verwendet.\r\nTrotzdem löschen?</value>
     <comment>Count of Items</comment>
   </data>
   <data name="baggage_delete_error_title" xml:space="preserve">
@@ -187,6 +187,10 @@
   </data>
   <data name="baggage_change_filter" xml:space="preserve">
     <value>Bilder</value>
+    <comment/>
+  </data>
+  <data name="baggage_add_title" xml:space="preserve">
+    <value>Anhang hinzufügen</value>
     <comment/>
   </data>
   <data name="baggage_import_title" xml:space="preserve">
@@ -243,6 +247,786 @@
   </data>
   <data name="memcalc_title" xml:space="preserve">
     <value>Speicherbelegung Fehler</value>
+    <comment/>
+  </data>
+  <data name="comref_delete" xml:space="preserve">
+    <value>Das ComObjectRef wird bereits im Dynamic verwendet. Wollen Sie es wirklich löschen?</value>
+    <comment/>
+  </data>
+  <data name="comref_delete_title" xml:space="preserve">
+    <value>ComObjectRef löschen</value>
+    <comment/>
+  </data>
+  <data name="comref_prompt_id" xml:space="preserve">
+    <value>Neue ComObjectRef Id</value>
+    <comment/>
+  </data>
+  <data name="com_delete1" xml:space="preserve">
+    <value>Das ComObject wird bereits im Dynamic verwendet. Wollen Sie es wirklich löschen?</value>
+    <comment/>
+  </data>
+  <data name="com_delete2" xml:space="preserve">
+    <value>Das ComObject wird von mindestens einem ComObjectRef verwendet. Wollen Sie es wirklich löschen?</value>
+    <comment/>
+  </data>
+  <data name="com_delete_title" xml:space="preserve">
+    <value>ComObject löschen</value>
+    <comment/>
+  </data>
+  <data name="com_prompt_id" xml:space="preserve">
+    <value>Neue ComObject Id</value>
+    <comment/>
+  </data>
+  <data name="para_delete1" xml:space="preserve">
+    <value>Der Parameter wird bereits im Dynamic verwendet. Wollen Sie ihn wirklich löschen?</value>
+    <comment/>
+  </data>
+  <data name="para_delete2" xml:space="preserve">
+    <value>Der Parameter wird bereits von mindestens einem ParameterRef verwendet. Wollen Sie ihn wirklich löschen?</value>
+    <comment/>
+  </data>
+  <data name="para_delete_title" xml:space="preserve">
+    <value>Parameter löschen</value>
+    <comment/>
+  </data>
+  <data name="para_prompt_id" xml:space="preserve">
+    <value>Neue Parameter Id</value>
+    <comment/>
+  </data>
+  <data name="pararef_delete" xml:space="preserve">
+    <value>Der ParameterRef wird bereits im Dynamic verwendet. Wollen Sie ihn wirklich löschen?</value>
+    <comment/>
+  </data>
+  <data name="pararef_delete_title" xml:space="preserve">
+    <value>ParameterRef löschen</value>
+    <comment/>
+  </data>
+  <data name="pararef_prompt_id" xml:space="preserve">
+    <value>Neue ParameterRef Id</value>
+    <comment/>
+  </data>
+  <data name="dyn_copy_error" xml:space="preserve">
+    <value>Sie müssen vorher ein Element ausschneiden.</value>
+    <comment/>
+  </data>
+  <data name="dyn_copy_error_title" xml:space="preserve">
+    <value>Element einfügen</value>
+    <comment/>
+  </data>
+  <data name="icon_delete_error" xml:space="preserve">
+    <value>Das Icon wird von {0} ParameterTypes verwendet.\r\nTrotzdem löschen?</value>
+    <comment>Count of Items</comment>
+  </data>
+  <data name="icon_delete_error_title" xml:space="preserve">
+    <value>Icon löschen</value>
+    <comment/>
+  </data>
+  <data name="icon_change_title" xml:space="preserve">
+    <value>Icon bearbeiten</value>
+    <comment/>
+  </data>
+  <data name="icon_change_success" xml:space="preserve">
+    <value>Icon wurde erfolgreich geändert</value>
+    <comment/>
+  </data>
+  <data name="icon_change_filter" xml:space="preserve">
+    <value>Bilder</value>
+    <comment/>
+  </data>
+  <data name="icon_add_title" xml:space="preserve">
+    <value>Icon hinzufügen</value>
+    <comment/>
+  </data>
+  <data name="icon_import_title" xml:space="preserve">
+    <value>Icons importieren</value>
+    <comment/>
+  </data>
+  <data name="icon_import_filter" xml:space="preserve">
+    <value>Icon Datei</value>
+    <comment/>
+  </data>
+  <data name="icon_import_prompt" xml:space="preserve">
+    <value>Bereits vorhandene Icons löschen?</value>
+    <comment/>
+  </data>
+  <data name="icon_export_title" xml:space="preserve">
+    <value>Icons exportieren</value>
+    <comment/>
+  </data>
+  <data name="icon_export_filter" xml:space="preserve">
+    <value>Icon Datei</value>
+    <comment/>
+  </data>
+  <data name="prodv_no_mod" xml:space="preserve">
+    <value>Kein Modul</value>
+    <comment/>
+  </data>
+  <data name="checkv_not_used" xml:space="preserve">
+    <value>Folgende Elemente werden nicht verwendet:</value>
+    <comment/>
+  </data>
+  <data name="checkv_delete" xml:space="preserve">
+    <value>Alle nicht verwendeten Elemente rekursiv löschen?</value>
+    <comment/>
+  </data>
+  <data name="checkv_delete_title" xml:space="preserve">
+    <value>Bereinigen mit löschen</value>
+    <comment/>
+  </data>
+  <data name="checkv_deleted" xml:space="preserve">
+    <value>Folgende Elemente wurden gelöscht:</value>
+    <comment/>
+  </data>
+  <data name="checkv_warnings" xml:space="preserve">
+    <value>Warnungen ignorieren?</value>
+    <comment/>
+  </data>
+  <data name="checkv_warnings_title" xml:space="preserve">
+    <value>Überprüfe Applikationsversion</value>
+    <comment/>
+  </data>
+  <data name="checkv_started" xml:space="preserve">
+    <value>Überprüfung gestartet</value>
+    <comment/>
+  </data>
+  <data name="checkv_fin" xml:space="preserve">
+    <value>Überprüfung abgeschlossen</value>
+    <comment/>
+  </data>
+  <data name="main_newets_title" xml:space="preserve">
+    <value>ETS Version</value>
+    <comment/>
+  </data>
+  <data name="main_newets_found" xml:space="preserve">
+    <value>Eine neue ETS Version wurde gefunden. Um sie zu verwenden, starten Sie die Anwendung einmalig als Administrator.</value>
+    <comment/>
+  </data>
+  <data name="main_newets_added" xml:space="preserve">
+    <value>Neue ETS Version wurde erfolgreich hinzugefügt.</value>
+    <comment/>
+  </data>
+  <data name="main_def_cat" xml:space="preserve">
+    <value>Hauptkategorie (wird nicht exportiert)</value>
+    <comment/>
+  </data>
+  <data name="main_empty_dpt" xml:space="preserve">
+    <value>Leerer DatapointType (nur für ComObjectRefs)</value>
+    <comment/>
+  </data>
+  <data name="main_add_hard_error" xml:space="preserve">
+    <value>Bitte wählen Sie eine Applikation aus.</value>
+    <comment/>
+  </data>
+  <data name="main_add_hard_error_title" xml:space="preserve">
+    <value>Hardware konnte nicht hinzugefügt werden</value>
+    <comment/>
+  </data>
+  <data name="main_open_viewer" xml:space="preserve">
+    <value>Achtung! Um den Viewer zu verwenden, werden alle IDs überprüft und eventuell geändert. Fortfahren?</value>
+    <comment/>
+  </data>
+  <data name="main_open_viewer_title" xml:space="preserve">
+    <value>ProdViewer öffnen</value>
+    <comment/>
+  </data>
+  <data name="main_open_viewer_error" xml:space="preserve">
+    <value>Die Applikation enthält Fehler. Bitte beheben Sie diese und probieren es erneut.</value>
+    <comment/>
+  </data>
+  <data name="main_lang_select" xml:space="preserve">
+    <value>Bitte wählen Sie eine Sprache aus.</value>
+    <comment/>
+  </data>
+  <data name="main_lang_add_error" xml:space="preserve">
+    <value>Sprache wird bereits unterstützt.</value>
+    <comment/>
+  </data>
+  <data name="main_project_save_title" xml:space="preserve">
+    <value>Projekt speichern</value>
+    <comment/>
+  </data>
+  <data name="main_project_filter" xml:space="preserve">
+    <value>Kaenx Hersteller Projekt</value>
+    <comment/>
+  </data>
+  <data name="main_save_template" xml:space="preserve">
+    <value>Name des Templates:</value>
+    <comment/>
+  </data>
+  <data name="main_save_template_title" xml:space="preserve">
+    <value>Neues Template</value>
+    <comment/>
+  </data>
+  <data name="main_save_template_empty" xml:space="preserve">
+    <value>Bitte geben Sie einen Namen ein.</value>
+    <comment/>
+  </data>
+  <data name="main_save_template_duplicate" xml:space="preserve">
+    <value>Ein Template mit dem Namen '{0}' ist bereits vorhanden. Wollen Sie es überschreiben?</value>
+    <comment/>
+  </data>
+  <data name="main_project_open_title" xml:space="preserve">
+    <value>Projekt öffnen</value>
+    <comment/>
+  </data>
+  <data name="main_project_open_format" xml:space="preserve">
+    <value>Anderes Dateiformat</value>
+    <comment/>
+  </data>
+  <data name="main_project_open_old" xml:space="preserve">
+    <value>Das Projekt wurde mit einer älteren Version erstellt. Soll versucht werden sie zu öffnen?</value>
+    <comment/>
+  </data>
+  <data name="main_project_open_new" xml:space="preserve">
+    <value>Das Projekt wurde mit einer neueren Version erstellt und kann nicht geöffnet werden.</value>
+    <comment/>
+  </data>
+  <data name="main_project_open_error" xml:space="preserve">
+    <value>Das Projekt kann nicht gelesen werden. Eventuell muss es vorher konvertiert werden.</value>
+    <comment/>
+  </data>
+  <data name="main_project_open_error2" xml:space="preserve">
+    <value>Aufgrund des neuen Dateiformats können folgende Hardware nicht mehr die Applikationen zugeordnet werden:</value>
+    <comment/>
+  </data>
+  <data name="main_def_category" xml:space="preserve">
+    <value>Neue Kategorie</value>
+    <comment/>
+  </data>
+  <data name="main_export_duplicate" xml:space="preserve">
+    <value>Es gibt bereits eine Datei mit dem Namen '{0}'. Soll diese überschrieben werden?</value>
+    <comment/>
+  </data>
+  <data name="main_export_title" xml:space="preserve">
+    <value>KnxProd exportieren</value>
+    <comment/>
+  </data>
+  <data name="paratype_delete" xml:space="preserve">
+    <value>Der ParameterType wird von mindestens einem Parameter verwendet. Trotzdem löschen?</value>
+    <comment/>
+  </data>
+  <data name="paratype_delete_title" xml:space="preserve">
+    <value>ParameterType löschen</value>
+    <comment/>
+  </data>
+  <data name="check_no_app" xml:space="preserve">
+    <value>Es wurde keine Applikation ausgewählt</value>
+    <comment/>
+  </data>
+  <data name="check_start" xml:space="preserve">
+    <value>Überprüfung wird gestartet</value>
+    <comment/>
+  </data>
+  <data name="check_start_count" xml:space="preserve">
+    <value>{0} Geräte - {1} Hardware - {2} Applikationen - {3} Versionen</value>
+    <comment/>
+  </data>
+  <data name="check_cat_sub" xml:space="preserve">
+    <value>Katalog muss mindestens eine Unterkategorie haben</value>
+    <comment/>
+  </data>
+  <data name="check_manu_id" xml:space="preserve">
+    <value>Ungültige HerstellerId: {0}</value>
+    <comment/>
+  </data>
+  <data name="check_hard" xml:space="preserve">
+    <value>Überprüfe Hardware</value>
+    <comment/>
+  </data>
+  <data name="check_hard_duplicate_name" xml:space="preserve">
+    <value>Hardwarename '{0}' wird bereits von {1} verwendet</value>
+    <comment>Name; Count</comment>
+  </data>
+  <data name="check_hard_duplicate_serial" xml:space="preserve">
+    <value>Hardwareserial '{0}' wird bereits von {1} verwendet</value>
+    <comment>Serial; Count</comment>
+  </data>
+  <data name="check_hard_no_devices" xml:space="preserve">
+    <value>Hardware '{0}' hat keine Geräte</value>
+    <comment>Name;</comment>
+  </data>
+  <data name="check_hard_no_apps" xml:space="preserve">
+    <value>Hardware '{0}' hat keine Applikationen</value>
+    <comment>Name;</comment>
+  </data>
+  <data name="check_hard_apps" xml:space="preserve">
+    <value>Hardware '{0}' hat Applikationen, allerdings wurde die Option nicht ausgewählt</value>
+    <comment>Name;</comment>
+  </data>
+  <data name="check_hard_no_physicaladdress" xml:space="preserve">
+    <value>Hardware '{0}' hat nicht die Option für eine Individuelle Adresse ausgewählt</value>
+    <comment>Name;</comment>
+  </data>
+  <data name="check_hard_no_app" xml:space="preserve">
+    <value>Hardware '{0}' hat nicht die Option für das Applikationsprogramm ausgewählt</value>
+    <comment>Name;</comment>
+  </data>
+  <data name="check_hard_no_app2" xml:space="preserve">
+    <value>Hardware '{0}' hat die Option für Applikationsprogramm2 ausgewählt, allerdings nicht für Applikationsprogramm</value>
+    <comment>Name;</comment>
+  </data>
+  <data name="check_app" xml:space="preserve">
+    <value>Überprüfe Applikationen</value>
+    <comment/>
+  </data>
+  <data name="check_app_duplicate_name" xml:space="preserve">
+    <value>Applikationsname '{0}' wird bereits von {1} Applikationen verwendet</value>
+    <comment>Name; Count</comment>
+  </data>
+  <data name="check_app_duplicate_number" xml:space="preserve">
+    <value>Applikationsnummer '{0}' wird bereits von {1} Applikationen verwendet</value>
+    <comment>Name; Count</comment>
+  </data>
+  <data name="check_app_duplicate_version" xml:space="preserve">
+    <value>Applikation '{0}' verwendet Version {1}.{2} {3} mal</value>
+    <comment>Name; Version High; Version Low</comment>
+  </data>
+  <data name="check_app_openknx" xml:space="preserve">
+    <value>Applikation '{0}' ist ein OpenKnx Projekt. Die Nummer kann somit nicht größer als FF sein</value>
+    <comment>Name; Id</comment>
+  </data>
+  <data name="check_baggage_no_target" xml:space="preserve">
+    <value>Anhang '{0}' hat kein Zielpfad</value>
+    <comment>Name;</comment>
+  </data>
+  <data name="check_ver" xml:space="preserve">
+    <value>ParameterType IpAddress {0} ({1}): Kein IP-Protokoll ausgewählt</value>
+    <comment/>
+  </data>
+  <data name="check_end" xml:space="preserve">
+    <value>Überprüfung abgeschlossen</value>
+    <comment/>
+  </data>
+  <data name="check_ver_mediumtypes" xml:space="preserve">
+    <value>MediumTypes wurde nicht gesetzt. Bitte löschen Sie die Datei Data/maskversion.json und starten Sie die Applikation neu</value>
+    <comment/>
+  </data>
+  <data name="check_ver_modules" xml:space="preserve">
+    <value>ModuleDefines werden erst ab Namespace 20 unterstützt</value>
+    <comment/>
+  </data>
+  <data name="check_ver_messages" xml:space="preserve">
+    <value>Nachrichten werden erst ab Namespace 14 unterstützt</value>
+    <comment/>
+  </data>
+  <data name="check_ver_loadprod" xml:space="preserve">
+    <value>Version muss über eine Ladeprozedur verfügen</value>
+    <comment/>
+  </data>
+  <data name="check_ver_helptext" xml:space="preserve">
+    <value>Hilfetexte werden erst ab Namespace 14 unterstützt</value>
+    <comment/>
+  </data>
+  <data name="check_ver_loadprod_size" xml:space="preserve">
+    <value>Ladeprozedur {0}: Speichergröße stimmen nicht überein</value>
+    <comment>Name</comment>
+  </data>
+  <data name="check_ver_parat_checkbox" xml:space="preserve">
+    <value>ParameterType Number {0} ({1}): Wenn bei UIHint Checkbox ausgewählt wurde, muss minimum 0 und maximum 1 sein</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_parat_text" xml:space="preserve">
+    <value>ParameterType Text {0} ({1}): Größe {2} ist kein Vielfaches von 8</value>
+    <comment>Name; UId; Size</comment>
+  </data>
+  <data name="check_ver_parat_enum" xml:space="preserve">
+    <value>ParameterType Enum {0} ({1}): Wert {2} wird mehrmals verwendet</value>
+    <comment>Name; UId; Value</comment>
+  </data>
+  <data name="check_ver_parat_enum2" xml:space="preserve">
+    <value>ParameterType Enum {0} ({1}): Wert {2} ist größer als das Maximum {3}</value>
+    <comment>Name; UId; Value; Max</comment>
+  </data>
+  <data name="check_ver_parat_enum_translation" xml:space="preserve">
+    <value>ParameterType Enum {0}/{1} ({2}): Wurde nicht in {3} übersetzt</value>
+    <comment>Enumname; Name; UId</comment>
+  </data>
+  <data name="check_ver_parat_enum_icon" xml:space="preserve">
+    <value>ParameterType Enum {0}/{1} ({2}): Kein Icon ausgewählt</value>
+    <comment>Enumname; Name; UId</comment>
+  </data>
+  <data name="check_ver_parat_int_progbar" xml:space="preserve">
+    <value>ParameterType {0} {1} ({2}); Progressbar wird erst ab Namespace 20 unterstützt</value>
+    <comment>UInt/Int; Name; UId</comment>
+  </data>
+  <data name="check_ver_parat_int_max" xml:space="preserve">
+    <value>ParameterType {0} {1} ({2}): Maximum ist keine Ganzzahl</value>
+    <comment>UInt/Int; Name; UId</comment>
+  </data>
+  <data name="check_ver_parat_int_min" xml:space="preserve">
+    <value>ParameterType {0} {1} ({2}): Minimum ist keine Ganzzahl</value>
+    <comment>UInt/Int; Name; UId</comment>
+  </data>
+  <data name="check_ver_parat_int_offset" xml:space="preserve">
+    <value>ParameterType {0} {1} ({2}): Anzeige Offset ist keine Ganzzahl</value>
+    <comment>UInt/Int; Name; UId</comment>
+  </data>
+  <data name="check_ver_parat_int_factor" xml:space="preserve">
+    <value>ParameterType {0} {1} ({2}): Anzeige Faktor ist keine Ganzzahl</value>
+    <comment>UInt/Int; Name; UId</comment>
+  </data>
+  <data name="check_ver_parat_uint_min2" xml:space="preserve">
+    <value>ParameterType UInt {0} ({1}): Minimun kann nicht kleiner als 0 sein</value>
+    <comment>UInt/Int; Name; UId</comment>
+  </data>
+  <data name="check_ver_parat_int_minmax" xml:space="preserve">
+    <value>ParameterType {0} {1} ({2}): Minimum ist größer als das Maximum</value>
+    <comment>UInt/Int; Name; UId</comment>
+  </data>
+  <data name="check_ver_parat_int_max2" xml:space="preserve">
+    <value>ParameterType {0} {1} ({2}): Maximum kann nicht größer als {3} sein</value>
+    <comment>UInt/Int; Name; UId; Max Value</comment>
+  </data>
+  <data name="check_ver_parat_int_min2" xml:space="preserve">
+    <value>ParameterType Int {0} ({1}): Minimum kann nicht kleiner als {2} sein</value>
+    <comment>UInt/Int; Name; UId; Min Value</comment>
+  </data>
+  <data name="check_ver_parat_float" xml:space="preserve">
+    <value>ParameterType Float {0} ({1}): Aktuell keine Überprüfung verfügbar</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_parat_picture" xml:space="preserve">
+    <value>ParameterType Picture {0} ({1}): Kein Ahnahng ausgewählt</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_parat_none" xml:space="preserve">
+    <value>ParameterType None {0} ({1}): Unterstützt in ETS3. Aktivieren Sie die Option IsPreETS4</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_parat_color1" xml:space="preserve">
+    <value>ParameterType Color {0} ({1}): Nicht unterstützter Farbspektrum {2}</value>
+    <comment>Name; UId; Colorspace</comment>
+  </data>
+  <data name="check_ver_parat_color2" xml:space="preserve">
+    <value>ParameterType Color {0} ({1}): RGBW wird erst ab Namespace 20 unterstützt</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_parat_ip1" xml:space="preserve">
+    <value>ParameterType IpAddress {0} ({1}): Kein AddressType ausgewählt</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_parat_ip2" xml:space="preserve">
+    <value>ParameterType IpAddress {0} ({1}): Kein IP-Protokoll ausgewählt</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_parat_date" xml:space="preserve">
+    <value>ParameterType Date {0} ({1}): Kein Encoding ausgewählt</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_parat_unknown" xml:space="preserve">
+    <value>Unbekannter ParameterType für {0} ({1})</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_loadprod_msg" xml:space="preserve">
+    <value>Ladeprozedur: Nachrichten werden verwendet, wurden allerdings nicht aktiviert</value>
+    <comment/>
+  </data>
+  <data name="check_ver_loadprod_msgref" xml:space="preserve">
+    <value>Ladeprozedur: MessageRef ist keine Ganzzahl</value>
+    <comment/>
+  </data>
+  <data name="check_ver_loadprod_msgref_error" xml:space="preserve">
+    <value>Ladeprozedur: MessageRef verweist auf eine nicht existierende UId ({0})</value>
+    <comment>UId</comment>
+  </data>
+  <data name="check_ver_cat_number" xml:space="preserve">
+    <value>Katalog {0}: Sektionsnummer ist leer</value>
+    <comment>Name</comment>
+  </data>
+  <data name="check_ver_cat_prodnumber" xml:space="preserve">
+    <value>Katalog {0}: Produktnummer ist keine Ganzzahl</value>
+    <comment>Name</comment>
+  </data>
+  <data name="check_ver_cat_hardware" xml:space="preserve">
+    <value>Katalog {0}: Keine Hardware ausgewählt</value>
+    <comment>Name</comment>
+  </data>
+  <data name="check_ver_mod_allocs" xml:space="preserve">
+    <value>Modul {0}: Allokatoren werden erst ab Namespace 20 unterstützt</value>
+    <comment>Name</comment>
+  </data>
+  <data name="check_ver_mod_paraoff" xml:space="preserve">
+    <value>Modul {0}: ParameterBaseOffset Argument ist nicht vom Typ Numeric</value>
+    <comment>Name</comment>
+  </data>
+  <data name="check_ver_mod_combase" xml:space="preserve">
+    <value>Modul {0}: ComObjectBaseNumber Argument ist nicht vom Type Numeric</value>
+    <comment>Name</comment>
+  </data>
+  <data name="check_ver_dyn_items" xml:space="preserve">
+    <value>Dynamic hat keine Elemente</value>
+    <comment/>
+  </data>
+  <data name="check_ver_para_type" xml:space="preserve">
+    <value>Parameter {0} ({1}): Kein ParameterTyp ausgewählt</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_para_text" xml:space="preserve">
+    <value>Parameter {0} ({1}): Wert benötigt mehr Speicher ({2}) als verfügbar ({3})</value>
+    <comment>Name; UId; nedded; size</comment>
+  </data>
+  <data name="check_ver_para_enum1" xml:space="preserve">
+    <value>{0} {1} ({2}): Wert ist keine Ganzzahl</value>
+    <comment>Parameter/Ref; Name; UId</comment>
+  </data>
+  <data name="check_ver_para_enum2" xml:space="preserve">
+    <value>{0} {1} ({2}): Wert ist nicht als Option verfügbar</value>
+    <comment>Parameter/Ref; Name; UId</comment>
+  </data>
+  <data name="check_ver_para_number1" xml:space="preserve">
+    <value>{0} {1} ({2}): Wert ist keine Ganzzahl</value>
+    <comment>Parameter/Ref; Name; UId</comment>
+  </data>
+  <data name="check_ver_para_number2" xml:space="preserve">
+    <value>{0} {1} ({2}): Wert ist nicht im verfügbaren Rahmen</value>
+    <comment>Parameter/Ref; Name; UId</comment>
+  </data>
+  <data name="check_ver_para_color" xml:space="preserve">
+    <value>{0} {1} ({2}): Wert hat nicht das richtige Format {3}</value>
+    <comment>Parameter/Ref; Name; UId; format</comment>
+  </data>
+  <data name="check_ver_para_raw1" xml:space="preserve">
+    <value>{0} {1} ({2}): Wert hat eine ungerade Anzahl an Zeichen</value>
+    <comment>Parameter/Ref; Name; UId</comment>
+  </data>
+  <data name="check_ver_para_raw2" xml:space="preserve">
+    <value>{0} {1} ({2}): Wert benötigt mehr Speicher ({3}) als verfügbar ({4})</value>
+    <comment>Parameter/Ref; Name; UId, needed; size</comment>
+  </data>
+  <data name="check_ver_para_raw3" xml:space="preserve">
+    <value>{0} {1} ({2}): Wert ist kein gültiger Hex-Wert</value>
+    <comment>Parameter/Ref; Name; UId</comment>
+  </data>
+  <data name="check_ver_para_date" xml:space="preserve">
+    <value>{0} {1} ({2}): Wert hat nicht das Format 'YYYY-MM-DD'</value>
+    <comment>Parameter/Ref; Name; UId</comment>
+  </data>
+  <data name="check_ver_lang_no_translation" xml:space="preserve">
+    <value>{0} {1} ({2}): Wurde nicht übersetzt</value>
+    <comment>Parameter/Ref; Name; UId; Text/FunctionText</comment>
+  </data>
+  <data name="check_ver_lang_not_all" xml:space="preserve">
+    <value>{0} {1} ({2}): Wurde nicht in alle Sprachen übersetzt</value>
+    <comment>Parameter/Ref; Name; UId</comment>
+  </data>
+  <data name="check_ver_lang_suffix" xml:space="preserve">
+    <value>{0} {1} ({2}): Suffix wurde nicht in alle Sprachen übersetzt</value>
+    <comment>Parameter/Ref; Name; UId</comment>
+  </data>
+  <data name="check_ver_para_save_error" xml:space="preserve">
+    <value>Parameter {0} ({1}): Kein Speichersegment ausgewählt</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_para_save_offset" xml:space="preserve">
+    <value>Parameter {0} ({1}): Offset wurde nicht angegeben</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_para_save_offsetbit" xml:space="preserve">
+    <value>Parameter {0} ({1}): Bit Offset wurde nicht angegeben</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_para_save_obsolet" xml:space="preserve">
+    <value>Parameter {0} ({1}): Bit Offset darf nicht größer als 7 sein</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_para_save_objectindex" xml:space="preserve">
+    <value>Parameter {0} ({1}): ObjectIndex wurde nicht angegeben</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_para_save_propertyid" xml:space="preserve">
+    <value>Parameter {0} ({1}): Propertyid wurde nicht angegeben</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_para_save_union" xml:space="preserve">
+    <value>Parameter {0} ({1}): Union wurde nicht angegeben</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_lang_suffix_length" xml:space="preserve">
+    <value>{0} {1} ({2}): Suffix hat mehr als 20 Zeichen</value>
+    <comment>Parameter/Ref; Name; UId</comment>
+  </data>
+  <data name="check_ver_pararef_no_para" xml:space="preserve">
+    <value>ParameterRef {0} ({1}): Kein Parameter ausgewählt</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_com_not_unique" xml:space="preserve">
+    <value>ComObjectNumers sind nicht eindeutig. Die IDs werden aufsteigend neu vergeben</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_com_no_dpt" xml:space="preserve">
+    <value>ComObject {0} ({1}): Kein DatapointType angegeben</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_com_no_dpt_ref" xml:space="preserve">
+    <value>ComObject {0} ({1}): Kein DatapointType angeben ist nur bei ComObjectRefs erlaubt</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_com_no_dpst" xml:space="preserve">
+    <value>ComObject {0} ({1}): Kein DatapointType ausgewählt</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_com_no_textpara" xml:space="preserve">
+    <value>{0} {1} ({2}): Kein TextParameter ausgewählt</value>
+    <comment>ComObject/Ref; Name; UId</comment>
+  </data>
+  <data name="check_ver_com_no_used_textpara" xml:space="preserve">
+    <value>{0} {1} ({2}) TextParameter wurde ausgewählt, allerdings ist im Text kein {{{{0}}}}</value>
+    <comment>ComObject/Ref; Name; UId</comment>
+  </data>
+  <data name="check_ver_comref_no_com" xml:space="preserve">
+    <value>ComObjectRef {0} ({1}): Kein ComObject ausgewählt</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_mods" xml:space="preserve">
+    <value>Überprüfe Modul '{0}'</value>
+    <comment>Name</comment>
+  </data>
+  <data name="check_cat_dev_text_not_all" xml:space="preserve">
+    <value>Gerät {0}: Text hat nicht alle Sprachen der Applikation oder wurde nicht in alle übersetzt</value>
+    <comment/>
+  </data>
+  <data name="check_cat_dev_desc_not_all" xml:space="preserve">
+    <value>Gerät {0}: Beschreibung hat nicht alle Sprachen der Applikation oder wurde nicht in alle übersetzt</value>
+    <comment/>
+  </data>
+  <data name="check_cat_cat_text_not_all" xml:space="preserve">
+    <value>Katalog {0}: Text hat nicht alle Sprachen der Applikation oder wurde nicht in alle übersetzt</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_channel_no_number" xml:space="preserve">
+    <value>DynChannel {0}: Nummer ist leer</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_channel_textpara" xml:space="preserve">
+    <value>DynChannel {0}: Kein TextParameter ausgewählt</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_block_pref_error" xml:space="preserve">
+    <value>DynParaBlock {0}: ParameterRef wird nur in ETS3 unterstützt. Aktivieren Sie die Option IsPreETS4</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_block_no_pref" xml:space="preserve">
+    <value>DynParaBlock {0}: Kein ParameterRef ausgewählt</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_block_no_textpara" xml:space="preserve">
+    <value>DynParaBlock {0}: Kein TextParameter ausgewählt</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_block_no_icon" xml:space="preserve">
+    <value>DynParaBlock {0}: Kein Icon ausgewählt</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_mod_no_module" xml:space="preserve">
+    <value>DynModule {0}: Kein Modul ausgewählt</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_mod_empty_arg" xml:space="preserve">
+    <value>DynModule {0}: Mindestens ein Argument ist leer</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_mod_no_alloc" xml:space="preserve">
+    <value>DynModule {0}: Ein Allokator muss referenziert werden</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_mod_alloc_error" xml:space="preserve">
+    <value>DynModule {0}: Mindestens ein Argument hat einen Allokator, der nicht vom Typ Numeric ist</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_choose_no_pararef" xml:space="preserve">
+    <value>DynChoose {0}: Kein ParameterRef ausgewählt</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_when_no_cond" xml:space="preserve">
+    <value>DynWhen {0}: Bedingung ist leer</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_when_default" xml:space="preserve">
+    <value>DynWhen {0}: Als Default gesetzt. Bedingung wird ignoriert</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_para_no_ref" xml:space="preserve">
+    <value>DynParameter {0}: Kein ParameterRef ausgewählt</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_para_no_help" xml:space="preserve">
+    <value>DynParameter {0}: Kein Hilfetext ausgewählt</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_com_no_ref" xml:space="preserve">
+    <value>DynComObject {0}: Kein ComObjectRef ausgewählt</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_sep_no_ref" xml:space="preserve">
+    <value>DynSeparator {0}: Kein ParameterRef ausgewählt</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_sep_uihint" xml:space="preserve">
+    <value>DynSeparator {0}: UIHint wird erst ab Namespace 14 unterstützt</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_sep_no_icon" xml:space="preserve">
+    <value>DynSeparator {0}: Kein Icon ausgewählt</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_assign_no_target" xml:space="preserve">
+    <value>DynAssign {0}: Keine Quelle ausgewählt</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_assign_no_source" xml:space="preserve">
+    <value>DynAssign {0}: Keine Quelle oder Wert angegeben</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_btn_no_name" xml:space="preserve">
+    <value>DynButton {0}: Name wurde nicht angegeben</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_btn_no_ref" xml:space="preserve">
+    <value>DynButton {0}: Kein ParameterRef ausgewählt</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_btn_no_icon" xml:space="preserve">
+    <value>DynButton {0}: Kein Icon ausgewählt</value>
+    <comment/>
+  </data>
+  <data name="check_com_lang_text" xml:space="preserve">
+    <value>{0} {1} ({2}): Keine Übersetzung für Text {3}</value>
+    <comment/>
+  </data>
+  <data name="check_com_lang_functext" xml:space="preserve">
+    <value>{0} {1} ({2}): Keine Übersetzung für FunktionsText {3}</value>
+    <comment/>
+  </data>
+  <data name="main_export_error" xml:space="preserve">
+    <value>KnxProd konnte nicht veröffentlicht werden</value>
+    <comment/>
+  </data>
+  <data name="main_export_success" xml:space="preserve">
+    <value>KnxProd wurde erfolgreich erstellt</value>
+    <comment/>
+  </data>
+  <data name="main_export_error_namespace" xml:space="preserve">
+    <value>Namespace {0} kann auf diesem System nicht erstellt werden</value>
+    <comment/>
+  </data>
+  <data name="main_export_error_prod_namespace" xml:space="preserve">
+    <value>KnxProd kann nicht verschiedene Namespaces enthalten</value>
+    <comment/>
+  </data>
+  <data name="main_export_create" xml:space="preserve">
+    <value>Erstelle KnxProd</value>
+    <comment/>
+  </data>
+  <data name="main_export_checked" xml:space="preserve">
+    <value>Überprüfung bestanden</value>
+    <comment/>
+  </data>
+  <data name="main_export_failed" xml:space="preserve">
+    <value>Erstellen fehlgeschlagen. Es traten Fehler auf</value>
+    <comment/>
+  </data>
+  <data name="update_error" xml:space="preserve">
+    <value>Es konnte nicht nach einer neuen Version suchen werden</value>
     <comment/>
   </data>
 </root>
