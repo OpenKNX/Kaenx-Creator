@@ -229,7 +229,7 @@ namespace Kaenx.Creator.Controls
 
         private void ListMouseMove(object sender, MouseEventArgs e)
         {
-            if (sender is ListBox && e.LeftButton == MouseButtonState.Pressed)
+            if (sender is ListBox && e.LeftButton == MouseButtonState.Pressed && !e.OriginalSource.GetType().Equals(typeof(System.Windows.Controls.Primitives.Thumb)))
             {
                 _draggedItem = (Parameter)ParamList.SelectedItem;
                 if (_draggedItem != null)
