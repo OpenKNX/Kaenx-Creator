@@ -9,7 +9,14 @@ namespace Kaenx.Creator.Models
     public class ModelGeneral : INotifyPropertyChanged
     {
         public string ProjectName { get; set; } = "Meine erste Applikation";
-        public string Guid { get; set; }
+
+        private string _guid = "";
+        public string Guid
+        {
+            get { return _guid; }
+            set { _guid = value; Changed("Guid"); }
+        }
+
 
         public string GetGuid()
         {

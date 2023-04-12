@@ -33,6 +33,11 @@ namespace Kaenx.Creator.Controls
             InitializeComponent();
         }
 
+        public void ResetActions()
+        {
+            Actions.Clear();
+        }
+
         private void ClickShowClean(object sender, RoutedEventArgs e)
         { 
             Actions.Clear();

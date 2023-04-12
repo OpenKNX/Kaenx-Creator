@@ -418,7 +418,7 @@ namespace Kaenx.Creator.Controls
 
         private void TreeMouseMove(object sender, MouseEventArgs e)
         {
-            if (sender is TreeView && e.LeftButton == MouseButtonState.Pressed)
+            if (sender is TreeView && e.LeftButton == MouseButtonState.Pressed && !e.OriginalSource.GetType().Equals(typeof(System.Windows.Controls.Primitives.Thumb)))
             {
                 _draggedItem = (Models.Dynamic.IDynItems)DynamicList.SelectedItem;
                 if (_draggedItem != null)

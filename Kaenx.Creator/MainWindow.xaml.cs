@@ -546,6 +546,9 @@ namespace Kaenx.Creator
             after = System.GC.GetTotalMemory(false);
             System.Diagnostics.Debug.WriteLine("Neu verbraucht: " + (after - before).ToString());
             TabsEdit.SelectedIndex = 6;
+
+            Controls.CheckView check = (VersionTabs.Items[1] as TabItem).Content as Controls.CheckView;
+            check.ResetActions();
         }
 
         private void SelectedVersion_PropertyChanged(object sender, PropertyChangedEventArgs e = null)
@@ -969,6 +972,8 @@ namespace Kaenx.Creator
         {
             MenuItem item = sender as MenuItem;
             DoOpen(item.Tag.ToString());
+            MenuSaveBtn.IsEnabled = false;
+            General.Guid = Guid.NewGuid().ToString();
         }
 
         private void ClickOpen(object sender, RoutedEventArgs e)
