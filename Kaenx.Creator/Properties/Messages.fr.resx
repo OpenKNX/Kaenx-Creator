@@ -1,0 +1,1032 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="global_exception" xml:space="preserve">
+    <value>Sauvegarder votre projet et redémarrer l'application.</value>
+    <comment/>
+  </data>
+  <data name="global_exception_title" xml:space="preserve">
+    <value>Erreur</value>
+    <comment/>
+  </data>
+  <data name="update_new" xml:space="preserve">
+    <value>Une nouvelle version est disponible: v{0}\r\nVous voulez vérifier les versions sur Github ?</value>
+    <comment>Versionstring like 1.1.2</comment>
+  </data>
+  <data name="update_title" xml:space="preserve">
+    <value>Vérification des mises à jour</value>
+    <comment/>
+  </data>
+  <data name="update_uptodate" xml:space="preserve">
+    <value>Vous utilisez déjà la dernière version : v{0}</value>
+    <comment>Versionstring like 1.1.2</comment>
+  </data>
+  <data name="message_prompt_id" xml:space="preserve">
+    <value>Nouveau Message ID</value>
+    <comment/>
+  </data>
+  <data name="prompt_id" xml:space="preserve">
+    <value>ID manuel</value>
+    <comment/>
+  </data>
+  <data name="prompt_error" xml:space="preserve">
+    <value>Merci de saisir un entier.</value>
+    <comment/>
+  </data>
+  <data name="prompt_error_title" xml:space="preserve">
+    <value>Erreur de saisie</value>
+    <comment/>
+  </data>
+  <data name="prompt_double" xml:space="preserve">
+    <value>L'ID {0} est déjà utilisé par {1}.</value>
+    <comment>ID; Name of Message</comment>
+  </data>
+  <data name="prompt_double_title" xml:space="preserve">
+    <value>ID existant</value>
+    <comment/>
+  </data>
+  <data name="prompt_auto_error" xml:space="preserve">
+    <value>Cet élément a déjà le premier ID disponible.</value>
+    <comment/>
+  </data>
+  <data name="prompt_auto_error_title" xml:space="preserve">
+    <value>ID automatique</value>
+    <comment/>
+  </data>
+  <data name="baggage_delete_error" xml:space="preserve">
+    <value>Le baggage est référencé par {0} ParameterTypes.\r\nVoulez-vous le supprimer ?</value>
+    <comment>Count of Items</comment>
+  </data>
+  <data name="baggage_delete_error_title" xml:space="preserve">
+    <value>Supprimer le Baggage</value>
+    <comment/>
+  </data>
+  <data name="baggage_change_title" xml:space="preserve">
+    <value>Editer le Baggage</value>
+    <comment/>
+  </data>
+  <data name="baggage_change_success" xml:space="preserve">
+    <value>Le Baggage a été supprimé avec succès</value>
+    <comment/>
+  </data>
+  <data name="baggage_change_filter" xml:space="preserve">
+    <value>Images</value>
+    <comment/>
+  </data>
+  <data name="baggage_add_title" xml:space="preserve">
+    <value>Ajouter un Baggage</value>
+    <comment/>
+  </data>
+  <data name="baggage_import_title" xml:space="preserve">
+    <value>Importer des Baggages</value>
+    <comment/>
+  </data>
+  <data name="baggage_import_filter" xml:space="preserve">
+    <value>Fichier Baggage</value>
+    <comment/>
+  </data>
+  <data name="baggage_import_prompt" xml:space="preserve">
+    <value>Supprimer le Baggage existant ?</value>
+    <comment/>
+  </data>
+  <data name="baggage_export_title" xml:space="preserve">
+    <value>Exporter les Baggages</value>
+    <comment/>
+  </data>
+  <data name="baggage_export_filter" xml:space="preserve">
+    <value>Fichier Baggage</value>
+    <comment/>
+  </data>
+  <data name="viewer_get_title" xml:space="preserve">
+    <value>Récupérer la valeur</value>
+    <comment/>
+  </data>
+  <data name="viewer_get_prompt" xml:space="preserve">
+    <value>Id de Paramètre :</value>
+    <comment/>
+  </data>
+  <data name="viewer_get_inactive" xml:space="preserve">
+    <value>Le paramètre avec l'ID {0} n'est visible.</value>
+    <comment>ParameterId</comment>
+  </data>
+  <data name="viewer_get_value" xml:space="preserve">
+    <value>Le paramètre avec l'ID {0} a pour valeur : {1}</value>
+    <comment>ParameterId; Value</comment>
+  </data>
+  <data name="viewer_get_error" xml:space="preserve">
+    <value>Il n'y a pas de paramètre avec l'ID {0}.</value>
+    <comment>ParameterId</comment>
+  </data>
+  <data name="viewer_logger" xml:space="preserve">
+    <value>Paramètre mis à jour : ID={0} Valeur={1}</value>
+    <comment>ParameterId; Value</comment>
+  </data>
+  <data name="memcalc_para" xml:space="preserve">
+    <value>L paramètre '{0}' est en dehors des limites de la mémoire.</value>
+    <comment>ParameterName</comment>
+  </data>
+  <data name="memcalc_union" xml:space="preserve">
+    <value>L'Union '{0}' est en dehors des limites de la mémoire.</value>
+    <comment>UnionName</comment>
+  </data>
+  <data name="memcalc_title" xml:space="preserve">
+    <value>Erreur d'allocation mémoire</value>
+    <comment/>
+  </data>
+  <data name="comref_delete" xml:space="preserve">
+    <value>Cet ComObjectRef est utilisé dans la vue dynamique au moins une fois. Voulez-vous continuer ?</value>
+    <comment/>
+  </data>
+  <data name="comref_delete_title" xml:space="preserve">
+    <value>Supprimer le ComObjectRef</value>
+    <comment/>
+  </data>
+  <data name="comref_prompt_id" xml:space="preserve">
+    <value>Nouveau ComObjectRef ID</value>
+    <comment/>
+  </data>
+  <data name="com_delete1" xml:space="preserve">
+    <value>Cet ComObject est utilisé dans la vue dynamique au moins une fois. Voulez-vous continuer ?</value>
+    <comment/>
+  </data>
+  <data name="com_delete2" xml:space="preserve">
+    <value>Cet ComObject est utilisé par un ComObjectRef au moins une fois. Voulez-vous continuer ?</value>
+    <comment/>
+  </data>
+  <data name="com_delete_title" xml:space="preserve">
+    <value>Supprimer le ComObject</value>
+    <comment/>
+  </data>
+  <data name="com_prompt_id" xml:space="preserve">
+    <value>Nouveau ComObject ID</value>
+    <comment/>
+  </data>
+  <data name="para_delete1" xml:space="preserve">
+    <value>Ce Parameter est utilisé dans la vue dynamique au moins une fois. Voulez-vous continuer ?</value>
+    <comment/>
+  </data>
+  <data name="para_delete2" xml:space="preserve">
+    <value>Ce Parameter est utilisé par un ParameterRef au moins une fois. Voulez-vous continuer ?</value>
+    <comment/>
+  </data>
+  <data name="para_delete_title" xml:space="preserve">
+    <value>Supprimer le Parameter</value>
+    <comment/>
+  </data>
+  <data name="para_prompt_id" xml:space="preserve">
+    <value>Nouveau Parameter ID</value>
+    <comment/>
+  </data>
+  <data name="pararef_delete" xml:space="preserve">
+    <value>Ce ParameterRef est utilisé dans la vue dynamique au moins une fois. Voulez-vous continuer ?</value>
+    <comment/>
+  </data>
+  <data name="pararef_delete_title" xml:space="preserve">
+    <value>Supprimer le ParameterRef</value>
+    <comment/>
+  </data>
+  <data name="pararef_prompt_id" xml:space="preserve">
+    <value>Nouveau ParameterRef ID</value>
+    <comment/>
+  </data>
+  <data name="dyn_copy_error" xml:space="preserve">
+    <value>Vous devez couper un élément avant.</value>
+    <comment/>
+  </data>
+  <data name="dyn_copy_error_title" xml:space="preserve">
+    <value>Coller l'élément</value>
+    <comment/>
+  </data>
+  <data name="icon_delete_error" xml:space="preserve">
+    <value>Cet ID est référencé par {0} ParameterType(s).\r\nSupprimer ?</value>
+    <comment>Count of Items</comment>
+  </data>
+  <data name="icon_delete_error_title" xml:space="preserve">
+    <value>Supprimer l'icône</value>
+    <comment/>
+  </data>
+  <data name="icon_change_title" xml:space="preserve">
+    <value>Éditer l'icône</value>
+    <comment/>
+  </data>
+  <data name="icon_change_success" xml:space="preserve">
+    <value>L'icône a été modifiée avec succès</value>
+    <comment/>
+  </data>
+  <data name="icon_change_filter" xml:space="preserve">
+    <value>Images</value>
+    <comment/>
+  </data>
+  <data name="icon_add_title" xml:space="preserve">
+    <value>Ajouter une icône</value>
+    <comment/>
+  </data>
+  <data name="icon_import_title" xml:space="preserve">
+    <value>Importer des icônes</value>
+    <comment/>
+  </data>
+  <data name="icon_import_filter" xml:space="preserve">
+    <value>Fichier de l'icône</value>
+    <comment/>
+  </data>
+  <data name="icon_import_prompt" xml:space="preserve">
+    <value>Supprimer les icônes existantes ?</value>
+    <comment/>
+  </data>
+  <data name="icon_export_title" xml:space="preserve">
+    <value>Exporter les icônes</value>
+    <comment/>
+  </data>
+  <data name="icon_export_filter" xml:space="preserve">
+    <value>Fichier de l'icône</value>
+    <comment/>
+  </data>
+  <data name="prodv_no_mod" xml:space="preserve">
+    <value>Pas de modules</value>
+    <comment/>
+  </data>
+  <data name="checkv_not_used" xml:space="preserve">
+    <value>Ces éléments ne sont pas utilisés :</value>
+    <comment/>
+  </data>
+  <data name="checkv_delete" xml:space="preserve">
+    <value>Supprimer tous les éléments qui ne sont pas utilisés ?</value>
+    <comment/>
+  </data>
+  <data name="checkv_delete_title" xml:space="preserve">
+    <value>Nettoyer avec suppression</value>
+    <comment/>
+  </data>
+  <data name="checkv_deleted" xml:space="preserve">
+    <value>Ces éléments ont été supprimés :</value>
+    <comment/>
+  </data>
+  <data name="checkv_warnings" xml:space="preserve">
+    <value>Ignorer les avertissements ?</value>
+    <comment/>
+  </data>
+  <data name="checkv_warnings_title" xml:space="preserve">
+    <value>Vérifier la version de l'application</value>
+    <comment/>
+  </data>
+  <data name="checkv_started" xml:space="preserve">
+    <value>Vérification démarrée</value>
+    <comment/>
+  </data>
+  <data name="checkv_fin" xml:space="preserve">
+    <value>Vérification finie</value>
+    <comment/>
+  </data>
+  <data name="main_newets_title" xml:space="preserve">
+    <value>Version d'ETS</value>
+    <comment/>
+  </data>
+  <data name="main_newets_found" xml:space="preserve">
+    <value>Une nouvelle version d'ETS a été trouvée. Pour l'utiliser, exécuter l'application en tant d'admin une première fois.</value>
+    <comment/>
+  </data>
+  <data name="main_newets_added" xml:space="preserve">
+    <value>Nouvelle version d'ETS ajoutée avec succès.</value>
+    <comment/>
+  </data>
+  <data name="main_def_cat" xml:space="preserve">
+    <value>Catégorie racine (ne sera pas exportée)</value>
+    <comment/>
+  </data>
+  <data name="main_empty_dpt" xml:space="preserve">
+    <value>DatapointType vide (seulement pour les ComObjectRefs)</value>
+    <comment/>
+  </data>
+  <data name="main_add_hard_error" xml:space="preserve">
+    <value>Sélection une application.</value>
+    <comment/>
+  </data>
+  <data name="main_add_hard_error_title" xml:space="preserve">
+    <value>L'ajout du Hardware a échoué</value>
+    <comment/>
+  </data>
+  <data name="main_open_viewer" xml:space="preserve">
+    <value>Attention : Pour utiliser le Viewer, tous les ID doivent être sélectionnés ou définis. Continuer ?</value>
+    <comment/>
+  </data>
+  <data name="main_open_viewer_title" xml:space="preserve">
+    <value>Ouvrir avec ProViewer</value>
+    <comment/>
+  </data>
+  <data name="main_open_viewer_error" xml:space="preserve">
+    <value>L'application contient des erreurs. Fixer les et essayer de nouveau.</value>
+    <comment/>
+  </data>
+  <data name="main_lang_select" xml:space="preserve">
+    <value>Veuillez sélectionner une langue.</value>
+    <comment/>
+  </data>
+  <data name="main_lang_add_error" xml:space="preserve">
+    <value>Cette langue est déjà supportée.</value>
+    <comment/>
+  </data>
+  <data name="main_project_save_title" xml:space="preserve">
+    <value>Enregistrer le projet</value>
+    <comment/>
+  </data>
+  <data name="main_project_filter" xml:space="preserve">
+    <value>Constructeur de projets Kaenx</value>
+    <comment/>
+  </data>
+  <data name="main_save_template" xml:space="preserve">
+    <value>Nom du modèle :</value>
+    <comment/>
+  </data>
+  <data name="main_save_template_title" xml:space="preserve">
+    <value>Nouveau modèle</value>
+    <comment/>
+  </data>
+  <data name="main_save_template_empty" xml:space="preserve">
+    <value>Saisir un nom.</value>
+    <comment/>
+  </data>
+  <data name="main_save_template_duplicate" xml:space="preserve">
+    <value>Il existe un modèle avec le nom '{0}'. L'écraser ?</value>
+    <comment/>
+  </data>
+  <data name="main_project_open_title" xml:space="preserve">
+    <value>Ouvrir un projet</value>
+    <comment/>
+  </data>
+  <data name="main_project_open_format" xml:space="preserve">
+    <value>Autres formats de fichiers</value>
+    <comment/>
+  </data>
+  <data name="main_project_open_old" xml:space="preserve">
+    <value>Ce projet a été créé avec une ancienne version. Voulez-vous le convertir ?</value>
+    <comment/>
+  </data>
+  <data name="main_project_open_new" xml:space="preserve">
+    <value>Ce projet a été créé avec une version plus récente et ne peut être ouvert.</value>
+    <comment/>
+  </data>
+  <data name="main_project_open_error" xml:space="preserve">
+    <value>Le projet ne peut être lu. Peut-être faut-il le convertir.</value>
+    <comment/>
+  </data>
+  <data name="main_project_open_error2" xml:space="preserve">
+    <value>A cause du nouveau format, il faut ré-ajouter les applications au matériel suivant :</value>
+    <comment/>
+  </data>
+  <data name="main_def_category" xml:space="preserve">
+    <value>Nouvelle catégorie</value>
+    <comment/>
+  </data>
+  <data name="main_export_duplicate" xml:space="preserve">
+    <value>Il existe un fichier avec le nom '{0}'. L'écraser ?</value>
+    <comment/>
+  </data>
+  <data name="main_export_title" xml:space="preserve">
+    <value>Exporter le knxprod</value>
+    <comment/>
+  </data>
+  <data name="paratype_delete" xml:space="preserve">
+    <value>Ce ParameterType est utilisé par un paramètre au moins une fois. Voulez-vous continuer ?</value>
+    <comment/>
+  </data>
+  <data name="paratype_delete_title" xml:space="preserve">
+    <value>Supprimer le ParameterType</value>
+    <comment/>
+  </data>
+  <data name="check_no_app" xml:space="preserve">
+    <value>Pas d'application sélectionnée</value>
+    <comment/>
+  </data>
+  <data name="check_start" xml:space="preserve">
+    <value>Démarrage de la vérification</value>
+    <comment/>
+  </data>
+  <data name="check_start_count" xml:space="preserve">
+    <value>{0} Appareils - {1} Matériel - {2} Applications - {3} Versions</value>
+    <comment/>
+  </data>
+  <data name="check_cat_sub" xml:space="preserve">
+    <value>Un catalogue doit avoir une sous catégorie</value>
+    <comment/>
+  </data>
+  <data name="check_manu_id" xml:space="preserve">
+    <value>ManufactureID invalide : {0}</value>
+    <comment/>
+  </data>
+  <data name="check_hard" xml:space="preserve">
+    <value>Vérification du matériel</value>
+    <comment/>
+  </data>
+  <data name="check_hard_duplicate_name" xml:space="preserve">
+    <value>Le nom '{0}' est utilisé par le matériel {1}</value>
+    <comment>Name; Count</comment>
+  </data>
+  <data name="check_hard_duplicate_serial" xml:space="preserve">
+    <value>Le n° de série '{0}' est utilisé par le matériel {1}</value>
+    <comment>Serial; Count</comment>
+  </data>
+  <data name="check_hard_no_devices" xml:space="preserve">
+    <value>Matériel '{0}' n'a pas d'appareil</value>
+    <comment>Name;</comment>
+  </data>
+  <data name="check_hard_no_apps" xml:space="preserve">
+    <value>Matériel '{0}' n'a pas d'application</value>
+    <comment>Name;</comment>
+  </data>
+  <data name="check_hard_apps" xml:space="preserve">
+    <value>Matériel '{0}' a une application mais l'option HasApplicationprogram n'est pas activée</value>
+    <comment>Name;</comment>
+  </data>
+  <data name="check_hard_no_physicaladdress" xml:space="preserve">
+    <value>Matériel '{0}' a l'option HasIndividualAddress non activée</value>
+    <comment>Name;</comment>
+  </data>
+  <data name="check_hard_no_app" xml:space="preserve">
+    <value>Matériel '{0}' a l'option HasApplicationprogram n'est pas activée</value>
+    <comment>Name;</comment>
+  </data>
+  <data name="check_hard_no_app2" xml:space="preserve">
+    <value>Matériel '{0}' a l'option HasApplicationprogram2 validée mais pas l'option HasApplicationprogram</value>
+    <comment>Name;</comment>
+  </data>
+  <data name="check_app" xml:space="preserve">
+    <value>Vérification des applications</value>
+    <comment/>
+  </data>
+  <data name="check_app_duplicate_name" xml:space="preserve">
+    <value>Le nom d'application '{0}' est utilisé par {1} applications</value>
+    <comment>Name; Count</comment>
+  </data>
+  <data name="check_app_duplicate_number" xml:space="preserve">
+    <value>Le numéro d'application '{0}' est utilisé par {1} applications</value>
+    <comment>Name; Count</comment>
+  </data>
+  <data name="check_app_duplicate_version" xml:space="preserve">
+    <value>L'application '{0}' utilise la version {1}.{2} {3} fois</value>
+    <comment>Name; Version High; Version Low</comment>
+  </data>
+  <data name="check_app_openknx" xml:space="preserve">
+    <value>L'application '{0}' est un projet OpenKnx. Son numéro ne peut être plus élevé que FF</value>
+    <comment>Name; Id</comment>
+  </data>
+  <data name="check_baggage_no_target" xml:space="preserve">
+    <value>Le Baggage '{0}' n'a pas de destination</value>
+    <comment>Name;</comment>
+  </data>
+  <data name="check_ver" xml:space="preserve">
+    <value>ParameterType adresse IP {0} ({1}): Pas de protocole sélectionné</value>
+    <comment/>
+  </data>
+  <data name="check_end" xml:space="preserve">
+    <value>Vérification finie</value>
+    <comment/>
+  </data>
+  <data name="check_ver_mediumtypes" xml:space="preserve">
+    <value>Le MediumType n'est pas défini. Supprimer le fichier Data/maskversion.json et redémarrer l'application</value>
+    <comment/>
+  </data>
+  <data name="check_ver_modules" xml:space="preserve">
+    <value>Les ModulesDefines sont supportées à partir de Namespace 20 ou +</value>
+    <comment/>
+  </data>
+  <data name="check_ver_messages" xml:space="preserve">
+    <value>Les Messages sont supportés à partir de Namespace 14 ou +</value>
+    <comment/>
+  </data>
+  <data name="check_ver_loadprod" xml:space="preserve">
+    <value>La version doit avoir une procédure de chargement</value>
+    <comment/>
+  </data>
+  <data name="check_ver_helptext" xml:space="preserve">
+    <value>Les Helptexts sont supportés à partir de Namespace 14 ou +</value>
+    <comment/>
+  </data>
+  <data name="check_ver_loadprod_size" xml:space="preserve">
+    <value>La procédure de chargement {0}: La taille mémoire ne correspond pas</value>
+    <comment>Name</comment>
+  </data>
+  <data name="check_ver_parat_checkbox" xml:space="preserve">
+    <value>Le numéro de ParameterType {0} ({1}): Si la case UIHint est cochée, le minimum doit être 0 et le maximum 1</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_parat_text" xml:space="preserve">
+    <value>Le ParameterType texte {0} ({1}): La taille {2} n'est pas un multiple de 8</value>
+    <comment>Name; UId; Size</comment>
+  </data>
+  <data name="check_ver_parat_enum" xml:space="preserve">
+    <value>Le ParameterType énumération {0} ({1}): La valeur {2} est utilisée plus d'une fois</value>
+    <comment>Name; UId; Value</comment>
+  </data>
+  <data name="check_ver_parat_enum2" xml:space="preserve">
+    <value>Le ParameterType énumération {0} ({1}): La valeur {2} est plus grande que le max {3}</value>
+    <comment>Name; UId; Value; Max</comment>
+  </data>
+  <data name="check_ver_parat_enum_translation" xml:space="preserve">
+    <value>Le ParameterType énumération {0}/{1} ({2}): n'est traduit en {3}</value>
+    <comment>Enumname; Name; UId</comment>
+  </data>
+  <data name="check_ver_parat_enum_icon" xml:space="preserve">
+    <value>Le ParameterType énumération {0}/{1} ({2}): Pas d'icône sélectionnée</value>
+    <comment>Enumname; Name; UId</comment>
+  </data>
+  <data name="check_ver_parat_int_progbar" xml:space="preserve">
+    <value>Le ParameterType {0} {1} ({2}): La barre de progression est supportée à partir de Namespace 20 ou +</value>
+    <comment>UInt/Int; Name; UId</comment>
+  </data>
+  <data name="check_ver_parat_int_max" xml:space="preserve">
+    <value>ParameterType {0} {1} ({2}): Le maximum n'est pas un entier</value>
+    <comment>UInt/Int; Name; UId</comment>
+  </data>
+  <data name="check_ver_parat_int_min" xml:space="preserve">
+    <value>ParameterType {0} {1} ({2}): Le minimum n'est pas un entier</value>
+    <comment>UInt/Int; Name; UId</comment>
+  </data>
+  <data name="check_ver_parat_int_offset" xml:space="preserve">
+    <value>ParameterType {0} {1} ({2}): L'offset d'affichage n'est ps un entier</value>
+    <comment>UInt/Int; Name; UId</comment>
+  </data>
+  <data name="check_ver_parat_int_factor" xml:space="preserve">
+    <value>ParameterType {0} {1} ({2}): Le facteur d'affichage n'est pas un entier</value>
+    <comment>UInt/Int; Name; UId</comment>
+  </data>
+  <data name="check_ver_parat_uint_min2" xml:space="preserve">
+    <value>ParameterType UInt {0} ({1}): Le minimum ne peut être inférieur à 0</value>
+    <comment>UInt/Int; Name; UId</comment>
+  </data>
+  <data name="check_ver_parat_int_minmax" xml:space="preserve">
+    <value>ParameterType {0} {1} ({2}): Le minimum ne peut être plus grand que le maximum</value>
+    <comment>UInt/Int; Name; UId</comment>
+  </data>
+  <data name="check_ver_parat_int_max2" xml:space="preserve">
+    <value>ParameterType {0} {1} ({2}): Le maximum ne </value>
+    <comment>UInt/Int; Name; UId; Max Value</comment>
+  </data>
+  <data name="check_ver_parat_int_min2" xml:space="preserve">
+    <value>ParameterType entier {0} ({1}): Le minimum ne peut être plus petit que {2}</value>
+    <comment>UInt/Int; Name; UId; Min Value</comment>
+  </data>
+  <data name="check_ver_parat_float" xml:space="preserve">
+    <value>ParameterType nombre flottant {0} ({1}): Il n'y a pas encore de test</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_parat_picture" xml:space="preserve">
+    <value>ParameterType image {0} ({1}): Pas de Baggage de sélectionné</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_parat_none" xml:space="preserve">
+    <value>ParameterType None {0} ({1}): Supporté dans ETS3. Activer l'option IsPreETS4</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_parat_color1" xml:space="preserve">
+    <value>ParameterType couleur {0} ({1}): Spectre de couleur non supporté{2}</value>
+    <comment>Name; UId; Colorspace</comment>
+  </data>
+  <data name="check_ver_parat_color2" xml:space="preserve">
+    <value>ParameterType couleur {0} ({1}): RGBW est supporté avec le Namespace 20 ou +</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_parat_ip1" xml:space="preserve">
+    <value>ParameterType adresse IP {0} ({1}): Aucun type d'adresse sélectionné</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_parat_ip2" xml:space="preserve">
+    <value>ParameterType adresse IP {0} ({1}): Aucun protocole IP sélectionné</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_parat_date" xml:space="preserve">
+    <value>ParameterType date {0} ({1}): Aucun encodage sélectionné</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_parat_unknown" xml:space="preserve">
+    <value>ParameterType inconnu {0} ({1})</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_loadprod_msg" xml:space="preserve">
+    <value>Procédure de chargement : Les messages sont utilisés mais l'option est inactive</value>
+    <comment/>
+  </data>
+  <data name="check_ver_loadprod_msgref" xml:space="preserve">
+    <value>Procédure de chargement : MessageRef n'est pas un entier</value>
+    <comment/>
+  </data>
+  <data name="check_ver_loadprod_msgref_error" xml:space="preserve">
+    <value>Procédure de chargement : MessageRef référence un UID inexistant ({0})</value>
+    <comment>UId</comment>
+  </data>
+  <data name="check_ver_cat_number" xml:space="preserve">
+    <value>Catalogue {0}: Le numéro de section est vide</value>
+    <comment>Name</comment>
+  </data>
+  <data name="check_ver_cat_prodnumber" xml:space="preserve">
+    <value>Catalogue {0}: Le numéro de produit n'est pas un entier</value>
+    <comment>Name</comment>
+  </data>
+  <data name="check_ver_cat_hardware" xml:space="preserve">
+    <value>Catalogue {0}: Aucun matériel sélectionné</value>
+    <comment>Name</comment>
+  </data>
+  <data name="check_ver_mod_allocs" xml:space="preserve">
+    <value>Module {0}: les Allocators sont supportés à partir de Namespace 20 ou +</value>
+    <comment>Name</comment>
+  </data>
+  <data name="check_ver_mod_paraoff" xml:space="preserve">
+    <value>Module {0}: L'argument ParameterBaseOffset n'est pas de type numérique</value>
+    <comment>Name</comment>
+  </data>
+  <data name="check_ver_mod_combase" xml:space="preserve">
+    <value>Module {0}: L'argument ComObjectBasenumber n'est pas de type numérique</value>
+    <comment>Name</comment>
+  </data>
+  <data name="check_ver_dyn_items" xml:space="preserve">
+    <value>La vue Dynamic est vide</value>
+    <comment/>
+  </data>
+  <data name="check_ver_para_type" xml:space="preserve">
+    <value>Paramètre {0} ({1}): Pas de ParameterType sélectionné</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_para_text" xml:space="preserve">
+    <value>Paramètre {0} ({1}): La valeur nécessite plus de mémoire ({2}) que sa taille ({3})</value>
+    <comment>Name; UId; nedded; size</comment>
+  </data>
+  <data name="check_ver_para_enum1" xml:space="preserve">
+    <value>{0} {1} ({2}): La valeur n'est pas un entier</value>
+    <comment>Parameter/Ref; Name; UId</comment>
+  </data>
+  <data name="check_ver_para_enum2" xml:space="preserve">
+    <value>{0} {1} ({2}): La valeur n'est une option disponible</value>
+    <comment>Parameter/Ref; Name; UId</comment>
+  </data>
+  <data name="check_ver_para_number1" xml:space="preserve">
+    <value>{0} {1} ({2}): La valeur n'est pas un entier</value>
+    <comment>Parameter/Ref; Name; UId</comment>
+  </data>
+  <data name="check_ver_para_number2" xml:space="preserve">
+    <value>{0} {1} ({2}): La valeur n'est pas la plage</value>
+    <comment>Parameter/Ref; Name; UId</comment>
+  </data>
+  <data name="check_ver_para_color" xml:space="preserve">
+    <value>{0} {1} ({2}): La valeur n'est pas au format défini {3}</value>
+    <comment>Parameter/Ref; Name; UId; format</comment>
+  </data>
+  <data name="check_ver_para_raw1" xml:space="preserve">
+    <value>{0} {1} ({2}): La valeur a un nombre impair de caractères</value>
+    <comment>Parameter/Ref; Name; UId</comment>
+  </data>
+  <data name="check_ver_para_raw2" xml:space="preserve">
+    <value>{0} {1} ({2}): La valeur nécessite plus de mémoire ({3}) que sa taille ({4})</value>
+    <comment>Parameter/Ref; Name; UId, needed; size</comment>
+  </data>
+  <data name="check_ver_para_raw3" xml:space="preserve">
+    <value>{0} {1} ({2}): La valeur n'est une valeur hexadécimale valide</value>
+    <comment>Parameter/Ref; Name; UId</comment>
+  </data>
+  <data name="check_ver_para_date" xml:space="preserve">
+    <value>{0} {1} ({2}): La valeur n'est pas au format date 'YYYY-MM-DD'</value>
+    <comment>Parameter/Ref; Name; UId</comment>
+  </data>
+  <data name="check_ver_lang_no_translation" xml:space="preserve">
+    <value>{0} {1} ({2}): N'est pas traduit</value>
+    <comment>Parameter/Ref; Name; UId; Text/FunctionText</comment>
+  </data>
+  <data name="check_ver_lang_not_all" xml:space="preserve">
+    <value>{0} {1} ({2}): N'est pas traduit dans toutes les langues</value>
+    <comment>Parameter/Ref; Name; UId</comment>
+  </data>
+  <data name="check_ver_lang_suffix" xml:space="preserve">
+    <value>{0} {1} ({2}): Suffix non traduit dans toutes les langues</value>
+    <comment>Parameter/Ref; Name; UId</comment>
+  </data>
+  <data name="check_ver_para_save_error" xml:space="preserve">
+    <value>Paramètre {0} ({1}): pas de segment de mémoire sélectionné</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_para_save_offset" xml:space="preserve">
+    <value>Paramètre {0} ({1}): Offset non défini</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_para_save_offsetbit" xml:space="preserve">
+    <value>Paramètre {0} ({1}): Bit d'Offset non défini</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_para_save_obsolet" xml:space="preserve">
+    <value>Paramètre {0} ({1}): Bit d'Offset ne peut être supérieur à 7</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_para_save_objectindex" xml:space="preserve">
+    <value>Parameter {0} ({1}): La valeur ObjectIndex n'est pas fixée</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_para_save_propertyid" xml:space="preserve">
+    <value>Parameter {0} ({1}): La valeur PropertyId n'est pas fixée</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_para_save_union" xml:space="preserve">
+    <value>Parameter {0} ({1}): L'Union n'est pas définie</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_lang_suffix_length" xml:space="preserve">
+    <value>{0} {1} ({2}): Le Suffix a plus de 20 caractères</value>
+    <comment>Parameter/Ref; Name; UId</comment>
+  </data>
+  <data name="check_ver_pararef_no_para" xml:space="preserve">
+    <value>ParameterRef {0} ({1}): Pas de paramètre sélectionné</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_com_not_unique" xml:space="preserve">
+    <value>Les ComObjectNumbers ne sont pas uniques. Les IDs seront renumérotés</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_com_no_dpt" xml:space="preserve">
+    <value>ComObject {0} ({1}): Pas de DatapointType sélectionné</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_com_no_dpt_ref" xml:space="preserve">
+    <value>ComObject {0} ({1}): L'option "Aucun DatapointType" n'est valide que pour les ComObjectRefs</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_com_no_dpst" xml:space="preserve">
+    <value>ComObject {0} ({1}): Pas de DatapointSubType sélectionné</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_com_no_textpara" xml:space="preserve">
+    <value>{0} {1} ({2}): Pas de TextParameter sélectionné</value>
+    <comment>ComObject/Ref; Name; UId</comment>
+  </data>
+  <data name="check_ver_com_no_used_textpara" xml:space="preserve">
+    <value>{0} {1} ({2}): Un TextParameter est sélectionné mais pas de {{{{0}}}} dans le texte</value>
+    <comment>ComObject/Ref; Name; UId</comment>
+  </data>
+  <data name="check_ver_comref_no_com" xml:space="preserve">
+    <value>ComObjectRef {0} ({1}): Pas de ComObject sélectionné</value>
+    <comment>Name; UId</comment>
+  </data>
+  <data name="check_ver_mods" xml:space="preserve">
+    <value>Vérification du Module '{0}'</value>
+    <comment>Name</comment>
+  </data>
+  <data name="check_cat_dev_text_not_all" xml:space="preserve">
+    <value>Appareil {0}: Le texte n'est pas dans tous les langages de l'application ou n'est pas traduit</value>
+    <comment/>
+  </data>
+  <data name="check_cat_dev_desc_not_all" xml:space="preserve">
+    <value>Appareil {0}: La description n'est pas dans les langages de l'application ou n'est pas traduit</value>
+    <comment/>
+  </data>
+  <data name="check_cat_cat_text_not_all" xml:space="preserve">
+    <value>Le Catalogue {0}: Le texte n'est pas dans tous les langages de l'application ou n'est pas traduit</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_channel_no_number" xml:space="preserve">
+    <value>DynChannel {0}: Le numéro est vide</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_channel_textpara" xml:space="preserve">
+    <value>DynChannel {0}: Pas de TextParameter sélectionné</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_block_pref_error" xml:space="preserve">
+    <value>DynParaBlock {0}: le ParameterRef n'est supporté que dans ETS3. Activerzl'option IsPreETS4.</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_block_no_pref" xml:space="preserve">
+    <value>DynParaBlock {0}: Pas de ParameterRef sélectionné</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_block_no_textpara" xml:space="preserve">
+    <value>DynParaBlock {0}: Pas de TextParameter sélectionné</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_block_no_icon" xml:space="preserve">
+    <value>DynParaBlock {0}: Pas d'icône sélectionnée</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_mod_no_module" xml:space="preserve">
+    <value>DynModule {0}: Pas de Module sélectionné</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_mod_empty_arg" xml:space="preserve">
+    <value>DynModule {0}: Au moins un argument est vide</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_mod_no_alloc" xml:space="preserve">
+    <value>DynModule {0}: Un Allocator Doit être associé</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_mod_alloc_error" xml:space="preserve">
+    <value>DynModule {0}: Au moins un argument a un Allocator qui n'est pas un numérique</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_choose_no_pararef" xml:space="preserve">
+    <value>DynChoose {0}: Pas de ParameterRef sélectionné</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_when_no_cond" xml:space="preserve">
+    <value>DynWhen {0}: La condition est vide</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_when_default" xml:space="preserve">
+    <value>DynWhen {0}: Activé par défaut. La condition sera ignorée</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_para_no_ref" xml:space="preserve">
+    <value>DynParameter {0}: Pas de ParameterRef sélectionné</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_para_no_help" xml:space="preserve">
+    <value>DynParameter {0}: Pas de Helptext sélectionné</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_com_no_ref" xml:space="preserve">
+    <value>DynComObject {0}: Pas de ComObjectRef sélectionné</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_sep_no_ref" xml:space="preserve">
+    <value>DynSeparator {0}: Pas de ParameterRef sélectionné</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_sep_uihint" xml:space="preserve">
+    <value>DynSeparator {0}: L'option UIHint est supportée à partir de Namespace 14 ou +</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_sep_no_icon" xml:space="preserve">
+    <value>DynSeparator {0}: Pas d'icône sélectionnée</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_assign_no_target" xml:space="preserve">
+    <value>DynAssign {0}: Pas de cible sélectionnée</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_assign_no_source" xml:space="preserve">
+    <value>DynAssign {0}: Pas de source ou de valeur définies</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_btn_no_name" xml:space="preserve">
+    <value>DynButton {0}: Le nom n'est pas défini</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_btn_no_ref" xml:space="preserve">
+    <value>DynButton {0}: Pas de ParameterRef sélectionné</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_btn_no_icon" xml:space="preserve">
+    <value>DynButton {0}: Pas d'icône sélectionnée</value>
+    <comment/>
+  </data>
+  <data name="check_com_lang_text" xml:space="preserve">
+    <value>{0} {1} ({2}): Pas de traduction pour {3}</value>
+    <comment/>
+  </data>
+  <data name="check_com_lang_functext" xml:space="preserve">
+    <value>{0} {1} ({2}): Pas de traduction pour la functiontext {3}</value>
+    <comment/>
+  </data>
+  <data name="main_export_error" xml:space="preserve">
+    <value>Le fichier knxprod ne peut être créé</value>
+    <comment/>
+  </data>
+  <data name="main_export_success" xml:space="preserve">
+    <value>Le fichier knxprod a été créé avec succès</value>
+    <comment/>
+  </data>
+  <data name="main_export_error_namespace" xml:space="preserve">
+    <value>Namespace /{0} Ne peut pas construire cet appareil</value>
+    <comment/>
+  </data>
+  <data name="main_export_error_prod_namespace" xml:space="preserve">
+    <value>Un fichier knxprod ne peut contenir différents namespaces (version de ETS)</value>
+    <comment/>
+  </data>
+  <data name="main_export_create" xml:space="preserve">
+    <value>Créer le fichier knxprod</value>
+    <comment/>
+  </data>
+  <data name="main_export_checked" xml:space="preserve">
+    <value>Vérification faite</value>
+    <comment/>
+  </data>
+  <data name="main_export_failed" xml:space="preserve">
+    <value>Construction a échouée. Il y a des erreurs.</value>
+    <comment/>
+  </data>
+  <data name="update_error" xml:space="preserve">
+    <value>Vérification d'une nouvelle version impossible</value>
+    <comment/>
+  </data>
+</root>

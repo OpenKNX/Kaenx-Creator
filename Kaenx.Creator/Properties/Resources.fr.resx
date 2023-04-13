@@ -518,7 +518,7 @@
     <comment/>
   </data>
   <data name="tabs_dyn" xml:space="preserve">
-    <value>Vue dynamique</value>
+    <value>Vue Dynamic</value>
     <comment/>
   </data>
   <data name="tabs_msg" xml:space="preserve">
@@ -754,7 +754,7 @@
     <comment/>
   </data>
   <data name="tpara_error2" xml:space="preserve">
-    <value>Ce ParameterRef n'est pas utilisé dans la vue dynamique</value>
+    <value>Ce ParameterRef n'est pas utilisé dans la vue Dynamic</value>
     <comment/>
   </data>
   <data name="prop_para" xml:space="preserve">
@@ -814,7 +814,7 @@
     <comment/>
   </data>
   <data name="tcom_error2" xml:space="preserve">
-    <value>Ce ComObjectRef n'est pas utilisé dans la vue dynamique</value>
+    <value>Ce ComObjectRef n'est pas utilisé dans la vue Dynamic</value>
     <comment/>
   </data>
   <data name="prop_como" xml:space="preserve">
@@ -958,7 +958,7 @@
     <comment/>
   </data>
   <data name="tdyn_tmod" xml:space="preserve">
-    <value>Module</value>
+    <value>Modules</value>
     <comment/>
   </data>
   <data name="tdyn_tselection" xml:space="preserve">
@@ -986,7 +986,7 @@
     <comment/>
   </data>
   <data name="gen_unfold" xml:space="preserve">
-    <value>Dévelloper</value>
+    <value>Développer</value>
     <comment/>
   </data>
   <data name="gen_collapse" xml:space="preserve">
@@ -1034,7 +1034,7 @@
     <comment/>
   </data>
   <data name="tdyn_when_def" xml:space="preserve">
-    <value>Montré uniquement si les autres conditions échoues</value>
+    <value>Montrer uniquement si les autres conditions échoues</value>
     <comment/>
   </data>
   <data name="tdyn_when1" xml:space="preserve">
