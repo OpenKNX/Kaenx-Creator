@@ -185,6 +185,7 @@ namespace Kaenx.Creator
 
             string newVersion = versionInfo.FileVersion;
             if (versionInfo.FileVersion.Split('.').Length > 2) newVersion = string.Join('.', newVersion.Split('.').Take(2));
+            if(Directory.Exists(System.IO.Path.Combine(path, "CV", newVersion))) return true;
             try {
                 Directory.CreateDirectory(System.IO.Path.Combine(path, "CV", newVersion));
             } catch{
