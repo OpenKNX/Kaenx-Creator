@@ -37,6 +37,13 @@ namespace Kaenx.Creator.Models
         [JsonIgnore]
         public Memory Memory { get;set; } = new Memory();
         
+        private string _prefix = "";
+        public string Prefix
+        {
+            get { return _prefix; }
+            set { _prefix = value; Changed("Prefix"); }
+        }
+
         private string _name = "dummy";
         public string Name
         {
@@ -114,6 +121,7 @@ namespace Kaenx.Creator.Models
 
         public int LastParameterId { get; set; } = 0;
         public int LastParameterRefId { get; set; } = 0;
+        public bool IsOpenKnxModule { get; set; } = false;
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void Changed(string name)

@@ -127,7 +127,7 @@ namespace Kaenx.Creator.Controls
             ParamList.ScrollIntoView(para);
             ParamList.SelectedItem = para;
 
-            if(Version.IsParameterRefAuto)
+            if(Module.IsParameterRefAuto)
             {
                 Models.ParameterRef pref = new Models.ParameterRef(para) { UId = AutoHelper.GetNextFreeUId(Module.ParameterRefs) };
                 foreach(Models.Language lang in Version.Languages) {
@@ -147,7 +147,7 @@ namespace Kaenx.Creator.Controls
 
             Module.Parameters.Add(clonedPara);
 
-            if (Version.IsParameterRefAuto)
+            if (Module.IsParameterRefAuto)
             {
                 Module.ParameterRefs.Add(new Models.ParameterRef(clonedPara) { UId = AutoHelper.GetNextFreeUId(Module.ParameterRefs) });
             }
@@ -157,7 +157,7 @@ namespace Kaenx.Creator.Controls
         {
             Parameter para = ParamList.SelectedItem as Models.Parameter;
 
-            if(Version.IsParameterRefAuto)
+            if(Module.IsParameterRefAuto)
             {
                 ParameterRef pref = Module.ParameterRefs.Single(p => p.ParameterObject == para);
                 List<int> uids = new List<int>();

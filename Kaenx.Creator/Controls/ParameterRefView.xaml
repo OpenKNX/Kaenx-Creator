@@ -146,7 +146,7 @@
 
                     <CheckBox IsChecked="{Binding OverwriteText}" VerticalAlignment="Center" />
                     <StackPanel Grid.Column="1">
-                        <CheckBox IsEnabled="False" IsChecked="{Binding ParameterObject.TranslationText}" Content="Nur Standardsprache exportieren (keine Translation-Unit)" />
+                        <CheckBox IsEnabled="False" IsChecked="{Binding TranslationText}" Content="{x:Static p:Resources.gen_onlydeflang}" />
                         <DataGrid IsEnabled="{Binding OverwriteText}" ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="{x:Static p:Resources.gen_lang}" Binding="{Binding Language.Text}" IsReadOnly="True" />

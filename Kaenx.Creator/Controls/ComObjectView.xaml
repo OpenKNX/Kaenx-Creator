@@ -131,7 +131,7 @@
                         </StackPanel>
                     </HeaderedContentControl>
 
-                    <HeaderedContentControl Header="{x:Static p:Resources.tcom_para}" Visibility="{Binding Version.IsComObjectRefAuto, ElementName=ViewControl, Converter={StaticResource BoolToVis}}">
+                    <HeaderedContentControl Header="{x:Static p:Resources.tcom_para}" Visibility="{Binding Module.IsComObjectRefAuto, ElementName=ViewControl, Converter={StaticResource BoolToVis}}">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="auto" />
@@ -203,22 +203,40 @@
                     </HeaderedContentControl>
 
                     <HeaderedContentControl Header="{x:Static p:Resources.tcom_flag_com}" Margin="5 30 5 5">
-                        <ComboBox ItemsSource="{Binding Source={StaticResource dataFromCom}}" SelectedItem="{Binding FlagComm}" />
+                        <ComboBox SelectedValue="{Binding FlagComm}" SelectedValuePath="Tag">
+                            <ComboBoxItem Content="{x:Static p:Resources.tcom_flag_enable}" Tag="Enabled" />
+                            <ComboBoxItem Content="{x:Static p:Resources.tcom_flag_disable}" Tag="Disabled" />
+                        </ComboBox>
                     </HeaderedContentControl>
                     <HeaderedContentControl Header="{x:Static p:Resources.tcom_flag_read}">
-                        <ComboBox ItemsSource="{Binding Source={StaticResource dataFromCom}}" SelectedItem="{Binding FlagRead}" />
+                        <ComboBox SelectedValue="{Binding FlagRead}" SelectedValuePath="Tag">
+                            <ComboBoxItem Content="{x:Static p:Resources.tcom_flag_enable}" Tag="Enabled" />
+                            <ComboBoxItem Content="{x:Static p:Resources.tcom_flag_disable}" Tag="Disabled" />
+                        </ComboBox>
                     </HeaderedContentControl>
                     <HeaderedContentControl Header="{x:Static p:Resources.tcom_flag_write}">
-                        <ComboBox ItemsSource="{Binding Source={StaticResource dataFromCom}}" SelectedItem="{Binding FlagWrite}" />
+                        <ComboBox SelectedValue="{Binding FlagWrite}" SelectedValuePath="Tag">
+                            <ComboBoxItem Content="{x:Static p:Resources.tcom_flag_enable}" Tag="Enabled" />
+                            <ComboBoxItem Content="{x:Static p:Resources.tcom_flag_disable}" Tag="Disabled" />
+                        </ComboBox>
                     </HeaderedContentControl>
                     <HeaderedContentControl Header="{x:Static p:Resources.tcom_flag_trans}">
-                        <ComboBox ItemsSource="{Binding Source={StaticResource dataFromCom}}" SelectedItem="{Binding FlagTrans}" />
+                        <ComboBox SelectedValue="{Binding FlagTrans}" SelectedValuePath="Tag">
+                            <ComboBoxItem Content="{x:Static p:Resources.tcom_flag_enable}" Tag="Enabled" />
+                            <ComboBoxItem Content="{x:Static p:Resources.tcom_flag_disable}" Tag="Disabled" />
+                        </ComboBox>
                     </HeaderedContentControl>
                     <HeaderedContentControl Header="{x:Static p:Resources.tcom_flag_update}">
-                        <ComboBox ItemsSource="{Binding Source={StaticResource dataFromCom}}" SelectedItem="{Binding FlagUpdate}" />
+                        <ComboBox SelectedValue="{Binding FlagUpdate}" SelectedValuePath="Tag">
+                            <ComboBoxItem Content="{x:Static p:Resources.tcom_flag_enable}" Tag="Enabled" />
+                            <ComboBoxItem Content="{x:Static p:Resources.tcom_flag_disable}" Tag="Disabled" />
+                        </ComboBox>
                     </HeaderedContentControl>
                     <HeaderedContentControl Header="{x:Static p:Resources.tcom_flag_oninit}">
-                        <ComboBox ItemsSource="{Binding Source={StaticResource dataFromCom}}" SelectedItem="{Binding FlagOnInit}" />
+                        <ComboBox SelectedValue="{Binding FlagOnInit}" SelectedValuePath="Tag">
+                            <ComboBoxItem Content="{x:Static p:Resources.tcom_flag_enable}" Tag="Enabled" />
+                            <ComboBoxItem Content="{x:Static p:Resources.tcom_flag_disable}" Tag="Disabled" />
+                        </ComboBox>
                     </HeaderedContentControl>
                 </StackPanel>
             </ScrollViewer>

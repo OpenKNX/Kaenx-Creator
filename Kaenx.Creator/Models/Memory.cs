@@ -179,6 +179,11 @@ namespace Kaenx.Creator.Models
             }
         }
 
+        public int GetFreeOffset()
+        {
+            return GetCount();
+        }
+
         public (int offset, int offsetbit) GetFreeOffset(int size)
         {
             int offset = -1;

@@ -176,9 +176,16 @@
                                 </Grid>
                                 
                                 <HeaderedContentControl Header="{x:Static p:Resources.prop_name}">
-                                    <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+                                    <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsOpenKnxModule, Converter={StaticResource BoolNeg}}" />
                                 </HeaderedContentControl>
         
+                                <HeaderedContentControl Header="{x:Static p:Resources.tmod_prefix}">
+                                    <TextBox Text="{Binding Prefix, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsOpenKnxModule, Converter={StaticResource BoolNeg}}" />
+                                </HeaderedContentControl>
+
+                                <CheckBox IsChecked="{Binding IsParameterRefAuto}" Content="{x:Static p:Resources.vgen_autopara}" HorizontalAlignment="Left" />
+                                <CheckBox IsChecked="{Binding IsComObjectRefAuto}" Content="{x:Static p:Resources.vgen_autocom}" HorizontalAlignment="Left" />
+                                
                                 
                                 <HeaderedContentControl Header="{x:Static p:Resources.tmod_pbo}" Margin="5" IsTabStop="false">
                                     <ComboBox ItemsSource="{Binding Arguments}" SelectedItem="{Binding ParameterBaseOffset}" DisplayMemberPath="Name" Margin="0 5" />
@@ -191,6 +198,8 @@
                                 <CheckBox Content="{x:Static p:Resources.tmod_autocbn}" IsChecked="{Binding IsComObjectBaseNumberAuto}" />
                                 
                                 
+                                <Button Content="{x:Static p:Resources.tcheck_clean1}" Click="ClickShowClean" />
+                                <Button Content="{x:Static p:Resources.tcheck_clean2}" Click="ClickDoClean" />
                             </StackPanel>
                         </ScrollViewer>
                     </TabItem>
@@ -212,7 +221,7 @@
                 <ctrl:ParameterView Version="{Binding .}" Module="{Binding SelectedItem, ElementName=ModuleList}" />
             </TabItem>
 
-            <TabItem Header="{x:Static p:Resources.tabs_pararefs}" Visibility="{Binding IsParameterRefAuto, Converter={StaticResource BoolToVis}, ConverterParameter=true}" Style="{StaticResource LeftTabItem2}">
+            <TabItem Header="{x:Static p:Resources.tabs_pararefs}" Visibility="{Binding SelectedItem.IsParameterRefAuto, ElementName=ModuleList, Converter={StaticResource BoolToVis}, ConverterParameter=true}" Style="{StaticResource LeftTabItem2}">
                 <ctrl:ParameterRefView Version="{Binding .}" Module="{Binding SelectedItem, ElementName=ModuleList}" />
             </TabItem>
 
@@ -220,7 +229,7 @@
                 <ctrl:ComObjectView Version="{Binding .}" Module="{Binding SelectedItem, ElementName=ModuleList}" />
             </TabItem>
 
-            <TabItem Header="{x:Static p:Resources.tabs_comrefs}" Visibility="{Binding IsComObjectRefAuto, Converter={StaticResource BoolToVis}, ConverterParameter=true}" Style="{StaticResource LeftTabItem2}">
+            <TabItem Header="{x:Static p:Resources.tabs_comrefs}" Visibility="{Binding SelectedItem.IsComObjectRefAuto, ElementName=ModuleList, Converter={StaticResource BoolToVis}, ConverterParameter=true}" Style="{StaticResource LeftTabItem2}">
                 <ctrl:ComObjectRefView Version="{Binding .}" Module="{Binding SelectedItem, ElementName=ModuleList}" />
             </TabItem>
 

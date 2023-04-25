@@ -116,7 +116,7 @@
                     <ComboBox IsEditable="true" ItemsSource="{Binding Module.ComObjects, ElementName=ViewControl}" DisplayMemberPath="Name" SelectedItem="{Binding ComObjectObject}" />
                 </HeaderedContentControl>
 
-                <HeaderedContentControl Header="{x:Static p:Resources.tcom_para}" Visibility="{Binding Version.IsComObjectRefAuto, ElementName=ViewControl, Converter={StaticResource BoolToVis}, ConverterParameter=true}">
+                <HeaderedContentControl Header="{x:Static p:Resources.tcom_para}" Visibility="{Binding Module.IsComObjectRefAuto, ElementName=ViewControl, Converter={StaticResource BoolToVis}, ConverterParameter=true}">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="auto" />
@@ -137,7 +137,7 @@
 
                         <CheckBox IsChecked="{Binding OverwriteText}" VerticalAlignment="Center" />
                         <StackPanel Grid.Column="1">
-                            <CheckBox IsEnabled="{Binding OverwriteText}" IsChecked="{Binding TranslationText}" Content="Nur Standardsprache exportieren (keine Translation-Unit)" />
+                            <CheckBox IsEnabled="{Binding OverwriteText}" IsChecked="{Binding TranslationText}" Content="{x:Static p:Resources.gen_onlydeflang}" />
                             <DataGrid IsEnabled="{Binding OverwriteText}" ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="{x:Static p:Resources.gen_lang}" Binding="{Binding Language.Text}" IsReadOnly="True" />
@@ -157,7 +157,7 @@
 
                         <CheckBox IsChecked="{Binding OverwriteFunctionText}" VerticalAlignment="Center" />
                         <StackPanel Grid.Column="1">
-                            <CheckBox IsEnabled="{Binding OverwriteFunctionText}" IsChecked="{Binding TranslationFunctionText}" Content="Nur Standardsprache exportieren (keine Translation-Unit)" />
+                            <CheckBox IsEnabled="{Binding OverwriteFunctionText}" IsChecked="{Binding TranslationFunctionText}" Content="{x:Static p:Resources.gen_onlydeflang}" />
                             <DataGrid IsEnabled="{Binding OverwriteFunctionText}" ItemsSource="{Binding FunctionText}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="{x:Static p:Resources.gen_lang}" Binding="{Binding Language.Text}" IsReadOnly="True" />
@@ -221,23 +221,90 @@
                 </HeaderedContentControl>
 
 
+
                 <HeaderedContentControl Header="{x:Static p:Resources.tcom_flag_com}" Margin="5 30 5 5">
-                    <ComboBox ItemsSource="{Binding Source={StaticResource dataFromCom}}" SelectedItem="{Binding FlagComm}" />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <CheckBox IsChecked="{Binding OverwriteFC}" VerticalAlignment="Center" />
+                        <ComboBox Grid.Column="1" IsEnabled="{Binding OverwriteFC}" SelectedValue="{Binding FlagComm}" SelectedValuePath="Tag">
+                            <ComboBoxItem Content="{x:Static p:Resources.tcom_flag_enable}" Tag="Enabled" />
+                            <ComboBoxItem Content="{x:Static p:Resources.tcom_flag_disable}" Tag="Disabled" />
+                        </ComboBox>
+                    </Grid>
                 </HeaderedContentControl>
                 <HeaderedContentControl Header="{x:Static p:Resources.tcom_flag_read}">
-                    <ComboBox ItemsSource="{Binding Source={StaticResource dataFromCom}}" SelectedItem="{Binding FlagRead}" />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <CheckBox IsChecked="{Binding OverwriteFR}" VerticalAlignment="Center" />
+                        <ComboBox Grid.Column="1" IsEnabled="{Binding OverwriteFR}" SelectedValue="{Binding FlagRead}" SelectedValuePath="Tag">
+                            <ComboBoxItem Content="{x:Static p:Resources.tcom_flag_enable}" Tag="Enabled" />
+                            <ComboBoxItem Content="{x:Static p:Resources.tcom_flag_disable}" Tag="Disabled" />
+                        </ComboBox>
+                    </Grid>
                 </HeaderedContentControl>
                 <HeaderedContentControl Header="{x:Static p:Resources.tcom_flag_write}">
-                    <ComboBox ItemsSource="{Binding Source={StaticResource dataFromCom}}" SelectedItem="{Binding FlagWrite}" />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <CheckBox IsChecked="{Binding OverwriteFW}" VerticalAlignment="Center" />
+                        <ComboBox Grid.Column="1" IsEnabled="{Binding OverwriteFW}" SelectedValue="{Binding FlagWrite}" SelectedValuePath="Tag">
+                            <ComboBoxItem Content="{x:Static p:Resources.tcom_flag_enable}" Tag="Enabled" />
+                            <ComboBoxItem Content="{x:Static p:Resources.tcom_flag_disable}" Tag="Disabled" />
+                        </ComboBox>
+                    </Grid>
                 </HeaderedContentControl>
                 <HeaderedContentControl Header="{x:Static p:Resources.tcom_flag_trans}">
-                    <ComboBox ItemsSource="{Binding Source={StaticResource dataFromCom}}" SelectedItem="{Binding FlagTrans}" />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <CheckBox IsChecked="{Binding OverwriteFT}" VerticalAlignment="Center" />
+                        <ComboBox Grid.Column="1" IsEnabled="{Binding OverwriteFT}" SelectedValue="{Binding FlagTrans}" SelectedValuePath="Tag">
+                            <ComboBoxItem Content="{x:Static p:Resources.tcom_flag_enable}" Tag="Enabled" />
+                            <ComboBoxItem Content="{x:Static p:Resources.tcom_flag_disable}" Tag="Disabled" />
+                        </ComboBox>
+                    </Grid>
                 </HeaderedContentControl>
                 <HeaderedContentControl Header="{x:Static p:Resources.tcom_flag_update}">
-                    <ComboBox ItemsSource="{Binding Source={StaticResource dataFromCom}}" SelectedItem="{Binding FlagUpdate}" />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <CheckBox IsChecked="{Binding OverwriteFU}" VerticalAlignment="Center" />
+                        <ComboBox Grid.Column="1" IsEnabled="{Binding OverwriteFU}" SelectedValue="{Binding FlagUpdate}" SelectedValuePath="Tag">
+                            <ComboBoxItem Content="{x:Static p:Resources.tcom_flag_enable}" Tag="Enabled" />
+                            <ComboBoxItem Content="{x:Static p:Resources.tcom_flag_disable}" Tag="Disabled" />
+                        </ComboBox>
+                    </Grid>
                 </HeaderedContentControl>
                 <HeaderedContentControl Header="{x:Static p:Resources.tcom_flag_oninit}">
-                    <ComboBox ItemsSource="{Binding Source={StaticResource dataFromCom}}" SelectedItem="{Binding FlagOnInit}" />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <CheckBox IsChecked="{Binding OverwriteFOI}" VerticalAlignment="Center" />
+                        <ComboBox Grid.Column="1" IsEnabled="{Binding OverwriteFOI}" SelectedValue="{Binding FlagOnInit}" SelectedValuePath="Tag">
+                            <ComboBoxItem Content="{x:Static p:Resources.tcom_flag_enable}" Tag="Enabled" />
+                            <ComboBoxItem Content="{x:Static p:Resources.tcom_flag_disable}" Tag="Disabled" />
+                        </ComboBox>
+                    </Grid>
                 </HeaderedContentControl>
             </StackPanel>
         </ScrollViewer>

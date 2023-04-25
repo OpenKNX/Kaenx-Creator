@@ -47,13 +47,6 @@ namespace Kaenx.Creator.Controls
             Baggage bag = BaggageList.SelectedItem as Baggage;
             List<ParameterType> types = new List<ParameterType>();
 
-            /*foreach(Models.Application app in General.Applications)
-                foreach(AppVersion vers in app.Versions)
-                    foreach(ParameterType type in vers.ParameterTypes)
-                        if(type.Type == ParameterTypes.Picture && type.BaggageObject == bag)
-                            types.Add(type);
-*/
-//TODO implement
             if(types.Count > 0)
             {
                 var result = MessageBox.Show(Properties.Messages.baggage_delete_error, Properties.Messages.baggage_delete_error_title, MessageBoxButton.YesNo);

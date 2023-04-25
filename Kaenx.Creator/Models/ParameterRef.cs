@@ -106,6 +106,20 @@ namespace Kaenx.Creator.Models
         public string Value { get; set; } = "";
 
 
+        private bool _transText = false;
+        public bool TranslationText
+        {
+            get { return _transText; }
+            set { _transText = value; Changed("TranslationText"); }
+        }
+
+        private bool _transSuffix = false;
+        public bool TranslationSuffix
+        {
+            get { return _transSuffix; }
+            set { _transSuffix = value; Changed("TranslationSuffix"); }
+        }
+
 
         public ObservableCollection<Translation> Text {get;set;} = new ObservableCollection<Translation>();
         public ObservableCollection<Translation> Suffix {get;set;} = new ObservableCollection<Translation>();

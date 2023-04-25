@@ -255,7 +255,7 @@
                     </HeaderedContentControl>
                     <HeaderedContentControl Header="{x:Static p:Resources.gen_text}" IsEnabled="{Binding UseParameterRef, Converter={StaticResource BoolNegate}}">
                         <StackPanel>
-                            <CheckBox IsChecked="{Binding TranslationText}" Content="Nur Standardsprache exportieren (keine Translation-Unit)" />
+                            <CheckBox IsChecked="{Binding TranslationText}" Content="{x:Static p:Resources.gen_onlydeflang}" />
                             <DataGrid ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="{x:Static p:Resources.gen_lang}" Binding="{Binding Language.Text}" IsReadOnly="True" />
@@ -303,7 +303,7 @@
                 </HeaderedContentControl>
                 <HeaderedContentControl Header="{x:Static p:Resources.gen_text}">
                     <StackPanel>
-                        <CheckBox IsChecked="{Binding TranslationText}" Content="Nur Standardsprache exportieren (keine Translation-Unit)" />
+                        <CheckBox IsChecked="{Binding TranslationText}" Content="{x:Static p:Resources.gen_onlydeflang}" />
                         <DataGrid IsEnabled="{Binding UseTextParameter, Converter={StaticResource BoolNegate}}"  ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="{x:Static p:Resources.gen_lang}" Binding="{Binding Language.Text}" IsReadOnly="True" />
@@ -364,7 +364,7 @@
                 </HeaderedContentControl>
                 <HeaderedContentControl Header="{x:Static p:Resources.gen_text}">
                     <StackPanel>
-                        <CheckBox IsChecked="{Binding TranslationText}" Content="Nur Standardsprache exportieren (keine Translation-Unit)" />
+                        <CheckBox IsChecked="{Binding TranslationText}" Content="{x:Static p:Resources.gen_onlydeflang}" />
                         <DataGrid ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="{x:Static p:Resources.gen_lang}" Binding="{Binding Language.Text}" IsReadOnly="True" />

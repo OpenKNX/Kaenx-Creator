@@ -20,7 +20,6 @@ namespace Kaenx.Creator.Classes
             AppVersion version = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.AppVersion>(model.Version, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
             LoadVersion(general, version, version);
 
-            //TODO doesnt work anymore
             foreach(Models.ParameterType ptype in version.ParameterTypes)
             {
                 if(ptype.Type == Models.ParameterTypes.Picture && ptype._baggageUId != -1)
@@ -114,7 +113,7 @@ namespace Kaenx.Creator.Classes
                 if(!string.IsNullOrEmpty(com._subTypeNumber) && com.Type != null)
                     com.SubType = com.Type.SubTypes.Single(d => d.Number == com._subTypeNumber);
                     
-                if(vbase.IsComObjectRefAuto && com.UseTextParameter && com._parameterRef != -1)
+                if(mod.IsComObjectRefAuto && com.UseTextParameter && com._parameterRef != -1)
                     com.ParameterRefObject = ParaRefs[com._parameterRef];
             }
 
@@ -129,7 +128,7 @@ namespace Kaenx.Creator.Classes
                 if(!string.IsNullOrEmpty(cref._subTypeNumber) && cref.Type != null)
                     cref.SubType = cref.Type.SubTypes.Single(d => d.Number == cref._subTypeNumber);
 
-                if(!vbase.IsComObjectRefAuto && cref.UseTextParameter && cref._parameterRef != -1)
+                if(!mod.IsComObjectRefAuto && cref.UseTextParameter && cref._parameterRef != -1)
                     cref.ParameterRefObject = ParaRefs[cref._parameterRef];
             }
 
@@ -248,6 +247,7 @@ namespace Kaenx.Creator.Classes
 
         public static void MemoryCalculation(AppVersion ver, Memory mem)
         {
+            System.Console.WriteLine("Starting Memory calculation");
             mem.Sections.Clear();
 
             if(mem.Type == MemoryTypes.Absolute)
@@ -259,7 +259,7 @@ namespace Kaenx.Creator.Classes
             }
 
             foreach(Module mod in ver.Modules)
-                mod.Memory.Sections.Clear();
+                ClearModuleMemory(mod);
 
             if(!mem.IsAutoSize)
                 mem.AddBytes(mem.Size);
@@ -274,6 +274,15 @@ namespace Kaenx.Creator.Classes
                     MemoryCalculationComs(ver, mem);
             }
             MemoryCalculationRegular(ver, mem);
+
+            System.Console.WriteLine("Finished Memory calculation");
+        }
+
+        private static void ClearModuleMemory(Module mod)
+        {
+            mod.Memory.Sections.Clear();
+            foreach(Module xmod in mod.Modules)
+                ClearModuleMemory(xmod);
         }
 
         private static void MemoryCalculationGroups(AppVersion ver, Memory mem)
@@ -388,6 +397,10 @@ namespace Kaenx.Creator.Classes
             List<Models.Dynamic.DynModule> mods = new List<Models.Dynamic.DynModule>();
             GetModules(ver.Dynamics[0], mods);
             int highestComNumber = ver.ComObjects.OrderByDescending(c => c.Number).FirstOrDefault()?.Number ?? -1;
+            int offset = mem.GetFreeOffset();
+
+            List<string> checkedMods = new List<string>();
+
             foreach(Models.Dynamic.DynModule dmod in mods)
             {
                 Models.Dynamic.DynModuleArg argParas = dmod.Arguments.SingleOrDefault(a => a.ArgumentId == dmod.ModuleObject.ParameterBaseOffsetUId);
@@ -403,10 +416,17 @@ namespace Kaenx.Creator.Classes
                 if(mem.IsAutoPara && (string.IsNullOrEmpty(argParas.Value) || mem.IsAutoOrder))
                 {
                     int modSize = dmod.ModuleObject.Memory.GetCount();
-                    (int offset, int offsetbit) result = mem.GetFreeOffset(modSize * 8);
-                    argParas.Value = result.offset.ToString();
+                    mem.AddBytes(modSize);
+                    argParas.Value = offset.ToString();
                     argParas.Argument.Allocates = modSize;
-                    mem.SetBytesUsed(MemoryByteUsage.Module, modSize, result.offset, dmod?.ModuleObject);
+                    mem.SetBytesUsed(MemoryByteUsage.Module, modSize, offset, dmod?.ModuleObject);
+
+                    if(argParas.UseAllocator && !checkedMods.Contains(dmod.ModuleObject.Name))
+                    {
+                        argParas.Allocator.Start = offset;
+                    }
+
+                    offset += modSize;
                 }
 
                 if(dmod.ModuleObject.IsComObjectBaseNumberAuto)
@@ -418,10 +438,18 @@ namespace Kaenx.Creator.Classes
                         int lowestComNumber2 = dmod.ModuleObject.ComObjects.OrderBy(c => c.Number).FirstOrDefault()?.Number ?? 1;
                         argComs.Value = (++highestComNumber).ToString();
 
+                        if(argComs.UseAllocator && !checkedMods.Contains(dmod.ModuleObject.Name))
+                        {
+                            argComs.Allocator.Start = (long)highestComNumber;
+                        }
+
                         argComs.Argument.Allocates = highestComNumber2 - lowestComNumber2 + 1;
                         highestComNumber += highestComNumber2;
                     }
                 }
+
+                
+                        checkedMods.Add(dmod.ModuleObject.Name);
             }
 
             if (mem.IsAutoSize)
@@ -490,6 +518,9 @@ namespace Kaenx.Creator.Classes
                     id++;
             } else if(list is System.Collections.ObjectModel.ObservableCollection<Icon>) {
                 while((list as System.Collections.ObjectModel.ObservableCollection<Icon>).Any(i => i.UId == id))
+                    id++;
+            } else if(list is System.Collections.ObjectModel.ObservableCollection<OpenKnxModule>) {
+                while((list as System.Collections.ObjectModel.ObservableCollection<OpenKnxModule>).Any(i => i.UId == id))
                     id++;
             } else {
                 throw new Exception("Can't get NextFreeUId. Type not implemented.");

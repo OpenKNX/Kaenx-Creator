@@ -58,6 +58,8 @@ namespace Kaenx.Creator.Classes
         private Dictionary<string, Dictionary<string, Dictionary<string, string>>> _translations = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>();
         private bool _defaultLangIsInTrans = false;
 
+        public ImportHelper() { }
+
         public ImportHelper(string path, ObservableCollection<MaskVersion> bcus) {
             _path = path;
             _bcus = bcus;
@@ -242,6 +244,21 @@ namespace Kaenx.Creator.Classes
             zip.Dispose();
         }
 
+        public void SetCurrentVers(AppVersion vers)
+        {
+            currentVers = vers;
+        }
+
+        public void SetGeneral(ModelGeneral gen)
+        {
+            _general = gen;
+        }
+
+        public void SetDPTs(ObservableCollection<DataPointType> dpts)
+        {
+            DPTs = dpts;
+        }
+
         private void ImportApplication(XElement xapp)
         {
             System.Console.WriteLine("----------------Neue Applikation-------------------");
@@ -281,7 +298,6 @@ namespace Kaenx.Creator.Classes
                     return;
                 }
             }
-            //TODO implement
 
             currentVers = new AppVersion()
             {
@@ -348,7 +364,7 @@ namespace Kaenx.Creator.Classes
             ImportSegments(xstatic.Element(Get("Code")));
             ImportScript(xstatic.Element(Get("Script")));
             ImportAllocators(xstatic.Element(Get("Allocators")), currentVers);
-            ImportParameterTypes(xstatic.Element(Get("ParameterTypes")));
+            ImportParameterTypes(xstatic.Element(Get("ParameterTypes")), currentVers);
             ImportParameter(xstatic.Element(Get("Parameters")), currentVers);
             ImportParameterRefs(xstatic.Element(Get("ParameterRefs")), currentVers);
             Dictionary<string, long> dic = null;
@@ -693,7 +709,7 @@ namespace Kaenx.Creator.Classes
             }
         }
 
-        private void ImportParameterTypes(XElement xparatypes)
+        public void ImportParameterTypes(XElement xparatypes, AppVersion vers, bool removeExisting = false)
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
@@ -704,10 +720,26 @@ namespace Kaenx.Creator.Classes
             {
                 ParameterType ptype = new ParameterType()
                 {
-                    Name = xparatype.Attribute("Name").Value,
+                    //Name = xparatype.Attribute("Name").Value,
                     IsSizeManual = true,
                     UId = _uidCounter++,
                 };
+
+                ptype.Name = GetLastSplit(xparatype.Attribute("Id").Value, 3);
+                ptype.Name = Unescape(ptype.Name);
+
+                if(vers.ParameterTypes.Any(p => p.Name == ptype.Name))
+                {
+                    if(removeExisting)
+                    {
+                        vers.ParameterTypes.Remove(vers.ParameterTypes.Single(p => p.Name == ptype.Name));
+                    } else {
+                        ptype = vers.ParameterTypes.Single(p => p.Name == ptype.Name);
+                        ptype.ImportHelperName = xparatype.Attribute("Id").Value;
+                        continue;
+                    }
+                }
+
                 ptype.ImportHelperName = xparatype.Attribute("Id").Value;
 
                 XElement xsub = xparatype.Elements().ElementAt(0);
@@ -760,8 +792,6 @@ namespace Kaenx.Creator.Classes
                             ParameterTypeEnum penum = new ParameterTypeEnum()
                             {
                                 Name = xenum.Attribute("Text")?.Value ?? "",
-                                //TODO
-                                //Icon = xenum.Attribute("Icon")?.Value ?? "",
                                 Text = GetTranslation(xenum.Attribute("Id").Value, "Text", xenum),
                                 Value = int.Parse(xenum.Attribute("Value").Value)
                             };
@@ -827,13 +857,13 @@ namespace Kaenx.Creator.Classes
 
                 ptype.IsSizeManual = true;
 
-                currentVers.ParameterTypes.Add(ptype);
+                vers.ParameterTypes.Add(ptype);
             }
             sw.Stop();
             System.Console.WriteLine($"{sw.ElapsedMilliseconds} ms");
         }
 
-        private void ImportParameter(XElement xparas, IVersionBase vbase)
+        public void ImportParameter(XElement xparas, IVersionBase vbase)
         {
             Paras = new Dictionary<long, Parameter>();
             if(xparas == null) return;
@@ -921,7 +951,7 @@ namespace Kaenx.Creator.Classes
                 "Read" => ParamAccess.Read,
                 "ReadWrite" => ParamAccess.ReadWrite,
                 null => ParamAccess.ReadWrite,
-                _ => throw new Exception("Unbekannter AccesType für Parameter: " + xpara.Attribute("Access").Value)
+                _ => throw new Exception("Unbekannter AccessType für Parameter: " + xpara.Attribute("Access").Value)
             };
 
             string typeName = xpara.Attribute("ParameterType").Value;
@@ -974,7 +1004,14 @@ namespace Kaenx.Creator.Classes
             vbase.Parameters.Add(para);
         }
 
-        private void ImportParameterRefs(XElement xrefs, IVersionBase vbase)
+        public void SetParas(ObservableCollection<Parameter> paras)
+        {
+            Paras = new Dictionary<long, Parameter>();
+            foreach(Parameter para in paras)
+                Paras.Add(para.Id, para);
+        }
+
+        public void ImportParameterRefs(XElement xrefs, IVersionBase vbase)
         {
             if(xrefs == null) return;
             _uidCounter = 1;
@@ -1003,7 +1040,8 @@ namespace Kaenx.Creator.Classes
                 if (id.StartsWith("-"))
                     id = id.Substring(1);
                 long paraId = long.Parse(id);
-                pref.ParameterObject = Paras[paraId];
+                if(Paras.ContainsKey(paraId))
+                    pref.ParameterObject = Paras[paraId];
                 //pref.ParameterObject = vbase.Parameters.Single(p => p.Id == paraId);
                 pref.Name = pref.ParameterObject.Name;
                 
@@ -1022,7 +1060,7 @@ namespace Kaenx.Creator.Classes
             System.Console.WriteLine($"ImportParameterRefs: {sw.ElapsedMilliseconds} ms");
         }
 
-        private void ImportComObjects(XElement xcoms, IVersionBase vbase, ref Dictionary<string, long> idmapper)
+        public void ImportComObjects(XElement xcoms, IVersionBase vbase, ref Dictionary<string, long> idmapper, bool checkOffsets = true)
         {
             Coms = new Dictionary<long, ComObject>();
 
@@ -1035,7 +1073,7 @@ namespace Kaenx.Creator.Classes
             bool countNew = false;
             int counter = 0;
 
-            if(vbase is Models.Module)
+            if(checkOffsets && vbase is Models.Module)
             {
                 int firstId = -1;
                 foreach(XElement xref in xcoms.Elements())
@@ -1143,7 +1181,7 @@ namespace Kaenx.Creator.Classes
             System.Console.WriteLine($"ImportComObjects: {sw.ElapsedMilliseconds} ms");
         }
 
-        private void ImportComObjectRefs(XElement xrefs, IVersionBase vbase, Dictionary<string, long> idmapper = null)
+        public void ImportComObjectRefs(XElement xrefs, IVersionBase vbase, Dictionary<string, long> idmapper = null)
         {
             if(xrefs == null) return;
             _uidCounter = 1;
@@ -1187,27 +1225,28 @@ namespace Kaenx.Creator.Classes
                 {
                     long tid = long.Parse(GetLastSplit(xref.Attribute("TextParameterRefId").Value, 2));
                     cref.UseTextParameter = true;
-                    cref.ParameterRefObject = ParaRefs[tid];
+                    if(ParaRefs.ContainsKey(tid))
+                        cref.ParameterRefObject = ParaRefs[tid];
                 }
 
                 cref.FlagRead = ParseFlagType(xref.Attribute("ReadFlag")?.Value);
-                cref.OverwriteFR = cref.FlagRead == FlagType.Undefined;
-                if (cref.FlagRead == FlagType.Undefined) cref.FlagRead = FlagType.Disabled;
+                cref.OverwriteFR = cref.FlagRead != FlagType.Undefined;
+                //if (cref.FlagRead == FlagType.Undefined) cref.FlagRead = FlagType.Disabled;
                 cref.FlagWrite = ParseFlagType(xref.Attribute("WriteFlag")?.Value);
-                cref.OverwriteFW = cref.FlagWrite == FlagType.Undefined;
-                if (cref.FlagWrite == FlagType.Undefined) cref.FlagWrite = FlagType.Disabled;
+                cref.OverwriteFW = cref.FlagWrite != FlagType.Undefined;
+                //if (cref.FlagWrite == FlagType.Undefined) cref.FlagWrite = FlagType.Disabled;
                 cref.FlagComm = ParseFlagType(xref.Attribute("CommunicationFlag")?.Value);
-                cref.OverwriteFC = cref.FlagComm == FlagType.Undefined;
-                if (cref.FlagComm == FlagType.Undefined) cref.FlagComm = FlagType.Disabled;
+                cref.OverwriteFC = cref.FlagComm != FlagType.Undefined;
+                //if (cref.FlagComm == FlagType.Undefined) cref.FlagComm = FlagType.Disabled;
                 cref.FlagTrans = ParseFlagType(xref.Attribute("TransmitFlag")?.Value);
-                cref.OverwriteFT = cref.FlagTrans == FlagType.Undefined;
-                if (cref.FlagTrans == FlagType.Undefined) cref.FlagTrans = FlagType.Disabled;
+                cref.OverwriteFT = cref.FlagTrans != FlagType.Undefined;
+                //if (cref.FlagTrans == FlagType.Undefined) cref.FlagTrans = FlagType.Disabled;
                 cref.FlagUpdate = ParseFlagType(xref.Attribute("UpdateFlag")?.Value);
-                cref.OverwriteFU = cref.FlagUpdate == FlagType.Undefined;
-                if (cref.FlagUpdate == FlagType.Undefined) cref.FlagUpdate = FlagType.Disabled;
+                cref.OverwriteFU = cref.FlagUpdate != FlagType.Undefined;
+                //if (cref.FlagUpdate == FlagType.Undefined) cref.FlagUpdate = FlagType.Disabled;
                 cref.FlagOnInit = ParseFlagType(xref.Attribute("ReadOnInitFlag")?.Value);
-                cref.OverwriteFOI = cref.FlagOnInit == FlagType.Undefined;
-                if (cref.FlagOnInit == FlagType.Undefined) cref.FlagOnInit = FlagType.Disabled;
+                cref.OverwriteFOI = cref.FlagOnInit != FlagType.Undefined;
+                //if (cref.FlagOnInit == FlagType.Undefined) cref.FlagOnInit = FlagType.Disabled;
 
                 if (xref.Attribute("DatapointType") != null)
                 {
@@ -1603,7 +1642,7 @@ namespace Kaenx.Creator.Classes
 
         }
 
-        private void ImportDynamic(XElement xdyn, IVersionBase vbase)
+        public void ImportDynamic(XElement xdyn, IVersionBase vbase)
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
@@ -1616,9 +1655,18 @@ namespace Kaenx.Creator.Classes
             foreach(ComObjectRef cref in vbase.ComObjectRefs)
                 ComRefs.Add(cref.Id, cref);
 
-            DynamicMain main = new DynamicMain();
+            IDynamicMain main;
+
+            if(vbase.Dynamics.Count() > 0)
+                main = vbase.Dynamics[0];
+            else {
+                if(vbase is AppVersion av)
+                    main = new DynamicMain();
+                else
+                    main = new DynamicModule();
+                vbase.Dynamics.Add(main);
+            }
             ParseDynamic(main, xdyn, vbase);
-            vbase.Dynamics.Add(main);
             sw.Stop();
             System.Console.WriteLine($"ImportDynamic: {sw.ElapsedMilliseconds} ms");
         }
@@ -1645,7 +1693,8 @@ namespace Kaenx.Creator.Classes
                         {
                             dc.UseTextParameter = true;
                             paraId = long.Parse(GetLastSplit(xele.Attribute("TextParameterRefId").Value, 2));
-                            dc.ParameterRefObject = ParaRefs[paraId];
+                            if(ParaRefs.ContainsKey(paraId))
+                                dc.ParameterRefObject = ParaRefs[paraId];
                         }
                         if(!string.IsNullOrEmpty(xele.Attribute("Icon")?.Value))
                         {
@@ -1723,7 +1772,8 @@ namespace Kaenx.Creator.Classes
                         if(xele.Attribute("ParamRefId") != null) {
                             dpb.UseParameterRef = true;
                             paraId = long.Parse(GetLastSplit(xele.Attribute("ParamRefId").Value, 2));
-                            dpb.ParameterRefObject = ParaRefs[paraId];
+                            if(ParaRefs.ContainsKey(paraId))
+                                dpb.ParameterRefObject = ParaRefs[paraId];
                         } else {
                             dpb.Id = int.Parse(GetLastSplit(xele.Attribute("Id").Value, 3));
                         }
@@ -1731,7 +1781,8 @@ namespace Kaenx.Creator.Classes
                         {
                             dpb.UseTextParameter = true;
                             paraId = long.Parse(GetLastSplit(xele.Attribute("TextParameterRefId").Value, 2));
-                            dpb.TextRefObject = ParaRefs[paraId];
+                            if(ParaRefs.ContainsKey(paraId))
+                                dpb.TextRefObject = ParaRefs[paraId];
                         }
                         dpb.ShowInComObjectTree = xele.Attribute("ShowInComObjectTree")?.Value.ToLower() == "true";
                         if(!string.IsNullOrEmpty(xele.Attribute("Icon")?.Value))
@@ -1764,7 +1815,8 @@ namespace Kaenx.Creator.Classes
                         }
                         dch.Parent = parent;
                         paraId = long.Parse(GetLastSplit(xele.Attribute("ParamRefId").Value, 2));
-                        dch.ParameterRefObject = ParaRefs[paraId];
+                        if(ParaRefs.ContainsKey(paraId))
+                            dch.ParameterRefObject = ParaRefs[paraId];
                         parent.Items.Add(dch);
                         ParseDynamic(dch, xele, vbase);
                         break;
@@ -1797,7 +1849,8 @@ namespace Kaenx.Creator.Classes
                             Cell = xele.Attribute("Cell")?.Value
                         };
                         paraId = long.Parse(GetLastSplit(xele.Attribute("RefId").Value, 2));
-                        dp.ParameterRefObject = ParaRefs[paraId];
+                        if(ParaRefs.ContainsKey(paraId))
+                            dp.ParameterRefObject = ParaRefs[paraId];
                         if(xele.Attribute("HelpContext") != null && !string.IsNullOrEmpty(xele.Attribute("HelpContext").Value))
                         {
                             dp.HasHelptext = true;
@@ -1878,18 +1931,16 @@ namespace Kaenx.Creator.Classes
                             uid = assigncounter++
                         };
                         long targetid = long.Parse(GetLastSplit(xele.Attribute("TargetParamRefRef").Value, 2));
-                        dass.TargetObject = ParaRefs[targetid];
+                        if(ParaRefs.ContainsKey(targetid))
+                            dass.TargetObject = ParaRefs[targetid];
                         if(xele.Attribute("SourceParamRefRef") != null)
                         {
                             long sourceid = long.Parse(GetLastSplit(xele.Attribute("SourceParamRefRef").Value, 2));
-                            dass.SourceObject = ParaRefs[sourceid];
+                            if(ParaRefs.ContainsKey(sourceid))
+                                dass.SourceObject = ParaRefs[sourceid];
                         }
                         dass.Value = xele.Attribute("Value")?.Value;
                         parent.Items.Add(dass);
-                        if(dass.TargetObject.Name == "LOG_f1E1Convert")
-                        {
-
-                        }
                         break;
 
                     case "Rename":
@@ -1921,7 +1972,8 @@ namespace Kaenx.Creator.Classes
                         {
                             drep.UseParameterRef = true;
                             paraId = long.Parse(GetLastSplit(xele.Attribute("ParameterRefId").Value, 2));
-                            drep.ParameterRefObject = ParaRefs[paraId];
+                            if(ParaRefs.ContainsKey(paraId))
+                                drep.ParameterRefObject = ParaRefs[paraId];
                         }
                         parent.Items.Add(drep);
                         ParseDynamic(drep, xele, vbase);
@@ -1946,7 +1998,8 @@ namespace Kaenx.Creator.Classes
                         {
                             dbtn.UseTextParameter = true;
                             paraId = long.Parse(GetLastSplit(xele.Attribute("TextParameterRefId").Value, 2));
-                            dbtn.TextRefObject = ParaRefs[paraId];
+                            if(ParaRefs.ContainsKey(paraId))
+                                dbtn.TextRefObject = ParaRefs[paraId];
                         }
                         Regex regex = new Regex(@"function %handler%[ ]?\(.+\)( ||\n){0,}{([^}]+)}".Replace("%handler%", xele.Attribute("EventHandler").Value));
                         Match m = regex.Match(currentVers.Script);
@@ -1999,7 +2052,7 @@ namespace Kaenx.Creator.Classes
             }
         }
 
-        private string Unescape(string input)
+        public static string Unescape(string input)
         {
             input = input.Replace(".25", "%");
             input = input.Replace(".20", " ");
@@ -2043,6 +2096,11 @@ namespace Kaenx.Creator.Classes
         private XName Get(string name)
         {
             return XName.Get(name, _namespace);
+        }
+
+        public void SetNamespace(string ns)
+        {
+            _namespace = ns;
         }
     }
 }

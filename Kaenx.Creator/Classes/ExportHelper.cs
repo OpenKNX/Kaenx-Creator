@@ -361,6 +361,13 @@ namespace Kaenx.Creator.Classes
                 headers.AppendLine("#pragma once");
                 headers.AppendLine();
 
+                headers.AppendLine(@"#define paramDelay(time) (uint32_t)( \
+            (time & 0xC000) == 0xC000 ? (time & 0x3FFF) * 100 : \
+            (time & 0xC000) == 0x0000 ? (time & 0x3FFF) * 1000 : \
+            (time & 0xC000) == 0x4000 ? (time & 0x3FFF) * 60000 : \
+            (time & 0xC000) == 0x8000 ? ((time & 0x3FFF) > 1000 ? 3600000 : \
+                                         (time & 0x3FFF) * 3600000 ) : 0 )");
+
                 
                 headers.AppendLine("//--------------------Allgemein---------------------------");
                 if(general.IsOpenKnx)
@@ -375,10 +382,10 @@ namespace Kaenx.Creator.Classes
                 headers.AppendLine($"#define MAIN_OrderNumber \"{hardware.First(h => h.Apps.Contains(app)).Devices.First().OrderNumber}\" //may not work with multiple devices on same hardware or app on different hardware");
                 headers.AppendLine();
 
-                ExportParameters(ver, xunderapp, headers);
+                ExportParameters(ver, ver, xunderapp, headers);
                 ExportParameterRefs(ver, xunderapp);
-                ExportComObjects(ver, xunderapp, headers);
-                ExportComObjectRefs(ver, ver, xunderapp);
+                ExportComObjects(ver, ver, xunderapp, headers);
+                ExportComObjectRefs(ver, xunderapp);
 
                 #region "Tables / LoadProcedure"
                 temp = new XElement(Get("AddressTable"));
@@ -547,15 +554,23 @@ namespace Kaenx.Creator.Classes
                     headers.AppendLine("//-----Module specific starts");
                 }
 
-                Dictionary<string, List<long>> modStartPara = new Dictionary<string, List<long>>();
-                Dictionary<string, List<long>> modStartComs = new Dictionary<string, List<long>>();
+                Dictionary<string, (long, long)> modStartPara = new Dictionary<string, (long, long)>();
+                Dictionary<string, (long, long)> modStartComs = new Dictionary<string, (long, long)>();
                 Dictionary<string, long> allocators = new Dictionary<string, long>();
                 foreach(DynModule dmod in mods)
                 {
-                    if(!modStartPara.ContainsKey(dmod.ModuleObject.Name))
-                        modStartPara.Add(dmod.ModuleObject.Name, new List<long>());
-                    if(!modStartComs.ContainsKey(dmod.ModuleObject.Name))
-                        modStartComs.Add(dmod.ModuleObject.Name, new List<long>());
+                    string prefix = dmod.ModuleObject.Prefix;
+
+                    if(dmod.ModuleObject.IsOpenKnxModule)
+                    {
+                        OpenKnxModule omod = ver.OpenKnxModules.Single(m => m.Name == dmod.ModuleObject.Name.Split(' ')[0]);
+                        prefix = omod.Prefix;
+                    }
+
+                    //if(!modStartPara.ContainsKey(prefix))
+                    //    modStartPara.Add(prefix, new List<long>());
+                    //if(!modStartComs.ContainsKey(prefix))
+                    //    modStartComs.Add(prefix, new List<long>());
 
                     DynModuleArg dargp = dmod.Arguments.Single(a => a.ArgumentId == dmod.ModuleObject.ParameterBaseOffsetUId);
                     if(dargp.UseAllocator)
@@ -563,12 +578,15 @@ namespace Kaenx.Creator.Classes
                         if(!allocators.ContainsKey(dargp.Allocator.Name))
                             allocators.Add(dargp.Allocator.Name, dargp.Allocator.Start);
 
-                        modStartPara[dmod.ModuleObject.Name].Add(allocators[dargp.Allocator.Name]);
+                        if(!modStartPara.ContainsKey(prefix))
+                            modStartPara.Add(prefix, (allocators[dargp.Allocator.Name], dargp.Argument.Allocates));
 
                         allocators[dargp.Allocator.Name] += dargp.Argument.Allocates;
-                    } else {
-                        long poffset = long.Parse(dargp.Value);
-                        modStartPara[dmod.ModuleObject.Name].Add(poffset);
+                    } else if(!dmod.ModuleObject.IsOpenKnxModule && !modStartPara.ContainsKey(prefix))
+                    {
+                        int size = (dmod.ModuleObject.Memory.Sections.Count - 1) * 16;
+                        size += dmod.ModuleObject.Memory.Sections[dmod.ModuleObject.Memory.Sections.Count - 1].Bytes.Count;
+                        modStartPara.Add(prefix, (long.Parse(dargp.Value), size));
                     }
                     
 
@@ -579,23 +597,45 @@ namespace Kaenx.Creator.Classes
                         if(!allocators.ContainsKey(dargc.Allocator.Name))
                             allocators.Add(dargc.Allocator.Name, dargc.Allocator.Start);
 
-                        modStartComs[dmod.ModuleObject.Name].Add(allocators[dargc.Allocator.Name]);
+                        if(!modStartComs.ContainsKey(prefix))
+                            modStartComs.Add(prefix, (allocators[dargc.Allocator.Name], dargc.Argument.Allocates));
 
                         allocators[dargc.Allocator.Name] += dargc.Argument.Allocates;
-                    } else {
-                        int coffset = int.Parse(dargc.Value);
-                        modStartComs[dmod.ModuleObject.Name].Add(coffset);
+                    } else if(!dmod.ModuleObject.IsOpenKnxModule && !modStartComs.ContainsKey(prefix))
+                    {
+                        long size = 0;
+                        if(dmod.ModuleObject.ComObjects.Count > 0)
+                        {
+                            ComObject com = dmod.ModuleObject.ComObjects.OrderByDescending(c => c.Number).First();
+                            size = com.Number + 1;
+                        }
+                        modStartComs.Add(prefix, (long.Parse(dargc.Value), size));
                     }
                 }
 
-                foreach(KeyValuePair<string, List<long>> item in modStartPara)
-                    headers.AppendLine($"const long mod_{HeaderNameEscape(item.Key)}_para[] = {{ {string.Join(',', item.Value)} }};");
-                foreach(KeyValuePair<string, List<long>> item in modStartComs)
-                    headers.AppendLine($"const long mod_{HeaderNameEscape(item.Key)}_coms[] = {{ {string.Join(',', item.Value)} }};");
+                foreach(KeyValuePair<string, (long offset,long size)> item in modStartPara)
+                {
+                    headers.AppendLine($"#define {item.Key}_ParamBlockOffset " + item.Value.offset);
+                    if(item.Value.size > 0)
+                        headers.AppendLine($"#define {item.Key}_ParamBlockSize " + item.Value.size);
+                    else
+                        headers.AppendLine($"#define {item.Key}_ParamBlockSize 0");
+                }
+                foreach(KeyValuePair<string, (long offset, long size)> item in modStartComs)
+                {
+                    headers.AppendLine($"#define {item.Key}_KoOffset " + item.Value.offset);
+                    if(item.Value.size > 0)
+                        headers.AppendLine($"#define {item.Key}_KoBlockSize " + item.Value.size);
+                    else
+                        headers.AppendLine($"#define {item.Key}_KoBlockSize 0");
+                    
+                }
     
+                
+
                 headers.AppendLine();
 
-                ExportModules(xapp, ver, ver.Modules, appVersion, headers, appVersion);
+                ExportModules(xapp, ver, ver, appVersion, headers, appVersion);
                 appVersionMod = appVersion;
 
 
@@ -900,7 +940,6 @@ namespace Kaenx.Creator.Classes
                 xmanu = CreateNewXML(Manu);
                 XElement xbags = new XElement(Get("Baggages"));
 
-                //TODO only export used baggages
                 foreach (Baggage bag in baggagesManu)
                 {
                     XElement xbag = new XElement(Get("Baggage"));
@@ -909,7 +948,6 @@ namespace Kaenx.Creator.Classes
                     xbag.SetAttributeValue("Id", $"M-{GetManuId()}_BG-{GetEncoded(bag.TargetPath)}-{GetEncoded(bag.Name + bag.Extension)}");
 
                     XElement xinfo = new XElement(Get("FileInfo"));
-                    //xinfo.SetAttributeValue("TimeInfo", "2022-01-28T13:55:35.2905057Z");
                     string time = bag.LastModified.ToUniversalTime().ToString("O");
                     xinfo.SetAttributeValue("TimeInfo", time);
                     xbag.Add(xinfo);
@@ -964,9 +1002,9 @@ namespace Kaenx.Creator.Classes
             return name.Replace(' ', '_').Replace('-', '_');
         }
 
-        private void ExportModules(XElement xparent, AppVersion ver, ObservableCollection<Models.Module> Modules, string modVersion, StringBuilder headers, string moduleName, int depth = 0)
+        private void ExportModules(XElement xparent, AppVersion ver, IVersionBase parent, string modVersion, StringBuilder headers, string moduleName, int depth = 0)
         {
-            if(Modules.Count > 0)
+            if(parent.Modules.Count > 0)
             {
                 string subName = depth == 0 ? "ModuleDefs" : "SubModuleDefs";
                 XElement xunderapp = new XElement(Get(subName));
@@ -974,13 +1012,29 @@ namespace Kaenx.Creator.Classes
 
                 int counter = 0;
 
-                foreach (Models.Module mod in Modules)
+                List<DynModule> mods = new List<DynModule>();
+                AutoHelper.GetModules(parent.Dynamics[0], mods);
+
+                foreach (Models.Module mod in parent.Modules)
                 {
+                    if(!mods.Any(m => m.ModuleUId == mod.UId))
+                    {
+                        Debug.WriteLine($"Skipping {mod.Name} since it is not used in Dynamic");
+                        continue;
+                    }
                     counter++;
                     mod.Id = counter;
                     headers.AppendLine("//-----Module: " + mod.Name);
                     //if (mod.Id == -1)
                     //    mod.Id = AutoHelper.GetNextFreeId(vers, "Modules");
+
+                    if(mod.IsOpenKnxModule && mod.Name.EndsWith("Templ"))
+                    {
+                        string oname = mod.Name.Substring(0, mod.Name.IndexOf(' '));
+                        OpenKnxModule omod = ver.OpenKnxModules.Single(o => o.Name == oname);
+                        int count = mods.Count(m => m.ModuleUId == mod.UId);
+                        headers.AppendLine($"#define {omod.Prefix}_ChannelCount {count}");
+                    }
 
                     XElement temp = new XElement(Get("Arguments"));
                     XElement xmod = new XElement(Get("ModuleDef"), temp);
@@ -1005,10 +1059,10 @@ namespace Kaenx.Creator.Classes
                     xunderapp.Add(xmod);
 
 
-                    ExportParameters(mod, xunderstatic, headers);
+                    ExportParameters(ver, mod, xunderstatic, headers);
                     ExportParameterRefs(mod, xunderstatic);
-                    ExportComObjects(mod, xunderstatic, headers);
-                    ExportComObjectRefs(mod, ver, xunderstatic);
+                    ExportComObjects(ver, mod, xunderstatic, headers);
+                    ExportComObjectRefs(mod, xunderstatic);
 
                     if(mod.Allocators.Count > 0)
                     {
@@ -1030,7 +1084,7 @@ namespace Kaenx.Creator.Classes
                             xallocs.Add(xalloc);
                         }
                     }
-                    ExportModules(xmod, ver, mod.Modules, appVersionMod, headers, newModVersion, depth + 1);
+                    ExportModules(xmod, ver, mod, appVersionMod, headers, newModVersion, depth + 1);
 
                     appVersionMod = $"{modVersion}_{(depth == 0 ? "MD" : "SM")}-{mod.Id}";
                     
@@ -1131,7 +1185,7 @@ namespace Kaenx.Creator.Classes
             xparent.Add(codes);
         }
 
-        private void ExportParameters(IVersionBase vbase, XElement xparent, StringBuilder headers)
+        private void ExportParameters(AppVersion ver, IVersionBase vbase, XElement xparent, StringBuilder headers)
         {
             Debug.WriteLine($"Exportiere Parameter: {vbase.Parameters.Count}x");
             if(vbase.Parameters.Count == 0) return;
@@ -1140,7 +1194,7 @@ namespace Kaenx.Creator.Classes
             foreach (Parameter para in vbase.Parameters.Where(p => !p.IsInUnion))
             {
                 //Debug.WriteLine($"    - Parameter {para.UId} {para.Name}");
-                ParseParameter(para, xparas, vbase, headers);
+                ParseParameter(para, xparas, ver, vbase, headers);
             }
 
             Debug.WriteLine($"Exportiere Unions: {vbase.Parameters.Where(p => p.IsInUnion).GroupBy(p => p.UnionObject).Count()}x");
@@ -1175,7 +1229,7 @@ namespace Kaenx.Creator.Classes
                 foreach (Parameter para in paras)
                 {
                     //Debug.WriteLine($"        - Parameter {para.UId} {para.Name}");
-                    ParseParameter(para, xunion, vbase, headers);
+                    ParseParameter(para, xunion, ver, vbase, headers);
                 }
 
                 xparas.Add(xunion);
@@ -1210,14 +1264,14 @@ namespace Kaenx.Creator.Classes
                 if(pref.OverwriteText)
                 {
                     xpref.SetAttributeValue("Text", GetDefaultLanguage(pref.Text));
-                    if(!pref.ParameterObject.TranslationText)
-                    foreach(Models.Translation trans in pref.Text) AddTranslation(trans.Language.CultureCode, id, "SuffixText", trans.Text);
+                    if(!pref.TranslationText)
+                        foreach(Models.Translation trans in pref.Text) AddTranslation(trans.Language.CultureCode, id, "SuffixText", trans.Text);
                 }
                 if(pref.OverwriteSuffix)
                 {
                     xpref.SetAttributeValue("SuffixText", pref.Suffix.Single(p => p.Language.CultureCode == currentLang).Text);
-                    if(!pref.ParameterObject.TranslationSuffix)
-                    foreach(Models.Translation trans in pref.Suffix) AddTranslation(trans.Language.CultureCode, id, "SuffixText", trans.Text);
+                    if(!pref.TranslationSuffix)
+                        foreach(Models.Translation trans in pref.Suffix) AddTranslation(trans.Language.CultureCode, id, "SuffixText", trans.Text);
                 }
                 xrefs.Add(xpref);
             }
@@ -1225,7 +1279,7 @@ namespace Kaenx.Creator.Classes
             xparent.Add(xrefs);
         }
 
-        private void ExportComObjects(IVersionBase vbase, XElement xparent, StringBuilder headers)
+        private void ExportComObjects(AppVersion ver, IVersionBase vbase, XElement xparent, StringBuilder headers)
         {
             Debug.WriteLine($"Exportiere ComObjects: {vbase.ComObjects.Count}x");
             XElement xcoms;
@@ -1239,12 +1293,12 @@ namespace Kaenx.Creator.Classes
             {
                 baseNumber = mod.ComObjectBaseNumber;
             }
-            if(vbase is Models.AppVersion ver)
+            if(vbase is Models.AppVersion aver)
             {
-                if(ver.ComObjectMemoryObject != null && ver.ComObjectMemoryObject.Type == MemoryTypes.Absolute)
+                if(aver.ComObjectMemoryObject != null && aver.ComObjectMemoryObject.Type == MemoryTypes.Absolute)
                 {
-                    xcoms.SetAttributeValue("CodeSegment", $"{appVersion}_AS-{ver.ComObjectMemoryObject.Address:X4}");
-                    xcoms.SetAttributeValue("Offset", ver.ComObjectTableOffset);
+                    xcoms.SetAttributeValue("CodeSegment", $"{appVersion}_AS-{aver.ComObjectMemoryObject.Address:X4}");
+                    xcoms.SetAttributeValue("Offset", aver.ComObjectTableOffset);
                 }
             }
 
@@ -1254,12 +1308,32 @@ namespace Kaenx.Creator.Classes
                 if(headers != null)
                 {
                     string line;
+                    headers.AppendLine($"//!< Number: {com.Number}, Text: {GetDefaultLanguage(com.Text)}, Function: {GetDefaultLanguage(com.FunctionText)}");
                     if(vbase is Models.Module vmod)
-                        line = $"#define COMOBJ_{HeaderNameEscape(vmod.Name)}_{HeaderNameEscape(com.Name)} ";
+                    {
+                        string prefix = vmod.Prefix;
+                        if(vmod.IsOpenKnxModule)
+                        {
+                            OpenKnxModule omod = ver.OpenKnxModules.Single(m => m.Name == vmod.Name.Split(' ')[0]);
+                            prefix = omod.Prefix;
+                        }
+
+                        line = $"#define Ko{prefix}_{HeaderNameEscape(com.Name)}";
+                        headers.AppendLine($"#define {prefix}_Ko{HeaderNameEscape(com.Name)} {com.Number}");
+
+                        if((vmod.IsOpenKnxModule && vmod.Name.EndsWith("Templ")) || !vmod.IsOpenKnxModule)
+                        {
+                            headers.AppendLine($"{line}Index(X) knx.getGroupObject({prefix}_KoOffset + {prefix}_KoBlockSize * X + {com.Number})");
+                            headers.AppendLine($"{line} knx.getGroupObject({prefix}_KoOffset + {prefix}_KoBlockSize * channelIndex() + {com.Number})");
+                        } else {
+                            headers.AppendLine($"{line} knx.getGroupObject({com.Number})");
+                        }
+                    }
                     else
-                        line = $"#define COMOBJ_{HeaderNameEscape(com.Name)} ";
-                    line += $"\t{com.Number}\t//!< Number: {com.Number}, Text: {GetDefaultLanguage(com.Text)}, Function: {GetDefaultLanguage(com.FunctionText)}";
-                    headers.AppendLine(line);
+                    {
+                        headers.AppendLine($"#define APP_Ko{HeaderNameEscape(com.Name)} {com.Number}");
+                        headers.AppendLine($"#define KoAPP_{HeaderNameEscape(com.Name)} knx.getGroupObject({com.Number})");
+                    }
                 }
 
                 XElement xcom = new XElement(Get("ComObject"));
@@ -1308,7 +1382,7 @@ namespace Kaenx.Creator.Classes
             xparent.Add(xcoms);
         }
 
-        private void ExportComObjectRefs(IVersionBase vbase, AppVersion vers, XElement xparent)
+        private void ExportComObjectRefs(IVersionBase vbase, XElement xparent)
         {
             Debug.WriteLine($"Exportiere ComObjectRefs: {vbase.ComObjectRefs.Count}x");
             if(vbase.ComObjectRefs.Count == 0) return;
@@ -1362,16 +1436,30 @@ namespace Kaenx.Creator.Classes
                 }
 
 
-                if(vers.IsComObjectRefAuto && cref.ComObjectObject.UseTextParameter)
+                if(vbase.IsComObjectRefAuto && cref.ComObjectObject.UseTextParameter)
                 {
                     int nsVersion = int.Parse(currentNamespace.Substring(currentNamespace.LastIndexOf('/')+1));
                     xcref.SetAttributeValue("TextParameterRefId", appVersionMod + (cref.ComObjectObject.ParameterRefObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{cref.ComObjectObject.ParameterRefObject.ParameterObject.Id}_R-{cref.ComObjectObject.ParameterRefObject.Id}");
                 }
-                if(!vers.IsComObjectRefAuto && cref.UseTextParameter)
+                if(!vbase.IsComObjectRefAuto && cref.UseTextParameter)
                 {
                     int nsVersion = int.Parse(currentNamespace.Substring(currentNamespace.LastIndexOf('/')+1));
                     xcref.SetAttributeValue("TextParameterRefId", appVersionMod + (cref.ParameterRefObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{cref.ParameterRefObject.ParameterObject.Id}_R-{cref.ParameterRefObject.Id}");    
                 }
+
+
+                if(cref.OverwriteFC)
+                    xcref.SetAttributeValue("CommunicationFlag", cref.FlagComm.ToString());
+                if(cref.OverwriteFOI)
+                    xcref.SetAttributeValue("ReadOnInitFlag", cref.FlagOnInit.ToString());
+                if(cref.OverwriteFR)
+                    xcref.SetAttributeValue("ReadFlag", cref.FlagRead.ToString());
+                if(cref.OverwriteFT)
+                    xcref.SetAttributeValue("TransmitFlag", cref.FlagTrans.ToString());
+                if(cref.OverwriteFU)
+                    xcref.SetAttributeValue("UpdateFlag", cref.FlagUpdate.ToString());
+                if(cref.OverwriteFW)
+                    xcref.SetAttributeValue("WriteFlag", cref.FlagWrite.ToString());
                 
 
                 xrefs.Add(xcref);
@@ -1380,17 +1468,31 @@ namespace Kaenx.Creator.Classes
             xparent.Add(xrefs);
         }
 
-        private void ParseParameter(Parameter para, XElement parent, IVersionBase ver, StringBuilder headers)
+        private void ParseParameter(Parameter para, XElement parent, AppVersion ver, IVersionBase vbase, StringBuilder headers)
         {
+            if(para.Name == "fTYearDay")
+            {
+
+            }
+
             if((headers != null && para.SavePath != SavePaths.Nowhere) || (headers != null && para.IsInUnion && para.UnionObject != null && para.UnionObject.SavePath != SavePaths.Nowhere))
             {
                 string lineStart;
                 string lineComm = "";
-                if(ver is Models.Module mod)
+                string prefix = "";
+                if(vbase is Models.Module mod)
                 {
-                    lineStart = $"#define PARAM_{HeaderNameEscape(mod.Name)}_{HeaderNameEscape(para.Name)}";
+                    if(mod.IsOpenKnxModule)
+                    {   
+                        OpenKnxModule omod = ver.OpenKnxModules.Single(m => m.Name == mod.Name.Split(' ')[0]);
+                        lineStart = $"#define {omod.Prefix}_{HeaderNameEscape(para.Name)}";
+                        prefix = omod.Prefix;
+                    } else {
+                        lineStart = $"#define {mod.Prefix}_{HeaderNameEscape(para.Name)}";
+                        prefix = mod.Prefix;
+                    }
                 } else {
-                    lineStart = $"#define PARAM_{HeaderNameEscape(para.Name)}";
+                    lineStart = $"#define APP_{HeaderNameEscape(para.Name)}";
                 }
                 
                 int offset = 0;
@@ -1410,7 +1512,6 @@ namespace Kaenx.Creator.Classes
                 lineComm += $", Size: {para.ParameterTypeObject.SizeInBit} Bit";
                 if (para.ParameterTypeObject.SizeInBit % 8 == 0) lineComm += " (" + (para.ParameterTypeObject.SizeInBit / 8) + " Byte)";
                 lineComm += $", Text: {GetDefaultLanguage(para.Text)}";
-                headers.AppendLine(lineComm);
                 headers.AppendLine(linePara);
 
                 int shift = (8 - para.OffsetBit - (para.ParameterTypeObject.SizeInBit % 8)) % 8;
@@ -1419,16 +1520,9 @@ namespace Kaenx.Creator.Classes
                 for(int i = 0; i < para.ParameterTypeObject.SizeInBit; i++)
                     mask += (ulong)Math.Pow(2, i);
                     
-                lineComm = $"{lineStart.Split(' ')[0]} GET{lineStart.Split(' ')[1]}";
-                
-                string offsetOut = offset.ToString();
-                if(ver is Models.Module mod2)
-                {
-                    lineComm += "(X)";
-                    offsetOut = $"(mod_{HeaderNameEscape(mod2.Name)}_para[X] + {offset})";
-                }
 
-                lineComm += " ";
+                string paraAccess = $"{lineStart.Split(' ')[0]} Param{lineStart.Split(' ')[1]}";
+                string paraKnxGet = "";
 
                 switch(para.ParameterTypeObject.Type)
                 {
@@ -1440,7 +1534,7 @@ namespace Kaenx.Creator.Classes
 
                         if(para.ParameterTypeObject.SizeInBit == 1)
                         {
-                            lineComm += $"knx.paramBit({offsetOut}, {para.OffsetBit})";
+                            paraKnxGet += $"knx.paramBit(%off%, {para.OffsetBit})";
                         } else {
                             string pshift;
                             if(shift == 0 )
@@ -1462,35 +1556,61 @@ namespace Kaenx.Creator.Classes
                             else if(para.ParameterTypeObject.SizeInBit <= 32) pAccess = "paramInt";
                             else throw new Exception("Size to big for Int/Enum");
 
-                            lineComm += $"({ptype}((knx.{pAccess}({offsetOut}){pshift}){pmask}))";
+                            paraKnxGet += $"({ptype}((knx.{pAccess}(%off%){pshift}){pmask}))";
                         }
                         break;
                     }
 
                     case ParameterTypes.Float_DPT9:
                     {
-                        lineComm += $"knx.paramFloat({offsetOut}, Float_Enc_DPT9)";
+                        paraKnxGet += $"knx.paramFloat(%off%, Float_Enc_DPT9)";
                         break;
                     }
                     case ParameterTypes.Float_IEEE_Single:
                     {
-                        lineComm += $"knx.paramFloat({offsetOut}, Float_Enc_IEEE754Single)";
+                        paraKnxGet += $"knx.paramFloat(%off%, Float_Enc_IEEE754Single)";
                         break;
                     }
                     case ParameterTypes.Float_IEEE_Double:
                     {
-                        lineComm += $"knx.paramFloat({offsetOut}, Float_Enc_IEEE754Double)";
+                        paraKnxGet += $"knx.paramFloat(%off%, Float_Enc_IEEE754Double)";
                         break;
                     }
 
                     case ParameterTypes.Color:
                     case ParameterTypes.Text:
                     {
-                        lineComm += $"knx.paramData({offsetOut})";
+                        paraKnxGet += $"knx.paramData(%off%)";
                         break;
                     }
                 }
-                headers.AppendLine(lineComm);
+                
+                string offsetOut = offset.ToString();
+                if(vbase is Models.Module mod2)
+                {
+                    if((mod2.IsOpenKnxModule && mod2.Name.EndsWith("Templ")) || !mod2.IsOpenKnxModule)
+                    {
+                        string off = paraKnxGet.Replace("%off%", $"({prefix}_ParamBlockOffset + {prefix}_ParamBlockSize * X + {offset})");
+                        headers.AppendLine(lineComm);
+                        headers.AppendLine($"{paraAccess}Index(X) {off}");
+                        off = paraKnxGet.Replace("%off%", $"({prefix}_ParamBlockOffset + {prefix}_ParamBlockSize * channelIndex() + {offset})");
+                        headers.AppendLine(lineComm);
+                        headers.AppendLine($"{paraAccess} {off}");
+                    } else {
+                        string off = paraKnxGet.Replace("%off%", offset.ToString());
+                        headers.AppendLine(lineComm);
+                        headers.AppendLine($"{paraAccess} {off}");
+                    }
+                } else {
+                    paraKnxGet = paraKnxGet.Replace("%off%", offset.ToString());
+                    headers.AppendLine(lineComm);
+                    headers.AppendLine($"{paraAccess} {paraKnxGet}");
+                }
+
+                if(para.ParameterTypeObject.Name.StartsWith("DelayTime"))
+                {
+                    headers.AppendLine($"{paraAccess}MS (paramDelay(Param{lineStart.Split(' ')[1]}))");
+                }
             }
 
             XElement xpara = new XElement(Get("Parameter"));
@@ -1521,7 +1641,7 @@ namespace Kaenx.Creator.Classes
                         xparamem.SetAttributeValue("Offset", para.Offset);
                         xparamem.SetAttributeValue("BitOffset", para.OffsetBit);
 
-                        if(ver is Models.Module mod)
+                        if(vbase is Models.Module mod)
                         {
                             xparamem.SetAttributeValue("BaseOffset", $"{appVersionMod}_A-{mod.ParameterBaseOffset.Id}");
                         }
@@ -1714,9 +1834,7 @@ namespace Kaenx.Creator.Classes
         private void HandleSep(DynSeparator sep, XElement parent)
         {
             XElement xsep = new XElement(Get("ParameterSeparator"));
-            if(sep.Id == -1) {
-                sep.Id = separatorCounter++;
-            }
+            sep.Id = separatorCounter++;
             xsep.SetAttributeValue("Id", $"{appVersionMod}_PS-{sep.Id}");
             xsep.SetAttributeValue("Text", GetDefaultLanguage(sep.Text));
             if(sep.Hint != SeparatorHint.None)

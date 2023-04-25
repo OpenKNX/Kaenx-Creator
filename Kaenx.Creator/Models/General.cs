@@ -32,20 +32,21 @@ namespace Kaenx.Creator.Models
 
         public int ImportVersion { get; set; }
 
-        private int _manuId = 250;
+        private int _manuId = 0xAF;
         public int ManufacturerId
         {
             get { return _manuId; }
             set { _manuId = value; Changed("ManufacturerId"); }
         }
 
-        private bool _isOpenKnx = false;
+        private bool _isOpenKnx = true;
         public bool IsOpenKnx
         {
             get { return _isOpenKnx; }
             set { 
                 _isOpenKnx = value; 
                 Changed("IsOpenKnx"); 
+                //TODO delete all OpenKnxModules
             }
         }
 

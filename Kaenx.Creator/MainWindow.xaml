@@ -905,6 +905,10 @@
                         </Grid>
                     </TabItem>
 
+                    <TabItem Header="OpenKNX Modules" Visibility="{Binding General.IsOpenKnx, ElementName=ViewControl, Converter={StaticResource BoolToVis}}" Style="{StaticResource LeftTabItem}">
+                        <ctrl:OpenKnxView Version="{Binding .}" General="{Binding General, ElementName=ViewControl}" />
+                    </TabItem>
+                    
                     <TabItem Header="{x:Static p:Resources.tabs_parat}" Style="{StaticResource LeftTabItem}">
                         <ctrl:ParameterTypeView Baggages="{Binding General.Baggages, ElementName=ViewControl}" Icons="{Binding General.Icons, ElementName=ViewControl}" Version="{Binding .}" />
                     </TabItem>

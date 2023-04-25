@@ -352,6 +352,55 @@ namespace Kaenx.Creator.Classes {
                 }
             }
 
+            foreach(OpenKnxModule mod in vers.OpenKnxModules)
+            {
+                if(string.IsNullOrEmpty(mod.Prefix))
+                    actions.Add(new PublishAction() { Text = string.Format(Properties.Messages.check_open_noprefix, mod.Name), State = PublishState.Fail });
+            
+                Module omod = vers.Modules.SingleOrDefault(m => m.Name == mod.Name + " Templ");
+
+                if(omod != null)
+                {
+                    List<DynModule> lmods = new List<DynModule>();
+                    AutoHelper.GetModules(vers.Dynamics[0], lmods);
+                    int count = lmods.Count(m => m.ModuleUId == omod.UId);
+
+                    foreach(Module xmod in vers.Modules.Where(m => m.IsOpenKnxModule && m.Name.StartsWith(mod.Name)))
+                    {
+                        foreach(OpenKnxNum onum in mod.NumChannels)
+                        {
+                            switch(onum.Type)
+                            {
+                                case NumberType.ParameterType:
+                                {
+                                    ParameterType ptype = vers.ParameterTypes.Single(p => p.Name == onum.UId);
+                                    if(onum.Property == "Minimum")
+                                        ptype.Min = count.ToString();
+                                    else if(onum.Property == "Maximum")
+                                        ptype.Max = count.ToString();
+                                    else
+                                        throw new Exception("Not Implemented Property for ParmeterType: " + onum.Property);
+                                    break;
+                                }
+
+                                case NumberType.Parameter:
+                                {
+                                    Parameter para = xmod.Parameters.SingleOrDefault(p => p.Name == onum.UId);
+                                    if(para != null)
+                                    {
+                                        if(onum.Property == "Value")
+                                            para.Value = count.ToString();
+                                        else
+                                            throw new Exception("Not Implemented Property for Parmeter: " + onum.Property);
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             //if(app.Mask.Memory == MemoryTypes.Relative && vers.Memories.Count > 1)
             //    actions.Add(new PublishAction() { Text = $"Die Maskenversion unterstützt nur einen Speicher", State = PublishState.Fail });
 
@@ -407,14 +456,13 @@ namespace Kaenx.Creator.Classes {
         private static void CheckVersion(AppVersion ver, IVersionBase vbase, ObservableCollection<PublishAction> actions, string defaultLang, int ns, bool showOnlyErrors)
         {
             Module mod = vbase as Module;
-            //TODO check languages from Texts
-            //TODO check hexvalue from parameter with parameertype color
-
-            if(mod != null && ver.NamespaceVersion < 20 && mod.Allocators.Count > 0)
-                actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_mod_allocs, mod.Name), State = PublishState.Fail });
 
             if(mod != null)
             {
+                if(ver.NamespaceVersion < 20 && mod.Allocators.Count > 0)
+                    actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_mod_allocs, mod.Name), State = PublishState.Fail });
+                if(!mod.IsOpenKnxModule && string.IsNullOrEmpty(mod.Prefix))
+                    actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_mod_noprefix, mod.Name), State = PublishState.Fail });
                 if(mod.ParameterBaseOffset.Type != ArgumentTypes.Numeric)
                     actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_mod_paraoff, mod.Name), State = PublishState.Fail });
                 if(mod.ComObjectBaseNumber.Type != ArgumentTypes.Numeric)
@@ -499,16 +547,11 @@ namespace Kaenx.Creator.Classes {
                 }
             }
 
-
-
-
-
             foreach(ComObject com in vbase.ComObjects) {
                 if(com.HasDpt && com.Type == null) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_com_no_dpt, com.Name, com.UId), State = PublishState.Fail, Item = com, Module = mod });
                 if(com.HasDpt && com.Type != null && com.Type.Number == "0") actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_com_no_dpt_ref, com.Name, com.UId), State = PublishState.Fail, Item = com, Module = mod });
                 if(com.HasDpt && com.HasDpts && com.SubType == null) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_com_no_dpst, com.Name, com.UId), State = PublishState.Fail, Item = com, Module = mod });
             
-                //TODO auslagern in Funktion
                 if(com.TranslationText) {
                     Translation trans = com.Text.Single(t => t.Language.CultureCode == defaultLang);
                     if(string.IsNullOrEmpty(trans.Text))
@@ -542,15 +585,26 @@ namespace Kaenx.Creator.Classes {
                     }
                 }
 
-                if(ver.IsComObjectRefAuto && com.UseTextParameter)
+                if(vbase.IsComObjectRefAuto && com.UseTextParameter)
                 {
                     if(com.ParameterRefObject == null)
                         actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_com_no_textpara, "ComObject", com.Name, com.UId), State = PublishState.Fail, Item = com, Module = mod });
                     if(com.Text.Any(t => !t.Text.Contains("{{0")))
                         actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_com_no_used_textpara, "ComObject", com.Name, com.UId), State = PublishState.Fail, Item = com, Module = mod });
-
                 }
                 
+                if(com.FlagComm == FlagType.Undefined)
+                    actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_com_flagComm, "ComObject", com.Name, com.UId), State = PublishState.Fail, Item = com, Module = mod });
+                if(com.FlagOnInit == FlagType.Undefined)
+                    actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_com_flagOnInit, "ComObject", com.Name, com.UId), State = PublishState.Fail, Item = com, Module = mod });
+                if(com.FlagRead == FlagType.Undefined)
+                    actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_com_flagRead, "ComObject", com.Name, com.UId), State = PublishState.Fail, Item = com, Module = mod });
+                if(com.FlagTrans == FlagType.Undefined)
+                    actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_com_flagTrans, "ComObject", com.Name, com.UId), State = PublishState.Fail, Item = com, Module = mod });
+                if(com.FlagUpdate == FlagType.Undefined)
+                    actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_com_flagUpdate, "ComObject", com.Name, com.UId), State = PublishState.Fail, Item = com, Module = mod });
+                if(com.FlagWrite == FlagType.Undefined)
+                    actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_com_flagWrite, "ComObject", com.Name, com.UId), State = PublishState.Fail, Item = com, Module = mod });
             }
 
             foreach(ComObjectRef rcom in vbase.ComObjectRefs) {
@@ -583,16 +637,36 @@ namespace Kaenx.Creator.Classes {
                     }
                 }
 
-                if(!ver.IsComObjectRefAuto && rcom.UseTextParameter && rcom.ParameterRefObject == null)
+                if(!vbase.IsComObjectRefAuto && rcom.UseTextParameter && rcom.ParameterRefObject == null)
                 {
                     if(rcom.ParameterRefObject == null)
                         actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_com_no_textpara, "ComObjectRef", rcom.Name, rcom.UId), State = PublishState.Fail, Item = rcom, Module = mod });
                     if(rcom.Text.Any(t => !t.Text.Contains("{{0")))
                         actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_com_no_used_textpara, "ComObjectRef", rcom.Name, rcom.UId), State = PublishState.Fail, Item = rcom, Module = mod });
                 }
+
+                if(rcom.OverwriteFC && rcom.FlagComm == FlagType.Undefined)
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_com_flagComm, "ComObjectRef", rcom.Name, rcom.UId), State = PublishState.Fail, Item = rcom, Module = mod });
+                if(rcom.OverwriteFOI && rcom.FlagOnInit == FlagType.Undefined)
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_com_flagOnInit, "ComObjectRef", rcom.Name, rcom.UId), State = PublishState.Fail, Item = rcom, Module = mod });
+                if(rcom.OverwriteFR && rcom.FlagRead == FlagType.Undefined)
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_com_flagRead, "ComObjectRef", rcom.Name, rcom.UId), State = PublishState.Fail, Item = rcom, Module = mod });
+                if(rcom.OverwriteFT && rcom.FlagTrans == FlagType.Undefined)
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_com_flagTrans, "ComObjectRef", rcom.Name, rcom.UId), State = PublishState.Fail, Item = rcom, Module = mod });
+                if(rcom.OverwriteFU && rcom.FlagUpdate == FlagType.Undefined)
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_com_flagUpdate, "ComObjectRef", rcom.Name, rcom.UId), State = PublishState.Fail, Item = rcom, Module = mod });
+                if(rcom.OverwriteFW && rcom.FlagWrite == FlagType.Undefined)
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_com_flagWrite, "ComObjectRef", rcom.Name, rcom.UId), State = PublishState.Fail, Item = rcom, Module = mod });
             }
         
-            //TODO check union size fits parameter+offset
+            foreach(Union union in vbase.Unions)
+            {
+                foreach(Parameter para in vbase.Parameters.Where(p => p.IsInUnion && p.UnionId == union.UId))
+                {
+                    if(para.ParameterTypeObject.SizeInBit + (para.Offset * 8) + para.OffsetBit >union.SizeInBit)
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_union_size, union.Name, para.Name, para.UId), State = PublishState.Fail });
+                }
+            }
 
             CheckDynamicItem(vbase.Dynamics[0], actions, ns, showOnlyErrors, mod);
 
@@ -727,10 +801,10 @@ namespace Kaenx.Creator.Classes {
                 name = parameterref.Name;
                 uid = parameterref.UId;
                 text = parameterref.Suffix;
-                translate = false; //Todo
+                translate = parameterref.TranslationText;
             }
             
-            if(translate) {
+            /*if(translate) {
                 Translation trans = text.Single(t => t.Language.CultureCode == defaultLang);
                 if(string.IsNullOrEmpty(trans.Text))
                     actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_lang_no_translation, stype, name, uid), State = PublishState.Warning, Item = item, Module = mod });
@@ -739,7 +813,7 @@ namespace Kaenx.Creator.Classes {
                 {
                     actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_lang_not_all, stype, name, uid), State = PublishState.Warning, Item = item, Module = mod });
                 }
-            }
+            }*/
         }
 
         private static void CheckSuffix(object item, bool showOnlyErrors, string defaultLang, object mod, ObservableCollection<PublishAction> actions)
@@ -761,10 +835,10 @@ namespace Kaenx.Creator.Classes {
                 name = parameterref.Name;
                 uid = parameterref.UId;
                 text = parameterref.Suffix;
-                translate = false; //TODO
+                translate = parameterref.TranslationSuffix;
             }
 
-            if(!showOnlyErrors)
+            /*if(!showOnlyErrors)
             {
                 if(translate) {
                     Translation trans = text.Single(t => t.Language.CultureCode == defaultLang);
@@ -776,7 +850,7 @@ namespace Kaenx.Creator.Classes {
                         actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_lang_not_all, stype, name, uid), State = PublishState.Warning, Item = item, Module = mod });
                     }
                 }
-            }
+            }*/
             
             if(text.Any(t => t.Text.Length > 20)) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_lang_suffix_length, stype, name, uid), State = PublishState.Fail, Item = item, Module = mod });
         }

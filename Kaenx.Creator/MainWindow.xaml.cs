@@ -119,7 +119,7 @@ namespace Kaenx.Creator
         {
             if(module != null)
             {
-                VersionTabs.SelectedIndex = 6;
+                VersionTabs.SelectedIndex = 7;
                 int index2 = item switch {
                     Models.Union => 4,
                     Models.Parameter => 7,
@@ -137,14 +137,14 @@ namespace Kaenx.Creator
 
 
             int index = item switch{
-                Models.ParameterType => 3,
-                Models.Union => 4,
-                Models.Module => 6,
-                Models.Parameter => 7,
-                Models.ParameterRef => 8,
-                Models.ComObject => 9,
-                Models.ComObjectRef => 10,
-                Models.Dynamic.IDynItems => 14,
+                Models.ParameterType => 4,
+                Models.Union => 5,
+                Models.Module => 7,
+                Models.Parameter => 8,
+                Models.ParameterRef => 9,
+                Models.ComObject => 10,
+                Models.ComObjectRef => 11,
+                Models.Dynamic.IDynItems => 15,
                 _ => -1
             };
 
@@ -510,6 +510,9 @@ namespace Kaenx.Creator
             Models.Application app = AppList.SelectedItem as Models.Application;
             Models.AppVersionModel ver = (sender as MenuItem).DataContext as Models.AppVersionModel;
 
+            if(SelectedVersion == ver)
+                SelectedVersion = null;
+
             app.Versions.Remove(ver);
         }
 
@@ -543,7 +546,7 @@ namespace Kaenx.Creator
             SelectedVersion = (sender as MenuItem).DataContext as Models.AppVersionModel;
             SelectedVersion.Model = AutoHelper.GetAppVersion(General, SelectedVersion);
             SelectedVersion.Model.PropertyChanged += SelectedVersion_PropertyChanged;
-            //TODO auto open TabView Item
+            
             after = System.GC.GetTotalMemory(false);
             System.Diagnostics.Debug.WriteLine("Neu verbraucht: " + (after - before).ToString());
             TabsEdit.SelectedIndex = 6;
@@ -1169,6 +1172,7 @@ namespace Kaenx.Creator
             Models.Application app = _general.Applications.Single(a => a.Versions.Contains(SelectedVersion));
             CheckHelper.CheckVersion(null, app, SelectedVersion.Model, null, new ObservableCollection<Models.PublishAction>());
             AutoHelper.MemoryCalculation(SelectedVersion.Model, mem);
+            
         }
 
         private void TabChanged(object sender, SelectionChangedEventArgs e)

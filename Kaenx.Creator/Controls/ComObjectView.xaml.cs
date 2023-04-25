@@ -87,7 +87,7 @@ namespace Kaenx.Creator.Controls
             ComobjectList.ScrollIntoView(com);
             ComobjectList.SelectedItem = com;
 
-            if(Version.IsComObjectRefAuto){
+            if(Module.IsComObjectRefAuto){
                 Models.ComObjectRef cref = new Models.ComObjectRef(com) { UId = AutoHelper.GetNextFreeUId(Module.ComObjectRefs) };
                 foreach(Models.Language lang in Version.Languages) {
                     cref.Text.Add(new Models.Translation(lang, ""));
@@ -106,7 +106,7 @@ namespace Kaenx.Creator.Controls
 
             Module.ComObjects.Add(clonedCom);
 
-            if (Version.IsComObjectRefAuto)
+            if (Module.IsComObjectRefAuto)
             {
                 Models.ComObjectRef cref = new Models.ComObjectRef(clonedCom) { UId = AutoHelper.GetNextFreeUId(Module.ComObjectRefs) };
                 foreach (Models.Language lang in Version.Languages)
@@ -122,7 +122,7 @@ namespace Kaenx.Creator.Controls
         {
             Models.ComObject com = ComobjectList.SelectedItem as Models.ComObject;
 
-            if(Version.IsComObjectRefAuto)
+            if(Module.IsComObjectRefAuto)
             {
                 ComObjectRef cref = Module.ComObjectRefs.Single(c => c.ComObjectObject == com);
                 List<int> uids = new List<int>();

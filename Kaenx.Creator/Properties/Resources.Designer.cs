@@ -2504,5 +2504,71 @@ namespace Kaenx.Creator.Properties {
                 return ResourceManager.GetString("mem_ast", resourceCulture);
             }
         }
+        
+        public static string tmod_prefix {
+            get {
+                return ResourceManager.GetString("tmod_prefix", resourceCulture);
+            }
+        }
+        
+        public static string topen_url {
+            get {
+                return ResourceManager.GetString("topen_url", resourceCulture);
+            }
+        }
+        
+        public static string topen_branch {
+            get {
+                return ResourceManager.GetString("topen_branch", resourceCulture);
+            }
+        }
+        
+        public static string topen_commit {
+            get {
+                return ResourceManager.GetString("topen_commit", resourceCulture);
+            }
+        }
+        
+        public static string topen_numchannels {
+            get {
+                return ResourceManager.GetString("topen_numchannels", resourceCulture);
+            }
+        }
+        
+        public static string topen_update {
+            get {
+                return ResourceManager.GetString("topen_update", resourceCulture);
+            }
+        }
+        
+        public static string topen_haspart {
+            get {
+                return ResourceManager.GetString("topen_haspart", resourceCulture);
+            }
+        }
+        
+        public static string topen_hasshare {
+            get {
+                return ResourceManager.GetString("topen_hasshare", resourceCulture);
+            }
+        }
+        
+        public static string topen_hastempl {
+            get {
+                return ResourceManager.GetString("topen_hastempl", resourceCulture);
+            }
+        }
+        
+        public static string tcom_flag_enable {
+            get {
+                return ResourceManager.GetString("tcom_flag_enable", resourceCulture);
+            }
+        }
+        
+        public static string tcom_flag_disable {
+            get {
+                return ResourceManager.GetString("tcom_flag_disable", resourceCulture);
+            }
+        }
     }
 }

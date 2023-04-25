@@ -171,12 +171,11 @@ namespace Kaenx.Creator.Models
             set { _flagRead = value; Changed("FlagRead"); }
         }
 
-        //TODO make overwrite accesable from UI
         private bool _overFR = false;
         public bool OverwriteFR
         {
             get { return _overFR; }
-            set { _overFR = value; Changed("OverwriteFR"); }
+            set { _overFR = value; Changed("OverwriteFR"); if(!value) FlagRead = FlagType.Undefined; }
         }
 
         private FlagType _flagWrite = FlagType.Disabled;
@@ -190,7 +189,7 @@ namespace Kaenx.Creator.Models
         public bool OverwriteFW
         {
             get { return _overFW; }
-            set { _overFW = value; Changed("OverwriteFW"); }
+            set { _overFW = value; Changed("OverwriteFW"); if(!value) FlagWrite = FlagType.Undefined; }
         }
 
         private FlagType _flagTrans = FlagType.Disabled;
@@ -204,7 +203,7 @@ namespace Kaenx.Creator.Models
         public bool OverwriteFT
         {
             get { return _overFT; }
-            set { _overFT = value; Changed("OverwriteFT"); }
+            set { _overFT = value; Changed("OverwriteFT"); if(!value) FlagTrans = FlagType.Undefined; }
         }
 
         private FlagType _flagComm = FlagType.Disabled;
@@ -218,7 +217,7 @@ namespace Kaenx.Creator.Models
         public bool OverwriteFC
         {
             get { return _overFC; }
-            set { _overFC = value; Changed("OverwriteFC"); }
+            set { _overFC = value; Changed("OverwriteFC"); if(!value) FlagComm = FlagType.Undefined; }
         }
 
         private FlagType _flagUpdate = FlagType.Disabled;
@@ -232,7 +231,7 @@ namespace Kaenx.Creator.Models
         public bool OverwriteFU
         {
             get { return _overFU; }
-            set { _overFU = value; Changed("OverwriteFU"); }
+            set { _overFU = value; Changed("OverwriteFU"); if(!value) FlagUpdate = FlagType.Undefined; }
         }
 
         private FlagType _flagOnInit = FlagType.Disabled;
@@ -246,7 +245,7 @@ namespace Kaenx.Creator.Models
         public bool OverwriteFOI
         {
             get { return _overFOI; }
-            set { _overFOI = value; Changed("OverwriteFOI"); }
+            set { _overFOI = value; Changed("OverwriteFOI"); if(!value) FlagOnInit = FlagType.Undefined; }
         }
 
         private bool _isNotUsed = false;

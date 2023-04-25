@@ -181,6 +181,11 @@ namespace Kaenx.Creator.Models
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
+
+        public override string ToString()
+        {
+            return Name + " (" + Type.ToString() + ")";
+        }
     }
 
     public enum ParameterTypes {

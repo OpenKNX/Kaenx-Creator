@@ -86,5 +86,10 @@ namespace Kaenx.Creator.Models
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
+
+        public Union Copy()
+        {
+            return (Union)this.MemberwiseClone();
+        }
     }
 }

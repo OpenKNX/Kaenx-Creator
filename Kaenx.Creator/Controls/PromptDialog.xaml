@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
         Title="Eingabe" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterScreen"
+        Width="250"
         Icon="/FileLogo.ico">
     <Grid Margin="15" FocusManager.FocusedElement="{Binding ElementName=AnswerBox}">
         <Grid.ColumnDefinitions>

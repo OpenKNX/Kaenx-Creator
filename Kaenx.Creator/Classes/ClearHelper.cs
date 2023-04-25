@@ -11,10 +11,11 @@ namespace Kaenx.Creator.Classes
     public static class ClearHelper
     {
         
-        public static ClearResult ShowUnusedElements(AppVersion vers)
+        public static ClearResult ShowUnusedElements(IVersionBase vers, ClearResult result = null)
         {
             List<int> uids = new List<int>();
-            ClearResult result = new ClearResult();
+            if(result == null)
+                result = new ClearResult();
 
             foreach(Parameter para in vers.Parameters)
                 if(!uids.Contains(para.ParameterType))
@@ -23,11 +24,14 @@ namespace Kaenx.Creator.Classes
                     foreach(Parameter para in mod.Parameters)
                     if(!uids.Contains(para.ParameterType))
                         uids.Add(para.ParameterType);    
-            foreach(ParameterType ptype in vers.ParameterTypes)
+            if(vers is AppVersion aver)
             {
-                ptype.IsNotUsed = !uids.Contains(ptype.UId);
-                if(ptype.IsNotUsed)
-                    result.ParameterTypes++;
+                foreach(ParameterType ptype in aver.ParameterTypes)
+                {
+                    ptype.IsNotUsed = !uids.Contains(ptype.UId);
+                    if(ptype.IsNotUsed)
+                        result.ParameterTypes++;
+                }
             }
 
             CheckParameter(vers, result);
@@ -35,18 +39,18 @@ namespace Kaenx.Creator.Classes
             CheckUnion(vers, result);
             
             foreach(Module mod in vers.Modules)
-            {
-                CheckParameter(mod, result);
-                CheckComObject(mod, result);
-                CheckUnion(mod, result);
-            }
+                ShowUnusedElements(mod, result);
+
             return result;
         }
 
-        public static void RemoveUnusedElements(AppVersion vers)
+        public static void RemoveUnusedElements(IVersionBase vers)
         {
-            foreach(ParameterType pt in vers.ParameterTypes.Where(p => p.IsNotUsed).ToList())
-                vers.ParameterTypes.Remove(pt);
+            if(vers is AppVersion avers)
+            {
+                foreach(ParameterType pt in avers.ParameterTypes.Where(p => p.IsNotUsed).ToList())
+                    avers.ParameterTypes.Remove(pt);
+            }
 
             RemoveElements(vers);
 

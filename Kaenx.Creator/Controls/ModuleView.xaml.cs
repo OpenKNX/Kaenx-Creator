@@ -122,6 +122,11 @@ namespace Kaenx.Creator.Controls
         private void ClickRemoveModule(object sender, RoutedEventArgs e)
         {
             Models.Module mod = ModuleList.SelectedItem as Models.Module;
+            if(mod.IsOpenKnxModule)
+            {
+                MessageBox.Show("Modul ist von OpenKNX. Um es zu löschen, bitte das OpenKnx Modul löschen");
+                return;
+            }
             CurrentModule.Modules.Remove(mod);
             //RemoveModule(SelectedVersion.Model.Dynamics[0], mod);
             //TODO make it work again
@@ -143,6 +148,77 @@ namespace Kaenx.Creator.Controls
             Module model = ModuleList.SelectedItem as Module;
             Modules.Add(new ModuleViewerModel(model.Name, model.Modules));
             CurrentIndex++;
+        }
+
+
+
+        
+        private void ClickShowClean(object sender, RoutedEventArgs e)
+        {
+            Module model = ModuleList.SelectedItem as Module;
+            Models.ClearResult res = ClearHelper.ShowUnusedElements(model);
+
+            string msg = Properties.Messages.checkv_not_used + "\r\n" +
+                    $"{res.ParameterTypes}\tParameterTypes\r\n" +
+                    $"{res.Parameters}\tParameter\r\n" +
+                    $"{res.ParameterRefs}\tParameterRefs\r\n" +
+                    $"{res.Unions}\tUnions\r\n" +
+                    $"{res.ComObjects}\tComObjects\r\n" +
+                    $"{res.ComObjectRefs}\tComObjectRefs";
+            MessageBox.Show(msg);
+        }
+
+        private void ClickDoClean(object sender, RoutedEventArgs e)
+        {
+            var msgRes = MessageBox.Show(Properties.Messages.checkv_delete, Properties.Messages.checkv_delete_title, MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+
+            int countParameterTypes = 0;
+            int countParameters = 0;
+            int countParameterRefs = 0;
+            int countUnions = 0;
+            int countComObjects = 0;
+            int countComObjectRefs = 0;
+            
+            Module model = ModuleList.SelectedItem as Module;
+
+            Models.ClearResult res;
+            if(msgRes == MessageBoxResult.Yes)
+            {
+                int sum = 0;
+                do {
+                    res = ClearHelper.ShowUnusedElements(model);
+                    countParameterTypes += res.ParameterTypes;
+                    countParameters += res.Parameters;
+                    countParameterRefs += res.ParameterRefs;
+                    countUnions += res.Unions;
+                    countComObjects += res.ComObjects;
+                    countComObjectRefs += res.ComObjectRefs;
+                    sum = res.ParameterTypes + res.Parameters + res.ParameterRefs + res.Unions + res.ComObjects + res.ComObjectRefs;
+                    System.Diagnostics.Debug.WriteLine("Summe: " + sum);
+                    ClearHelper.RemoveUnusedElements(model);
+                } while(sum > 0);
+
+            } else if(msgRes == MessageBoxResult.No) {
+                res = ClearHelper.ShowUnusedElements(model);
+                countParameterTypes = res.ParameterTypes;
+                countParameters = res.Parameters;
+                countParameterRefs = res.ParameterRefs;
+                countUnions = res.Unions;
+                countComObjects = res.ComObjects;
+                countComObjectRefs = res.ComObjectRefs;
+                ClearHelper.RemoveUnusedElements(Version);
+            } else {
+                return;
+            }
+
+            string msg = Properties.Messages.checkv_deleted + "\r\n" +
+                    $"{countParameterTypes}\tParameterTypes\r\n" +
+                    $"{countParameters}\tParameter\r\n" +
+                    $"{countParameterRefs}\tParameterRefs\r\n" +
+                    $"{countUnions}\tUnions\r\n" +
+                    $"{countComObjects}\tComObjects\r\n" +
+                    $"{countComObjectRefs}\tComObjectRefs";
+            MessageBox.Show(msg);
         }
         
 

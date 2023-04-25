@@ -22,11 +22,12 @@ namespace Kaenx.Creator.Models
         public ObservableCollection<Language> Languages { get; set; } = new ObservableCollection<Language>();
         public ObservableCollection<Helptext> Helptexts { get; set; } = new ObservableCollection<Helptext>();
         public ObservableCollection<Allocator> Allocators { get; set; } = new ObservableCollection<Allocator>();
+        public ObservableCollection<OpenKnxModule> OpenKnxModules { get; set; } = new ObservableCollection<OpenKnxModule>();
         public List<IDynamicMain> Dynamics { get; set; } = new List<IDynamicMain>();
 
         public AppVersion() { }
 
-        private int _namespace = 14;
+        private int _namespace = 20;
         public int NamespaceVersion
         {
             get { return _namespace; }
