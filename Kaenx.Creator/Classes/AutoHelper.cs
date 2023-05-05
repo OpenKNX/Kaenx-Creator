@@ -452,6 +452,8 @@ namespace Kaenx.Creator.Classes
                         checkedMods.Add(dmod.ModuleObject.Name);
             }
 
+            ver.HighestComNumber = highestComNumber;
+
             if (mem.IsAutoSize)
                 mem.Size = mem.GetCount();
         }

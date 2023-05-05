@@ -380,6 +380,9 @@ namespace Kaenx.Creator.Classes
                 }
                 headers.AppendLine($"#define MAIN_ApplicationVersion 0x{ver.Number:X2}");
                 headers.AppendLine($"#define MAIN_OrderNumber \"{hardware.First(h => h.Apps.Contains(app)).Devices.First().OrderNumber}\" //may not work with multiple devices on same hardware or app on different hardware");
+                headers.AppendLine($"#define MAIN_ParameterSize {ver.Memories[0].Size}");
+                headers.AppendLine($"#define MAIN_MaxKoNumber {ver.HighestComNumber}");
+                headers.AppendLine();
                 headers.AppendLine();
 
                 ExportParameters(ver, ver, xunderapp, headers);

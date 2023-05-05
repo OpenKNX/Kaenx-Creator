@@ -249,6 +249,7 @@ namespace Kaenx.Creator.Models
         public int LastParameterRefId { get; set; } = 0;
         public int LastDynModuleId { get; set; } = 0;
         public int LastDynSeparatorId { get; set; } = 0;
+        public int HighestComNumber { get; set; } = 0;
 
         public event PropertyChangedEventHandler PropertyChanged;
         public void Changed(string name)
