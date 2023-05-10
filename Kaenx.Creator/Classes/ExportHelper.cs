@@ -1516,8 +1516,13 @@ namespace Kaenx.Creator.Classes
                 if (para.ParameterTypeObject.SizeInBit % 8 == 0) lineComm += " (" + (para.ParameterTypeObject.SizeInBit / 8) + " Byte)";
                 lineComm += $", Text: {GetDefaultLanguage(para.Text)}";
                 headers.AppendLine(linePara);
-
-                int shift = (8 - para.OffsetBit - (para.ParameterTypeObject.SizeInBit % 8)) % 8;
+            
+                int totalSize = para.ParameterTypeObject.SizeInBit + para.OffsetBit;
+                int totalInBytes = 8;
+                if(totalSize > 8 && totalSize <= 16) totalInBytes = 16;
+                else if(totalSize <= 32) totalInBytes = 32;
+                else totalInBytes = 8; //doesnt care because too big for an int
+                int shift = (totalInBytes - para.OffsetBit - (para.ParameterTypeObject.SizeInBit % 8)) % 8;
 
                 ulong mask = 0;
                 for(int i = 0; i < para.ParameterTypeObject.SizeInBit; i++)
@@ -1554,9 +1559,9 @@ namespace Kaenx.Creator.Classes
                             else
                                 headers.AppendLine($"{lineStart}_Mask\t0x{mask:X4}");
 
-                            if(para.ParameterTypeObject.SizeInBit <= 8) pAccess = "paramByte";
-                            else if(para.ParameterTypeObject.SizeInBit <= 16) pAccess = "paramWord";
-                            else if(para.ParameterTypeObject.SizeInBit <= 32) pAccess = "paramInt";
+                            if(totalSize <= 8) pAccess = "paramByte";
+                            else if(totalSize <= 16) pAccess = "paramWord";
+                            else if(totalSize <= 32) pAccess = "paramInt";
                             else throw new Exception("Size to big for Int/Enum");
 
                             paraKnxGet += $"({ptype}((knx.{pAccess}(%off%){pshift}){pmask}))";
