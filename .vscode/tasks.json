@@ -28,6 +28,18 @@
                 "-p:PublishSingleFile=true"
             ],
             "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "watch",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "watch",
+                "run",
+                "--project",
+                "${workspaceFolder}/Kaenx.Creator/Kaenx.Creator.csproj"
+            ],
+            "problemMatcher": "$msCompile"
         }
     ]
 }
