@@ -284,7 +284,8 @@ namespace Kaenx.Creator.Classes
                 {
                     Number = appNumber,
                     Name = xapp.Attribute("Name").Value,
-                    Mask = _bcus.Single(b => b.Id == xapp.Attribute("MaskVersion").Value)
+                    Mask = _bcus.Single(b => b.Id == xapp.Attribute("MaskVersion").Value),
+                    ImportHelper = xapp.Attribute("Id").Value
                 };
                 _general.Applications.Add(currentApp);
             }
@@ -816,11 +817,11 @@ namespace Kaenx.Creator.Classes
                     case "TypeIPAddress":
                         ptype.Type = ParameterTypes.IpAddress;
                         ptype.UIHint = xsub.Attribute("AddressType").Value;
-                        ptype.SizeInBit = xsub.Attribute("Version")?.Value switch 
+                        ptype.Increment = xsub.Attribute("Version")?.Value switch 
                         {
-                            "IPV4" => 1,
-                            "IPV6" => 2,
-                            _ => 0
+                            "IPV4" => "IPv4",
+                            "IPV6" => "IPv6",
+                            _ => "None"
                         };
                         break;
 
@@ -1491,11 +1492,17 @@ namespace Kaenx.Creator.Classes
 
                 foreach (XElement xapp in xhard.Descendants(Get("ApplicationProgramRef")))
                 {
-                    string[] appId = xapp.Attribute("RefId").Value.Split('-');
-                    int number = int.Parse(appId[2], System.Globalization.NumberStyles.HexNumber);
-                    int version = int.Parse(appId[3], System.Globalization.NumberStyles.HexNumber);
+                    try
+                    {
+                        string[] appId = xapp.Attribute("RefId").Value.Split('-');
+                        int number = int.Parse(appId[2], System.Globalization.NumberStyles.HexNumber);
+                        int version = int.Parse(appId[3], System.Globalization.NumberStyles.HexNumber);
 
-                    hardware.Apps.Add(_general.Applications.Single(a => a.Number == number));
+                        hardware.Apps.Add(_general.Applications.Single(a => a.Number == number));
+                    } catch {
+                        string appId = xapp.Attribute("RefId").Value;
+                        hardware.Apps.Add(_general.Applications.Single(a => a.ImportHelper == appId));
+                    }
                 }
 
                 foreach (XElement xprod in xhard.Descendants(Get("Product")))
@@ -1609,16 +1616,25 @@ namespace Kaenx.Creator.Classes
 
                 case "CatalogItem":
                 {
+                    Hardware hard;
+                    Device device;
                     string[] hard2ref = xitem.Attribute("Hardware2ProgramRefId").Value.Split('-');
-                    string serialNr = hard2ref[2];
-                    serialNr = Unescape(serialNr);
-                    int version = int.Parse(hard2ref[3].Split('_')[0]);
-                    Hardware hard = _general.Hardware.Single(h => h.SerialNumber == serialNr && h.Version == version);
-                    string prodId = xitem.Attribute("ProductRefId").Value;
-                    prodId = prodId.Substring(prodId.LastIndexOf('-')+1);
-                    prodId = Unescape(prodId);
+                    if(hard2ref[0].StartsWith("%"))
+                    {
+                        hard = _general.Hardware[0];
+                        device = hard.Devices[0];
+                    } else {
+                        string serialNr = hard2ref[2];
+                        serialNr = Unescape(serialNr);
+                        int version = int.Parse(hard2ref[3].Split('_')[0]);
+                        hard = _general.Hardware.Single(h => h.SerialNumber == serialNr && h.Version == version);
+                        string prodId = xitem.Attribute("ProductRefId").Value;
+                        prodId = prodId.Substring(prodId.LastIndexOf('-')+1);
+                        prodId = Unescape(prodId);
+                        device = hard.Devices.Single(d => d.OrderNumber == prodId);
+                    }
 
-                    Device device = hard.Devices.Single(d => d.OrderNumber == prodId);
+                    
 
                     if(device.Text.Count > 0)
                         return;

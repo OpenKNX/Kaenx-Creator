@@ -9,6 +9,9 @@ namespace Kaenx.Creator.Models
 {
     public class Application : INotifyPropertyChanged
     {
+        [JsonIgnore]
+        public string ImportHelper { get; set; } = "";
+        
         private string _name = "Dummy";
         public string Name
         {
