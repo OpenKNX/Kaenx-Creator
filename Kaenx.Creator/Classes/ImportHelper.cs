@@ -674,6 +674,8 @@ namespace Kaenx.Creator.Classes
 
         private void ImportSegments(XElement xcodes)
         {
+            if(xcodes == null) return;
+
             _uidCounter = 1;
             foreach (XElement xcode in xcodes.Elements())
             {
@@ -990,7 +992,7 @@ namespace Kaenx.Creator.Classes
                 {
                     para.SavePath = SavePaths.Property;
                     para.SaveObject = new Property() {
-                        ObjectIndex = int.Parse(xmem.Attribute("ObjectIndex").Value),
+                        ObjectType = int.Parse(xmem.Attribute("ObjectType").Value),
                         PropertyId = int.Parse(xmem.Attribute("PropertyId").Value),
                         Offset = int.Parse(xmem.Attribute("Offset").Value),
                         OffsetBit = int.Parse(xmem.Attribute("BitOffset").Value),

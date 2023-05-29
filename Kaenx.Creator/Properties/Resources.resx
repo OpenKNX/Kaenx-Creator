@@ -746,7 +746,7 @@
     <comment/>
   </data>
   <data name="prop_objectindex" xml:space="preserve">
-    <value>ObjectIndex</value>
+    <value>ObjectType</value>
     <comment/>
   </data>
   <data name="gen_onlydeflang" xml:space="preserve">
