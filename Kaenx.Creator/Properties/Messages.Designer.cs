@@ -476,24 +476,6 @@ namespace Kaenx.Creator.Properties {
             }
         }
         
-        public static string main_newets_title {
-            get {
-                return ResourceManager.GetString("main_newets_title", resourceCulture);
-            }
-        }
-        
-        public static string main_newets_found {
-            get {
-                return ResourceManager.GetString("main_newets_found", resourceCulture);
-            }
-        }
-        
-        public static string main_newets_added {
-            get {
-                return ResourceManager.GetString("main_newets_added", resourceCulture);
-            }
-        }
-        
         public static string main_def_cat {
             get {
                 return ResourceManager.GetString("main_def_cat", resourceCulture);

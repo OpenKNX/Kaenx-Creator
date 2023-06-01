@@ -30,11 +30,18 @@ namespace Kaenx.Creator.Classes
         string appVersionMod;
         string currentNamespace;
         string convPath;
-        string fileName;
+        string filePath;
         List<Icon> iconsApp = new List<Icon>();
         List<string> buttonScripts;
 
-        public ExportHelper(Models.ModelGeneral g, List<Models.Hardware> h, List<Models.Device> d, List<Models.Application> a, List<Models.AppVersionModel> v, string cp, string fN)
+        public ExportHelper(Models.ModelGeneral g, string cp, string fP)
+        {
+            general = g;
+            convPath = cp;
+            filePath = fP;
+        }
+
+        public ExportHelper(Models.ModelGeneral g, List<Models.Hardware> h, List<Models.Device> d, List<Models.Application> a, List<Models.AppVersionModel> v, string cp, string fP)
         {
             hardware = h;
             devices = d;
@@ -42,7 +49,7 @@ namespace Kaenx.Creator.Classes
             vers = v;
             general = g;
             convPath = cp;
-            fileName = fN;
+            filePath = fP;
         }
 
 
@@ -2164,19 +2171,20 @@ namespace Kaenx.Creator.Classes
             }
         }
 
-        public async void SignOutput()
+        public async void SignOutput(string path)
         {
-            string manu = $"M-{GetManuId()}";
+            string manu = Directory.GetDirectories(path).First();
+            manu = manu.Substring(manu.LastIndexOf('\\') + 1);
 
             IDictionary<string, string> applProgIdMappings = new Dictionary<string, string>();
             IDictionary<string, string> applProgHashes = new Dictionary<string, string>();
             IDictionary<string, string> mapBaggageIdToFileIntegrity = new Dictionary<string, string>(50);
 
-            FileInfo hwFileInfo = new FileInfo(GetRelPath("Temp", manu, "Hardware.xml"));
-            FileInfo catalogFileInfo = new FileInfo(GetRelPath("Temp", manu, "Catalog.xml"));
+            FileInfo hwFileInfo = new FileInfo(Path.Combine(path, manu, "Hardware.xml"));
+            FileInfo catalogFileInfo = new FileInfo(Path.Combine(path, manu, "Catalog.xml"));
             
             int nsVersion = int.Parse(currentNamespace.Substring(currentNamespace.LastIndexOf('/')+1));;
-            foreach (string file in Directory.GetFiles(GetRelPath("Temp", manu)))
+            foreach (string file in Directory.GetFiles(Path.Combine(path, manu)))
             {
                 if (!file.Contains("M-") || !file.Contains("_A-")) continue;
 
@@ -2219,16 +2227,16 @@ namespace Kaenx.Creator.Classes
                 }
             }
 
-            File.Copy(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", $"knx_master_{nsVersion}.xml"), GetRelPath("Temp", "knx_master.xml"));
+            File.Copy(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", $"knx_master_{nsVersion}.xml"), Path.Combine(path, "knx_master.xml"), true);
 
-            XmlSigning.SignDirectory(GetRelPath("Temp", manu), convPath);
+            XmlSigning.SignDirectory(Path.Combine(path, manu), convPath);
 
-            if(File.Exists(GetRelPath($"{fileName}.knxprod")))
-                File.Delete(GetRelPath($"{fileName}.knxprod"));
-            System.IO.Compression.ZipFile.CreateFromDirectory(GetRelPath("Temp"), GetRelPath($"{fileName}.knxprod"));
+            if(File.Exists(filePath))
+                File.Delete(filePath);
+            System.IO.Compression.ZipFile.CreateFromDirectory(path, filePath);
 
             #if (!DEBUG)
-            System.IO.Directory.Delete(GetRelPath("Temp"), true);
+            System.IO.Directory.Delete(path, true);
             #endif
         }
 
@@ -2293,6 +2301,11 @@ namespace Kaenx.Creator.Classes
         private XName Get(string name)
         {
             return XName.Get(name, currentNamespace);
+        }
+
+        public void SetNamespace(int ns)
+        {
+            currentNamespace = $"http://knx.org/xml/project/{ns}";
         }
 
         private XElement CreateNewXML(string manu)

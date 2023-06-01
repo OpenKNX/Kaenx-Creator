@@ -65,14 +65,14 @@ namespace Kaenx.Creator
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private string etsPath {get;set;} = "";
         private List<Models.EtsVersion> EtsVersions = new List<Models.EtsVersion>() {
-            new Models.EtsVersion(11, "ETS 4.0 (11)", "4.0.1997.50261"),
-            new Models.EtsVersion(12, "ETS 5.0 (12)", "5.0.204.12971"),
-            new Models.EtsVersion(13, "ETS 5.1 (13)", "5.1.84.17602"),
-            new Models.EtsVersion(14, "ETS 5.6 (14)", "5.6.241.33672"),
+            new Models.EtsVersion(11, "ETS 4.0 (11)", "4.0"),
+            new Models.EtsVersion(12, "ETS 5.0 (12)", "5.0"),
+            new Models.EtsVersion(13, "ETS 5.1 (13)", "5.1"),
+            new Models.EtsVersion(14, "ETS 5.6 (14)", "5.6"),
             new Models.EtsVersion(20, "ETS 5.7 (20)", "5.7"),
-            new Models.EtsVersion(21, "ETS 6.0 (21)", "6.0")
+            new Models.EtsVersion(21, "ETS 6.0 (21)", "6.0"),
+            new Models.EtsVersion(22, "ETS 6.1 (22)", "6.1")
         };
         
         private int VersionCurrent = 6;
@@ -89,7 +89,6 @@ namespace Kaenx.Creator
             LoadBcus();
             LoadDpts();
             CheckLangs();
-            CheckEtsPath();
             CheckEtsVersions();
             LoadTemplates();
 
@@ -153,81 +152,9 @@ namespace Kaenx.Creator
             ((VersionTabs.Items[index] as TabItem).Content as ISelectable).ShowItem(item);
         }
 
-        private void CheckEtsPath() {
-            if(Directory.Exists(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CV"))) {
-                if(CheckEtsPath(AppDomain.CurrentDomain.BaseDirectory)) {
-                    etsPath = AppDomain.CurrentDomain.BaseDirectory; 
-                    return;
-                }
-            }
-            if(CheckEtsPath(@"C:\Program Files (x86)\ETS6")) { 
-                etsPath = @"C:\Program Files (x86)\ETS6"; 
-                return;
-            }
-            if(CheckEtsPath(@"C:\Program Files (x86)\ETS5")) { 
-                etsPath = @"C:\Program Files (x86)\ETS5"; 
-                return;
-            }
-            if(CheckEtsPath(@"C:\Program Files (x86)\ETS4")) { 
-                etsPath = @"C:\Program Files (x86)\ETS4"; 
-                return;
-            }
-        }
-
-        private bool CheckEtsPath(string path)
-        {
-            if(!Directory.Exists(path)) return false;
-
-            if(!File.Exists(System.IO.Path.Combine(path, "Knx.Ets.XmlSigning.dll"))) return true;
-            FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(System.IO.Path.Combine(path, "Knx.Ets.XmlSigning.dll"));
-            if(versionInfo.FileVersion.StartsWith("6.") || Directory.Exists(System.IO.Path.Combine(path, "CV", versionInfo.FileVersion)))
-                return true;
-
-            string newVersion = versionInfo.FileVersion;
-            if (versionInfo.FileVersion.Split('.').Length > 2) newVersion = string.Join('.', newVersion.Split('.').Take(2));
-            if(Directory.Exists(System.IO.Path.Combine(path, "CV", newVersion))) return true;
-            try {
-                Directory.CreateDirectory(System.IO.Path.Combine(path, "CV", newVersion));
-            } catch{
-                MessageBox.Show(Properties.Messages.main_newets_found, Properties.Messages.main_newets_title, MessageBoxButton.OK, MessageBoxImage.Warning);
-                return true;
-            }
-            File.Copy(System.IO.Path.Combine(path, "Knx.Ets.Xml.ObjectModel.dll"), System.IO.Path.Combine(path, "CV", newVersion, "Knx.Ets.Xml.ObjectModel.dll"));
-            File.Copy(System.IO.Path.Combine(path, "Knx.Ets.Xml.ObjectModel.XmlSerializers.dll"), System.IO.Path.Combine(path, "CV", newVersion, "Knx.Ets.Xml.ObjectModel.XmlSerializers.dll"));
-            File.Copy(System.IO.Path.Combine(path, "Knx.Ets.Xml.RegistrationRelevanceInformation.dll"), System.IO.Path.Combine(path, "CV", newVersion, "Knx.Ets.Xml.RegistrationRelevanceInformation.dll"));
-            File.Copy(System.IO.Path.Combine(path, "Knx.Ets.XmlSigning.dll"), System.IO.Path.Combine(path, "CV", newVersion, "Knx.Ets.XmlSigning.dll"));
-            File.Copy(System.IO.Path.Combine(path, "log4net.dll"), System.IO.Path.Combine(path, "CV", newVersion, "log4net.dll"));
-            MessageBox.Show(Properties.Messages.main_newets_added, Properties.Messages.main_newets_title, MessageBoxButton.OK, MessageBoxImage.Information);
-            return true;
-        }
-
         private void CheckEtsVersions() {
-            bool flag = false;
-            if(Directory.Exists(System.IO.Path.Combine(etsPath, "CV", "6.0"))) {
-                flag = true;
-                foreach(Models.EtsVersion v in EtsVersions)
-                    v.IsEnabled = true;
-            } else {
-                if(File.Exists(System.IO.Path.Combine(etsPath, "Knx.Ets.XmlSigning.dll"))) {
-                    FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(System.IO.Path.Combine(etsPath, "Knx.Ets.XmlSigning.dll"));
-                    if(versionInfo.FileVersion.ToString().StartsWith("6.0")) {
-                        flag = true;
-                        foreach(Models.EtsVersion v in EtsVersions)
-                            v.IsEnabled = true;
-                    }
-                }
-            }
-
-            if(!flag) {
-                if(string.IsNullOrEmpty(etsPath)) {
-                    foreach(Models.EtsVersion v in EtsVersions)
-                        v.IsEnabled = false;
-                } else {
-                    foreach(Models.EtsVersion v in EtsVersions)
-                        v.IsEnabled = Directory.Exists(System.IO.Path.Combine(etsPath, "CV", v.FolderPath));
-                }
-            }
-
+            foreach(Models.EtsVersion v in EtsVersions)
+                v.IsEnabled = !string.IsNullOrEmpty(GetAssemblyPath(v.Number));
             NamespaceSelection.ItemsSource = EtsVersions;
         }
 
@@ -1111,6 +1038,36 @@ namespace Kaenx.Creator
         }
 
 
+        private void ClickSignFolder(object sender, RoutedEventArgs e)
+        {
+            var dialog = new System.Windows.Forms.FolderBrowserDialog();
+            if(dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                string sourcePath = dialog.SelectedPath;
+                string targetPath = Path.Combine(Path.GetTempPath(), "sign");
+                if(Directory.Exists(targetPath))
+                    Directory.Delete(targetPath, true);
+
+                foreach (string dirPath in Directory.GetDirectories(sourcePath, "*", SearchOption.AllDirectories))
+                {
+                    string x = dirPath.Substring(sourcePath.Length+1);
+                    if(!x.StartsWith("M-")) continue;
+                    Directory.CreateDirectory(dirPath.Replace(sourcePath, targetPath));
+                }
+                    
+                foreach(string filePath in Directory.GetFiles(sourcePath, "*", SearchOption.AllDirectories))
+                {
+                    if(filePath.EndsWith(".xsd") || filePath.EndsWith(".mtproj") || filePath.Contains("knx_master")) continue;
+                    File.Copy(filePath, filePath.Replace(sourcePath, targetPath).Replace(".mtxml", ".xml"));
+                }
+
+                int ns = 20;
+                ExportHelper helper = new ExportHelper(General, GetAssemblyPath(ns), Path.Combine(sourcePath, "sign.knxprod"));
+                helper.SetNamespace(ns);
+                helper.SignOutput(targetPath);
+            }
+        }
+
         private void ClickImport(object sender, RoutedEventArgs e)
         {
             Dictionary<string, string> filters = new Dictionary<string, string>() {
@@ -1173,6 +1130,53 @@ namespace Kaenx.Creator
             CheckHelper.CheckVersion(null, app, SelectedVersion.Model, null, new ObservableCollection<Models.PublishAction>());
             AutoHelper.MemoryCalculation(SelectedVersion.Model, mem);
             
+        }
+
+        private string GetAssemblyPath(int ns)
+        {
+            string convPath = "";
+
+            if(Directory.Exists(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CV"))) {
+                convPath = AppDomain.CurrentDomain.BaseDirectory;
+            } else if(Directory.Exists(@"C:\Program Files (x86)\ETS6")) { 
+                convPath = @"C:\Program Files (x86)\ETS6"; 
+            } else if(Directory.Exists(@"C:\Program Files (x86)\ETS5")) { 
+                convPath = @"C:\Program Files (x86)\ETS5"; 
+            } else {
+                throw new Exception("No ETS Path found");
+            }
+
+            if(System.IO.Directory.Exists(System.IO.Path.Combine(convPath, "CV", "6.1")))
+                return System.IO.Path.Combine(convPath, "CV", "6.1");
+            else if(System.IO.Directory.Exists(System.IO.Path.Combine(convPath, "CV", "6.0")) && ns < 22)
+                return System.IO.Path.Combine(convPath, "CV", "6.0");
+            else if(convPath.Contains("ETS6"))
+            {
+                if(!File.Exists(System.IO.Path.Combine(convPath, "Knx.Ets.XmlSigning.dll"))) return "";
+                FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(System.IO.Path.Combine(convPath, "Knx.Ets.XmlSigning.dll"));
+                if(versionInfo.FileVersion.StartsWith("6.1"))
+                    return convPath;
+                if(versionInfo.FileVersion.StartsWith("6.0") && ns < 22)
+                    return convPath;
+                //check if ets 6.0 or 6.1
+                return "";
+            } else if(convPath.Contains("ETS5") && ns < 21)
+            {
+                Models.EtsVersion version = EtsVersions.Single(v => v.Number == ns);
+                foreach(string dir in Directory.GetFiles(Path.Combine(convPath, "CV")))
+                {
+                    if(Path.GetDirectoryName(dir).StartsWith(version.Number.ToString()))
+                        return dir;
+                }
+
+                
+                if(!File.Exists(System.IO.Path.Combine(convPath, "Knx.Ets.XmlSigning.dll"))) return "";
+                FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(System.IO.Path.Combine(convPath, "Knx.Ets.XmlSigning.dll"));
+                if(versionInfo.FileVersion.StartsWith(version.FolderPath))
+                    return convPath;
+            }
+
+            return "";
         }
 
         private void TabChanged(object sender, SelectionChangedEventArgs e)
@@ -1249,7 +1253,8 @@ namespace Kaenx.Creator
             if(ExportInName.Text.EndsWith(".knxprod"))
                 ExportInName.Text = ExportInName.Text.Substring(0, ExportInName.Text.LastIndexOf('.'));
 
-            if(File.Exists(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Output", ExportInName.Text + ".knxprod")))
+            string filePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Output", ExportInName.Text + ".knxprod");
+            if(File.Exists(filePath))
             {
                 if(MessageBoxResult.No == MessageBox.Show(string.Format(Properties.Messages.main_export_duplicate, ExportInName.Text), Properties.Messages.main_export_title, MessageBoxButton.YesNo, MessageBoxImage.Question))
                     return;
@@ -1291,30 +1296,7 @@ namespace Kaenx.Creator
 
             await Task.Delay(1000);
             
-            string convPath = etsPath;
-            if(System.IO.Directory.Exists(System.IO.Path.Combine(convPath, "CV", "6.0")))
-                convPath = System.IO.Path.Combine(convPath, "CV", "6.0");
-            else
-            {
-                if(!convPath.Contains("ETS6"))
-                {
-                    if(versions.GroupBy(v => v.Namespace).Count() > 1)
-                    {
-                        PublishActions.Add(new Models.PublishAction() { Text = Properties.Messages.main_export_error_prod_namespace, State = Models.PublishState.Fail });
-                        return;
-                    }
-
-                    Models.EtsVersion etsVersion = EtsVersions.Single(v => v.Number == versions[0].Namespace);
-                    if(!etsVersion.IsEnabled)
-                    {
-                        PublishActions.Add(new Models.PublishAction() { Text = string.Format(Properties.Messages.main_export_error_prod_namespace, etsVersion.Number), State = Models.PublishState.Fail });
-                        return;
-                    }
-                    convPath = System.IO.Path.Combine(convPath, "CV", etsVersion.FolderPath);
-                }
-            }
-
-            ExportHelper helper = new ExportHelper(General, hardware, devices, apps, versions, convPath, ExportInName.Text);
+            ExportHelper helper = new ExportHelper(General, hardware, devices, apps, versions, GetAssemblyPath(versions[0].Number), filePath);
             switch(InPublishTarget.SelectedValue) {
                 case "ets":
                     bool success = helper.ExportEts(PublishActions);
@@ -1323,7 +1305,7 @@ namespace Kaenx.Creator
                         MessageBox.Show(Properties.Messages.main_export_error, Properties.Messages.main_export_title);
                         return;
                     }
-                    helper.SignOutput();
+                    helper.SignOutput(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Output", "Temp"));
                     break;
 
                 case "kaenx":

@@ -1361,4 +1361,56 @@
     <value>Table des associations.</value>
     <comment/>
   </data>
+  <data name="tmod_prefix" xml:space="preserve">
+    <value>Prefix</value>
+    <comment/>
+  </data>
+  <data name="topen_url" xml:space="preserve">
+    <value>URL</value>
+    <comment/>
+  </data>
+  <data name="topen_branch" xml:space="preserve">
+    <value>Branch (Commit)</value>
+    <comment/>
+  </data>
+  <data name="topen_commit" xml:space="preserve">
+    <value>Commit</value>
+    <comment/>
+  </data>
+  <data name="topen_numchannels" xml:space="preserve">
+    <value>%N% replacements</value>
+    <comment/>
+  </data>
+  <data name="topen_update" xml:space="preserve">
+    <value>Update</value>
+    <comment/>
+  </data>
+  <data name="topen_haspart" xml:space="preserve">
+    <value>Has Parts</value>
+    <comment/>
+  </data>
+  <data name="topen_hasshare" xml:space="preserve">
+    <value>Has Share</value>
+    <comment/>
+  </data>
+  <data name="topen_hastempl" xml:space="preserve">
+    <value>Has Template</value>
+    <comment/>
+  </data>
+  <data name="tcom_flag_enable" xml:space="preserve">
+    <value>Enable</value>
+    <comment/>
+  </data>
+  <data name="tcom_flag_disable" xml:space="preserve">
+    <value>Disable</value>
+    <comment/>
+  </data>
+  <data name="menu_sign" xml:space="preserve">
+    <value>Sign</value>
+    <comment/>
+  </data>
+  <data name="menu_sign_folder" xml:space="preserve">
+    <value>Folder</value>
+    <comment/>
+  </data>
 </root>

@@ -59,7 +59,7 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
@@ -314,7 +314,7 @@
     <comment/>
   </data>
   <data name="icon_delete_error" xml:space="preserve">
-    <value>Das Icon wird von {0} ParameterTypes verwendet.\r\nTrotzdem löschen?</value>
+    <value>Das Icon wird von dem ParameterType {0} verwendet.\r\nTrotzdem löschen?</value>
     <comment>Count of Items</comment>
   </data>
   <data name="icon_delete_error_title" xml:space="preserve">
@@ -391,18 +391,6 @@
   </data>
   <data name="checkv_fin" xml:space="preserve">
     <value>Überprüfung abgeschlossen</value>
-    <comment/>
-  </data>
-  <data name="main_newets_title" xml:space="preserve">
-    <value>ETS Version</value>
-    <comment/>
-  </data>
-  <data name="main_newets_found" xml:space="preserve">
-    <value>Eine neue ETS Version wurde gefunden. Um sie zu verwenden, starten Sie die Anwendung einmalig als Administrator.</value>
-    <comment/>
-  </data>
-  <data name="main_newets_added" xml:space="preserve">
-    <value>Neue ETS Version wurde erfolgreich hinzugefügt.</value>
     <comment/>
   </data>
   <data name="main_def_cat" xml:space="preserve">
@@ -750,7 +738,7 @@
     <comment>Name</comment>
   </data>
   <data name="check_ver_mod_combase" xml:space="preserve">
-    <value>Modul {0}: ComObjectBaseNumber Argument ist nicht vom Type Numeric</value>
+    <value>Modul {0}: ComObjectBaseNumer Argument ist nicht vom Typ Numerisch</value>
     <comment>Name</comment>
   </data>
   <data name="check_ver_dyn_items" xml:space="preserve">
@@ -1027,6 +1015,42 @@
   </data>
   <data name="update_error" xml:space="preserve">
     <value>Es konnte nicht nach einer neuen Version suchen werden</value>
+    <comment/>
+  </data>
+  <data name="check_open_noprefix" xml:space="preserve">
+    <value>OpenKnxModul {0}: Prefix wurde nicht gesetzt</value>
+    <comment/>
+  </data>
+  <data name="check_mod_noprefix" xml:space="preserve">
+    <value>Modul {0}: Prefix ist nicht gesetzt</value>
+    <comment/>
+  </data>
+  <data name="check_ver_com_flagComm" xml:space="preserve">
+    <value>{0} {1} ({2}): Flag Kommunikation wurde nicht gesetzt</value>
+    <comment/>
+  </data>
+  <data name="check_ver_com_flagOnInit" xml:space="preserve">
+    <value>{0} {1} ({2}): Flag LesenBeiInit wurde nicht gesetzt</value>
+    <comment/>
+  </data>
+  <data name="check_ver_com_flagRead" xml:space="preserve">
+    <value>{0} {1} ({2}): Flag Lesen wurde nicht gesetzt</value>
+    <comment/>
+  </data>
+  <data name="check_ver_com_flagTrans" xml:space="preserve">
+    <value>{0} {1} ({2}): Flag Übermitteln wurde nicht gesetzt</value>
+    <comment/>
+  </data>
+  <data name="check_ver_com_flagUpdate" xml:space="preserve">
+    <value>{0} {1} ({2}): Flag Aktualisieren wurde nicht gesetzt</value>
+    <comment/>
+  </data>
+  <data name="check_ver_com_flagWrite" xml:space="preserve">
+    <value>{0} {1} ({2}): Flag Schreiben wurde nicht gesetzt</value>
+    <comment/>
+  </data>
+  <data name="check_ver_union_size" xml:space="preserve">
+    <value>Union {0}: Parameter {1} ({2}) ist zu groß</value>
     <comment/>
   </data>
 </root>

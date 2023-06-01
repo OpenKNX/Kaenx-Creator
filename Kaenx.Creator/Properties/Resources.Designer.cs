@@ -2570,5 +2570,17 @@ namespace Kaenx.Creator.Properties {
                 return ResourceManager.GetString("tcom_flag_disable", resourceCulture);
             }
         }
+        
+        public static string menu_sign {
+            get {
+                return ResourceManager.GetString("menu_sign", resourceCulture);
+            }
+        }
+        
+        public static string menu_sign_folder {
+            get {
+                return ResourceManager.GetString("menu_sign_folder", resourceCulture);
+            }
+        }
     }
 }

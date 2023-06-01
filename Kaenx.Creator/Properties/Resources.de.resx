@@ -59,7 +59,7 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
@@ -1359,6 +1359,58 @@
   </data>
   <data name="mem_ast" xml:space="preserve">
     <value>Hier wird die Assoziationstabelle gespeichert.</value>
+    <comment/>
+  </data>
+  <data name="tmod_prefix" xml:space="preserve">
+    <value>Prefix</value>
+    <comment/>
+  </data>
+  <data name="topen_url" xml:space="preserve">
+    <value>URL</value>
+    <comment/>
+  </data>
+  <data name="topen_branch" xml:space="preserve">
+    <value>Branch (Commit)</value>
+    <comment/>
+  </data>
+  <data name="topen_commit" xml:space="preserve">
+    <value>Commit</value>
+    <comment/>
+  </data>
+  <data name="topen_numchannels" xml:space="preserve">
+    <value>%N% ersetzungen</value>
+    <comment/>
+  </data>
+  <data name="topen_update" xml:space="preserve">
+    <value>Update</value>
+    <comment/>
+  </data>
+  <data name="topen_haspart" xml:space="preserve">
+    <value>Enthält Parts</value>
+    <comment/>
+  </data>
+  <data name="topen_hasshare" xml:space="preserve">
+    <value>Enthält Share</value>
+    <comment/>
+  </data>
+  <data name="topen_hastempl" xml:space="preserve">
+    <value>Enthält Template</value>
+    <comment/>
+  </data>
+  <data name="tcom_flag_enable" xml:space="preserve">
+    <value>Aktiviert</value>
+    <comment/>
+  </data>
+  <data name="tcom_flag_disable" xml:space="preserve">
+    <value>Deaktiviert</value>
+    <comment/>
+  </data>
+  <data name="menu_sign" xml:space="preserve">
+    <value>Signieren</value>
+    <comment/>
+  </data>
+  <data name="menu_sign_folder" xml:space="preserve">
+    <value>Ordner</value>
     <comment/>
   </data>
 </root>
