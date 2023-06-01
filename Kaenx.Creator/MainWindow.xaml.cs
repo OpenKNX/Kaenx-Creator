@@ -1052,11 +1052,29 @@ namespace Kaenx.Creator
                 {
                     string x = dirPath.Substring(sourcePath.Length+1);
                     if(!x.StartsWith("M-")) continue;
+                    if(x.Split('\\').Length > 2)
+                    {
+                        x = x.Substring(x.IndexOf('\\')+1);
+                        if(!x.StartsWith("Baggages"))
+                            continue;
+                    }
                     Directory.CreateDirectory(dirPath.Replace(sourcePath, targetPath));
                 }
-                    
+                
                 foreach(string filePath in Directory.GetFiles(sourcePath, "*", SearchOption.AllDirectories))
                 {
+                    string path = Path.GetDirectoryName(filePath);
+                    if(!Directory.Exists(path.Replace(sourcePath, targetPath))) continue;
+                    string relativePath = path.Replace(sourcePath, "");
+                    if(relativePath == "") continue;
+                    relativePath = relativePath.Substring(7);
+
+                    if(!relativePath.StartsWith("\\Baggages"))
+                    {
+                        if(!filePath.EndsWith(".xml")
+                            && !filePath.EndsWith(".mtxml"))
+                            continue;
+                    }
                     if(filePath.EndsWith(".xsd") || filePath.EndsWith(".mtproj") || filePath.Contains("knx_master")) continue;
                     File.Copy(filePath, filePath.Replace(sourcePath, targetPath).Replace(".mtxml", ".xml"));
                 }
