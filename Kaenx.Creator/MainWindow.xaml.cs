@@ -1065,6 +1065,8 @@ namespace Kaenx.Creator
                 ExportHelper helper = new ExportHelper(General, GetAssemblyPath(ns), Path.Combine(sourcePath, "sign.knxprod"));
                 helper.SetNamespace(ns);
                 helper.SignOutput(targetPath);
+                
+                System.Windows.MessageBox.Show(Properties.Messages.main_export_success, Properties.Messages.main_export_title);
             }
         }
 
