@@ -387,7 +387,8 @@ namespace Kaenx.Creator.Classes
                 }
                 headers.AppendLine($"#define MAIN_ApplicationVersion 0x{ver.Number:X2}");
                 headers.AppendLine($"#define MAIN_OrderNumber \"{hardware.First(h => h.Apps.Contains(app)).Devices.First().OrderNumber}\" //may not work with multiple devices on same hardware or app on different hardware");
-                headers.AppendLine($"#define MAIN_ParameterSize {ver.Memories[0].Size}");
+                if(ver.Memories.Count > 0)
+                    headers.AppendLine($"#define MAIN_ParameterSize {ver.Memories[0].Size}");
                 headers.AppendLine($"#define MAIN_MaxKoNumber {ver.HighestComNumber}");
                 headers.AppendLine();
                 headers.AppendLine();
@@ -398,22 +399,28 @@ namespace Kaenx.Creator.Classes
                 ExportComObjectRefs(ver, xunderapp);
 
                 #region "Tables / LoadProcedure"
-                temp = new XElement(Get("AddressTable"));
-                if(app.Mask.Memory == MemoryTypes.Absolute)
+                if(ver.AddressMemoryObject != null)
                 {
-                    temp.SetAttributeValue("CodeSegment", $"{appVersion}_AS-{ver.AddressMemoryObject.Address:X4}");
-                    temp.SetAttributeValue("Offset", ver.AddressTableOffset);
+                    temp = new XElement(Get("AddressTable"));
+                    if(app.Mask.Memory == MemoryTypes.Absolute)
+                    {
+                        temp.SetAttributeValue("CodeSegment", $"{appVersion}_AS-{ver.AddressMemoryObject.Address:X4}");
+                        temp.SetAttributeValue("Offset", ver.AddressTableOffset);
+                    }
+                    temp.SetAttributeValue("MaxEntries", ver.AddressTableMaxCount);
+                    xunderapp.Add(temp);
                 }
-                temp.SetAttributeValue("MaxEntries", ver.AddressTableMaxCount);
-                xunderapp.Add(temp);
-                temp = new XElement(Get("AssociationTable"));
-                if(app.Mask.Memory == MemoryTypes.Absolute)
+                if(ver.AssociationMemoryObject != null)
                 {
-                    temp.SetAttributeValue("CodeSegment", $"{appVersion}_AS-{ver.AssociationMemoryObject.Address:X4}");
-                    temp.SetAttributeValue("Offset", ver.AssociationTableOffset);
+                    temp = new XElement(Get("AssociationTable"));
+                    if(app.Mask.Memory == MemoryTypes.Absolute)
+                    {
+                        temp.SetAttributeValue("CodeSegment", $"{appVersion}_AS-{ver.AssociationMemoryObject.Address:X4}");
+                        temp.SetAttributeValue("Offset", ver.AssociationTableOffset);
+                    }
+                    temp.SetAttributeValue("MaxEntries", ver.AssociationTableMaxCount);
+                    xunderapp.Add(temp);
                 }
-                temp.SetAttributeValue("MaxEntries", ver.AssociationTableMaxCount);
-                xunderapp.Add(temp);
 
                 if (app.Mask.Procedure != ProcedureTypes.Default)
                 {
@@ -1671,7 +1678,7 @@ namespace Kaenx.Creator.Classes
                         Property prop = para.SaveObject as Property;
                         if(prop == null) throw new Exception("Parameter soll in Property gespeichert werden, aber der Typ von SaveObject ist kein Property: " + para.SaveObject.GetType().ToString());
                         
-                        xparamem.SetAttributeValue("ObjectIndex", prop.ObjectIndex);
+                        xparamem.SetAttributeValue("ObjectType", prop.ObjectType);
                         xparamem.SetAttributeValue("PropertyId", prop.PropertyId);
                         xparamem.SetAttributeValue("Offset", prop.Offset);
                         xparamem.SetAttributeValue("BitOffset", prop.OffsetBit);

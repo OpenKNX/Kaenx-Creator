@@ -818,7 +818,7 @@
     <comment>Name; UId</comment>
   </data>
   <data name="check_ver_para_save_objectindex" xml:space="preserve">
-    <value>Parameter {0} ({1}): La valeur ObjectIndex n'est pas fixée</value>
+    <value>Parameter {0} ({1}): La valeur ObjectType n'est pas fixée</value>
     <comment>Name; UId</comment>
   </data>
   <data name="check_ver_para_save_propertyid" xml:space="preserve">

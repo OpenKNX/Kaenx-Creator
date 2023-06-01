@@ -505,7 +505,7 @@ namespace Kaenx.Creator.Classes {
 
                         case SavePaths.Property:
                         {
-                            if((para.SaveObject as Property).ObjectIndex == -1) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_para_save_objectindex, para.Name, para.UId), State = PublishState.Fail, Item = para, Module = mod });
+                            if((para.SaveObject as Property).ObjectType == -1) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_para_save_objectindex, para.Name, para.UId), State = PublishState.Fail, Item = para, Module = mod });
                             if((para.SaveObject as Property).PropertyId == -1) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_para_save_propertyid, para.Name, para.UId), State = PublishState.Fail, Item = para, Module = mod });
                             break;
                         }

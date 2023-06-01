@@ -202,7 +202,7 @@
 
                     <StackPanel Visibility="{Binding SavePath, Converter={StaticResource EnumToVis}, ConverterParameter=Property}">
                         <HeaderedContentControl Header="{x:Static p:Resources.prop_objectindex}">
-                            <ComboBox x:Name="ObjectTypeList" ItemsSource="{Binding ObjectTypes, ElementName=ViewControl}" SelectedValuePath="Number" SelectedValue="{Binding SaveObject.ObjectIndex}">
+                            <ComboBox x:Name="ObjectTypeList" ItemsSource="{Binding ObjectTypes, ElementName=ViewControl}" SelectedValuePath="Number" SelectedValue="{Binding SaveObject.ObjectType}">
                                 <ComboBox.ItemContainerStyle>
                                     <Style TargetType="{x:Type ComboBoxItem}">
                                         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>

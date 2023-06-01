@@ -13,7 +13,7 @@ namespace Kaenx.Creator.Models
 {
     public class Property : IParameterSavePath, INotifyPropertyChanged
     {
-        public int ObjectIndex { get; set; } = 0;
+        public int ObjectType { get; set; } = 0;
         public int PropertyId { get; set; } = 1;
         public int Offset { get; set; }
         public int OffsetBit { get; set; }
