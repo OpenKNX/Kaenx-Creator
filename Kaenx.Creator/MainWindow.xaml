@@ -230,6 +230,9 @@
                 <MenuItem Header="{x:Static p:Resources.menu_impo_xml}" Click="ClickImport" Tag="xml" />
                 <MenuItem Header="{x:Static p:Resources.menu_impo_kaenx}" IsEnabled="False" Tag="ae-prod" />
             </MenuItem>
+            <MenuItem x:Name="MenuSign" Header="{x:Static p:Resources.menu_sign}">
+                <MenuItem Header="{x:Static p:Resources.menu_sign_folder}" Click="ClickSignFolder" Tag="knxprod" />
+            </MenuItem>
             <MenuItem x:Name="MenuLang" Header="{x:Static p:Resources.menu_lang}">
                 <MenuItem Header="Please restart Application after changing language" IsEnabled="False" />
                 <Separator />

@@ -393,18 +393,6 @@
     <value>Finished check</value>
     <comment/>
   </data>
-  <data name="main_newets_title" xml:space="preserve">
-    <value>ETS Version</value>
-    <comment/>
-  </data>
-  <data name="main_newets_found" xml:space="preserve">
-    <value>A new ETS version was found. To use it run this application as admin once.</value>
-    <comment/>
-  </data>
-  <data name="main_newets_added" xml:space="preserve">
-    <value>New ETS version was added successfully.</value>
-    <comment/>
-  </data>
   <data name="main_def_cat" xml:space="preserve">
     <value>Main Category (will not be exported)</value>
     <comment/>

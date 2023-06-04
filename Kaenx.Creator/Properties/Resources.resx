@@ -1405,4 +1405,12 @@
     <value>Disable</value>
     <comment/>
   </data>
+  <data name="menu_sign" xml:space="preserve">
+    <value>Sign</value>
+    <comment/>
+  </data>
+  <data name="menu_sign_folder" xml:space="preserve">
+    <value>Folder</value>
+    <comment/>
+  </data>
 </root>
