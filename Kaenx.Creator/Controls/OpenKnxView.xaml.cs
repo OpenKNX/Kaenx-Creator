@@ -166,7 +166,7 @@ namespace Kaenx.Creator.Controls
                     CopyFile(xele, xele2);
                 }
             
-                await DoImport(mod, "Share", xele, helper);
+                DoImport(mod, "Share", xele, helper);
                 //Import ParameterTypes, Parameter, ParameterRefs, Coms, ComRefs, Dynamic
             }
 
@@ -182,7 +182,7 @@ namespace Kaenx.Creator.Controls
                 helper.SetNamespace(xele.Name.NamespaceName);
                 ChangeFile(xele, mod);
 
-                await DoImport(mod, "Templ", xele, helper);
+                DoImport(mod, "Templ", xele, helper);
                 //helper.ImportParameter(xele.Descendants(XName.Get("Parameters", xele.Name.NamespaceName)).ElementAt(0), xmod);
             }
 
@@ -252,7 +252,7 @@ namespace Kaenx.Creator.Controls
             }
         }
 
-        private async Task DoImport(OpenKnxModule mod, string name, XElement xele, ImportHelper helper)
+        private void DoImport(OpenKnxModule mod, string name, XElement xele, ImportHelper helper)
         {
             mod.AddState("Importing " + name);
 
