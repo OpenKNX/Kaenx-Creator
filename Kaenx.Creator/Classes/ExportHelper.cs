@@ -399,28 +399,24 @@ namespace Kaenx.Creator.Classes
                 ExportComObjectRefs(ver, xunderapp);
 
                 #region "Tables / LoadProcedure"
-                if(ver.AddressMemoryObject != null)
+                
+                temp = new XElement(Get("AddressTable"));
+                if(ver.AddressMemoryObject != null && app.Mask.Memory == MemoryTypes.Absolute)
                 {
-                    temp = new XElement(Get("AddressTable"));
-                    if(app.Mask.Memory == MemoryTypes.Absolute)
-                    {
-                        temp.SetAttributeValue("CodeSegment", $"{appVersion}_AS-{ver.AddressMemoryObject.Address:X4}");
-                        temp.SetAttributeValue("Offset", ver.AddressTableOffset);
-                    }
-                    temp.SetAttributeValue("MaxEntries", ver.AddressTableMaxCount);
-                    xunderapp.Add(temp);
+                    temp.SetAttributeValue("CodeSegment", $"{appVersion}_AS-{ver.AddressMemoryObject.Address:X4}");
+                    temp.SetAttributeValue("Offset", ver.AddressTableOffset);
                 }
-                if(ver.AssociationMemoryObject != null)
-                {
+                temp.SetAttributeValue("MaxEntries", ver.AddressTableMaxCount);
+                xunderapp.Add(temp);
+
                     temp = new XElement(Get("AssociationTable"));
-                    if(app.Mask.Memory == MemoryTypes.Absolute)
-                    {
-                        temp.SetAttributeValue("CodeSegment", $"{appVersion}_AS-{ver.AssociationMemoryObject.Address:X4}");
-                        temp.SetAttributeValue("Offset", ver.AssociationTableOffset);
-                    }
-                    temp.SetAttributeValue("MaxEntries", ver.AssociationTableMaxCount);
-                    xunderapp.Add(temp);
+                if(ver.AssociationMemoryObject != null && app.Mask.Memory == MemoryTypes.Absolute)
+                {
+                    temp.SetAttributeValue("CodeSegment", $"{appVersion}_AS-{ver.AssociationMemoryObject.Address:X4}");
+                    temp.SetAttributeValue("Offset", ver.AssociationTableOffset);
                 }
+                temp.SetAttributeValue("MaxEntries", ver.AssociationTableMaxCount);
+                xunderapp.Add(temp);
 
                 if (app.Mask.Procedure != ProcedureTypes.Default)
                 {
