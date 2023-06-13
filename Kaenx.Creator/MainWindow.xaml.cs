@@ -1316,7 +1316,7 @@ namespace Kaenx.Creator
 
             await Task.Delay(1000);
             
-            ExportHelper helper = new ExportHelper(General, hardware, devices, apps, versions, GetAssemblyPath(versions[0].Number), filePath);
+            ExportHelper helper = new ExportHelper(General, hardware, devices, apps, versions, GetAssemblyPath(versions[0].Namespace), filePath);
             switch(InPublishTarget.SelectedValue) {
                 case "ets":
                     bool success = helper.ExportEts(PublishActions);
