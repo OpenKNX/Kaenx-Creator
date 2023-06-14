@@ -98,7 +98,10 @@ namespace Kaenx.Creator
             if(Properties.Settings.Default.autoUpdate) AutoCheckUpdate();
 
             if(!string.IsNullOrEmpty(App.FilePath))
+            {
                 DoOpen(App.FilePath);
+                MenuSaveBtn.IsEnabled = true;
+            }
         }
 
         private async void AutoCheckUpdate()
