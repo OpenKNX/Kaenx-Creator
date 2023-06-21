@@ -66,7 +66,7 @@ namespace Kaenx.Creator
             object code = await monaco.ExecuteScriptAsync($"editor.getValue();");
             CodeNew = code.ToString();
             CodeNew = CodeNew.Substring(1, CodeNew.Length -2);
-            CodeNew = CodeNew.Replace("\\\"", "\"").Replace("\\'", "'").Replace("\\r\\n", "\r\n").Replace("\\n", "\r\n");
+            CodeNew = CodeNew.Replace("\\\"", "\"").Replace("\\'", "'").Replace("\\r\\n", "\r\n").Replace("\\n", "\n");
             CodeNew = System.Text.RegularExpressions.Regex.Unescape(CodeNew);
             this.Close();
         }
@@ -87,7 +87,7 @@ namespace Kaenx.Creator
                 code = await monaco.ExecuteScriptAsync($"editor.getValue();");
                 await Task.Delay(20);
             }
-            string xml = CodeOld.Replace("'", "\\'").Replace("\n", "\\n").Replace("\r", "\\r");
+            string xml = CodeOld.Replace("\\", @"\\\").Replace("'", "\\'").Replace("\n", "\\n").Replace("\r", "\\r");
             await monaco.ExecuteScriptAsync($"editor.setValue('{xml}');");
             CanSave = true;
         }
