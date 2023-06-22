@@ -1696,10 +1696,26 @@ namespace Kaenx.Creator.Classes
             
             if(para.ParameterTypeObject.Type == ParameterTypes.Picture)
                 xpara.SetAttributeValue("Value", "");
-            else
+            else if(para.ParameterTypeObject.Type == ParameterTypes.RawData)
+            {
+                xpara.SetAttributeValue("Value", ConvertHexStringToBas64(para.Value));
+            } else {
                 xpara.SetAttributeValue("Value", para.Value);
+            }
 
             parent.Add(xpara);
+        }
+
+        private string ConvertHexStringToBas64(string hexString)
+        {
+            byte[] data = new byte[hexString.Length / 2];
+            for (int index = 0; index < data.Length; index++)
+            {
+                string byteValue = hexString.Substring(index * 2, 2);
+                data[index] = byte.Parse(byteValue, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture);
+            }
+
+            return Convert.ToBase64String(data); 
         }
 
 
