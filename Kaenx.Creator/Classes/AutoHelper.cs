@@ -102,7 +102,14 @@ namespace Kaenx.Creator.Classes
             foreach(Models.ParameterRef pref in mod.ParameterRefs)
             {
                 if (pref._parameter != -1)
-                    pref.ParameterObject = Paras[pref._parameter];
+                {
+                    try{
+                        pref.ParameterObject = Paras[pref._parameter];
+                    } catch {
+                        //TODO Translate
+                        MessageBox.Show($"Für ParameterRef {pref.Name} konnte der Parameter nicht zugeordnet werden.");
+                    }
+                }
             }
 
             foreach(Models.ComObject com in mod.ComObjects)

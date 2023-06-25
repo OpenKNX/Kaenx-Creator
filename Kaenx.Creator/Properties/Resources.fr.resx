@@ -746,7 +746,7 @@
     <comment/>
   </data>
   <data name="prop_objectindex" xml:space="preserve">
-    <value>ObjectType</value>
+    <value>ObjectIndex</value>
     <comment/>
   </data>
   <data name="gen_onlydeflang" xml:space="preserve">
@@ -1362,7 +1362,7 @@
     <comment/>
   </data>
   <data name="tmod_prefix" xml:space="preserve">
-    <value>Prefix</value>
+    <value>Préfixe</value>
     <comment/>
   </data>
   <data name="topen_url" xml:space="preserve">
@@ -1370,7 +1370,7 @@
     <comment/>
   </data>
   <data name="topen_branch" xml:space="preserve">
-    <value>Branch (Commit)</value>
+    <value>Branche (Commit)</value>
     <comment/>
   </data>
   <data name="topen_commit" xml:space="preserve">
@@ -1378,39 +1378,39 @@
     <comment/>
   </data>
   <data name="topen_numchannels" xml:space="preserve">
-    <value>%N% replacements</value>
+    <value>%N% remplacements</value>
     <comment/>
   </data>
   <data name="topen_update" xml:space="preserve">
-    <value>Update</value>
+    <value>Mettre à jour</value>
     <comment/>
   </data>
   <data name="topen_haspart" xml:space="preserve">
-    <value>Has Parts</value>
+    <value>Possède des éléments</value>
     <comment/>
   </data>
   <data name="topen_hasshare" xml:space="preserve">
-    <value>Has Share</value>
+    <value>Possède un Share</value>
     <comment/>
   </data>
   <data name="topen_hastempl" xml:space="preserve">
-    <value>Has Template</value>
+    <value>Possède un Modèle</value>
     <comment/>
   </data>
   <data name="tcom_flag_enable" xml:space="preserve">
-    <value>Enable</value>
+    <value>Activer</value>
     <comment/>
   </data>
   <data name="tcom_flag_disable" xml:space="preserve">
-    <value>Disable</value>
+    <value>Désactiver</value>
     <comment/>
   </data>
   <data name="menu_sign" xml:space="preserve">
-    <value>Sign</value>
+    <value>Signer</value>
     <comment/>
   </data>
   <data name="menu_sign_folder" xml:space="preserve">
-    <value>Folder</value>
+    <value>Répertoire</value>
     <comment/>
   </data>
 </root>
