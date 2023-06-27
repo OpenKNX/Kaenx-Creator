@@ -1166,7 +1166,7 @@ namespace Kaenx.Creator
             } else if(Directory.Exists(@"C:\Program Files (x86)\ETS5")) { 
                 convPath = @"C:\Program Files (x86)\ETS5"; 
             } else {
-                MessageBox.Show("No ETS Path found");
+                MessageBox.Show("No ETS Path found for NS " + ns);
                 return "";
             }
 
@@ -1182,7 +1182,7 @@ namespace Kaenx.Creator
                     return convPath;
                 if(versionInfo.FileVersion.StartsWith("6.0") && ns < 22)
                     return convPath;
-                MessageBox.Show("Unsupported ETS6 version");
+                MessageBox.Show("Unsupported ETS6 version for NS " + ns);
                 //check if ets 6.0 or 6.1
                 return "";
             } else if(convPath.Contains("ETS5") && ns < 21)
@@ -1201,7 +1201,7 @@ namespace Kaenx.Creator
                     return convPath;
             }
 
-            MessageBox.Show("No ETS version found");
+            MessageBox.Show("No ETS version found for NS " + ns);
             return "";
         }
 
