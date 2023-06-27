@@ -156,7 +156,7 @@
                     </HeaderedContentControl>
 
                     <HeaderedContentControl Header="{x:Static p:Resources.prop_number}">
-                        <TextBox Text="{Binding Number}" />
+                        <TextBox Text="{Binding Number, UpdateSourceTrigger=PropertyChanged}" />
                     </HeaderedContentControl>
 
                     <HeaderedContentControl Header="{x:Static p:Resources.tcom_dpt}">
