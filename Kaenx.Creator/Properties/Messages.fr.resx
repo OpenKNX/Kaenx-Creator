@@ -314,7 +314,7 @@
     <comment/>
   </data>
   <data name="icon_delete_error" xml:space="preserve">
-    <value>The icon is being referenced by {0} ParameterType(s).\r\nDelete it anyway?</value>
+    <value>Cette icône est référencée par {0} ParameterType(s).\r\nSupprimer?</value>
     <comment>Count of Items</comment>
   </data>
   <data name="icon_delete_error_title" xml:space="preserve">
@@ -738,7 +738,7 @@
     <comment>Name</comment>
   </data>
   <data name="check_ver_mod_combase" xml:space="preserve">
-    <value>Module {0}: ComObjectBaseNumber Argument is not of type numeric</value>
+    <value>Module {0}: l'argument de ComObjectBaseNumber n'est de type numérique</value>
     <comment>Name</comment>
   </data>
   <data name="check_ver_dyn_items" xml:space="preserve">
@@ -818,7 +818,7 @@
     <comment>Name; UId</comment>
   </data>
   <data name="check_ver_para_save_objectindex" xml:space="preserve">
-    <value>Parameter {0} ({1}): La valeur ObjectType n'est pas fixée</value>
+    <value>Parameter {0} ({1}): La valeur ObjectIndex n'est pas fixée</value>
     <comment>Name; UId</comment>
   </data>
   <data name="check_ver_para_save_propertyid" xml:space="preserve">
@@ -1018,39 +1018,39 @@
     <comment/>
   </data>
   <data name="check_open_noprefix" xml:space="preserve">
-    <value>OpenKnxModule {0}: Prefix is not set</value>
+    <value>Le préfix OpenKnxModule {0}: n'est pas défini</value>
     <comment/>
   </data>
   <data name="check_mod_noprefix" xml:space="preserve">
-    <value>Module {0}: Prefix is not set</value>
+    <value>Module {0}: Préfix non défini</value>
     <comment/>
   </data>
   <data name="check_ver_com_flagComm" xml:space="preserve">
-    <value>{0} {1} ({2}): Flag Communication was not set</value>
+    <value>{0} {1} ({2}): Drapeau Communication non défini</value>
     <comment/>
   </data>
   <data name="check_ver_com_flagOnInit" xml:space="preserve">
-    <value>{0} {1} ({2}): Flag ReadOnInit was not set</value>
+    <value>{0} {1} ({2}): Drapeau ReadOnInit non défini</value>
     <comment/>
   </data>
   <data name="check_ver_com_flagRead" xml:space="preserve">
-    <value>{0} {1} ({2}): Flag Read was not set</value>
+    <value>{0} {1} ({2}): Drapeau Read non défini</value>
     <comment/>
   </data>
   <data name="check_ver_com_flagTrans" xml:space="preserve">
-    <value>{0} {1} ({2}): Flag Transmit was not set</value>
+    <value>{0} {1} ({2}): Drapeau Transmit non défini</value>
     <comment/>
   </data>
   <data name="check_ver_com_flagUpdate" xml:space="preserve">
-    <value>{0} {1} ({2}): Flag Update was not set</value>
+    <value>{0} {1} ({2}): Drapeau Update non défini</value>
     <comment/>
   </data>
   <data name="check_ver_com_flagWrite" xml:space="preserve">
-    <value>{0} {1} ({2}): Flag Write was not set</value>
+    <value>{0} {1} ({2}): Drapeau Write non défini</value>
     <comment/>
   </data>
   <data name="check_ver_union_size" xml:space="preserve">
-    <value>Union {0}: Parameter {1} ({2}) does not fit in</value>
+    <value>Union {0}: Le Parameter {1} ({2}) ne convient pas</value>
     <comment/>
   </data>
 </root>
