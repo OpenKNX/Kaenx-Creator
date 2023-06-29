@@ -21,13 +21,15 @@ namespace Kaenx.Creator.Signing
             Type RegistrationKeyEnum = objm.GetType("Knx.Ets.Xml.ObjectModel.RegistrationKey");
             object registrationKey = Enum.Parse(RegistrationKeyEnum, "knxconv");
 
-            if(asm.GetName().Version.ToString().StartsWith("6.0")) {
+            if(asm.GetName().Version.ToString().StartsWith("6.")) {
                 object knxSchemaVersion = Enum.ToObject(objm.GetType("Knx.Ets.Xml.ObjectModel.KnxXmlSchemaVersion"), nsVersion);
-                _instance = Activator.CreateInstance(asm.GetType("Knx.Ets.XmlSigning.HardwareSigner"), hardwareFile, applProgIdMappings, applProgHashes, patchIds, registrationKey, knxSchemaVersion);
-                _type = asm.GetType("Knx.Ets.XmlSigning.HardwareSigner");
+                _type = asm.GetType("Knx.Ets.XmlSigning.Signer.HardwareSigner");
+                if (asm.GetName().Version.ToString().StartsWith("6.0"))
+                    _type = asm.GetType("Knx.Ets.XmlSigning.HardwareSigner");
+                _instance = Activator.CreateInstance(_type, hardwareFile, applProgIdMappings, applProgHashes, patchIds, registrationKey, knxSchemaVersion);
             } else {
-                _instance = Activator.CreateInstance(asm.GetType("Knx.Ets.XmlSigning.HardwareSigner"), hardwareFile, applProgIdMappings, applProgHashes, patchIds, registrationKey);
                 _type = asm.GetType("Knx.Ets.XmlSigning.HardwareSigner");
+                _instance = Activator.CreateInstance(_type, hardwareFile, applProgIdMappings, applProgHashes, patchIds, registrationKey);
             }
         }
 

@@ -15,14 +15,16 @@ namespace Kaenx.Creator.Signing
         {
             Assembly asm = Assembly.LoadFrom(Path.Combine(basePath, "Knx.Ets.XmlSigning.dll"));
             
-            if(asm.GetName().Version.ToString().StartsWith("6.0")) {
+            if(asm.GetName().Version.ToString().StartsWith("6.")) {
                 Assembly objm = Assembly.LoadFrom(Path.Combine(basePath, "Knx.Ets.Xml.ObjectModel.dll"));
                 object knxSchemaVersion = Enum.ToObject(objm.GetType("Knx.Ets.Xml.ObjectModel.KnxXmlSchemaVersion"), nsVersion);
-                _instance = Activator.CreateInstance(asm.GetType("Knx.Ets.XmlSigning.CatalogIdPatcher"), catalogFile, hardware2ProgramIdMapping, knxSchemaVersion);
-                _type = asm.GetType("Knx.Ets.XmlSigning.CatalogIdPatcher");
+                _type = asm.GetType("Knx.Ets.XmlSigning.Signer.CatalogIdPatcher");
+                if (asm.GetName().Version.ToString().StartsWith("6.0"))
+                    _type = asm.GetType("Knx.Ets.XmlSigning.CatalogIdPatcher");
+                _instance = Activator.CreateInstance(_type, catalogFile, hardware2ProgramIdMapping, knxSchemaVersion);
             } else {
-                _instance = Activator.CreateInstance(asm.GetType("Knx.Ets.XmlSigning.CatalogIdPatcher"), catalogFile, hardware2ProgramIdMapping);
                 _type = asm.GetType("Knx.Ets.XmlSigning.CatalogIdPatcher");
+                _instance = Activator.CreateInstance(_type, catalogFile, hardware2ProgramIdMapping);
             }
         }
 
