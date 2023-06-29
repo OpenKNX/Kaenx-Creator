@@ -1171,13 +1171,14 @@ namespace Kaenx.Creator
 
         private string GetAssemblyPath(int ns)
         {
-            string convPath = "";
-
             List<string> dirs = new List<string>()
             {
                 @"C:\Program Files (x86)\ETS6",
                 @"C:\Program Files (x86)\ETS5",
-                @"C:\Program Files (x86)\ETS4"
+                @"C:\Program Files (x86)\ETS4",
+                @"C:\Program Files\ETS6",
+                @"C:\Program Files\ETS5",
+                @"C:\Program Files\ETS4"
             };
 
             
