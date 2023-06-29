@@ -1064,6 +1064,8 @@ namespace Kaenx.Creator
                     Directory.CreateDirectory(dirPath.Replace(sourcePath, targetPath));
                 }
                 
+                
+                int ns = 0;
                 foreach(string filePath in Directory.GetFiles(sourcePath, "*", SearchOption.AllDirectories))
                 {
                     string path = Path.GetDirectoryName(filePath);
@@ -1079,11 +1081,23 @@ namespace Kaenx.Creator
                             continue;
                     }
                     if(filePath.EndsWith(".xsd") || filePath.EndsWith(".mtproj") || filePath.Contains("knx_master")) continue;
+                    if(ns == 0 && filePath.Contains("_A-"))
+                    {
+                        string content = File.ReadAllText(filePath);
+                        System.Text.RegularExpressions.Regex reg = new System.Text.RegularExpressions.Regex("xmlns=\"http://knx\\.org/xml/project/([0-9]{2})");
+                        System.Text.RegularExpressions.Match m = reg.Match(content);
+                        if(!m.Success)
+                        {
+                            MessageBox.Show("NamespaceVersion konnte nicht ermittelt werden");
+                            return;
+                        }
+                        ns = int.Parse(m.Groups[1].Value);
+                    }
                     File.Copy(filePath, filePath.Replace(sourcePath, targetPath).Replace(".mtxml", ".xml"));
                 }
 
-                int ns = 20;
-                ExportHelper helper = new ExportHelper(General, GetAssemblyPath(ns), Path.Combine(sourcePath, "sign.knxprod"));
+                string assPath = GetAssemblyPath(ns);
+                ExportHelper helper = new ExportHelper(General, assPath, Path.Combine(sourcePath, "sign.knxprod"));
                 helper.SetNamespace(ns);
                 helper.SignOutput(targetPath);
                 
@@ -1159,49 +1173,43 @@ namespace Kaenx.Creator
         {
             string convPath = "";
 
+            List<string> dirs = new List<string>()
+            {
+                @"C:\Program Files (x86)\ETS6",
+                @"C:\Program Files (x86)\ETS5",
+                @"C:\Program Files (x86)\ETS4"
+            };
+
+            
             if(Directory.Exists(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CV"))) {
-                convPath = AppDomain.CurrentDomain.BaseDirectory;
-            } else if(Directory.Exists(@"C:\Program Files (x86)\ETS6")) { 
-                convPath = @"C:\Program Files (x86)\ETS6"; 
-            } else if(Directory.Exists(@"C:\Program Files (x86)\ETS5")) { 
-                convPath = @"C:\Program Files (x86)\ETS5"; 
-            } else {
-                MessageBox.Show("No ETS Path found for NS " + ns);
-                return "";
+                foreach(string path in Directory.GetDirectories(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CV")))
+                    dirs.Insert(0, path);
             }
 
-            if(System.IO.Directory.Exists(System.IO.Path.Combine(convPath, "CV", "6.1")))
-                return System.IO.Path.Combine(convPath, "CV", "6.1");
-            else if(System.IO.Directory.Exists(System.IO.Path.Combine(convPath, "CV", "6.0")) && ns < 22)
-                return System.IO.Path.Combine(convPath, "CV", "6.0");
-            else if(convPath.Contains("ETS6"))
+            foreach(string path in dirs)
             {
-                if(!File.Exists(System.IO.Path.Combine(convPath, "Knx.Ets.XmlSigning.dll"))) return "";
-                FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(System.IO.Path.Combine(convPath, "Knx.Ets.XmlSigning.dll"));
-                if(versionInfo.FileVersion.StartsWith("6.1"))
-                    return convPath;
-                if(versionInfo.FileVersion.StartsWith("6.0") && ns < 22)
-                    return convPath;
-                MessageBox.Show("Unsupported ETS6 version for NS " + ns);
-                //check if ets 6.0 or 6.1
-                return "";
-            } else if(convPath.Contains("ETS5") && ns < 21)
-            {
-                Models.EtsVersion version = EtsVersions.Single(v => v.Number == ns);
-                foreach(string dir in Directory.GetFiles(Path.Combine(convPath, "CV")))
-                {
-                    if(Path.GetDirectoryName(dir).StartsWith(version.Number.ToString()))
-                        return dir;
-                }
-
+                if(!File.Exists(System.IO.Path.Combine(path, "Knx.Ets.XmlSigning.dll"))) continue;
+                string versionInfo = FileVersionInfo.GetVersionInfo(System.IO.Path.Combine(path, "Knx.Ets.XmlSigning.dll")).FileVersion.Substring(0,3);
                 
-                if(!File.Exists(System.IO.Path.Combine(convPath, "Knx.Ets.XmlSigning.dll"))) return "";
-                FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(System.IO.Path.Combine(convPath, "Knx.Ets.XmlSigning.dll"));
-                if(versionInfo.FileVersion.StartsWith(version.FolderPath))
-                    return convPath;
+                if(versionInfo == "6.1" && ns < 23)
+                    return path;
+
+                if(versionInfo == "6.0" && ns < 22)
+                    return path;
+
+                if(versionInfo == "5.7" && ns == 20)
+                    return path;
+
+                if(versionInfo == "5.6" && ns == 14)
+                    return path;
+
+                if(versionInfo == "5.1" && ns == 13)
+                    return path;
+
+                if(versionInfo == "4.0" && ns == 11)
+                    return path;
             }
 
-            MessageBox.Show("No ETS version found for NS " + ns);
             return "";
         }
 
@@ -1304,6 +1312,13 @@ namespace Kaenx.Creator
                 if (!apps.Contains(item.App)) apps.Add(item.App);
                 if (!versions.Contains(item.Version)) versions.Add(item.Version);
             }
+            
+            string assPath = GetAssemblyPath(versions[0].Namespace);
+            if(string.IsNullOrEmpty(assPath))
+            {
+                MessageBox.Show($"Für den Namespace {versions[0].Namespace} wurde keine passende ETS installation gefunden");
+                return;
+            }
 
             CheckHelper.CheckThis(General, hardware, devices, apps, versions, PublishActions);
 
@@ -1322,7 +1337,7 @@ namespace Kaenx.Creator
 
             await Task.Delay(1000);
             
-            ExportHelper helper = new ExportHelper(General, hardware, devices, apps, versions, GetAssemblyPath(versions[0].Namespace), filePath);
+            ExportHelper helper = new ExportHelper(General, hardware, devices, apps, versions, assPath, filePath);
             switch(InPublishTarget.SelectedValue) {
                 case "ets":
                     bool success = helper.ExportEts(PublishActions);

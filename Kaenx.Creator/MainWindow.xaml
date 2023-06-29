@@ -771,13 +771,7 @@
                                         <TextBox Text="{Binding ReplacesVersions, UpdateSourceTrigger=PropertyChanged}" />
                                     </HeaderedContentControl>
                                     <HeaderedContentControl Header="{x:Static p:Resources.prop_ns}">
-                                        <ComboBox x:Name="NamespaceSelection" DisplayMemberPath="DisplayName" SelectedValue="{Binding NamespaceVersion}" SelectedIndex="3" SelectedValuePath="Number">
-                                            <ComboBox.ItemContainerStyle>
-                                                <Style TargetType="{x:Type ComboBoxItem}">
-                                                    <Setter Property="IsEnabled" Value="{Binding IsEnabled}"/>
-                                                </Style>
-                                            </ComboBox.ItemContainerStyle>
-                                        </ComboBox>
+                                        <ComboBox x:Name="NamespaceSelection" DisplayMemberPath="DisplayName" SelectedValue="{Binding NamespaceVersion}" SelectedIndex="3" SelectedValuePath="Number" />
                                     </HeaderedContentControl>
                                     <HeaderedContentControl Header="{x:Static p:Resources.gen_langs}" VerticalAlignment="Stretch">
                                         <ListBox x:Name="SupportedLanguagesVers" ItemsSource="{Binding Languages}" DisplayMemberPath="Text" />                                    
