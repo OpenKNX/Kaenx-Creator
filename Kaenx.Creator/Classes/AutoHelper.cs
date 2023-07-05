@@ -431,6 +431,7 @@ namespace Kaenx.Creator.Classes
                     if(argParas.UseAllocator && !checkedMods.Contains(dmod.ModuleObject.Name))
                     {
                         argParas.Allocator.Start = offset;
+                        argParas.Allocator.Max = argParas.Allocator.Start + (mods.Count(m => m.ModuleUId == dmod.ModuleUId) * modSize);
                     }
 
                     offset += modSize;
@@ -448,6 +449,7 @@ namespace Kaenx.Creator.Classes
                         if(argComs.UseAllocator && !checkedMods.Contains(dmod.ModuleObject.Name))
                         {
                             argComs.Allocator.Start = (long)highestComNumber;
+                            argComs.Allocator.Max = argComs.Allocator.Start + (mods.Count(m => m.ModuleUId == dmod.ModuleUId) * argComs.Argument.Allocates) + 1;
                         }
 
                         argComs.Argument.Allocates = highestComNumber2 - lowestComNumber2 + 1;
