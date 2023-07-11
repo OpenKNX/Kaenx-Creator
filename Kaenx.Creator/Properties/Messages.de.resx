@@ -578,7 +578,7 @@
     <comment>Name;</comment>
   </data>
   <data name="check_ver" xml:space="preserve">
-    <value>ParameterType IpAddress {0} ({1}): Kein IP-Protokoll ausgewählt</value>
+    <value>Überprüfe Applikation {0} {1}</value>
     <comment/>
   </data>
   <data name="check_end" xml:space="preserve">

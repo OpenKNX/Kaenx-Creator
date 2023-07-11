@@ -578,8 +578,8 @@
     <comment>Name;</comment>
   </data>
   <data name="check_ver" xml:space="preserve">
-    <value>ParameterType IpAddress {0} ({1}): No IP Protocol selected</value>
-    <comment/>
+    <value>Checking Application {0} {1}</value>
+    <comment>AppName, AppVersion</comment>
   </data>
   <data name="check_end" xml:space="preserve">
     <value>Finished Check</value>
