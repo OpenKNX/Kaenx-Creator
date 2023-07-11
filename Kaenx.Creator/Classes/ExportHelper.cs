@@ -604,25 +604,28 @@ namespace Kaenx.Creator.Classes
                     
 
                     
-                    DynModuleArg dargc = dmod.Arguments.Single(a => a.ArgumentId == dmod.ModuleObject.ComObjectBaseNumberUId);
-                    if(dargc.UseAllocator)
+                    DynModuleArg dargc = dmod.Arguments.SingleOrDefault(a => a.ArgumentId == dmod.ModuleObject.ComObjectBaseNumberUId);
+                    if(dargc != null)
                     {
-                        if(!allocators.ContainsKey(dargc.Allocator.Name))
-                            allocators.Add(dargc.Allocator.Name, dargc.Allocator.Start);
-
-                        if(!modStartComs.ContainsKey(prefix))
-                            modStartComs.Add(prefix, (allocators[dargc.Allocator.Name], dargc.Argument.Allocates));
-
-                        allocators[dargc.Allocator.Name] += dargc.Argument.Allocates;
-                    } else if(!dmod.ModuleObject.IsOpenKnxModule && !modStartComs.ContainsKey(prefix))
-                    {
-                        long size = 0;
-                        if(dmod.ModuleObject.ComObjects.Count > 0)
+                        if(dargc.UseAllocator)
                         {
-                            ComObject com = dmod.ModuleObject.ComObjects.OrderByDescending(c => c.Number).First();
-                            size = com.Number + 1;
+                            if(!allocators.ContainsKey(dargc.Allocator.Name))
+                                allocators.Add(dargc.Allocator.Name, dargc.Allocator.Start);
+
+                            if(!modStartComs.ContainsKey(prefix))
+                                modStartComs.Add(prefix, (allocators[dargc.Allocator.Name], dargc.Argument.Allocates));
+
+                            allocators[dargc.Allocator.Name] += dargc.Argument.Allocates;
+                        } else if(!dmod.ModuleObject.IsOpenKnxModule && !modStartComs.ContainsKey(prefix))
+                        {
+                            long size = 0;
+                            if(dmod.ModuleObject.ComObjects.Count > 0)
+                            {
+                                ComObject com = dmod.ModuleObject.ComObjects.OrderByDescending(c => c.Number).First();
+                                size = com.Number + 1;
+                            }
+                            modStartComs.Add(prefix, (long.Parse(dargc.Value), size));
                         }
-                        modStartComs.Add(prefix, (long.Parse(dargc.Value), size));
                     }
                 }
 
@@ -1784,6 +1787,7 @@ namespace Kaenx.Creator.Classes
         }
 
 
+        private int channelCounter = 1;
         private XElement Handle(IDynItems ch, XElement parent)
         {
             XElement channel = new XElement(Get("ChannelIndependentBlock"));
@@ -1795,6 +1799,9 @@ namespace Kaenx.Creator.Classes
                 if (dch.UseTextParameter)
                     channel.SetAttributeValue("TextParameterRefId", appVersionMod + (dch.ParameterRefObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{dch.ParameterRefObject.ParameterObject.Id}_R-{dch.ParameterRefObject.Id}");
 
+                dch.Number = channelCounter.ToString();
+                channelCounter++;
+                
                 channel.SetAttributeValue("Text", GetDefaultLanguage(dch.Text));
                 if (!dch.TranslationText)
                     foreach (Models.Translation trans in dch.Text) AddTranslation(trans.Language.CultureCode, $"{appVersionMod}_CH-{dch.Number}", "Text", trans.Text);
@@ -1898,7 +1905,10 @@ namespace Kaenx.Creator.Classes
         {
             XElement xcho = new XElement(Get("choose"));
             parent.Add(xcho);
-            xcho.SetAttributeValue("ParamRefId", appVersionMod + (cho.ParameterRefObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{cho.ParameterRefObject.ParameterObject.Id}_R-{cho.ParameterRefObject.Id}");
+            if(cho.IsLocal)
+                xcho.SetAttributeValue("ParamRefId", appVersionMod + (cho.ParameterRefObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{cho.ParameterRefObject.ParameterObject.Id}_R-{cho.ParameterRefObject.Id}");
+            else
+                xcho.SetAttributeValue("ParamRefId", appVersion + (cho.ParameterRefObject.ParameterObject.IsInUnion ? "_UP-" : "_P-") + $"{cho.ParameterRefObject.ParameterObject.Id}_R-{cho.ParameterRefObject.Id}");
             return xcho;
         }
 

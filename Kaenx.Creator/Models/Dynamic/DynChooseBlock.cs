@@ -27,6 +27,13 @@ namespace Kaenx.Creator.Models.Dynamic
             set { _name = value; Changed("Name"); }
         }
 
+        private bool _isLocal = true;
+        public bool IsLocal
+        {
+            get { return _isLocal; }
+            set { _isLocal = value; Changed("IsLocal"); _parameterRefObject = null; }
+        }
+
         private ParameterRef _parameterRefObject;
         [JsonIgnore]
         public ParameterRef ParameterRefObject

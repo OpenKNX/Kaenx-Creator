@@ -127,7 +127,14 @@ namespace Kaenx.Creator.Classes
             foreach(Models.ComObjectRef cref in mod.ComObjectRefs)
             {
                 if(cref._comObject != -1)
+                {
+                    try{
                     cref.ComObjectObject = Coms[cref._comObject];
+                    } catch {
+                        //TODO Translate
+                        MessageBox.Show($"Für ComObjectRef {cref.Name} konnte das ComObject nicht zugeordnet werden.");
+                    }
+                }
 
                 if (!string.IsNullOrEmpty(cref._typeNumber))
                     cref.Type = MainWindow.DPTs.Single(d => d.Number == cref._typeNumber);
@@ -181,7 +188,12 @@ namespace Kaenx.Creator.Classes
 
                     case Models.Dynamic.DynChooseBlock dcb:
                         if (dcb._parameterRef != -1)
-                            dcb.ParameterRefObject = ParaRefs[dcb._parameterRef];
+                        {
+                            if(dcb.IsLocal)
+                                dcb.ParameterRefObject = ParaRefs[dcb._parameterRef];
+                            else
+                                dcb.ParameterRefObject = vbase.ParameterRefs.SingleOrDefault(p => p.UId == dcb._parameterRef);
+                        }
                         break;
 
                     case Models.Dynamic.DynChooseChannel dcc:
@@ -449,7 +461,7 @@ namespace Kaenx.Creator.Classes
                         if(argComs.UseAllocator && !checkedMods.Contains(dmod.ModuleObject.Name))
                         {
                             argComs.Allocator.Start = (long)highestComNumber;
-                            argComs.Allocator.Max = argComs.Allocator.Start + (mods.Count(m => m.ModuleUId == dmod.ModuleUId) * argComs.Argument.Allocates) + 1;
+                            argComs.Allocator.Max = argComs.Allocator.Start + (mods.Count(m => m.ModuleUId == dmod.ModuleUId) * (highestComNumber2+1)) + 1;
                         }
 
                         argComs.Argument.Allocates = highestComNumber2 - lowestComNumber2 + 1;

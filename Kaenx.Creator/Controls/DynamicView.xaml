@@ -336,7 +336,7 @@
                     <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
                 </HeaderedContentControl>
                 <HeaderedContentControl Header="{x:Static p:Resources.prop_number}">
-                    <TextBox Text="{Binding Number, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBox Text="{Binding Number, UpdateSourceTrigger=PropertyChanged}" IsEnabled="False" />
                 </HeaderedContentControl>
                 <HeaderedContentControl Header="{x:Static p:Resources.prop_icon}">
                     <Grid Height="35">
@@ -381,7 +381,14 @@
                     <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
                 </HeaderedContentControl>
                 <HeaderedContentControl Header="{x:Static p:Resources.tdyn_pararef}">
-                    <ComboBox IsEditable="true" ItemsSource="{Binding Module.ParameterRefs, ElementName=ViewControl}" SelectedItem="{Binding ParameterRefObject}" DisplayMemberPath="Name"/>
+                    <StackPanel>
+                        <ComboBox SelectedValue="{Binding IsLocal}" SelectedValuePath="Tag">
+                            <ComboBoxItem Tag="true" Content="Lokal" IsSelected="True" />
+                            <ComboBoxItem Tag="false" Content="Global" />
+                        </ComboBox>
+                        <ComboBox Visibility="{Binding IsLocal, Converter={StaticResource BoolToVis}}" IsEditable="true" ItemsSource="{Binding Module.ParameterRefs, ElementName=ViewControl}" SelectedItem="{Binding ParameterRefObject}" DisplayMemberPath="Name"/>
+                        <ComboBox Visibility="{Binding IsLocal, Converter={StaticResource BoolToVis}, ConverterParameter=true}" IsEditable="true" ItemsSource="{Binding Version.ParameterRefs, ElementName=ViewControl}" SelectedItem="{Binding ParameterRefObject}" DisplayMemberPath="Name"/>
+                    </StackPanel>
                 </HeaderedContentControl>
             </StackPanel>
         </DataTemplate>
