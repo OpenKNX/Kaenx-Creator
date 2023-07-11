@@ -219,6 +219,16 @@
                 </ComboBox>
             </HeaderedContentControl>
             
+            <HeaderedContentControl Header="{x:Static p:Resources.parat_uihint}" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Enum, FallbackValue=Collapsed}">
+                <ComboBox SelectedValue="{Binding UIHint}" SelectedValuePath="Tag" Margin="0 5">
+                    <ComboBoxItem Content="{x:Static p:Resources.parat_uihint_none}" Tag="" />
+                    <ComboBoxItem Content="{x:Static p:Resources.parat_uihint_text}" Tag="Text" />
+                    <ComboBoxItem Content="{x:Static p:Resources.parat_uihint_drop}" Tag="DropDown" />
+                    <ComboBoxItem Content="{x:Static p:Resources.parat_uihint_btn}" Tag="Buttons" />
+                    <ComboBoxItem Content="{x:Static p:Resources.parat_uihint_seg}" Tag="Segmented" />
+                </ComboBox>
+            </HeaderedContentControl>
+            
             <HeaderedContentControl Header="{x:Static p:Resources.parat_max}" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=RawData, FallbackValue=Collapsed}">
                 <TextBox Text="{Binding Max, UpdateSourceTrigger=PropertyChanged}"/>
             </HeaderedContentControl>

@@ -2582,5 +2582,29 @@ namespace Kaenx.Creator.Properties {
                 return ResourceManager.GetString("menu_sign_folder", resourceCulture);
             }
         }
+        
+        public static string parat_uihint_text {
+            get {
+                return ResourceManager.GetString("parat_uihint_text", resourceCulture);
+            }
+        }
+        
+        public static string parat_uihint_drop {
+            get {
+                return ResourceManager.GetString("parat_uihint_drop", resourceCulture);
+            }
+        }
+        
+        public static string parat_uihint_btn {
+            get {
+                return ResourceManager.GetString("parat_uihint_btn", resourceCulture);
+            }
+        }
+        
+        public static string parat_uihint_seg {
+            get {
+                return ResourceManager.GetString("parat_uihint_seg", resourceCulture);
+            }
+        }
     }
 }

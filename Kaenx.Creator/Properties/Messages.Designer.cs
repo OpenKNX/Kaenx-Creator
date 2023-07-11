@@ -1460,5 +1460,11 @@ namespace Kaenx.Creator.Properties {
             }
         }
         
+        public static string check_ver_parat_enum_uihint {
+            get {
+                return ResourceManager.GetString("check_ver_parat_enum_uihint", resourceCulture);
+            }
+        }
+        
     }
 }

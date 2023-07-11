@@ -1413,4 +1413,20 @@
     <value>Folder</value>
     <comment/>
   </data>
+  <data name="parat_uihint_text" xml:space="preserve">
+    <value>Text</value>
+    <comment/>
+  </data>
+  <data name="parat_uihint_drop" xml:space="preserve">
+    <value>DropDown</value>
+    <comment/>
+  </data>
+  <data name="parat_uihint_btn" xml:space="preserve">
+    <value>Buttons</value>
+    <comment/>
+  </data>
+  <data name="parat_uihint_seg" xml:space="preserve">
+    <value>Segmented</value>
+    <comment/>
+  </data>
 </root>

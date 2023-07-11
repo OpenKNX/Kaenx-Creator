@@ -249,6 +249,9 @@ namespace Kaenx.Creator.Classes
                         case ParameterTypes.Enum:
                             xcontent = new XElement(Get("TypeRestriction"));
                             xcontent.SetAttributeValue("Base", "Value");
+                            if(ver.NamespaceVersion >= 20 && !string.IsNullOrEmpty(type.UIHint))
+                                xcontent.SetAttributeValue("UIHint", type.UIHint);
+                                
                             foreach (ParameterTypeEnum enu in type.Enums)
                             {
                                 XElement xenu = new XElement(Get("Enumeration"));

@@ -1053,4 +1053,8 @@
     <value>Union {0}: Parameter {1} ({2}) does not fit in</value>
     <comment/>
   </data>
+  <data name="check_ver_parat_enum_uihint" xml:space="preserve">
+    <value>ParameterType Enum {0}/{1} ({2}): UIHint is only availible with NS &gt;=20</value>
+    <comment/>
+  </data>
 </root>

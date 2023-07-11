@@ -243,6 +243,10 @@ namespace Kaenx.Creator.Classes {
                                 actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_enum_icon, penum.Name, ptype.Name, ptype.UId), State = PublishState.Fail, Item = ptype });
 
                         }
+
+                        if(vers.NamespaceVersion < 20 && !string.IsNullOrEmpty(ptype.UIHint))
+                                actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_enum_uihint, ptype.Name, ptype.UId), State = PublishState.Warning, Item = ptype });
+
                         break;
 
                     case ParameterTypes.NumberUInt:
