@@ -810,6 +810,7 @@
                                     <HeaderedContentControl Header="{x:Static p:Resources.tgen_lang_def}">
                                         <ComboBox ItemsSource="{Binding Languages}" SelectedIndex="{Binding DefaultLanguageIndex}" SelectedValue="{Binding DefaultLanguage}" SelectedValuePath="CultureCode" DisplayMemberPath="Text"></ComboBox>
                                     </HeaderedContentControl>
+                                    <Button Content="Translator" Click="ClickOpenTranslator" Margin="5" />
                                 </StackPanel>
                             </Grid>
                         </StackPanel>

@@ -922,6 +922,12 @@ namespace Kaenx.Creator
             }
         }
 
+        private void ClickOpenTranslator(object sender, RoutedEventArgs e)
+        {
+            TranslatorWindow window = new TranslatorWindow(SelectedVersion.Model);
+            window.ShowDialog();
+        }
+
 
         private void DoOpen(string path)
         {

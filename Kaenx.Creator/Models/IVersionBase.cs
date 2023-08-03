@@ -17,6 +17,7 @@ namespace Kaenx.Creator.Models
         public ObservableCollection<Allocator> Allocators { get; set; }
         public List<IDynamicMain> Dynamics { get; set; }
 
+        public string Name { get; set; }
         public bool IsParameterRefAuto { get; set; }
         public bool IsComObjectRefAuto { get; set; }
         public int LastParameterId { get; set; }
