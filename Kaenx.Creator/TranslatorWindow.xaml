@@ -47,7 +47,7 @@
                                         <Expander IsExpanded="False" Background="#FF112255" BorderBrush="#FF002255" BorderThickness="1,1,1,5">
                                             <Expander.Header>
                                                 <DockPanel>
-                                                    <TextBlock Foreground="#FFEEEEEE" FontWeight="Bold" Text="{Binding Path=Name}" Margin="5,0,0,0" Width="100"/>
+                                                    <TextBlock Foreground="#FFEEEEEE" FontWeight="Bold" Text="{Binding Path=Name}" Margin="5,0,0,0" Width="200"/>
                                                     <TextBlock Foreground="#FFEEEEEE" FontWeight="Bold" Text="{Binding Path=ItemCount}"/>
                                                 </DockPanel>
                                             </Expander.Header>
@@ -65,10 +65,9 @@
                 <GroupStyle>
                     <GroupStyle.HeaderTemplate>
                         <DataTemplate>
-                            <DockPanel Background="LightBlue">
-                                <TextBlock Text="{Binding Path=Name, Converter={StaticResource completeConverter}}" Foreground="Blue" Margin="30,0,0,0" Width="100"/>
-                                <TextBlock Text="{Binding Path=ItemCount}" Foreground="Blue"/>
-                            </DockPanel>
+                            <Border Background="LightBlue">
+                                <TextBlock Text="{Binding Path=Name}" Foreground="Blue" Margin="30,0,0,0" />
+                            </Border>
                         </DataTemplate>
                     </GroupStyle.HeaderTemplate>
                 </GroupStyle>

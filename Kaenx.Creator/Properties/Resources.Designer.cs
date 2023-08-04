@@ -2582,5 +2582,11 @@ namespace Kaenx.Creator.Properties {
                 return ResourceManager.GetString("menu_sign_folder", resourceCulture);
             }
         }
+        
+        public static string gen_translate {
+            get {
+                return ResourceManager.GetString("gen_translate", resourceCulture);
+            }
+        }
     }
 }

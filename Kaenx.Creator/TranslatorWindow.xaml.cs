@@ -41,15 +41,6 @@ namespace Kaenx.Creator
 
             GetSub(vers);
 
-            int counter = 0;
-            foreach(Language lang in vers.Languages)
-            {
-                DataGridTextColumn textColumn = new DataGridTextColumn(); 
-                textColumn.Header = lang.Text; 
-                textColumn.Binding = new Binding($"Text[{counter++}].Text"); 
-                TranslationList.Columns.Add(textColumn); 
-            }
-
             this.DataContext = this;
             TabList.SelectedIndex = 0;
         }
@@ -61,6 +52,7 @@ namespace Kaenx.Creator
             {
                 cvTasks.GroupDescriptions.Clear();
                 cvTasks.GroupDescriptions.Add(new PropertyGroupDescription("Group"));
+                cvTasks.GroupDescriptions.Add(new PropertyGroupDescription("SubGroup"));
             }
         }
 
@@ -75,43 +67,77 @@ namespace Kaenx.Creator
 
         private TranslationTab ParseVersion(IVersionBase vbase)
         {
-            TranslationTab tab = new TranslationTab() { Name = vbase.Name };
+            TranslationTab tab = new() { Name = vbase.Name };
 
-            foreach(Parameter para in vbase.Parameters)
+            if(vbase is AppVersion vers)
             {
-                tab.Items.Add(new TranslationItem() { Name = para.Name + " (Text)", Group = "Parameters", Text = para.Text });
-                tab.Items.Add(new TranslationItem() { Name = para.Name + " (Suffix)", Group = "Parameters", Text = para.Suffix });
+                foreach(ParameterType parameterType in vers.ParameterTypes.OrderBy(p => p.Name))
+                {
+                    if(parameterType.Type == ParameterTypes.Enum)
+                    {
+                        AddLanguage(parameterType.Enums[0].Text);
+                        foreach(ParameterTypeEnum typeEnum in parameterType.Enums.OrderBy(p => p.Name))
+                            tab.Items.Add(new TranslationItem() { Name = $"Wert {typeEnum.Value}", Group = "ParameterType Enums", SubGroup = parameterType.Name, Text = typeEnum.Text });
+                    }
+                }
+
+                foreach(Message msg in vers.Messages.OrderBy(m => m.Name))
+                    tab.Items.Add(new TranslationItem() { Name = msg.Name, Group = "Meldungen", Text = msg.Text });
+            }
+
+            if(vbase.Parameters.Count > 0) AddLanguage(vbase.Parameters[0].Text);
+            foreach(Parameter para in vbase.Parameters.OrderBy(p => p.Name))
+            {
+                tab.Items.Add(new TranslationItem() { Name = "Text", Group = "Parameters", SubGroup = para.Name + $" ({para.UId})", Text = para.Text });
+                tab.Items.Add(new TranslationItem() { Name = "Suffix", Group = "Parameters", SubGroup = para.Name + $" ({para.UId})", Text = para.Suffix });
             }
 
             if(!vbase.IsParameterRefAuto)
             {
-                foreach(ParameterRef para in vbase.ParameterRefs)
+                foreach(ParameterRef para in vbase.ParameterRefs.OrderBy(p => p.Name))
                 {
                     if(para.OverwriteText)
-                        tab.Items.Add(new TranslationItem() { Name = para.Name + " (Text)", Group = "ParameterRefs", Text = para.Text });
+                        tab.Items.Add(new TranslationItem() { Name = "Text", Group = "ParameterRefs", SubGroup = para.Name + $" ({para.UId})", Text = para.Text });
                     if(para.OverwriteSuffix)
-                        tab.Items.Add(new TranslationItem() { Name = para.Name + " (Suffix)", Group = "ParameterRefs", Text = para.Suffix });
+                        tab.Items.Add(new TranslationItem() { Name = "Suffix", Group = "ParameterRefs", SubGroup = para.Name + $" ({para.UId})", Text = para.Suffix });
                 }
             }
 
-            foreach(ComObject com in vbase.ComObjects)
+            if(vbase.ComObjects.Count > 0) AddLanguage(vbase.ComObjects[0].Text);
+            foreach(ComObject com in vbase.ComObjects.OrderBy(c => c.Name))
             {
-                tab.Items.Add(new TranslationItem() { Name = com.Name + " (Text)", Group = "ComObjects", Text = com.Text });
-                tab.Items.Add(new TranslationItem() { Name = com.Name + " (Function)", Group = "ComObjects", Text = com.FunctionText });
+                tab.Items.Add(new TranslationItem() { Name = "Text", Group = "ComObjects", SubGroup = com.Name + $" ({com.UId})", Text = com.Text });
+                tab.Items.Add(new TranslationItem() { Name = "FunctionText", Group = "ComObjects", SubGroup = com.Name + $" ({com.UId})", Text = com.FunctionText });
             }
 
             if(!vbase.IsComObjectRefAuto)
             {
-                foreach(ComObjectRef com in vbase.ComObjectRefs)
+                foreach(ComObjectRef com in vbase.ComObjectRefs.OrderBy(c => c.Name))
                 {
                     if(com.OverwriteText)
-                        tab.Items.Add(new TranslationItem() { Name = com.Name + " (Text)", Group = "ComObjectRefs", Text = com.Text });
+                        tab.Items.Add(new TranslationItem() { Name = "Text", Group = "ComObjectRefs", SubGroup = com.Name + $" ({com.UId})", Text = com.Text });
                     if(com.OverwriteFunctionText)
-                        tab.Items.Add(new TranslationItem() { Name = com.Name + " (Function)", Group = "ComObjectRefs", Text = com.FunctionText });
+                        tab.Items.Add(new TranslationItem() { Name = "FunctionText", Group = "ComObjectRefs", SubGroup = com.Name + $" ({com.UId})", Text = com.FunctionText });
                 }
             }
 
             return tab;
+        }
+    
+        bool langAdded = false;
+        private void AddLanguage(ObservableCollection<Translation> text)
+        {
+            if(langAdded) return;
+            langAdded = true;
+
+            int counter = 0;
+            foreach(Translation trans in text)
+            {
+                DataGridTextColumn textColumn = new DataGridTextColumn(); 
+                textColumn.Header = trans.Language.Text; 
+                textColumn.Binding = new Binding($"Text[{counter++}].Text"); 
+                TranslationList.Columns.Add(textColumn); 
+            }
         }
     }
 }

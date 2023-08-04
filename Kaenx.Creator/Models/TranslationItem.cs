@@ -11,6 +11,7 @@ namespace Kaenx.Creator.Models
     {
         public string Name { get; set; }
         public string Group { get; set; }
+        public string SubGroup { get; set; }
         public ObservableCollection<Translation> Text { get; set; }
     }
 }
