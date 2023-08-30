@@ -131,8 +131,8 @@ namespace Kaenx.Creator.Controls
             {
                 Models.ParameterRef pref = new Models.ParameterRef(para) { UId = AutoHelper.GetNextFreeUId(Module.ParameterRefs) };
                 foreach(Models.Language lang in Version.Languages) {
-                    pref.Text.Add(new Models.Translation(lang, "Dummy"));
-                    pref.Suffix.Add(new Models.Translation(lang, "Dummy"));
+                    pref.Text.Add(new Models.Translation(lang, ""));
+                    pref.Suffix.Add(new Models.Translation(lang, ""));
                 }
                 Module.ParameterRefs.Add(pref);
             }
@@ -149,7 +149,12 @@ namespace Kaenx.Creator.Controls
 
             if (Module.IsParameterRefAuto)
             {
-                Module.ParameterRefs.Add(new Models.ParameterRef(clonedPara) { UId = AutoHelper.GetNextFreeUId(Module.ParameterRefs) });
+                Models.ParameterRef pref = new Models.ParameterRef(clonedPara) { UId = AutoHelper.GetNextFreeUId(Module.ParameterRefs) };
+                Module.ParameterRefs.Add(pref);
+                foreach(Models.Language lang in Version.Languages) {
+                    pref.Text.Add(new Models.Translation(lang, ""));
+                    pref.Suffix.Add(new Models.Translation(lang, ""));
+                }
             }
         }
 
