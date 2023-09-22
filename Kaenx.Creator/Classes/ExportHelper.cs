@@ -1677,7 +1677,7 @@ namespace Kaenx.Creator.Classes
                         Property prop = para.SaveObject as Property;
                         if(prop == null) throw new Exception("Parameter soll in Property gespeichert werden, aber der Typ von SaveObject ist kein Property: " + para.SaveObject.GetType().ToString());
                         
-                        xparamem.SetAttributeValue("ObjectType", prop.ObjectType);
+                        xparamem.SetAttributeValue("ObjectIndex", prop.ObjectType);
                         xparamem.SetAttributeValue("PropertyId", prop.PropertyId);
                         xparamem.SetAttributeValue("Offset", prop.Offset);
                         xparamem.SetAttributeValue("BitOffset", prop.OffsetBit);

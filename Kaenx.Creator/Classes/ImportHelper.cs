@@ -992,7 +992,7 @@ namespace Kaenx.Creator.Classes
                 {
                     para.SavePath = SavePaths.Property;
                     para.SaveObject = new Property() {
-                        ObjectType = int.Parse(xmem.Attribute("ObjectType").Value),
+                        ObjectType = int.Parse(xmem.Attribute("ObjectIndex").Value),
                         PropertyId = int.Parse(xmem.Attribute("PropertyId").Value),
                         Offset = int.Parse(xmem.Attribute("Offset").Value),
                         OffsetBit = int.Parse(xmem.Attribute("BitOffset").Value),
