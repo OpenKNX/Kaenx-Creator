@@ -189,7 +189,7 @@ namespace Kaenx.Creator.Classes
                     case Models.Dynamic.DynChooseBlock dcb:
                         if (dcb._parameterRef != -1)
                         {
-                            if(dcb.IsLocal)
+                            if(!dcb.IsGlobal)
                                 dcb.ParameterRefObject = ParaRefs[dcb._parameterRef];
                             else
                                 dcb.ParameterRefObject = vbase.ParameterRefs.SingleOrDefault(p => p.UId == dcb._parameterRef);

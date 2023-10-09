@@ -382,12 +382,9 @@
                 </HeaderedContentControl>
                 <HeaderedContentControl Header="{x:Static p:Resources.tdyn_pararef}">
                     <StackPanel>
-                        <ComboBox SelectedValue="{Binding IsLocal}" SelectedValuePath="Tag">
-                            <ComboBoxItem Tag="true" Content="Lokal" IsSelected="True" />
-                            <ComboBoxItem Tag="false" Content="Global" />
-                        </ComboBox>
-                        <ComboBox Visibility="{Binding IsLocal, Converter={StaticResource BoolToVis}}" IsEditable="true" ItemsSource="{Binding Module.ParameterRefs, ElementName=ViewControl}" SelectedItem="{Binding ParameterRefObject}" DisplayMemberPath="Name"/>
-                        <ComboBox Visibility="{Binding IsLocal, Converter={StaticResource BoolToVis}, ConverterParameter=true}" IsEditable="true" ItemsSource="{Binding Version.ParameterRefs, ElementName=ViewControl}" SelectedItem="{Binding ParameterRefObject}" DisplayMemberPath="Name"/>
+                        <CheckBox Content="IsGlobal" IsChecked="{Binding IsGlobal}" Margin="0 3" />
+                        <ComboBox Visibility="{Binding IsGlobal, Converter={StaticResource BoolToVis}, ConverterParameter=true}" IsEditable="true" ItemsSource="{Binding Module.ParameterRefs, ElementName=ViewControl}" SelectedItem="{Binding ParameterRefObject}" DisplayMemberPath="Name"/>
+                        <ComboBox Visibility="{Binding IsGlobal, Converter={StaticResource BoolToVis}}" IsEditable="true" ItemsSource="{Binding Version.ParameterRefs, ElementName=ViewControl}" SelectedItem="{Binding ParameterRefObject}" DisplayMemberPath="Name"/>
                     </StackPanel>
                 </HeaderedContentControl>
             </StackPanel>

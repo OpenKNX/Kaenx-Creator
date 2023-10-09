@@ -11,6 +11,6 @@ namespace Kaenx.Creator.Models.Dynamic
     {
         public ParameterRef ParameterRefObject { get; set; }
         public int ParameterRef { get; set; }
-        public bool IsLocal { get; set; }
+        public bool IsGlobal { get; set; }
     }
 }

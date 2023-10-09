@@ -27,11 +27,15 @@ namespace Kaenx.Creator.Models.Dynamic
             set { _name = value; Changed("Name"); }
         }
 
-        private bool _isLocal = true;
-        public bool IsLocal
+        private bool _isGlobal = false;
+        public bool IsGlobal
         {
-            get { return _isLocal; }
-            set { _isLocal = value; Changed("IsLocal"); _parameterRefObject = null; }
+            get { return _isGlobal; }
+            set {
+                _isGlobal = value;
+                Changed("IsGlobal");
+                ParameterRefObject= null;
+            }
         }
 
         private ParameterRef _parameterRefObject;

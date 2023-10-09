@@ -1022,6 +1022,12 @@ namespace Kaenx.Creator.Classes {
 
         public static string CheckImportVersion(string json, int version)
         {
+            if(version < 7)
+            {
+                json = json.Replace("\\\"IsLocal\\\":true", "\\\"IsGlobal\\\":false");
+                json = json.Replace("\\\"IsLocal\\\":false", "\\\"IsGlobal\\\":true");
+            }
+
             JObject gen = JObject.Parse(json);
 
             if(version < 1)
@@ -1160,6 +1166,7 @@ namespace Kaenx.Creator.Classes {
                     }
                 }
             }
+
 
             return gen.ToString();
         }
