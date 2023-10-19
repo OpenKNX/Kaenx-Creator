@@ -837,6 +837,9 @@ namespace Kaenx.Creator
 
         private void ClickClose(object sender, RoutedEventArgs e)
         {
+            if(MessageBox.Show("Projekt wirklich schließen?\r\nNicht gespeicherte Änderungen gehen verloren", "Projekt schließen", MessageBoxButton.YesNo) == MessageBoxResult.No)
+                return;
+                
             General = null;
             SetButtons(false);
             MenuSaveBtn.IsEnabled = false;
