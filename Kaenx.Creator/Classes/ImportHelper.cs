@@ -2025,6 +2025,7 @@ namespace Kaenx.Creator.Classes
                         dbtn.Script = dbtn.Script.Trim(' ', '\r', '\n');
                         currentVers.Script = regex.Replace(currentVers.Script, "");
                         parent.Items.Add(dbtn);
+                        dbtn.Text = GetTranslation(xele.Attribute("Id").Value, "Text", xele);
                         break;
 
                     default:
