@@ -1417,4 +1417,20 @@
     <value>Open Translator</value>
     <comment/>
   </data>
+  <data name="menu_options" xml:space="preserve">
+    <value>Options</value>
+    <comment/>
+  </data>
+  <data name="menu_out" xml:space="preserve">
+    <value>KnxProd Output Path</value>
+    <comment/>
+  </data>
+  <data name="menu_out_exe" xml:space="preserve">
+    <value>Path of EXE File</value>
+    <comment/>
+  </data>
+  <data name="menu_out_ae" xml:space="preserve">
+    <value>Path of AE File</value>
+    <comment/>
+  </data>
 </root>

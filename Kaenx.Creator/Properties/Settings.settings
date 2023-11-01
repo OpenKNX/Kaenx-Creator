@@ -8,5 +8,8 @@
     <Setting Name="isDebug" Type="System.bool" Scope="User">
       <Value Profile="(Default)">false</Value>
     </Setting>
+    <Setting Name="output" Type="System.String" Scope="User">
+      <Value Profile="(Default)">exe</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

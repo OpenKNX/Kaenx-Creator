@@ -31,7 +31,7 @@ namespace Kaenx.Creator
         public static MainWindow Instance { get; set; }
 
         private Models.ModelGeneral _general;
-        private string filePath = "";
+        private string AE_FilePath = "";
 
         public Models.ModelGeneral General
         {
@@ -89,6 +89,7 @@ namespace Kaenx.Creator
             LoadBcus();
             LoadDpts();
             CheckLangs();
+            CheckOutput();
             CheckEtsVersions();
             LoadTemplates();
 
@@ -176,13 +177,35 @@ namespace Kaenx.Creator
         private void CheckLangs()
         {
             string lang = Properties.Settings.Default.language;
+            bool wasset = false;
             foreach(UIElement ele in MenuLang.Items)
             {
                 if(ele is MenuItem item)
                 {
                     item.IsChecked = item.Tag?.ToString() == lang;
+                    if(item.IsChecked) wasset = true;
                 }
             }
+
+            if(!wasset)
+                (MenuLang.Items[2] as MenuItem).IsChecked = true;
+        }
+
+        private void CheckOutput()
+        {
+            string outp = Properties.Settings.Default.Output;
+            bool wasset = false;
+            foreach(UIElement ele in MenuOutput.Items)
+            {
+                if(ele is MenuItem item)
+                {
+                    item.IsChecked = item.Tag?.ToString() == outp;
+                    if(item.IsChecked) wasset = true;
+                }
+            }
+            
+            if(!wasset)
+                (MenuOutput.Items[0] as MenuItem).IsChecked = true;
         }
 
         private void ClickNew(object sender, RoutedEventArgs e)
@@ -832,7 +855,7 @@ namespace Kaenx.Creator
                 SelectedVersion.Version = Newtonsoft.Json.JsonConvert.SerializeObject(SelectedVersion.Model, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
             
             string general = Newtonsoft.Json.JsonConvert.SerializeObject(General, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
-            System.IO.File.WriteAllText(filePath, general);
+            System.IO.File.WriteAllText(App.FilePath, general);
         }
 
         private void ClickClose(object sender, RoutedEventArgs e)
@@ -869,7 +892,7 @@ namespace Kaenx.Creator
             if(diag.ShowDialog() == true)
             {
                 System.IO.File.WriteAllText(diag.FileName, general);
-                filePath = diag.FileName;
+                App.FilePath = diag.FileName;
                 MenuSaveBtn.IsEnabled = true;
             }
         }
@@ -936,6 +959,7 @@ namespace Kaenx.Creator
         {
             if(!File.Exists(path)) return;
             
+            App.FilePath = path;
             string general = System.IO.File.ReadAllText(path);
 
             System.Text.RegularExpressions.Regex reg = new System.Text.RegularExpressions.Regex("\"ImportVersion\":[ ]?([0-9]+)");
@@ -965,7 +989,6 @@ namespace Kaenx.Creator
             }
             SelectedVersion = null;
             General.ImportVersion = VersionCurrent;
-            filePath = path;
 
             foreach(Models.Application app in General.Applications)
             {
@@ -1297,7 +1320,28 @@ namespace Kaenx.Creator
             if(ExportInName.Text.EndsWith(".knxprod"))
                 ExportInName.Text = ExportInName.Text.Substring(0, ExportInName.Text.LastIndexOf('.'));
 
-            string filePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Output", ExportInName.Text + ".knxprod");
+            string fileFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Output");
+
+            switch(Properties.Settings.Default.Output)
+            {
+                case "exe":
+                #if DEBUG
+                    fileFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Output");
+                #else
+                    fileFolder = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
+                #endif
+                    break;
+
+                case "ae":
+                    fileFolder = Path.GetDirectoryName(App.FilePath);
+                    break;
+
+                default:
+                    MessageBox.Show("Einstellungen für Output nicht gültig");
+                    return;
+            }
+
+            string filePath = System.IO.Path.Combine(fileFolder, ExportInName.Text + ".knxprod");
             if(File.Exists(filePath))
             {
                 if(MessageBoxResult.No == MessageBox.Show(string.Format(Properties.Messages.main_export_duplicate, ExportInName.Text), Properties.Messages.main_export_title, MessageBoxButton.YesNo, MessageBoxImage.Question))
@@ -1373,6 +1417,17 @@ namespace Kaenx.Creator
                 Properties.Settings.Default.language = tag;
                 Properties.Settings.Default.Save();
                 CheckLangs();
+            }
+        }
+
+        private void ChangeOutput(object sender, RoutedEventArgs e)
+        {
+            if(sender is MenuItem)
+            {
+                string tag = (sender as MenuItem).Tag.ToString();
+                Properties.Settings.Default.Output = tag;
+                Properties.Settings.Default.Save();
+                CheckOutput();
             }
         }
 

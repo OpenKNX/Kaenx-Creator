@@ -2588,5 +2588,29 @@ namespace Kaenx.Creator.Properties {
                 return ResourceManager.GetString("gen_translate", resourceCulture);
             }
         }
+        
+        public static string menu_options {
+            get {
+                return ResourceManager.GetString("menu_options", resourceCulture);
+            }
+        }
+        
+        public static string menu_out {
+            get {
+                return ResourceManager.GetString("menu_out", resourceCulture);
+            }
+        }
+        
+        public static string menu_out_exe {
+            get {
+                return ResourceManager.GetString("menu_out_exe", resourceCulture);
+            }
+        }
+        
+        public static string menu_out_ae {
+            get {
+                return ResourceManager.GetString("menu_out_ae", resourceCulture);
+            }
+        }
     }
 }

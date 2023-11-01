@@ -233,13 +233,19 @@
             <MenuItem x:Name="MenuSign" Header="{x:Static p:Resources.menu_sign}">
                 <MenuItem Header="{x:Static p:Resources.menu_sign_folder}" Click="ClickSignFolder" Tag="knxprod" />
             </MenuItem>
-            <MenuItem x:Name="MenuLang" Header="{x:Static p:Resources.menu_lang}">
-                <MenuItem Header="Please restart Application after changing language" IsEnabled="False" />
-                <Separator />
-                <MenuItem IsCheckable="True" Header="{x:Static p:Resources.menu_lang_default}" Tag="def" Click="ChangeLang" />
-                <MenuItem IsCheckable="True" Header="Deutsch" Tag="de-DE" Click="ChangeLang" />
-                <MenuItem IsCheckable="True" Header="English" Tag="en-US" Click="ChangeLang" />
-                <MenuItem IsCheckable="True" Header="France" Tag="fr-FR" Click="ChangeLang" />
+            <MenuItem Header="{x:Static p:Resources.menu_options}">
+                <MenuItem x:Name="MenuOutput" Header="{x:Static p:Resources.menu_out}">
+                    <MenuItem IsCheckable="True" Header="{x:Static p:Resources.menu_out_exe}" Tag="exe" Click="ChangeOutput" />
+                    <MenuItem IsCheckable="True" Header="{x:Static p:Resources.menu_out_ae}" Tag="ae" Click="ChangeOutput" />
+                </MenuItem>
+                <MenuItem x:Name="MenuLang" Header="{x:Static p:Resources.menu_lang}">
+                    <MenuItem Header="Please restart Application after changing language" IsEnabled="False" />
+                    <Separator />
+                    <MenuItem IsCheckable="True" Header="{x:Static p:Resources.menu_lang_default}" Tag="def" Click="ChangeLang" />
+                    <MenuItem IsCheckable="True" Header="Deutsch" Tag="de-DE" Click="ChangeLang" />
+                    <MenuItem IsCheckable="True" Header="English" Tag="en-US" Click="ChangeLang" />
+                    <MenuItem IsCheckable="True" Header="France" Tag="fr-FR" Click="ChangeLang" />
+                </MenuItem>
             </MenuItem>
             <MenuItem Header="{x:Static p:Resources.menu_info}">
                 <MenuItem Header="{x:Static p:Resources.menu_info_vers}" Click="ClickShowVersion" />
