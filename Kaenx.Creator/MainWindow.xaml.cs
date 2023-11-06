@@ -31,7 +31,6 @@ namespace Kaenx.Creator
         public static MainWindow Instance { get; set; }
 
         private Models.ModelGeneral _general;
-        private string AE_FilePath = "";
 
         public Models.ModelGeneral General
         {
