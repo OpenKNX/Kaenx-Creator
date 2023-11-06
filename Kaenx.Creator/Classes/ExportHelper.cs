@@ -2352,7 +2352,7 @@ namespace Kaenx.Creator.Classes
 
             XElement knx = new XElement(Get("KNX"));
             //this makes icons work...
-            knx.SetAttributeValue("CreatedBy", "MT");
+            knx.SetAttributeValue("CreatedBy", "knxconv");
 
             /*int nsx = int.Parse(currentNamespace.Substring(currentNamespace.LastIndexOf("/")+1));
             switch(nsx)
