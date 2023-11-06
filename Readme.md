@@ -25,6 +25,9 @@ Es gibt 2 Möglichkeiten die Anwendung zu installieren:
     Zusätzlich wird das Repo https://github.com/thewhobox/Kaenx.DataContext benötigt.
     Danach kann die Anwendung debugt oder selbst ein Release erstellt werden.
 
+## Changelog
+Eine Übersicht über die Änderungen finden Sie [hier](/ChangeLog).
+
 ## Bilder
 [![Kaenx-Connect Ansicht Dynamic](/Images/Dynamic.png)](/Images/)
   

@@ -194,6 +194,27 @@ namespace Kaenx.Creator
         private void CheckOutput()
         {
             string outp = Properties.Settings.Default.Output;
+
+            bool valid = false;
+            foreach(UIElement ele in MenuOutput.Items)
+            {
+                if(ele is MenuItem item)
+                {
+                    if(item.Tag?.ToString() == outp)
+                    {
+                        valid = true;
+                        break;
+                    }
+                }
+            }
+            if(!valid)
+            {
+                outp = "exe";
+                Properties.Settings.Default.Output = outp;
+                Properties.Settings.Default.Save();
+            }
+
+
             bool wasset = false;
             foreach(UIElement ele in MenuOutput.Items)
             {
@@ -1391,7 +1412,8 @@ namespace Kaenx.Creator
 
             await Task.Delay(1000);
             
-            ExportHelper helper = new ExportHelper(General, hardware, devices, apps, versions, assPath, filePath);
+            string headerPath = Path.Combine(Path.GetDirectoryName(filePath), "knxprod.h");
+            ExportHelper helper = new ExportHelper(General, hardware, devices, apps, versions, assPath, filePath, headerPath);
             switch(InPublishTarget.SelectedValue) {
                 case "ets":
                     bool success = helper.ExportEts(PublishActions);

@@ -31,6 +31,8 @@ namespace Kaenx.Creator.Classes
         string currentNamespace;
         string convPath;
         string filePath;
+        string headerPath;
+        string toolVersion = "5.7.617.38708";
         List<Icon> iconsApp = new List<Icon>();
         List<string> buttonScripts;
 
@@ -39,9 +41,10 @@ namespace Kaenx.Creator.Classes
             general = g;
             convPath = cp;
             filePath = fP;
+            SetToolVersion();
         }
 
-        public ExportHelper(Models.ModelGeneral g, List<Models.Hardware> h, List<Models.Device> d, List<Models.Application> a, List<Models.AppVersionModel> v, string cp, string fP)
+        public ExportHelper(Models.ModelGeneral g, List<Models.Hardware> h, List<Models.Device> d, List<Models.Application> a, List<Models.AppVersionModel> v, string cp, string fP, string hP)
         {
             hardware = h;
             devices = d;
@@ -50,6 +53,8 @@ namespace Kaenx.Creator.Classes
             general = g;
             convPath = cp;
             filePath = fP;
+            headerPath = hP;
+            SetToolVersion();
         }
 
 
@@ -61,6 +66,12 @@ namespace Kaenx.Creator.Classes
             if(!languages.ContainsKey(lang)) languages.Add(lang, new Dictionary<string, Dictionary<string, string>>());
             if(!languages[lang].ContainsKey(id)) languages[lang].Add(id, new Dictionary<string, string>());
             if(!languages[lang][id].ContainsKey(attr)) languages[lang][id].Add(attr, value);
+        }
+
+        private void SetToolVersion()
+        {
+            System.Diagnostics.FileVersionInfo info = FileVersionInfo.GetVersionInfo(Path.Combine(convPath, "Knx.Ets.XmlSigning.dll"));
+            toolVersion = $"{info.FileVersion}.{info.FilePrivatePart}";
         }
 
         public bool ExportEts(ObservableCollection<PublishAction> actions)
@@ -647,17 +658,12 @@ namespace Kaenx.Creator.Classes
                     
                 }
     
-                
-
                 headers.AppendLine();
 
                 ExportModules(xapp, ver, ver, appVersion, headers, appVersion);
                 appVersionMod = appVersion;
 
-
-
-
-                System.IO.File.WriteAllText(GetRelPath($"knxprod_{GetAppId(app.Number)}_{ver.Number:X2}.h"), headers.ToString());
+                System.IO.File.WriteAllText(headerPath, headers.ToString());
                 headers = null;
 
                 #endregion
@@ -1119,32 +1125,34 @@ namespace Kaenx.Creator.Classes
         private void ExportHelptexts(AppVersion ver, string manu, List<Baggage> baggagesManu, List<Baggage> baggagesApp)
         {
             if(ver.Helptexts.Count == 0) return;
-            if(System.IO.Directory.Exists("HelpTemp"))
-                System.IO.Directory.Delete("HelpTemp", true);
-            System.IO.Directory.CreateDirectory("HelpTemp");
+            if(System.IO.Directory.Exists(GetRelPath("HelpTemp")))
+                System.IO.Directory.Delete(GetRelPath("HelpTemp"), true);
+            System.IO.Directory.CreateDirectory(GetRelPath("HelpTemp"));
 
             foreach(Language lang in ver.Languages)
             {
-                if(!System.IO.Directory.Exists(System.IO.Path.Combine("HelpTemp", lang.CultureCode)))
-                    System.IO.Directory.CreateDirectory(System.IO.Path.Combine("HelpTemp", lang.CultureCode));
+                if(!System.IO.Directory.Exists(GetRelPath("HelpTemp", lang.CultureCode)))
+                    System.IO.Directory.CreateDirectory(GetRelPath("HelpTemp", lang.CultureCode));
             }
 
             foreach(Helptext text in ver.Helptexts)
             {
                 foreach(Translation trans in text.Text)
                 {
-                    System.IO.File.WriteAllText(System.IO.Path.Combine("HelpTemp", trans.Language.CultureCode, text.Name + ".txt"), trans.Text);
+                    System.IO.File.WriteAllText(GetRelPath("HelpTemp", trans.Language.CultureCode, text.Name + ".txt"), trans.Text);
                 }
             }
 
 
-            if(!System.IO.Directory.Exists(System.IO.Path.Combine("Output", "Temp", manu, "Baggages")))
-                System.IO.Directory.CreateDirectory(System.IO.Path.Combine("Output", "Temp", manu, "Baggages"));
+            if(!System.IO.Directory.Exists(GetRelPath("Temp", manu, "Baggages")))
+                System.IO.Directory.CreateDirectory(GetRelPath("Temp", manu, "Baggages"));
             
             foreach(Language lang in ver.Languages)
             {
-                string destPath = System.IO.Path.Combine("Output", "Temp", manu, "Baggages", "HelpFile_" + lang.CultureCode + ".zip");
-                System.IO.Compression.ZipFile.CreateFromDirectory(System.IO.Path.Combine("HelpTemp", lang.CultureCode), destPath);
+                string destPath = GetRelPath("Temp", manu, "Baggages", "HelpFile_" + lang.CultureCode + ".zip");
+                if(File.Exists(destPath))
+                    File.Delete(destPath);
+                System.IO.Compression.ZipFile.CreateFromDirectory(GetRelPath("HelpTemp", lang.CultureCode), destPath);
                 Baggage bag = new Baggage() {
                     Name = "HelpFile_" + lang.CultureCode,
                     Extension = ".zip",
@@ -1159,7 +1167,7 @@ namespace Kaenx.Creator.Classes
                     AddTranslation(lang.CultureCode, appVersion, "ContextHelpFile", $"{manu}_BG--{GetEncoded("HelpFile_" + lang.CultureCode + ".zip")}");
             }
 
-            System.IO.Directory.Delete("HelpTemp", true);
+            System.IO.Directory.Delete(GetRelPath("HelpTemp"), true);
         }
 
         private void ExportSegments(AppVersion ver, XElement xparent)
@@ -2345,9 +2353,35 @@ namespace Kaenx.Creator.Classes
             XElement knx = new XElement(Get("KNX"));
             //this makes icons work...
             knx.SetAttributeValue("CreatedBy", "MT");
-            knx.SetAttributeValue("ToolVersion", "5.7.617.38708");
-            //knx.SetAttributeValue("CreatedBy", "Kaenx.Creator");
-            //knx.SetAttributeValue("ToolVersion", Assembly.GetEntryAssembly().GetName().Version.ToString());
+
+            /*int nsx = int.Parse(currentNamespace.Substring(currentNamespace.LastIndexOf("/")+1));
+            switch(nsx)
+            {
+                case 11:
+                    knx.SetAttributeValue("ToolVersion", "4.0.1997.50261");
+                    break;
+                case 12:
+                    knx.SetAttributeValue("ToolVersion", "5.0.204.12971");
+                    break;
+                case 13:
+                    knx.SetAttributeValue("ToolVersion", "5.1.84.17602");
+                    break;
+                case 14:
+                    knx.SetAttributeValue("ToolVersion", "5.6.241.33672");
+                    break;
+                case 20:
+                    knx.SetAttributeValue("ToolVersion", "5.7.617.38708");
+                    break;
+                case 21:
+                    knx.SetAttributeValue("ToolVersion", "5.7.617.38708");
+                    break;
+                case 22:
+                    knx.SetAttributeValue("ToolVersion", "6.1.5686.0");
+                    break;
+
+            }*/
+                    knx.SetAttributeValue("ToolVersion", toolVersion);
+
             doc = new XDocument(knx);
             doc.Root.Add(new XElement(Get("ManufacturerData"), xmanu));
             return xmanu;
