@@ -463,10 +463,14 @@ namespace Kaenx.Creator.Classes {
                     actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_mod_allocs, mod.Name), State = PublishState.Fail });
                 if(!mod.IsOpenKnxModule && string.IsNullOrEmpty(mod.Prefix))
                     actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_mod_noprefix, mod.Name), State = PublishState.Fail });
-                if(mod.ParameterBaseOffset != null && mod.ParameterBaseOffset.Type != ArgumentTypes.Numeric)
-                    actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_mod_paraoff, mod.Name), State = PublishState.Fail });
-                if(mod.ComObjectBaseNumber != null && mod.ComObjectBaseNumber.Type != ArgumentTypes.Numeric)
-                    actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_mod_combase, mod.Name), State = PublishState.Fail });
+                if(mod.ParameterBaseOffset == null)
+                    actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_mod_paraoff_null, mod.Name), Item = mod, State = PublishState.Fail });
+                else if(mod.ParameterBaseOffset.Type != ArgumentTypes.Numeric)
+                    actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_mod_paraoff, mod.Name), Item = mod, State = PublishState.Fail });
+                if(mod.ComObjectBaseNumber == null)
+                    actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_mod_combase_null, mod.Name), Item = mod, State = PublishState.Fail });
+                else if(mod.ComObjectBaseNumber.Type != ArgumentTypes.Numeric)
+                    actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_mod_combase, mod.Name), Item = mod, State = PublishState.Fail });
             }
 
             if(vbase.Dynamics[0].Items.Count == 0)

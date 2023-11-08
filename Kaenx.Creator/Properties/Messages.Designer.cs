@@ -1459,6 +1459,17 @@ namespace Kaenx.Creator.Properties {
                 return ResourceManager.GetString("check_ver_union_size", resourceCulture);
             }
         }
+
+        public static string check_ver_mod_paraoff_null {
+            get {
+                return ResourceManager.GetString("check_ver_mod_paraoff_null", resourceCulture);
+            }
+        }
         
+        public static string check_ver_mod_combase_null {
+            get {
+                return ResourceManager.GetString("check_ver_mod_combase_null", resourceCulture);
+            }
+        }
     }
 }

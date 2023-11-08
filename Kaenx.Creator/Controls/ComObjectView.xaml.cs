@@ -132,9 +132,9 @@ namespace Kaenx.Creator.Controls
                     if(MessageBoxResult.No == MessageBox.Show(Properties.Messages.com_delete1, Properties.Messages.com_delete_title, MessageBoxButton.YesNo, MessageBoxImage.Warning))
                         return;
                     
-                    Module.ComObjectRefs.Remove(cref);
                     ClearHelper.ClearIDs(Module.Dynamics[0], cref);
                 }
+                Module.ComObjectRefs.Remove(cref);
             } else {
                 if(Module.ComObjectRefs.Any(c => c.ComObjectObject == com))
                 {

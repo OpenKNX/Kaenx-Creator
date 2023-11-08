@@ -172,9 +172,9 @@ namespace Kaenx.Creator.Controls
                     if(MessageBoxResult.No == MessageBox.Show(Properties.Messages.para_delete1, Properties.Messages.para_delete_title, MessageBoxButton.YesNo, MessageBoxImage.Warning))
                         return;
                     
-                    Module.ParameterRefs.Remove(pref);
                     ClearHelper.ClearIDs(Module.Dynamics[0], pref);
                 }
+                Module.ParameterRefs.Remove(pref);
             } else {
                 if(Module.ParameterRefs.Any(p => p.ParameterObject == para))
                 {

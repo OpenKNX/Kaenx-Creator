@@ -26,8 +26,8 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="150" />
-            <ColumnDefinition Width="150" />
+            <ColumnDefinition Width="100" />
+            <ColumnDefinition Width="100" />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <Button Content="{x:Static p:Resources.gen_add}" Click="ClickAddUnion" Margin="0 0 1 2" />
@@ -41,87 +41,115 @@
 			</ListView.ItemTemplate>
         </ListView>
 
-        <ScrollViewer Grid.Column="3" Grid.RowSpan="2" DataContext="{Binding ElementName=UnionList, Path=SelectedItem}" IsEnabled="{Binding Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
-            <StackPanel Margin="5">
-                <StackPanel.Resources>
-                    <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
-                        <ObjectDataProvider.MethodParameters>
-                            <x:Type TypeName="models:ParamAccess"/>
-                        </ObjectDataProvider.MethodParameters>
-                    </ObjectDataProvider>
-                    <ObjectDataProvider x:Key="dataSave" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
-                        <ObjectDataProvider.MethodParameters>
-                            <x:Type TypeName="models:SavePaths"/>
-                        </ObjectDataProvider.MethodParameters>
-                    </ObjectDataProvider>
-                    <Style TargetType="HeaderedContentControl">
-                        <Setter Property="Margin" Value="5" />
-                        <Setter Property="IsTabStop" Value="false" />
-                    </Style>
-                    <Style TargetType="CheckBox">
-                        <Setter Property="Margin" Value="5" />
-                    </Style>
-                    <Style TargetType="ComboBox">
-                        <Setter Property="Margin" Value="0 5" />
-                    </Style>
-                    <Style TargetType="Button">
-                        <Setter Property="Margin" Value="5" />
-                    </Style>
-                    <Style TargetType="ListView">
-                        <Setter Property="Margin" Value="5" />
-                    </Style>
-                </StackPanel.Resources>
+        <TabControl Grid.Column="2" Grid.RowSpan="3" DataContext="{Binding ElementName=UnionList, Path=SelectedItem}" IsEnabled="{Binding Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
+            <TabItem Header="{x:Static p:Resources.tuni_settings}">
+                <ScrollViewer Grid.Column="3" Grid.RowSpan="2" DataContext="{Binding ElementName=UnionList, Path=SelectedItem}" IsEnabled="{Binding Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
+                    <StackPanel Margin="5">
+                        <StackPanel.Resources>
+                            <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+                                <ObjectDataProvider.MethodParameters>
+                                    <x:Type TypeName="models:ParamAccess"/>
+                                </ObjectDataProvider.MethodParameters>
+                            </ObjectDataProvider>
+                            <ObjectDataProvider x:Key="dataSave" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+                                <ObjectDataProvider.MethodParameters>
+                                    <x:Type TypeName="models:SavePaths"/>
+                                </ObjectDataProvider.MethodParameters>
+                            </ObjectDataProvider>
+                            <Style TargetType="HeaderedContentControl">
+                                <Setter Property="Margin" Value="5" />
+                                <Setter Property="IsTabStop" Value="false" />
+                            </Style>
+                            <Style TargetType="CheckBox">
+                                <Setter Property="Margin" Value="5" />
+                            </Style>
+                            <Style TargetType="ComboBox">
+                                <Setter Property="Margin" Value="0 5" />
+                            </Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Margin" Value="5" />
+                            </Style>
+                            <Style TargetType="ListView">
+                                <Setter Property="Margin" Value="5" />
+                            </Style>
+                        </StackPanel.Resources>
 
-                <TextBlock Margin="5 0" VerticalAlignment="Center">
-                    <Run Text="{x:Static p:Resources.gen_uid}" />
-                    <Run Text="{Binding UId}"/>
-                </TextBlock>
-
-                <TextBlock Text="{x:Static p:Resources.uni_error}" Foreground="Red" Visibility="{Binding IsNotUsed, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}" Margin="5" />
-
-                <HeaderedContentControl Header="{x:Static p:Resources.prop_name}">
-                    <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
-                </HeaderedContentControl>
-                <HeaderedContentControl Header="{x:Static p:Resources.prop_sizebit}">
-                    <TextBox Text="{Binding SizeInBit, UpdateSourceTrigger=PropertyChanged}"/>
-                </HeaderedContentControl>
-
-                <HeaderedContentControl Header="{x:Static p:Resources.prop_savepath}">
-                    <ComboBox ItemsSource="{Binding Source={StaticResource dataSave}}" SelectedItem="{Binding SavePath, Mode=TwoWay}" />
-                </HeaderedContentControl>
-
-                <StackPanel Visibility="{Binding SavePath, Converter={StaticResource EnumToVis}, ConverterParameter=Memory, FallbackValue=Collapsed}">
-                    <HeaderedContentControl Header="{x:Static p:Resources.prop_mem}">
-                        <ComboBox ItemsSource="{Binding Version.Memories, ElementName=ViewControl}" SelectedItem="{Binding MemoryObject, Mode=TwoWay}" DisplayMemberPath="Name" />
-                    </HeaderedContentControl>
-
-                    <StackPanel Visibility="{Binding MemoryObject.IsAutoPara, Converter={StaticResource BoolToVis}, ConverterParameter=true, FallbackValue=Collapsed}">
-                        <HeaderedContentControl Header="{x:Static p:Resources.prop_offset}">
-                            <TextBox Text="{Binding Offset, UpdateSourceTrigger=PropertyChanged}" />
-                        </HeaderedContentControl>
-                        <HeaderedContentControl Header="{x:Static p:Resources.prop_offsetbit}">
-                            <TextBox Text="{Binding OffsetBit, UpdateSourceTrigger=PropertyChanged}"/>
-                        </HeaderedContentControl>
-                    </StackPanel>
-
-                    <StackPanel Visibility="{Binding MemoryObject.IsAutoPara, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}">
-                        <TextBlock Text="{x:Static p:Resources.uni_addrauto}" Margin="5" />
-
-                        <TextBlock Margin="5">
-                                <Run Text="{x:Static p:Resources.prop_offset}" />
-                                <Run Text="{Binding Offset, Mode=OneWay}" />
-                                <LineBreak />
-                                <Run Text="{x:Static p:Resources.prop_offsetbit}" />
-                                <Run Text="{Binding OffsetBit, Mode=OneWay}" />
+                        <TextBlock Margin="5 0" VerticalAlignment="Center">
+                            <Run Text="{x:Static p:Resources.gen_uid}" />
+                            <Run Text="{Binding UId}"/>
                         </TextBlock>
-                    </StackPanel>
-                </StackPanel>
 
-                <StackPanel Visibility="{Binding SavePath, Converter={StaticResource EnumToVis}, ConverterParameter=Property, FallbackValue=Collapsed}">
-                    <TextBlock Text="{x:Static p:Resources.uni_error2}" />
-                </StackPanel>
-            </StackPanel>
-        </ScrollViewer>
+                        <TextBlock Text="{x:Static p:Resources.uni_error}" Foreground="Red" Visibility="{Binding IsNotUsed, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}" Margin="5" />
+
+                        <HeaderedContentControl Header="{x:Static p:Resources.prop_name}">
+                            <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+                        </HeaderedContentControl>
+                        <HeaderedContentControl Header="{x:Static p:Resources.prop_sizebit}">
+                            <TextBox Text="{Binding SizeInBit, UpdateSourceTrigger=PropertyChanged}"/>
+                        </HeaderedContentControl>
+
+                        <HeaderedContentControl Header="{x:Static p:Resources.prop_savepath}">
+                            <ComboBox ItemsSource="{Binding Source={StaticResource dataSave}}" SelectedItem="{Binding SavePath, Mode=TwoWay}" />
+                        </HeaderedContentControl>
+
+                        <StackPanel Visibility="{Binding SavePath, Converter={StaticResource EnumToVis}, ConverterParameter=Memory, FallbackValue=Collapsed}">
+                            <HeaderedContentControl Header="{x:Static p:Resources.prop_mem}">
+                                <ComboBox ItemsSource="{Binding Version.Memories, ElementName=ViewControl}" SelectedItem="{Binding MemoryObject, Mode=TwoWay}" DisplayMemberPath="Name" />
+                            </HeaderedContentControl>
+
+                            <StackPanel Visibility="{Binding MemoryObject.IsAutoPara, Converter={StaticResource BoolToVis}, ConverterParameter=true, FallbackValue=Collapsed}">
+                                <HeaderedContentControl Header="{x:Static p:Resources.prop_offset}">
+                                    <TextBox Text="{Binding Offset, UpdateSourceTrigger=PropertyChanged}" />
+                                </HeaderedContentControl>
+                                <HeaderedContentControl Header="{x:Static p:Resources.prop_offsetbit}">
+                                    <TextBox Text="{Binding OffsetBit, UpdateSourceTrigger=PropertyChanged}"/>
+                                </HeaderedContentControl>
+                            </StackPanel>
+
+                            <StackPanel Visibility="{Binding MemoryObject.IsAutoPara, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}">
+                                <TextBlock Text="{x:Static p:Resources.uni_addrauto}" Margin="5" />
+
+                                <TextBlock Margin="5">
+                                        <Run Text="{x:Static p:Resources.prop_offset}" />
+                                        <Run Text="{Binding Offset, Mode=OneWay}" />
+                                        <LineBreak />
+                                        <Run Text="{x:Static p:Resources.prop_offsetbit}" />
+                                        <Run Text="{Binding OffsetBit, Mode=OneWay}" />
+                                </TextBlock>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <StackPanel Visibility="{Binding SavePath, Converter={StaticResource EnumToVis}, ConverterParameter=Property, FallbackValue=Collapsed}">
+                            <TextBlock Text="{x:Static p:Resources.uni_error2}" />
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+            <TabItem Header="{x:Static p:Resources.tuni_heatmap}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid.Resources>
+                        <DataTemplate x:Key="CellTemplate">
+                            <TextBlock />
+                        </DataTemplate>
+                    </Grid.Resources>
+
+                    <Button Margin="5" Content="{x:Static p:Resources.vgen_heatmap}" Click="ClickCalcHeatmap" />
+
+                    <DataGrid Grid.Row="1" x:Name="MemoryGrid" ItemsSource="{Binding Memories, ElementName=ViewControl}" AutoGenerateColumns="false" CanUserAddRows="False" CanUserResizeRows="False" CanUserResizeColumns="False" CurrentCellChanged="CurrentCellChanged"> 
+                        <DataGrid.RowStyle>
+                            <Style TargetType="{x:Type DataGridRow}">
+                                <Setter Property="Header" Value="{Binding Name}" />
+                                <Setter Property="Foreground" Value="{Binding Overflow, Converter={StaticResource BoolToBrush}}" />
+                            </Style>
+                        </DataGrid.RowStyle>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+        </TabControl>
     </Grid>
 
 </UserControl>

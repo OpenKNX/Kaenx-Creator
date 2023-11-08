@@ -1433,4 +1433,12 @@
     <value>Path of AE File</value>
     <comment/>
   </data>
+  <data name="tuni_settings" xml:space="preserve">
+    <value>Einstellungen</value>
+    <comment/>
+  </data>
+  <data name="tuni_heatmap" xml:space="preserve">
+    <value>Speicherbelegung</value>
+    <comment/>
+  </data>
 </root>

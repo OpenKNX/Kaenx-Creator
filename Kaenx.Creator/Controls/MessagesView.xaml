@@ -31,7 +31,7 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="300" />
+            <ColumnDefinition Width="200" />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <Button Content="{x:Static p:Resources.gen_add}" Click="ClickAdd" Margin="0 0 0 2" />

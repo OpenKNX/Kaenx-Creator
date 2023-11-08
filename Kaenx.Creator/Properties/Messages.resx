@@ -1053,4 +1053,12 @@
     <value>Union {0}: Parameter {1} ({2}) does not fit in</value>
     <comment/>
   </data>
+  <data name="check_ver_mod_paraoff_null" xml:space="preserve">
+    <value>Module {0}: ParameterBaseOffset Argument is null</value>
+    <comment>Name</comment>
+  </data>
+  <data name="check_ver_mod_combase_null" xml:space="preserve">
+    <value>Module {0}: ComObjectBaseNumber Argument is null</value>
+    <comment>Name</comment>
+  </data>
 </root>

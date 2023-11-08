@@ -2612,5 +2612,17 @@ namespace Kaenx.Creator.Properties {
                 return ResourceManager.GetString("menu_out_ae", resourceCulture);
             }
         }
+        
+        public static string tuni_settings {
+            get {
+                return ResourceManager.GetString("tuni_settings", resourceCulture);
+            }
+        }
+        
+        public static string tuni_heatmap {
+            get {
+                return ResourceManager.GetString("tuni_heatmap", resourceCulture);
+            }
+        }
     }
 }
