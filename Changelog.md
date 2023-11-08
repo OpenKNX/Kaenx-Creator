@@ -1,3 +1,7 @@
+v1.6.6
+ - added: check for empty Parameter/ComObject Arg in Module
+ - added: union memory view
+
 v1.6.5
  - changed: knxprod.h will be saved in same folder as output.knxprod
  - fixed: Error on publish because HelpFile already exists
