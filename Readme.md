@@ -1,5 +1,5 @@
 ## Languages
-This application is availible in: English, Deutsch  
+This application is availible in: English, Deutsch, French
 You want to contribute and add a new Language?  
 [![Crowdin](https://badges.crowdin.net/kaenx-creator/localized.svg)](https://crowdin.com/project/kaenx-creator) <- Click here   
 If your language isn't listed create an issue.  

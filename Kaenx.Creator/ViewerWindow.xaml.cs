@@ -291,7 +291,7 @@ namespace Kaenx.Creator
             if (e.PropertyName == "Value")
             {
                 System.Diagnostics.Debug.WriteLine("Wert geändert! " + para.Id + " -> " + para.Value);
-                LogViewer.Text = Properties.Messages.viewer_logger + $"\r\n{LogViewer.Text}";
+                LogViewer.Text = string.Format(Properties.Messages.viewer_logger, para.Id, para.Value) + $"\r\n{LogViewer.Text}";
             } else if(e.PropertyName == "ParamVisibility")
             {
                 System.Diagnostics.Debug.WriteLine("Sichtbarkeit geändert! " + para.Id + " -> " + para.IsVisible);

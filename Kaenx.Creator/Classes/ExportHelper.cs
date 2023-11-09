@@ -20,11 +20,7 @@ namespace Kaenx.Creator.Classes
 {
     public class ExportHelper
     {
-        List<Models.Hardware> hardware;
-        List<Models.Device> devices;
-        List<Models.Application> apps;
-        List<Models.AppVersionModel> vers;
-        Models.ModelGeneral general;
+        MainModel general;
         XDocument doc;
         string appVersion;
         string appVersionMod;
@@ -36,7 +32,7 @@ namespace Kaenx.Creator.Classes
         List<Icon> iconsApp = new List<Icon>();
         List<string> buttonScripts;
 
-        public ExportHelper(Models.ModelGeneral g, string cp, string fP)
+        public ExportHelper(MainModel g, string cp, string fP)
         {
             general = g;
             convPath = cp;
@@ -44,12 +40,8 @@ namespace Kaenx.Creator.Classes
             SetToolVersion();
         }
 
-        public ExportHelper(Models.ModelGeneral g, List<Models.Hardware> h, List<Models.Device> d, List<Models.Application> a, List<Models.AppVersionModel> v, string cp, string fP, string hP)
+        public ExportHelper(MainModel g, string cp, string fP, string hP)
         {
-            hardware = h;
-            devices = d;
-            apps = a;
-            vers = v;
             general = g;
             convPath = cp;
             filePath = fP;
@@ -85,17 +77,7 @@ namespace Kaenx.Creator.Classes
             System.IO.Directory.CreateDirectory(GetRelPath("Temp"));
             System.IO.Directory.CreateDirectory(GetRelPath("Temp", Manu));
 
-            int highestNS = 0;
-            foreach (Models.AppVersionModel ver in vers)
-            {
-                Regex reg = new Regex("NamespaceVersion\":[ ]?([0-9]{2})");
-                Match m = reg.Match(ver.Version);
-                if(!m.Success) continue;
-                int nsv = int.Parse(m.Groups[1].Value);
-                if (nsv > highestNS)
-                    highestNS = nsv;
-            }
-            currentNamespace = $"http://knx.org/xml/project/{highestNS}";
+            currentNamespace = $"http://knx.org/xml/project/{general.Application.NamespaceVersion}";
 
             Dictionary<string, string> ProductIds = new Dictionary<string, string>();
             Dictionary<string, string> HardwareIds = new Dictionary<string, string>();
@@ -103,768 +85,746 @@ namespace Kaenx.Creator.Classes
             bool exportIcons = false;
 
             #region XML Applications
-            Debug.WriteLine($"Exportiere Applikationen: {vers.Count}x");
+            Debug.WriteLine($"Exportiere Applikation");
             XElement xmanu = null;
             XElement xlanguages = null;
-            foreach(Models.AppVersionModel model in vers) {
-                Models.AppVersion ver = model.Model != null ? model.Model : AutoHelper.GetAppVersion(general, model);
-                Debug.WriteLine($"Exportiere AppVersion: {ver.Name} {ver.NameText}");
-                languages = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>();
-                xmanu = CreateNewXML(Manu);
-                XElement xapps = new XElement(Get("ApplicationPrograms"));
-                xmanu.Add(xapps);
-                Models.Application app = apps.Single(a => a.Versions.Contains(model));
+            
+            AppVersion ver = general.Application;
+            Debug.WriteLine($"Exportiere AppVersion: {ver.Name} {ver.NameText}");
+            languages = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>();
+            xmanu = CreateNewXML(Manu);
+            XElement xapps = new XElement(Get("ApplicationPrograms"));
+            xmanu.Add(xapps);
 
-                appVersion = $"{Manu}_A-{GetAppId(app.Number)}-{ver.Number:X2}";
-                appVersion += "-0000";
-                appVersionMod = appVersion;
+            appVersion = $"{Manu}_A-{GetAppId(general.Info.AppNumber)}-{ver.Number:X2}";
+            appVersion += "-0000";
+            appVersionMod = appVersion;
 
-                currentLang = ver.DefaultLanguage;
-                foreach(Models.Translation trans in ver.Text)
-                    AddTranslation(trans.Language.CultureCode, appVersion, "Name", trans.Text);
+            currentLang = ver.DefaultLanguage;
+            foreach(Models.Translation trans in ver.Text)
+                AddTranslation(trans.Language.CultureCode, appVersion, "Name", trans.Text);
 
-                XElement xunderapp = new XElement(Get("Static"));
-                XElement xapp = new XElement(Get("ApplicationProgram"), xunderapp);
-                xapps.Add(xapp);
-                xapp.SetAttributeValue("Id", appVersion);
-                int appnumber = app.Number;
-                if(general.IsOpenKnx) appnumber |= general.ManufacturerId << 8;
-                xapp.SetAttributeValue("ApplicationNumber", appnumber);
-                xapp.SetAttributeValue("ApplicationVersion", ver.Number.ToString());
-                xapp.SetAttributeValue("ProgramType", "ApplicationProgram");
-                xapp.SetAttributeValue("MaskVersion", app.Mask.Id);
-                xapp.SetAttributeValue("Name", GetDefaultLanguage(ver.Text));
-                xapp.SetAttributeValue("DefaultLanguage", currentLang);
-                xapp.SetAttributeValue("LoadProcedureStyle", $"{app.Mask.Procedure}Procedure");
-                xapp.SetAttributeValue("PeiType", "0");
-                xapp.SetAttributeValue("DynamicTableManagement", "false"); //TODO check when to add
-                xapp.SetAttributeValue("Linkable", "false"); //TODO check when to add
+            XElement xunderapp = new XElement(Get("Static"));
+            XElement xapp = new XElement(Get("ApplicationProgram"), xunderapp);
+            xapps.Add(xapp);
+            xapp.SetAttributeValue("Id", appVersion);
+            int appnumber = general.Info.AppNumber;
+            if(general.IsOpenKnx) appnumber |= general.ManufacturerId << 8;
+            xapp.SetAttributeValue("ApplicationNumber", appnumber);
+            xapp.SetAttributeValue("ApplicationVersion", ver.Number.ToString());
+            xapp.SetAttributeValue("ProgramType", "ApplicationProgram");
+            xapp.SetAttributeValue("MaskVersion", general.Info.Mask.Id);
+            xapp.SetAttributeValue("Name", GetDefaultLanguage(ver.Text));
+            xapp.SetAttributeValue("DefaultLanguage", currentLang);
+            xapp.SetAttributeValue("LoadProcedureStyle", $"{general.Info.Mask.Procedure}Procedure");
+            xapp.SetAttributeValue("PeiType", "0");
+            xapp.SetAttributeValue("DynamicTableManagement", "false"); //TODO check when to add
+            xapp.SetAttributeValue("Linkable", "false"); //TODO check when to add
 
-                if(ver.IsBusInterfaceActive && ver.BusInterfaceCounter > 0)
+            if(ver.IsBusInterfaceActive && ver.BusInterfaceCounter > 0)
+            {
+                xapp.SetAttributeValue("AdditionalAddressesCount", ver.BusInterfaceCounter);
+            }
+
+            buttonScripts = new List<string>();
+            iconsApp = new List<Icon>();
+            List<Baggage> baggagesApp = new List<Baggage>();
+            if(ver.IsHelpActive)
+            {
+                if(ver.NamespaceVersion == 14)
                 {
-                    xapp.SetAttributeValue("AdditionalAddressesCount", ver.BusInterfaceCounter);
+                    xapp.SetAttributeValue("ContextHelpFile", "HelpFile_" + ver.DefaultLanguage + ".zip");
+                } else {
+                    xapp.SetAttributeValue("ContextHelpFile", $"{Manu}_BG--{GetEncoded("HelpFile_" + ver.DefaultLanguage + ".zip")}");
                 }
+                ExportHelptexts(ver, Manu, baggagesManu, baggagesApp);
+            }
 
-                buttonScripts = new List<string>();
-                iconsApp = new List<Icon>();
-                List<Baggage> baggagesApp = new List<Baggage>();
-                if(ver.IsHelpActive)
+            if(ver.IsPreETS4)
+            {
+                xapp.SetAttributeValue("PreEts4Style", "true"); //TODO check when to add
+                xapp.SetAttributeValue("ConvertedFromPreEts4Data", "true"); //TODO check when to add
+            }
+
+            if(!string.IsNullOrEmpty(ver.ReplacesVersions)) xapp.SetAttributeValue("ReplacesVersions", ver.ReplacesVersions);
+
+            switch (currentNamespace)
+            {
+                case "http://knx.org/xml/project/11":
+                    xapp.SetAttributeValue("MinEtsVersion", "4.0");
+                    break;
+                case "http://knx.org/xml/project/12":
+                case "http://knx.org/xml/project/13":
+                case "http://knx.org/xml/project/14":
+                case "http://knx.org/xml/project/20":
+                    xapp.SetAttributeValue("MinEtsVersion", "5.0");
+                    break;
+                case "http://knx.org/xml/project/21":
+                    xapp.SetAttributeValue("MinEtsVersion", "6.0");
+                    break;
+            }
+
+            AutoHelper.CheckIds(ver);
+
+            XElement temp;
+            ExportSegments(ver, xunderapp);
+
+            #region ParamTypes/Baggages
+            Debug.WriteLine($"Exportiere ParameterTypes: {ver.ParameterTypes.Count}x");
+            temp = new XElement(Get("ParameterTypes"));
+            foreach (ParameterType type in ver.ParameterTypes)
+            {
+                //Debug.WriteLine($"    - ParameterType {type.Name}x");
+                string id = appVersion + "_PT-" + GetEncoded(type.Name);
+                XElement xtype = new XElement(Get("ParameterType"));
+                xtype.SetAttributeValue("Id", id);
+                xtype.SetAttributeValue("Name", type.Name);
+                XElement xcontent = null;
+
+                switch (type.Type)
                 {
-                    if(ver.NamespaceVersion == 14)
-                    {
-                        xapp.SetAttributeValue("ContextHelpFile", "HelpFile_" + ver.DefaultLanguage + ".zip");
-                    } else {
-                        xapp.SetAttributeValue("ContextHelpFile", $"{Manu}_BG--{GetEncoded("HelpFile_" + ver.DefaultLanguage + ".zip")}");
-                    }
-                    ExportHelptexts(ver, Manu, baggagesManu, baggagesApp);
-                }
-
-                if(ver.IsPreETS4)
-                {
-                    xapp.SetAttributeValue("PreEts4Style", "true"); //TODO check when to add
-                    xapp.SetAttributeValue("ConvertedFromPreEts4Data", "true"); //TODO check when to add
-                }
-
-                if(!string.IsNullOrEmpty(ver.ReplacesVersions)) xapp.SetAttributeValue("ReplacesVersions", ver.ReplacesVersions);
-
-                switch (currentNamespace)
-                {
-                    case "http://knx.org/xml/project/11":
-                        xapp.SetAttributeValue("MinEtsVersion", "4.0");
+                    case ParameterTypes.None:
+                        xcontent = new XElement(Get("TypeNone"));
                         break;
-                    case "http://knx.org/xml/project/12":
-                    case "http://knx.org/xml/project/13":
-                    case "http://knx.org/xml/project/14":
-                    case "http://knx.org/xml/project/20":
-                        xapp.SetAttributeValue("MinEtsVersion", "5.0");
+
+                    case ParameterTypes.Text:
+                        xcontent = new XElement(Get("TypeText"));
                         break;
-                    case "http://knx.org/xml/project/21":
-                        xapp.SetAttributeValue("MinEtsVersion", "6.0");
-                        break;
-                }
 
-                AutoHelper.CheckIds(ver);
+                    case ParameterTypes.NumberInt:
+                    case ParameterTypes.NumberUInt:
+                    case ParameterTypes.Float_DPT9:
+                    case ParameterTypes.Float_IEEE_Double:
+                    case ParameterTypes.Float_IEEE_Single:
+                        if(type.Type == ParameterTypes.NumberUInt || type.Type == ParameterTypes.NumberInt)
+                            xcontent = new XElement(Get("TypeNumber"));
+                        else
+                            xcontent = new XElement(Get("TypeFloat"));
 
-                XElement temp;
-                ExportSegments(ver, xunderapp);
-
-                #region ParamTypes/Baggages
-                Debug.WriteLine($"Exportiere ParameterTypes: {ver.ParameterTypes.Count}x");
-                temp = new XElement(Get("ParameterTypes"));
-                foreach (ParameterType type in ver.ParameterTypes)
-                {
-                    //Debug.WriteLine($"    - ParameterType {type.Name}x");
-                    string id = appVersion + "_PT-" + GetEncoded(type.Name);
-                    XElement xtype = new XElement(Get("ParameterType"));
-                    xtype.SetAttributeValue("Id", id);
-                    xtype.SetAttributeValue("Name", type.Name);
-                    XElement xcontent = null;
-
-                    switch (type.Type)
-                    {
-                        case ParameterTypes.None:
-                            xcontent = new XElement(Get("TypeNone"));
-                            break;
-
-                        case ParameterTypes.Text:
-                            xcontent = new XElement(Get("TypeText"));
-                            break;
-
-                        case ParameterTypes.NumberInt:
-                        case ParameterTypes.NumberUInt:
-                        case ParameterTypes.Float_DPT9:
-                        case ParameterTypes.Float_IEEE_Double:
-                        case ParameterTypes.Float_IEEE_Single:
-                            if(type.Type == ParameterTypes.NumberUInt || type.Type == ParameterTypes.NumberInt)
-                                xcontent = new XElement(Get("TypeNumber"));
-                            else
-                                xcontent = new XElement(Get("TypeFloat"));
-
-                            switch(type.Type)
-                            {
-                                case ParameterTypes.NumberUInt:
-                                    xcontent.SetAttributeValue("Type", "unsignedInt");
-                                    break;
-                                
-                                case ParameterTypes.NumberInt:
-                                    xcontent.SetAttributeValue("Type", "signedInt");
-                                    break;
-
-                                case ParameterTypes.Float_DPT9:
-                                    xcontent.SetAttributeValue("Encoding", "DPT 9");
-                                    break;
-
-                                case ParameterTypes.Float_IEEE_Single:
-                                    xcontent.SetAttributeValue("Encoding", "IEEE-754 Single");
-                                    break;
-
-                                case ParameterTypes.Float_IEEE_Double:
-                                    xcontent.SetAttributeValue("Encoding", "IEEE-754 Double");
-                                    break;
-
-                                default:
-                                    throw new Exception("Unbekannter ParameterType: " + type.Type.ToString());
-                            }
-                            xcontent.SetAttributeValue("minInclusive", type.Min.Replace(",", "."));
-                            xcontent.SetAttributeValue("maxInclusive", type.Max.Replace(",", "."));
-                            if(type.Increment != "1")
-                                xcontent.SetAttributeValue("Increment", type.Increment.Replace(",", "."));
-                            if(type.UIHint != "None" && !string.IsNullOrEmpty(type.UIHint))
-                                xcontent.SetAttributeValue("UIHint", type.UIHint);
-                            if(type.DisplayOffset != "0")
-                                xcontent.SetAttributeValue("DisplayOffset", type.DisplayOffset);
-                            if(type.DisplayFactor != "1")
-                                xcontent.SetAttributeValue("DisplayFactor", type.DisplayFactor);
-                            break;
-
-                        case ParameterTypes.Enum:
-                            xcontent = new XElement(Get("TypeRestriction"));
-                            xcontent.SetAttributeValue("Base", "Value");
-                            foreach (ParameterTypeEnum enu in type.Enums)
-                            {
-                                XElement xenu = new XElement(Get("Enumeration"));
-                                xenu.SetAttributeValue("Text", GetDefaultLanguage(enu.Text));
-                                xenu.SetAttributeValue("Value", enu.Value);
-                                xenu.SetAttributeValue("Id", $"{id}_EN-{enu.Value}");
-                                xcontent.Add(xenu);
-                                if(enu.Translate)
-                                    foreach(Models.Translation trans in enu.Text) AddTranslation(trans.Language.CultureCode, $"{id}_EN-{enu.Value}", "Text", trans.Text);
-                            
-                                if(enu.UseIcon)
-                                {
-                                    xenu.SetAttributeValue("Icon", enu.IconObject.Name);
-                                    if(!iconsApp.Contains(enu.IconObject))
-                                        iconsApp.Add(enu.IconObject);
-                                }
-                            }
-                            break;
-
-                        case ParameterTypes.Picture:
+                        switch(type.Type)
                         {
-                            xcontent = new XElement(Get("TypePicture"));
-                            Baggage bag2 = type.BaggageObject.Copy();
+                            case ParameterTypes.NumberUInt:
+                                xcontent.SetAttributeValue("Type", "unsignedInt");
+                                break;
+                            
+                            case ParameterTypes.NumberInt:
+                                xcontent.SetAttributeValue("Type", "signedInt");
+                                break;
 
-                            if(general.IsOpenKnx)
+                            case ParameterTypes.Float_DPT9:
+                                xcontent.SetAttributeValue("Encoding", "DPT 9");
+                                break;
+
+                            case ParameterTypes.Float_IEEE_Single:
+                                xcontent.SetAttributeValue("Encoding", "IEEE-754 Single");
+                                break;
+
+                            case ParameterTypes.Float_IEEE_Double:
+                                xcontent.SetAttributeValue("Encoding", "IEEE-754 Double");
+                                break;
+
+                            default:
+                                throw new Exception("Unbekannter ParameterType: " + type.Type.ToString());
+                        }
+                        xcontent.SetAttributeValue("minInclusive", type.Min.Replace(",", "."));
+                        xcontent.SetAttributeValue("maxInclusive", type.Max.Replace(",", "."));
+                        if(type.Increment != "1")
+                            xcontent.SetAttributeValue("Increment", type.Increment.Replace(",", "."));
+                        if(type.UIHint != "None" && !string.IsNullOrEmpty(type.UIHint))
+                            xcontent.SetAttributeValue("UIHint", type.UIHint);
+                        if(type.DisplayOffset != "0")
+                            xcontent.SetAttributeValue("DisplayOffset", type.DisplayOffset);
+                        if(type.DisplayFactor != "1")
+                            xcontent.SetAttributeValue("DisplayFactor", type.DisplayFactor);
+                        break;
+
+                    case ParameterTypes.Enum:
+                        xcontent = new XElement(Get("TypeRestriction"));
+                        xcontent.SetAttributeValue("Base", "Value");
+                        foreach (ParameterTypeEnum enu in type.Enums)
+                        {
+                            XElement xenu = new XElement(Get("Enumeration"));
+                            xenu.SetAttributeValue("Text", GetDefaultLanguage(enu.Text));
+                            xenu.SetAttributeValue("Value", enu.Value);
+                            xenu.SetAttributeValue("Id", $"{id}_EN-{enu.Value}");
+                            xcontent.Add(xenu);
+                            if(enu.Translate)
+                                foreach(Models.Translation trans in enu.Text) AddTranslation(trans.Language.CultureCode, $"{id}_EN-{enu.Value}", "Text", trans.Text);
+                        
+                            if(enu.UseIcon)
                             {
-                                switch(type.BaggageObject.TargetPath)
+                                xenu.SetAttributeValue("Icon", enu.IconObject.Name);
+                                if(!iconsApp.Contains(enu.IconObject))
+                                    iconsApp.Add(enu.IconObject);
+                            }
+                        }
+                        break;
+
+                    case ParameterTypes.Picture:
+                    {
+                        xcontent = new XElement(Get("TypePicture"));
+                        Baggage bag2 = type.BaggageObject.Copy();
+
+                        if(general.IsOpenKnx)
+                        {
+                            switch(type.BaggageObject.TargetPath)
+                            {
+                                case "root":
+                                    bag2.TargetPath = "";
+                                    break;
+
+                                case "openknxid":
                                 {
-                                    case "root":
-                                        bag2.TargetPath = "";
-                                        break;
+                                    bag2.TargetPath = general.ManufacturerId.ToString("X2");
+                                    break;
+                                }
 
-                                    case "openknxid":
-                                    {
-                                        bag2.TargetPath = general.ManufacturerId.ToString("X2");
-                                        break;
-                                    }
-
-                                    case "openknxapp":
-                                    {
-                                        bag2.TargetPath = Path.Combine(general.ManufacturerId.ToString("X2"), app.Number.ToString("X2"));
-                                        break;
-                                    }
+                                case "openknxapp":
+                                {
+                                    bag2.TargetPath = Path.Combine(general.ManufacturerId.ToString("X2"), general.Info.AppNumber.ToString("X2"));
+                                    break;
                                 }
                             }
-                            
-                            xcontent.SetAttributeValue("RefId", $"M-{GetManuId()}_BG-{GetEncoded(bag2.TargetPath)}-{GetEncoded(type.BaggageObject.Name + type.BaggageObject.Extension)}");
-                            if (!baggagesApp.Any(b => b.TargetPath == bag2.TargetPath && b.Name == bag2.Name && b.Extension == bag2.Extension))
-                                baggagesApp.Add(bag2);
-                            break;
                         }
-
-                        case ParameterTypes.IpAddress:
-                            xcontent = new XElement(Get("TypeIPAddress"));
-                            xcontent.SetAttributeValue("AddressType", type.UIHint);
-                            if(type.Increment == "IPv6")
-                            {
-                                xcontent.SetAttributeValue("Version", type.Increment);
-                            }
-                            break;
-
-                        case ParameterTypes.Color:
-                            xcontent = new XElement(Get("TypeColor"));
-                            xcontent.SetAttributeValue("Space", type.UIHint);
-                            break;
-
-                        case ParameterTypes.RawData:
-                            xcontent = new XElement(Get("TypeRawData"));
-                            xcontent.SetAttributeValue("MaxSize", type.Max);
-                            break;
-
-                        case ParameterTypes.Date:
-                            xcontent = new XElement(Get("TypeDate"));
-                            xcontent.SetAttributeValue("Encoding", type.UIHint);
-                            if(!type.OtherValue)
-                                xcontent.SetAttributeValue("DisplayTheYear", "false");
-                            break;
-
-                        default:
-                            throw new Exception("Unbekannter Parametertyp: " + type.Type);
+                        
+                        xcontent.SetAttributeValue("RefId", $"M-{GetManuId()}_BG-{GetEncoded(bag2.TargetPath)}-{GetEncoded(type.BaggageObject.Name + type.BaggageObject.Extension)}");
+                        if (!baggagesApp.Any(b => b.TargetPath == bag2.TargetPath && b.Name == bag2.Name && b.Extension == bag2.Extension))
+                            baggagesApp.Add(bag2);
+                        break;
                     }
 
-                    if (xcontent != null && 
-                        xcontent.Name.LocalName != "TypeFloat" &&
-                        xcontent.Name.LocalName != "TypeNone" &&
-                        xcontent.Name.LocalName != "TypePicture" &&
-                        xcontent.Name.LocalName != "TypeColor" &&
-                        xcontent.Name.LocalName != "TypeDate" &&
-                        xcontent.Name.LocalName != "TypeRawData" &&
-                        xcontent.Name.LocalName != "TypeIPAddress")
-                    {
-                        xcontent.SetAttributeValue("SizeInBit", type.SizeInBit);
-                    }
-                    if (xcontent != null)
-                        xtype.Add(xcontent);
-                    temp.Add(xtype);
+                    case ParameterTypes.IpAddress:
+                        xcontent = new XElement(Get("TypeIPAddress"));
+                        xcontent.SetAttributeValue("AddressType", type.UIHint);
+                        if(type.Increment == "IPv6")
+                        {
+                            xcontent.SetAttributeValue("Version", type.Increment);
+                        }
+                        break;
+
+                    case ParameterTypes.Color:
+                        xcontent = new XElement(Get("TypeColor"));
+                        xcontent.SetAttributeValue("Space", type.UIHint);
+                        break;
+
+                    case ParameterTypes.RawData:
+                        xcontent = new XElement(Get("TypeRawData"));
+                        xcontent.SetAttributeValue("MaxSize", type.Max);
+                        break;
+
+                    case ParameterTypes.Date:
+                        xcontent = new XElement(Get("TypeDate"));
+                        xcontent.SetAttributeValue("Encoding", type.UIHint);
+                        if(!type.OtherValue)
+                            xcontent.SetAttributeValue("DisplayTheYear", "false");
+                        break;
+
+                    default:
+                        throw new Exception("Unbekannter Parametertyp: " + type.Type);
                 }
-                xunderapp.Add(temp);
-                XElement xextension = new XElement(Get("Extension"));
 
-                if (baggagesApp.Count > 0)
+                if (xcontent != null && 
+                    xcontent.Name.LocalName != "TypeFloat" &&
+                    xcontent.Name.LocalName != "TypeNone" &&
+                    xcontent.Name.LocalName != "TypePicture" &&
+                    xcontent.Name.LocalName != "TypeColor" &&
+                    xcontent.Name.LocalName != "TypeDate" &&
+                    xcontent.Name.LocalName != "TypeRawData" &&
+                    xcontent.Name.LocalName != "TypeIPAddress")
                 {
-                    foreach(Baggage bag in baggagesApp)
-                    {
-                        XElement xbag = new XElement(Get("Baggage"));
-                        xbag.SetAttributeValue("RefId", $"M-{GetManuId()}_BG-{GetEncoded(bag.TargetPath)}-{GetEncoded(bag.Name + bag.Extension)}");
-                        xextension.Add(xbag);
-
-                        if (!baggagesManu.Any(b => b.TargetPath == bag.TargetPath && b.Name == bag.Name && b.Extension == bag.Extension))
-                            baggagesManu.Add(bag);
-                    }
+                    xcontent.SetAttributeValue("SizeInBit", type.SizeInBit);
                 }
+                if (xcontent != null)
+                    xtype.Add(xcontent);
+                temp.Add(xtype);
+            }
+            xunderapp.Add(temp);
+            XElement xextension = new XElement(Get("Extension"));
 
-                #endregion
+            if (baggagesApp.Count > 0)
+            {
+                foreach(Baggage bag in baggagesApp)
+                {
+                    XElement xbag = new XElement(Get("Baggage"));
+                    xbag.SetAttributeValue("RefId", $"M-{GetManuId()}_BG-{GetEncoded(bag.TargetPath)}-{GetEncoded(bag.Name + bag.Extension)}");
+                    xextension.Add(xbag);
 
-                StringBuilder headers = new StringBuilder();
-                headers.AppendLine("#pragma once");
-                headers.AppendLine();
+                    if (!baggagesManu.Any(b => b.TargetPath == bag.TargetPath && b.Name == bag.Name && b.Extension == bag.Extension))
+                        baggagesManu.Add(bag);
+                }
+            }
 
-                headers.AppendLine(@"#define paramDelay(time) (uint32_t)( \
+            #endregion
+
+            StringBuilder headers = new StringBuilder();
+            headers.AppendLine("#pragma once");
+            headers.AppendLine();
+
+            headers.AppendLine(@"#define paramDelay(time) (uint32_t)( \
             (time & 0xC000) == 0xC000 ? (time & 0x3FFF) * 100 : \
             (time & 0xC000) == 0x0000 ? (time & 0x3FFF) * 1000 : \
             (time & 0xC000) == 0x4000 ? (time & 0x3FFF) * 60000 : \
             (time & 0xC000) == 0x8000 ? ((time & 0x3FFF) > 1000 ? 3600000 : \
-                                         (time & 0x3FFF) * 3600000 ) : 0 )");
+                                            (time & 0x3FFF) * 3600000 ) : 0 )");
 
-                
-                headers.AppendLine("//--------------------Allgemein---------------------------");
-                if(general.IsOpenKnx)
+            
+            headers.AppendLine("//--------------------Allgemein---------------------------");
+            if(general.IsOpenKnx)
+            {
+                headers.AppendLine($"#define MAIN_OpenKnxId 0x{general.ManufacturerId:X2}");
+                headers.AppendLine($"#define MAIN_ApplicationNumber 0x{general.Info.AppNumber:X2}");
+            } else {
+                //headers.AppendLine($"#define MAIN_OpenKnxId 0x{(app.Number >> 8):X2}");
+                headers.AppendLine($"#define MAIN_ApplicationNumber 0x{general.Info.AppNumber:X4}");
+            }
+            headers.AppendLine($"#define MAIN_ApplicationVersion 0x{ver.Number:X2}");
+            headers.AppendLine($"#define MAIN_OrderNumber \"{general.Info.OrderNumber}\"");
+            if(ver.Memories.Count > 0)
+                headers.AppendLine($"#define MAIN_ParameterSize {ver.Memories[0].Size}");
+            headers.AppendLine($"#define MAIN_MaxKoNumber {ver.HighestComNumber}");
+            headers.AppendLine();
+            headers.AppendLine();
+
+            ExportParameters(ver, ver, xunderapp, headers);
+            ExportParameterRefs(ver, xunderapp);
+            ExportComObjects(ver, ver, xunderapp, headers);
+            ExportComObjectRefs(ver, xunderapp);
+
+            #region "Tables / LoadProcedure"
+            
+            temp = new XElement(Get("AddressTable"));
+            if(ver.AddressMemoryObject != null && general.Info.Mask.Memory == MemoryTypes.Absolute)
+            {
+                temp.SetAttributeValue("CodeSegment", $"{appVersion}_AS-{ver.AddressMemoryObject.Address:X4}");
+                temp.SetAttributeValue("Offset", ver.AddressTableOffset);
+            }
+            temp.SetAttributeValue("MaxEntries", ver.AddressTableMaxCount);
+            xunderapp.Add(temp);
+
+                temp = new XElement(Get("AssociationTable"));
+            if(ver.AssociationMemoryObject != null && general.Info.Mask.Memory == MemoryTypes.Absolute)
+            {
+                temp.SetAttributeValue("CodeSegment", $"{appVersion}_AS-{ver.AssociationMemoryObject.Address:X4}");
+                temp.SetAttributeValue("Offset", ver.AssociationTableOffset);
+            }
+            temp.SetAttributeValue("MaxEntries", ver.AssociationTableMaxCount);
+            xunderapp.Add(temp);
+
+            if (general.Info.Mask.Procedure != ProcedureTypes.Default)
+            {
+                temp = XElement.Parse(ver.Procedure);
+                //Write correct Memory Size if AutoLoad is activated
+                foreach (XElement xele in temp.Descendants())
                 {
-                    headers.AppendLine($"#define MAIN_OpenKnxId 0x{general.ManufacturerId:X2}");
-                    headers.AppendLine($"#define MAIN_ApplicationNumber 0x{app.Number:X2}");
-                } else {
-                    //headers.AppendLine($"#define MAIN_OpenKnxId 0x{(app.Number >> 8):X2}");
-                    headers.AppendLine($"#define MAIN_ApplicationNumber 0x{app.Number:X4}");
-                }
-                headers.AppendLine($"#define MAIN_ApplicationVersion 0x{ver.Number:X2}");
-                headers.AppendLine($"#define MAIN_OrderNumber \"{hardware.First(h => h.Apps.Contains(app)).Devices.First().OrderNumber}\" //may not work with multiple devices on same hardware or app on different hardware");
-                if(ver.Memories.Count > 0)
-                    headers.AppendLine($"#define MAIN_ParameterSize {ver.Memories[0].Size}");
-                headers.AppendLine($"#define MAIN_MaxKoNumber {ver.HighestComNumber}");
-                headers.AppendLine();
-                headers.AppendLine();
-
-                ExportParameters(ver, ver, xunderapp, headers);
-                ExportParameterRefs(ver, xunderapp);
-                ExportComObjects(ver, ver, xunderapp, headers);
-                ExportComObjectRefs(ver, xunderapp);
-
-                #region "Tables / LoadProcedure"
-                
-                temp = new XElement(Get("AddressTable"));
-                if(ver.AddressMemoryObject != null && app.Mask.Memory == MemoryTypes.Absolute)
-                {
-                    temp.SetAttributeValue("CodeSegment", $"{appVersion}_AS-{ver.AddressMemoryObject.Address:X4}");
-                    temp.SetAttributeValue("Offset", ver.AddressTableOffset);
-                }
-                temp.SetAttributeValue("MaxEntries", ver.AddressTableMaxCount);
-                xunderapp.Add(temp);
-
-                    temp = new XElement(Get("AssociationTable"));
-                if(ver.AssociationMemoryObject != null && app.Mask.Memory == MemoryTypes.Absolute)
-                {
-                    temp.SetAttributeValue("CodeSegment", $"{appVersion}_AS-{ver.AssociationMemoryObject.Address:X4}");
-                    temp.SetAttributeValue("Offset", ver.AssociationTableOffset);
-                }
-                temp.SetAttributeValue("MaxEntries", ver.AssociationTableMaxCount);
-                xunderapp.Add(temp);
-
-                if (app.Mask.Procedure != ProcedureTypes.Default)
-                {
-                    temp = XElement.Parse(ver.Procedure);
-                    //Write correct Memory Size if AutoLoad is activated
-                    foreach (XElement xele in temp.Descendants())
+                    switch (xele.Name.LocalName)
                     {
-                        switch (xele.Name.LocalName)
-                        {
-                            case "LdCtrlWriteRelMem":
-                                {
-                                    if (xele.Attribute("ObjIdx").Value == "4" && ver.Memories[0].IsAutoLoad)
-                                    {
-                                        xele.SetAttributeValue("Size", ver.Memories[0].Size);
-                                    }
-                                    break;
-                                }
-
-                            case "LdCtrlRelSegment":
-                                {
-                                    if (xele.Attribute("LsmIdx").Value == "4" && ver.Memories[0].IsAutoLoad)
-                                    {
-                                        xele.SetAttributeValue("Size", ver.Memories[0].Size);
-                                    }
-                                    break;
-                                }
-                        }
-                    }
-                    ver.Procedure = temp.ToString();
-
-                    temp.Attributes().Where((x) => x.IsNamespaceDeclaration).Remove();
-                    temp.Name = XName.Get(temp.Name.LocalName, currentNamespace);
-                    foreach(XElement xele in temp.Descendants())
-                    {
-                        xele.Name = XName.Get(xele.Name.LocalName, currentNamespace);
-                        switch(xele.Name.LocalName)
-                        {
-                            case "OnError":
+                        case "LdCtrlWriteRelMem":
                             {
-                                int id = int.Parse(xele.Attribute("MessageRef").Value);
-                                Message msg = ver.Messages.SingleOrDefault(m => m.UId == id);
-                                xele.SetAttributeValue("MessageRef", $"{appVersion}_M-{msg.Id}");
+                                if (xele.Attribute("ObjIdx").Value == "4" && ver.Memories[0].IsAutoLoad)
+                                {
+                                    xele.SetAttributeValue("Size", ver.Memories[0].Size);
+                                }
                                 break;
                             }
-                        }
-                    }
-                    xunderapp.Add(temp);
-                }
-                #endregion
 
-
-                xunderapp.Add(xextension);
-
-
-                if(ver.IsMessagesActive && ver.Messages.Count > 0)
-                {
-                    temp = new XElement(Get("Messages"));
-                    foreach(Message msg in ver.Messages)
-                    {
-                        if(msg.Id == -1)
-                            msg.Id = AutoHelper.GetNextFreeId(ver, "Messages");
-
-                        XElement xmsg = new XElement(Get("Message"));
-                        xmsg.SetAttributeValue("Id", $"{appVersion}_M-{msg.Id}");
-                        xmsg.SetAttributeValue("Name", msg.Name);
-                        xmsg.SetAttributeValue("Text",  GetDefaultLanguage(msg.Text));
-                        temp.Add(xmsg);
-
-                        if(!msg.TranslationText)
-                            foreach(Translation trans in msg.Text)
-                                AddTranslation(trans.Language.CultureCode, $"{appVersion}_M-{msg.Id}", "Text", trans.Text);
-                    }
-                    xunderapp.Add(temp);
-                }
-
-                XElement xscript = new XElement(Get("Script"), "");
-                xunderapp.Add(xscript);
-
-                #region BusInterfaces
-
-                if(ver.IsBusInterfaceActive)
-                {
-                    XElement xbis = new XElement(Get("BusInterfaces"));
-                    xunderapp.Add(xbis);
-
-                    for(int i = 1; i <= ver.BusInterfaceCounter; i++)
-                    {
-                        XElement xbi = new XElement(Get("BusInterface"));
-                        xbi.SetAttributeValue("Id", $"{appVersion}_BI-{i}");
-                        xbi.SetAttributeValue("AddressIndex", i);
-                        xbi.SetAttributeValue("AccessType", "Tunneling");
-                        xbi.SetAttributeValue("Text", "Tunneling Channel " + i);
-                        xbis.Add(xbi);
-                    }
-
-                    if(ver.HasBusInterfaceRouter)
-                    {
-                        XElement xbi = new XElement(Get("BusInterface"));
-                        xbi.SetAttributeValue("Id", $"{appVersion}_BI-0");
-                        xbi.SetAttributeValue("AddressIndex", "0");
-                        xbi.SetAttributeValue("AccessType", "Tunneling");
-                        xbi.SetAttributeValue("Text", "IP Routing");
-                        xbis.Add(xbi);
-                    }
-
-                }
-
-                #endregion
-
-                
-                #region Modules
-
-                if(ver.Allocators.Count > 0)
-                {
-                    XElement xallocs = new XElement(Get("Allocators"));
-                    xunderapp.Add(xallocs);
-                    
-                    foreach(Models.Allocator alloc in ver.Allocators)
-                    {
-                        XElement xalloc = new XElement(Get("Allocator"));
-
-                        if (alloc.Id == -1)
-                            alloc.Id = AutoHelper.GetNextFreeId(ver, "Allocators");
-                        xalloc.SetAttributeValue("Id", $"{appVersionMod}_L-{alloc.Id}");
-                        xalloc.SetAttributeValue("Name", alloc.Name);
-                        xalloc.SetAttributeValue("Start", alloc.Start);
-                        xalloc.SetAttributeValue("maxInclusive", alloc.Max);
-                        //TODO errormessageid
-                        
-                        xallocs.Add(xalloc);
-                    }
-                }
-
-
-
-                if(ver.Modules.Count > 0)
-                {
-                    headers.AppendLine("");
-                    headers.AppendLine("//---------------------Modules----------------------------");
-                }
-
-                List<DynModule> mods = new List<DynModule>();
-                AutoHelper.GetModules(ver.Dynamics[0], mods);
-
-                if(mods.Count > 0)
-                {
-                    headers.AppendLine("");
-                    headers.AppendLine("//-----Module specific starts");
-                }
-
-                Dictionary<string, (long, long)> modStartPara = new Dictionary<string, (long, long)>();
-                Dictionary<string, (long, long)> modStartComs = new Dictionary<string, (long, long)>();
-                Dictionary<string, long> allocators = new Dictionary<string, long>();
-                foreach(DynModule dmod in mods)
-                {
-                    string prefix = dmod.ModuleObject.Prefix;
-
-                    if(dmod.ModuleObject.IsOpenKnxModule)
-                    {
-                        OpenKnxModule omod = ver.OpenKnxModules.Single(m => m.Name == dmod.ModuleObject.Name.Split(' ')[0]);
-                        prefix = omod.Prefix;
-                    }
-
-                    //if(!modStartPara.ContainsKey(prefix))
-                    //    modStartPara.Add(prefix, new List<long>());
-                    //if(!modStartComs.ContainsKey(prefix))
-                    //    modStartComs.Add(prefix, new List<long>());
-
-                    DynModuleArg dargp = dmod.Arguments.Single(a => a.ArgumentId == dmod.ModuleObject.ParameterBaseOffsetUId);
-                    if(dargp.UseAllocator)
-                    {
-                        if(!allocators.ContainsKey(dargp.Allocator.Name))
-                            allocators.Add(dargp.Allocator.Name, dargp.Allocator.Start);
-
-                        if(!modStartPara.ContainsKey(prefix))
-                            modStartPara.Add(prefix, (allocators[dargp.Allocator.Name], dargp.Argument.Allocates));
-
-                        allocators[dargp.Allocator.Name] += dargp.Argument.Allocates;
-                    } else if(!dmod.ModuleObject.IsOpenKnxModule && !modStartPara.ContainsKey(prefix))
-                    {
-                        int size = (dmod.ModuleObject.Memory.Sections.Count - 1) * 16;
-                        size += dmod.ModuleObject.Memory.Sections[dmod.ModuleObject.Memory.Sections.Count - 1].Bytes.Count;
-                        modStartPara.Add(prefix, (long.Parse(dargp.Value), size));
-                    }
-                    
-
-                    
-                    DynModuleArg dargc = dmod.Arguments.SingleOrDefault(a => a.ArgumentId == dmod.ModuleObject.ComObjectBaseNumberUId);
-                    if(dargc != null)
-                    {
-                        if(dargc.UseAllocator)
-                        {
-                            if(!allocators.ContainsKey(dargc.Allocator.Name))
-                                allocators.Add(dargc.Allocator.Name, dargc.Allocator.Start);
-
-                            if(!modStartComs.ContainsKey(prefix))
-                                modStartComs.Add(prefix, (allocators[dargc.Allocator.Name], dargc.Argument.Allocates));
-
-                            allocators[dargc.Allocator.Name] += dargc.Argument.Allocates;
-                        } else if(!dmod.ModuleObject.IsOpenKnxModule && !modStartComs.ContainsKey(prefix))
-                        {
-                            long size = 0;
-                            if(dmod.ModuleObject.ComObjects.Count > 0)
+                        case "LdCtrlRelSegment":
                             {
-                                ComObject com = dmod.ModuleObject.ComObjects.OrderByDescending(c => c.Number).First();
-                                size = com.Number + 1;
+                                if (xele.Attribute("LsmIdx").Value == "4" && ver.Memories[0].IsAutoLoad)
+                                {
+                                    xele.SetAttributeValue("Size", ver.Memories[0].Size);
+                                }
+                                break;
                             }
-                            modStartComs.Add(prefix, (long.Parse(dargc.Value), size));
+                    }
+                }
+                ver.Procedure = temp.ToString();
+
+                temp.Attributes().Where((x) => x.IsNamespaceDeclaration).Remove();
+                temp.Name = XName.Get(temp.Name.LocalName, currentNamespace);
+                foreach(XElement xele in temp.Descendants())
+                {
+                    xele.Name = XName.Get(xele.Name.LocalName, currentNamespace);
+                    switch(xele.Name.LocalName)
+                    {
+                        case "OnError":
+                        {
+                            int id = int.Parse(xele.Attribute("MessageRef").Value);
+                            Message msg = ver.Messages.SingleOrDefault(m => m.UId == id);
+                            xele.SetAttributeValue("MessageRef", $"{appVersion}_M-{msg.Id}");
+                            break;
                         }
                     }
                 }
-
-                foreach(KeyValuePair<string, (long offset,long size)> item in modStartPara)
-                {
-                    headers.AppendLine($"#define {item.Key}_ParamBlockOffset " + item.Value.offset);
-                    if(item.Value.size > 0)
-                        headers.AppendLine($"#define {item.Key}_ParamBlockSize " + item.Value.size);
-                    else
-                        headers.AppendLine($"#define {item.Key}_ParamBlockSize 0");
-                }
-                foreach(KeyValuePair<string, (long offset, long size)> item in modStartComs)
-                {
-                    headers.AppendLine($"#define {item.Key}_KoOffset " + item.Value.offset);
-                    if(item.Value.size > 0)
-                        headers.AppendLine($"#define {item.Key}_KoBlockSize " + item.Value.size);
-                    else
-                        headers.AppendLine($"#define {item.Key}_KoBlockSize 0");
-                    
-                }
-    
-                headers.AppendLine();
-
-                ExportModules(xapp, ver, ver, appVersion, headers, appVersion);
-                appVersionMod = appVersion;
-
-                System.IO.File.WriteAllText(headerPath, headers.ToString());
-                headers = null;
-
-                #endregion
-
-
-                XElement xdyn = new XElement(Get("Dynamic"));
-                HandleSubItems(ver.Dynamics[0], xdyn, ver);
-
-
-                if(buttonScripts.Count > 0)
-                {
-                    string scripts = "";
-                    scripts += string.Join(null, buttonScripts);
-                    xscript.Value += scripts;
-                }
-
-                if(string.IsNullOrEmpty(xscript.Value))
-                    xscript.Remove();
-
-
-                if(iconsApp.Count > 0)
-                {
-                    string zipName = "Icons_" + general.GetGuid();
-                    Baggage bag = new Baggage() {
-                        Name = zipName,
-                        Extension = ".zip",
-                        LastModified = general.Icons.OrderByDescending(i => i.LastModified).First().LastModified
-                    };
-                    baggagesManu.Add(bag);
-                    if(ver.NamespaceVersion == 14)
-                    {
-                        xapp.SetAttributeValue("IconFile", $"{zipName}.zip");
-                    } else {
-                        xapp.SetAttributeValue("IconFile", $"{Manu}_BG--{GetEncoded($"{zipName}.zip")}");
-                    }
-
-                    XElement xbag = new XElement(Get("Baggage"));
-                    xbag.SetAttributeValue("RefId", $"M-{GetManuId()}_BG--{GetEncoded($"{zipName}.zip")}");
-                    xextension.Add(xbag);
-                    exportIcons = true;
-                }
-                
-                if(!xextension.HasElements)
-                    xextension.Remove();
-
-                xapp.Add(xdyn);
-
-
-                #region Translations
-                Debug.WriteLine($"Exportiere Translations: {languages.Count} Sprachen");
-                xlanguages = new XElement(Get("Languages"));
-                foreach(KeyValuePair<string, Dictionary<string, Dictionary<string, string>>> lang in languages) {
-                    XElement xunit = new XElement(Get("TranslationUnit"));
-                    xunit.SetAttributeValue("RefId", appVersion);
-                    XElement xlang = new XElement(Get("Language"), xunit);
-                    xlang.SetAttributeValue("Identifier", lang.Key);
-
-                    foreach(KeyValuePair<string, Dictionary<string, string>> langitem in lang.Value) {
-                        XElement xele = new XElement(Get("TranslationElement"));
-                        xele.SetAttributeValue("RefId", langitem.Key);
-
-                        foreach(KeyValuePair<string, string> langval in langitem.Value) {
-                            XElement xtrans = new XElement(Get("Translation"));
-                            xtrans.SetAttributeValue("AttributeName", langval.Key);
-                            xtrans.SetAttributeValue("Text", langval.Value);
-                            xele.Add(xtrans);
-                        }
-
-                        if(xele.HasElements)
-                            xunit.Add(xele);
-                    }
-                    if(xlang.HasElements)
-                        xlanguages.Add(xlang);
-                }
-                xmanu.Add(xlanguages);
-                #endregion
-
-                string nsnumber = currentNamespace.Substring(currentNamespace.LastIndexOf('/') + 1);
-                string xsdFile = "Data\\knx_project_" + nsnumber + ".xsd";
-                if (File.Exists(xsdFile))
-                {
-                    doc.Save(GetRelPath("Temp", Manu, appVersion + ".validate.xml"));
-                    Debug.WriteLine("XSD gefunden. Validierung wird ausgeführt");
-                    XmlSchemaSet schemas = new XmlSchemaSet();
-                    schemas.Add(null, xsdFile);
-                    bool flag = false;
-
-                    XDocument doc2 = XDocument.Load(GetRelPath("Temp", Manu, appVersion + ".validate.xml"), LoadOptions.SetLineInfo);
-
-                    doc2.Validate(schemas, (o, e) => {
-                        Debug.WriteLine($"Fehler beim Validieren! Zeile {e.Exception.LineNumber}:{e.Exception.LinePosition}\r\n--->{e.Message}\r\n--->({o})");
-                        actions.Add(new PublishAction() { Text = $"    Fehler beim Validieren! Zeile {e.Exception.LineNumber}:{e.Exception.LinePosition} -> {e.Message} ({o})", State = PublishState.Fail});
-                        flag = true;
-                    });
-
-                    if(!flag)
-                        File.Delete(GetRelPath("Temp", Manu, appVersion + ".validate.xml"));
-
-                    if(flag)
-                    {
-                        return false;
-                    }
-                }
-                else
-                {
-                    Debug.WriteLine("XSD nicht gefunden. Validierung wird übersprungen");
-                }
-                
-                doc.Root.Attributes().Where((x) => x.IsNamespaceDeclaration).Remove();
-                doc.Root.Name = doc.Root.Name.LocalName;
-                foreach(XElement xele in doc.Descendants())
-                {
-                    xele.Name = xele.Name.LocalName;
-                }
-
-                Debug.WriteLine($"Speichere App: {GetRelPath("Temp", Manu, appVersion + ".xml")}");
-                doc.Save(GetRelPath("Temp", Manu, appVersion + ".xml"));
-                Debug.WriteLine($"Speichern beendet");
+                xunderapp.Add(temp);
             }
+            #endregion
+
+
+            xunderapp.Add(xextension);
+
+
+            if(ver.IsMessagesActive && ver.Messages.Count > 0)
+            {
+                temp = new XElement(Get("Messages"));
+                foreach(Message msg in ver.Messages)
+                {
+                    if(msg.Id == -1)
+                        msg.Id = AutoHelper.GetNextFreeId(ver, "Messages");
+
+                    XElement xmsg = new XElement(Get("Message"));
+                    xmsg.SetAttributeValue("Id", $"{appVersion}_M-{msg.Id}");
+                    xmsg.SetAttributeValue("Name", msg.Name);
+                    xmsg.SetAttributeValue("Text",  GetDefaultLanguage(msg.Text));
+                    temp.Add(xmsg);
+
+                    if(!msg.TranslationText)
+                        foreach(Translation trans in msg.Text)
+                            AddTranslation(trans.Language.CultureCode, $"{appVersion}_M-{msg.Id}", "Text", trans.Text);
+                }
+                xunderapp.Add(temp);
+            }
+
+            XElement xscript = new XElement(Get("Script"), "");
+            xunderapp.Add(xscript);
+
+            #region BusInterfaces
+
+            if(ver.IsBusInterfaceActive)
+            {
+                XElement xbis = new XElement(Get("BusInterfaces"));
+                xunderapp.Add(xbis);
+
+                for(int i = 1; i <= ver.BusInterfaceCounter; i++)
+                {
+                    XElement xbi = new XElement(Get("BusInterface"));
+                    xbi.SetAttributeValue("Id", $"{appVersion}_BI-{i}");
+                    xbi.SetAttributeValue("AddressIndex", i);
+                    xbi.SetAttributeValue("AccessType", "Tunneling");
+                    xbi.SetAttributeValue("Text", "Tunneling Channel " + i);
+                    xbis.Add(xbi);
+                }
+
+                if(ver.HasBusInterfaceRouter)
+                {
+                    XElement xbi = new XElement(Get("BusInterface"));
+                    xbi.SetAttributeValue("Id", $"{appVersion}_BI-0");
+                    xbi.SetAttributeValue("AddressIndex", "0");
+                    xbi.SetAttributeValue("AccessType", "Tunneling");
+                    xbi.SetAttributeValue("Text", "IP Routing");
+                    xbis.Add(xbi);
+                }
+
+            }
+
+            #endregion
+
+            
+            #region Modules
+
+            if(ver.Allocators.Count > 0)
+            {
+                XElement xallocs = new XElement(Get("Allocators"));
+                xunderapp.Add(xallocs);
+                
+                foreach(Models.Allocator alloc in ver.Allocators)
+                {
+                    XElement xalloc = new XElement(Get("Allocator"));
+
+                    if (alloc.Id == -1)
+                        alloc.Id = AutoHelper.GetNextFreeId(ver, "Allocators");
+                    xalloc.SetAttributeValue("Id", $"{appVersionMod}_L-{alloc.Id}");
+                    xalloc.SetAttributeValue("Name", alloc.Name);
+                    xalloc.SetAttributeValue("Start", alloc.Start);
+                    xalloc.SetAttributeValue("maxInclusive", alloc.Max);
+                    //TODO errormessageid
+                    
+                    xallocs.Add(xalloc);
+                }
+            }
+
+
+
+            if(ver.Modules.Count > 0)
+            {
+                headers.AppendLine("");
+                headers.AppendLine("//---------------------Modules----------------------------");
+            }
+
+            List<DynModule> mods = new List<DynModule>();
+            AutoHelper.GetModules(ver.Dynamics[0], mods);
+
+            if(mods.Count > 0)
+            {
+                headers.AppendLine("");
+                headers.AppendLine("//-----Module specific starts");
+            }
+
+            Dictionary<string, (long, long)> modStartPara = new Dictionary<string, (long, long)>();
+            Dictionary<string, (long, long)> modStartComs = new Dictionary<string, (long, long)>();
+            Dictionary<string, long> allocators = new Dictionary<string, long>();
+            foreach(DynModule dmod in mods)
+            {
+                string prefix = dmod.ModuleObject.Prefix;
+
+                if(dmod.ModuleObject.IsOpenKnxModule)
+                {
+                    OpenKnxModule omod = ver.OpenKnxModules.Single(m => m.Name == dmod.ModuleObject.Name.Split(' ')[0]);
+                    prefix = omod.Prefix;
+                }
+
+                //if(!modStartPara.ContainsKey(prefix))
+                //    modStartPara.Add(prefix, new List<long>());
+                //if(!modStartComs.ContainsKey(prefix))
+                //    modStartComs.Add(prefix, new List<long>());
+
+                DynModuleArg dargp = dmod.Arguments.Single(a => a.ArgumentId == dmod.ModuleObject.ParameterBaseOffsetUId);
+                if(dargp.UseAllocator)
+                {
+                    if(!allocators.ContainsKey(dargp.Allocator.Name))
+                        allocators.Add(dargp.Allocator.Name, dargp.Allocator.Start);
+
+                    if(!modStartPara.ContainsKey(prefix))
+                        modStartPara.Add(prefix, (allocators[dargp.Allocator.Name], dargp.Argument.Allocates));
+
+                    allocators[dargp.Allocator.Name] += dargp.Argument.Allocates;
+                } else if(!dmod.ModuleObject.IsOpenKnxModule && !modStartPara.ContainsKey(prefix))
+                {
+                    int size = (dmod.ModuleObject.Memory.Sections.Count - 1) * 16;
+                    size += dmod.ModuleObject.Memory.Sections[dmod.ModuleObject.Memory.Sections.Count - 1].Bytes.Count;
+                    modStartPara.Add(prefix, (long.Parse(dargp.Value), size));
+                }
+                
+
+                
+                DynModuleArg dargc = dmod.Arguments.SingleOrDefault(a => a.ArgumentId == dmod.ModuleObject.ComObjectBaseNumberUId);
+                if(dargc != null)
+                {
+                    if(dargc.UseAllocator)
+                    {
+                        if(!allocators.ContainsKey(dargc.Allocator.Name))
+                            allocators.Add(dargc.Allocator.Name, dargc.Allocator.Start);
+
+                        if(!modStartComs.ContainsKey(prefix))
+                            modStartComs.Add(prefix, (allocators[dargc.Allocator.Name], dargc.Argument.Allocates));
+
+                        allocators[dargc.Allocator.Name] += dargc.Argument.Allocates;
+                    } else if(!dmod.ModuleObject.IsOpenKnxModule && !modStartComs.ContainsKey(prefix))
+                    {
+                        long size = 0;
+                        if(dmod.ModuleObject.ComObjects.Count > 0)
+                        {
+                            ComObject com = dmod.ModuleObject.ComObjects.OrderByDescending(c => c.Number).First();
+                            size = com.Number + 1;
+                        }
+                        modStartComs.Add(prefix, (long.Parse(dargc.Value), size));
+                    }
+                }
+            }
+
+            foreach(KeyValuePair<string, (long offset,long size)> item in modStartPara)
+            {
+                headers.AppendLine($"#define {item.Key}_ParamBlockOffset " + item.Value.offset);
+                if(item.Value.size > 0)
+                    headers.AppendLine($"#define {item.Key}_ParamBlockSize " + item.Value.size);
+                else
+                    headers.AppendLine($"#define {item.Key}_ParamBlockSize 0");
+            }
+            foreach(KeyValuePair<string, (long offset, long size)> item in modStartComs)
+            {
+                headers.AppendLine($"#define {item.Key}_KoOffset " + item.Value.offset);
+                if(item.Value.size > 0)
+                    headers.AppendLine($"#define {item.Key}_KoBlockSize " + item.Value.size);
+                else
+                    headers.AppendLine($"#define {item.Key}_KoBlockSize 0");
+                
+            }
+
+            headers.AppendLine();
+
+            ExportModules(xapp, ver, ver, appVersion, headers, appVersion);
+            appVersionMod = appVersion;
+
+            System.IO.File.WriteAllText(headerPath, headers.ToString());
+            headers = null;
+
+            #endregion
+
+
+            XElement xdyn = new XElement(Get("Dynamic"));
+            HandleSubItems(ver.Dynamics[0], xdyn, ver);
+
+
+            if(buttonScripts.Count > 0)
+            {
+                string scripts = "";
+                scripts += string.Join(null, buttonScripts);
+                xscript.Value += scripts;
+            }
+
+            if(string.IsNullOrEmpty(xscript.Value))
+                xscript.Remove();
+
+
+            if(iconsApp.Count > 0)
+            {
+                string zipName = "Icons_" + general.GetGuid();
+                Baggage bag = new Baggage() {
+                    Name = zipName,
+                    Extension = ".zip",
+                    LastModified = general.Icons.OrderByDescending(i => i.LastModified).First().LastModified
+                };
+                baggagesManu.Add(bag);
+                if(ver.NamespaceVersion == 14)
+                {
+                    xapp.SetAttributeValue("IconFile", $"{zipName}.zip");
+                } else {
+                    xapp.SetAttributeValue("IconFile", $"{Manu}_BG--{GetEncoded($"{zipName}.zip")}");
+                }
+
+                XElement xbag = new XElement(Get("Baggage"));
+                xbag.SetAttributeValue("RefId", $"M-{GetManuId()}_BG--{GetEncoded($"{zipName}.zip")}");
+                xextension.Add(xbag);
+                exportIcons = true;
+            }
+            
+            if(!xextension.HasElements)
+                xextension.Remove();
+
+            xapp.Add(xdyn);
+
+
+            #region Translations
+            Debug.WriteLine($"Exportiere Translations: {languages.Count} Sprachen");
+            xlanguages = new XElement(Get("Languages"));
+            foreach(KeyValuePair<string, Dictionary<string, Dictionary<string, string>>> lang in languages) {
+                XElement xunit = new XElement(Get("TranslationUnit"));
+                xunit.SetAttributeValue("RefId", appVersion);
+                XElement xlang = new XElement(Get("Language"), xunit);
+                xlang.SetAttributeValue("Identifier", lang.Key);
+
+                foreach(KeyValuePair<string, Dictionary<string, string>> langitem in lang.Value) {
+                    XElement xele = new XElement(Get("TranslationElement"));
+                    xele.SetAttributeValue("RefId", langitem.Key);
+
+                    foreach(KeyValuePair<string, string> langval in langitem.Value) {
+                        XElement xtrans = new XElement(Get("Translation"));
+                        xtrans.SetAttributeValue("AttributeName", langval.Key);
+                        xtrans.SetAttributeValue("Text", langval.Value);
+                        xele.Add(xtrans);
+                    }
+
+                    if(xele.HasElements)
+                        xunit.Add(xele);
+                }
+                if(xlang.HasElements)
+                    xlanguages.Add(xlang);
+            }
+            xmanu.Add(xlanguages);
+            #endregion
+
+            string xsdFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "knx_project_" + general.Application.NamespaceVersion + ".xsd");
+            if (File.Exists(xsdFile))
+            {
+                doc.Save(GetRelPath("Temp", Manu, appVersion + ".validate.xml"));
+                Debug.WriteLine("XSD gefunden. Validierung wird ausgeführt");
+                XmlSchemaSet schemas = new XmlSchemaSet();
+                schemas.Add(null, xsdFile);
+                bool flag = false;
+
+                XDocument doc2 = XDocument.Load(GetRelPath("Temp", Manu, appVersion + ".validate.xml"), LoadOptions.SetLineInfo);
+
+                doc2.Validate(schemas, (o, e) => {
+                    Debug.WriteLine($"Fehler beim Validieren! Zeile {e.Exception.LineNumber}:{e.Exception.LinePosition}\r\n--->{e.Message}\r\n--->({o})");
+                    actions.Add(new PublishAction() { Text = $"    Fehler beim Validieren! Zeile {e.Exception.LineNumber}:{e.Exception.LinePosition} -> {e.Message} ({o})", State = PublishState.Fail});
+                    flag = true;
+                });
+
+                if(!flag)
+                    File.Delete(GetRelPath("Temp", Manu, appVersion + ".validate.xml"));
+
+                if(flag)
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                Debug.WriteLine("XSD nicht gefunden. Validierung wird übersprungen");
+            }
+            
+            doc.Root.Attributes().Where((x) => x.IsNamespaceDeclaration).Remove();
+            doc.Root.Name = doc.Root.Name.LocalName;
+            foreach(XElement xele in doc.Descendants())
+            {
+                xele.Name = xele.Name.LocalName;
+            }
+
+            Debug.WriteLine($"Speichere App: {GetRelPath("Temp", Manu, appVersion + ".xml")}");
+            doc.Save(GetRelPath("Temp", Manu, appVersion + ".xml"));
+            Debug.WriteLine($"Speichern beendet");
             #endregion
 
             #region XML Hardware
             languages.Clear();
-            Debug.WriteLine($"Exportiere Hardware: {hardware.Count}x");
+            Debug.WriteLine($"Exportiere Hardware");
             xmanu = CreateNewXML(Manu);
             XElement xhards = new XElement(Get("Hardware"));
             xmanu.Add(xhards);
             
-            foreach (Models.Hardware hard in hardware)
-            {
-                string hid = Manu + "_H-" + GetEncoded(hard.SerialNumber) + "-" + hard.Version;
-                XElement xhard = new XElement(Get("Hardware"));
-                xhard.SetAttributeValue("Id", hid);
-                xhard.SetAttributeValue("Name", hard.Name);
-                xhard.SetAttributeValue("SerialNumber", hard.SerialNumber);
-                xhard.SetAttributeValue("VersionNumber", hard.Version.ToString());
-                xhard.SetAttributeValue("BusCurrent", hard.BusCurrent);
-                if (hard.HasIndividualAddress) xhard.SetAttributeValue("HasIndividualAddress", "1");
-                if (hard.HasApplicationProgram) xhard.SetAttributeValue("HasApplicationProgram", "1");
-                if (hard.HasApplicationProgram2) xhard.SetAttributeValue("HasApplicationProgram2", "1");
-                if (hard.IsPowerSupply) xhard.SetAttributeValue("IsPowerSupply", "1");
-                if (hard.IsCoppler) xhard.SetAttributeValue("IsCoupler", "1");
-                if (hard.IsPowerSupply) xhard.SetAttributeValue("IsPowerSupply", "1");
-                //xhard.SetAttributeValue("IsCable", "0"); //Todo check if means PoweLine Cable
-                //xhard.SetAttributeValue("IsChoke", "0"); //Ist immer 0 da keine Drossel
-                //xhard.SetAttributeValue("IsPowerLineRepeater", "0");
-                //xhard.SetAttributeValue("IsPowerLineSignalFilter", "0");
-                if (hard.IsIpEnabled) xhard.SetAttributeValue("IsIPEnabled", "1");
+            string hid = Manu + "_H-" + GetEncoded(general.Info.SerialNumber) + "-" + general.Info.Version;
+            XElement xhard = new XElement(Get("Hardware"));
+            xhard.SetAttributeValue("Id", hid);
+            xhard.SetAttributeValue("Name", general.Info.Name);
+            xhard.SetAttributeValue("SerialNumber", general.Info.SerialNumber);
+            xhard.SetAttributeValue("VersionNumber", general.Info.Version.ToString());
+            xhard.SetAttributeValue("BusCurrent", general.Info.BusCurrent);
+            if (general.Info.HasIndividualAddress) xhard.SetAttributeValue("HasIndividualAddress", "1");
+            if (general.Info.HasApplicationProgram) xhard.SetAttributeValue("HasApplicationProgram", "1");
+            if (general.Info.HasApplicationProgram2) xhard.SetAttributeValue("HasApplicationProgram2", "1");
+            if (general.Info.IsPowerSupply) xhard.SetAttributeValue("IsPowerSupply", "1");
+            if (general.Info.IsCoppler) xhard.SetAttributeValue("IsCoupler", "1");
+            if (general.Info.IsPowerSupply) xhard.SetAttributeValue("IsPowerSupply", "1");
+            //xhard.SetAttributeValue("IsCable", "0"); //Todo check if means PoweLine Cable
+            //xhard.SetAttributeValue("IsChoke", "0"); //Ist immer 0 da keine Drossel
+            //xhard.SetAttributeValue("IsPowerLineRepeater", "0");
+            //xhard.SetAttributeValue("IsPowerLineSignalFilter", "0");
+            if (general.Info.IsIpEnabled) xhard.SetAttributeValue("IsIPEnabled", "1");
 
-                XElement xprods = new XElement(Get("Products"));
-                xhard.Add(xprods);
-                foreach (Device dev in hard.Devices)
-                {
-                    if (!devices.Contains(dev)) continue;
+            XElement xprods = new XElement(Get("Products"));
+            xhard.Add(xprods);
+            XElement xprod = new XElement(Get("Product"));
+            string pid = hid + "_P-" + GetEncoded(general.Info.OrderNumber);
+            ProductIds.Add(general.Info.Name, pid);
+            xprod.SetAttributeValue("Id", pid);
+            xprod.SetAttributeValue("Text", GetDefaultLanguage(general.Info.Text));
+            xprod.SetAttributeValue("OrderNumber", general.Info.OrderNumber);
+            xprod.SetAttributeValue("IsRailMounted", general.Info.IsRailMounted ? "1" : "0");
+            xprod.SetAttributeValue("DefaultLanguage", currentLang);
+            xprod.Add(new XElement(Get("RegistrationInfo"), new XAttribute("RegistrationStatus", "Registered")));
+            xprods.Add(xprod);
 
-                    XElement xprod = new XElement(Get("Product"));
-                    string pid = hid + "_P-" + GetEncoded(dev.OrderNumber);
-                    ProductIds.Add(dev.Name, pid);
-                    xprod.SetAttributeValue("Id", pid);
-                    xprod.SetAttributeValue("Text", GetDefaultLanguage(dev.Text));
-                    xprod.SetAttributeValue("OrderNumber", dev.OrderNumber);
-                    xprod.SetAttributeValue("IsRailMounted", dev.IsRailMounted ? "1" : "0");
-                    xprod.SetAttributeValue("DefaultLanguage", currentLang);
-                    xprod.Add(new XElement(Get("RegistrationInfo"), new XAttribute("RegistrationStatus", "Registered")));
-                    xprods.Add(xprod);
-
-                    foreach(Models.Translation trans in dev.Text) AddTranslation(trans.Language.CultureCode, pid, "Text", trans.Text);
-                }
+            foreach(Models.Translation trans in general.Info.Text) AddTranslation(trans.Language.CultureCode, pid, "Text", trans.Text);
 
 
-                XElement xasso = new XElement(Get("Hardware2Programs"));
-                xhard.Add(xasso);
+            XElement xasso = new XElement(Get("Hardware2Programs"));
+            xhard.Add(xasso);
 
-                foreach (Models.Application app in hard.Apps)
-                {
-                    if (!apps.Contains(app)) continue;
+            string appidx = GetAppId(general.Info.AppNumber) + "-" + ver.Number.ToString("X2") + "-0000";
 
-                    foreach (Models.AppVersionModel ver in app.Versions)
-                    {
-                        //if (!vers.Contains(ver)) continue;
-                        
-                        string appidx = GetAppId(app.Number) + "-" + ver.Number.ToString("X2") + "-0000";
+            XElement xh2p = new XElement(Get("Hardware2Program"));
+            xh2p.SetAttributeValue("Id", hid + "_HP-" + appidx);
+            xh2p.SetAttributeValue("MediumTypes", general.Info.Mask.MediumTypes);
 
-                        XElement xh2p = new XElement(Get("Hardware2Program"));
-                        xh2p.SetAttributeValue("Id", hid + "_HP-" + appidx);
-                        xh2p.SetAttributeValue("MediumTypes", app.Mask.MediumTypes);
+            HardwareIds.Add(general.Info.Version + "-" + GetAppId(general.Info.AppNumber) + "-" + ver.Number, hid + "_HP-" + appidx);
 
-                        HardwareIds.Add(hard.Version + "-" + GetAppId(app.Number) + "-" + ver.Number, hid + "_HP-" + appidx);
+            xh2p.Add(new XElement(Get("ApplicationProgramRef"), new XAttribute("RefId", Manu + "_A-" + appidx)));
 
-                        xh2p.Add(new XElement(Get("ApplicationProgramRef"), new XAttribute("RefId", Manu + "_A-" + appidx)));
-
-                        XElement xreginfo = new XElement(Get("RegistrationInfo"));
-                        xreginfo.SetAttributeValue("RegistrationStatus", "Registered");
-                        xreginfo.SetAttributeValue("RegistrationNumber", "0001/" + hard.Version + ver.Number);
-                        xh2p.Add(xreginfo);
-                        xasso.Add(xh2p);
-
-                    }
-                }
-                xhards.Add(xhard);
-            }
+            XElement xreginfo = new XElement(Get("RegistrationInfo"));
+            xreginfo.SetAttributeValue("RegistrationStatus", "Registered");
+            xreginfo.SetAttributeValue("RegistrationNumber", "0001/" + general.Info.Version + ver.Number);
+            xh2p.Add(xreginfo);
+            xasso.Add(xh2p);
+            xhards.Add(xhard);
 
             Debug.WriteLine($"Exportiere Translations: {languages.Count} Sprachen");
             xlanguages = new XElement(Get("Languages"));
@@ -2130,7 +2090,7 @@ namespace Kaenx.Creator.Classes
                 }
                 else
                 {
-                    if (item.Hardware.Devices.Any(d => devices.Contains(d))) flag = true;
+                    flag = true;
                 }
             }
             return flag;
@@ -2170,41 +2130,27 @@ namespace Kaenx.Creator.Classes
             }
             else
             {
-                foreach (Device dev in item.Hardware.Devices)
-                {
-                    if (!devices.Contains(dev)) continue;
+                XElement xitem = new XElement(Get("CatalogItem"));
 
-                    foreach (Application app in item.Hardware.Apps)
-                    {
-                        if (!apps.Contains(app)) continue;
+                string id = $"M-{GetManuId()}";
+                id += $"_H-{GetEncoded(general.Info.SerialNumber)}-{general.Info.Version}";
+                id += $"_HP-{GetAppId(general.Info.AppNumber)}-{general.Application.Number.ToString("X2")}-0000";
+                string parentId = parent.Attribute("Id").Value;
+                parentId = parentId.Substring(parentId.LastIndexOf("_CS-") + 4);
+                id += $"_CI-{GetEncoded(general.Info.OrderNumber)}-{GetEncoded(item.Number)}";
 
-                        foreach (AppVersionModel ver in app.Versions)
-                        {
-                            if (!vers.Contains(ver)) continue;
-                            XElement xitem = new XElement(Get("CatalogItem"));
+                xitem.SetAttributeValue("Id", id);
+                xitem.SetAttributeValue("Name", GetDefaultLanguage(general.Info.Text));
+                xitem.SetAttributeValue("Number", item.Number);
+                xitem.SetAttributeValue("VisibleDescription", GetDefaultLanguage(general.Info.Description));
+                xitem.SetAttributeValue("ProductRefId", productIds[general.Info.Name]);
+                string hardid = general.Info.Version + "-" + GetAppId(general.Info.AppNumber) + "-" + general.Application.Number;
+                xitem.SetAttributeValue("Hardware2ProgramRefId", hardwareIds[hardid]);
+                xitem.SetAttributeValue("DefaultLanguage", currentLang);
+                parent.Add(xitem);
 
-                            string id = $"M-{GetManuId()}";
-                            id += $"_H-{GetEncoded(item.Hardware.SerialNumber)}-{item.Hardware.Version}";
-                            id += $"_HP-{GetAppId(app.Number)}-{ver.Number.ToString("X2")}-0000";
-                            string parentId = parent.Attribute("Id").Value;
-                            parentId = parentId.Substring(parentId.LastIndexOf("_CS-") + 4);
-                            id += $"_CI-{GetEncoded(dev.OrderNumber)}-{GetEncoded(item.Number)}";
-
-                            xitem.SetAttributeValue("Id", id);
-                            xitem.SetAttributeValue("Name", GetDefaultLanguage(dev.Text));
-                            xitem.SetAttributeValue("Number", item.Number);
-                            xitem.SetAttributeValue("VisibleDescription", GetDefaultLanguage(dev.Description));
-                            xitem.SetAttributeValue("ProductRefId", productIds[dev.Name]);
-                            string hardid = item.Hardware.Version + "-" + GetAppId(app.Number) + "-" + ver.Number;
-                            xitem.SetAttributeValue("Hardware2ProgramRefId", hardwareIds[hardid]);
-                            xitem.SetAttributeValue("DefaultLanguage", currentLang);
-                            parent.Add(xitem);
-
-                            foreach(Translation trans in dev.Text) AddTranslation(trans.Language.CultureCode, id, "Name", trans.Text);
-                            foreach(Translation trans in dev.Description) AddTranslation(trans.Language.CultureCode, id, "VisibleDescription", trans.Text);
-                        }
-                    }
-                }
+                foreach(Translation trans in general.Info.Text) AddTranslation(trans.Language.CultureCode, id, "Name", trans.Text);
+                foreach(Translation trans in general.Info.Description) AddTranslation(trans.Language.CultureCode, id, "VisibleDescription", trans.Text);
             }
         }
 

@@ -258,163 +258,112 @@
 
         <TabControl x:Name="TabsEdit" Grid.Row="1" Margin=" 0 10 0 0" IsEnabled="False" BorderThickness="0 0 0 4" Style="{StaticResource ResourceKey=TopTabControl}">
             <TabItem Header="{x:Static p:Resources.tabs_gen}" Style="{StaticResource TopTabItem}">
-                <StackPanel>
-                    <StackPanel.Resources>
-                        <Style TargetType="HeaderedContentControl">
-                            <Setter Property="Margin" Value="5" />
-                        </Style>
-                        <Style TargetType="CheckBox">
-                            <Setter Property="Margin" Value="5" />
-                        </Style>
-                        <Style TargetType="ComboBox">
-                            <Setter Property="Margin" Value="5" />
-                        </Style>
-                        <Style TargetType="Button">
-                            <Setter Property="Margin" Value="5" />
-                        </Style>
-                    </StackPanel.Resources>
-                    <HeaderedContentControl Header="{x:Static p:Resources.tgen_guid}">
-                        <TextBlock Text="{Binding General.Guid}" />
-                    </HeaderedContentControl>
-                    <CheckBox Content="OpenKNX Projekt" IsChecked="{Binding General.IsOpenKnx}" />
-                    <HeaderedContentControl Header="{x:Static p:Resources.tgen_manu}" Visibility="{Binding General.IsOpenKnx, Converter={StaticResource BoolToVis}, ConverterParameter=true}">
-                        <TextBox Text="{Binding General.ManufacturerId, Converter={StaticResource IntToHex}, ConverterParameter=4}" MaxLength="4" />
-                    </HeaderedContentControl>
-                    <HeaderedContentControl Header="{x:Static p:Resources.tgen_openknxid}" Visibility="{Binding General.IsOpenKnx, Converter={StaticResource BoolToVis}}">
-                        <TextBox Text="{Binding General.ManufacturerId, Converter={StaticResource IntToHex}, ConverterParameter=2}" MaxLength="2" />
-                    </HeaderedContentControl>
-                    <HeaderedContentControl Header="{x:Static p:Resources.tgen_name}">
-                        <TextBox Text="{Binding General.ProjectName, UpdateSourceTrigger=PropertyChanged}" />
-                    </HeaderedContentControl>
-
-                    <HeaderedContentControl Header="{x:Static p:Resources.tgen_lang}">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
-                                <ColumnDefinition MaxWidth="300" />
-                            </Grid.ColumnDefinitions>
-                            
-                            <ListBox x:Name="SupportedLanguagesGen" ItemsSource="{Binding General.Languages}" DisplayMemberPath="Text" />
-                            
-                            <StackPanel Grid.Column="1">
-                                <HeaderedContentControl Header="{x:Static p:Resources.gen_edit}">
-                                    <StackPanel>
-                                        <ComboBox x:Name="LanguagesListGen" DisplayMemberPath="Text">
-                                            <models:Language Text="Tschechisch" CultureCode="cs-CZ" />
-                                            <models:Language Text="Dänisch" CultureCode="da-DK" />
-                                            <models:Language Text="Deutsch" CultureCode="de-DE" />
-                                            <models:Language Text="Griechisch" CultureCode="el-GR" />
-                                            <models:Language Text="Englisch" CultureCode="en-US" />
-                                            <models:Language Text="Spanisch" CultureCode="es-ES" />
-                                            <models:Language Text="Finnisch" CultureCode="fi-FI" />
-                                            <models:Language Text="Französisch" CultureCode="fr-FR" />
-                                            <models:Language Text="Ungarisch" CultureCode="hu-HU" />
-                                            <models:Language Text="Isländisch" CultureCode="is-IS" />
-                                            <models:Language Text="Italienisch" CultureCode="it-IT" />
-                                            <models:Language Text="Japanisch" CultureCode="ja-JP" />
-                                            <models:Language Text="Norwegisch" CultureCode=" nb-NO" />
-                                            <models:Language Text="Niederländisch" CultureCode="nl-NL" />
-                                            <models:Language Text="Polnisch" CultureCode="pl-PL" />
-                                            <models:Language Text="Portugisisch" CultureCode="pt-PT" />
-                                            <models:Language Text="Rumänisch" CultureCode="ro-RO" />
-                                            <models:Language Text="Russisch" CultureCode="ru-RU" />
-                                            <models:Language Text="Slovakisch" CultureCode="sk-SK" />
-                                            <models:Language Text="Slovenisch" CultureCode="sl-SI" />
-                                            <models:Language Text="Schwedisch" CultureCode="sv-SE" />
-                                            <models:Language Text="Türkisch" CultureCode="tr-TR" />
-                                            <models:Language Text="Chinesisch" CultureCode="zh-CN" />
-                                        </ComboBox>
-                                        <Button Content="{x:Static p:Resources.gen_add}" Click="ClickAddLanguageGen" IsEnabled="{Binding ElementName=SupportedLanguagesGen, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
-                                        <Button Content="{x:Static p:Resources.gen_remove}" Click="ClickRemoveLanguageGen" IsEnabled="{Binding ElementName=SupportedLanguagesGen, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
+                <TabControl TabStripPlacement="Left" Style="{StaticResource LeftTabControl}">
+                    <TabItem Header="{x:Static p:Resources.tabs_proj}" Style="{StaticResource LeftTabItem}">
+                        <StackPanel>
+                            <StackPanel.Resources>
+                                <Style TargetType="HeaderedContentControl">
+                                    <Setter Property="Margin" Value="5" />
+                                </Style>
+                                <Style TargetType="CheckBox">
+                                    <Setter Property="Margin" Value="5" />
+                                </Style>
+                                <Style TargetType="ComboBox">
+                                    <Setter Property="Margin" Value="5" />
+                                </Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Margin" Value="5" />
+                                </Style>
+                            </StackPanel.Resources>
+                            <HeaderedContentControl Header="{x:Static p:Resources.tgen_guid}">
+                                <TextBlock Text="{Binding General.Guid}" />
+                            </HeaderedContentControl>
+                            <CheckBox Content="OpenKNX Projekt" IsChecked="{Binding General.IsOpenKnx}" />
+                            <HeaderedContentControl Header="{x:Static p:Resources.tgen_manu}" Visibility="{Binding General.IsOpenKnx, Converter={StaticResource BoolToVis}, ConverterParameter=true}">
+                                <TextBox Text="{Binding General.ManufacturerId, Converter={StaticResource IntToHex}, ConverterParameter=4}" MaxLength="4" />
+                            </HeaderedContentControl>
+                            <HeaderedContentControl Header="{x:Static p:Resources.tgen_openknxid}" Visibility="{Binding General.IsOpenKnx, Converter={StaticResource BoolToVis}}">
+                                <TextBox Text="{Binding General.ManufacturerId, Converter={StaticResource IntToHex}, ConverterParameter=2}" MaxLength="2" />
+                            </HeaderedContentControl>
+                            <HeaderedContentControl Header="{x:Static p:Resources.tgen_name}">
+                                <TextBox Text="{Binding General.ProjectName, UpdateSourceTrigger=PropertyChanged}" />
+                            </HeaderedContentControl>
+        
+                            <HeaderedContentControl Header="{x:Static p:Resources.tgen_lang}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition MaxWidth="300" />
+                                    </Grid.ColumnDefinitions>
+                                    
+                                    <ListBox x:Name="SupportedLanguagesGen" ItemsSource="{Binding General.Languages}" DisplayMemberPath="Text" />
+                                    
+                                    <StackPanel Grid.Column="1">
+                                        <HeaderedContentControl Header="{x:Static p:Resources.gen_edit}">
+                                            <StackPanel>
+                                                <ComboBox x:Name="LanguagesListGen" DisplayMemberPath="Text">
+                                                    <models:Language Text="Tschechisch" CultureCode="cs-CZ" />
+                                                    <models:Language Text="Dänisch" CultureCode="da-DK" />
+                                                    <models:Language Text="Deutsch" CultureCode="de-DE" />
+                                                    <models:Language Text="Griechisch" CultureCode="el-GR" />
+                                                    <models:Language Text="Englisch" CultureCode="en-US" />
+                                                    <models:Language Text="Spanisch" CultureCode="es-ES" />
+                                                    <models:Language Text="Finnisch" CultureCode="fi-FI" />
+                                                    <models:Language Text="Französisch" CultureCode="fr-FR" />
+                                                    <models:Language Text="Ungarisch" CultureCode="hu-HU" />
+                                                    <models:Language Text="Isländisch" CultureCode="is-IS" />
+                                                    <models:Language Text="Italienisch" CultureCode="it-IT" />
+                                                    <models:Language Text="Japanisch" CultureCode="ja-JP" />
+                                                    <models:Language Text="Norwegisch" CultureCode=" nb-NO" />
+                                                    <models:Language Text="Niederländisch" CultureCode="nl-NL" />
+                                                    <models:Language Text="Polnisch" CultureCode="pl-PL" />
+                                                    <models:Language Text="Portugisisch" CultureCode="pt-PT" />
+                                                    <models:Language Text="Rumänisch" CultureCode="ro-RO" />
+                                                    <models:Language Text="Russisch" CultureCode="ru-RU" />
+                                                    <models:Language Text="Slovakisch" CultureCode="sk-SK" />
+                                                    <models:Language Text="Slovenisch" CultureCode="sl-SI" />
+                                                    <models:Language Text="Schwedisch" CultureCode="sv-SE" />
+                                                    <models:Language Text="Türkisch" CultureCode="tr-TR" />
+                                                    <models:Language Text="Chinesisch" CultureCode="zh-CN" />
+                                                </ComboBox>
+                                                <Button Content="{x:Static p:Resources.gen_add}" Click="ClickAddLanguageGen" IsEnabled="{Binding ElementName=SupportedLanguagesGen, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
+                                                <Button Content="{x:Static p:Resources.gen_remove}" Click="ClickRemoveLanguageGen" IsEnabled="{Binding ElementName=SupportedLanguagesGen, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
+                                            </StackPanel>
+                                        </HeaderedContentControl>
                                     </StackPanel>
-                                </HeaderedContentControl>
-                            </StackPanel>
-                        </Grid>
-                    </HeaderedContentControl>
-                </StackPanel>
-            </TabItem>
+                                </Grid>
+                            </HeaderedContentControl>
+                        </StackPanel>
+                    </TabItem>
 
-            <TabItem Header="{x:Static p:Resources.tabs_cat}" Style="{StaticResource TopTabItem}">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition MaxWidth="250" />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-
-                    <TreeView Name="CatalogTree" ItemsSource="{Binding General.Catalog}">
-                        <TreeView.Resources>
-                            <HierarchicalDataTemplate DataType="{x:Type models:CatalogItem}" ItemsSource="{Binding Items}">
-                                <StackPanel Orientation="Horizontal">
-                                    <StackPanel.ContextMenu>
-                                        <ContextMenu>
-                                            <MenuItem Header="{x:Static p:Resources.tcat_add_sub}" Click="ClickCatalogContext" IsEnabled="{Binding IsSection}" />
-                                            <MenuItem Header="{x:Static p:Resources.gen_remove}" Click="ClickCatalogContextRemove" IsEnabled="{Binding Parent, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
-                                        </ContextMenu>
-                                    </StackPanel.ContextMenu>
-                                    <Image Source="/WpfTutorialSamples;component/Images/group.png" Margin="0,0,5,0" />
-                                    <TextBlock Text="{Binding Name}" />
-                                    <TextBlock Text=" [" Foreground="Blue" />
-                                    <TextBlock Text="{Binding Items.Count}" Foreground="Blue" />
-                                    <TextBlock Text="]" Foreground="Blue" />
-                                </StackPanel>
-                            </HierarchicalDataTemplate>
-                        </TreeView.Resources>
-                    </TreeView>
-
-                    <StackPanel Grid.Column="1" DataContext="{Binding ElementName=CatalogTree, Path=SelectedItem}" IsEnabled="{Binding ElementName=CatalogTree, Path=SelectedItem.Parent, Converter={StaticResource EmptyToBool}, ConverterParameter=true, FallbackValue=False}">
-                        <StackPanel.Resources>
-                            <Style TargetType="HeaderedContentControl">
-                                <Setter Property="Margin" Value="5" />
-                            </Style>
-                            <Style TargetType="CheckBox">
-                                <Setter Property="Margin" Value="5" />
-                            </Style>
-                            <Style TargetType="ComboBox">
-                                <Setter Property="Margin" Value="5" />
-                            </Style>
-                        </StackPanel.Resources>
-                        <HeaderedContentControl Header="{x:Static p:Resources.prop_name}">
-                            <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
-                        </HeaderedContentControl>
-                        <HeaderedContentControl Header="{x:Static p:Resources.prop_number}">
-                            <TextBox Text="{Binding Number, UpdateSourceTrigger=PropertyChanged}" />
-                        </HeaderedContentControl>
-                        <CheckBox Name="InCatalogSection" IsChecked="{Binding IsSection}" Content="{x:Static p:Resources.tcat_iscat}" IsEnabled="{Binding Items.Count, Converter={StaticResource EmptyListToBool}}" />
-                        
-                        <HeaderedContentControl Header="{x:Static p:Resources.gen_text}" Visibility="{Binding ElementName=InCatalogSection, Path=IsChecked, Converter={StaticResource BoolToVis}}">
-                            <DataGrid ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
-                                <DataGrid.Columns>
-                                    <DataGridTextColumn Header="{x:Static p:Resources.gen_lang}" Binding="{Binding Language.Text}" IsReadOnly="True" />
-                                    <DataGridTextColumn Header="{x:Static p:Resources.gen_text}" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
-                                </DataGrid.Columns>
-                            </DataGrid>
-                        </HeaderedContentControl>
-                        <HeaderedContentControl Header="{x:Static p:Resources.gen_hard}" Visibility="{Binding ElementName=InCatalogSection, Path=IsChecked, Converter={StaticResource BoolToVis}, ConverterParameter=true}">
-                            <ComboBox Name="InCatalogHardware" Margin="0" ItemsSource="{Binding General.Hardware, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" SelectedItem="{Binding Hardware, Mode=TwoWay}" DisplayMemberPath="Name"/>
-                        </HeaderedContentControl>
-                    </StackPanel>
-                </Grid>
-            </TabItem>
-
-            <TabItem Header="{x:Static p:Resources.tabs_hard}" Style="{StaticResource TopTabItem}">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="auto" />
-                        <RowDefinition />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="150" />
-                        <ColumnDefinition Width="150" />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-                    <Button Content="{x:Static p:Resources.gen_add}" Click="ClickAddHardware" Margin="0 0 1 2" />
-                    <Button Grid.Column="1" Content="{x:Static p:Resources.gen_remove}" Click="ClickRemoveHardware" Margin="1 0 0 2" IsEnabled="{Binding ElementName=HardwareList, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
-
-                    <ListView x:Name="HardwareList" Grid.Row="1" Grid.RowSpan="3" Grid.ColumnSpan="2" ItemsSource="{Binding General.Hardware}" DisplayMemberPath="Name" />
-
-                    <TabControl Grid.RowSpan="2" Grid.Column="2" Style="{StaticResource TopTabControl}" DataContext="{Binding ElementName=HardwareList, Path=SelectedItem}"  IsEnabled="{Binding ElementName=HardwareList, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
-                        <TabItem Header="{x:Static p:Resources.gen_gen}" Style="{StaticResource TopTabItem}">
-                            <StackPanel DataContext="{Binding ElementName=HardwareList, Path=SelectedItem}" IsEnabled="{Binding ElementName=HardwareList, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
+                    <TabItem Header="{x:Static p:Resources.tabs_cat}" Style="{StaticResource LeftTabItem}">
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="350" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+        
+                            <TreeView Name="CatalogTree" ItemsSource="{Binding General.Catalog}">
+                                <TreeView.Resources>
+                                    <HierarchicalDataTemplate DataType="{x:Type models:CatalogItem}" ItemsSource="{Binding Items}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <StackPanel.ContextMenu>
+                                                <ContextMenu>
+                                                    <MenuItem Header="{x:Static p:Resources.tcat_add_sub}" Click="ClickCatalogContext" IsEnabled="{Binding IsSection}" />
+                                                    <MenuItem Header="{x:Static p:Resources.gen_remove}" Click="ClickCatalogContextRemove" IsEnabled="{Binding Parent, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
+                                                </ContextMenu>
+                                            </StackPanel.ContextMenu>
+                                            <Image Source="/WpfTutorialSamples;component/Images/group.png" Margin="0,0,5,0" />
+                                            <TextBlock Text="{Binding Name}" />
+                                            <TextBlock Text=" [" Foreground="Blue" />
+                                            <TextBlock Text="{Binding Items.Count}" Foreground="Blue" />
+                                            <TextBlock Text="]" Foreground="Blue" />
+                                        </StackPanel>
+                                    </HierarchicalDataTemplate>
+                                </TreeView.Resources>
+                            </TreeView>
+        
+                            <StackPanel Grid.Column="1" DataContext="{Binding ElementName=CatalogTree, Path=SelectedItem}" IsEnabled="{Binding ElementName=CatalogTree, Path=SelectedItem.Parent, Converter={StaticResource EmptyToBool}, ConverterParameter=true, FallbackValue=False}">
                                 <StackPanel.Resources>
                                     <Style TargetType="HeaderedContentControl">
                                         <Setter Property="Margin" Value="5" />
@@ -429,139 +378,25 @@
                                 <HeaderedContentControl Header="{x:Static p:Resources.prop_name}">
                                     <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
                                 </HeaderedContentControl>
-                                <HeaderedContentControl Header="{x:Static p:Resources.prop_serial}">
-                                    <TextBox Text="{Binding SerialNumber, UpdateSourceTrigger=PropertyChanged}" />
+                                <HeaderedContentControl Header="{x:Static p:Resources.prop_number}">
+                                    <TextBox Text="{Binding Number, UpdateSourceTrigger=PropertyChanged}" />
                                 </HeaderedContentControl>
-                                <HeaderedContentControl Header="{x:Static p:Resources.prop_vers}">
-                                    <TextBox Text="{Binding Version, UpdateSourceTrigger=PropertyChanged}" />
+                                <CheckBox Name="InCatalogSection" IsChecked="{Binding IsSection}" Content="{x:Static p:Resources.tcat_iscat}" IsEnabled="{Binding Items.Count, Converter={StaticResource EmptyListToBool}}" />
+                                
+                                <HeaderedContentControl Header="{x:Static p:Resources.gen_text}" Visibility="{Binding ElementName=InCatalogSection, Path=IsChecked, Converter={StaticResource BoolToVis}}">
+                                    <DataGrid ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="{x:Static p:Resources.gen_lang}" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                                            <DataGridTextColumn Header="{x:Static p:Resources.gen_text}" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                                        </DataGrid.Columns>
+                                    </DataGrid>
                                 </HeaderedContentControl>
-                                <HeaderedContentControl Header="{x:Static p:Resources.prop_buscurrent}">
-                                    <TextBox Text="{Binding BusCurrent, UpdateSourceTrigger=PropertyChanged}" />
-                                </HeaderedContentControl>
-                                <CheckBox IsChecked="{Binding HasIndividualAddress, Mode=TwoWay}" Content="{x:Static p:Resources.prop_haspa}" />
-                                <CheckBox IsChecked="{Binding IsPowerSupply, Mode=TwoWay}" Content="{x:Static p:Resources.prop_ispower}" />
-                                <CheckBox IsChecked="{Binding IsCoppler, Mode=TwoWay}" Content="{x:Static p:Resources.prop_iscoupler}" />
-                                <CheckBox IsChecked="{Binding IsIpEnabled, Mode=TwoWay}" Content="{x:Static p:Resources.prop_ip}" />
-
-                                <CheckBox IsChecked="{Binding HasApplicationProgram, Mode=TwoWay}" Content="{x:Static p:Resources.prop_hasapp}" />
-                                <CheckBox IsChecked="{Binding HasApplicationProgram2, Mode=TwoWay}" Content="{x:Static p:Resources.prop_hasapp2}" />
                             </StackPanel>
-                        </TabItem>
+                        </Grid>
+                    </TabItem>
 
-                        <TabItem Header="{x:Static p:Resources.thard_devices}" Style="{StaticResource TopTabItem}">
-                            <DataGrid Grid.Row="1" ItemsSource="{Binding Devices}" AddingNewItem="OnAddingNewDevice" AutoGenerateColumns="False">
-                                <DataGrid.Columns>
-                                    <DataGridTextColumn Header="{x:Static p:Resources.prop_name}" Binding="{Binding Name}"/>
-                                    <DataGridTextColumn Header="{x:Static p:Resources.prop_ordernumber}" Binding="{Binding OrderNumber}" />
-                                    <DataGridCheckBoxColumn Header="{x:Static p:Resources.prop_isreg}" Binding="{Binding IsRailMounted}" />
-                                </DataGrid.Columns>
-                                <DataGrid.RowDetailsTemplate>
-                                    <DataTemplate>
-                                        <Grid>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="auto" />
-                                                <RowDefinition />
-                                            </Grid.RowDefinitions>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition />
-                                                <ColumnDefinition />
-                                                <ColumnDefinition />
-                                            </Grid.ColumnDefinitions>
-
-                                            <TextBlock Grid.Column="1" Text="{x:Static p:Resources.gen_text}" Margin="0 10 0 0" />
-                                            <DataGrid Grid.Row="1" Grid.Column="1" Margin="5 5 5 10" ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
-                                                <DataGrid.Columns>
-                                                    <DataGridTextColumn Header="{x:Static p:Resources.gen_lang}" Binding="{Binding Language.Text}" IsReadOnly="True" />
-                                                    <DataGridTextColumn Header="{x:Static p:Resources.gen_text}" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
-                                                </DataGrid.Columns>
-                                            </DataGrid>
-
-                                            <TextBlock Grid.Column="2" Text="{x:Static p:Resources.gen_desc}" Margin="0 10 0 0" />
-                                            <DataGrid Grid.Row="1" Grid.Column="2" Margin="5 5 5 10" ItemsSource="{Binding Description}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
-                                                <DataGrid.Columns>
-                                                    <DataGridTextColumn Header="{x:Static p:Resources.gen_lang}" Binding="{Binding Language.Text}" IsReadOnly="True" />
-                                                    <DataGridTextColumn Header="{x:Static p:Resources.gen_text}" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
-                                                </DataGrid.Columns>
-                                            </DataGrid>
-                                        </Grid>
-                                    </DataTemplate>
-                                </DataGrid.RowDetailsTemplate>
-                            </DataGrid>
-                        </TabItem>
-
-                        <TabItem Header="{x:Static p:Resources.thard_apps}" Style="{StaticResource TopTabItem}">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="auto" />
-                                    <RowDefinition />
-                                </Grid.RowDefinitions>
-
-                                <StackPanel Orientation="Horizontal">
-                                    <ComboBox Width="150" Name="InHardApp" Margin="2" ItemsSource="{Binding General.Applications, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" DisplayMemberPath="NameText" />
-                                    <Button Content="{x:Static p:Resources.gen_add}" Click="ClickAddHardApp" IsEnabled="{Binding ElementName=InHardApp, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" Margin="2" />
-                                    <Button Content="{x:Static p:Resources.gen_remove}" Margin="2" Click="ClickRemoveDeviceApp" IsEnabled="{Binding ElementName=DeviceAppList, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
-                                </StackPanel>
-
-                                <ListBox Name="DeviceAppList" Grid.Row="1" ItemsSource="{Binding Apps}" DisplayMemberPath="NameText" />
-                            </Grid>
-                        </TabItem>
-                    </TabControl>
-
-                </Grid>
-            </TabItem>
-
-            <TabItem Header="{x:Static p:Resources.tabs_bagg}" Style="{StaticResource TopTabItem}">
-                <ctrl:BaggageView General="{Binding General}" />
-            </TabItem>
-
-            <TabItem Header="{x:Static p:Resources.tabs_icon}" Style="{StaticResource TopTabItem}">
-                <ctrl:IconView General="{Binding General}" />
-            </TabItem>
-
-            <TabItem Header="{x:Static p:Resources.tabs_apps}" Style="{StaticResource TopTabItem}">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="auto" />
-                        <RowDefinition />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="150" />
-                        <ColumnDefinition Width="150" />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-                    <Button Content="{x:Static p:Resources.gen_add}" Click="ClickAddApp" Margin="0 0 1 2" />
-                    <Button Grid.Column="1" Content="{x:Static p:Resources.gen_remove}" Click="ClickRemoveApp" Margin="1 0 0 2" IsEnabled="{Binding ElementName=AppList, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
-
-                    <ListView x:Name="AppList" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding General.Applications}">
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel>
-                                    <TextBlock Visibility="{Binding General.IsOpenKnx, ElementName=ViewControl, Converter={StaticResource BoolToVis}, ConverterParameter=true}" Text="{Binding NameText}" />
-                                    <TextBlock Visibility="{Binding General.IsOpenKnx, ElementName=ViewControl, Converter={StaticResource BoolToVis}}">
-                                        <Run Text="{Binding Name}" />
-                                        <Run Text="{Binding Number, Converter={StaticResource IntToHex}}" />
-                                    </TextBlock>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
-
-                    <Grid Grid.Column="2" Grid.RowSpan="2" DataContext="{Binding ElementName=AppList, Path=SelectedItem}" IsEnabled="{Binding ., Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="auto" />
-                            <RowDefinition Height="auto" />
-                            <RowDefinition Height="auto" />
-                            <RowDefinition Height="auto" />
-                            <RowDefinition Height="auto" />
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-
-                        <StackPanel Grid.ColumnSpan="3">
+                    <TabItem Header="{x:Static p:Resources.tabs_hard}" Style="{StaticResource LeftTabItem}">
+                        <StackPanel Grid.Column="1" Grid.Row="1" DataContext="{Binding General.Info}">
                             <StackPanel.Resources>
                                 <Style TargetType="HeaderedContentControl">
                                     <Setter Property="Margin" Value="5" />
@@ -579,6 +414,61 @@
                             <HeaderedContentControl Header="{x:Static p:Resources.prop_name}">
                                 <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
                             </HeaderedContentControl>
+                            <HeaderedContentControl Header="{x:Static p:Resources.prop_serial}">
+                                <TextBox Text="{Binding SerialNumber, UpdateSourceTrigger=PropertyChanged}" />
+                            </HeaderedContentControl>
+                            <HeaderedContentControl Header="{x:Static p:Resources.prop_vers}">
+                                <TextBox Text="{Binding Version, UpdateSourceTrigger=PropertyChanged}" />
+                            </HeaderedContentControl>
+                            <HeaderedContentControl Header="{x:Static p:Resources.prop_buscurrent}">
+                                <TextBox Text="{Binding BusCurrent, UpdateSourceTrigger=PropertyChanged}" />
+                            </HeaderedContentControl>
+                            <HeaderedContentControl Header="{x:Static p:Resources.prop_ordernumber}">
+                                <TextBox Text="{Binding OrderNumber}" />
+                            </HeaderedContentControl>
+                            <HeaderedContentControl Header="{x:Static p:Resources.gen_text}">
+                                <DataGrid ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="{x:Static p:Resources.gen_lang}" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                                        <DataGridTextColumn Header="{x:Static p:Resources.gen_text}" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </HeaderedContentControl>
+                            <HeaderedContentControl Header="{x:Static p:Resources.gen_desc}">
+                                <DataGrid ItemsSource="{Binding Description}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="{x:Static p:Resources.gen_lang}" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                                        <DataGridTextColumn Header="{x:Static p:Resources.gen_text}" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </HeaderedContentControl>
+                            <CheckBox IsChecked="{Binding HasIndividualAddress, Mode=TwoWay}" Content="{x:Static p:Resources.prop_haspa}" />
+                            <CheckBox IsChecked="{Binding IsPowerSupply, Mode=TwoWay}" Content="{x:Static p:Resources.prop_ispower}" />
+                            <CheckBox IsChecked="{Binding IsCoppler, Mode=TwoWay}" Content="{x:Static p:Resources.prop_iscoupler}" />
+                            <CheckBox IsChecked="{Binding IsIpEnabled, Mode=TwoWay}" Content="{x:Static p:Resources.prop_ip}" />
+    
+                            <CheckBox IsChecked="{Binding HasApplicationProgram, Mode=TwoWay}" Content="{x:Static p:Resources.prop_hasapp}" />
+                            <CheckBox IsChecked="{Binding HasApplicationProgram2, Mode=TwoWay}" Content="{x:Static p:Resources.prop_hasapp2}" />
+                            <CheckBox IsChecked="{Binding IsRailMounted, Mode=TwoWay}" Content="{x:Static p:Resources.prop_isreg}" />
+                        </StackPanel>
+                    </TabItem>
+                    
+                    <TabItem Header="{x:Static p:Resources.tabs_app}" Style="{StaticResource LeftTabItem}">
+                        <StackPanel Grid.Column="2" Grid.Row="1" DataContext="{Binding General.Info}">
+                            <StackPanel.Resources>
+                                <Style TargetType="HeaderedContentControl">
+                                    <Setter Property="Margin" Value="5" />
+                                </Style>
+                                <Style TargetType="CheckBox">
+                                    <Setter Property="Margin" Value="5" />
+                                </Style>
+                                <Style TargetType="ComboBox">
+                                    <Setter Property="Margin" Value="5" />
+                                </Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Margin" Value="5" />
+                                </Style>
+                            </StackPanel.Resources>
                             <HeaderedContentControl Header="{x:Static p:Resources.tapps_info}">
                                 <TextBlock>
                                     <Hyperlink NavigateUri="https://github.com/OpenKNX/OpenKNX/wiki/Information-about-KnxProd#applicationnumber" RequestNavigate="Hyperlink_RequestNavigate">
@@ -588,57 +478,44 @@
                             </HeaderedContentControl>
                             <HeaderedContentControl Header="{x:Static p:Resources.prop_number}">
                                 <Grid>
-                                    <TextBox Text="{Binding Number, Converter={StaticResource IntToHex}}" MaxLength="4" Visibility="{Binding General.IsOpenKnx, ElementName=ViewControl, Converter={StaticResource BoolToVis}, ConverterParameter=true}" />
-                                    <TextBox Text="{Binding Number, Converter={StaticResource IntToHex}}" MaxLength="2" Visibility="{Binding General.IsOpenKnx, ElementName=ViewControl, Converter={StaticResource BoolToVis}}" />
+                                    <TextBox Text="{Binding AppNumber, Converter={StaticResource IntToHex}}" MaxLength="4" Visibility="{Binding General.IsOpenKnx, ElementName=ViewControl, Converter={StaticResource BoolToVis}, ConverterParameter=true}" />
+                                    <TextBox Text="{Binding AppNumber, Converter={StaticResource IntToHex}}" MaxLength="2" Visibility="{Binding General.IsOpenKnx, ElementName=ViewControl, Converter={StaticResource BoolToVis}}" />
                                 </Grid>
                             </HeaderedContentControl>
-                            <HeaderedContentControl Header="{x:Static p:Resources.prop_bcu}">
-                                <ComboBox SelectedItem="{Binding Mask, Mode=TwoWay}" Margin="0" DisplayMemberPath="Id" IsEnabled="{Binding Versions.Count, Converter={StaticResource EmptyListToBool}}" ItemsSource="{Binding BCUs, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
+                            <HeaderedContentControl Header="{x:Static p:Resources.prop_bcu}" IsEnabled="{Binding Mask, Converter={StaticResource EmptyToBool}}">
+                                <ComboBox SelectedItem="{Binding Mask, Mode=TwoWay}" Margin="0" DisplayMemberPath="Id" ItemsSource="{Binding BCUs, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
                             </HeaderedContentControl>
+    
+                            <TextBlock Margin="5 5 0 0">
+                                <Run Text="{x:Static p:Resources.tapps_memory}" />
+                                <Run Text="{Binding Mask.Memory}" />
+                            </TextBlock>
+    
+                            <TextBlock Margin="5 0 0 0">
+                                <Run Text="{x:Static p:Resources.tapps_loadp}" />
+                                <Run Text="{Binding Mask.Procedure}" />
+                            </TextBlock>
+    
+                            <TextBlock Margin="5 0 0 5">
+                                <Run Text="{x:Static p:Resources.tapps_medium}" />
+                                <Run Text="{Binding Mask.Mediums, Mode=OneWay}" />
+                            </TextBlock>
+                            
+                            <Button Content="{x:Static p:Resources.tapps_openv}" Click="ClickOpenViewer" />
                         </StackPanel>
-
-                        <TextBlock Grid.Row="1" HorizontalAlignment="Center">
-                            <Run Text="{x:Static p:Resources.tapps_memory}" />
-                            <Run Text="{Binding Mask.Memory}" />
-                        </TextBlock>
-
-                        <TextBlock Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center">
-                            <Run Text="{x:Static p:Resources.tapps_loadp}" />
-                            <Run Text="{Binding Mask.Procedure}" />
-                        </TextBlock>
-
-                        <TextBlock Grid.Row="1" Grid.Column="2" HorizontalAlignment="Center">
-                            <Run Text="{x:Static p:Resources.tapps_medium}" />
-                            <Run Text="{Binding Mask.Mediums, Mode=OneWay}" />
-                        </TextBlock>
-
-                        <Separator Grid.Row="2" Grid.ColumnSpan="3" Margin="0 10 0 4" />
-
-                        <Button Grid.Row="3" Grid.ColumnSpan="3" Content="{x:Static p:Resources.tapps_addv}" Click="ClickAddVersion" Margin="5 5 5 2" IsEnabled="{Binding Mask, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
-                        
-                        <TextBlock Grid.Row="4" Margin="5" Grid.ColumnSpan="3" Text="Right click to open Version" />
-
-                        <ListView x:Name="VersionList" Grid.Row="5" Grid.ColumnSpan="3" ItemsSource="{Binding Versions}" DisplayMemberPath="NameText" Margin="5 5 5 0">
-                            <ListView.Resources>
-                                <ContextMenu x:Key="ContextMenu">
-                                    <MenuItem Header="{x:Static p:Resources.tapps_openh}" Click="ClickOpenHere" />
-                                    <MenuItem Header="{x:Static p:Resources.tapps_openv}" Click="ClickOpenViewer" />
-                                    <Separator />
-                                    <MenuItem Header="{x:Static p:Resources.gen_copy}" Click="ClickCopyVersion" />
-                                    <MenuItem Header="{x:Static p:Resources.gen_remove}" Click="ClickRemoveVersion" />
-                                </ContextMenu>
-                            </ListView.Resources>
-                            <ListView.ItemContainerStyle>
-                                <Style TargetType="ListViewItem">
-                                    <Setter Property="ContextMenu" Value="{StaticResource ContextMenu}" />
-                                </Style>
-                            </ListView.ItemContainerStyle>
-                        </ListView>
-                    </Grid>
-                </Grid>
+                    </TabItem>
+                </TabControl>
             </TabItem>
 
-            <TabItem Header="{Binding NameText}" DataContext="{Binding SelectedVersion.Model}" Style="{StaticResource TopTabItem}" IsEnabled="{Binding ., Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
+            <TabItem Header="{x:Static p:Resources.tabs_bagg}" Style="{StaticResource TopTabItem}">
+                <ctrl:BaggageView General="{Binding General}" />
+            </TabItem>
+
+            <TabItem Header="{x:Static p:Resources.tabs_icon}" Style="{StaticResource TopTabItem}">
+                <ctrl:IconView General="{Binding General}" />
+            </TabItem>
+
+            <TabItem Header="{x:Static p:Resources.tabs_app}" IsEnabled="{Binding General.Info.Mask, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" Style="{StaticResource TopTabItem}">
                 <TabControl x:Name="VersionTabs" SelectionChanged="TabChanged" TabStripPlacement="Left" Style="{StaticResource LeftTabControl}">
                     
                     <TabControl.Template>
@@ -667,7 +544,7 @@
                         </ControlTemplate>
                     </TabControl.Template>
 
-                    <TabItem Header="{x:Static p:Resources.tabs_gen}" Style="{StaticResource LeftTabItem}">
+                    <TabItem Header="{x:Static p:Resources.tabs_gen}" DataContext="{Binding General.Application}" Style="{StaticResource LeftTabItem}">
                         <StackPanel>
                             <StackPanel.Resources>
                                 <Style TargetType="HeaderedContentControl">
@@ -735,10 +612,10 @@
                                         </Grid.ColumnDefinitions>
 
                                         <StackPanel>
-                                            <HeaderedContentControl Header="{x:Static p:Resources.tver_addrmem}" Visibility="{Binding SelectedItem.Mask.Memory, ElementName=AppList, Converter={StaticResource EnumToVis}, ConverterParameter=Absolute}">
+                                            <HeaderedContentControl Header="{x:Static p:Resources.tver_addrmem}" Visibility="{Binding General.Info.Mask.Memory, ElementName=ViewControl, Converter={StaticResource EnumToVis}, ConverterParameter=Absolute}">
                                                 <ComboBox ItemsSource="{Binding Memories}" SelectedItem="{Binding AddressMemoryObject}" DisplayMemberPath="Name" />
                                             </HeaderedContentControl>
-                                            <HeaderedContentControl Header="{x:Static p:Resources.tver_addroff}" Visibility="{Binding SelectedItem.Mask.Memory, ElementName=AppList, Converter={StaticResource EnumToVis}, ConverterParameter=Absolute}">
+                                            <HeaderedContentControl Header="{x:Static p:Resources.tver_addroff}" Visibility="{Binding General.Info.Mask.Memory, ElementName=ViewControl, Converter={StaticResource EnumToVis}, ConverterParameter=Absolute}">
                                                 <TextBox Text="{Binding AddressTableOffset, UpdateSourceTrigger=PropertyChanged}" />
                                             </HeaderedContentControl>
                                             <HeaderedContentControl Header="{x:Static p:Resources.tver_addrmax}">
@@ -747,10 +624,10 @@
                                         </StackPanel>
 
                                         <StackPanel Grid.Column="1">
-                                            <HeaderedContentControl Header="{x:Static p:Resources.tver_assomem}" Visibility="{Binding SelectedItem.Mask.Memory, ElementName=AppList, Converter={StaticResource EnumToVis}, ConverterParameter=Absolute}">
+                                            <HeaderedContentControl Header="{x:Static p:Resources.tver_assomem}" Visibility="{Binding General.Info.Mask.Memory, ElementName=ViewControl, Converter={StaticResource EnumToVis}, ConverterParameter=Absolute}">
                                                 <ComboBox ItemsSource="{Binding Memories}" SelectedItem="{Binding AssociationMemoryObject}" DisplayMemberPath="Name" />
                                             </HeaderedContentControl>
-                                            <HeaderedContentControl Header="{x:Static p:Resources.tver_assooff}" Visibility="{Binding SelectedItem.Mask.Memory, ElementName=AppList, Converter={StaticResource EnumToVis}, ConverterParameter=Absolute}">
+                                            <HeaderedContentControl Header="{x:Static p:Resources.tver_assooff}" Visibility="{Binding General.Info.Mask.Memory, ElementName=ViewControl, Converter={StaticResource EnumToVis}, ConverterParameter=Absolute}">
                                                 <TextBox Text="{Binding AssociationTableOffset, UpdateSourceTrigger=PropertyChanged}" />
                                             </HeaderedContentControl>
                                             <HeaderedContentControl Header="{x:Static p:Resources.tver_assomax}">
@@ -759,10 +636,10 @@
                                         </StackPanel>
 
                                         <StackPanel Grid.Column="2">
-                                            <HeaderedContentControl Header="{x:Static p:Resources.tver_commem}" Visibility="{Binding SelectedItem.Mask.Memory, ElementName=AppList, Converter={StaticResource EnumToVis}, ConverterParameter=Absolute}">
+                                            <HeaderedContentControl Header="{x:Static p:Resources.tver_commem}" Visibility="{Binding General.Info.Mask.Memory, ElementName=ViewControl, Converter={StaticResource EnumToVis}, ConverterParameter=Absolute}">
                                                 <ComboBox ItemsSource="{Binding Memories}" SelectedItem="{Binding ComObjectMemoryObject}" DisplayMemberPath="Name" />
                                             </HeaderedContentControl>
-                                            <HeaderedContentControl Header="{x:Static p:Resources.tver_comoff}" Visibility="{Binding SelectedItem.Mask.Memory, ElementName=AppList, Converter={StaticResource EnumToVis}, ConverterParameter=Absolute}">
+                                            <HeaderedContentControl Header="{x:Static p:Resources.tver_comoff}" Visibility="{Binding General.Info.Mask.Memory, ElementName=ViewControl, Converter={StaticResource EnumToVis}, ConverterParameter=Absolute}">
                                                 <TextBox Text="{Binding ComObjectTableOffset, UpdateSourceTrigger=PropertyChanged}" />
                                             </HeaderedContentControl>
                                         </StackPanel>
@@ -823,10 +700,10 @@
                     </TabItem>
 
                     <TabItem Header="{x:Static p:Resources.tabs_check}" Style="{StaticResource LeftTabItem}">
-                        <ctrl:CheckView App="{Binding SelectedItem, ElementName=AppList}" Version="{Binding .}" />
+                        <ctrl:CheckView General="{Binding General}" Version="{Binding General.Application}" />
                     </TabItem>
 
-                    <TabItem Header="{x:Static p:Resources.tabs_mem}" Style="{StaticResource LeftTabItem}">
+                    <TabItem Header="{x:Static p:Resources.tabs_mem}" DataContext="{Binding General.Application}" Style="{StaticResource LeftTabItem}">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="100" />
@@ -909,142 +786,89 @@
                         </Grid>
                     </TabItem>
 
-                    <TabItem Header="OpenKNX Modules" Visibility="{Binding General.IsOpenKnx, ElementName=ViewControl, Converter={StaticResource BoolToVis}}" Style="{StaticResource LeftTabItem}">
-                        <ctrl:OpenKnxView Version="{Binding .}" General="{Binding General, ElementName=ViewControl}" />
+                    <TabItem Header="OpenKNX Modules" Visibility="{Binding General.IsOpenKnx, Converter={StaticResource BoolToVis}}" Style="{StaticResource LeftTabItem}">
+                        <ctrl:OpenKnxView Version="{Binding General.Application}" General="{Binding General, ElementName=ViewControl}" />
                     </TabItem>
                     
                     <TabItem Header="{x:Static p:Resources.tabs_parat}" Style="{StaticResource LeftTabItem}">
-                        <ctrl:ParameterTypeView Baggages="{Binding General.Baggages, ElementName=ViewControl}" Icons="{Binding General.Icons, ElementName=ViewControl}" Version="{Binding .}" />
+                        <ctrl:ParameterTypeView Baggages="{Binding General.Baggages}" Icons="{Binding General.Icons}" Version="{Binding General.Application}" />
                     </TabItem>
 
-                    <TabItem Header="{x:Static p:Resources.tabs_union}" Visibility="{Binding IsUnionActive, Converter={StaticResource BoolToVis}}" Style="{StaticResource LeftTabItem}">
+                    <TabItem Header="{x:Static p:Resources.tabs_union}" DataContext="{Binding General.Application}" Visibility="{Binding IsUnionActive, Converter={StaticResource BoolToVis}}" Style="{StaticResource LeftTabItem}">
                         <ctrl:UnionView Version="{Binding .}" Module="{Binding .}" />
                     </TabItem>
                     
-                    <TabItem Header="{x:Static p:Resources.tabs_alloc}" Visibility="{Binding IsModulesActive, Converter={StaticResource BoolToVis}}" Style="{StaticResource LeftTabItem}"> 
+                    <TabItem Header="{x:Static p:Resources.tabs_alloc}" DataContext="{Binding General.Application}" Visibility="{Binding IsModulesActive, Converter={StaticResource BoolToVis}}" Style="{StaticResource LeftTabItem}"> 
                         <ctrl:AllocatorView Module="{Binding .}" />
                     </TabItem>
 
 
-                    <TabItem Header="{x:Static p:Resources.tabs_module}" Visibility="{Binding IsModulesActive, Converter={StaticResource BoolToVis}}" Style="{StaticResource LeftTabItem}">
+                    <TabItem Header="{x:Static p:Resources.tabs_module}" DataContext="{Binding General.Application}" Visibility="{Binding IsModulesActive, Converter={StaticResource BoolToVis}}" Style="{StaticResource LeftTabItem}">
                         <ctrl:ModuleView Version="{Binding .}" Icons="{Binding General.Icons, ElementName=ViewControl}" />
                     </TabItem>
 
-                    <TabItem Header="{x:Static p:Resources.tabs_paras}" Style="{StaticResource LeftTabItem}">
+                    <TabItem Header="{x:Static p:Resources.tabs_paras}" DataContext="{Binding General.Application}" Style="{StaticResource LeftTabItem}">
                         <ctrl:ParameterView Version="{Binding .}" Module="{Binding .}" />
                     </TabItem>
 
-                    <TabItem Header="{x:Static p:Resources.tabs_pararefs}" Visibility="{Binding IsParameterRefAuto, Converter={StaticResource BoolToVis}, ConverterParameter=true}" Style="{StaticResource LeftTabItem}">
+                    <TabItem Header="{x:Static p:Resources.tabs_pararefs}" DataContext="{Binding General.Application}" Visibility="{Binding IsParameterRefAuto, Converter={StaticResource BoolToVis}, ConverterParameter=true}" Style="{StaticResource LeftTabItem}">
                         <ctrl:ParameterRefView Version="{Binding .}" Module="{Binding .}" />
                     </TabItem>
 
-                    <TabItem Header="{x:Static p:Resources.tabs_coms}" Style="{StaticResource LeftTabItem}">
+                    <TabItem Header="{x:Static p:Resources.tabs_coms}" DataContext="{Binding General.Application}" Style="{StaticResource LeftTabItem}">
                         <ctrl:ComObjectView Version="{Binding .}" Module="{Binding .}" />
                     </TabItem>
 
-                    <TabItem Header="{x:Static p:Resources.tabs_comrefs}" Visibility="{Binding IsComObjectRefAuto, Converter={StaticResource BoolToVis}, ConverterParameter=true}" Style="{StaticResource LeftTabItem}">
+                    <TabItem Header="{x:Static p:Resources.tabs_comrefs}" DataContext="{Binding General.Application}" Visibility="{Binding IsComObjectRefAuto, Converter={StaticResource BoolToVis}, ConverterParameter=true}" Style="{StaticResource LeftTabItem}">
                         <ctrl:ComObjectRefView Version="{Binding .}" Module="{Binding .}" />
                     </TabItem>
 
 
-                    <TabItem Header="{x:Static p:Resources.tabs_msg}" Visibility="{Binding IsMessagesActive, Converter={StaticResource BoolToVis}}" Style="{StaticResource LeftTabItem}">
+                    <TabItem Header="{x:Static p:Resources.tabs_msg}" DataContext="{Binding General.Application}" Visibility="{Binding IsMessagesActive, Converter={StaticResource BoolToVis}}" Style="{StaticResource LeftTabItem}">
                         <ctrl:MessagesView Version="{Binding .}" />
                     </TabItem>
 
                     <TabItem Header="{x:Static p:Resources.tabs_loadp}" Style="{StaticResource LeftTabItem}">
-                        <ctrl:LoadProcedures Mask="{Binding SelectedItem.Mask, ElementName=AppList}" Version="{Binding .}"/>
+                        <ctrl:LoadProcedures Mask="{Binding General.Info.Mask}" Version="{Binding General.Application}"/>
                     </TabItem>
 
-                    <TabItem Header="{x:Static p:Resources.tabs_help}" Visibility="{Binding IsHelpActive, Converter={StaticResource BoolToVis}}" Style="{StaticResource LeftTabItem}">
+                    <TabItem Header="{x:Static p:Resources.tabs_help}" DataContext="{Binding General.Application}" Visibility="{Binding IsHelpActive, Converter={StaticResource BoolToVis}}" Style="{StaticResource LeftTabItem}">
                         <ctrl:HelpView Version="{Binding .}" />
                     </TabItem>
 
                     <TabItem Header="{x:Static p:Resources.tabs_dyn}" Style="{StaticResource LeftTabItem}">
-                        <ctrl:DynamicView Version="{Binding .}" Module="{Binding .}" Icons="{Binding General.Icons, ElementName=ViewControl}" />
+                        <ctrl:DynamicView Version="{Binding General.Application}" Module="{Binding General.Application}" Icons="{Binding General.Icons, ElementName=ViewControl}" />
                     </TabItem>
 
 
                 </TabControl>
             </TabItem>
 
-            <TabItem Style="{StaticResource TopTabItem}">
-                <TabItem.Header>
-                    <TextBlock FontSize="18" Text="{x:Static p:Resources.tabs_pub}" MouseLeftButtonUp="TabItem_MouseLeftButtonUp" />
-                </TabItem.Header>
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition MaxHeight="500" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition />
-                    </Grid.RowDefinitions>
-
+            <TabItem Header="{x:Static p:Resources.tabs_pub}" Style="{StaticResource TopTabItem}">
+                <StackPanel Grid.Row="2">
+                    <StackPanel.Resources>
+                        <Style TargetType="HeaderedContentControl">
+                            <Setter Property="Margin" Value="5" />
+                        </Style>
+                        <Style TargetType="CheckBox">
+                            <Setter Property="Margin" Value="5" />
+                        </Style>
+                        <Style TargetType="ComboBox">
+                            <Setter Property="Margin" Value="5" />
+                        </Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Margin" Value="5" />
+                        </Style>
+                        <Style TargetType="ListView">
+                            <Setter Property="Margin" Value="5" />
+                        </Style>
+                    </StackPanel.Resources>
                     
-                    <StackPanel>
-                        <StackPanel.Resources>
-                            <Style TargetType="HeaderedContentControl">
-                                <Setter Property="Margin" Value="5" />
-                            </Style>
-                            <Style TargetType="CheckBox">
-                                <Setter Property="Margin" Value="5" />
-                            </Style>
-                            <Style TargetType="ComboBox">
-                                <Setter Property="Margin" Value="5" />
-                            </Style>
-                            <Style TargetType="Button">
-                                <Setter Property="Margin" Value="5" />
-                            </Style>
-                            <Style TargetType="ListView">
-                                <Setter Property="Margin" Value="5" />
-                            </Style>
-                        </StackPanel.Resources>
-                        <HeaderedContentControl Header="{x:Static p:Resources.tpub_filter}">
-                            <TextBox x:Name="ExportInFilter" TextChanged="ExportInFilter_TextChanged" />
-                        </HeaderedContentControl>
+                    <HeaderedContentControl Header="{x:Static p:Resources.tpub_filename}">
+                        <TextBox x:Name="ExportInName" Text="output" />
+                    </HeaderedContentControl>
 
-                        <CheckBox x:Name="InPublishOnlyLatest" Content="{x:Static p:Resources.tpub_onlynew}" Checked="ChangedPublishOnlyLatest" Unchecked="ChangedPublishOnlyLatest" />
-                    </StackPanel>
-
-                    <DataGrid Grid.Row="1" Name="ExportList" CanUserAddRows="False" AutoGenerateColumns="False" BorderThickness="0 0 1 0">
-                        <DataGrid.Columns>
-                            <DataGridCheckBoxColumn Header="{x:Static p:Resources.tpub_publish}" Binding="{Binding Selected}" />
-                            <DataGridTextColumn Header="{x:Static p:Resources.tpub_device}" Binding="{Binding Device.Name}" IsReadOnly="True" />
-                            <DataGridTextColumn Header="{x:Static p:Resources.tpub_hardware}" Binding="{Binding Hardware.Name}" IsReadOnly="True" />
-                            <DataGridTextColumn Header="{x:Static p:Resources.tpub_app}" Binding="{Binding App.Name}" IsReadOnly="True" />
-                            <DataGridTextColumn Header="{x:Static p:Resources.tpub_vers}" Binding="{Binding Version.NameText}" IsReadOnly="True" />
-                        </DataGrid.Columns>
-                    </DataGrid>
-
-                    <StackPanel Grid.Row="2">
-                        <StackPanel.Resources>
-                            <Style TargetType="HeaderedContentControl">
-                                <Setter Property="Margin" Value="5" />
-                            </Style>
-                            <Style TargetType="CheckBox">
-                                <Setter Property="Margin" Value="5" />
-                            </Style>
-                            <Style TargetType="ComboBox">
-                                <Setter Property="Margin" Value="5" />
-                            </Style>
-                            <Style TargetType="Button">
-                                <Setter Property="Margin" Value="5" />
-                            </Style>
-                            <Style TargetType="ListView">
-                                <Setter Property="Margin" Value="5" />
-                            </Style>
-                        </StackPanel.Resources>
-                        <ComboBox x:Name="InPublishTarget" SelectedIndex="0" SelectedValuePath="Tag" Visibility="Collapsed">
-                            <ComboBoxItem Content="ETS" Tag="ets" />
-                            <ComboBoxItem Content="Kaenx" Tag="kaenx" IsEnabled="False" />
-                        </ComboBox>
-                        
-                        <HeaderedContentControl Header="{x:Static p:Resources.tpub_filename}">
-                            <TextBox x:Name="ExportInName" Text="output" />
-                        </HeaderedContentControl>
-
-                        <Button Content="{x:Static p:Resources.tpub_publish}" Click="Button_Click" />
-                    </StackPanel>
-
+                    <Button Content="{x:Static p:Resources.tpub_publish}" Click="Button_Click" />
                     <ScrollViewer Grid.Row="3">
                         <ItemsControl ItemsSource="{Binding PublishActions}">
                             <ItemsControl.ItemTemplate>
@@ -1058,7 +882,7 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
                     </ScrollViewer>
-                </Grid>
+                </StackPanel>
             </TabItem>
         </TabControl>
 

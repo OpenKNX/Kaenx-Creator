@@ -19,6 +19,7 @@ namespace Kaenx.Creator.Models
         public ObservableCollection<CatalogItem> Items { get; set; } = new ObservableCollection<CatalogItem>();
 
 
+        //todo remove hardware
         [JsonIgnore]
         public Hardware Hardware { get; set; }
 

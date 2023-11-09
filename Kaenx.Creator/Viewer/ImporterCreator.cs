@@ -10,7 +10,7 @@ namespace Kaenx.Creator.Viewer
 {
     public class ImporterCreator : IImporter
     {
-        private Application _app;
+        private MainModel _general;
         private AppVersion _version;
         private CatalogContext _context;
         private ApplicationViewModel _model;
@@ -25,10 +25,10 @@ namespace Kaenx.Creator.Viewer
        
 
 
-        public ImporterCreator(AppVersion version, Application app)
+        public ImporterCreator(MainModel general)
         {
-            _version = version;
-            _app = app;
+            _version = general.Application;
+            _general = general;
             _langCode = _version.DefaultLanguage;
         }
 
@@ -55,9 +55,9 @@ namespace Kaenx.Creator.Viewer
         private void DoImport()
         {
             _model = new ApplicationViewModel() {
-                Number = _app.Number,
+                Number = _general.Info.AppNumber,
                 Version = _version.Number,
-                Name = _app.Name
+                Name = _general.Application.Name
             };
             _context.Applications.Add(_model);
             _context.SaveChanges();

@@ -15,13 +15,18 @@ namespace Kaenx.Creator.Models.Dynamic
             Argument = arg;
         }
 
+        private Argument _arg;
         [JsonIgnore]
-        public Models.Argument Argument { get; set; }
+        public Models.Argument Argument
+        {
+            get { return _arg; }
+            set { _arg = value; if(Value == null) _argId = -1; }
+        }
 
         [JsonIgnore]
         public int _argId = -1;
         public int ArgumentId {
-            get { return Argument?.UId ?? -1; }
+            get { return Argument?.UId ?? _argId; }
             set { _argId = value; }
         }
 
@@ -44,13 +49,13 @@ namespace Kaenx.Creator.Models.Dynamic
         public Models.Allocator Allocator
         {
             get { return _alloc; }
-            set { if(value == null) return; _alloc = value; Changed("Allocator"); }
+            set { if(value == null) { _allocId = -1; return; } _alloc = value; Changed("Allocator"); }
         }
 
         [JsonIgnore]
         public int _allocId = -1;
         public int AllocatorId {
-            get { return Allocator?.UId ?? -1; }
+            get { return Allocator?.UId ?? _allocId; }
             set { _allocId = value; }
         }
 

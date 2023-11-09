@@ -169,8 +169,12 @@
     <value>Allgemeines</value>
     <comment/>
   </data>
+  <data name="tabs_info" xml:space="preserve">
+    <value>Infos</value>
+    <comment/>
+  </data>
   <data name="tabs_hard" xml:space="preserve">
-    <value>Hardware/Geräte</value>
+    <value>Hardware</value>
     <comment/>
   </data>
   <data name="tabs_pub" xml:space="preserve">

@@ -52,7 +52,7 @@ namespace Kaenx.Creator.Models.Dynamic
         public int _parameterUId = -1;
         public int ParameterUId
         {
-            get { return ParameterRefObject?.UId ?? -1; }
+            get { return ParameterRefObject?.UId ?? _parameterUId; }
             set { _parameterUId = value; }
         }
         
@@ -61,7 +61,7 @@ namespace Kaenx.Creator.Models.Dynamic
         public Models.ParameterRef ParameterRefObject
         {
             get { return _parameterRef; }
-            set { _parameterRef = value; Changed("ParameterRefObject"); }
+            set { _parameterRef = value; Changed("ParameterRefObject"); if(value == null) _parameterUId = -1; }
         }
 
 

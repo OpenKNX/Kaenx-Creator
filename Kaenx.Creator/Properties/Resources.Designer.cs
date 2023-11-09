@@ -180,9 +180,27 @@ namespace Kaenx.Creator.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Hardware/Geräte ähnelt.
         /// </summary>
+        public static string tabs_info {
+            get {
+                return ResourceManager.GetString("tabs_info", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Hardware/Geräte ähnelt.
+        /// </summary>
         public static string tabs_hard {
             get {
                 return ResourceManager.GetString("tabs_hard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Hardware/Geräte ähnelt.
+        /// </summary>
+        public static string tabs_app {
+            get {
+                return ResourceManager.GetString("tabs_app", resourceCulture);
             }
         }
         
@@ -2622,6 +2640,12 @@ namespace Kaenx.Creator.Properties {
         public static string tuni_heatmap {
             get {
                 return ResourceManager.GetString("tuni_heatmap", resourceCulture);
+            }
+        }
+        
+        public static string tabs_proj {
+            get {
+                return ResourceManager.GetString("tabs_proj", resourceCulture);
             }
         }
     }

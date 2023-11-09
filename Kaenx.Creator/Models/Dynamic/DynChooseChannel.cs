@@ -43,14 +43,14 @@ namespace Kaenx.Creator.Models.Dynamic
         public ParameterRef ParameterRefObject
         {
             get { return _parameterRefObject; }
-            set { _parameterRefObject = value; Changed("ParameterRefObject"); }
+            set { _parameterRefObject = value; Changed("ParameterRefObject"); if(value == null) _parameterRef = -1; }
         }
 
         [JsonIgnore]
         public int _parameterRef;
         public int ParameterRef
         {
-            get { return ParameterRefObject?.UId ?? -1; }
+            get { return ParameterRefObject?.UId ?? _parameterRef; }
             set { _parameterRef = value; }
         }
 

@@ -14,36 +14,12 @@ namespace Kaenx.Creator.Classes
 {
     public static class AutoHelper
     {
-
-        public static AppVersion GetAppVersion(ModelGeneral general, AppVersionModel model)
-        {
-            AppVersion version = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.AppVersion>(model.Version, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
-            LoadVersion(general, version, version);
-
-            foreach(Models.ParameterType ptype in version.ParameterTypes)
-            {
-                if(ptype.Type == Models.ParameterTypes.Picture && ptype._baggageUId != -1)
-                    ptype.BaggageObject = general.Baggages.SingleOrDefault(b => b.UId == ptype._baggageUId);
-
-                if(ptype.Type == Models.ParameterTypes.Enum)
-                {
-                    foreach(ParameterTypeEnum penu in ptype.Enums)
-                    {
-                        if(penu._iconId != -1)
-                            penu.IconObject = general.Icons.SingleOrDefault(i => i.UId == penu._iconId);
-                    }
-                }
-            }
-
-            return version;
-        }
-        
         private static Dictionary<long, Parameter> Paras;
         private static Dictionary<long, ParameterRef> ParaRefs;
         private static Dictionary<long, ComObject> Coms;
         private static Dictionary<long, ComObjectRef> ComRefs;
 
-        private static void LoadVersion(ModelGeneral general, Models.AppVersion vbase, Models.IVersionBase mod)
+        public static void LoadVersion(MainModel general, Models.IVersionBase mod)
         {
             Paras = new Dictionary<long, Parameter>();
             foreach(Parameter para in mod.Parameters)
@@ -61,17 +37,30 @@ namespace Kaenx.Creator.Classes
             foreach(ComObjectRef cref in mod.ComObjectRefs)
                 ComRefs.Add(cref.UId, cref);
 
+            if(general.Application == mod) {
+                if(general.Application._addressMemoryId != -1)
+                    general.Application.AddressMemoryObject = general.Application.Memories.SingleOrDefault(m => m.UId == general.Application._addressMemoryId);
 
-
-            if(vbase == mod) {
-                if(vbase._addressMemoryId != -1)
-                    vbase.AddressMemoryObject = vbase.Memories.SingleOrDefault(m => m.UId == vbase._addressMemoryId);
-
-                if(vbase._assocMemoryId != -1)
-                    vbase.AssociationMemoryObject = vbase.Memories.SingleOrDefault(m => m.UId == vbase._assocMemoryId);
+                if(general.Application._assocMemoryId != -1)
+                    general.Application.AssociationMemoryObject = general.Application.Memories.SingleOrDefault(m => m.UId == general.Application._assocMemoryId);
                     
-                if(vbase._comMemoryId != -1)
-                    vbase.ComObjectMemoryObject = vbase.Memories.SingleOrDefault(m => m.UId == vbase._comMemoryId);
+                if(general.Application._comMemoryId != -1)
+                    general.Application.ComObjectMemoryObject = general.Application.Memories.SingleOrDefault(m => m.UId == general.Application._comMemoryId);
+            
+                foreach(Models.ParameterType ptype in general.Application.ParameterTypes)
+                {
+                    if(ptype.Type == Models.ParameterTypes.Picture && ptype._baggageUId != -1)
+                        ptype.BaggageObject = general.Baggages.SingleOrDefault(b => b.UId == ptype._baggageUId);
+
+                    if(ptype.Type == Models.ParameterTypes.Enum)
+                    {
+                        foreach(ParameterTypeEnum penu in ptype.Enums)
+                        {
+                            if(penu.UseIcon && penu._iconId != -1)
+                                penu.IconObject = general.Icons.SingleOrDefault(i => i.UId == penu._iconId);
+                        }
+                    }
+                }
             } else {
                 Models.Module modu = mod as Models.Module;
                 if(modu._parameterBaseOffsetUId != -1)
@@ -84,10 +73,10 @@ namespace Kaenx.Creator.Classes
             foreach(Models.Parameter para in mod.Parameters)
             {
                 if (para._memoryId != -1)
-                    para.SaveObject = vbase.Memories.SingleOrDefault(m => m.UId == para._memoryId);
+                    para.SaveObject = general.Application.Memories.SingleOrDefault(m => m.UId == para._memoryId);
                     
                 if (para._parameterType != -1)
-                    para.ParameterTypeObject = vbase.ParameterTypes.SingleOrDefault(p => p.UId == para._parameterType);
+                    para.ParameterTypeObject = general.Application.ParameterTypes.SingleOrDefault(p => p.UId == para._parameterType);
 
                 if(para.IsInUnion && para._unionId != -1)
                     para.UnionObject = mod.Unions.SingleOrDefault(u => u.UId == para._unionId);
@@ -96,7 +85,7 @@ namespace Kaenx.Creator.Classes
             foreach(Models.Union union in mod.Unions)
             {
                 if (union._memoryId != -1)
-                    union.MemoryObject = vbase.Memories.SingleOrDefault(u => u.UId == union._memoryId);
+                    union.MemoryObject = general.Application.Memories.SingleOrDefault(u => u.UId == union._memoryId);
             }
 
             foreach(Models.ParameterRef pref in mod.ParameterRefs)
@@ -156,13 +145,13 @@ namespace Kaenx.Creator.Classes
             }
 
             if(mod.Dynamics.Count > 0)
-                LoadSubDyn(general, mod.Dynamics[0], vbase, mod);
+                LoadSubDyn(general, mod.Dynamics[0], mod);
             
             foreach(Models.Module mod3 in mod.Modules)
-                LoadVersion(general, vbase, mod3);
+                LoadVersion(general, mod3);
         }
 
-        private static void LoadSubDyn(ModelGeneral general, Models.Dynamic.IDynItems dyn, AppVersion vbase, IVersionBase mod)
+        private static void LoadSubDyn(MainModel general, Models.Dynamic.IDynItems dyn, IVersionBase mod)
         {
             foreach (Models.Dynamic.IDynItems item in dyn.Items)
             {
@@ -181,7 +170,7 @@ namespace Kaenx.Creator.Classes
                         if (dp._parameter != -1)
                             dp.ParameterRefObject = ParaRefs[dp._parameter];
                         if(dp.HasHelptext)
-                            dp.Helptext = vbase.Helptexts.SingleOrDefault(p => p.UId == dp._helptextId);
+                            dp.Helptext = general.Application.Helptexts.SingleOrDefault(p => p.UId == dp._helptextId);
                         if(dp.UseIcon && dp._iconId != -1)
                             dp.IconObject = general.Icons.SingleOrDefault(i => i.UId == dp._iconId);
                         break;
@@ -192,7 +181,7 @@ namespace Kaenx.Creator.Classes
                             if(!dcb.IsGlobal)
                                 dcb.ParameterRefObject = ParaRefs[dcb._parameterRef];
                             else
-                                dcb.ParameterRefObject = vbase.ParameterRefs.SingleOrDefault(p => p.UId == dcb._parameterRef);
+                                dcb.ParameterRefObject = general.Application.ParameterRefs.SingleOrDefault(p => p.UId == dcb._parameterRef);
                         }
                         break;
 
@@ -223,7 +212,7 @@ namespace Kaenx.Creator.Classes
                     case Models.Dynamic.DynModule dm:
                         if(dm._module != -1)
                         {
-                            dm.ModuleObject = vbase.Modules.Single(m => m.UId == dm._module);
+                            dm.ModuleObject = general.Application.Modules.Single(m => m.UId == dm._module);
                             foreach(Models.Dynamic.DynModuleArg arg in dm.Arguments)
                             {
                                 if(arg._argId != -1)
@@ -260,7 +249,7 @@ namespace Kaenx.Creator.Classes
                 }
 
                 if (item.Items != null)
-                    LoadSubDyn(general, item, vbase, mod);
+                    LoadSubDyn(general, item, mod);
             }
         }
 

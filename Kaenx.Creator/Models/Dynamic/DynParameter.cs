@@ -34,7 +34,7 @@ namespace Kaenx.Creator.Models.Dynamic
         public int _parameter;
         public int ParameterRef
         {
-            get { return ParameterRefObject?.UId ?? -1; }
+            get { return ParameterRefObject?.UId ?? _parameter; }
             set { _parameter = value; }
         }
         
@@ -54,14 +54,14 @@ namespace Kaenx.Creator.Models.Dynamic
         public Helptext Helptext
         {
             get { return _helptext; }
-            set { _helptext = value; Changed("Helptext"); }
+            set { _helptext = value; Changed("Helptext"); if(value == null) _helptextId = -1; }
         }
 
         [JsonIgnore]
         public int _helptextId;
         public int HelptextId
         {
-            get { return Helptext?.UId ?? -1; }
+            get { return Helptext?.UId ?? _helptextId; }
             set { _helptextId = value; }
         }
 
@@ -80,7 +80,7 @@ namespace Kaenx.Creator.Models.Dynamic
         [JsonIgnore]
         public int _iconId = -1;
         public int IconId{
-            get { return IconObject?.UId ?? -1; }
+            get { return IconObject?.UId ?? _iconId; }
             set { _iconId = value; }
         }
 
@@ -89,7 +89,7 @@ namespace Kaenx.Creator.Models.Dynamic
         public Icon IconObject
         {
             get { return _icon; }
-            set { _icon = value; Changed("IconObject"); }
+            set { _icon = value; Changed("IconObject"); if(value == null) _iconId = -1; }
         }
 
 

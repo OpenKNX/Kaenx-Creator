@@ -15,30 +15,10 @@ namespace Kaenx.Creator.Classes {
 
     public class CheckHelper
     {
-        
-        public static void CheckThis(Application app,
-                                    AppVersionModel version,
-                                    ObservableCollection<PublishAction> actions,
-                                    bool showOnlyErrors = false)
+        public static void CheckThis(MainModel General, ObservableCollection<PublishAction> actions, bool showOnlyErrors = false)
         {
-            CheckThis(null, null, null, new List<Application>() { app }, new List<AppVersionModel>() { version }, actions, showOnlyErrors);
-        }
-
-        public static void CheckThis(ModelGeneral General,
-                                    List<Hardware> hardware,
-                                    List<Device> devices,
-                                    List<Application> apps,
-                                    List<AppVersionModel> versions,
-                                    ObservableCollection<PublishAction> actions, bool showOnlyErrors = false)
-        {
-            if(apps.Count == 0) {
-                actions.Add(new PublishAction() { Text = Properties.Messages.check_no_app, State = PublishState.Fail });
-                return;
-            }
-
             actions.Add(new PublishAction() { Text = Properties.Messages.check_start });
-            actions.Add(new PublishAction() { Text = string.Format(Properties.Messages.check_start_count, devices?.Count, hardware?.Count, apps.Count, versions.Count) });
-
+            
             if(General != null)
             {
                 if(General.Catalog[0].Items.Any(c => !c.IsSection ))
@@ -53,68 +33,23 @@ namespace Kaenx.Creator.Classes {
 
                 #region Hardware Check
                 actions.Add(new PublishAction() { Text = Properties.Messages.check_hard });
-                List<string> serials = new List<string>();
 
-                var check1 = General.Hardware.GroupBy(h => h.Name).Where(h => h.Count() > 1);
-                foreach(var group in check1)
-                    actions.Add(new PublishAction() { Text = string.Format(Properties.Messages.check_hard_duplicate_name, group.Key, group.Count()), State = PublishState.Fail });
-
-                check1 = General.Hardware.GroupBy(h => h.SerialNumber).Where(h => h.Count() > 1);
-                foreach (var group in check1)
-                    actions.Add(new PublishAction() { Text = string.Format(Properties.Messages.check_hard_duplicate_serial, group.Key, group.Count()), State = PublishState.Fail });
-
-                IEnumerable<Hardware> check2;
-                if(!showOnlyErrors)
-                {
-                    check1 = null;
-                    check2 = General.Hardware.Where(h => h.Devices.Count == 0);
-                    foreach (var group in check2)
-                        actions.Add(new PublishAction() { Text = string.Format(Properties.Messages.check_hard_no_devices, group.Name), State = PublishState.Warning });
-
-                    check2 = General.Hardware.Where(h => h.HasApplicationProgram && h.Apps.Count == 0);
-                    foreach (var group in check2)
-                        actions.Add(new PublishAction() { Text = string.Format(Properties.Messages.check_hard_no_apps, group.Name), State = PublishState.Warning });
-
-                    check2 = General.Hardware.Where(h => !h.HasApplicationProgram && h.Apps.Count != 0);
-                    foreach (var group in check2)
-                        actions.Add(new PublishAction() { Text = string.Format(Properties.Messages.check_hard_apps, group.Name), State = PublishState.Warning });
-                }
-                foreach(Hardware hard in hardware)
-                {
-                    if(!hard.HasIndividualAddress)
-                        actions.Add(new PublishAction() { Text = string.Format(Properties.Messages.check_hard_no_physicaladdress, hard.Name), State = PublishState.Fail });
-                    if(!hard.HasApplicationProgram)
-                        actions.Add(new PublishAction() { Text = string.Format(Properties.Messages.check_hard_no_app, hard.Name), State = PublishState.Fail });
-                    if(!hard.HasApplicationProgram && hard.HasApplicationProgram2)
-                        actions.Add(new PublishAction() { Text = string.Format(Properties.Messages.check_hard_no_app2, hard.Name), State = PublishState.Fail });
-                }
+                if(!General.Info.HasIndividualAddress)
+                    actions.Add(new PublishAction() { Text = Properties.Messages.check_hard_no_physicaladdress, State = PublishState.Fail });
+                if(!General.Info.HasApplicationProgram)
+                    actions.Add(new PublishAction() { Text = Properties.Messages.check_hard_no_app, State = PublishState.Fail });
+                if(!General.Info.HasApplicationProgram && General.Info.HasApplicationProgram2)
+                    actions.Add(new PublishAction() { Text = Properties.Messages.check_hard_no_app2, State = PublishState.Fail });
                 #endregion
 
 
                 #region Applikation Check
                 actions.Add(new PublishAction() { Text = Properties.Messages.check_app });
 
-                var check3 = General.Applications.GroupBy(h => h.Name).Where(h => h.Count() > 1);
-                foreach (var group in check3)
-                    actions.Add(new PublishAction() { Text = string.Format(Properties.Messages.check_app_duplicate_name, group.Key, group.Count()), State = PublishState.Fail });
-
-                check3 = null;
-                var check4 = General.Applications.GroupBy(h => h.Number).Where(h => h.Count() > 1);
-                foreach (var group in check4)
-                    actions.Add(new PublishAction() { Text = string.Format(Properties.Messages.check_app_duplicate_number, group.Key.ToString("X4"), group.Count()), State = PublishState.Fail });
-
-                check4 = null;
-                foreach(Application app in General.Applications)
+                if(General.IsOpenKnx)
                 {
-                    var check5 = app.Versions.GroupBy(v => v.Number).Where(l => l.Count() > 1);
-                    foreach (var group in check5)
-                        actions.Add(new PublishAction() { Text = string.Format(Properties.Messages.check_app_duplicate_version, app.NameText, Math.Floor(group.Key / 16.0), group.Key % 16, group.Count()), State = PublishState.Fail });
-                
-                    if(General.IsOpenKnx)
-                    {
-                        if(app.Number > 0xFF)
-                            actions.Add(new PublishAction() { Text = string.Format(Properties.Messages.check_app_openknx, app.NameText), State = PublishState.Fail });
-                    }
+                    if(General.Application.Number > 0xFF)
+                        actions.Add(new PublishAction() { Text = string.Format(Properties.Messages.check_app_openknx, General.Application.NameText), State = PublishState.Fail });
                 }
                 #endregion
 
@@ -134,45 +69,37 @@ namespace Kaenx.Creator.Classes {
 
             //TODO check hardware/device/app
 
-            foreach(AppVersionModel model in versions)
-            {
-                AppVersion version = model.Model != null ? model.Model : AutoHelper.GetAppVersion(General, model);
-                Application app = apps.Single(a => a.Versions.Any(v => v.Name == version.Name && v.Number == version.Number));
-                actions.Add(new PublishAction() { Text = string.Format(Properties.Messages.check_ver, app.NameText, version.NameText) });
-                CheckVersion(General, app, version, devices, actions, showOnlyErrors);
-            }
+            actions.Add(new PublishAction() { Text = string.Format(Properties.Messages.check_ver, General.Application.NameText) });
+            CheckVersion(General, actions, showOnlyErrors);
             
             actions.Add(new PublishAction() { Text = Properties.Messages.check_end });
         }
 
 
         public static void CheckVersion(
-            ModelGeneral General, 
-            Application app,
-            AppVersion vers, 
-            List<Device> devices,
+            MainModel General,
             ObservableCollection<PublishAction> actions, 
             bool showOnlyErrors = false)
         {
-            if(string.IsNullOrEmpty(app.Mask.MediumTypes))
+            if(string.IsNullOrEmpty(General.Info.Mask.MediumTypes))
             {
                 actions.Add(new PublishAction() { Text = Properties.Messages.check_ver_mediumtypes, State = PublishState.Fail });
             }
             
-            if(vers.IsModulesActive && vers.NamespaceVersion < 20)
+            if(General.Application.IsModulesActive && General.Application.NamespaceVersion < 20)
                 actions.Add(new PublishAction() { Text = Properties.Messages.check_ver_modules, State = PublishState.Fail });
 
-            if(vers.IsMessagesActive && vers.NamespaceVersion < 14)
+            if(General.Application.IsMessagesActive && General.Application.NamespaceVersion < 14)
                 actions.Add(new PublishAction() { Text = Properties.Messages.check_ver_messages, State = PublishState.Fail });
 
-            if(app.Mask.Procedure != ProcedureTypes.Default && string.IsNullOrEmpty(vers.Procedure))
+            if(General.Info.Mask.Procedure != ProcedureTypes.Default && string.IsNullOrEmpty(General.Application.Procedure))
                 actions.Add(new PublishAction() { Text = Properties.Messages.check_ver_loadprod, State = PublishState.Fail });
 
-            if(vers.IsHelpActive && vers.NamespaceVersion < 14)
+            if(General.Application.IsHelpActive && General.Application.NamespaceVersion < 14)
                 actions.Add(new PublishAction() { Text = Properties.Messages.check_ver_helptext, State = PublishState.Fail });
-            if(vers.Memories.Count > 0 && !vers.Memories[0].IsAutoLoad)
+            if(General.Application.Memories.Count > 0 && !General.Application.Memories[0].IsAutoLoad)
             {
-                XElement xtemp = XElement.Parse(vers.Procedure);
+                XElement xtemp = XElement.Parse(General.Application.Procedure);
                 foreach(XElement xele in xtemp.Descendants())
                 {
                     if(xele.Name.LocalName == "LdCtrlRelSegment")
@@ -180,7 +107,7 @@ namespace Kaenx.Creator.Classes {
                         if(xele.Attribute("LsmIdx").Value == "4")
                         {
                             int memsize = int.Parse(xele.Attribute("Size")?.Value ?? "0");
-                            if(memsize != vers.Memories[0].Size)
+                            if(memsize != General.Application.Memories[0].Size)
                                 actions.Add(new PublishAction() { Text = string.Format(Properties.Messages.check_ver_loadprod_size, xele.Name.LocalName), State = PublishState.Warning });
                         }
                     }
@@ -189,14 +116,14 @@ namespace Kaenx.Creator.Classes {
                         if(xele.Attribute("ObjIdx").Value == "4")
                         {
                             int memsize = int.Parse(xele.Attribute("Size")?.Value ?? "0");
-                            if(memsize != vers.Memories[0].Size)
+                            if(memsize != General.Application.Memories[0].Size)
                                 actions.Add(new PublishAction() { Text = string.Format(Properties.Messages.check_ver_loadprod_size, xele.Name.LocalName), State = PublishState.Warning });
                         }
                     }
                 }
             }
 
-            foreach(ParameterType ptype in vers.ParameterTypes) {
+            foreach(ParameterType ptype in General.Application.ParameterTypes) {
                 long maxsize = (long)Math.Pow(2, ptype.SizeInBit);
     
                 if(ptype.UIHint == "CheckBox" && (ptype.Min != "0" || ptype.Max != "1"))
@@ -229,7 +156,7 @@ namespace Kaenx.Creator.Classes {
                                 actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_enum2, ptype.Name, ptype.UId, penum.Value, maxsize-1), State = PublishState.Fail, Item = ptype });
 
                             if(!penum.Translate) {
-                                Translation trans = penum.Text.Single(t => t.Language.CultureCode == vers.DefaultLanguage);
+                                Translation trans = penum.Text.Single(t => t.Language.CultureCode == General.Application.DefaultLanguage);
                                 if(string.IsNullOrEmpty(trans.Text))
                                     actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_enum_translation, penum.Name, ptype.Name, ptype.UId, trans.Language.Text), State = PublishState.Fail, Item = ptype });
                             } else {
@@ -247,7 +174,7 @@ namespace Kaenx.Creator.Classes {
 
                     case ParameterTypes.NumberUInt:
                     {
-                        if(ptype.UIHint == "ProgressBar" && vers.NamespaceVersion < 20)
+                        if(ptype.UIHint == "ProgressBar" && General.Application.NamespaceVersion < 20)
                             actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_int_progbar, "UInt", ptype.Name, ptype.UId), State = PublishState.Fail, Item = ptype });
 
                         long min, max, temp;
@@ -270,7 +197,7 @@ namespace Kaenx.Creator.Classes {
 
                     case ParameterTypes.NumberInt:
                     {
-                        if(ptype.UIHint == "Progressbar" && vers.NamespaceVersion < 20)
+                        if(ptype.UIHint == "Progressbar" && General.Application.NamespaceVersion < 20)
                             actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_int_progbar, "UInt", ptype.Name, ptype.UId), State = PublishState.Fail, Item = ptype });
 
                         long min, max, temp;
@@ -309,14 +236,14 @@ namespace Kaenx.Creator.Classes {
                         break;
 
                     case ParameterTypes.None:
-                        if(!vers.IsPreETS4)
+                        if(!General.Application.IsPreETS4)
                             actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_none, ptype.Name, ptype.UId), State = PublishState.Warning, Item = ptype });
                         break;
 
                     case ParameterTypes.Color:
                         if(ptype.UIHint != "RGB" && ptype.UIHint != "RGBW" && ptype.UIHint != "HSV")
                             actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_color1, ptype.Name, ptype.UId, ptype.UIHint), State = PublishState.Fail, Item = ptype });
-                        if(ptype.UIHint == "RGBW" && vers.NamespaceVersion < 20)
+                        if(ptype.UIHint == "RGBW" && General.Application.NamespaceVersion < 20)
                             actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_color2, ptype.Name, ptype.UId), State = PublishState.Fail, Item = ptype });
                         break;
 
@@ -352,20 +279,20 @@ namespace Kaenx.Creator.Classes {
                 }
             }
 
-            foreach(OpenKnxModule mod in vers.OpenKnxModules)
+            foreach(OpenKnxModule mod in General.Application.OpenKnxModules)
             {
                 if(string.IsNullOrEmpty(mod.Prefix))
                     actions.Add(new PublishAction() { Text = string.Format(Properties.Messages.check_open_noprefix, mod.Name), State = PublishState.Fail });
             
-                Module omod = vers.Modules.SingleOrDefault(m => m.Name == mod.Name + " Templ");
+                Module omod = General.Application.Modules.SingleOrDefault(m => m.Name == mod.Name + " Templ");
 
                 if(omod != null)
                 {
                     List<DynModule> lmods = new List<DynModule>();
-                    AutoHelper.GetModules(vers.Dynamics[0], lmods);
+                    AutoHelper.GetModules(General.Application.Dynamics[0], lmods);
                     int count = lmods.Count(m => m.ModuleUId == omod.UId);
 
-                    foreach(Module xmod in vers.Modules.Where(m => m.IsOpenKnxModule && m.Name.StartsWith(mod.Name)))
+                    foreach(Module xmod in General.Application.Modules.Where(m => m.IsOpenKnxModule && m.Name.StartsWith(mod.Name)))
                     {
                         foreach(OpenKnxNum onum in mod.NumChannels)
                         {
@@ -373,7 +300,7 @@ namespace Kaenx.Creator.Classes {
                             {
                                 case NumberType.ParameterType:
                                 {
-                                    ParameterType ptype = vers.ParameterTypes.Single(p => p.Name == onum.UId);
+                                    ParameterType ptype = General.Application.ParameterTypes.Single(p => p.Name == onum.UId);
                                     if(onum.Property == "Minimum")
                                         ptype.Min = count.ToString();
                                     else if(onum.Property == "Maximum")
@@ -404,32 +331,42 @@ namespace Kaenx.Creator.Classes {
             //if(app.Mask.Memory == MemoryTypes.Relative && vers.Memories.Count > 1)
             //    actions.Add(new PublishAction() { Text = $"Die Maskenversion unterstützt nur einen Speicher", State = PublishState.Fail });
 
-            CheckVersion(vers, vers, actions, vers.DefaultLanguage, vers.NamespaceVersion, showOnlyErrors);
+            CheckVersion(General.Application, General.Application, actions, General.Application.DefaultLanguage, General.Application.NamespaceVersion, showOnlyErrors);
             if(General != null)
-                CheckLanguages(vers, actions, General, devices);
+                CheckLanguages(General, actions);
 
-            if (app.Mask.Procedure != ProcedureTypes.Default)
+            if (General.Info.Mask.Procedure != ProcedureTypes.Default)
             {
-                XElement temp = XElement.Parse(vers.Procedure);
-                temp.Attributes().Where((x) => x.IsNamespaceDeclaration).Remove();
-                foreach (XElement xele in temp.Descendants())
+                if(string.IsNullOrEmpty(General.Application.Procedure))
                 {
-                    if (xele.Name.LocalName == "OnError")
-                    {
-                        if (!vers.IsMessagesActive)
+                    actions.Add(new PublishAction() { Text = "\t" + Properties.Messages.check_ver_loadprod_empty, State = PublishState.Fail });
+                } else {
+                    XElement temp = null;
+                    try{
+                        temp = XElement.Parse(General.Application.Procedure);
+                        temp.Attributes().Where((x) => x.IsNamespaceDeclaration).Remove();
+                        foreach (XElement xele in temp.Descendants())
                         {
-                            actions.Add(new PublishAction() { Text = "\t" + Properties.Messages.check_ver_loadprod_msg, State = PublishState.Fail });
-                            return;
-                        }
+                            if (xele.Name.LocalName == "OnError")
+                            {
+                                if (!General.Application.IsMessagesActive)
+                                {
+                                    actions.Add(new PublishAction() { Text = "\t" + Properties.Messages.check_ver_loadprod_msg, State = PublishState.Fail });
+                                    return;
+                                }
 
-                        int id = -1;
-                        if (!int.TryParse(xele.Attribute("MessageRef").Value, out id))
-                            actions.Add(new PublishAction() { Text = "\t" + Properties.Messages.check_ver_loadprod_msgref, State = PublishState.Fail });
-                        if (id != -1)
-                        {
-                            if (!vers.Messages.Any(m => m.UId == id))
-                                actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_loadprod_msgref_error, id), State = PublishState.Fail });
+                                int id = -1;
+                                if (!int.TryParse(xele.Attribute("MessageRef").Value, out id))
+                                    actions.Add(new PublishAction() { Text = "\t" + Properties.Messages.check_ver_loadprod_msgref, State = PublishState.Fail });
+                                if (id != -1)
+                                {
+                                    if (!General.Application.Messages.Any(m => m.UId == id))
+                                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_loadprod_msgref_error, id), State = PublishState.Fail });
+                                }
+                            }
                         }
+                    } catch {
+                        actions.Add(new PublishAction() { Text = "\t" + Properties.Messages.check_ver_loadprod_failed, State = PublishState.Fail });
                     }
                 }
             }
@@ -448,8 +385,6 @@ namespace Kaenx.Creator.Classes {
                 int number = -1;
                 if(!int.TryParse(item.Number, out number))
                     actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_cat_prodnumber, item.Name), State = PublishState.Fail }); 
-                if(item.Hardware == null)
-                    actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_cat_hardware, item.Name), State = PublishState.Fail });
             }
         }
 
@@ -859,26 +794,27 @@ namespace Kaenx.Creator.Classes {
             if(text.Any(t => t.Text.Length > 20)) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_lang_suffix_length, stype, name, uid), State = PublishState.Fail, Item = item, Module = mod });
         }
 
-        private static void CheckLanguages(AppVersion vers,  ObservableCollection<PublishAction> actions, ModelGeneral general, List<Device> devices)
+        private static void CheckLanguages(MainModel general, ObservableCollection<PublishAction> actions)
         {
             List<CatalogItem> toCheck = new List<CatalogItem>();
-            CheckCatalog(vers, general.Catalog[0], devices, general, actions);
+            CheckCatalog(general.Catalog[0], general, actions);
         }
 
-        private static void CheckCatalog(AppVersion vers, CatalogItem item, List<Device> devices, ModelGeneral general,  ObservableCollection<PublishAction> actions)
+        private static void CheckCatalog(CatalogItem item, MainModel general,  ObservableCollection<PublishAction> actions)
         {
             foreach(CatalogItem citem in item.Items)
             {
                 if(!citem.IsSection)
                 {
-                    List<Application> appList = general.Applications.ToList().FindAll(a => a.Versions.Any(v => v.Number == vers.Number));
+                    //todo move to general check for device info
+                    /*List<Application> appList = general.Applications.ToList().FindAll(a => a.Versions.Any(v => v.Number == vers.Number));
                     foreach (Application app in appList)
                     {
                         if (devices != null && citem.Hardware.Apps.Contains(app))
                         {
                             foreach (Device dev in citem.Hardware.Devices.Where(d => devices.Contains(d)))
                             {
-                                foreach (Language lang in vers.Languages)
+                                foreach (Language lang in general.Languages)
                                 {
                                     if (!dev.Text.Any(l => l.Language.CultureCode == lang.CultureCode || string.IsNullOrEmpty(l.Text)))
                                         actions.Add(new PublishAction() { Text = string.Format(Properties.Messages.check_cat_dev_text_not_all, dev.Name), State = PublishState.Fail });
@@ -887,14 +823,14 @@ namespace Kaenx.Creator.Classes {
                                 }
                             }
                         }
-                    }
+                    }*/
                 } else {
-                    foreach(Language lang in vers.Languages)
+                    foreach(Language lang in general.Languages)
                     {
                         if(!citem.Text.Any(l => l.Language.CultureCode == lang.CultureCode || string.IsNullOrEmpty(l.Text)))
                             actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_cat_cat_text_not_all, citem.Name), State = PublishState.Fail });
                     }
-                    CheckCatalog(vers, citem, devices, general, actions);
+                    CheckCatalog(citem, general, actions);
                 }
             }
         }
@@ -1172,6 +1108,13 @@ namespace Kaenx.Creator.Classes {
             }
 
 
+            if(version < 8)
+            {
+                json = gen.ToString();
+                json = Update8(json);
+                gen = JObject.Parse(json);
+            }
+
             return gen.ToString();
         }
 
@@ -1225,6 +1168,55 @@ namespace Kaenx.Creator.Classes {
                         break;
                 }
             }
+        }
+    
+        private static string Update8(string json)
+        {
+            ModelGeneral general = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.ModelGeneral>(json, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
+            MainModel main = new MainModel
+            {
+                Baggages = general.Baggages,
+                Catalog = general.Catalog,
+                Guid = general.Guid,
+                Icons = general.Icons,
+                ImportVersion = general.ImportVersion,
+                IsOpenKnx = general.IsOpenKnx,
+                Languages = general.Languages,
+                ManufacturerId = general.ManufacturerId,
+                ProjectName = general.ProjectName
+            };
+
+            
+            Application app = general.Applications[0];
+            
+            
+            AppVersion vers = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.AppVersion>(app.Versions[0].Version, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
+            main.Application = vers;
+
+            
+            Hardware hard =  general.Hardware[0];
+            Device dev = hard.Devices[0];
+
+            main.Info = new Info() {
+                AppNumber = app.Number,
+                BusCurrent = hard.BusCurrent,
+                Description = dev.Description,
+                HasApplicationProgram = hard.HasApplicationProgram,
+                HasApplicationProgram2 = hard.HasApplicationProgram2,
+                HasIndividualAddress = hard.HasIndividualAddress,
+                IsCoppler = hard.IsCoppler,
+                IsIpEnabled = hard.IsIpEnabled,
+                IsPowerSupply = hard.IsPowerSupply,
+                IsRailMounted = dev.IsRailMounted,
+                _maskId = app._maskId,
+                Name = hard.Name,
+                OrderNumber = dev.OrderNumber,
+                SerialNumber = hard.SerialNumber,
+                Text = dev.Text,
+                Version = hard.Version
+            };
+
+            return Newtonsoft.Json.JsonConvert.SerializeObject(main, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
         }
     }
 }

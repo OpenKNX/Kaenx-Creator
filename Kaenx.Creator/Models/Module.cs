@@ -78,14 +78,14 @@ namespace Kaenx.Creator.Models
         public Argument ParameterBaseOffset
         {
             get { return _parameterBaseOffset; }
-            set { _parameterBaseOffset = value; Changed("ParameterBaseOffset"); }
+            set { _parameterBaseOffset = value; Changed("ParameterBaseOffset"); if(value == null) _parameterBaseOffsetUId = -1; }
         }
 
         [JsonIgnore]
         public int _parameterBaseOffsetUId;
         public int ParameterBaseOffsetUId
         {
-            get { return ParameterBaseOffset?.UId ?? -1; }
+            get { return ParameterBaseOffset?.UId ?? _parameterBaseOffsetUId; }
             set { _parameterBaseOffsetUId = value; }
         }
 
@@ -96,7 +96,8 @@ namespace Kaenx.Creator.Models
             get { return _comObjectBaseNumber; }
             set { 
                 _comObjectBaseNumber = value; 
-                Changed("ComObjectBaseNumber"); 
+                Changed("ComObjectBaseNumber");
+                if(value == null) _comObjectBaseNumberUId = -1; 
             }
         }
 
@@ -104,7 +105,7 @@ namespace Kaenx.Creator.Models
         public int _comObjectBaseNumberUId;
         public int ComObjectBaseNumberUId
         {
-            get { return ComObjectBaseNumber?.UId ?? -1; }
+            get { return ComObjectBaseNumber?.UId ?? _comObjectBaseNumberUId; }
             set { _comObjectBaseNumberUId = value; }
         }
 

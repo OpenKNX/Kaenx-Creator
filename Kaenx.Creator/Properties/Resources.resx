@@ -169,8 +169,16 @@
     <value>General</value>
     <comment/>
   </data>
+  <data name="tabs_info" xml:space="preserve">
+    <value>Infos</value>
+    <comment/>
+  </data>
   <data name="tabs_hard" xml:space="preserve">
-    <value>Hardware/Devices</value>
+    <value>Hardware</value>
+    <comment/>
+  </data>
+  <data name="tabs_app" xml:space="preserve">
+    <value>Application</value>
     <comment/>
   </data>
   <data name="tabs_pub" xml:space="preserve">
@@ -1439,6 +1447,10 @@
   </data>
   <data name="tuni_heatmap" xml:space="preserve">
     <value>Speicherbelegung</value>
+    <comment/>
+  </data>
+  <data name="tabs_proj" xml:space="preserve">
+    <value>Project</value>
     <comment/>
   </data>
 </root>

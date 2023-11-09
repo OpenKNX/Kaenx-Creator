@@ -15,9 +15,9 @@ namespace Kaenx.Creator.Controls
 {
     public partial class BaggageView : UserControl, INotifyPropertyChanged
     {
-        public static readonly System.Windows.DependencyProperty GeneralProperty = System.Windows.DependencyProperty.Register("General", typeof(ModelGeneral), typeof(BaggageView), new System.Windows.PropertyMetadata(null));
-        public ModelGeneral General {
-            get { return (ModelGeneral)GetValue(GeneralProperty); }
+        public static readonly System.Windows.DependencyProperty GeneralProperty = System.Windows.DependencyProperty.Register("General", typeof(MainModel), typeof(BaggageView), new System.Windows.PropertyMetadata(null));
+        public MainModel General {
+            get { return (MainModel)GetValue(GeneralProperty); }
             set { SetValue(GeneralProperty, value); }
         }
 

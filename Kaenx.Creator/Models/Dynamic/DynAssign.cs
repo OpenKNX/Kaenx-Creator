@@ -27,14 +27,14 @@ namespace Kaenx.Creator.Models.Dynamic
         public ParameterRef SourceObject
         {
             get { return _sourceObject; }
-            set { _sourceObject = value; Changed("SourceObject"); }
+            set { _sourceObject = value; Changed("SourceObject"); if(value == null) _sourceUId = -1; }
         }
 
         [JsonIgnore]
         public int _sourceUId;
         public int SourceUId
         {
-            get { return SourceObject?.UId ?? -1; }
+            get { return SourceObject?.UId ?? _sourceUId; }
             set { _sourceUId = value; }
         }
 
@@ -43,14 +43,14 @@ namespace Kaenx.Creator.Models.Dynamic
         public ParameterRef TargetObject
         {
             get { return _targetObject; }
-            set { _targetObject = value; Changed("TargetObject"); }
+            set { _targetObject = value; Changed("TargetObject"); if(value == null) _targetUId = -1; }
         }
 
         [JsonIgnore]
         public int _targetUId;
         public int TargetUId
         {
-            get { return TargetObject?.UId ?? -1; }
+            get { return TargetObject?.UId ?? _targetUId; }
             set { _targetUId = value; }
         }
 

@@ -15,15 +15,15 @@ namespace Kaenx.Creator.Controls
 {
     public partial class CheckView : UserControl, INotifyPropertyChanged
     {
-        public static readonly System.Windows.DependencyProperty AppProperty = System.Windows.DependencyProperty.Register("App", typeof(Models.Application), typeof(CheckView), new System.Windows.PropertyMetadata(null));
+        public static readonly System.Windows.DependencyProperty GeneralProperty = System.Windows.DependencyProperty.Register("General", typeof(MainModel), typeof(CheckView), new System.Windows.PropertyMetadata(null));
         public static readonly System.Windows.DependencyProperty VersionProperty = System.Windows.DependencyProperty.Register("Version", typeof(AppVersion), typeof(CheckView), new System.Windows.PropertyMetadata(null));
         public AppVersion Version {
             get { return (AppVersion)GetValue(VersionProperty); }
             set { SetValue(VersionProperty, value); }
         }
-        public Models.Application App {
-            get { return (Models.Application)GetValue(AppProperty); }
-            set { SetValue(AppProperty, value); }
+        public MainModel General {
+            get { return (MainModel)GetValue(GeneralProperty); }
+            set { SetValue(GeneralProperty, value); }
         }
         
         public ObservableCollection<Models.PublishAction> Actions { get; set; } = new ObservableCollection<Models.PublishAction>();
@@ -108,7 +108,7 @@ namespace Kaenx.Creator.Controls
             Actions.Clear();
             bool showOnlyErrors = MessageBoxResult.Yes == MessageBox.Show(Properties.Messages.checkv_warnings, Properties.Messages.checkv_warnings_title, MessageBoxButton.YesNo, MessageBoxImage.Question);
             Actions.Add(new PublishAction() { Text = Properties.Messages.checkv_started });
-            CheckHelper.CheckVersion(null, App, Version, null, Actions, showOnlyErrors);
+            CheckHelper.CheckVersion(General, Actions, showOnlyErrors);
             Actions.Add(new PublishAction() { Text = Properties.Messages.checkv_fin });
         }
         

@@ -20,6 +20,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Xml.Linq;
+using Uno.UI.Xaml;
 
 namespace Kaenx.Creator
 {
@@ -30,9 +31,9 @@ namespace Kaenx.Creator
     {
         public static MainWindow Instance { get; set; }
 
-        private Models.ModelGeneral _general;
+        private Models.MainModel _general;
 
-        public Models.ModelGeneral General
+        public Models.MainModel General
         {
             get { return _general; }
             set { _general = value; Changed("General"); }
@@ -74,7 +75,7 @@ namespace Kaenx.Creator
             new Models.EtsVersion(22, "ETS 6.1 (22)", "6.1")
         };
         
-        private int VersionCurrent = 7;
+        private int VersionCurrent = 8;
 
 
         public MainWindow()
@@ -230,7 +231,7 @@ namespace Kaenx.Creator
 
         private void ClickNew(object sender, RoutedEventArgs e)
         {
-            General = new Models.ModelGeneral() { ImportVersion = VersionCurrent, Guid = Guid.NewGuid().ToString() };
+            General = new Models.MainModel() { ImportVersion = VersionCurrent, Guid = Guid.NewGuid().ToString() };
             var currentLang = System.Threading.Thread.CurrentThread.CurrentUICulture.IetfLanguageTag;
             if(!ImportHelper._langTexts.ContainsKey(currentLang))
                 if(currentLang.Contains("-"))
@@ -243,6 +244,25 @@ namespace Kaenx.Creator
             }
             General.Languages.Add(new Models.Language(System.Threading.Thread.CurrentThread.CurrentUICulture.DisplayName, currentLang));
             General.Catalog.Add(new Models.CatalogItem() { Name = Properties.Messages.main_def_cat });
+
+            foreach(Models.Language lang in General.Languages)
+            {
+                if(!General.Info.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
+                    General.Info.Text.Add(new Models.Translation(lang, ""));
+                if(!General.Info.Description.Any(t => t.Language.CultureCode == lang.CultureCode))
+                    General.Info.Description.Add(new Models.Translation(lang, ""));
+            }
+
+            
+            General.Application.Languages.Add(new Models.Language(System.Threading.Thread.CurrentThread.CurrentUICulture.DisplayName, currentLang));
+            foreach(Models.Language lang in General.Languages)
+            {
+                if(!General.Application.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
+                    General.Application.Text.Add(new Models.Translation(lang, ""));
+            }
+
+            General.Application.Dynamics.Add(new Models.Dynamic.DynamicMain());
+
             SetButtons(true);
             MenuSaveBtn.IsEnabled = false;
             SelectedVersion = null;
@@ -393,7 +413,7 @@ namespace Kaenx.Creator
             Models.Hardware hard = (sender as Button).DataContext as Models.Hardware;
             hard.Devices.Add(new Models.Device());
         }
-
+/*
         private void ClickAddHardApp(object sender, RoutedEventArgs e)
         {
             if(InHardApp.SelectedItem == null)
@@ -451,22 +471,17 @@ namespace Kaenx.Creator
             
             app.Versions.Add(model);
         }
-
+*/
         private void ClickAddMemory(object sender, RoutedEventArgs e)
         {
-            Models.Application app = AppList.SelectedItem as Models.Application;
-            Models.AppVersion version = (sender as Button).DataContext as Models.AppVersion;
-            version.Memories.Add(new Models.Memory() { Type = app.Mask.Memory, UId = AutoHelper.GetNextFreeUId(version.Memories) });
+            General.Application.Memories.Add(new Models.Memory() { Type = General.Info.Mask.Memory, UId = AutoHelper.GetNextFreeUId(General.Application.Memories) });
         }
 
         private void ClickRemoveMemory(object sender, RoutedEventArgs e)
         {
-            Models.AppVersion version = (sender as Button).DataContext as Models.AppVersion;
             Models.Memory mem = ListMemories.SelectedItem as Models.Memory;
-
-            RecursiveRemoveMemory(version, mem);
-
-            version.Memories.Remove(mem);
+            RecursiveRemoveMemory(General.Application, mem);
+            General.Application.Memories.Remove(mem);
         }
 
         private void RecursiveRemoveMemory(Models.IVersionBase vbase, Models.Memory mem)
@@ -478,107 +493,22 @@ namespace Kaenx.Creator
                 RecursiveRemoveMemory(mod, mem);
         }
 
-        private void ClickRemoveVersion(object sender, RoutedEventArgs e)
-        {
-            Models.Application app = AppList.SelectedItem as Models.Application;
-            Models.AppVersionModel ver = (sender as MenuItem).DataContext as Models.AppVersionModel;
-
-            if(SelectedVersion == ver)
-                SelectedVersion = null;
-
-            app.Versions.Remove(ver);
-        }
-
-        private void ClickCopyVersion(object sender, RoutedEventArgs e)
-        {
-            Models.Application app = AppList.SelectedItem as Models.Application;
-            Models.AppVersionModel ver = (sender as MenuItem).DataContext as Models.AppVersionModel;
-
-            //TODO
-            MessageBox.Show("Copy doestn work");
-            //Models.AppVersion copy = ver.Copy();
-            //copy.Number += 1;
-            //copy.Name += " Kopie";
-        }
-
-        private void ClickOpenHere(object sender, RoutedEventArgs e)
-        {
-            long before, after;
-            if(SelectedVersion != null)
-            {
-                SelectedVersion.PropertyChanged -= SelectedVersion_PropertyChanged;
-                SelectedVersion.Name = SelectedVersion.Model.Name;
-                SelectedVersion.Number = SelectedVersion.Model.Number;
-                SelectedVersion.Version = Newtonsoft.Json.JsonConvert.SerializeObject(SelectedVersion.Model, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
-                before = System.GC.GetTotalMemory(false);
-                System.GC.Collect();
-                after = System.GC.GetTotalMemory(false);
-                System.Diagnostics.Debug.WriteLine("Freigemacht: " + (before - after).ToString());
-            }
-            before = System.GC.GetTotalMemory(false);
-            SelectedVersion = (sender as MenuItem).DataContext as Models.AppVersionModel;
-            SelectedVersion.Model = AutoHelper.GetAppVersion(General, SelectedVersion);
-            SelectedVersion.Model.PropertyChanged += SelectedVersion_PropertyChanged;
-            
-            after = System.GC.GetTotalMemory(false);
-            System.Diagnostics.Debug.WriteLine("Neu verbraucht: " + (after - before).ToString());
-            TabsEdit.SelectedIndex = 6;
-
-            Controls.CheckView check = (VersionTabs.Items[1] as TabItem).Content as Controls.CheckView;
-            check.ResetActions();
-        }
-
-        private void SelectedVersion_PropertyChanged(object sender, PropertyChangedEventArgs e = null)
-        {
-            if(e.PropertyName != "NameText" && e.PropertyName != "NamespaceVersion") return;
-            SelectedVersion.Name = SelectedVersion.Model.Name;
-            SelectedVersion.Number = SelectedVersion.Model.Number;
-            SelectedVersion.Namespace = SelectedVersion.Model.NamespaceVersion;
-        }
-
         private void ClickOpenViewer(object sender, RoutedEventArgs e)
         {
             if(MessageBoxResult.Cancel == MessageBox.Show(Properties.Messages.main_open_viewer, Properties.Messages.main_open_viewer_title, MessageBoxButton.OKCancel, MessageBoxImage.Question)) return;
-            Models.Application app = (Models.Application)AppList.SelectedItem;
-            Models.AppVersionModel model = (sender as MenuItem).DataContext as Models.AppVersionModel;
-            Models.AppVersion ver;
-            if(model == SelectedVersion)
-            {
-                ver = SelectedVersion.Model;
-            } else {
-                ver = AutoHelper.GetAppVersion(General, model);
-            }
-            AutoHelper.CheckIds(ver);
+            
+            AutoHelper.CheckIds(General.Application);
 
             ObservableCollection<Models.PublishAction> actions = new ObservableCollection<Models.PublishAction>();
-            CheckHelper.CheckVersion(General, app, ver, null, actions);
+            CheckHelper.CheckVersion(General, actions);
             if(actions.Any(a => a.State == Models.PublishState.Fail))
             {
                 MessageBox.Show(Properties.Messages.main_open_viewer_error, Properties.Messages.main_open_viewer_title, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            ViewerWindow viewer = new ViewerWindow(new Viewer.ImporterCreator(ver, app));
+            ViewerWindow viewer = new ViewerWindow(new Viewer.ImporterCreator(General));
             viewer.Show();
-        }
-
-        private void ClickAddApp(object sender, RoutedEventArgs e)
-        {
-            General.Applications.Add(new Models.Application());
-        }
-
-        private void ClickRemoveApp(object sender, RoutedEventArgs e)
-        {
-            if(AppList.SelectedItem == null) return;
-
-            Models.Application app = AppList.SelectedItem as Models.Application;
-            General.Applications.Remove(app);
-
-            foreach(Models.Hardware h in General.Hardware)
-            {
-                if(h.Apps.Contains(app))
-                    h.Apps.Remove(app);
-            }
         }
 
         private void ClickAddLanguageVers(object sender, RoutedEventArgs e)
@@ -790,14 +720,10 @@ namespace Kaenx.Creator
             else {
                 _general.Languages.Add(lang);
                 LanguageCatalogItemAdd(_general.Catalog[0], lang);
-                foreach(Models.Hardware hard in _general.Hardware) {
-                    foreach(Models.Device dev in hard.Devices) {
-                        if(!dev.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
-                            dev.Text.Add(new Models.Translation(lang, ""));
-                        if(!dev.Description.Any(t => t.Language.CultureCode == lang.CultureCode))
-                            dev.Description.Add(new Models.Translation(lang, ""));
-                    }
-                }
+                if(!General.Info.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
+                    General.Info.Text.Add(new Models.Translation(lang, ""));
+                if(!General.Info.Description.Any(t => t.Language.CultureCode == lang.CultureCode))
+                    General.Info.Description.Add(new Models.Translation(lang, ""));
             }
         }
 
@@ -831,49 +757,16 @@ namespace Kaenx.Creator
 
             _general.Languages.Remove(_general.Languages.Single(l => l.CultureCode == lang.CultureCode));
             LanguageCatalogItemRemove(_general.Catalog[0], lang);
-            foreach(Models.Hardware hard in _general.Hardware) {
-                foreach(Models.Device dev in hard.Devices) {
-                    if(dev.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
-                        dev.Text.Remove(dev.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
-                    if(dev.Description.Any(t => t.Language.CultureCode == lang.CultureCode))
-                        dev.Description.Remove(dev.Description.Single(l => l.Language.CultureCode == lang.CultureCode));
-                } 
-            }
+            if(General.Info.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
+                General.Info.Text.Remove(General.Info.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
+            if(General.Info.Description.Any(t => t.Language.CultureCode == lang.CultureCode))
+                General.Info.Description.Remove(General.Info.Description.Single(l => l.Language.CultureCode == lang.CultureCode));
         }
-
-        private void ClickAddHardware(object sender, RoutedEventArgs e)
-        {
-            General.Hardware.Add(new Models.Hardware());
-        }
-
-        private void ClickRemoveHardware(object sender, RoutedEventArgs e)
-        {
-            General.Hardware.Remove(HardwareList.SelectedItem as Models.Hardware);
-        }
-
-        private void OnAddingNewDevice(object sender, AddingNewItemEventArgs e)
-        {
-            Models.Hardware hard = (sender as DataGrid).DataContext as Models.Hardware;
-            Models.Device device = new Models.Device();
-            foreach(Models.Language lang in _general.Languages) {
-                device.Text.Add(new Models.Translation(lang, ""));
-                device.Description.Add(new Models.Translation(lang, ""));
-            }
-            e.NewItem = device;
-        }
-
-        private void ClickRemoveDeviceApp(object sender, RoutedEventArgs e)
-        {
-            (HardwareList.SelectedItem as Models.Hardware).Apps.Remove(DeviceAppList.SelectedItem as Models.Application);
-        }
-
         #endregion
 
         private void ClickSave(object sender, RoutedEventArgs e)
         {
-            if(SelectedVersion != null)
-                SelectedVersion.Version = Newtonsoft.Json.JsonConvert.SerializeObject(SelectedVersion.Model, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
-            
+            General.ImportVersion = VersionCurrent;
             string general = Newtonsoft.Json.JsonConvert.SerializeObject(General, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
             System.IO.File.WriteAllText(App.FilePath, general);
         }
@@ -900,8 +793,7 @@ namespace Kaenx.Creator
 
         private void ClickSaveAs(object sender, RoutedEventArgs e)
         {
-            if(SelectedVersion != null)
-                SelectedVersion.Version = Newtonsoft.Json.JsonConvert.SerializeObject(SelectedVersion.Model, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
+            General.ImportVersion = VersionCurrent;
             string general = Newtonsoft.Json.JsonConvert.SerializeObject(General, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
 
             SaveFileDialog diag = new SaveFileDialog();
@@ -919,6 +811,7 @@ namespace Kaenx.Creator
 
         private void ClickSaveTemplate(object sender, RoutedEventArgs e)
         {
+            General.ImportVersion = VersionCurrent;
             while(true) {
                 Controls.PromptDialog diag = new Controls.PromptDialog(Properties.Messages.main_save_template, Properties.Messages.main_save_template_title);
                 if(diag.ShowDialog() == false) {
@@ -1002,7 +895,8 @@ namespace Kaenx.Creator
             }
                 
             try{
-                General = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.ModelGeneral>(general, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
+                General = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.MainModel>(general, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
+                AutoHelper.LoadVersion(General, General.Application);
             } catch {
                 MessageBox.Show(Properties.Messages.main_project_open_error, Properties.Messages.main_project_open_format, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
@@ -1010,32 +904,9 @@ namespace Kaenx.Creator
             SelectedVersion = null;
             General.ImportVersion = VersionCurrent;
 
-            foreach(Models.Application app in General.Applications)
+            if (!string.IsNullOrEmpty(General.Info._maskId))
             {
-                string mid = app._maskId;
-                if (string.IsNullOrEmpty(mid)) continue;
-
-                Models.MaskVersion mask = BCUs.Single(bcu => bcu.Id == mid);
-                app.Mask = mask;
-            }
-
-
-            foreach(Models.Hardware hard in General.Hardware){
-                if(string.IsNullOrEmpty(hard._appsString)) continue;
-                
-                foreach(string name in hard._appsString.Split(',')){
-                    if(VersionToOpen < 6)
-                    {
-                        try{
-                            hard.Apps.Add(General.Applications.Single(app => app.Name == name));
-                        } catch{
-                            MessageBox.Show(Properties.Messages.main_project_open_error2 + "\r\n\r\n" + hard.Name);
-                        }
-                    } else {
-                        int number = int.Parse(name);
-                        hard.Apps.Add(General.Applications.Single(app => app.Number == number));
-                    }
-                }
+                General.Info.Mask = BCUs.Single(bcu => bcu.Id == General.Info._maskId);
             }
 
             SetSubCatalogItems(General.Catalog[0]);
@@ -1044,20 +915,11 @@ namespace Kaenx.Creator
             MenuSave.IsEnabled = true;
         }
 
-        
-
-
         private void SetSubCatalogItems(Models.CatalogItem parent)
         {
             foreach(Models.CatalogItem item in parent.Items)
             {
                 item.Parent = parent;
-
-                if (!string.IsNullOrEmpty(item._hardwareName))
-                {
-                    item.Hardware = General.Hardware.First(h => h.Name == item._hardwareName);
-                }
-
                 SetSubCatalogItems(item);
             }
         }
@@ -1149,10 +1011,10 @@ namespace Kaenx.Creator
                 }
 
                 string assPath = GetAssemblyPath(ns);
-                ExportHelper helper = new ExportHelper(General, assPath, Path.Combine(sourcePath, "sign.knxprod"));
+                ExportHelper helper = null;//todo = new ExportHelper(General, assPath, Path.Combine(sourcePath, "sign.knxprod"));
                 helper.SetNamespace(ns);
                 helper.SignOutput(targetPath);
-                
+
                 System.Windows.MessageBox.Show(Properties.Messages.main_export_success, Properties.Messages.main_export_title);
             }
         }
@@ -1176,11 +1038,11 @@ namespace Kaenx.Creator
                 switch(prod)
                 {
                     case "knxprod":
-                        helper.StartZip(_general, DPTs);
+                        //todo helper.StartZip(_general, DPTs);
                         break;
 
                     case "xml":
-                        helper.StartXml(_general, DPTs);
+                        //todo helper.StartXml(_general, DPTs);
                         break;
 
                     default:
@@ -1214,10 +1076,7 @@ namespace Kaenx.Creator
         private void ClickCalcHeatmap(object sender, RoutedEventArgs e)
         {
             Models.Memory mem = (sender as Button).DataContext as Models.Memory;
-            //Models.Application app = _general.Applications.Single(a => a.Versions.Any(v => v.Name == SelectedVersion.Model.Name && v.Number == SelectedVersion.Model.Number));
-            Models.Application app = _general.Applications.Single(a => a.Versions.Contains(SelectedVersion));
-            CheckHelper.CheckVersion(null, app, SelectedVersion.Model, null, new ObservableCollection<Models.PublishAction>());
-            AutoHelper.MemoryCalculation(SelectedVersion.Model, mem);
+            AutoHelper.MemoryCalculation(General.Application, mem);
             
         }
 
@@ -1275,57 +1134,6 @@ namespace Kaenx.Creator
                 mx2.FilterShow();
         }
 
-        private void TabItem_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            ListDevicesForExport();
-        }
-
-        private void ChangedPublishOnlyLatest(object sender, RoutedEventArgs e)
-        {
-            ListDevicesForExport();
-        }
-
-        private void ListDevicesForExport()
-        {
-            Exports.Clear();
-            foreach (Models.Hardware hard in General.Hardware)
-            {
-                foreach (Models.Device dev in hard.Devices)
-                {
-                    foreach (Models.Application app in hard.Apps)
-                    {
-                        if (InPublishOnlyLatest.IsChecked == true)
-                        {
-                            Models.AppVersionModel ver = app.Versions.OrderByDescending(v => v.Number).First();
-                            Models.ExportItem item = new Models.ExportItem();
-                            item.Hardware = hard;
-                            item.Device = dev;
-                            item.App = app;
-                            item.Version = ver;
-                            Exports.Add(item);
-                        } else {
-                            foreach (Models.AppVersionModel ver in app.Versions)
-                            {
-                                Models.ExportItem item = new Models.ExportItem();
-                                item.Hardware = hard;
-                                item.Device = dev;
-                                item.App = app;
-                                item.Version = ver;
-                                Exports.Add(item);
-                            }
-                        }
-                    }
-                }
-            }
-
-            ExportList.ItemsSource = Exports;
-        }
-
-        private void ExportInFilter_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            ExportList.ItemsSource = Exports.Where(i => i.Version.NameText.Contains(ExportInFilter.Text) || i.App.NameText.Contains(ExportInFilter.Text) || i.Hardware.Name.Contains(ExportInFilter.Text) || i.Device.Name.Contains(ExportInFilter.Text));
-        }
-
         private void ResetId(object sender, RoutedEventArgs e)
         {
             if((sender as Button).DataContext is Models.Module) {
@@ -1374,27 +1182,14 @@ namespace Kaenx.Creator
             if(SelectedVersion != null)
                 SelectedVersion.Version = Newtonsoft.Json.JsonConvert.SerializeObject(SelectedVersion.Model, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
             
-            List<Models.Hardware> hardware = new List<Models.Hardware>();
-            List<Models.Device> devices = new List<Models.Device>();
-            List<Models.Application> apps = new List<Models.Application>();
-            List<Models.AppVersionModel> versions = new List<Models.AppVersionModel>();
-
-            foreach(Models.ExportItem item in Exports.Where(ex => ex.Selected))
-            {
-                if (!hardware.Contains(item.Hardware)) hardware.Add(item.Hardware);
-                if (!devices.Contains(item.Device)) devices.Add(item.Device);
-                if (!apps.Contains(item.App)) apps.Add(item.App);
-                if (!versions.Contains(item.Version)) versions.Add(item.Version);
-            }
-            
-            string assPath = GetAssemblyPath(versions[0].Namespace);
+            string assPath = GetAssemblyPath(General.Application.NamespaceVersion);
             if(string.IsNullOrEmpty(assPath))
             {
-                MessageBox.Show($"Für den Namespace {versions[0].Namespace} wurde keine passende ETS installation gefunden");
+                MessageBox.Show($"Für den Namespace {General.Application.NamespaceVersion} wurde keine passende ETS installation gefunden");
                 return;
             }
 
-            CheckHelper.CheckThis(General, hardware, devices, apps, versions, PublishActions);
+            CheckHelper.CheckThis(General, PublishActions);
 
 
             if(PublishActions.Count(pa => pa.State == Models.PublishState.Fail) > 0)
@@ -1412,22 +1207,15 @@ namespace Kaenx.Creator
             await Task.Delay(1000);
             
             string headerPath = Path.Combine(Path.GetDirectoryName(filePath), "knxprod.h");
-            ExportHelper helper = new ExportHelper(General, hardware, devices, apps, versions, assPath, filePath, headerPath);
-            switch(InPublishTarget.SelectedValue) {
-                case "ets":
-                    bool success = helper.ExportEts(PublishActions);
-                    if(!success)
-                    {
-                        MessageBox.Show(Properties.Messages.main_export_error, Properties.Messages.main_export_title);
-                        return;
-                    }
-                    helper.SignOutput(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Output", "Temp"));
-                    break;
-
-                case "kaenx":
-                    throw new NotImplementedException("Dieses Feature wurde noch nicht implementiert");
+            ExportHelper helper = new ExportHelper(General, assPath, filePath, headerPath);
+            bool success = helper.ExportEts(PublishActions);
+            if(!success)
+            {
+                MessageBox.Show(Properties.Messages.main_export_error, Properties.Messages.main_export_title);
+                return;
             }
-            System.Windows.MessageBox.Show(Properties.Messages.main_export_success, Properties.Messages.main_export_title);
+            helper.SignOutput(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Output", "Temp"));
+            PublishActions.Add(new Models.PublishAction() { Text = Properties.Messages.main_export_success, State = Models.PublishState.Success } );
         }
 
         private void ChangeLang(object sender, RoutedEventArgs e)

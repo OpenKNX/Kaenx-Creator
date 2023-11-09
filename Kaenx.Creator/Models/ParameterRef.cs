@@ -67,6 +67,7 @@ namespace Kaenx.Creator.Models
         {
             get { return _parameterObject; }
             set { 
+                if(value == null) _parameter = -1;
                 if(_parameterObject != null)
                     if(value == null || _parameterObject != value)
                         _parameterObject.PropertyChanged -= ParameterChanged;
@@ -82,7 +83,7 @@ namespace Kaenx.Creator.Models
         public int _parameter;
         public int Parameter
         {
-            get { return ParameterObject?.UId ?? -1; }
+            get { return ParameterObject?.UId ?? _parameter; }
             set { _parameter = value; }
         }
 

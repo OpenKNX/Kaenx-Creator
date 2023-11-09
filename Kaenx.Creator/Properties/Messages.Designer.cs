@@ -1471,5 +1471,17 @@ namespace Kaenx.Creator.Properties {
                 return ResourceManager.GetString("check_ver_mod_combase_null", resourceCulture);
             }
         }
+        
+        public static string check_ver_loadprod_empty {
+            get {
+                return ResourceManager.GetString("check_ver_loadprod_empty", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_loadprod_failed {
+            get {
+                return ResourceManager.GetString("check_ver_loadprod_failed", resourceCulture);
+            }
+        }
     }
 }

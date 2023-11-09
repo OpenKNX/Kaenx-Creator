@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Kaenx.Creator.Models
 {
-    public class ModelGeneral : INotifyPropertyChanged
+    public class MainModel : INotifyPropertyChanged
     {
         public string ProjectName { get; set; } = "Meine erste Applikation";
 
@@ -23,7 +23,6 @@ namespace Kaenx.Creator.Models
             return Guid.Substring(Guid.Length - 6, 6);
         }
 
-        public ObservableCollection<CatalogItem> Catalog { get; set; } = new ObservableCollection<CatalogItem>();
 
         private Info _info = new Info();
         public Info Info
@@ -32,9 +31,20 @@ namespace Kaenx.Creator.Models
             set { _info = value; Changed("Info"); }
         }
 
+        private AppVersion _app = null;
+        public AppVersion Application
+        {
+            get {
+                if(_app == null)
+                {
+                    _app = new AppVersion();
+                } 
+                return _app; 
+            }
+            set { _app = value; Changed("Application"); }
+        }
 
-        public ObservableCollection<Application> Applications { get; set; } = new ObservableCollection<Application>();
-        public ObservableCollection<Hardware> Hardware { get; set; } = new ObservableCollection<Hardware>();
+        public ObservableCollection<CatalogItem> Catalog { get; set; } = new ObservableCollection<CatalogItem>();
         public ObservableCollection<Language> Languages { get; set; } = new ObservableCollection<Language>();
         public ObservableCollection<Baggage> Baggages { get; set; } = new ObservableCollection<Baggage>();
         public ObservableCollection<Icon> Icons { get; set; } = new ObservableCollection<Icon>();

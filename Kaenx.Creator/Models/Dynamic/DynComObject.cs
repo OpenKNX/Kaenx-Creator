@@ -26,14 +26,14 @@ namespace Kaenx.Creator.Models.Dynamic
         public ComObjectRef ComObjectRefObject
         {
             get { return _comObjectRefObject; }
-            set { _comObjectRefObject = value; Changed("ComObjectRefObject"); }
+            set { _comObjectRefObject = value; Changed("ComObjectRefObject"); if(value == null) _comObjectRef = -1; }
         }
 
         [JsonIgnore]
         public int _comObjectRef;
         public int ComObjectRef
         {
-            get { return ComObjectRefObject?.UId ?? -1; }
+            get { return ComObjectRefObject?.UId ?? _comObjectRef; }
             set { _comObjectRef = value; }
         }
 

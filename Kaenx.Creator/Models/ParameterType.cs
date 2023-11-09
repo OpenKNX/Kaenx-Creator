@@ -130,13 +130,13 @@ namespace Kaenx.Creator.Models
         public Baggage BaggageObject
         {
             get { return _baggageObject; }
-            set { _baggageObject = value; Changed("BaggageObject"); }
+            set { _baggageObject = value; Changed("BaggageObject"); if(value == null) _baggageUId = -1; }
         }
         [JsonIgnore]
         public int _baggageUId = -1;
         public int BaggageUId
         {
-            get { return BaggageObject?.UId ?? -1; }
+            get { return BaggageObject?.UId ?? _baggageUId; }
             set { _baggageUId = value; }
         }
 

@@ -30,6 +30,7 @@ namespace Kaenx.Creator.Models
             set { 
                 _useIcon = value; 
                 IconObject = null;
+                IconId = -1;
                 Changed("UseIcon"); 
             }
         }
@@ -37,7 +38,7 @@ namespace Kaenx.Creator.Models
         [JsonIgnore]
         public int _iconId = -1;
         public int IconId{
-            get { return IconObject?.UId ?? -1; }
+            get { return IconObject?.UId ?? _iconId; }
             set { _iconId = value; }
         }
 
@@ -46,7 +47,7 @@ namespace Kaenx.Creator.Models
         public Icon IconObject
         {
             get { return _icon; }
-            set { _icon = value; Changed("IconObject"); }
+            set { _icon = value; Changed("IconObject"); if(value == null) _iconId = -1; }
         }
 
         public bool Translate {get;set;} = true;

@@ -58,7 +58,7 @@ namespace Kaenx.Creator.Models
             get {
                 return _saveObject; 
             }
-            set { _saveObject = value; Changed("SaveObject"); }
+            set { _saveObject = value; Changed("SaveObject"); if(value == null) _memoryId = -1; }
         }
 
         [JsonIgnore]
@@ -67,7 +67,7 @@ namespace Kaenx.Creator.Models
         {
             get { 
                 if(SaveObject is Memory mem)
-                    return mem?.UId ?? -1; 
+                    return mem?.UId ?? _memoryId; 
                 return -1;
             }
             set { _memoryId = value; }
@@ -80,14 +80,14 @@ namespace Kaenx.Creator.Models
         public Union UnionObject
         {
             get { return _unionObject; }
-            set { _unionObject = value; Changed("UnionObject"); }
+            set { _unionObject = value; Changed("UnionObject"); if(value == null) _unionId = -1; }
         }
 
         [JsonIgnore]
         public int _unionId;
         public int UnionId
         {
-            get { return UnionObject?.UId ?? -1; }
+            get { return UnionObject?.UId ?? _unionId; }
             set { _unionId = value; }
         }
 
@@ -98,14 +98,14 @@ namespace Kaenx.Creator.Models
         public ParameterType ParameterTypeObject
         {
             get { return _parameterTypeObject; }
-            set { _parameterTypeObject = value; Changed("ParameterTypeObject"); }
+            set { _parameterTypeObject = value; Changed("ParameterTypeObject"); if(value == null) _parameterType = -1; }
         }
 
         [JsonIgnore]
         public int _parameterType;
         public int ParameterType
         {
-            get { return ParameterTypeObject?.UId ?? -1; }
+            get { return ParameterTypeObject?.UId ?? _parameterType; }
             set { _parameterType = value; }
         }
 
@@ -159,7 +159,7 @@ namespace Kaenx.Creator.Models
             set { _transText = value; Changed("TranslationText"); }
         }
 
-        private bool _transSuffix = false;
+        private bool _transSuffix = true;
         public bool TranslationSuffix
         {
             get { return _transSuffix; }

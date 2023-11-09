@@ -542,16 +542,16 @@
     <comment>Name;</comment>
   </data>
   <data name="check_hard_no_physicaladdress" xml:space="preserve">
-    <value>Hardware '{0}' has option HasIndividualAddress not checked</value>
-    <comment>Name;</comment>
+    <value>Hardware has option HasIndividualAddress not checked</value>
+    <comment></comment>
   </data>
   <data name="check_hard_no_app" xml:space="preserve">
-    <value>Hardware '{0}' has option HasApplicationprogram not checked</value>
-    <comment>Name;</comment>
+    <value>Hardware has option HasApplicationprogram not checked</value>
+    <comment></comment>
   </data>
   <data name="check_hard_no_app2" xml:space="preserve">
-    <value>Hardware '{0}' has option HasApplicationprogram2 checked but not HasApplicationprogram</value>
-    <comment>Name;</comment>
+    <value>Hardware has option HasApplicationprogram2 checked but not HasApplicationprogram</value>
+    <comment></comment>
   </data>
   <data name="check_app" xml:space="preserve">
     <value>Checking Applications</value>
@@ -578,8 +578,8 @@
     <comment>Name;</comment>
   </data>
   <data name="check_ver" xml:space="preserve">
-    <value>Checking Application {0} {1}</value>
-    <comment>AppName, AppVersion</comment>
+    <value>Checking Application {0}</value>
+    <comment>AppVersion</comment>
   </data>
   <data name="check_end" xml:space="preserve">
     <value>Finished Check</value>
@@ -1060,5 +1060,13 @@
   <data name="check_ver_mod_combase_null" xml:space="preserve">
     <value>Module {0}: ComObjectBaseNumber Argument is null</value>
     <comment>Name</comment>
+  </data>
+  <data name="check_ver_loadprod_empty" xml:space="preserve">
+    <value>Loadprocedure: Procedure is empty</value>
+    <comment/>
+  </data>
+  <data name="check_ver_loadprod_failed" xml:space="preserve">
+    <value>Loadprocedure: Parsing failed, no valid xml</value>
+    <comment/>
   </data>
 </root>

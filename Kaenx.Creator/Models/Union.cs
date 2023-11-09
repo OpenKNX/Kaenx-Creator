@@ -51,14 +51,14 @@ namespace Kaenx.Creator.Models
         public Memory MemoryObject
         {
             get { return _memoryObject; }
-            set { _memoryObject = value; Changed("MemoryObject"); }
+            set { _memoryObject = value; Changed("MemoryObject"); if(value == null) _memoryId = -1; }
         }
 
         [JsonIgnore]
         public int _memoryId;
         public int MemoryId
         {
-            get { return MemoryObject?.UId ?? -1; }
+            get { return MemoryObject?.UId ?? _memoryId; }
             set { _memoryId = value; }
         }
 

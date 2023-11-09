@@ -542,16 +542,16 @@
     <comment>Name;</comment>
   </data>
   <data name="check_hard_no_physicaladdress" xml:space="preserve">
-    <value>Hardware '{0}' hat nicht die Option für eine Individuelle Adresse ausgewählt</value>
-    <comment>Name;</comment>
+    <value>Hardware hat nicht die Option für eine Individuelle Adresse ausgewählt</value>
+    <comment></comment>
   </data>
   <data name="check_hard_no_app" xml:space="preserve">
-    <value>Hardware '{0}' hat nicht die Option für das Applikationsprogramm ausgewählt</value>
-    <comment>Name;</comment>
+    <value>Hardware hat nicht die Option für das Applikationsprogramm ausgewählt</value>
+    <comment></comment>
   </data>
   <data name="check_hard_no_app2" xml:space="preserve">
-    <value>Hardware '{0}' hat die Option für Applikationsprogramm2 ausgewählt, allerdings nicht für Applikationsprogramm</value>
-    <comment>Name;</comment>
+    <value>Hardware hat die Option für Applikationsprogramm2 ausgewählt, allerdings nicht für Applikationsprogramm</value>
+    <comment></comment>
   </data>
   <data name="check_app" xml:space="preserve">
     <value>Überprüfe Applikationen</value>
@@ -578,7 +578,7 @@
     <comment>Name;</comment>
   </data>
   <data name="check_ver" xml:space="preserve">
-    <value>Überprüfe Applikation {0} {1}</value>
+    <value>Überprüfe Applikation {0}</value>
     <comment/>
   </data>
   <data name="check_end" xml:space="preserve">

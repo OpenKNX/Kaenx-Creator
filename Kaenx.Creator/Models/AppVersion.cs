@@ -109,13 +109,13 @@ namespace Kaenx.Creator.Models
         public Memory AddressMemoryObject
         {
             get { return _addressMemoryObject; }
-            set { _addressMemoryObject = value; Changed("AddressMemoryObject"); }
+            set { _addressMemoryObject = value; Changed("AddressMemoryObject"); if(value == null) _addressMemoryId = -1; }
         }
         [JsonIgnore]
         public int _addressMemoryId;
         public int AddressMemoryId
         {
-            get { return AddressMemoryObject?.UId ?? -1; }
+            get { return AddressMemoryObject?.UId ?? _addressMemoryId; }
             set { _addressMemoryId = value; }
         }
 
@@ -138,13 +138,13 @@ namespace Kaenx.Creator.Models
         public Memory AssociationMemoryObject
         {
             get { return _assocMemoryObject; }
-            set { _assocMemoryObject = value; Changed("AssociationMemoryObject"); }
+            set { _assocMemoryObject = value; Changed("AssociationMemoryObject");if(value == null) _assocMemoryId = -1; }
         }
         [JsonIgnore]
         public int _assocMemoryId;
         public int AssociationMemoryId
         {
-            get { return AssociationMemoryObject?.UId ?? -1; }
+            get { return AssociationMemoryObject?.UId ?? _assocMemoryId; }
             set { _assocMemoryId = value; }
         }
 
@@ -160,13 +160,13 @@ namespace Kaenx.Creator.Models
         public Memory ComObjectMemoryObject
         {
             get { return _comMemoryObject; }
-            set { _comMemoryObject = value; Changed("ComObjectMemoryObject"); }
+            set { _comMemoryObject = value; Changed("ComObjectMemoryObject"); if(value == null) _comMemoryId = -1; }
         }
         [JsonIgnore]
         public int _comMemoryId;
         public int ComObjectMemoryId
         {
-            get { return ComObjectMemoryObject?.UId ?? -1; }
+            get { return ComObjectMemoryObject?.UId ?? _comMemoryId; }
             set { _comMemoryId = value; }
         }
 

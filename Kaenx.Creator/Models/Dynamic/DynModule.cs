@@ -36,7 +36,11 @@ namespace Kaenx.Creator.Models.Dynamic
         {
             get { return _moduleObject; }
             set { 
-                if(value == null) return;
+                if(value == null)
+                {
+                    _module = -1;
+                    return;
+                }
 
                 if(_oldModuleObject != null)
                     _oldModuleObject.Arguments.CollectionChanged -= ArgsChanged;
@@ -71,10 +75,10 @@ namespace Kaenx.Creator.Models.Dynamic
         }
 
         [JsonIgnore]
-        public int _module;
+        public int _module = -1;
         public int ModuleUId
         {
-            get { return ModuleObject?.UId ?? -1; }
+            get { return ModuleObject?.UId ?? _module; }
             set { _module = value; }
         }
 

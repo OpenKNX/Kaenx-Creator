@@ -95,6 +95,7 @@ namespace Kaenx.Creator.Models
         {
             get { return _comObjectObject; }
             set { 
+                if(value == null) _comObject = -1;
                 if(_comObjectObject != null)
                     if(value == null || _comObjectObject != value)
                         _comObjectObject.PropertyChanged -= Com_PropertyChanged;
@@ -160,7 +161,7 @@ namespace Kaenx.Creator.Models
         public int _comObject;
         public int ComObject
         {
-            get { return ComObjectObject?.UId ?? -1; }
+            get { return ComObjectObject?.UId ?? _comObject; }
             set { _comObject = value; }
         }
 
@@ -275,14 +276,14 @@ namespace Kaenx.Creator.Models
         public ParameterRef ParameterRefObject
         {
             get { return _parameterRefObject; }
-            set { _parameterRefObject = value; Changed("ParameterRefObject"); }
+            set { _parameterRefObject = value; Changed("ParameterRefObject"); if(value == null) _parameterRef = -1; }
         }
 
         [JsonIgnore]
         public int _parameterRef;
         public int ParameterRef
         {
-            get { return ParameterRefObject?.UId ?? -1; }
+            get { return ParameterRefObject?.UId ?? _parameterRef; }
             set { _parameterRef = value; }
         }
 

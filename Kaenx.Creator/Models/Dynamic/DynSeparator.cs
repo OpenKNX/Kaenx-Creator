@@ -61,14 +61,14 @@ namespace Kaenx.Creator.Models.Dynamic
         public ParameterRef TextRefObject
         {
             get { return _textRefObject; }
-            set { _textRefObject = value; Changed("TextRefObject"); }
+            set { _textRefObject = value; Changed("TextRefObject"); if(value == null) _textRef = -1; }
         }
 
         [JsonIgnore]
         public int _textRef;
         public int TextRef
         {
-            get { return TextRefObject?.UId ?? -1; }
+            get { return TextRefObject?.UId ?? _textRef; }
             set { _textRef = value; }
         }
 
@@ -87,7 +87,7 @@ namespace Kaenx.Creator.Models.Dynamic
         [JsonIgnore]
         public int _iconId = -1;
         public int IconId{
-            get { return IconObject?.UId ?? -1; }
+            get { return IconObject?.UId ?? _iconId; }
             set { _iconId = value; }
         }
 
@@ -96,7 +96,7 @@ namespace Kaenx.Creator.Models.Dynamic
         public Icon IconObject
         {
             get { return _icon; }
-            set { _icon = value; Changed("IconObject"); }
+            set { _icon = value; Changed("IconObject"); if(value == null) _iconId = -1; }
         }
 
 
