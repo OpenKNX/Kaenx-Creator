@@ -928,7 +928,6 @@ namespace Kaenx.Creator
         {
             MenuSave.IsEnabled = enable;
             MenuClose.IsEnabled = enable;
-            MenuImport.IsEnabled = enable;
             TabsEdit.IsEnabled = enable;
             
             if(General != null)
@@ -1023,8 +1022,7 @@ namespace Kaenx.Creator
         {
             Dictionary<string, string> filters = new Dictionary<string, string>() {
                 {"knxprod", "KNX Produktdatenbank (*.knxprod)|*.knxprod"},
-                {"xml", "XML Produktatenbank (*.xml)|*.xml"},
-                {"ae-prod", "Kaenx Produktatenbank (*.ae-prod)|*.ae-prod"},
+                {"xml", "XML Produktatenbank (*.xml)|*.xml"}
             };
 
             string prod = (sender as MenuItem).Tag.ToString();
@@ -1034,15 +1032,21 @@ namespace Kaenx.Creator
 
             if (result == true)
             {
+                _general = new Models.MainModel();
+                _general.Catalog.Add(new Models.CatalogItem() { Name = Properties.Messages.main_def_cat });
                 ImportHelper helper = new ImportHelper(dialog.FileName, bcus);
                 switch(prod)
                 {
                     case "knxprod":
-                        //todo helper.StartZip(_general, DPTs);
+                        helper.StartZip(General, DPTs);
+                        SetButtons(true);
+                        Changed("General");
                         break;
 
                     case "xml":
-                        //todo helper.StartXml(_general, DPTs);
+                        helper.StartXml(_general, DPTs);
+                        SetButtons(true);
+                        Changed("General");
                         break;
 
                     default:

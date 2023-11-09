@@ -20,13 +20,13 @@ namespace Kaenx.Creator.Controls
     public partial class OpenKnxView : UserControl
     {
         public static readonly DependencyProperty VersionProperty = DependencyProperty.Register("Version", typeof(AppVersion), typeof(OpenKnxView), new PropertyMetadata(null));
-        public static readonly DependencyProperty GeneralProperty = DependencyProperty.Register("General", typeof(ModelGeneral), typeof(OpenKnxView), new PropertyMetadata(null));
+        public static readonly DependencyProperty GeneralProperty = DependencyProperty.Register("General", typeof(MainModel), typeof(OpenKnxView), new PropertyMetadata(null));
         public AppVersion Version {
             get { return (AppVersion)GetValue(VersionProperty); }
             set { SetValue(VersionProperty, value); }
         }
-        public ModelGeneral General {
-            get { return (ModelGeneral)GetValue(GeneralProperty); }
+        public MainModel General {
+            get { return (MainModel)GetValue(GeneralProperty); }
             set { SetValue(GeneralProperty, value); }
         }
 
@@ -132,7 +132,7 @@ namespace Kaenx.Creator.Controls
             currentVers.Memories = Version.Memories;
             currentVers.Languages = Version.Languages;
 
-            ModelGeneral gen = new ModelGeneral();
+            MainModel gen = new MainModel();
             gen.Icons = General.Icons;
             
             ImportHelper helper = new ImportHelper();

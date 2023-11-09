@@ -13,6 +13,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.IO;
 using System.Linq;
+using Kaenx.Creator.Controls;
 
 namespace Kaenx.Creator.Classes
 {
@@ -21,14 +22,13 @@ namespace Kaenx.Creator.Classes
         private string _namespace;
         private ObservableCollection<MaskVersion> _bcus;
         private ZipArchive Archive { get; set; }
-        private ModelGeneral _general;
+        private MainModel _general;
         private string _path;
         private ObservableCollection<DataPointType> DPTs;
         private int _uidCounter = 1;
+        private string AppImportHelper;
 
-        private Application currentApp = null;
         private AppVersion currentVers = null;
-        private AppVersionModel currentVersModel = null;
 
         public static Dictionary<string, string> _langTexts = new Dictionary<string, string>() {
             {"cs-CZ", "Tschechisch"},
@@ -65,7 +65,7 @@ namespace Kaenx.Creator.Classes
             _bcus = bcus;
         }
 
-        public void StartXml(ModelGeneral general, ObservableCollection<DataPointType>dpts)
+        public void StartXml(MainModel general, ObservableCollection<DataPointType>dpts)
         {
             _general = general;
             DPTs = dpts;
@@ -102,7 +102,7 @@ namespace Kaenx.Creator.Classes
 
         }
 
-        public void StartZip(ModelGeneral general, ObservableCollection<DataPointType> dpts)
+        public void StartZip(MainModel general, ObservableCollection<DataPointType> dpts)
         {
             _general = general;
             DPTs = dpts;
@@ -145,18 +145,35 @@ namespace Kaenx.Creator.Classes
             }
 
 
-            foreach (ZipArchiveEntry entryTemp in Archive.Entries)
+            IEnumerable<ZipArchiveEntry> entries = Archive.Entries.Where(e => e.FullName.Contains("_A-"));
+
+            ZipArchiveEntry toImport = null;
+
+            if(entries.Count() == 0)
             {
-                if (entryTemp.FullName.Contains("_A-"))
-                {
-                    using (Stream entryStream = entryTemp.Open())
-                    {
-                        XElement xapp = XDocument.Load(entryStream).Root;
-                        _namespace = xapp.Attribute("xmlns").Value;
-                        xapp = xapp.Element(Get("ManufacturerData")).Element(Get("Manufacturer")).Element(Get("ApplicationPrograms")).Element(Get("ApplicationProgram"));
-                        ImportApplication(xapp);
-                    }
-                }
+                System.Windows.MessageBox.Show("Knxprod enthält keine Applikation");
+                return;
+            } else if(entries.Count() == 1)
+            {
+                toImport = entries.ElementAt(0);
+            } else {
+                List<string> names = new();
+                foreach(ZipArchiveEntry xentry in entries)
+                    names.Add(xentry.Name.Substring(0, xentry.Name.LastIndexOf('.')));
+                ListDialog diag = new ("Welche Applikation soll importiert werden?", "Import", names);
+                diag.ShowDialog();
+
+                if(diag.DialogResult != true) return;
+
+                toImport = entries.Single(e => e.Name.Contains(diag.Answer));
+            }
+
+            using (Stream entryStream = toImport.Open())
+            {
+                XElement xapp = XDocument.Load(entryStream).Root;
+                _namespace = xapp.Attribute("xmlns").Value;
+                xapp = xapp.Element(Get("ManufacturerData")).Element(Get("Manufacturer")).Element(Get("ApplicationPrograms")).Element(Get("ApplicationProgram"));
+                ImportApplication(xapp);
             }
 
             entry = Archive.GetEntry($"M-{manuHex}/Hardware.xml");
@@ -249,7 +266,7 @@ namespace Kaenx.Creator.Classes
             currentVers = vers;
         }
 
-        public void SetGeneral(ModelGeneral gen)
+        public void SetGeneral(MainModel gen)
         {
             _general = gen;
         }
@@ -263,52 +280,21 @@ namespace Kaenx.Creator.Classes
         {
             System.Console.WriteLine("----------------Neue Applikation-------------------");
             #region "Create/Get Application and Version"
-            currentApp = null;
             currentVers = null;
-            currentVersModel = null;
-            int appNumber = int.Parse(xapp.Attribute("ApplicationNumber").Value);
-            int versNumber = int.Parse(xapp.Attribute("ApplicationVersion").Value);
 
-            foreach (Application app in _general.Applications)
-            {
-                if (app.Number == appNumber)
-                {
-                    currentApp = app;
-                    break;
-                }
-            }
+            _general.Info.AppNumber = int.Parse(xapp.Attribute("ApplicationNumber").Value);
+            _general.Application.Number = int.Parse(xapp.Attribute("ApplicationVersion").Value);
+            _general.Info.Mask = _bcus.Single(b => b.Id == xapp.Attribute("MaskVersion").Value);
 
-            if (currentApp == null)
-            {
-                currentApp = new Application()
-                {
-                    Number = appNumber,
-                    Name = xapp.Attribute("Name").Value,
-                    Mask = _bcus.Single(b => b.Id == xapp.Attribute("MaskVersion").Value),
-                    ImportHelper = xapp.Attribute("Id").Value
-                };
-                _general.Applications.Add(currentApp);
-            }
+            AppImportHelper = xapp.Attribute("Id").Value;
 
-            foreach (AppVersionModel vers in currentApp.Versions)
-            {
-                if (vers.Number == versNumber)
-                {
-                    System.Console.WriteLine("Applikation existiert bereits");
-                    //MessageBox.Show("Applikation '" + vers.NameText + "' ist bereits vorhanden und wird übersprungen");
-                    return;
-                }
-            }
+            currentVers = _general.Application;
 
-            currentVers = new AppVersion()
-            {
-                Number = versNumber,
-                Name = xapp.Attribute("Name")?.Value ?? "Imported",
-                IsParameterRefAuto = false,
-                IsComObjectRefAuto = false,
-                IsMemSizeAuto = false,
-                ReplacesVersions = xapp.Attribute("ReplacesVersions")?.Value
-            };
+            currentVers.Name = xapp.Attribute("Name")?.Value ?? "Imported";
+            currentVers.IsParameterRefAuto = false;
+            currentVers.IsComObjectRefAuto = false;
+            currentVers.IsMemSizeAuto = false;
+            currentVers.ReplacesVersions = xapp.Attribute("ReplacesVersions")?.Value;
 
             string ns = xapp.Name.NamespaceName;
             ns = ns.Substring(ns.LastIndexOf('/') + 1);
@@ -396,14 +382,6 @@ namespace Kaenx.Creator.Classes
 
             sw.Stop();
             System.Console.WriteLine($"Total Time: {sw.ElapsedMilliseconds} ms");
-
-            currentVersModel = new AppVersionModel() {
-                Name = currentVers.Name,
-                Number = currentVers.Number,
-                Namespace = currentVers.NamespaceVersion,
-                Version = Newtonsoft.Json.JsonConvert.SerializeObject(currentVers, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects })
-            };
-            currentApp.Versions.Add(currentVersModel);
         }
 
         private Dictionary<long, Parameter> Paras;
@@ -447,7 +425,7 @@ namespace Kaenx.Creator.Classes
                 string text = "Parameter-/ComObjectRefIds";
                 if(flag1 && !flag2) text = "ParameterRefIds";
                 if(!flag1 && flag2) text = "ComObjectRefIds";
-                System.Windows.MessageBox.Show($"Die Applikation '{currentApp.Name}' enthält {text}, die nicht komplett eindeutig sind.\r\n\r\nEin Import führt dazu, dass diese geändert werden. Die importierte Version kann somit nicht mehr als Update verwendet werden.", "RefId nicht eindeutig", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
+                System.Windows.MessageBox.Show($"Die Applikation '{_general.Application.Name}' enthält {text}, die nicht komplett eindeutig sind.\r\n\r\nEin Import führt dazu, dass diese geändert werden. Die importierte Version kann somit nicht mehr als Update verwendet werden.", "RefId nicht eindeutig", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
                 DynamicRenameRefIds(flag1, flag2, xstatic, xdyn);
             }
             
@@ -707,7 +685,7 @@ namespace Kaenx.Creator.Classes
                 }
                 else
                 {
-                    throw new Exception("Masks Memory Type is not supported! " + currentApp.Mask.Memory);
+                    throw new Exception("Masks Memory Type is not supported! " + _general.Info.Mask.Memory);
                 }
             }
         }
@@ -1468,66 +1446,26 @@ namespace Kaenx.Creator.Classes
                     _general.Languages.Add(new Language(_langTexts[def], def));
             }
 
-            foreach(XElement xhard in xhards.Elements()) {
-                Hardware hardware;
+            foreach(XElement xhard in xhards.Elements())
+            {
+                if(xhard.Descendants(Get("ApplicationProgramRef")).Count() > 1)
+                    System.Windows.MessageBox.Show("Hardware enthält mehrere Applikationen. Es wird nur die erste Importiert."); //todo translate
 
-                string snumb = xhard.Attribute("SerialNumber").Value;
-                int vers = int.Parse(xhard.Attribute("VersionNumber").Value);
+                XElement appProgRef = xhard.Descendants(Get("ApplicationProgramRef")).ElementAt(0);
+                if(appProgRef.Attribute("RefId").Value != AppImportHelper)
+                    continue;
 
-                if (_general.Hardware.Any(h => h.SerialNumber == snumb && h.Version == vers))
-                {
-                    hardware = _general.Hardware.Single(h => h.SerialNumber == snumb && h.Version == vers);
-                }
-                else
-                {
-                    hardware = new Hardware()
-                    {
-                        SerialNumber = snumb,
-                        Version = vers,
-                        Name = xhard.Attribute("Name").Value
-                    };
-                    hardware.HasApplicationProgram = xhard.Attribute("HasApplicationProgram")?.Value == "true";
-                    hardware.HasIndividualAddress = xhard.Attribute("HasIndividualAddress")?.Value == "true";
-                    hardware.BusCurrent = (int)StringToFloat(xhard.Attribute("BusCurrent")?.Value, 10);
-                    _general.Hardware.Add(hardware);
-                }
+                _general.Info.Name = xhard.Attribute("Name").Value;
+                _general.Info.SerialNumber = xhard.Attribute("SerialNumber").Value;
+                _general.Info.Version = int.Parse(xhard.Attribute("VersionNumber").Value);
+                _general.Info.HasApplicationProgram = xhard.Attribute("HasApplicationProgram")?.Value == "true";
+                _general.Info.HasIndividualAddress = xhard.Attribute("HasIndividualAddress")?.Value == "true";
+                _general.Info.BusCurrent = (int)StringToFloat(xhard.Attribute("BusCurrent")?.Value, 10);
 
-                foreach (XElement xapp in xhard.Descendants(Get("ApplicationProgramRef")))
-                {
-                    try
-                    {
-                        string[] appId = xapp.Attribute("RefId").Value.Split('-');
-                        int number = int.Parse(appId[2], System.Globalization.NumberStyles.HexNumber);
-                        int version = int.Parse(appId[3], System.Globalization.NumberStyles.HexNumber);
-
-                        hardware.Apps.Add(_general.Applications.Single(a => a.Number == number));
-                    } catch {
-                        string appId = xapp.Attribute("RefId").Value;
-                        hardware.Apps.Add(_general.Applications.Single(a => a.ImportHelper == appId));
-                    }
-                }
-
-                foreach (XElement xprod in xhard.Descendants(Get("Product")))
-                {
-                    Device device;
-                    string ordernumb = xprod.Attribute("OrderNumber").Value;
-
-                    if (hardware.Devices.Any(d => d.OrderNumber == ordernumb))
-                    {
-                        device = hardware.Devices.Single(d => d.OrderNumber == ordernumb);
-                    }
-                    else
-                    {
-                        device = new Device()
-                        {
-                            OrderNumber = ordernumb,
-                            Name = xprod.Parent.Parent.Attribute("Name").Value,
-                            //Text = GetTranslation(xprod.Attribute("Id").Value, "Text", xprod),
-                            IsRailMounted = xprod.Attribute("IsRailMounted")?.Value == "true"
-                        };
-                        hardware.Devices.Add(device);
-                    }
-                }
+                XElement xprod = xhard.Descendants(Get("Product")).ElementAt(0);
+                _general.Info.OrderNumber = xprod.Attribute("OrderNumber").Value;
+                _general.Info.Name = xprod.Parent.Parent.Attribute("Name").Value;
+                _general.Info.IsRailMounted = xprod.Attribute("IsRailMounted")?.Value == "true";
             }
         }
 
@@ -1538,7 +1476,8 @@ namespace Kaenx.Creator.Classes
                 ParseCatalogItem(xitem, _general.Catalog[0]);
             }
 
-            foreach(Hardware hard in _general.Hardware)
+            //todo check where to put this
+            /*foreach(Hardware hard in _general.Hardware)
             {
                 foreach(Device dev in hard.Devices)
                 {
@@ -1550,7 +1489,7 @@ namespace Kaenx.Creator.Classes
                             dev.Description.Add(new Translation(lang, ""));
                     }
                 }
-            }
+            }*/
 
             CheckCatalogSectionLanguages(_general.Catalog[0]);
         }
@@ -1618,41 +1557,23 @@ namespace Kaenx.Creator.Classes
 
                 case "CatalogItem":
                 {
-                    Hardware hard;
-                    Device device;
-                    string[] hard2ref = xitem.Attribute("Hardware2ProgramRefId").Value.Split('-');
-                    if(hard2ref[0].StartsWith("%"))
-                    {
-                        hard = _general.Hardware[0];
-                        device = hard.Devices[0];
-                    } else {
-                        string serialNr = hard2ref[2];
-                        serialNr = Unescape(serialNr);
-                        int version = int.Parse(hard2ref[3].Split('_')[0]);
-                        hard = _general.Hardware.Single(h => h.SerialNumber == serialNr && h.Version == version);
-                        string prodId = xitem.Attribute("ProductRefId").Value;
-                        prodId = prodId.Substring(prodId.LastIndexOf('-')+1);
-                        prodId = Unescape(prodId);
-                        device = hard.Devices.Single(d => d.OrderNumber == prodId);
-                    }
+                    string id = xitem.Attribute("Hardware2ProgramRefId").Value.Substring(xitem.Attribute("Hardware2ProgramRefId").Value.IndexOf("_HP-") + 3, 13);
+                    if(!AppImportHelper.Contains(id))
+                        break;
 
+                    _general.Info.Text = GetTranslation(xitem.Attribute("Id")?.Value ?? "", "Name", xitem, true);
+                    _general.Info.Description = GetTranslation(xitem.Attribute("Id")?.Value ?? "", "VisibleDescription", xitem, true);
                     
-
-                    if(device.Text.Count > 0)
-                        return;
-                        
-
+                    
                     CatalogItem item = new CatalogItem()
                     {
                         Parent = parent,
                         Name = xitem.Attribute("Name").Value,
                         Number = Unescape(xitem.Attribute("Number").Value),
                         IsSection = false,
-                        Hardware = hard
+                        Text = GetTranslation(xitem.Attribute("Id")?.Value ?? "", "Text", xitem)
                     };
-                    item.Text = GetTranslation(xitem.Attribute("Id")?.Value ?? "", "Text", xitem);
-                    device.Text = GetTranslation(xitem.Attribute("Id")?.Value ?? "", "Name", xitem, true);
-                    device.Description = GetTranslation(xitem.Attribute("Id")?.Value ?? "", "VisibleDescription", xitem, true);
+                    
                     parent.Items.Add(item);
                     break;
                 }

@@ -225,10 +225,9 @@
                 </MenuItem>
                 <MenuItem x:Name="MenuClose" IsEnabled="False" Header="{x:Static p:Resources.menu_proj_close}" Click="ClickClose" />
             </MenuItem>
-            <MenuItem x:Name="MenuImport" IsEnabled="False" Header="{x:Static p:Resources.menu_impo}">
+            <MenuItem x:Name="MenuImport" Header="{x:Static p:Resources.menu_impo}">
                 <MenuItem Header="{x:Static p:Resources.menu_impo_ets}" Click="ClickImport" Tag="knxprod" />
                 <MenuItem Header="{x:Static p:Resources.menu_impo_xml}" Click="ClickImport" Tag="xml" />
-                <MenuItem Header="{x:Static p:Resources.menu_impo_kaenx}" IsEnabled="False" Tag="ae-prod" />
             </MenuItem>
             <MenuItem x:Name="MenuSign" Header="{x:Static p:Resources.menu_sign}">
                 <MenuItem Header="{x:Static p:Resources.menu_sign_folder}" Click="ClickSignFolder" Tag="knxprod" />
@@ -396,61 +395,63 @@
                     </TabItem>
 
                     <TabItem Header="{x:Static p:Resources.tabs_hard}" Style="{StaticResource LeftTabItem}">
-                        <StackPanel Grid.Column="1" Grid.Row="1" DataContext="{Binding General.Info}">
-                            <StackPanel.Resources>
-                                <Style TargetType="HeaderedContentControl">
-                                    <Setter Property="Margin" Value="5" />
-                                </Style>
-                                <Style TargetType="CheckBox">
-                                    <Setter Property="Margin" Value="5" />
-                                </Style>
-                                <Style TargetType="ComboBox">
-                                    <Setter Property="Margin" Value="5" />
-                                </Style>
-                                <Style TargetType="Button">
-                                    <Setter Property="Margin" Value="5" />
-                                </Style>
-                            </StackPanel.Resources>
-                            <HeaderedContentControl Header="{x:Static p:Resources.prop_name}">
-                                <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
-                            </HeaderedContentControl>
-                            <HeaderedContentControl Header="{x:Static p:Resources.prop_serial}">
-                                <TextBox Text="{Binding SerialNumber, UpdateSourceTrigger=PropertyChanged}" />
-                            </HeaderedContentControl>
-                            <HeaderedContentControl Header="{x:Static p:Resources.prop_vers}">
-                                <TextBox Text="{Binding Version, UpdateSourceTrigger=PropertyChanged}" />
-                            </HeaderedContentControl>
-                            <HeaderedContentControl Header="{x:Static p:Resources.prop_buscurrent}">
-                                <TextBox Text="{Binding BusCurrent, UpdateSourceTrigger=PropertyChanged}" />
-                            </HeaderedContentControl>
-                            <HeaderedContentControl Header="{x:Static p:Resources.prop_ordernumber}">
-                                <TextBox Text="{Binding OrderNumber}" />
-                            </HeaderedContentControl>
-                            <HeaderedContentControl Header="{x:Static p:Resources.gen_text}">
-                                <DataGrid ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
-                                    <DataGrid.Columns>
-                                        <DataGridTextColumn Header="{x:Static p:Resources.gen_lang}" Binding="{Binding Language.Text}" IsReadOnly="True" />
-                                        <DataGridTextColumn Header="{x:Static p:Resources.gen_text}" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
-                                    </DataGrid.Columns>
-                                </DataGrid>
-                            </HeaderedContentControl>
-                            <HeaderedContentControl Header="{x:Static p:Resources.gen_desc}">
-                                <DataGrid ItemsSource="{Binding Description}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
-                                    <DataGrid.Columns>
-                                        <DataGridTextColumn Header="{x:Static p:Resources.gen_lang}" Binding="{Binding Language.Text}" IsReadOnly="True" />
-                                        <DataGridTextColumn Header="{x:Static p:Resources.gen_text}" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
-                                    </DataGrid.Columns>
-                                </DataGrid>
-                            </HeaderedContentControl>
-                            <CheckBox IsChecked="{Binding HasIndividualAddress, Mode=TwoWay}" Content="{x:Static p:Resources.prop_haspa}" />
-                            <CheckBox IsChecked="{Binding IsPowerSupply, Mode=TwoWay}" Content="{x:Static p:Resources.prop_ispower}" />
-                            <CheckBox IsChecked="{Binding IsCoppler, Mode=TwoWay}" Content="{x:Static p:Resources.prop_iscoupler}" />
-                            <CheckBox IsChecked="{Binding IsIpEnabled, Mode=TwoWay}" Content="{x:Static p:Resources.prop_ip}" />
-    
-                            <CheckBox IsChecked="{Binding HasApplicationProgram, Mode=TwoWay}" Content="{x:Static p:Resources.prop_hasapp}" />
-                            <CheckBox IsChecked="{Binding HasApplicationProgram2, Mode=TwoWay}" Content="{x:Static p:Resources.prop_hasapp2}" />
-                            <CheckBox IsChecked="{Binding IsRailMounted, Mode=TwoWay}" Content="{x:Static p:Resources.prop_isreg}" />
-                        </StackPanel>
+                        <ScrollViewer>
+                            <StackPanel DataContext="{Binding General.Info}">
+                                <StackPanel.Resources>
+                                    <Style TargetType="HeaderedContentControl">
+                                        <Setter Property="Margin" Value="5" />
+                                    </Style>
+                                    <Style TargetType="CheckBox">
+                                        <Setter Property="Margin" Value="5" />
+                                    </Style>
+                                    <Style TargetType="ComboBox">
+                                        <Setter Property="Margin" Value="5" />
+                                    </Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Margin" Value="5" />
+                                    </Style>
+                                </StackPanel.Resources>
+                                <HeaderedContentControl Header="{x:Static p:Resources.prop_name}">
+                                    <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
+                                </HeaderedContentControl>
+                                <HeaderedContentControl Header="{x:Static p:Resources.prop_serial}">
+                                    <TextBox Text="{Binding SerialNumber, UpdateSourceTrigger=PropertyChanged}" />
+                                </HeaderedContentControl>
+                                <HeaderedContentControl Header="{x:Static p:Resources.prop_vers}">
+                                    <TextBox Text="{Binding Version, UpdateSourceTrigger=PropertyChanged}" />
+                                </HeaderedContentControl>
+                                <HeaderedContentControl Header="{x:Static p:Resources.prop_buscurrent}">
+                                    <TextBox Text="{Binding BusCurrent, UpdateSourceTrigger=PropertyChanged}" />
+                                </HeaderedContentControl>
+                                <HeaderedContentControl Header="{x:Static p:Resources.prop_ordernumber}">
+                                    <TextBox Text="{Binding OrderNumber}" />
+                                </HeaderedContentControl>
+                                <HeaderedContentControl Header="{x:Static p:Resources.gen_text}">
+                                    <DataGrid ItemsSource="{Binding Text}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="{x:Static p:Resources.gen_lang}" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                                            <DataGridTextColumn Header="{x:Static p:Resources.gen_text}" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </HeaderedContentControl>
+                                <HeaderedContentControl Header="{x:Static p:Resources.gen_desc}">
+                                    <DataGrid ItemsSource="{Binding Description}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="{x:Static p:Resources.gen_lang}" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                                            <DataGridTextColumn Header="{x:Static p:Resources.gen_text}" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </HeaderedContentControl>
+                                <CheckBox IsChecked="{Binding HasIndividualAddress, Mode=TwoWay}" Content="{x:Static p:Resources.prop_haspa}" />
+                                <CheckBox IsChecked="{Binding IsPowerSupply, Mode=TwoWay}" Content="{x:Static p:Resources.prop_ispower}" />
+                                <CheckBox IsChecked="{Binding IsCoppler, Mode=TwoWay}" Content="{x:Static p:Resources.prop_iscoupler}" />
+                                <CheckBox IsChecked="{Binding IsIpEnabled, Mode=TwoWay}" Content="{x:Static p:Resources.prop_ip}" />
+        
+                                <CheckBox IsChecked="{Binding HasApplicationProgram, Mode=TwoWay}" Content="{x:Static p:Resources.prop_hasapp}" />
+                                <CheckBox IsChecked="{Binding HasApplicationProgram2, Mode=TwoWay}" Content="{x:Static p:Resources.prop_hasapp2}" />
+                                <CheckBox IsChecked="{Binding IsRailMounted, Mode=TwoWay}" Content="{x:Static p:Resources.prop_isreg}" />
+                            </StackPanel>
+                        </ScrollViewer>
                     </TabItem>
                     
                     <TabItem Header="{x:Static p:Resources.tabs_app}" Style="{StaticResource LeftTabItem}">
@@ -752,7 +753,7 @@
                                             <HeaderedContentControl Header="{x:Static p:Resources.prop_name}">
                                                 <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
                                             </HeaderedContentControl>
-                                            <HeaderedContentControl Header="{x:Static p:Resources.prop_address}" Visibility="{Binding ElementName=AppList, Path=SelectedItem.Mask.Memory, Converter={StaticResource EnumToVis}, ConverterParameter=Absolute}">
+                                            <HeaderedContentControl Header="{x:Static p:Resources.prop_address}" Visibility="{Binding ElementName=ViewControl, Path=General.Info.Mask.Memory, Converter={StaticResource EnumToVis}, ConverterParameter=Absolute}">
                                                 <TextBox Text="{Binding Address, UpdateSourceTrigger=PropertyChanged}"/>
                                             </HeaderedContentControl>
                                             <CheckBox Content="{x:Static p:Resources.vgen_autosize}"  IsChecked="{Binding IsAutoSize}" />
@@ -760,7 +761,7 @@
                                             <HeaderedContentControl Header="{x:Static p:Resources.prop_size}" IsEnabled="{Binding IsAutoSize, Converter={StaticResource BoolNegate}}">
                                                 <TextBox Text="{Binding Size, UpdateSourceTrigger=PropertyChanged}" />
                                             </HeaderedContentControl>
-                                            <HeaderedContentControl Header="{x:Static p:Resources.prop_offset}" Visibility="{Binding ElementName=AppList, Path=SelectedItem.Mask.Memory, Converter={StaticResource EnumToVis}, ConverterParameter=Relative}">
+                                            <HeaderedContentControl Header="{x:Static p:Resources.prop_offset}" Visibility="{Binding ElementName=ViewControl, Path=General.Info.Mask.Memory, Converter={StaticResource EnumToVis}, ConverterParameter=Relative}">
                                                 <TextBox Text="{Binding Offset, UpdateSourceTrigger=PropertyChanged}"/>
                                             </HeaderedContentControl>
                                             <CheckBox Content="{x:Static p:Resources.vgen_mautopara}" IsChecked="{Binding IsAutoPara}" />
