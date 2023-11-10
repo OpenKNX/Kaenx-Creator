@@ -1,3 +1,7 @@
+v1.7.0
+ - changed: only one application per file
+ - added: output filename will be saved
+ 
 v1.6.6
  - added: check for empty Parameter/ComObject Arg in Module
  - added: union memory view

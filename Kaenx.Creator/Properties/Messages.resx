@@ -505,10 +505,6 @@
     <value>Starting check</value>
     <comment/>
   </data>
-  <data name="check_start_count" xml:space="preserve">
-    <value>{0} Devices - {1} Hardware - {2} Applications - {3} Versions</value>
-    <comment/>
-  </data>
   <data name="check_cat_sub" xml:space="preserve">
     <value>Catalog has to have one subcategory</value>
     <comment/>
@@ -520,26 +516,6 @@
   <data name="check_hard" xml:space="preserve">
     <value>Checking Hardware</value>
     <comment/>
-  </data>
-  <data name="check_hard_duplicate_name" xml:space="preserve">
-    <value>Hardwarename '{0}' is used by {1} hardware</value>
-    <comment>Name; Count</comment>
-  </data>
-  <data name="check_hard_duplicate_serial" xml:space="preserve">
-    <value>Hardwareserial '{0}' is used by {1} hardware</value>
-    <comment>Serial; Count</comment>
-  </data>
-  <data name="check_hard_no_devices" xml:space="preserve">
-    <value>Hardware '{0}' has no devices</value>
-    <comment>Name;</comment>
-  </data>
-  <data name="check_hard_no_apps" xml:space="preserve">
-    <value>Hardware '{0}' has no apps</value>
-    <comment>Name;</comment>
-  </data>
-  <data name="check_hard_apps" xml:space="preserve">
-    <value>Hardware '{0}' has apps but option HasApplicationprogram was not checked</value>
-    <comment>Name;</comment>
   </data>
   <data name="check_hard_no_physicaladdress" xml:space="preserve">
     <value>Hardware has option HasIndividualAddress not checked</value>
@@ -556,18 +532,6 @@
   <data name="check_app" xml:space="preserve">
     <value>Checking Applications</value>
     <comment/>
-  </data>
-  <data name="check_app_duplicate_name" xml:space="preserve">
-    <value>Applicationname '{0}' is used by {1} applications</value>
-    <comment>Name; Count</comment>
-  </data>
-  <data name="check_app_duplicate_number" xml:space="preserve">
-    <value>Applicationnumber '{0}' is used by {1} applications</value>
-    <comment>Name; Count</comment>
-  </data>
-  <data name="check_app_duplicate_version" xml:space="preserve">
-    <value>Application '{0}' uses version {1}.{2} {3} times</value>
-    <comment>Name; Version High; Version Low</comment>
   </data>
   <data name="check_app_openknx" xml:space="preserve">
     <value>Application '{0}' is an OpenKnx project. Its number can't be greater than FF</value>

@@ -79,15 +79,6 @@ namespace Kaenx.Creator.Properties {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Kaenx Produktdatei ähnelt.
-        /// </summary>
-        public static string menu_impo_kaenx {
-            get {
-                return ResourceManager.GetString("menu_impo_kaenx", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Sprache/Language ähnelt.
         /// </summary>
         public static string menu_lang {
@@ -174,15 +165,6 @@ namespace Kaenx.Creator.Properties {
         public static string tabs_gen {
             get {
                 return ResourceManager.GetString("tabs_gen", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Hardware/Geräte ähnelt.
-        /// </summary>
-        public static string tabs_info {
-            get {
-                return ResourceManager.GetString("tabs_info", resourceCulture);
             }
         }
         
@@ -495,15 +477,6 @@ namespace Kaenx.Creator.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string thard_devices {
-            get {
-                return ResourceManager.GetString("thard_devices", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
-        /// </summary>
         public static string prop_ordernumber {
             get {
                 return ResourceManager.GetString("prop_ordernumber", resourceCulture);
@@ -525,15 +498,6 @@ namespace Kaenx.Creator.Properties {
         public static string gen_desc {
             get {
                 return ResourceManager.GetString("gen_desc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
-        /// </summary>
-        public static string thard_apps {
-            get {
-                return ResourceManager.GetString("thard_apps", resourceCulture);
             }
         }
         
@@ -651,15 +615,6 @@ namespace Kaenx.Creator.Properties {
         public static string tapps_openv {
             get {
                 return ResourceManager.GetString("tapps_openv", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
-        /// </summary>
-        public static string tapps_addv {
-            get {
-                return ResourceManager.GetString("tapps_addv", resourceCulture);
             }
         }
         
@@ -2151,12 +2106,6 @@ namespace Kaenx.Creator.Properties {
             }
         }
         
-        public static string tapps_openh {
-            get {
-                return ResourceManager.GetString("tapps_openh", resourceCulture);
-            }
-        }
-        
         public static string vgen_autoload {
             get {
                 return ResourceManager.GetString("vgen_autoload", resourceCulture);
@@ -2346,48 +2295,6 @@ namespace Kaenx.Creator.Properties {
         public static string submod_open {
             get {
                 return ResourceManager.GetString("submod_open", resourceCulture);
-            }
-        }
-        
-        public static string tpub_publish {
-            get {
-                return ResourceManager.GetString("tpub_publish", resourceCulture);
-            }
-        }
-        
-        public static string tpub_device {
-            get {
-                return ResourceManager.GetString("tpub_device", resourceCulture);
-            }
-        }
-        
-        public static string tpub_hardware {
-            get {
-                return ResourceManager.GetString("tpub_hardware", resourceCulture);
-            }
-        }
-        
-        public static string tpub_app {
-            get {
-                return ResourceManager.GetString("tpub_app", resourceCulture);
-            }
-        }
-        
-        public static string tpub_vers {
-            get {
-                return ResourceManager.GetString("tpub_vers", resourceCulture);
-            }
-        }
-        
-        public static string tpub_filter {
-            get {
-                return ResourceManager.GetString("tpub_filter", resourceCulture);
-            }
-        }
-        
-        public static string tpub_onlynew {
-            get {
-                return ResourceManager.GetString("tpub_onlynew", resourceCulture);
             }
         }
         

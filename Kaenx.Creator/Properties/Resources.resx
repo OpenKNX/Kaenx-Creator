@@ -125,10 +125,6 @@
     <value>ETS Product database</value>
     <comment/>
   </data>
-  <data name="menu_impo_kaenx" xml:space="preserve">
-    <value>Kaenx Projectfile</value>
-    <comment/>
-  </data>
   <data name="menu_lang" xml:space="preserve">
     <value>Language</value>
     <comment/>
@@ -167,10 +163,6 @@
   </data>
   <data name="tabs_gen" xml:space="preserve">
     <value>General</value>
-    <comment/>
-  </data>
-  <data name="tabs_info" xml:space="preserve">
-    <value>Infos</value>
     <comment/>
   </data>
   <data name="tabs_hard" xml:space="preserve">
@@ -309,10 +301,6 @@
     <value>Device has a second application program</value>
     <comment/>
   </data>
-  <data name="thard_devices" xml:space="preserve">
-    <value>Devices</value>
-    <comment/>
-  </data>
   <data name="prop_ordernumber" xml:space="preserve">
     <value>Order Number</value>
     <comment/>
@@ -323,10 +311,6 @@
   </data>
   <data name="gen_desc" xml:space="preserve">
     <value>Description</value>
-    <comment/>
-  </data>
-  <data name="thard_apps" xml:space="preserve">
-    <value>Applications</value>
     <comment/>
   </data>
   <data name="gen_import" xml:space="preserve">
@@ -379,10 +363,6 @@
   </data>
   <data name="tapps_openv" xml:space="preserve">
     <value>Open in ProdViewer</value>
-    <comment/>
-  </data>
-  <data name="tapps_addv" xml:space="preserve">
-    <value>Add Version</value>
     <comment/>
   </data>
   <data name="tver_addrmem" xml:space="preserve">
@@ -1113,10 +1093,6 @@
     <value>Help</value>
     <comment/>
   </data>
-  <data name="tapps_openh" xml:space="preserve">
-    <value>Open</value>
-    <comment/>
-  </data>
   <data name="vgen_autoload" xml:space="preserve">
     <value>Add size in LoadProcedure automatically</value>
     <comment/>
@@ -1253,32 +1229,8 @@
     <value>Edit SubModules</value>
     <comment/>
   </data>
-  <data name="tpub_publish" xml:space="preserve">
-    <value>Publish</value>
-    <comment/>
-  </data>
-  <data name="tpub_device" xml:space="preserve">
-    <value>Device</value>
-    <comment/>
-  </data>
-  <data name="tpub_hardware" xml:space="preserve">
-    <value>Hardware</value>
-    <comment/>
-  </data>
-  <data name="tpub_app" xml:space="preserve">
-    <value>Application</value>
-    <comment/>
-  </data>
-  <data name="tpub_vers" xml:space="preserve">
-    <value>Version</value>
-    <comment/>
-  </data>
-  <data name="tpub_filter" xml:space="preserve">
-    <value>Filter:</value>
-    <comment/>
-  </data>
-  <data name="tpub_onlynew" xml:space="preserve">
-    <value>Export only the latest version</value>
+  <data name="tpub_filename" xml:space="preserve">
+    <value>File Name:</value>
     <comment/>
   </data>
   <data name="tpub_filename" xml:space="preserve">
@@ -1442,11 +1394,11 @@
     <comment/>
   </data>
   <data name="tuni_settings" xml:space="preserve">
-    <value>Einstellungen</value>
+    <value>Settings</value>
     <comment/>
   </data>
   <data name="tuni_heatmap" xml:space="preserve">
-    <value>Speicherbelegung</value>
+    <value>Memory Map</value>
     <comment/>
   </data>
   <data name="tabs_proj" xml:space="preserve">

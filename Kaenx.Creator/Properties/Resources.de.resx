@@ -125,10 +125,6 @@
     <value>ETS Produktdatenbank</value>
     <comment/>
   </data>
-  <data name="menu_impo_kaenx" xml:space="preserve">
-    <value>Kaenx Produktdatei</value>
-    <comment/>
-  </data>
   <data name="menu_lang" xml:space="preserve">
     <value>Sprache/Language</value>
     <comment/>
@@ -169,12 +165,12 @@
     <value>Allgemeines</value>
     <comment/>
   </data>
-  <data name="tabs_info" xml:space="preserve">
-    <value>Infos</value>
-    <comment/>
-  </data>
   <data name="tabs_hard" xml:space="preserve">
     <value>Hardware</value>
+    <comment/>
+  </data>
+  <data name="tabs_app" xml:space="preserve">
+    <value>Applikation</value>
     <comment/>
   </data>
   <data name="tabs_pub" xml:space="preserve">
@@ -305,10 +301,6 @@
     <value>Gerät hat ein zweites Applikationsprogramm</value>
     <comment/>
   </data>
-  <data name="thard_devices" xml:space="preserve">
-    <value>Geräte</value>
-    <comment/>
-  </data>
   <data name="prop_ordernumber" xml:space="preserve">
     <value>Bestellnummer</value>
     <comment/>
@@ -319,10 +311,6 @@
   </data>
   <data name="gen_desc" xml:space="preserve">
     <value>Beschreibung</value>
-    <comment/>
-  </data>
-  <data name="thard_apps" xml:space="preserve">
-    <value>Applikationen</value>
     <comment/>
   </data>
   <data name="gen_import" xml:space="preserve">
@@ -375,10 +363,6 @@
   </data>
   <data name="tapps_openv" xml:space="preserve">
     <value>Öffnen in ProdViewer</value>
-    <comment/>
-  </data>
-  <data name="tapps_addv" xml:space="preserve">
-    <value>Version hinzufügen</value>
     <comment/>
   </data>
   <data name="tver_addrmem" xml:space="preserve">
@@ -1109,10 +1093,6 @@
     <value>Hilfe</value>
     <comment/>
   </data>
-  <data name="tapps_openh" xml:space="preserve">
-    <value>Öffnen</value>
-    <comment/>
-  </data>
   <data name="vgen_autoload" xml:space="preserve">
     <value>In LadeProzedur automatisch Größe einfügen</value>
     <comment/>
@@ -1247,34 +1227,6 @@
   </data>
   <data name="submod_open" xml:space="preserve">
     <value>SubModule bearbeiten</value>
-    <comment/>
-  </data>
-  <data name="tpub_publish" xml:space="preserve">
-    <value>Veröffentlichen</value>
-    <comment/>
-  </data>
-  <data name="tpub_device" xml:space="preserve">
-    <value>Gerät</value>
-    <comment/>
-  </data>
-  <data name="tpub_hardware" xml:space="preserve">
-    <value>Hardware</value>
-    <comment/>
-  </data>
-  <data name="tpub_app" xml:space="preserve">
-    <value>Applikation</value>
-    <comment/>
-  </data>
-  <data name="tpub_vers" xml:space="preserve">
-    <value>Version</value>
-    <comment/>
-  </data>
-  <data name="tpub_filter" xml:space="preserve">
-    <value>Filtern:</value>
-    <comment/>
-  </data>
-  <data name="tpub_onlynew" xml:space="preserve">
-    <value>Nur neueste Applikationversion exportieren</value>
     <comment/>
   </data>
   <data name="tpub_filename" xml:space="preserve">
@@ -1419,6 +1371,34 @@
   </data>
   <data name="gen_translate" xml:space="preserve">
     <value>Übersetzer öffnen</value>
+    <comment/>
+  </data>
+  <data name="menu_options" xml:space="preserve">
+    <value>Optionen</value>
+    <comment/>
+  </data>
+  <data name="menu_out" xml:space="preserve">
+    <value>KnxProd Ausgabepfad</value>
+    <comment/>
+  </data>
+  <data name="menu_out_exe" xml:space="preserve">
+    <value>Im Pfad der EXE Datei</value>
+    <comment/>
+  </data>
+  <data name="menu_out_ae" xml:space="preserve">
+    <value>Im Pfad der AE Datei</value>
+    <comment/>
+  </data>
+  <data name="tuni_settings" xml:space="preserve">
+    <value>Einstellungen</value>
+    <comment/>
+  </data>
+  <data name="tuni_heatmap" xml:space="preserve">
+    <value>Speicherbelegung</value>
+    <comment/>
+  </data>
+  <data name="tabs_proj" xml:space="preserve">
+    <value>Projekt</value>
     <comment/>
   </data>
 </root>

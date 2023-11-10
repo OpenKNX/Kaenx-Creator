@@ -644,12 +644,6 @@ namespace Kaenx.Creator.Properties {
             }
         }
         
-        public static string check_start_count {
-            get {
-                return ResourceManager.GetString("check_start_count", resourceCulture);
-            }
-        }
-        
         public static string check_cat_sub {
             get {
                 return ResourceManager.GetString("check_cat_sub", resourceCulture);
@@ -665,36 +659,6 @@ namespace Kaenx.Creator.Properties {
         public static string check_hard {
             get {
                 return ResourceManager.GetString("check_hard", resourceCulture);
-            }
-        }
-        
-        public static string check_hard_duplicate_name {
-            get {
-                return ResourceManager.GetString("check_hard_duplicate_name", resourceCulture);
-            }
-        }
-        
-        public static string check_hard_duplicate_serial {
-            get {
-                return ResourceManager.GetString("check_hard_duplicate_serial", resourceCulture);
-            }
-        }
-        
-        public static string check_hard_no_devices {
-            get {
-                return ResourceManager.GetString("check_hard_no_devices", resourceCulture);
-            }
-        }
-        
-        public static string check_hard_no_apps {
-            get {
-                return ResourceManager.GetString("check_hard_no_apps", resourceCulture);
-            }
-        }
-        
-        public static string check_hard_apps {
-            get {
-                return ResourceManager.GetString("check_hard_apps", resourceCulture);
             }
         }
         
@@ -719,24 +683,6 @@ namespace Kaenx.Creator.Properties {
         public static string check_app {
             get {
                 return ResourceManager.GetString("check_app", resourceCulture);
-            }
-        }
-        
-        public static string check_app_duplicate_name {
-            get {
-                return ResourceManager.GetString("check_app_duplicate_name", resourceCulture);
-            }
-        }
-        
-        public static string check_app_duplicate_number {
-            get {
-                return ResourceManager.GetString("check_app_duplicate_number", resourceCulture);
-            }
-        }
-        
-        public static string check_app_duplicate_version {
-            get {
-                return ResourceManager.GetString("check_app_duplicate_version", resourceCulture);
             }
         }
         

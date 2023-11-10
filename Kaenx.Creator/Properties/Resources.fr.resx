@@ -125,10 +125,6 @@
     <value>Base de données produit</value>
     <comment/>
   </data>
-  <data name="menu_impo_kaenx" xml:space="preserve">
-    <value>Fichier projet Kaenx</value>
-    <comment/>
-  </data>
   <data name="menu_lang" xml:space="preserve">
     <value>Langue</value>
     <comment/>
@@ -170,7 +166,11 @@
     <comment/>
   </data>
   <data name="tabs_hard" xml:space="preserve">
-    <value>Matériels/Appareils</value>
+    <value>Hardware</value>
+    <comment/>
+  </data>
+  <data name="tabs_app" xml:space="preserve">
+    <value>Application</value>
     <comment/>
   </data>
   <data name="tabs_pub" xml:space="preserve">
@@ -301,10 +301,6 @@
     <value>Ce matériel possède une application secondaire</value>
     <comment/>
   </data>
-  <data name="thard_devices" xml:space="preserve">
-    <value>Appareils</value>
-    <comment/>
-  </data>
   <data name="prop_ordernumber" xml:space="preserve">
     <value>Numéro de commande</value>
     <comment/>
@@ -315,10 +311,6 @@
   </data>
   <data name="gen_desc" xml:space="preserve">
     <value>Description</value>
-    <comment/>
-  </data>
-  <data name="thard_apps" xml:space="preserve">
-    <value>Applications</value>
     <comment/>
   </data>
   <data name="gen_import" xml:space="preserve">
@@ -371,10 +363,6 @@
   </data>
   <data name="tapps_openv" xml:space="preserve">
     <value>Ouvrir dans ProdViewer</value>
-    <comment/>
-  </data>
-  <data name="tapps_addv" xml:space="preserve">
-    <value>Ajouter une version</value>
     <comment/>
   </data>
   <data name="tver_addrmem" xml:space="preserve">
@@ -746,7 +734,7 @@
     <comment/>
   </data>
   <data name="prop_objectindex" xml:space="preserve">
-    <value>ObjectIndex</value>
+    <value>ObjectType</value>
     <comment/>
   </data>
   <data name="gen_onlydeflang" xml:space="preserve">
@@ -1105,10 +1093,6 @@
     <value>Aide</value>
     <comment/>
   </data>
-  <data name="tapps_openh" xml:space="preserve">
-    <value>Ouvrir</value>
-    <comment/>
-  </data>
   <data name="vgen_autoload" xml:space="preserve">
     <value>Ajouter la taille automatiquement dans la procédure de chargement</value>
     <comment/>
@@ -1243,34 +1227,6 @@
   </data>
   <data name="submod_open" xml:space="preserve">
     <value>Editer le sous module</value>
-    <comment/>
-  </data>
-  <data name="tpub_publish" xml:space="preserve">
-    <value>Publier</value>
-    <comment/>
-  </data>
-  <data name="tpub_device" xml:space="preserve">
-    <value>Appareil</value>
-    <comment/>
-  </data>
-  <data name="tpub_hardware" xml:space="preserve">
-    <value>Matériel</value>
-    <comment/>
-  </data>
-  <data name="tpub_app" xml:space="preserve">
-    <value>Application</value>
-    <comment/>
-  </data>
-  <data name="tpub_vers" xml:space="preserve">
-    <value>Version</value>
-    <comment/>
-  </data>
-  <data name="tpub_filter" xml:space="preserve">
-    <value>Filtre :</value>
-    <comment/>
-  </data>
-  <data name="tpub_onlynew" xml:space="preserve">
-    <value>Exporter seulement la dernière version</value>
     <comment/>
   </data>
   <data name="tpub_filename" xml:space="preserve">
@@ -1411,6 +1367,38 @@
   </data>
   <data name="menu_sign_folder" xml:space="preserve">
     <value>Répertoire</value>
+    <comment/>
+  </data>
+  <data name="gen_translate" xml:space="preserve">
+    <value>Open Translator</value>
+    <comment/>
+  </data>
+  <data name="menu_options" xml:space="preserve">
+    <value>Options</value>
+    <comment/>
+  </data>
+  <data name="menu_out" xml:space="preserve">
+    <value>KnxProd Output Path</value>
+    <comment/>
+  </data>
+  <data name="menu_out_exe" xml:space="preserve">
+    <value>Path of EXE File</value>
+    <comment/>
+  </data>
+  <data name="menu_out_ae" xml:space="preserve">
+    <value>Path of AE File</value>
+    <comment/>
+  </data>
+  <data name="tuni_settings" xml:space="preserve">
+    <value>Settings</value>
+    <comment/>
+  </data>
+  <data name="tuni_heatmap" xml:space="preserve">
+    <value>Memory Map</value>
+    <comment/>
+  </data>
+  <data name="tabs_proj" xml:space="preserve">
+    <value>Project</value>
     <comment/>
   </data>
 </root>

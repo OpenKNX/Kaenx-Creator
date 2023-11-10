@@ -505,10 +505,6 @@
     <value>Démarrage de la vérification</value>
     <comment/>
   </data>
-  <data name="check_start_count" xml:space="preserve">
-    <value>{0} Appareils - {1} Matériel - {2} Applications - {3} Versions</value>
-    <comment/>
-  </data>
   <data name="check_cat_sub" xml:space="preserve">
     <value>Un catalogue doit avoir une sous catégorie</value>
     <comment/>
@@ -521,53 +517,21 @@
     <value>Vérification du matériel</value>
     <comment/>
   </data>
-  <data name="check_hard_duplicate_name" xml:space="preserve">
-    <value>Le nom '{0}' est utilisé par le matériel {1}</value>
-    <comment>Name; Count</comment>
-  </data>
-  <data name="check_hard_duplicate_serial" xml:space="preserve">
-    <value>Le n° de série '{0}' est utilisé par le matériel {1}</value>
-    <comment>Serial; Count</comment>
-  </data>
-  <data name="check_hard_no_devices" xml:space="preserve">
-    <value>Matériel '{0}' n'a pas d'appareil</value>
-    <comment>Name;</comment>
-  </data>
-  <data name="check_hard_no_apps" xml:space="preserve">
-    <value>Matériel '{0}' n'a pas d'application</value>
-    <comment>Name;</comment>
-  </data>
-  <data name="check_hard_apps" xml:space="preserve">
-    <value>Matériel '{0}' a une application mais l'option HasApplicationprogram n'est pas activée</value>
-    <comment>Name;</comment>
-  </data>
   <data name="check_hard_no_physicaladdress" xml:space="preserve">
-    <value>Matériel '{0}' a l'option HasIndividualAddress non activée</value>
-    <comment>Name;</comment>
+    <value>Hardware has option HasIndividualAddress not checked</value>
+    <comment/>
   </data>
   <data name="check_hard_no_app" xml:space="preserve">
-    <value>Matériel '{0}' a l'option HasApplicationprogram n'est pas activée</value>
-    <comment>Name;</comment>
+    <value>Hardware has option HasApplicationprogram not checked</value>
+    <comment/>
   </data>
   <data name="check_hard_no_app2" xml:space="preserve">
-    <value>Matériel '{0}' a l'option HasApplicationprogram2 validée mais pas l'option HasApplicationprogram</value>
-    <comment>Name;</comment>
+    <value>Hardware has option HasApplicationprogram2 checked but not HasApplicationprogram</value>
+    <comment/>
   </data>
   <data name="check_app" xml:space="preserve">
     <value>Vérification des applications</value>
     <comment/>
-  </data>
-  <data name="check_app_duplicate_name" xml:space="preserve">
-    <value>Le nom d'application '{0}' est utilisé par {1} applications</value>
-    <comment>Name; Count</comment>
-  </data>
-  <data name="check_app_duplicate_number" xml:space="preserve">
-    <value>Le numéro d'application '{0}' est utilisé par {1} applications</value>
-    <comment>Name; Count</comment>
-  </data>
-  <data name="check_app_duplicate_version" xml:space="preserve">
-    <value>L'application '{0}' utilise la version {1}.{2} {3} fois</value>
-    <comment>Name; Version High; Version Low</comment>
   </data>
   <data name="check_app_openknx" xml:space="preserve">
     <value>L'application '{0}' est un projet OpenKnx. Son numéro ne peut être plus élevé que FF</value>
@@ -578,8 +542,8 @@
     <comment>Name;</comment>
   </data>
   <data name="check_ver" xml:space="preserve">
-    <value>Checking Application {0} {1}</value>
-    <comment/>
+    <value>Checking Application {0}</value>
+    <comment>AppVersion</comment>
   </data>
   <data name="check_end" xml:space="preserve">
     <value>Vérification finie</value>
@@ -818,7 +782,7 @@
     <comment>Name; UId</comment>
   </data>
   <data name="check_ver_para_save_objectindex" xml:space="preserve">
-    <value>Parameter {0} ({1}): La valeur ObjectIndex n'est pas fixée</value>
+    <value>Parameter {0} ({1}): ObjectType is not set</value>
     <comment>Name; UId</comment>
   </data>
   <data name="check_ver_para_save_propertyid" xml:space="preserve">
@@ -1051,6 +1015,22 @@
   </data>
   <data name="check_ver_union_size" xml:space="preserve">
     <value>Union {0}: Le Parameter {1} ({2}) ne convient pas</value>
+    <comment/>
+  </data>
+  <data name="check_ver_mod_paraoff_null" xml:space="preserve">
+    <value>Module {0}: ParameterBaseOffset Argument is null</value>
+    <comment>Name</comment>
+  </data>
+  <data name="check_ver_mod_combase_null" xml:space="preserve">
+    <value>Module {0}: ComObjectBaseNumber Argument is null</value>
+    <comment>Name</comment>
+  </data>
+  <data name="check_ver_loadprod_empty" xml:space="preserve">
+    <value>Loadprocedure: Procedure is empty</value>
+    <comment/>
+  </data>
+  <data name="check_ver_loadprod_failed" xml:space="preserve">
+    <value>Loadprocedure: Parsing failed, no valid xml</value>
     <comment/>
   </data>
 </root>

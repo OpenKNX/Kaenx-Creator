@@ -865,11 +865,14 @@
                         </Style>
                     </StackPanel.Resources>
                     
+                    <HeaderedContentControl Header="{x:Static p:Resources.prop_vers}">
+                        <TextBox Text="{Binding General.Application.Number, UpdateSourceTrigger=PropertyChanged}" />
+                    </HeaderedContentControl>
                     <HeaderedContentControl Header="{x:Static p:Resources.tpub_filename}">
-                        <TextBox x:Name="ExportInName" Text="output" />
+                        <TextBox Text="{Binding General.FileName}" />
                     </HeaderedContentControl>
 
-                    <Button Content="{x:Static p:Resources.tpub_publish}" Click="Button_Click" />
+                    <Button Content="{x:Static p:Resources.tabs_pub}" Click="Button_Click" />
                     <ScrollViewer Grid.Row="3">
                         <ItemsControl ItemsSource="{Binding PublishActions}">
                             <ItemsControl.ItemTemplate>

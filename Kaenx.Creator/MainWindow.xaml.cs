@@ -1149,8 +1149,8 @@ namespace Kaenx.Creator
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
-            if(ExportInName.Text.EndsWith(".knxprod"))
-                ExportInName.Text = ExportInName.Text.Substring(0, ExportInName.Text.LastIndexOf('.'));
+            if(General.FileName.EndsWith(".knxprod"))
+                General.FileName = General.FileName.Substring(0, General.FileName.LastIndexOf('.'));
 
             string fileFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Output");
 
@@ -1173,10 +1173,10 @@ namespace Kaenx.Creator
                     return;
             }
 
-            string filePath = System.IO.Path.Combine(fileFolder, ExportInName.Text + ".knxprod");
+            string filePath = System.IO.Path.Combine(fileFolder, General.FileName + ".knxprod");
             if(File.Exists(filePath))
             {
-                if(MessageBoxResult.No == MessageBox.Show(string.Format(Properties.Messages.main_export_duplicate, ExportInName.Text), Properties.Messages.main_export_title, MessageBoxButton.YesNo, MessageBoxImage.Question))
+                if(MessageBoxResult.No == MessageBox.Show(string.Format(Properties.Messages.main_export_duplicate, General.FileName), Properties.Messages.main_export_title, MessageBoxButton.YesNo, MessageBoxImage.Question))
                     return;
             }
 

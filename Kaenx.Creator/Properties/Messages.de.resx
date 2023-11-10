@@ -505,10 +505,6 @@
     <value>Überprüfung wird gestartet</value>
     <comment/>
   </data>
-  <data name="check_start_count" xml:space="preserve">
-    <value>{0} Geräte - {1} Hardware - {2} Applikationen - {3} Versionen</value>
-    <comment/>
-  </data>
   <data name="check_cat_sub" xml:space="preserve">
     <value>Katalog muss mindestens eine Unterkategorie haben</value>
     <comment/>
@@ -521,53 +517,21 @@
     <value>Überprüfe Hardware</value>
     <comment/>
   </data>
-  <data name="check_hard_duplicate_name" xml:space="preserve">
-    <value>Hardwarename '{0}' wird bereits von {1} verwendet</value>
-    <comment>Name; Count</comment>
-  </data>
-  <data name="check_hard_duplicate_serial" xml:space="preserve">
-    <value>Hardwareserial '{0}' wird bereits von {1} verwendet</value>
-    <comment>Serial; Count</comment>
-  </data>
-  <data name="check_hard_no_devices" xml:space="preserve">
-    <value>Hardware '{0}' hat keine Geräte</value>
-    <comment>Name;</comment>
-  </data>
-  <data name="check_hard_no_apps" xml:space="preserve">
-    <value>Hardware '{0}' hat keine Applikationen</value>
-    <comment>Name;</comment>
-  </data>
-  <data name="check_hard_apps" xml:space="preserve">
-    <value>Hardware '{0}' hat Applikationen, allerdings wurde die Option nicht ausgewählt</value>
-    <comment>Name;</comment>
-  </data>
   <data name="check_hard_no_physicaladdress" xml:space="preserve">
     <value>Hardware hat nicht die Option für eine Individuelle Adresse ausgewählt</value>
-    <comment></comment>
+    <comment/>
   </data>
   <data name="check_hard_no_app" xml:space="preserve">
     <value>Hardware hat nicht die Option für das Applikationsprogramm ausgewählt</value>
-    <comment></comment>
+    <comment/>
   </data>
   <data name="check_hard_no_app2" xml:space="preserve">
     <value>Hardware hat die Option für Applikationsprogramm2 ausgewählt, allerdings nicht für Applikationsprogramm</value>
-    <comment></comment>
+    <comment/>
   </data>
   <data name="check_app" xml:space="preserve">
     <value>Überprüfe Applikationen</value>
     <comment/>
-  </data>
-  <data name="check_app_duplicate_name" xml:space="preserve">
-    <value>Applikationsname '{0}' wird bereits von {1} Applikationen verwendet</value>
-    <comment>Name; Count</comment>
-  </data>
-  <data name="check_app_duplicate_number" xml:space="preserve">
-    <value>Applikationsnummer '{0}' wird bereits von {1} Applikationen verwendet</value>
-    <comment>Name; Count</comment>
-  </data>
-  <data name="check_app_duplicate_version" xml:space="preserve">
-    <value>Applikation '{0}' verwendet Version {1}.{2} {3} mal</value>
-    <comment>Name; Version High; Version Low</comment>
   </data>
   <data name="check_app_openknx" xml:space="preserve">
     <value>Applikation '{0}' ist ein OpenKnx Projekt. Die Nummer kann somit nicht größer als FF sein</value>
@@ -579,7 +543,7 @@
   </data>
   <data name="check_ver" xml:space="preserve">
     <value>Überprüfe Applikation {0}</value>
-    <comment/>
+    <comment>AppVersion</comment>
   </data>
   <data name="check_end" xml:space="preserve">
     <value>Überprüfung abgeschlossen</value>
@@ -1051,6 +1015,22 @@
   </data>
   <data name="check_ver_union_size" xml:space="preserve">
     <value>Union {0}: Parameter {1} ({2}) ist zu groß</value>
+    <comment/>
+  </data>
+  <data name="check_ver_mod_paraoff_null" xml:space="preserve">
+    <value>Modul {0}: ParameterBaseOffset Argument wurde nicht angegeben</value>
+    <comment>Name</comment>
+  </data>
+  <data name="check_ver_mod_combase_null" xml:space="preserve">
+    <value>Modul {0}: ComObjectBaseNumber wurde nicht angegeben</value>
+    <comment>Name</comment>
+  </data>
+  <data name="check_ver_loadprod_empty" xml:space="preserve">
+    <value>Ladeprozedur: Prozedur ist leer</value>
+    <comment/>
+  </data>
+  <data name="check_ver_loadprod_failed" xml:space="preserve">
+    <value>Ladeprozedur: Xml ist nicht korrekt</value>
     <comment/>
   </data>
 </root>

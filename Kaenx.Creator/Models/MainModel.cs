@@ -17,6 +17,13 @@ namespace Kaenx.Creator.Models
             set { _guid = value; Changed("Guid"); }
         }
 
+        private string _fileName = "output";
+        public string FileName
+        {
+            get { return _fileName; }
+            set { _fileName = value; Changed("FileName"); }
+        }
+
 
         public string GetGuid()
         {
