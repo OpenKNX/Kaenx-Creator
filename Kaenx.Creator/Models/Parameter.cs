@@ -67,7 +67,9 @@ namespace Kaenx.Creator.Models
         {
             get { 
                 if(SaveObject is Memory mem)
-                    return mem?.UId ?? _memoryId; 
+                    return mem?.UId ?? _memoryId;
+                if(SavePath == SavePaths.Memory)
+                    return _memoryId;
                 return -1;
             }
             set { _memoryId = value; }
