@@ -519,15 +519,15 @@
   </data>
   <data name="check_hard_no_physicaladdress" xml:space="preserve">
     <value>Hardware has option HasIndividualAddress not checked</value>
-    <comment></comment>
+    <comment/>
   </data>
   <data name="check_hard_no_app" xml:space="preserve">
     <value>Hardware has option HasApplicationprogram not checked</value>
-    <comment></comment>
+    <comment/>
   </data>
   <data name="check_hard_no_app2" xml:space="preserve">
     <value>Hardware has option HasApplicationprogram2 checked but not HasApplicationprogram</value>
-    <comment></comment>
+    <comment/>
   </data>
   <data name="check_app" xml:space="preserve">
     <value>Checking Applications</value>
@@ -1031,6 +1031,14 @@
   </data>
   <data name="check_ver_loadprod_failed" xml:space="preserve">
     <value>Loadprocedure: Parsing failed, no valid xml</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_dr_pararef_null" xml:space="preserve">
+    <value>DynRepeat {0}: ParameterRef is null</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_dr_type" xml:space="preserve">
+    <value>DynRepeat {0}: ParameterType of ParameterRef has to be Enum or NumberUInt</value>
     <comment/>
   </data>
 </root>

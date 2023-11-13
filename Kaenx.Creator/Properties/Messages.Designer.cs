@@ -1429,5 +1429,17 @@ namespace Kaenx.Creator.Properties {
                 return ResourceManager.GetString("check_ver_loadprod_failed", resourceCulture);
             }
         }
+        
+        public static string check_dyn_dr_pararef_null {
+            get {
+                return ResourceManager.GetString("check_dyn_dr_pararef_null", resourceCulture);
+            }
+        }
+        
+        public static string check_dyn_dr_type {
+            get {
+                return ResourceManager.GetString("check_dyn_dr_type", resourceCulture);
+            }
+        }
     }
 }

@@ -9,6 +9,7 @@ using Kaenx.Creator.Models.Dynamic;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Kaenx.Creator.Classes
 {
@@ -432,7 +433,8 @@ namespace Kaenx.Creator.Classes
                     if(argParas.UseAllocator && !checkedMods.Contains(dmod.ModuleObject.Name))
                     {
                         argParas.Allocator.Start = offset;
-                        argParas.Allocator.Max = argParas.Allocator.Start + (mods.Count(m => m.ModuleUId == dmod.ModuleUId) * modSize);
+                        int modCounter = mods.Count(m => m.ModuleUId == dmod.ModuleUId);
+                        argParas.Allocator.Max = argParas.Allocator.Start + (modCounter * modSize);
                     }
 
                     offset += modSize;
@@ -480,7 +482,13 @@ namespace Kaenx.Creator.Classes
 
             long srepeat = repeater;
             if(item is Models.Dynamic.DynRepeat dr)
+            {
                 srepeat = dr.Count;
+                if(dr.ParameterRefObject != null)
+                {
+                    srepeat += long.Parse(dr.ParameterRefObject.ParameterObject.ParameterTypeObject.Max);
+                }
+            }
 
             foreach(Models.Dynamic.IDynItems i in item.Items)
                 GetModules(i, mods, srepeat);

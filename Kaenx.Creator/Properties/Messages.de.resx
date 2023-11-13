@@ -638,7 +638,7 @@
     <comment>Name; UId</comment>
   </data>
   <data name="check_ver_parat_picture" xml:space="preserve">
-    <value>ParameterType Picture {0} ({1}): Kein Ahnahng ausgewählt</value>
+    <value>ParameterType Picture {0} ({1}): Kein Anhang ausgewählt</value>
     <comment>Name; UId</comment>
   </data>
   <data name="check_ver_parat_none" xml:space="preserve">
@@ -1031,6 +1031,14 @@
   </data>
   <data name="check_ver_loadprod_failed" xml:space="preserve">
     <value>Ladeprozedur: Xml ist nicht korrekt</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_dr_pararef_null" xml:space="preserve">
+    <value>DynRepeat {0}: Es wurde kein ParameterRef angegeben</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_dr_type" xml:space="preserve">
+    <value>DynRepeat {0}: ParameterType des ParameterRefs muss Enum oder NumberUInt sein</value>
     <comment/>
   </data>
 </root>

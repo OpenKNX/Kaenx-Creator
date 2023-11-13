@@ -946,6 +946,22 @@ namespace Kaenx.Creator.Classes {
                     break;
                 }
 
+                case DynRepeat dr:
+                {
+                    if(dr.UseParameterRef)
+                    {
+                        if(dr.ParameterRefObject == null)
+                            actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_dr_pararef_null, dr.Name), State = PublishState.Fail});
+                        else if(dr.ParameterRefObject.ParameterObject != null && dr.ParameterRefObject.ParameterObject.ParameterTypeObject != null)
+                        {
+                            if(dr.ParameterRefObject.ParameterObject.ParameterTypeObject.Type != ParameterTypes.Enum && dr.ParameterRefObject.ParameterObject.ParameterTypeObject.Type != ParameterTypes.NumberUInt)
+                                actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_dr_type, dr.Name), State = PublishState.Fail});
+                        }
+                    }       
+                    break;
+                }
+
+                case DynChannelIndependent:
                 case DynamicMain:
                 case DynamicModule:
                     break;

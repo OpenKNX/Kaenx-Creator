@@ -444,7 +444,7 @@
                 <HeaderedContentControl Header="{x:Static p:Resources.prop_count}">
                     <TextBox Text="{Binding Count, UpdateSourceTrigger=PropertyChanged}" />
                 </HeaderedContentControl>
-                <HeaderedContentControl Header="{x:Static p:Resources.tdyn_textpara}">
+                <HeaderedContentControl Header="{x:Static p:Resources.tdyn_pararef}">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="auto" />
