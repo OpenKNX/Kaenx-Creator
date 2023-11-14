@@ -27,10 +27,8 @@ namespace Kaenx.Creator
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class TranslatorWindow : Window, INotifyPropertyChanged
+    public partial class TranslatorWindow : Window
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-
         public ObservableCollection<TranslationTab> Tabs { get; set; } = new ObservableCollection<TranslationTab>();
 
 
