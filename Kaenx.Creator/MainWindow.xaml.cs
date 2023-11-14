@@ -759,8 +759,7 @@ namespace Kaenx.Creator
         private void ClickSave(object sender, RoutedEventArgs e)
         {
             General.ImportVersion = VersionCurrent;
-            string general = Newtonsoft.Json.JsonConvert.SerializeObject(General, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
-            System.IO.File.WriteAllText(App.FilePath, general);
+            DoSave();
         }
 
         private void ClickClose(object sender, RoutedEventArgs e)
@@ -785,8 +784,6 @@ namespace Kaenx.Creator
         private void ClickSaveAs(object sender, RoutedEventArgs e)
         {
             General.ImportVersion = VersionCurrent;
-            string general = Newtonsoft.Json.JsonConvert.SerializeObject(General, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
-
             SaveFileDialog diag = new SaveFileDialog();
             diag.FileName = General.ProjectName;
             diag.Title = Properties.Messages.main_project_save_title;
@@ -794,10 +791,24 @@ namespace Kaenx.Creator
             
             if(diag.ShowDialog() == true)
             {
-                System.IO.File.WriteAllText(diag.FileName, general);
                 App.FilePath = diag.FileName;
+                DoSave();
                 MenuSaveBtn.IsEnabled = true;
             }
+        }
+
+        private void DoSave()
+        {
+            // using (MemoryStream ms = new MemoryStream())
+            // using (Newtonsoft.Json.Bson.BsonDataWriter datawriter = new Newtonsoft.Json.Bson.BsonDataWriter(ms))
+            // {
+            //     JsonSerializer serializer = JsonSerializer.Create(new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
+            //     serializer.Serialize(datawriter, General);
+            //     File.WriteAllBytes(App.FilePath, ms.ToArray());
+            // }
+            // <PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.2" />
+            string general = Newtonsoft.Json.JsonConvert.SerializeObject(General, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
+            System.IO.File.WriteAllText(App.FilePath, general);
         }
 
         private void ClickSaveTemplate(object sender, RoutedEventArgs e)
@@ -884,6 +895,14 @@ namespace Kaenx.Creator
                 
             try{
                 General = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.MainModel>(general, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
+                
+                // using (MemoryStream ms = new MemoryStream(File.ReadAllBytes(path)))
+                // using (Newtonsoft.Json.Bson.BsonDataReader reader = new Newtonsoft.Json.Bson.BsonDataReader(ms))
+                // {
+                //     JsonSerializer serializer = JsonSerializer.Create(new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
+                //     General = serializer.Deserialize<Models.MainModel>(reader);
+                // }
+                
                 AutoHelper.LoadVersion(General, General.Application);
             } catch {
                 MessageBox.Show(Properties.Messages.main_project_open_error, Properties.Messages.main_project_open_format, MessageBoxButton.OK, MessageBoxImage.Error);
