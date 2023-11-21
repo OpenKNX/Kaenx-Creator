@@ -1,3 +1,7 @@
+ - feature: can import OGM-Common
+ - feature: check errors have now link for dynamic item
+ - changed: missing referenz will now load the file
+
 v1.7.0
  - changed: only one application per file
  - added: output filename will be saved

@@ -842,10 +842,10 @@ namespace Kaenx.Creator.Classes {
                 case DynChannel dc:
                 {
                     if(string.IsNullOrEmpty(dc.Number))
-                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_channel_no_number, dc.Name), State = PublishState.Fail});
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_channel_no_number, dc.Name), Item = dc, Module = vbase, State = PublishState.Fail});
 
                     if(dc.UseTextParameter && dc.ParameterRefObject == null)
-                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_channel_textpara), State = PublishState.Fail});
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_channel_textpara), Item = dc, Module = vbase, State = PublishState.Fail});
                     break;
                 }
 
@@ -854,47 +854,47 @@ namespace Kaenx.Creator.Classes {
                     if(vbase is AppVersion av)
                     {
                         if(!av.IsPreETS4 && dpb.UseParameterRef)
-                            actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_block_pref_error, dpb.Name), State = PublishState.Warning});
+                            actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_block_pref_error, dpb.Name), Item = dpb, Module = vbase, State = PublishState.Warning});
                     }
                     if(dpb.UseParameterRef && dpb.ParameterRefObject == null)
-                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_block_no_pref, dpb.Name), State = PublishState.Fail});
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_block_no_pref, dpb.Name), Item = dpb, Module = vbase, State = PublishState.Fail});
                         
                     if(dpb.UseTextParameter && dpb.TextRefObject == null)
-                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_block_no_textpara, dpb.Name), State = PublishState.Fail});
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_block_no_textpara, dpb.Name), Item = dpb, Module = vbase, State = PublishState.Fail});
                     
                     if(dpb.UseIcon && dpb.IconObject == null)
-                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_block_no_icon, dpb.Name), State = PublishState.Fail});
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_block_no_icon, dpb.Name), Item = dpb, Module = vbase, State = PublishState.Fail});
                     break;
                 }
 
                 case DynModule dm:
                 {
                     if(dm.ModuleObject == null)
-                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_mod_no_module, dm.Name), State = PublishState.Fail});
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_mod_no_module, dm.Name), Item = dm, Module = vbase, State = PublishState.Fail});
                         
                     if(dm.Arguments.Any(a => !a.UseAllocator && string.IsNullOrEmpty(a.Value)))
-                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_mod_empty_arg, dm.Name), State = PublishState.Fail});
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_mod_empty_arg, dm.Name), Item = dm, Module = vbase, State = PublishState.Fail});
                     if(dm.Arguments.Any(a => a.UseAllocator && a.Allocator == null))
-                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_mod_no_alloc, dm.Name), State = PublishState.Fail});
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_mod_no_alloc, dm.Name), Item = dm, Module = vbase, State = PublishState.Fail});
                     if(dm.Arguments.Any(a => a.Argument.Type != ArgumentTypes.Numeric && a.UseAllocator))
-                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_mod_alloc_error), State = PublishState.Fail});
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_mod_alloc_error), Item = dm, Module = vbase, State = PublishState.Fail});
                     break;
                 }
 
                 case IDynChoose dco:
                 {
                     if(dco.ParameterRefObject == null)
-                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_choose_no_pararef, dco.Name), State = PublishState.Fail});
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_choose_no_pararef, dco.Name), Item = dco, Module = vbase, State = PublishState.Fail});
                     break;
                 }
 
                 case IDynWhen dwh:
                 {
                     if(string.IsNullOrEmpty(dwh.Condition) && !dwh.IsDefault)
-                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_when_no_cond, dwh.Name), State = PublishState.Fail});
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_when_no_cond, dwh.Name), Item = dwh, Module = vbase, State = PublishState.Fail});
                     
                     if(!showOnlyErrors && !string.IsNullOrEmpty(dwh.Condition) && dwh.IsDefault)
-                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_when_default, dwh.Name), State = PublishState.Warning});
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_when_default, dwh.Name), Item = dwh, Module = vbase, State = PublishState.Warning});
                     break;
                 }
 
@@ -910,39 +910,39 @@ namespace Kaenx.Creator.Classes {
                 case DynComObject dco:
                 {
                     if(dco.ComObjectRefObject == null)
-                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_com_no_ref, dco.Name), State = PublishState.Fail});
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_com_no_ref, dco.Name), Item = dco, Module = vbase, State = PublishState.Fail});
                     break;
                 }
 
                 case DynSeparator dse:
                 {
                     if(dse.UseTextParameter && dse.TextRefObject == null)
-                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_sep_no_ref, dse.Name), State = PublishState.Fail});
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_sep_no_ref, dse.Name), Item = dse, Module = vbase, State = PublishState.Fail});
                     if(dse.Hint != SeparatorHint.None && ns < 14)
-                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_sep_uihint, dse.Name), State = PublishState.Fail});
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_sep_uihint, dse.Name), Item = dse, Module = vbase, State = PublishState.Fail});
                     if(dse.UseIcon && dse.IconObject == null)
-                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_sep_no_icon, dse.Name), State = PublishState.Fail});
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_sep_no_icon, dse.Name), Item = dse, Module = vbase, State = PublishState.Fail});
                     break;
                 }
 
                 case DynAssign das:
                 {
                     if(das.TargetObject == null)
-                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_assign_no_target, das.Name), State = PublishState.Fail});
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_assign_no_target, das.Name), Item = das, Module = vbase, State = PublishState.Fail});
                         
                     if(das.SourceObject == null && string.IsNullOrEmpty(das.Value))
-                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_assign_no_source, das.Name), State = PublishState.Fail});
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_assign_no_source, das.Name), Item = das, Module = vbase, State = PublishState.Fail});
                     break;
                 }
 
                 case DynButton dbtn:
                 {
                     if(string.IsNullOrEmpty(dbtn.Name))
-                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_btn_no_name, dbtn.Name), State = PublishState.Fail});
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_btn_no_name, dbtn.Name), Item = dbtn, Module = vbase, State = PublishState.Fail});
                     if(dbtn.UseTextParameter && dbtn.TextRefObject == null)
-                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_btn_no_ref, dbtn.Name), State = PublishState.Fail});
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_btn_no_ref, dbtn.Name), Item = dbtn, Module = vbase, State = PublishState.Fail});
                     if(dbtn.UseIcon && dbtn.IconObject == null)
-                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_btn_no_icon, dbtn.Name), State = PublishState.Fail});
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_btn_no_icon, dbtn.Name), Item = dbtn, Module = vbase, State = PublishState.Fail});
                     break;
                 }
 
@@ -951,11 +951,11 @@ namespace Kaenx.Creator.Classes {
                     if(dr.UseParameterRef)
                     {
                         if(dr.ParameterRefObject == null)
-                            actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_dr_pararef_null, dr.Name), State = PublishState.Fail});
+                            actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_dr_pararef_null, dr.Name), Item = dr, Module = vbase, State = PublishState.Fail});
                         else if(dr.ParameterRefObject.ParameterObject != null && dr.ParameterRefObject.ParameterObject.ParameterTypeObject != null)
                         {
                             if(dr.ParameterRefObject.ParameterObject.ParameterTypeObject.Type != ParameterTypes.Enum && dr.ParameterRefObject.ParameterObject.ParameterTypeObject.Type != ParameterTypes.NumberUInt)
-                                actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_dr_type, dr.Name), State = PublishState.Fail});
+                                actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_dr_type, dr.Name), Item = dr, Module = vbase, State = PublishState.Fail});
                         }
                     }       
                     break;

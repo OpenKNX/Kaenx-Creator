@@ -44,7 +44,7 @@ namespace Kaenx.Creator.Controls
             if(string.IsNullOrEmpty(diag.Answer)) return;
 
             string[] parts = diag.Answer.Split('/');
-            if(!parts[4].StartsWith("OFM-"))
+            if(!parts[4].StartsWith("OFM-") && parts[4] != "OGM-Common")
             {
                 MessageBox.Show("Das Repo ist kein OFM!");
                 return;

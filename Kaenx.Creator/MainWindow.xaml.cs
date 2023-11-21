@@ -903,11 +903,11 @@ namespace Kaenx.Creator
                 //     General = serializer.Deserialize<Models.MainModel>(reader);
                 // }
                 
-                AutoHelper.LoadVersion(General, General.Application);
             } catch {
                 MessageBox.Show(Properties.Messages.main_project_open_error, Properties.Messages.main_project_open_format, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
+                AutoHelper.LoadVersion(General, General.Application);
             General.ImportVersion = VersionCurrent;
 
             if (!string.IsNullOrEmpty(General.Info._maskId))

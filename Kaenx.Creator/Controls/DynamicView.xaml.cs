@@ -42,26 +42,24 @@ namespace Kaenx.Creator.Controls
 
         public void ShowItem(object item)
         {
-            var tvi = FindTviFromObjectRecursive(DynamicList, item);
-            if (tvi != null) tvi.IsSelected = true;
-        }
-
-        public static TreeViewItem FindTviFromObjectRecursive(ItemsControl ic, object o) {
-            //Search for the object model in first level children (recursively)
-            TreeViewItem tvi = ic.ItemContainerGenerator.ContainerFromItem(o) as TreeViewItem;
-            if (tvi != null) return tvi;
+            Models.Dynamic.IDynItems ditem = (Models.Dynamic.IDynItems)item;
             
-            //Loop through user object models
-            foreach (object i in ic.Items) {
-                //Get the TreeViewItem associated with the iterated object model
-                TreeViewItem tvi2 = ic.ItemContainerGenerator.ContainerFromItem(i) as TreeViewItem;
-                tvi = FindTviFromObjectRecursive(tvi2, o);
-                if (tvi != null) return tvi;
+            SetExpandedFalse(Module.Dynamics[0]);
+
+            while(ditem.GetType() != typeof(Models.Dynamic.DynamicMain) && ditem.GetType() != typeof(Models.Dynamic.DynamicModule))
+            {
+                ditem = ditem.Parent;
+                ditem.IsExpanded = true;
             }
-            return null;
         }
 
-
+        private void SetExpandedFalse(Models.Dynamic.IDynItems item)
+        {
+            item.IsExpanded = false;
+            if(item.Items != null)
+                foreach(Models.Dynamic.IDynItems ditem in item.Items)
+                    SetExpandedFalse(ditem);
+        }
 
         private void ClickOpenDyn(object sender, RoutedEventArgs e)
         {
