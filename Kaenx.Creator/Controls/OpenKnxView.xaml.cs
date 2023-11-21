@@ -290,8 +290,11 @@ namespace Kaenx.Creator.Controls
 
             if(name == "Share")
             {
-                mod.AddState("  - ParameterTypes");
-                helper.ImportParameterTypes(xele.Descendants(XName.Get("ParameterTypes", xele.Name.NamespaceName)).ElementAt(0), Version, true);
+                if(xele.Descendants(XName.Get("ParameterTypes", xele.Name.NamespaceName)).Count() > 0)
+                {
+                    mod.AddState("  - ParameterTypes");
+                    helper.ImportParameterTypes(xele.Descendants(XName.Get("ParameterTypes", xele.Name.NamespaceName)).ElementAt(0), Version, true);
+                }
             }
             var x = xele.Descendants(XName.Get("Parameters", xele.Name.NamespaceName));
             if(x.Count() > 0)
