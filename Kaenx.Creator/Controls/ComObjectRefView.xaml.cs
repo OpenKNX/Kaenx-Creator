@@ -128,7 +128,6 @@ namespace Kaenx.Creator.Controls
                 MessageBox.Show(Properties.Messages.prompt_auto_error, Properties.Messages.prompt_auto_error_title);
         }
 
-
         public event PropertyChangedEventHandler PropertyChanged;
         private void Changed(string name)
         {

@@ -165,8 +165,8 @@ namespace Kaenx.Creator.Models
             set { _comObject = value; }
         }
 
-        private FlagType _flagRead = FlagType.Disabled;
-        public FlagType FlagRead
+        private bool _flagRead = false;
+        public bool FlagRead
         {
             get { return _flagRead; }
             set { _flagRead = value; Changed("FlagRead"); }
@@ -176,11 +176,11 @@ namespace Kaenx.Creator.Models
         public bool OverwriteFR
         {
             get { return _overFR; }
-            set { _overFR = value; Changed("OverwriteFR"); if(!value) FlagRead = FlagType.Undefined; }
+            set { _overFR = value; Changed("OverwriteFR"); if(!value) FlagRead = false; }
         }
 
-        private FlagType _flagWrite = FlagType.Disabled;
-        public FlagType FlagWrite
+        private bool _flagWrite = false;
+        public bool FlagWrite
         {
             get { return _flagWrite; }
             set { _flagWrite = value; Changed("FlagWrite"); }
@@ -190,11 +190,11 @@ namespace Kaenx.Creator.Models
         public bool OverwriteFW
         {
             get { return _overFW; }
-            set { _overFW = value; Changed("OverwriteFW"); if(!value) FlagWrite = FlagType.Undefined; }
+            set { _overFW = value; Changed("OverwriteFW"); if(!value) FlagWrite = false; }
         }
 
-        private FlagType _flagTrans = FlagType.Disabled;
-        public FlagType FlagTrans
+        private bool _flagTrans = false;
+        public bool FlagTrans
         {
             get { return _flagTrans; }
             set { _flagTrans = value; Changed("FlagTrans"); }
@@ -204,11 +204,11 @@ namespace Kaenx.Creator.Models
         public bool OverwriteFT
         {
             get { return _overFT; }
-            set { _overFT = value; Changed("OverwriteFT"); if(!value) FlagTrans = FlagType.Undefined; }
+            set { _overFT = value; Changed("OverwriteFT"); if(!value) FlagTrans = false; }
         }
 
-        private FlagType _flagComm = FlagType.Disabled;
-        public FlagType FlagComm
+        private bool _flagComm = true;
+        public bool FlagComm
         {
             get { return _flagComm; }
             set { _flagComm = value; Changed("FlagComm"); }
@@ -218,11 +218,11 @@ namespace Kaenx.Creator.Models
         public bool OverwriteFC
         {
             get { return _overFC; }
-            set { _overFC = value; Changed("OverwriteFC"); if(!value) FlagComm = FlagType.Undefined; }
+            set { _overFC = value; Changed("OverwriteFC"); if(!value) FlagComm = false; }
         }
 
-        private FlagType _flagUpdate = FlagType.Disabled;
-        public FlagType FlagUpdate
+        private bool _flagUpdate = false;
+        public bool FlagUpdate
         {
             get { return _flagUpdate; }
             set { _flagUpdate = value; Changed("FlagUpdate"); }
@@ -232,11 +232,11 @@ namespace Kaenx.Creator.Models
         public bool OverwriteFU
         {
             get { return _overFU; }
-            set { _overFU = value; Changed("OverwriteFU"); if(!value) FlagUpdate = FlagType.Undefined; }
+            set { _overFU = value; Changed("OverwriteFU"); if(!value) FlagUpdate = false; }
         }
 
-        private FlagType _flagOnInit = FlagType.Disabled;
-        public FlagType FlagOnInit
+        private bool _flagOnInit = false;
+        public bool FlagOnInit
         {
             get { return _flagOnInit; }
             set { _flagOnInit = value; Changed("FlagOnInit"); }
@@ -246,7 +246,7 @@ namespace Kaenx.Creator.Models
         public bool OverwriteFOI
         {
             get { return _overFOI; }
-            set { _overFOI = value; Changed("OverwriteFOI"); if(!value) FlagOnInit = FlagType.Undefined; }
+            set { _overFOI = value; Changed("OverwriteFOI"); if(!value) FlagOnInit = false; }
         }
 
         private bool _isNotUsed = false;

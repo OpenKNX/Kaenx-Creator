@@ -531,19 +531,6 @@ namespace Kaenx.Creator.Classes {
                     if(com.Text.Any(t => !t.Text.Contains("{{0")))
                         actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_com_no_used_textpara, "ComObject", com.Name, com.UId), State = PublishState.Fail, Item = com, Module = mod });
                 }
-                
-                if(com.FlagComm == FlagType.Undefined)
-                    actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_com_flagComm, "ComObject", com.Name, com.UId), State = PublishState.Fail, Item = com, Module = mod });
-                if(com.FlagOnInit == FlagType.Undefined)
-                    actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_com_flagOnInit, "ComObject", com.Name, com.UId), State = PublishState.Fail, Item = com, Module = mod });
-                if(com.FlagRead == FlagType.Undefined)
-                    actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_com_flagRead, "ComObject", com.Name, com.UId), State = PublishState.Fail, Item = com, Module = mod });
-                if(com.FlagTrans == FlagType.Undefined)
-                    actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_com_flagTrans, "ComObject", com.Name, com.UId), State = PublishState.Fail, Item = com, Module = mod });
-                if(com.FlagUpdate == FlagType.Undefined)
-                    actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_com_flagUpdate, "ComObject", com.Name, com.UId), State = PublishState.Fail, Item = com, Module = mod });
-                if(com.FlagWrite == FlagType.Undefined)
-                    actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_com_flagWrite, "ComObject", com.Name, com.UId), State = PublishState.Fail, Item = com, Module = mod });
             }
 
             foreach(ComObjectRef rcom in vbase.ComObjectRefs) {
@@ -583,19 +570,6 @@ namespace Kaenx.Creator.Classes {
                     if(rcom.Text.Any(t => !t.Text.Contains("{{0")))
                         actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_com_no_used_textpara, "ComObjectRef", rcom.Name, rcom.UId), State = PublishState.Fail, Item = rcom, Module = mod });
                 }
-
-                if(rcom.OverwriteFC && rcom.FlagComm == FlagType.Undefined)
-                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_com_flagComm, "ComObjectRef", rcom.Name, rcom.UId), State = PublishState.Fail, Item = rcom, Module = mod });
-                if(rcom.OverwriteFOI && rcom.FlagOnInit == FlagType.Undefined)
-                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_com_flagOnInit, "ComObjectRef", rcom.Name, rcom.UId), State = PublishState.Fail, Item = rcom, Module = mod });
-                if(rcom.OverwriteFR && rcom.FlagRead == FlagType.Undefined)
-                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_com_flagRead, "ComObjectRef", rcom.Name, rcom.UId), State = PublishState.Fail, Item = rcom, Module = mod });
-                if(rcom.OverwriteFT && rcom.FlagTrans == FlagType.Undefined)
-                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_com_flagTrans, "ComObjectRef", rcom.Name, rcom.UId), State = PublishState.Fail, Item = rcom, Module = mod });
-                if(rcom.OverwriteFU && rcom.FlagUpdate == FlagType.Undefined)
-                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_com_flagUpdate, "ComObjectRef", rcom.Name, rcom.UId), State = PublishState.Fail, Item = rcom, Module = mod });
-                if(rcom.OverwriteFW && rcom.FlagWrite == FlagType.Undefined)
-                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_com_flagWrite, "ComObjectRef", rcom.Name, rcom.UId), State = PublishState.Fail, Item = rcom, Module = mod });
             }
         
             foreach(Union union in vbase.Unions)
@@ -616,7 +590,6 @@ namespace Kaenx.Creator.Classes {
                 CheckVersion(ver, xmod, actions, ver.DefaultLanguage, ver.NamespaceVersion, showOnlyErrors);
                 //TODO check for Argument exist
             }
-
         }
 
         private static void CheckValue(object item, object mod, ObservableCollection<PublishAction> actions)
@@ -1131,6 +1104,11 @@ namespace Kaenx.Creator.Classes {
                 gen = JObject.Parse(json);
             }
 
+            if(version < 9)
+            {
+                Update9((JObject)gen["Application"]);
+            }
+
             return gen.ToString();
         }
 
@@ -1233,6 +1211,34 @@ namespace Kaenx.Creator.Classes {
             };
 
             return Newtonsoft.Json.JsonConvert.SerializeObject(main, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
+        }
+    
+        private static void Update9(JObject jver)
+        {
+            foreach(JObject com in jver["ComObjects"])
+            {
+                com["FlagRead"] = com["FlagRead"].ToString() == "0";
+                com["FlagWrite"] = com["FlagWrite"].ToString() == "0";
+                com["FlagTrans"] = com["FlagTrans"].ToString() == "0";
+                com["FlagComm"] = com["FlagComm"].ToString() == "0";
+                com["FlagUpdate"] = com["FlagUpdate"].ToString() == "0";
+                com["FlagOnInit"] = com["FlagOnInit"].ToString() == "0";
+            }
+            foreach(JObject com in jver["ComObjectRefs"])
+            {
+                com["FlagRead"] = com["FlagRead"].ToString() == "0";
+                com["FlagWrite"] = com["FlagWrite"].ToString() == "0";
+                com["FlagTrans"] = com["FlagTrans"].ToString() == "0";
+                com["FlagComm"] = com["FlagComm"].ToString() == "0";
+                com["FlagUpdate"] = com["FlagUpdate"].ToString() == "0";
+                com["FlagOnInit"] = com["FlagOnInit"].ToString() == "0";
+            }
+
+            
+            foreach(JObject mod in jver["Modules"])
+            {
+                Update9(mod);
+            }
         }
     }
 }

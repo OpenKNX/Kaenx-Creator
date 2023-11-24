@@ -1364,42 +1364,6 @@ namespace Kaenx.Creator.Properties {
             }
         }
         
-        public static string check_ver_com_flagComm {
-            get {
-                return ResourceManager.GetString("check_ver_com_flagComm", resourceCulture);
-            }
-        }
-        
-        public static string check_ver_com_flagOnInit {
-            get {
-                return ResourceManager.GetString("check_ver_com_flagOnInit", resourceCulture);
-            }
-        }
-        
-        public static string check_ver_com_flagRead {
-            get {
-                return ResourceManager.GetString("check_ver_com_flagRead", resourceCulture);
-            }
-        }
-        
-        public static string check_ver_com_flagTrans {
-            get {
-                return ResourceManager.GetString("check_ver_com_flagTrans", resourceCulture);
-            }
-        }
-        
-        public static string check_ver_com_flagUpdate {
-            get {
-                return ResourceManager.GetString("check_ver_com_flagUpdate", resourceCulture);
-            }
-        }
-        
-        public static string check_ver_com_flagWrite {
-            get {
-                return ResourceManager.GetString("check_ver_com_flagWrite", resourceCulture);
-            }
-        }
-        
         public static string check_ver_union_size {
             get {
                 return ResourceManager.GetString("check_ver_union_size", resourceCulture);

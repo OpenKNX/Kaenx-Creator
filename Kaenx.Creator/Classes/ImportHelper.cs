@@ -1211,22 +1211,22 @@ namespace Kaenx.Creator.Classes
                 }
 
                 cref.FlagRead = ParseFlagType(xref.Attribute("ReadFlag")?.Value);
-                cref.OverwriteFR = cref.FlagRead != FlagType.Undefined;
+                cref.OverwriteFR = IsFlagTypeOverwriten(xref.Attribute("ReadFlag")?.Value);
                 //if (cref.FlagRead == FlagType.Undefined) cref.FlagRead = FlagType.Disabled;
                 cref.FlagWrite = ParseFlagType(xref.Attribute("WriteFlag")?.Value);
-                cref.OverwriteFW = cref.FlagWrite != FlagType.Undefined;
+                cref.OverwriteFW = IsFlagTypeOverwriten(xref.Attribute("WriteFlag")?.Value);
                 //if (cref.FlagWrite == FlagType.Undefined) cref.FlagWrite = FlagType.Disabled;
                 cref.FlagComm = ParseFlagType(xref.Attribute("CommunicationFlag")?.Value);
-                cref.OverwriteFC = cref.FlagComm != FlagType.Undefined;
+                cref.OverwriteFC = IsFlagTypeOverwriten(xref.Attribute("CommunicationFlag")?.Value);
                 //if (cref.FlagComm == FlagType.Undefined) cref.FlagComm = FlagType.Disabled;
                 cref.FlagTrans = ParseFlagType(xref.Attribute("TransmitFlag")?.Value);
-                cref.OverwriteFT = cref.FlagTrans != FlagType.Undefined;
+                cref.OverwriteFT = IsFlagTypeOverwriten(xref.Attribute("TransmitFlag")?.Value);
                 //if (cref.FlagTrans == FlagType.Undefined) cref.FlagTrans = FlagType.Disabled;
                 cref.FlagUpdate = ParseFlagType(xref.Attribute("UpdateFlag")?.Value);
-                cref.OverwriteFU = cref.FlagUpdate != FlagType.Undefined;
+                cref.OverwriteFU = IsFlagTypeOverwriten(xref.Attribute("UpdateFlag")?.Value);
                 //if (cref.FlagUpdate == FlagType.Undefined) cref.FlagUpdate = FlagType.Disabled;
                 cref.FlagOnInit = ParseFlagType(xref.Attribute("ReadOnInitFlag")?.Value);
-                cref.OverwriteFOI = cref.FlagOnInit != FlagType.Undefined;
+                cref.OverwriteFOI = IsFlagTypeOverwriten(xref.Attribute("ReadOnInitFlag")?.Value);
                 //if (cref.FlagOnInit == FlagType.Undefined) cref.FlagOnInit = FlagType.Disabled;
 
                 if (xref.Attribute("DatapointType") != null)
@@ -1956,14 +1956,26 @@ namespace Kaenx.Creator.Classes
         }
 
 
-        private FlagType ParseFlagType(string type)
+        private bool ParseFlagType(string type)
         {
             return type switch
             {
-                "Enabled" => FlagType.Enabled,
-                "Disabled" => FlagType.Disabled,
-                "Undefined" => FlagType.Undefined,
-                null => FlagType.Undefined,
+                "Enabled" => true,
+                "Disabled" => false,
+                "Undefined" => false,
+                null => false,
+                _ => throw new Exception("Unbekannter FlagTyp: " + type)
+            };
+        }
+
+        private bool IsFlagTypeOverwriten(string type)
+        {
+            return type switch
+            {
+                "Enabled" => true,
+                "Disabled" => true,
+                "Undefined" => false,
+                null => false,
                 _ => throw new Exception("Unbekannter FlagTyp: " + type)
             };
         }

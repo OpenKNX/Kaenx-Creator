@@ -1401,4 +1401,20 @@
     <value>Projekt</value>
     <comment/>
   </data>
+  <data name="tcom_flags" xml:space="preserve">
+    <value>KommObjekt Flags</value>
+    <comment/>
+  </data>
+  <data name="tcom_trans" xml:space="preserve">
+    <value>KommObjekt sendet auf den Bus</value>
+    <comment/>
+  </data>
+  <data name="tcom_recv" xml:space="preserve">
+    <value>KommObjekt empfängt vom Bus</value>
+    <comment/>
+  </data>
+  <data name="tcom_overwrite" xml:space="preserve">
+    <value>Überschreiben</value>
+    <comment/>
+  </data>
 </root>

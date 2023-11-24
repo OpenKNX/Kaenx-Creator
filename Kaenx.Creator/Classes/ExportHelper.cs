@@ -2223,7 +2223,7 @@ namespace Kaenx.Creator.Classes
             #endif
         }
 
-        private string GetEncoded(string input)
+        public static string GetEncoded(string input)
         {
             if(input == null)
             {

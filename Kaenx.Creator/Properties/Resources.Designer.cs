@@ -2555,5 +2555,29 @@ namespace Kaenx.Creator.Properties {
                 return ResourceManager.GetString("tabs_proj", resourceCulture);
             }
         }
+        
+        public static string tcom_flags {
+            get {
+                return ResourceManager.GetString("tcom_flags", resourceCulture);
+            }
+        }
+        
+        public static string tcom_trans {
+            get {
+                return ResourceManager.GetString("tcom_trans", resourceCulture);
+            }
+        }
+        
+        public static string tcom_recv {
+            get {
+                return ResourceManager.GetString("tcom_recv", resourceCulture);
+            }
+        }
+        
+        public static string tcom_overwrite {
+            get {
+                return ResourceManager.GetString("tcom_overwrite", resourceCulture);
+            }
+        }
     }
 }

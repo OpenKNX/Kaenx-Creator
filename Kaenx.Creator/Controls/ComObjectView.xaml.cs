@@ -184,6 +184,28 @@ namespace Kaenx.Creator.Controls
             if(ele.Id == oldId)
                 MessageBox.Show(Properties.Messages.prompt_auto_error, Properties.Messages.prompt_auto_error_title);
         }
+
+        private void SetTransmit(object sender, RoutedEventArgs e)
+        {
+            Models.ComObject com = ComobjectList.SelectedItem as Models.ComObject;
+            com.FlagComm = true;
+            com.FlagRead = true;
+            com.FlagWrite = false;
+            com.FlagTrans = true;
+            com.FlagUpdate = false;
+            com.FlagOnInit = false;
+        }
+        
+        private void SetReceive(object sender, RoutedEventArgs e)
+        {
+            Models.ComObject com = ComobjectList.SelectedItem as Models.ComObject;
+            com.FlagComm = true;
+            com.FlagRead = false;
+            com.FlagWrite = true;
+            com.FlagTrans = false;
+            com.FlagUpdate = true;
+            com.FlagOnInit = false;
+        }
         
         public event PropertyChangedEventHandler PropertyChanged;
         private void Changed(string name)

@@ -244,12 +244,12 @@ namespace Kaenx.Creator.Viewer
                     Number = cref.ComObjectObject.Number,
                     Size = cref.ComObjectObject.ObjectSize,
 
-                    Flag_Communicate = (cref.OverwriteFC ? cref.FlagComm : cref.ComObjectObject.FlagComm) == FlagType.Enabled,
-                    Flag_Read = (cref.OverwriteFR ? cref.FlagRead : cref.ComObjectObject.FlagRead) == FlagType.Enabled,
-                    Flag_ReadOnInit = (cref.OverwriteFOI ? cref.FlagOnInit : cref.ComObjectObject.FlagOnInit) == FlagType.Enabled,
-                    Flag_Transmit = (cref.OverwriteFT ? cref.FlagTrans : cref.ComObjectObject.FlagTrans) == FlagType.Enabled,
-                    Flag_Update = (cref.OverwriteFU ? cref.FlagUpdate : cref.ComObjectObject.FlagUpdate) == FlagType.Enabled,
-                    Flag_Write = (cref.OverwriteFW ? cref.FlagWrite : cref.ComObjectObject.FlagWrite) == FlagType.Enabled,
+                    Flag_Communicate = (cref.OverwriteFC ? cref.FlagComm : cref.ComObjectObject.FlagComm) == true,
+                    Flag_Read = (cref.OverwriteFR ? cref.FlagRead : cref.ComObjectObject.FlagRead) == true,
+                    Flag_ReadOnInit = (cref.OverwriteFOI ? cref.FlagOnInit : cref.ComObjectObject.FlagOnInit) == true,
+                    Flag_Transmit = (cref.OverwriteFT ? cref.FlagTrans : cref.ComObjectObject.FlagTrans) == true,
+                    Flag_Update = (cref.OverwriteFU ? cref.FlagUpdate : cref.ComObjectObject.FlagUpdate) == true,
+                    Flag_Write = (cref.OverwriteFW ? cref.FlagWrite : cref.ComObjectObject.FlagWrite) == true,
                 };
 
                 if(args != null)

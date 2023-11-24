@@ -989,30 +989,6 @@
     <value>Module {0}: Prefix is not set</value>
     <comment/>
   </data>
-  <data name="check_ver_com_flagComm" xml:space="preserve">
-    <value>{0} {1} ({2}): Flag Communication was not set</value>
-    <comment/>
-  </data>
-  <data name="check_ver_com_flagOnInit" xml:space="preserve">
-    <value>{0} {1} ({2}): Flag ReadOnInit was not set</value>
-    <comment/>
-  </data>
-  <data name="check_ver_com_flagRead" xml:space="preserve">
-    <value>{0} {1} ({2}): Flag Read was not set</value>
-    <comment/>
-  </data>
-  <data name="check_ver_com_flagTrans" xml:space="preserve">
-    <value>{0} {1} ({2}): Flag Transmit was not set</value>
-    <comment/>
-  </data>
-  <data name="check_ver_com_flagUpdate" xml:space="preserve">
-    <value>{0} {1} ({2}): Flag Update was not set</value>
-    <comment/>
-  </data>
-  <data name="check_ver_com_flagWrite" xml:space="preserve">
-    <value>{0} {1} ({2}): Flag Write was not set</value>
-    <comment/>
-  </data>
   <data name="check_ver_union_size" xml:space="preserve">
     <value>Union {0}: Parameter {1} ({2}) does not fit in</value>
     <comment/>

@@ -57,43 +57,43 @@ namespace Kaenx.Creator.Models
         }
 
 
-        private FlagType _flagRead = FlagType.Disabled;
-        public FlagType FlagRead
+        private bool _flagRead = false;
+        public bool FlagRead
         {
             get { return _flagRead; }
             set { _flagRead = value; Changed("FlagRead"); }
         }
 
-        private FlagType _flagWrite = FlagType.Disabled;
-        public FlagType FlagWrite
+        private bool _flagWrite = false;
+        public bool FlagWrite
         {
             get { return _flagWrite; }
             set { _flagWrite = value; Changed("FlagWrite"); }
         }
 
-        private FlagType _flagTrans = FlagType.Disabled;
-        public FlagType FlagTrans
+        private bool _flagTrans = false;
+        public bool FlagTrans
         {
             get { return _flagTrans; }
             set { _flagTrans = value; Changed("FlagTrans"); }
         }
 
-        private FlagType _flagComm = FlagType.Enabled;
-        public FlagType FlagComm
+        private bool _flagComm = true;
+        public bool FlagComm
         {
             get { return _flagComm; }
             set { _flagComm = value; Changed("FlagComm"); }
         }
 
-        private FlagType _flagUpdate = FlagType.Disabled;
-        public FlagType FlagUpdate
+        private bool _flagUpdate = false;
+        public bool FlagUpdate
         {
             get { return _flagUpdate; }
             set { _flagUpdate = value; Changed("FlagUpdate"); }
         }
 
-        private FlagType _flagOnInit = FlagType.Disabled;
-        public FlagType FlagOnInit
+        private bool _flagOnInit = false;
+        public bool FlagOnInit
         {
             get { return _flagOnInit; }
             set { _flagOnInit = value; Changed("FlagOnInit"); }
@@ -230,12 +230,5 @@ namespace Kaenx.Creator.Models
                 
             return comobj;
         }
-    }
-
-    public enum FlagType
-    {
-        Enabled,
-        Disabled,
-        Undefined
     }
 }

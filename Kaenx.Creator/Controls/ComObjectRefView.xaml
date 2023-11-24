@@ -221,91 +221,44 @@
                 </HeaderedContentControl>
 
 
+                <Grid Margin="5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                    </Grid.RowDefinitions>
 
-                <HeaderedContentControl Header="{x:Static p:Resources.tcom_flag_com}" Margin="5 30 5 5">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="auto" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
+                    <TextBlock Text="Overwrite" />
 
-                        <CheckBox IsChecked="{Binding OverwriteFC}" VerticalAlignment="Center" />
-                        <ComboBox Grid.Column="1" IsEnabled="{Binding OverwriteFC}" SelectedValue="{Binding FlagComm}" SelectedValuePath="Tag">
-                            <ComboBoxItem Content="{x:Static p:Resources.tcom_flag_enable}" Tag="Enabled" />
-                            <ComboBoxItem Content="{x:Static p:Resources.tcom_flag_disable}" Tag="Disabled" />
-                        </ComboBox>
-                    </Grid>
-                </HeaderedContentControl>
-                <HeaderedContentControl Header="{x:Static p:Resources.tcom_flag_read}">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="auto" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-
-                        <CheckBox IsChecked="{Binding OverwriteFR}" VerticalAlignment="Center" />
-                        <ComboBox Grid.Column="1" IsEnabled="{Binding OverwriteFR}" SelectedValue="{Binding FlagRead}" SelectedValuePath="Tag">
-                            <ComboBoxItem Content="{x:Static p:Resources.tcom_flag_enable}" Tag="Enabled" />
-                            <ComboBoxItem Content="{x:Static p:Resources.tcom_flag_disable}" Tag="Disabled" />
-                        </ComboBox>
-                    </Grid>
-                </HeaderedContentControl>
-                <HeaderedContentControl Header="{x:Static p:Resources.tcom_flag_write}">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="auto" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-
-                        <CheckBox IsChecked="{Binding OverwriteFW}" VerticalAlignment="Center" />
-                        <ComboBox Grid.Column="1" IsEnabled="{Binding OverwriteFW}" SelectedValue="{Binding FlagWrite}" SelectedValuePath="Tag">
-                            <ComboBoxItem Content="{x:Static p:Resources.tcom_flag_enable}" Tag="Enabled" />
-                            <ComboBoxItem Content="{x:Static p:Resources.tcom_flag_disable}" Tag="Disabled" />
-                        </ComboBox>
-                    </Grid>
-                </HeaderedContentControl>
-                <HeaderedContentControl Header="{x:Static p:Resources.tcom_flag_trans}">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="auto" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-
-                        <CheckBox IsChecked="{Binding OverwriteFT}" VerticalAlignment="Center" />
-                        <ComboBox Grid.Column="1" IsEnabled="{Binding OverwriteFT}" SelectedValue="{Binding FlagTrans}" SelectedValuePath="Tag">
-                            <ComboBoxItem Content="{x:Static p:Resources.tcom_flag_enable}" Tag="Enabled" />
-                            <ComboBoxItem Content="{x:Static p:Resources.tcom_flag_disable}" Tag="Disabled" />
-                        </ComboBox>
-                    </Grid>
-                </HeaderedContentControl>
-                <HeaderedContentControl Header="{x:Static p:Resources.tcom_flag_update}">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="auto" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-
-                        <CheckBox IsChecked="{Binding OverwriteFU}" VerticalAlignment="Center" />
-                        <ComboBox Grid.Column="1" IsEnabled="{Binding OverwriteFU}" SelectedValue="{Binding FlagUpdate}" SelectedValuePath="Tag">
-                            <ComboBoxItem Content="{x:Static p:Resources.tcom_flag_enable}" Tag="Enabled" />
-                            <ComboBoxItem Content="{x:Static p:Resources.tcom_flag_disable}" Tag="Disabled" />
-                        </ComboBox>
-                    </Grid>
-                </HeaderedContentControl>
-                <HeaderedContentControl Header="{x:Static p:Resources.tcom_flag_oninit}">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="auto" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-
-                        <CheckBox IsChecked="{Binding OverwriteFOI}" VerticalAlignment="Center" />
-                        <ComboBox Grid.Column="1" IsEnabled="{Binding OverwriteFOI}" SelectedValue="{Binding FlagOnInit}" SelectedValuePath="Tag">
-                            <ComboBoxItem Content="{x:Static p:Resources.tcom_flag_enable}" Tag="Enabled" />
-                            <ComboBoxItem Content="{x:Static p:Resources.tcom_flag_disable}" Tag="Disabled" />
-                        </ComboBox>
-                    </Grid>
-                </HeaderedContentControl>
+                    <CheckBox Grid.Row="1" IsChecked="{Binding OverwriteFC}" VerticalAlignment="Center" />
+                    <CheckBox Grid.Row="1" Grid.Column="1" IsChecked="{Binding FlagComm}" IsEnabled="{Binding OverwriteFC}" Content="{x:Static p:Resources.tcom_flag_com}" />
+                    <CheckBox Grid.Row="2" IsChecked="{Binding OverwriteFR}" VerticalAlignment="Center" />
+                    <CheckBox Grid.Row="2" Grid.Column="1" IsChecked="{Binding FlagRead}" IsEnabled="{Binding OverwriteFR}" Content="{x:Static p:Resources.tcom_flag_read}" />
+                    <CheckBox Grid.Row="3" IsChecked="{Binding OverwriteFW}" VerticalAlignment="Center" />
+                    <CheckBox Grid.Row="3" Grid.Column="1" IsChecked="{Binding FlagWrite}" IsEnabled="{Binding OverwriteFW}" Content="{x:Static p:Resources.tcom_flag_write}" />
+                    <CheckBox Grid.Row="4" IsChecked="{Binding OverwriteFT}" VerticalAlignment="Center" />
+                    <CheckBox Grid.Row="4" Grid.Column="1" IsChecked="{Binding FlagTrans}" IsEnabled="{Binding OverwriteFT}" Content="{x:Static p:Resources.tcom_flag_trans}" />
+                    <CheckBox Grid.Row="5" IsChecked="{Binding OverwriteFU}" VerticalAlignment="Center" />
+                    <CheckBox Grid.Row="5" Grid.Column="1" IsChecked="{Binding FlagUpdate}" IsEnabled="{Binding OverwriteFU}" Content="{x:Static p:Resources.tcom_flag_update}" />
+                    <CheckBox Grid.Row="6" IsChecked="{Binding OverwriteFOI}" VerticalAlignment="Center" />
+                    <CheckBox Grid.Row="6" Grid.Column="1" IsChecked="{Binding FlagOnInit}" IsEnabled="{Binding OverwriteFOI}" Content="{x:Static p:Resources.tcom_flag_oninit}" />
+<!--                 
+                    <StackPanel Grid.Column="2" Grid.RowSpan="7">
+                        <Button Content="{x:Static p:Resources.tcom_trans}" Click="SetTransmit" />
+                        <Button Content="{x:Static p:Resources.tcom_recv}" Click="SetReceive" />
+                    </StackPanel> -->
+                </Grid>
             </StackPanel>
         </ScrollViewer>
     </Grid>

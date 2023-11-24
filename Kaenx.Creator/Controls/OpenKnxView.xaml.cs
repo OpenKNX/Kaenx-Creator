@@ -400,6 +400,12 @@ namespace Kaenx.Creator.Controls
                     xenu.Attribute("Id").Value = "_EN-" + xenu.Attribute("Value").Value;
                 }
             }
+            foreach(XElement xrest in xroot.Descendants(XName.Get("TypePicture", xroot.Name.NamespaceName)))
+            {
+                XElement xbaggage = xroot.Descendants(XName.Get("Baggage", xroot.Name.NamespaceName)).Single(b => b.Attribute("Id").Value == xrest.Attribute("RefId").Value);
+                xrest.Attribute("RefId").Value = $"M-00FA_BG-{ExportHelper.GetEncoded(xbaggage.Attribute("TargetPath").Value)}-{ExportHelper.GetEncoded(xbaggage.Attribute("Name").Value)}";
+                xbaggage.Attribute("Id").Value = xrest.Attribute("RefId").Value;
+            }
 
             Regex regex = new Regex("%[A-Z]+%");
             List<XElement> elements = new List<XElement>();
