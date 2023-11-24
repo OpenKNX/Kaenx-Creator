@@ -20,7 +20,7 @@ namespace Kaenx.Creator.Models
         public string Name { get; set; }
         public bool IsParameterRefAuto { get; set; }
         public bool IsComObjectRefAuto { get; set; }
-        public int LastParameterId { get; set; }
-        public int LastParameterRefId { get; set; }
+        public long LastParameterId { get; set; }
+        public long LastParameterRefId { get; set; }
     }
 }

@@ -25,10 +25,12 @@ namespace Kaenx.Creator.Classes
             Paras = new Dictionary<long, Parameter>();
             foreach(Parameter para in mod.Parameters)
                 Paras.Add(para.UId, para);
+            mod.LastParameterId = mod.Parameters.OrderByDescending(p => p.Id).First().Id;
 
             ParaRefs = new Dictionary<long, ParameterRef>();
             foreach(ParameterRef pref in mod.ParameterRefs)
                 ParaRefs.Add(pref.UId, pref);
+            mod.LastParameterRefId = mod.ParameterRefs.OrderByDescending(p => p.Id).First().Id;
 
             Coms = new Dictionary<long, ComObject>();
             foreach(ComObject com in mod.ComObjects)
@@ -548,8 +550,8 @@ namespace Kaenx.Creator.Classes
             return id;
         }
 
-        public static int GetNextFreeId(IVersionBase vbase, string list, int start = 1) {
-            int id = start;
+        public static long GetNextFreeId(IVersionBase vbase, string list, long start = 1) {
+            long id = start;
 
             if(list == "Parameters") {
                 return ++vbase.LastParameterId;

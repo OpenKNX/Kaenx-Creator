@@ -19,8 +19,8 @@ namespace Kaenx.Creator.Models
             set { _uid = value; Changed("UId"); }
         }
         
-        private int _id = -1;
-        public int Id
+        private long _id = -1;
+        public long Id
         {
             get { return _id; }
             set { _id = value; Changed("Id"); }
@@ -120,8 +120,8 @@ namespace Kaenx.Creator.Models
         public ObservableCollection<Allocator> Allocators { get; set; } = new ObservableCollection<Allocator>();
         public List<IDynamicMain> Dynamics { get; set; } = new List<IDynamicMain>();
 
-        public int LastParameterId { get; set; } = 0;
-        public int LastParameterRefId { get; set; } = 0;
+        public long LastParameterId { get; set; } = 0;
+        public long LastParameterRefId { get; set; } = 0;
         public bool IsOpenKnxModule { get; set; } = false;
 
         public event PropertyChangedEventHandler PropertyChanged;

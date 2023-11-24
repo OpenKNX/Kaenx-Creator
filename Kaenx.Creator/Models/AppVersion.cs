@@ -255,8 +255,8 @@ namespace Kaenx.Creator.Models
             set { _isPreETS4 = value; Changed("IsPreETS4"); }
         }
 
-        public int LastParameterId { get; set; } = 0;
-        public int LastParameterRefId { get; set; } = 0;
+        public long LastParameterId { get; set; } = 0;
+        public long LastParameterRefId { get; set; } = 0;
         public int LastDynModuleId { get; set; } = 0;
         public int LastDynSeparatorId { get; set; } = 0;
         public int HighestComNumber { get; set; } = 0;

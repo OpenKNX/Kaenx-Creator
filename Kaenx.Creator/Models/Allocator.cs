@@ -19,8 +19,8 @@ namespace Kaenx.Creator.Models
             set { _uid = value; Changed("UId"); }
         }
         
-        private int _id = -1;
-        public int Id
+        private long _id = -1;
+        public long Id
         {
             get { return _id; }
             set { _id = value; Changed("Id"); }
