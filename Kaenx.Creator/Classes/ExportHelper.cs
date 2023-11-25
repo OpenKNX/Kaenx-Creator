@@ -1342,12 +1342,12 @@ namespace Kaenx.Creator.Classes
 
                 //TODO implement mayread >=20
 
-                xcom.SetAttributeValue("ReadFlag", com.FlagRead.ToString());
-                xcom.SetAttributeValue("WriteFlag", com.FlagWrite.ToString());
-                xcom.SetAttributeValue("CommunicationFlag", com.FlagComm.ToString());
-                xcom.SetAttributeValue("TransmitFlag", com.FlagTrans.ToString());
-                xcom.SetAttributeValue("UpdateFlag", com.FlagUpdate.ToString());
-                xcom.SetAttributeValue("ReadOnInitFlag", com.FlagOnInit.ToString());
+                xcom.SetAttributeValue("ReadFlag", com.FlagRead ? "Enabled" : "Disabled");
+                xcom.SetAttributeValue("WriteFlag", com.FlagWrite ? "Enabled" : "Disabled");
+                xcom.SetAttributeValue("CommunicationFlag", com.FlagComm ? "Enabled" : "Disabled");
+                xcom.SetAttributeValue("TransmitFlag", com.FlagTrans ? "Enabled" : "Disabled");
+                xcom.SetAttributeValue("UpdateFlag", com.FlagUpdate ? "Enabled" : "Disabled");
+                xcom.SetAttributeValue("ReadOnInitFlag", com.FlagOnInit ? "Enabled" : "Disabled");
 
                 if (com.HasDpt && com.Type.Number != "0")
                 {
@@ -1433,17 +1433,17 @@ namespace Kaenx.Creator.Classes
 
 
                 if(cref.OverwriteFC)
-                    xcref.SetAttributeValue("CommunicationFlag", cref.FlagComm.ToString());
+                    xcref.SetAttributeValue("CommunicationFlag", cref.FlagComm ? "Enabled" : "Disabled");
                 if(cref.OverwriteFOI)
-                    xcref.SetAttributeValue("ReadOnInitFlag", cref.FlagOnInit.ToString());
+                    xcref.SetAttributeValue("ReadOnInitFlag", cref.FlagOnInit ? "Enabled" : "Disabled");
                 if(cref.OverwriteFR)
-                    xcref.SetAttributeValue("ReadFlag", cref.FlagRead.ToString());
+                    xcref.SetAttributeValue("ReadFlag", cref.FlagRead ? "Enabled" : "Disabled");
                 if(cref.OverwriteFT)
-                    xcref.SetAttributeValue("TransmitFlag", cref.FlagTrans.ToString());
+                    xcref.SetAttributeValue("TransmitFlag", cref.FlagTrans ? "Enabled" : "Disabled");
                 if(cref.OverwriteFU)
-                    xcref.SetAttributeValue("UpdateFlag", cref.FlagUpdate.ToString());
+                    xcref.SetAttributeValue("UpdateFlag", cref.FlagUpdate ? "Enabled" : "Disabled");
                 if(cref.OverwriteFW)
-                    xcref.SetAttributeValue("WriteFlag", cref.FlagWrite.ToString());
+                    xcref.SetAttributeValue("WriteFlag", cref.FlagWrite ? "Enabled" : "Disabled");
                 
 
                 xrefs.Add(xcref);
