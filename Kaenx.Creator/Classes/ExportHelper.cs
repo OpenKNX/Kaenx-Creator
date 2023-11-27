@@ -590,7 +590,8 @@ namespace Kaenx.Creator.Classes
                 } else if(!dmod.ModuleObject.IsOpenKnxModule && !modStartPara.ContainsKey(prefix))
                 {
                     int size = (dmod.ModuleObject.Memory.Sections.Count - 1) * 16;
-                    size += dmod.ModuleObject.Memory.Sections[dmod.ModuleObject.Memory.Sections.Count - 1].Bytes.Count;
+                    if(dmod.ModuleObject.Memory.Sections.Count > 0)
+                        size += dmod.ModuleObject.Memory.Sections[dmod.ModuleObject.Memory.Sections.Count - 1].Bytes.Count;
                     modStartPara.Add(prefix, (long.Parse(dargp.Value), size));
                 }
                 
