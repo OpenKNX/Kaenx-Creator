@@ -25,11 +25,17 @@ namespace Kaenx.Creator.Classes
             Paras = new Dictionary<long, Parameter>();
             foreach(Parameter para in mod.Parameters)
                 Paras.Add(para.UId, para);
-            mod.LastParameterId = mod.Parameters.OrderByDescending(p => p.Id).First().Id;
+            if(mod.Parameters.Count == 0)
+                mod.LastParameterId = 0;
+            else
+                mod.LastParameterId = mod.Parameters.OrderByDescending(p => p.Id).First().Id;
 
             ParaRefs = new Dictionary<long, ParameterRef>();
             foreach(ParameterRef pref in mod.ParameterRefs)
                 ParaRefs.Add(pref.UId, pref);
+            if(mod.ParameterRefs.Count == 0)
+                mod.LastParameterRefId = 0;
+            else
             mod.LastParameterRefId = mod.ParameterRefs.OrderByDescending(p => p.Id).First().Id;
 
             Coms = new Dictionary<long, ComObject>();
