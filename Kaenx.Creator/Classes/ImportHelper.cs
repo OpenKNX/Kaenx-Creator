@@ -14,6 +14,7 @@ using System.Xml.Linq;
 using System.IO;
 using System.Linq;
 using Kaenx.Creator.Controls;
+using System.Windows;
 
 namespace Kaenx.Creator.Classes
 {
@@ -194,7 +195,7 @@ namespace Kaenx.Creator.Classes
 
         List<string> supportedExtensions = new List<string>() { ".png", ".jpg", ".jpeg" };
 
-        private void ImportBaggages(string manuHex, XElement xele, ZipArchive archive)
+        public void ImportBaggages(string manuHex, XElement xele, ZipArchive archive)
         {
             string tempFolder = Path.Combine(Path.GetTempPath(), "Knx.Creator");
             if(Directory.Exists(tempFolder))
@@ -219,7 +220,8 @@ namespace Kaenx.Creator.Classes
                 
                 string path = $"{bag.Name}{bag.Extension}";
                 if(!string.IsNullOrEmpty(bag.TargetPath)) path = $"{bag.TargetPath}/{path}";
-                ZipArchiveEntry entry = Archive.GetEntry($"M-{manuHex}/Baggages/{path}");
+                ZipArchiveEntry entry = archive.Entries.Single(e => e.FullName.EndsWith($"/Baggages/{path}"));
+                //ZipArchiveEntry entry = Archive.GetEntry($"M-{manuHex}/Baggages/{path}");
                 string tempFile = Path.Combine(tempFolder, bag.Name + bag.Extension);
                 entry.ExtractToFile(tempFile, true);
 
@@ -1024,7 +1026,7 @@ namespace Kaenx.Creator.Classes
                 if(Paras.ContainsKey(paraId))
                     pref.ParameterObject = Paras[paraId];
                 //pref.ParameterObject = vbase.Parameters.Single(p => p.Id == paraId);
-                pref.Name = pref.ParameterObject.Name;
+                pref.Name = pref.ParameterObject?.Name ?? "Zuordnungsfehler";
                 
                 pref.OverwriteText = xref.Attribute("Text") != null;
                 pref.Text = GetTranslation(xref.Attribute("Id").Value, "Text", xref);
@@ -1836,6 +1838,7 @@ namespace Kaenx.Creator.Classes
                             Parent = parent
                         };
                         long comId = long.Parse(GetLastSplit(xele.Attribute("RefId").Value, 2));
+                        if(ComRefs.ContainsKey(comId))
                         dco.ComObjectRefObject = ComRefs[comId];
                         parent.Items.Add(dco);
                         break;
@@ -1844,22 +1847,28 @@ namespace Kaenx.Creator.Classes
                         DynModule dmo = new DynModule() {
                             Parent = parent
                         };
-                        dmo.Id = int.Parse(GetLastSplit(xele.Attribute("Id").Value, 2));
-                        paraId = int.Parse(GetLastSplit(xele.Attribute("RefId").Value, 3));
-                        dmo.ModuleObject = vbase.Modules.Single(m => m.Id == paraId);
-                        foreach(XElement xarg in xele.Elements())
+                        int xid = 0;
+                        if(int.TryParse(GetLastSplit(xele.Attribute("Id").Value, 2), out xid))
                         {
-                            int id1 = int.Parse(GetLastSplit(xarg.Attribute("RefId").Value, 2));
-                            Argument arg = dmo.ModuleObject.Arguments.Single(a => a.Id == id1);
-                            DynModuleArg darg = dmo.Arguments.Single(a => a.Argument == arg);
-                            if(xarg.Attribute("AllocatorRefId") != null)
+                            dmo.Id = xid;
+                            paraId = int.Parse(GetLastSplit(xele.Attribute("RefId").Value, 3));
+                            dmo.ModuleObject = vbase.Modules.Single(m => m.Id == paraId);
+                            foreach(XElement xarg in xele.Elements())
                             {
-                                int id3 = int.Parse(GetLastSplit(xarg.Attribute("AllocatorRefId").Value, 2));
-                                darg.Allocator = vbase.Allocators.Single(a => a.Id == id3);
-                                darg.UseAllocator = true;
-                            } else {
-                                darg.Value = xarg.Attribute("Value").Value;
+                                int id1 = int.Parse(GetLastSplit(xarg.Attribute("RefId").Value, 2));
+                                Argument arg = dmo.ModuleObject.Arguments.Single(a => a.Id == id1);
+                                DynModuleArg darg = dmo.Arguments.Single(a => a.Argument == arg);
+                                if(xarg.Attribute("AllocatorRefId") != null)
+                                {
+                                    int id3 = int.Parse(GetLastSplit(xarg.Attribute("AllocatorRefId").Value, 2));
+                                    darg.Allocator = vbase.Allocators.Single(a => a.Id == id3);
+                                    darg.UseAllocator = true;
+                                } else {
+                                    darg.Value = xarg.Attribute("Value").Value;
+                                }
                             }
+                        } else {
+                            MessageBox.Show("Ein Modul konnte nicht zugeordnet werden.\r\n\r\n" + xele.ToString()[..100]);
                         }
                         parent.Items.Add(dmo);
                         break;
@@ -1947,6 +1956,10 @@ namespace Kaenx.Creator.Classes
                         currentVers.Script = regex.Replace(currentVers.Script, "");
                         parent.Items.Add(dbtn);
                         dbtn.Text = GetTranslation(xele.Attribute("Id").Value, "Text", xele);
+                        break;
+
+                    case "include":
+                        //include von producer überspringen
                         break;
 
                     default:

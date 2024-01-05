@@ -60,9 +60,12 @@ namespace Kaenx.Creator.Controls
             else 
                 mod.Url = diag.Answer;
 
-            mod.Name = mod.Url.Substring(mod.Url.IndexOf('-') + 1);
-            mod.Branch = "master";
+            if(parts.Length > 6)
+                mod.Branch = parts[6];
+            else
+                mod.Branch = "master";
 
+            mod.Name = mod.Url.Substring(mod.Url.IndexOf('-') + 1);
             if(Version.OpenKnxModules.Any(o => o.Name == mod.Name))
             {
                 MessageBox.Show("Es existiert bereits ein OpenKnxModul mit dem Name '" + mod.Name + "'");
@@ -134,6 +137,7 @@ namespace Kaenx.Creator.Controls
 
             MainModel gen = new MainModel();
             gen.Icons = General.Icons;
+            gen.Baggages = General.Baggages;
             
             ImportHelper helper = new ImportHelper();
             helper.SetCurrentVers(currentVers);
@@ -151,7 +155,7 @@ namespace Kaenx.Creator.Controls
                     xele = XElement.Parse(await reader.ReadToEndAsync());
                 }
                 helper.SetNamespace(xele.Name.NamespaceName);
-                ChangeFile(xele, mod);
+                xele = ChangeFile(xele, mod);
 
                 if(mod.HasPart)
                 {
@@ -162,11 +166,11 @@ namespace Kaenx.Creator.Controls
                     {
                         xele2 = XElement.Parse(await reader.ReadToEndAsync());
                     }
-                    ChangeFile(xele2, mod);
+                    xele2 = ChangeFile(xele2, mod);
                     CopyFile(xele, xele2);
                 }
             
-                DoImport(mod, "Share", xele, helper);
+                DoImport(mod, "Share", xele, helper, zip);
                 //Import ParameterTypes, Parameter, ParameterRefs, Coms, ComRefs, Dynamic
             }
 
@@ -180,9 +184,9 @@ namespace Kaenx.Creator.Controls
                     xele = XElement.Parse(await reader.ReadToEndAsync());
                 }
                 helper.SetNamespace(xele.Name.NamespaceName);
-                ChangeFile(xele, mod);
+                xele = ChangeFile(xele, mod);
 
-                DoImport(mod, "Templ", xele, helper);
+                DoImport(mod, "Templ", xele, helper, zip);
                 //helper.ImportParameter(xele.Descendants(XName.Get("Parameters", xele.Name.NamespaceName)).ElementAt(0), xmod);
             }
 
@@ -252,7 +256,7 @@ namespace Kaenx.Creator.Controls
             }
         }
 
-        private void DoImport(OpenKnxModule mod, string name, XElement xele, ImportHelper helper)
+        private void DoImport(OpenKnxModule mod, string name, XElement xele, ImportHelper helper, ZipArchive zip)
         {
             mod.AddState("Importing " + name);
 
@@ -286,6 +290,15 @@ namespace Kaenx.Creator.Controls
                 foreach(Union union in xmod2.Unions)
                     xmod.Unions.Add(union.Copy());
                 helper.SetParas(xmod.Parameters);
+            }
+
+            if(xele.Descendants(XName.Get("Baggages", xele.Name.NamespaceName)).Count() > 0)
+            {
+                mod.AddState("  - Baggages");
+                XElement xbag = xele.Descendants(XName.Get("Baggages", xele.Name.NamespaceName)).ElementAt(0);
+                helper.ImportBaggages("", xbag, zip);
+                
+                //helper.ImportParameterTypes(xele.Descendants(XName.Get("ParameterTypes", xele.Name.NamespaceName)).ElementAt(0), Version, true);
             }
 
             if(name == "Share")
@@ -353,14 +366,22 @@ namespace Kaenx.Creator.Controls
 
             if(name == "Share")
             {
-                int uid = 1;
+                int uid = Version.ParameterTypes.Count > 0 ? (Version.ParameterTypes.OrderByDescending(t => t.UId).First().UId + 1) : 1;
                 foreach(ParameterType ptype in Version.ParameterTypes)
                     ptype.UId = uid++;
             }
         }
 
-        private void ChangeFile(XElement xroot, OpenKnxModule mod)
+        private XElement ChangeFile(XElement xroot, OpenKnxModule mod)
         {
+            string content = xroot.ToString();
+            foreach(XElement xconfig in xroot.Descendants(XName.Get("config", "http://github.com/OpenKNX/OpenKNXproducer")))
+            {
+                content = content.Replace(xconfig.Attribute("name").Value, xconfig.Attribute("value").Value);
+            }
+
+            xroot = XElement.Parse(content);
+
             foreach(XElement xrest in xroot.Descendants(XName.Get("TypeNumber", xroot.Name.NamespaceName)))
             {
                 if(xrest.Attribute("minInclusive").Value == "%N%")
@@ -406,6 +427,17 @@ namespace Kaenx.Creator.Controls
                 xrest.Attribute("RefId").Value = $"M-00FA_BG-{ExportHelper.GetEncoded(xbaggage.Attribute("TargetPath").Value)}-{ExportHelper.GetEncoded(xbaggage.Attribute("Name").Value)}";
                 xbaggage.Attribute("Id").Value = xrest.Attribute("RefId").Value;
             }
+            foreach(XElement xbag in xroot.Descendants(XName.Get("Baggage", xroot.Name.NamespaceName)))
+            {
+                XElement info = xbag.Element(XName.Get("FileInfo", xroot.Name.NamespaceName));
+                info.Attribute("TimeInfo").Value = DateTime.Now.ToUniversalTime().ToString("O");
+            }
+            foreach(XElement xmem in xroot.Descendants(XName.Get("Memory", xroot.Name.NamespaceName)))
+            {
+                xmem.Attribute("CodeSegment").Value = "RS-04-0000";
+            }
+
+            
 
             Regex regex = new Regex("%[A-Z]+%");
             List<XElement> elements = new List<XElement>();
@@ -459,9 +491,10 @@ namespace Kaenx.Creator.Controls
                     {
                         string xwhen = xele.ToString();
                         if(xwhen.Length > 300)
-                            xwhen = xwhen.Substring(0, 100);
-                        MessageBox.Show("Test darf kein '%xxx%' enthalten und wird daher nicht importiert.\r\n\r\n" + xwhen);
-                        xele.Remove();
+                            xwhen = xwhen[..100];
+                        MessageBox.Show("Test darf kein '%xxx%' enthalten und wird daher zurückgesetzt.\r\n\r\n" + xwhen);
+                        //xele.Remove();
+                        xele.Attribute("test").Value = "";
                     }
                 }
                 
@@ -513,6 +546,7 @@ namespace Kaenx.Creator.Controls
             {
                 xblock.Attribute("Id").Value = "_PS-" + counter++;
             }
+            return xroot;
         }
 
         private Module CreateModule(string name)
