@@ -365,8 +365,8 @@ namespace Kaenx.Creator.Classes {
                                 }
                             }
                         }
-                    } catch {
-                        actions.Add(new PublishAction() { Text = "\t" + Properties.Messages.check_ver_loadprod_failed, State = PublishState.Fail });
+                    } catch(Exception ex) {
+                        actions.Add(new PublishAction() { Text = $"\t{Properties.Messages.check_ver_loadprod_failed} ({ex.Message})", State = PublishState.Fail });
                     }
                 }
             }
