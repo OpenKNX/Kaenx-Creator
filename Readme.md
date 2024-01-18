@@ -1,12 +1,12 @@
 ## Languages
-This application is availible in: English, Deutsch, French
+This application is available in: English, Deutsch, French
 You want to contribute and add a new Language?  
 [![Crowdin](https://badges.crowdin.net/kaenx-creator/localized.svg)](https://crowdin.com/project/kaenx-creator) <- Click here   
 If your language isn't listed create an issue.  
 
 ## Wiki
 There is a detailed [Wiki](https://github.com/OpenKNX/Kaenx-Creator/wiki).  
-It's availible only in english for now.
+It's available only in english for now.
 
 # Kaenx-Creator
 Kaenx-Creator ist eine Open Source Entwicklungstol um eigene Produktdatenbanken für seine DIY-Geräte  
@@ -23,7 +23,7 @@ Es gibt 2 Möglichkeiten die Anwendung zu installieren:
  - Selbst kompilieren  
     Dazu dieses Repo lokal klonen und mit Visual Studio oder auch Visual Studio Code öffnen  
     Zusätzlich wird das Repo https://github.com/thewhobox/Kaenx.DataContext benötigt.
-    Danach kann die Anwendung debugt oder selbst ein Release erstellt werden.
+    Danach kann die Anwendung debugged oder selbst ein Release erstellt werden.
 
 ## Changelog
 Eine Übersicht über die Änderungen finden Sie [hier](/ChangeLog).
