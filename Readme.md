@@ -1,7 +1,12 @@
+![Commit](https://badgen.net/github/last-commit/openknx/kaenx-creator)
+![Release](https://badgen.net/github/release/openknx/kaenx-creator)
+[![CodeFactor](https://www.codefactor.io/repository/github/openknx/kaenx-creator/badge)](https://www.codefactor.io/repository/github/openknx/kaenx-creator)
+[![Crowdin](https://badges.crowdin.net/kaenx-creator/localized.svg)](https://crowdin.com/project/kaenx-creator)
+
 ## Languages
 This application is available in: English, Deutsch, French
 You want to contribute and add a new Language?  
-[![Crowdin](https://badges.crowdin.net/kaenx-creator/localized.svg)](https://crowdin.com/project/kaenx-creator) <- Click here   
+Visit [Crowdin](https://crowdin.com/project/kaenx-creator).  
 If your language isn't listed create an issue.  
 
 ## Wiki
