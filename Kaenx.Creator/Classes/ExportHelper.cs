@@ -168,6 +168,17 @@ namespace Kaenx.Creator.Classes
 
             XElement temp;
             ExportSegments(ver, xunderapp);
+            
+            StringBuilder headers = new StringBuilder();
+            headers.AppendLine("#pragma once");
+            headers.AppendLine();
+
+            headers.AppendLine(@"#define paramDelay(time) (uint32_t)( \
+            (time & 0xC000) == 0xC000 ? (time & 0x3FFF) * 100 : \
+            (time & 0xC000) == 0x0000 ? (time & 0x3FFF) * 1000 : \
+            (time & 0xC000) == 0x4000 ? (time & 0x3FFF) * 60000 : \
+            (time & 0xC000) == 0x8000 ? ((time & 0x3FFF) > 1000 ? 3600000 : \
+                                            (time & 0x3FFF) * 3600000 ) : 0 )");
 
             #region ParamTypes/Baggages
             Debug.WriteLine($"Exportiere ParameterTypes: {ver.ParameterTypes.Count}x");
@@ -257,6 +268,8 @@ namespace Kaenx.Creator.Classes
                                 if(!iconsApp.Contains(enu.IconObject))
                                     iconsApp.Add(enu.IconObject);
                             }
+
+                            headers.AppendLine($"#define PT_{type.Name}_{enu.Name} {enu.Value}");
                         }
                         break;
 
@@ -353,21 +366,8 @@ namespace Kaenx.Creator.Classes
                         baggagesManu.Add(bag);
                 }
             }
-
             #endregion
 
-            StringBuilder headers = new StringBuilder();
-            headers.AppendLine("#pragma once");
-            headers.AppendLine();
-
-            headers.AppendLine(@"#define paramDelay(time) (uint32_t)( \
-            (time & 0xC000) == 0xC000 ? (time & 0x3FFF) * 100 : \
-            (time & 0xC000) == 0x0000 ? (time & 0x3FFF) * 1000 : \
-            (time & 0xC000) == 0x4000 ? (time & 0x3FFF) * 60000 : \
-            (time & 0xC000) == 0x8000 ? ((time & 0x3FFF) > 1000 ? 3600000 : \
-                                            (time & 0x3FFF) * 3600000 ) : 0 )");
-
-            
             headers.AppendLine("//--------------------Allgemein---------------------------");
             if(general.IsOpenKnx)
             {
@@ -594,8 +594,6 @@ namespace Kaenx.Creator.Classes
                         size += dmod.ModuleObject.Memory.Sections[dmod.ModuleObject.Memory.Sections.Count - 1].Bytes.Count;
                     modStartPara.Add(prefix, (long.Parse(dargp.Value), size));
                 }
-                
-
                 
                 DynModuleArg dargc = dmod.Arguments.SingleOrDefault(a => a.ArgumentId == dmod.ModuleObject.ComObjectBaseNumberUId);
                 if(dargc != null)
