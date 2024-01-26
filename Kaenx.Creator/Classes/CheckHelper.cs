@@ -273,6 +273,12 @@ namespace Kaenx.Creator.Classes {
                         break;
                     }
 
+                    case ParameterTypes.Time:
+                    {
+                        //TODO check
+                        break;
+                    }
+
                     default:
                         actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_unknown, ptype.Name, ptype.UId), State = PublishState.Fail, Item = ptype });
                         break;

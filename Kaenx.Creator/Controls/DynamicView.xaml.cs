@@ -356,6 +356,7 @@ namespace Kaenx.Creator.Controls
             {
                 string copyType = _copyItem.GetType().ToString();
                 copyType = copyType.Substring(copyType.LastIndexOf('.') + 1);
+                if(copyType.StartsWith("DynChoose")) copyType = copyType.Substring(0, 9);
                 (menu.Items[15] as MenuItem).IsEnabled = SubTypes[type].Contains(copyType);
             } else {
                 (menu.Items[15] as MenuItem).IsEnabled = false;

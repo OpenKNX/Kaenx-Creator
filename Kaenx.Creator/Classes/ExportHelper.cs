@@ -332,6 +332,15 @@ namespace Kaenx.Creator.Classes
                             xcontent.SetAttributeValue("DisplayTheYear", "false");
                         break;
 
+                    case ParameterTypes.Time:
+                        xcontent = new XElement(Get("TypeTime"));
+                        xcontent.SetAttributeValue("Unit", type.Increment);
+                        if(!string.IsNullOrEmpty(type.UIHint))
+                            xcontent.SetAttributeValue("UIHint", type.UIHint);
+                        xcontent.SetAttributeValue("minInclusive", type.Min.Replace(",", "."));
+                        xcontent.SetAttributeValue("maxInclusive", type.Max.Replace(",", "."));
+                        break;
+
                     default:
                         throw new Exception("Unbekannter Parametertyp: " + type.Type);
                 }

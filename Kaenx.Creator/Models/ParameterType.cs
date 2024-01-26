@@ -34,6 +34,7 @@ namespace Kaenx.Creator.Models
             set { 
                 _type = value;
                 UIHint = "";
+                IsSizeManual = false;
                 switch(value)
                 {
                     case ParameterTypes.Color:
@@ -61,6 +62,14 @@ namespace Kaenx.Creator.Models
                         UIHint = "None";
                         SizeInBit = 8*4;
                         break;
+                    case ParameterTypes.Time:
+                        UIHint = "Seconds";
+                        SizeInBit = 8;
+                        IsSizeManual = true;
+                        break;
+                    case ParameterTypes.Text:
+                        IsSizeManual = true;
+                        break;
                     default:
                         SizeInBit = 8;
                         break;
@@ -74,7 +83,6 @@ namespace Kaenx.Creator.Models
                 Enums.Clear();
                 BaggageObject = null;
                 TranslateEnums = true;
-                IsSizeManual = _type == ParameterTypes.Text;
                 Changed("Type");
             }
         }
@@ -201,6 +209,7 @@ namespace Kaenx.Creator.Models
         NumberInt,
         Picture,
         RawData,
-        Text
+        Text,
+        Time
     }
 }
