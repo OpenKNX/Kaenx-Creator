@@ -39,15 +39,13 @@ namespace Kaenx.Creator
             set { _general = value; Changed("General"); }
         }
 
-        private ObservableCollection<Models.MaskVersion> bcus;
         public ObservableCollection<Models.MaskVersion> BCUs
         {
-            get { return bcus; }
-            set { bcus = value; Changed("BCUs"); }
+            get { return Kaenx.Creator.Classes.Helper.BCUs; }
         }
 
         public ObservableCollection<Models.DataPointType> DPTs {
-            get { return Kaenx.Creator.Models.Helper.DPTs; }
+            get { return Kaenx.Creator.Classes.Helper.DPTs; }
         }
 
         public ObservableCollection<Models.ExportItem> Exports { get; set; } = new ObservableCollection<Models.ExportItem>();
@@ -73,8 +71,8 @@ namespace Kaenx.Creator
                 System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo(lang);
             InitializeComponent();
             this.DataContext = this;
-            LoadBcus();
-            Kaenx.Creator.Models.Helper.LoadDpts();
+            Kaenx.Creator.Classes.Helper.LoadBcus();
+            Kaenx.Creator.Classes.Helper.LoadDpts();
             CheckLangs();
             CheckOutput();
             CheckEtsVersions();
@@ -143,7 +141,7 @@ namespace Kaenx.Creator
 
         private void CheckEtsVersions() {
             foreach(Models.EtsVersion v in EtsVersions)
-                v.IsEnabled = !string.IsNullOrEmpty(GetAssemblyPath(v.Number));
+                v.IsEnabled = !string.IsNullOrEmpty(Kaenx.Creator.Classes.Helper.GetAssemblyPath(v.Number));
             NamespaceSelection.ItemsSource = EtsVersions;
         }
 
@@ -216,7 +214,7 @@ namespace Kaenx.Creator
 
         private void ClickNew(object sender, RoutedEventArgs e)
         {
-            General = new Models.MainModel() { ImportVersion = Kaenx.Creator.Models.Helper.CurrentVersion, Guid = Guid.NewGuid().ToString() };
+            General = new Models.MainModel() { ImportVersion = Kaenx.Creator.Classes.Helper.CurrentVersion, Guid = Guid.NewGuid().ToString() };
             var currentLang = System.Threading.Thread.CurrentThread.CurrentUICulture.IetfLanguageTag;
             if(!ImportHelper._langTexts.ContainsKey(currentLang))
                 if(currentLang.Contains("-"))
@@ -255,83 +253,6 @@ namespace Kaenx.Creator
         private void Changed(string name)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-
-
-        private void LoadBcus()
-        {
-            string jsonPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "maskversion.json");
-            string xmlPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "maskversion.xml");
-            if (System.IO.File.Exists(jsonPath))
-            {
-                BCUs = Newtonsoft.Json.JsonConvert.DeserializeObject<ObservableCollection<Models.MaskVersion>>(System.IO.File.ReadAllText(jsonPath));
-            } else
-            {
-                BCUs = new ObservableCollection<Models.MaskVersion>();
-                XDocument xdoc = XDocument.Load(xmlPath);
-                foreach(XElement xmask in xdoc.Root.Elements())
-                {
-                    Models.MaskVersion mask = new Models.MaskVersion();
-                    mask.Id = xmask.Attribute("Id").Value;
-                    mask.MediumTypes = xmask.Attribute("MediumTypeRefId").Value;
-                    if(xmask.Attribute("OtherMediumTypeRefId") != null) mask.MediumTypes += " " + xmask.Attribute("OtherMediumTypeRefId").Value;
-
-                    string eleStr = xmask.ToString();
-                    if (eleStr.Contains("<Procedure ProcedureType=\"Load\""))
-                    {
-                        XElement prodLoad = xmask.Descendants(XName.Get("Procedure")).First(p => p.Attribute("ProcedureType")?.Value == "Load");
-                        if (prodLoad.ToString().Contains("<LdCtrlMerge"))
-                            mask.Procedure = Models.ProcedureTypes.Merged;
-                        else
-                            mask.Procedure = Models.ProcedureTypes.Default;
-                    } else
-                    {
-                        mask.Procedure = Models.ProcedureTypes.Product;
-                    }
-
-
-                    if(mask.Procedure != Models.ProcedureTypes.Product)
-                    {
-                        if (eleStr.Contains("<LdCtrlAbsSegment"))
-                        {
-                            mask.Memory = Models.MemoryTypes.Absolute;
-                        }
-                        else if (eleStr.Contains("<LdCtrlWriteRelMem"))
-                        {
-                            mask.Memory = Models.MemoryTypes.Relative;
-                        }
-                        else if (eleStr.Contains("<LdCtrlWriteMem"))
-                        {
-                            mask.Memory = Models.MemoryTypes.Absolute;
-                        }
-                        else
-                        {
-                            continue;
-                        }
-                    }
-
-
-                    if(xmask.Descendants(XName.Get("Procedures")).Count() > 0) {
-                        foreach(XElement xproc in xmask.Element(XName.Get("HawkConfigurationData")).Element(XName.Get("Procedures")).Elements()) {
-                            Models.Procedure proc = new Models.Procedure();
-                            proc.Type = xproc.Attribute("ProcedureType").Value;
-                            proc.SubType = xproc.Attribute("ProcedureSubType").Value;
-
-                            StringBuilder sb = new StringBuilder();
-
-                            foreach (XNode node in xproc.Nodes())
-                                sb.Append(node.ToString() + "\r\n");
-
-                            proc.Controls = sb.ToString();
-                            mask.Procedures.Add(proc);
-                        }
-                    }
-
-                    BCUs.Add(mask);
-                }
-
-                System.IO.File.WriteAllText(jsonPath, Newtonsoft.Json.JsonConvert.SerializeObject(BCUs));
-            }
         }
 
         #region Clicks
@@ -404,7 +325,7 @@ namespace Kaenx.Creator
 */
         private void ClickAddMemory(object sender, RoutedEventArgs e)
         {
-            General.Application.Memories.Add(new Models.Memory() { Type = General.Info.Mask.Memory, UId = AutoHelper.GetNextFreeUId(General.Application.Memories) });
+            General.Application.Memories.Add(new Models.Memory() { Type = General.Info.Mask.Memory, UId = Kaenx.Creator.Classes.Helper.GetNextFreeUId(General.Application.Memories) });
         }
 
         private void ClickRemoveMemory(object sender, RoutedEventArgs e)
@@ -427,7 +348,7 @@ namespace Kaenx.Creator
         {
             if(MessageBoxResult.Cancel == MessageBox.Show(Properties.Messages.main_open_viewer, Properties.Messages.main_open_viewer_title, MessageBoxButton.OKCancel, MessageBoxImage.Question)) return;
             
-            AutoHelper.CheckIds(General.Application);
+            Kaenx.Creator.Classes.Helper.CheckIds(General.Application);
 
             ObservableCollection<Models.PublishAction> actions = new ObservableCollection<Models.PublishAction>();
             CheckHelper.CheckVersion(General, actions);
@@ -696,7 +617,7 @@ namespace Kaenx.Creator
 
         private void ClickSave(object sender, RoutedEventArgs e)
         {
-            General.ImportVersion = Kaenx.Creator.Models.Helper.CurrentVersion;
+            General.ImportVersion = Kaenx.Creator.Classes.Helper.CurrentVersion;
             DoSave();
         }
 
@@ -721,7 +642,7 @@ namespace Kaenx.Creator
 
         private void ClickSaveAs(object sender, RoutedEventArgs e)
         {
-            General.ImportVersion = Kaenx.Creator.Models.Helper.CurrentVersion;
+            General.ImportVersion = Kaenx.Creator.Classes.Helper.CurrentVersion;
             SaveFileDialog diag = new SaveFileDialog();
             diag.FileName = General.ProjectName;
             diag.Title = Properties.Messages.main_project_save_title;
@@ -751,7 +672,7 @@ namespace Kaenx.Creator
 
         private void ClickSaveTemplate(object sender, RoutedEventArgs e)
         {
-            General.ImportVersion = Kaenx.Creator.Models.Helper.CurrentVersion;
+            General.ImportVersion = Kaenx.Creator.Classes.Helper.CurrentVersion;
             while(true) {
                 Controls.PromptDialog diag = new Controls.PromptDialog(Properties.Messages.main_save_template, Properties.Messages.main_save_template_title);
                 if(diag.ShowDialog() == false) {
@@ -820,11 +741,11 @@ namespace Kaenx.Creator
                 VersionToOpen = int.Parse(match.Groups[1].Value);
             }
 
-            if(VersionToOpen < Kaenx.Creator.Models.Helper.CurrentVersion && MessageBox.Show(Properties.Messages.main_project_open_old, Properties.Messages.main_project_open_format, MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+            if(VersionToOpen < Kaenx.Creator.Classes.Helper.CurrentVersion && MessageBox.Show(Properties.Messages.main_project_open_old, Properties.Messages.main_project_open_format, MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
             {
-                general = Kaenx.Creator.Models.Helper.CheckImportVersion(general, VersionToOpen);
+                general = Kaenx.Creator.Classes.Helper.CheckImportVersion(general, VersionToOpen);
             }
-            if(VersionToOpen > Kaenx.Creator.Models.Helper.CurrentVersion)
+            if(VersionToOpen > Kaenx.Creator.Classes.Helper.CurrentVersion)
             {
                 MessageBox.Show(Properties.Messages.main_project_open_new, Properties.Messages.main_project_open_format, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
@@ -836,27 +757,11 @@ namespace Kaenx.Creator
                 MessageBox.Show(Properties.Messages.main_project_open_error, Properties.Messages.main_project_open_format, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-            Kaenx.Creator.Models.Helper.LoadVersion(General, General.Application);
-            General.ImportVersion = Kaenx.Creator.Models.Helper.CurrentVersion;
-
-            if (!string.IsNullOrEmpty(General.Info._maskId))
-            {
-                General.Info.Mask = BCUs.Single(bcu => bcu.Id == General.Info._maskId);
-            }
-
-            SetSubCatalogItems(General.Catalog[0]);
+            Kaenx.Creator.Classes.Helper.LoadVersion(General, General.Application);
+            General.ImportVersion = Kaenx.Creator.Classes.Helper.CurrentVersion;
 
             SetButtons(true);
             MenuSave.IsEnabled = true;
-        }
-
-        private void SetSubCatalogItems(Models.CatalogItem parent)
-        {
-            foreach(Models.CatalogItem item in parent.Items)
-            {
-                item.Parent = parent;
-                SetSubCatalogItems(item);
-            }
         }
 
         private void SetButtons(bool enable)
@@ -944,8 +849,8 @@ namespace Kaenx.Creator
                     File.Copy(filePath, filePath.Replace(sourcePath, targetPath).Replace(".mtxml", ".xml"));
                 }
 
-                string assPath = GetAssemblyPath(ns);
-                ExportHelper helper = null;//todo = new ExportHelper(General, assPath, Path.Combine(sourcePath, "sign.knxprod"));
+                string assPath = Kaenx.Creator.Classes.Helper.GetAssemblyPath(ns);
+                Kaenx.Creator.Classes.ExportHelper helper = null;//todo = new Kaenx.Creator.Classes.ExportHelper(General, assPath, Path.Combine(sourcePath, "sign.knxprod"));
                 helper.SetNamespace(ns);
                 helper.SignOutput(targetPath);
 
@@ -969,17 +874,17 @@ namespace Kaenx.Creator
             {
                 _general = new Models.MainModel();
                 _general.Catalog.Add(new Models.CatalogItem() { Name = Properties.Messages.main_def_cat });
-                ImportHelper helper = new ImportHelper(dialog.FileName, bcus);
+                ImportHelper helper = new ImportHelper(dialog.FileName, Kaenx.Creator.Classes.Helper.BCUs);
                 switch(prod)
                 {
                     case "knxprod":
-                        helper.StartZip(General, Kaenx.Creator.Models.Helper.DPTs);
+                        helper.StartZip(General, Kaenx.Creator.Classes.Helper.DPTs);
                         SetButtons(true);
                         Changed("General");
                         break;
 
                     case "xml":
-                        helper.StartXml(_general, Kaenx.Creator.Models.Helper.DPTs);
+                        helper.StartXml(_general, Kaenx.Creator.Classes.Helper.DPTs);
                         SetButtons(true);
                         Changed("General");
                         break;
@@ -1015,53 +920,8 @@ namespace Kaenx.Creator
         private void ClickCalcHeatmap(object sender, RoutedEventArgs e)
         {
             Models.Memory mem = (sender as Button).DataContext as Models.Memory;
-            AutoHelper.MemoryCalculation(General.Application, mem);
+            Kaenx.Creator.Classes.MemoryHelper.MemoryCalculation(General.Application, mem);
             
-        }
-
-        private string GetAssemblyPath(int ns)
-        {
-            List<string> dirs = new List<string>()
-            {
-                @"C:\Program Files (x86)\ETS6",
-                @"C:\Program Files (x86)\ETS5",
-                @"C:\Program Files (x86)\ETS4",
-                @"C:\Program Files\ETS6",
-                @"C:\Program Files\ETS5",
-                @"C:\Program Files\ETS4"
-            };
-
-            
-            if(Directory.Exists(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CV"))) {
-                foreach(string path in Directory.GetDirectories(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CV")))
-                    dirs.Insert(0, path);
-            }
-
-            foreach(string path in dirs)
-            {
-                if(!File.Exists(System.IO.Path.Combine(path, "Knx.Ets.XmlSigning.dll"))) continue;
-                string versionInfo = FileVersionInfo.GetVersionInfo(System.IO.Path.Combine(path, "Knx.Ets.XmlSigning.dll")).FileVersion.Substring(0,3);
-                
-                if(versionInfo == "6.1" && ns < 23)
-                    return path;
-
-                if(versionInfo == "6.0" && ns < 22)
-                    return path;
-
-                if(versionInfo == "5.7" && ns == 20)
-                    return path;
-
-                if(versionInfo == "5.6" && ns == 14)
-                    return path;
-
-                if(versionInfo == "5.1" && ns == 13)
-                    return path;
-
-                if(versionInfo == "4.0" && ns == 11)
-                    return path;
-            }
-
-            return "";
         }
 
         private void TabChanged(object sender, SelectionChangedEventArgs e)
@@ -1119,7 +979,7 @@ namespace Kaenx.Creator
             PublishActions.Clear();
             await Task.Delay(1000);
 
-            string assPath = GetAssemblyPath(General.Application.NamespaceVersion);
+            string assPath = Kaenx.Creator.Classes.Helper.GetAssemblyPath(General.Application.NamespaceVersion);
             if(string.IsNullOrEmpty(assPath))
             {
                 MessageBox.Show($"Für den Namespace {General.Application.NamespaceVersion} wurde keine passende ETS installation gefunden");
@@ -1144,14 +1004,14 @@ namespace Kaenx.Creator
             await Task.Delay(1000);
             
             string headerPath = Path.Combine(Path.GetDirectoryName(filePath), "knxprod.h");
-            ExportHelper helper = new ExportHelper(General, assPath, filePath, headerPath);
+            Kaenx.Creator.Classes.ExportHelper helper = new Kaenx.Creator.Classes.ExportHelper(General, assPath, filePath, headerPath);
             bool success = helper.ExportEts(PublishActions);
             if(!success)
             {
                 MessageBox.Show(Properties.Messages.main_export_error, Properties.Messages.main_export_title);
                 return;
             }
-            helper.SignOutput(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Output", "Temp"));
+            await helper.SignOutput(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Output", "Temp"));
             PublishActions.Add(new Models.PublishAction() { Text = Properties.Messages.main_export_success, State = Models.PublishState.Success } );
         }
 

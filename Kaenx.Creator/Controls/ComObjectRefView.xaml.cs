@@ -69,7 +69,7 @@ namespace Kaenx.Creator.Controls
 
         private void ClickAdd(object sender, RoutedEventArgs e)
         {
-            Models.ComObjectRef cref = new Models.ComObjectRef() { UId = AutoHelper.GetNextFreeUId(Module.ComObjectRefs) };
+            Models.ComObjectRef cref = new Models.ComObjectRef() { UId = Kaenx.Creator.Classes.Helper.GetNextFreeUId(Module.ComObjectRefs) };
             foreach(Models.Language lang in Version.Languages) {
                 cref.Text.Add(new Models.Translation(lang, ""));
                 cref.FunctionText.Add(new Models.Translation(lang, ""));
@@ -123,7 +123,7 @@ namespace Kaenx.Creator.Controls
             Models.ComObjectRef ele = (sender as Button).DataContext as Models.ComObjectRef;
             long oldId = ele.Id;
             ele.Id = -1;
-            ele.Id = AutoHelper.GetNextFreeId(Module, "ComObjectRefs");
+            ele.Id = Kaenx.Creator.Classes.Helper.GetNextFreeId(Module, "ComObjectRefs");
             if(ele.Id == oldId)
                 MessageBox.Show(Properties.Messages.prompt_auto_error, Properties.Messages.prompt_auto_error_title);
         }

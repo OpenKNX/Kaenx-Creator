@@ -52,7 +52,7 @@ namespace Kaenx.Creator.Controls
 
             OpenKnxModule mod = new OpenKnxModule()
             {
-                UId = AutoHelper.GetNextFreeUId(Version.OpenKnxModules)
+                UId = Kaenx.Creator.Classes.Helper.GetNextFreeUId(Version.OpenKnxModules)
             };
 
             if(parts.Length > 5)
@@ -142,7 +142,7 @@ namespace Kaenx.Creator.Controls
             ImportHelper helper = new ImportHelper();
             helper.SetCurrentVers(currentVers);
             helper.SetGeneral(gen);
-            helper.SetDPTs(Kaenx.Creator.Models.Helper.DPTs);
+            helper.SetDPTs(Kaenx.Creator.Classes.Helper.DPTs);
             mod.NumChannels.Clear();
 
             if(mod.HasShare)
@@ -553,14 +553,14 @@ namespace Kaenx.Creator.Controls
         {
             Models.Module mod = new Models.Module() { 
                 Name = name, 
-                UId = AutoHelper.GetNextFreeUId(Version.Modules), 
+                UId = Kaenx.Creator.Classes.Helper.GetNextFreeUId(Version.Modules), 
                 IsOpenKnxModule = true,
                 IsParameterRefAuto = false,
                 IsComObjectRefAuto = false
             };
-            mod.Arguments.Add(new Models.Argument() { Name = "argParas", UId = AutoHelper.GetNextFreeUId(mod.Arguments) });
-            mod.Arguments.Add(new Models.Argument() { Name = "argComs", UId = AutoHelper.GetNextFreeUId(mod.Arguments) });
-            mod.Arguments.Add(new Models.Argument() { Name = "argChan", UId = AutoHelper.GetNextFreeUId(mod.Arguments) });
+            mod.Arguments.Add(new Models.Argument() { Name = "argParas", UId = Kaenx.Creator.Classes.Helper.GetNextFreeUId(mod.Arguments) });
+            mod.Arguments.Add(new Models.Argument() { Name = "argComs", UId = Kaenx.Creator.Classes.Helper.GetNextFreeUId(mod.Arguments) });
+            mod.Arguments.Add(new Models.Argument() { Name = "argChan", UId = Kaenx.Creator.Classes.Helper.GetNextFreeUId(mod.Arguments) });
             mod.ParameterBaseOffset = mod.Arguments[0];
             mod.ComObjectBaseNumber = mod.Arguments[1];
             mod.Dynamics.Add(new Models.Dynamic.DynamicModule());

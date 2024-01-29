@@ -78,7 +78,7 @@ namespace Kaenx.Creator.Controls
         
         private void ClickAdd(object sender, RoutedEventArgs e)
         {
-            Models.ComObject com = new Models.ComObject() { UId = AutoHelper.GetNextFreeUId(Module.ComObjects) };
+            Models.ComObject com = new Models.ComObject() { UId = Kaenx.Creator.Classes.Helper.GetNextFreeUId(Module.ComObjects) };
             foreach(Models.Language lang in Version.Languages) {
                 com.Text.Add(new Models.Translation(lang, "Dummy"));
                 com.FunctionText.Add(new Models.Translation(lang, "Dummy"));
@@ -88,7 +88,7 @@ namespace Kaenx.Creator.Controls
             ComobjectList.SelectedItem = com;
 
             if(Module.IsComObjectRefAuto){
-                Models.ComObjectRef cref = new Models.ComObjectRef(com) { UId = AutoHelper.GetNextFreeUId(Module.ComObjectRefs) };
+                Models.ComObjectRef cref = new Models.ComObjectRef(com) { UId = Kaenx.Creator.Classes.Helper.GetNextFreeUId(Module.ComObjectRefs) };
                 foreach(Models.Language lang in Version.Languages) {
                     cref.Text.Add(new Models.Translation(lang, ""));
                     cref.FunctionText.Add(new Models.Translation(lang, ""));
@@ -102,13 +102,13 @@ namespace Kaenx.Creator.Controls
             Models.ComObject com = ComobjectList.SelectedItem as Models.ComObject;
             Models.ComObject clonedCom = com.Copy();
             clonedCom.Id = -1;
-            clonedCom.UId = AutoHelper.GetNextFreeUId(Module.ComObjects);
+            clonedCom.UId = Kaenx.Creator.Classes.Helper.GetNextFreeUId(Module.ComObjects);
 
             Module.ComObjects.Add(clonedCom);
 
             if (Module.IsComObjectRefAuto)
             {
-                Models.ComObjectRef cref = new Models.ComObjectRef(clonedCom) { UId = AutoHelper.GetNextFreeUId(Module.ComObjectRefs) };
+                Models.ComObjectRef cref = new Models.ComObjectRef(clonedCom) { UId = Kaenx.Creator.Classes.Helper.GetNextFreeUId(Module.ComObjectRefs) };
                 foreach (Models.Language lang in Version.Languages)
                 {
                     cref.Text.Add(new Models.Translation(lang, ""));
@@ -180,7 +180,7 @@ namespace Kaenx.Creator.Controls
             Models.ComObject ele = (sender as Button).DataContext as Models.ComObject;
             long oldId = ele.Id;
             ele.Id = -1;
-            ele.Id = AutoHelper.GetNextFreeId(Module, "ComObjects");
+            ele.Id = Kaenx.Creator.Classes.Helper.GetNextFreeId(Module, "ComObjects");
             if(ele.Id == oldId)
                 MessageBox.Show(Properties.Messages.prompt_auto_error, Properties.Messages.prompt_auto_error_title);
         }

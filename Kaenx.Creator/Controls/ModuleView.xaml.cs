@@ -109,10 +109,10 @@ namespace Kaenx.Creator.Controls
 
         private void ClickAddModule(object sender, RoutedEventArgs e)
         {
-            Models.Module mod = new Models.Module() { UId = AutoHelper.GetNextFreeUId(CurrentModule.Modules)};
-            mod.Arguments.Add(new Models.Argument() { Name = "argParas", UId = AutoHelper.GetNextFreeUId(mod.Arguments) });
-            mod.Arguments.Add(new Models.Argument() { Name = "argComs", UId = AutoHelper.GetNextFreeUId(mod.Arguments) });
-            //mod.Arguments.Add(new Models.Argument() { Name = "argChan", UId = AutoHelper.GetNextFreeUId(mod.Arguments) });
+            Models.Module mod = new Models.Module() { UId = Kaenx.Creator.Classes.Helper.GetNextFreeUId(CurrentModule.Modules)};
+            mod.Arguments.Add(new Models.Argument() { Name = "argParas", UId = Kaenx.Creator.Classes.Helper.GetNextFreeUId(mod.Arguments) });
+            mod.Arguments.Add(new Models.Argument() { Name = "argComs", UId = Kaenx.Creator.Classes.Helper.GetNextFreeUId(mod.Arguments) });
+            //mod.Arguments.Add(new Models.Argument() { Name = "argChan", UId = Kaenx.Creator.Classes.Helper.GetNextFreeUId(mod.Arguments) });
             mod.ParameterBaseOffset = mod.Arguments[0];
             mod.ComObjectBaseNumber = mod.Arguments[1];
             mod.Dynamics.Add(new Models.Dynamic.DynamicModule());

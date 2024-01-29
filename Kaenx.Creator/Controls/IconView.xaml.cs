@@ -37,7 +37,7 @@ namespace Kaenx.Creator.Controls
             if(diag.ShowDialog() == true)
             {
                 Icon icon = new Icon();
-                icon.UId = AutoHelper.GetNextFreeUId(General.Icons);
+                icon.UId = Kaenx.Creator.Classes.Helper.GetNextFreeUId(General.Icons);
                 icon.Data = System.IO.File.ReadAllBytes(diag.FileName);
                 icon.Name = Path.GetFileNameWithoutExtension(diag.FileName);
 
@@ -104,7 +104,7 @@ namespace Kaenx.Creator.Controls
                     {
                         Icon icon = new Icon()
                         {
-                            UId = AutoHelper.GetNextFreeUId(General.Icons),
+                            UId = Kaenx.Creator.Classes.Helper.GetNextFreeUId(General.Icons),
                             Name = entry.Name.Substring(0, entry.Name.LastIndexOf("."))
                         };
 

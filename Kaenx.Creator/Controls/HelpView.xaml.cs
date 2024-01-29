@@ -29,7 +29,7 @@ namespace Kaenx.Creator.Controls
         private void ClickAdd(object sender, RoutedEventArgs e)
         {
             Helptext msg = new Helptext() { 
-                UId = AutoHelper.GetNextFreeUId(Version.Helptexts),
+                UId = Kaenx.Creator.Classes.Helper.GetNextFreeUId(Version.Helptexts),
                 Name = "dummy" 
             };
             Version.Helptexts.Add(msg);

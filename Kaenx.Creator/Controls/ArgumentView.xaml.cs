@@ -24,7 +24,7 @@ namespace Kaenx.Creator.Controls
 
         private void ClickAdd(object sender, RoutedEventArgs e)
         {
-            Module.Arguments.Add(new Models.Argument() { UId = AutoHelper.GetNextFreeUId(Module.Arguments)});
+            Module.Arguments.Add(new Models.Argument() { UId = Kaenx.Creator.Classes.Helper.GetNextFreeUId(Module.Arguments)});
         }
 
         private void ClickRemove(object sender, RoutedEventArgs e)

@@ -74,7 +74,7 @@ namespace Kaenx.Creator.Controls
 
         private void ClickAddParamType(object sender, RoutedEventArgs e)
         {
-            ParameterType type = new ParameterType() { UId = AutoHelper.GetNextFreeUId(Version.ParameterTypes) };
+            ParameterType type = new ParameterType() { UId = Kaenx.Creator.Classes.Helper.GetNextFreeUId(Version.ParameterTypes) };
             Version.ParameterTypes.Add(type);
             ListParamTypes.ScrollIntoView(type);
             ListParamTypes.SelectedItem = type;

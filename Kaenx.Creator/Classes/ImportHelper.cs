@@ -244,7 +244,7 @@ namespace Kaenx.Creator.Classes
             {
                 Icon icon = new Icon()
                 {
-                    UId = AutoHelper.GetNextFreeUId(_general.Icons),
+                    UId = Kaenx.Creator.Classes.Helper.GetNextFreeUId(_general.Icons),
                     Name = entry.Name.Substring(0, entry.Name.LastIndexOf("."))
                 };
 

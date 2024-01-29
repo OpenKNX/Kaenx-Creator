@@ -34,7 +34,7 @@ namespace Kaenx.Creator.Controls
             if(diag.ShowDialog() == true)
             {
                 Baggage bag = new Baggage();
-                bag.UId = AutoHelper.GetNextFreeUId(General.Baggages);
+                bag.UId = Kaenx.Creator.Classes.Helper.GetNextFreeUId(General.Baggages);
                 bag.Data = AutoHelper.GetFileBytes(diag.FileName);
                 bag.Extension = Path.GetExtension(diag.FileName).ToLower();
                 

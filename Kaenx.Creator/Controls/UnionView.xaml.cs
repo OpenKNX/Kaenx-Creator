@@ -44,7 +44,7 @@ namespace Kaenx.Creator.Controls
 
         private void ClickAddUnion(object sender, RoutedEventArgs e)
         {
-            Module.Unions.Add(new Models.Union() { UId = AutoHelper.GetNextFreeUId(Module.Unions)});
+            Module.Unions.Add(new Models.Union() { UId = Kaenx.Creator.Classes.Helper.GetNextFreeUId(Module.Unions)});
         }
         
         private void ClickRemoveUnion(object sender, RoutedEventArgs e)

@@ -91,7 +91,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Kaenx.DataContext\Kaenx.DataContext.csproj" />
-    <ProjectReference Include="..\..\Kaenx-Creator.Models\Kaenx.Creator.Models.csproj" />
+    <ProjectReference Include="..\..\Kaenx-Creator-Share\Kaenx.Creator.Share.csproj" />
   </ItemGroup>
 
 </Project>

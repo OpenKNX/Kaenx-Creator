@@ -117,7 +117,7 @@ namespace Kaenx.Creator.Controls
         private void ClickAdd(object sender, RoutedEventArgs e)
         {
             Models.Parameter para = new Models.Parameter() {
-                UId = AutoHelper.GetNextFreeUId(Module.Parameters)
+                UId = Kaenx.Creator.Classes.Helper.GetNextFreeUId(Module.Parameters)
             };
             foreach(Models.Language lang in Version.Languages) {
                 para.Text.Add(new Models.Translation(lang, "Dummy"));
@@ -129,7 +129,7 @@ namespace Kaenx.Creator.Controls
 
             if(Module.IsParameterRefAuto)
             {
-                Models.ParameterRef pref = new Models.ParameterRef(para) { UId = AutoHelper.GetNextFreeUId(Module.ParameterRefs) };
+                Models.ParameterRef pref = new Models.ParameterRef(para) { UId = Kaenx.Creator.Classes.Helper.GetNextFreeUId(Module.ParameterRefs) };
                 foreach(Models.Language lang in Version.Languages) {
                     pref.Text.Add(new Models.Translation(lang, ""));
                     pref.Suffix.Add(new Models.Translation(lang, ""));
@@ -143,13 +143,13 @@ namespace Kaenx.Creator.Controls
             Parameter para = ParamList.SelectedItem as Models.Parameter;
             Parameter clonedPara = para.Copy();
             clonedPara.Id = -1;
-            clonedPara.UId = AutoHelper.GetNextFreeUId(Module.Parameters);
+            clonedPara.UId = Kaenx.Creator.Classes.Helper.GetNextFreeUId(Module.Parameters);
 
             Module.Parameters.Add(clonedPara);
 
             if (Module.IsParameterRefAuto)
             {
-                Models.ParameterRef pref = new Models.ParameterRef(clonedPara) { UId = AutoHelper.GetNextFreeUId(Module.ParameterRefs) };
+                Models.ParameterRef pref = new Models.ParameterRef(clonedPara) { UId = Kaenx.Creator.Classes.Helper.GetNextFreeUId(Module.ParameterRefs) };
                 Module.ParameterRefs.Add(pref);
                 foreach(Models.Language lang in Version.Languages) {
                     pref.Text.Add(new Models.Translation(lang, ""));
@@ -221,7 +221,7 @@ namespace Kaenx.Creator.Controls
             Models.Parameter ele = (sender as Button).DataContext as Models.Parameter;
             long oldId = ele.Id;
             ele.Id = -1;
-            ele.Id = AutoHelper.GetNextFreeId(Module, "Parameters");
+            ele.Id = Kaenx.Creator.Classes.Helper.GetNextFreeId(Module, "Parameters");
             if(ele.Id == oldId)
                 MessageBox.Show(Properties.Messages.prompt_auto_error, Properties.Messages.prompt_auto_error_title);
         }

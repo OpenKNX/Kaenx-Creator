@@ -29,7 +29,7 @@ namespace Kaenx.Creator.Controls
         private void ClickAdd(object sender, RoutedEventArgs e)
         {
             Message msg = new Message() { 
-                UId = AutoHelper.GetNextFreeUId(Version.Messages),
+                UId = Kaenx.Creator.Classes.Helper.GetNextFreeUId(Version.Messages),
                 Name = "dummy" 
             };
             Version.Messages.Add(msg);
@@ -74,7 +74,7 @@ namespace Kaenx.Creator.Controls
             Models.Message msg = (sender as Button).DataContext as Models.Message;
             long oldId = msg.Id;
             msg.Id = -1;
-            msg.Id = AutoHelper.GetNextFreeId(Version, "Messages");
+            msg.Id = Kaenx.Creator.Classes.Helper.GetNextFreeId(Version, "Messages");
             if(msg.Id == oldId)
                 MessageBox.Show(Properties.Messages.prompt_auto_error, Properties.Messages.prompt_auto_error_title);
         }

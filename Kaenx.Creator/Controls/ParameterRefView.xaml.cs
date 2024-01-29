@@ -72,7 +72,7 @@ namespace Kaenx.Creator.Controls
         
         private void ClickAdd(object sender, RoutedEventArgs e)
         {
-            ParameterRef pref = new ParameterRef() { UId = AutoHelper.GetNextFreeUId(Module.ParameterRefs) };
+            ParameterRef pref = new ParameterRef() { UId = Kaenx.Creator.Classes.Helper.GetNextFreeUId(Module.ParameterRefs) };
             foreach(Language lang in Version.Languages)
             {
                 pref.Text.Add(new Translation(lang, ""));
@@ -128,7 +128,7 @@ namespace Kaenx.Creator.Controls
             Models.ParameterRef ele = (sender as Button).DataContext as Models.ParameterRef;
             long oldId = ele.Id;
             ele.Id = -1;
-            ele.Id = AutoHelper.GetNextFreeId(Module, "ParameterRefs");
+            ele.Id = Kaenx.Creator.Classes.Helper.GetNextFreeId(Module, "ParameterRefs");
             if(ele.Id == oldId)
                 MessageBox.Show(Properties.Messages.prompt_auto_error, Properties.Messages.prompt_auto_error_title);
         }

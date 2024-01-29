@@ -295,7 +295,7 @@ namespace Kaenx.Creator.Classes {
                 if(omod != null)
                 {
                     List<DynModule> lmods = new List<DynModule>();
-                    AutoHelper.GetModules(General.Application.Dynamics[0], lmods);
+                    Kaenx.Creator.Classes.Helper.GetModules(General.Application.Dynamics[0], lmods);
                     int count = lmods.Count(m => m.ModuleUId == omod.UId);
 
                     foreach(Module xmod in General.Application.Modules.Where(m => m.IsOpenKnxModule && m.Name.StartsWith(mod.Name)))
