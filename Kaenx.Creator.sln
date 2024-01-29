@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kaenx.Creator", "Kaenx.Crea
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kaenx.DataContext", "..\Kaenx.DataContext\Kaenx.DataContext.csproj", "{40E7F3E8-F036-4334-9219-DE3808808553}"
 EndProject
-Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "Packager", "Packager\Packager.wapproj", "{5B7E177E-0C9A-4F05-988D-EEC75C1BA408}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

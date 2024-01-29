@@ -142,7 +142,7 @@ namespace Kaenx.Creator.Controls
             ImportHelper helper = new ImportHelper();
             helper.SetCurrentVers(currentVers);
             helper.SetGeneral(gen);
-            helper.SetDPTs(MainWindow.DPTs);
+            helper.SetDPTs(Kaenx.Creator.Models.Helper.DPTs);
             mod.NumChannels.Clear();
 
             if(mod.HasShare)

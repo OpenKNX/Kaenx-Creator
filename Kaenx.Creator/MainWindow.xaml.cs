@@ -46,11 +46,8 @@ namespace Kaenx.Creator
             set { bcus = value; Changed("BCUs"); }
         }
 
-        private static ObservableCollection<Models.DataPointType> dpts;
-        public static ObservableCollection<Models.DataPointType> DPTs
-        {
-            get { return dpts; }
-            set { dpts = value; }
+        public ObservableCollection<Models.DataPointType> DPTs {
+            get { return Kaenx.Creator.Models.Helper.DPTs; }
         }
 
         public ObservableCollection<Models.ExportItem> Exports { get; set; } = new ObservableCollection<Models.ExportItem>();
@@ -67,9 +64,6 @@ namespace Kaenx.Creator
             new Models.EtsVersion(21, "ETS 6.0 (21)", "6.0"),
             new Models.EtsVersion(22, "ETS 6.1 (22)", "6.1")
         };
-        
-        private int VersionCurrent = 10;
-
 
         public MainWindow()
         {
@@ -80,13 +74,12 @@ namespace Kaenx.Creator
             InitializeComponent();
             this.DataContext = this;
             LoadBcus();
-            LoadDpts();
+            Kaenx.Creator.Models.Helper.LoadDpts();
             CheckLangs();
             CheckOutput();
             CheckEtsVersions();
             LoadTemplates();
 
-            
             MenuDebug.IsChecked = Properties.Settings.Default.isDebug;
             MenuUpdate.IsChecked = Properties.Settings.Default.autoUpdate;
             if(Properties.Settings.Default.autoUpdate) AutoCheckUpdate();
@@ -130,7 +123,6 @@ namespace Kaenx.Creator
                 (VersionTabs.SelectedContent as ISelectable).ShowItem(item);
                 return;
             }
-
 
             int index = item switch{
                 Models.ParameterType => 4,
@@ -224,7 +216,7 @@ namespace Kaenx.Creator
 
         private void ClickNew(object sender, RoutedEventArgs e)
         {
-            General = new Models.MainModel() { ImportVersion = VersionCurrent, Guid = Guid.NewGuid().ToString() };
+            General = new Models.MainModel() { ImportVersion = Kaenx.Creator.Models.Helper.CurrentVersion, Guid = Guid.NewGuid().ToString() };
             var currentLang = System.Threading.Thread.CurrentThread.CurrentUICulture.IetfLanguageTag;
             if(!ImportHelper._langTexts.ContainsKey(currentLang))
                 if(currentLang.Contains("-"))
@@ -340,60 +332,6 @@ namespace Kaenx.Creator
 
                 System.IO.File.WriteAllText(jsonPath, Newtonsoft.Json.JsonConvert.SerializeObject(BCUs));
             }
-        }
-
-        private void LoadDpts()
-        {
-            string jsonPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "datapoints.json");
-            string xmlPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "datapoints.xml");
-            if (System.IO.File.Exists(jsonPath))
-            {
-                DPTs = Newtonsoft.Json.JsonConvert.DeserializeObject<ObservableCollection<Models.DataPointType>>(System.IO.File.ReadAllText(jsonPath));
-            } else
-            {
-                DPTs = new ObservableCollection<Models.DataPointType>();
-                XDocument xdoc = XDocument.Load(xmlPath);
-                IEnumerable<XElement> xdpts = xdoc.Descendants(XName.Get("DatapointType"));
-                
-                DPTs.Add(new Models.DataPointType() {
-                    Name = Properties.Messages.main_empty_dpt,
-                    Number = "0",
-                    Size = 0
-                });
-
-                foreach(XElement xdpt in xdpts)
-                {
-                    Models.DataPointType dpt = new Models.DataPointType();
-                    dpt.Name = xdpt.Attribute("Name").Value + " " + xdpt.Attribute("Text").Value;
-                    dpt.Number = xdpt.Attribute("Number").Value;
-                    dpt.Size = int.Parse(xdpt.Attribute("SizeInBit").Value);
-
-                    IEnumerable<XElement> xsubs = xdpt.Descendants(XName.Get("DatapointSubtype"));
-
-                    foreach(XElement xsub in xsubs)
-                    {
-                        Models.DataPointSubType dpst = new Models.DataPointSubType();
-                        dpst.Name = dpt.Number + "." + Fill(xsub.Attribute("Number").Value, 3, "0") + " " + xsub.Attribute("Text").Value;
-                        dpst.Number = xsub.Attribute("Number").Value;
-                        dpst.ParentNumber = dpt.Number;
-                        dpt.SubTypes.Add(dpst);
-                    }
-
-                    DPTs.Add(dpt);
-                }
-
-
-                System.IO.File.WriteAllText(jsonPath, Newtonsoft.Json.JsonConvert.SerializeObject(DPTs));
-            }
-        }
-
-        private string Fill(string input, int length, string fill)
-        {
-            for(int i = input.Length; i < length; i++)
-            {
-                input = fill + input;
-            }
-            return input;
         }
 
         #region Clicks
@@ -758,7 +696,7 @@ namespace Kaenx.Creator
 
         private void ClickSave(object sender, RoutedEventArgs e)
         {
-            General.ImportVersion = VersionCurrent;
+            General.ImportVersion = Kaenx.Creator.Models.Helper.CurrentVersion;
             DoSave();
         }
 
@@ -783,7 +721,7 @@ namespace Kaenx.Creator
 
         private void ClickSaveAs(object sender, RoutedEventArgs e)
         {
-            General.ImportVersion = VersionCurrent;
+            General.ImportVersion = Kaenx.Creator.Models.Helper.CurrentVersion;
             SaveFileDialog diag = new SaveFileDialog();
             diag.FileName = General.ProjectName;
             diag.Title = Properties.Messages.main_project_save_title;
@@ -813,7 +751,7 @@ namespace Kaenx.Creator
 
         private void ClickSaveTemplate(object sender, RoutedEventArgs e)
         {
-            General.ImportVersion = VersionCurrent;
+            General.ImportVersion = Kaenx.Creator.Models.Helper.CurrentVersion;
             while(true) {
                 Controls.PromptDialog diag = new Controls.PromptDialog(Properties.Messages.main_save_template, Properties.Messages.main_save_template_title);
                 if(diag.ShowDialog() == false) {
@@ -838,7 +776,6 @@ namespace Kaenx.Creator
                 return;
             }
         }
-
 
         private void ClickOpenTemplate(object sender, RoutedEventArgs e)
         {
@@ -883,11 +820,11 @@ namespace Kaenx.Creator
                 VersionToOpen = int.Parse(match.Groups[1].Value);
             }
 
-            if(VersionToOpen < VersionCurrent && MessageBox.Show(Properties.Messages.main_project_open_old, Properties.Messages.main_project_open_format, MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+            if(VersionToOpen < Kaenx.Creator.Models.Helper.CurrentVersion && MessageBox.Show(Properties.Messages.main_project_open_old, Properties.Messages.main_project_open_format, MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
             {
-                general = CheckHelper.CheckImportVersion(general, VersionToOpen);
+                general = Kaenx.Creator.Models.Helper.CheckImportVersion(general, VersionToOpen);
             }
-            if(VersionToOpen > VersionCurrent)
+            if(VersionToOpen > Kaenx.Creator.Models.Helper.CurrentVersion)
             {
                 MessageBox.Show(Properties.Messages.main_project_open_new, Properties.Messages.main_project_open_format, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
@@ -895,20 +832,12 @@ namespace Kaenx.Creator
                 
             try{
                 General = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.MainModel>(general, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
-                
-                // using (MemoryStream ms = new MemoryStream(File.ReadAllBytes(path)))
-                // using (Newtonsoft.Json.Bson.BsonDataReader reader = new Newtonsoft.Json.Bson.BsonDataReader(ms))
-                // {
-                //     JsonSerializer serializer = JsonSerializer.Create(new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
-                //     General = serializer.Deserialize<Models.MainModel>(reader);
-                // }
-                
             } catch {
                 MessageBox.Show(Properties.Messages.main_project_open_error, Properties.Messages.main_project_open_format, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-                AutoHelper.LoadVersion(General, General.Application);
-            General.ImportVersion = VersionCurrent;
+            Kaenx.Creator.Models.Helper.LoadVersion(General, General.Application);
+            General.ImportVersion = Kaenx.Creator.Models.Helper.CurrentVersion;
 
             if (!string.IsNullOrEmpty(General.Info._maskId))
             {
@@ -1044,13 +973,13 @@ namespace Kaenx.Creator
                 switch(prod)
                 {
                     case "knxprod":
-                        helper.StartZip(General, DPTs);
+                        helper.StartZip(General, Kaenx.Creator.Models.Helper.DPTs);
                         SetButtons(true);
                         Changed("General");
                         break;
 
                     case "xml":
-                        helper.StartXml(_general, DPTs);
+                        helper.StartXml(_general, Kaenx.Creator.Models.Helper.DPTs);
                         SetButtons(true);
                         Changed("General");
                         break;
