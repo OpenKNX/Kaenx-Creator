@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Kaenx.Creator"
-        xmlns:models="clr-namespace:Kaenx.Creator.Models"
+        xmlns:models="clr-namespace:Kaenx.Creator.Models;assembly=Kaenx.Creator.Models"
         xmlns:conv="clr-namespace:Kaenx.Creator.Converter"
         xmlns:System="clr-namespace:System;assembly=mscorlib"
         xmlns:p="clr-namespace:Kaenx.Creator.Properties"

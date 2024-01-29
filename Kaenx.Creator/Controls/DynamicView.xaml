@@ -8,7 +8,7 @@
     xmlns:System="clr-namespace:System;assembly=mscorlib"
     xmlns:conv="clr-namespace:Kaenx.Creator.Converter"
     xmlns:models="clr-namespace:Kaenx.Creator.Models"
-    xmlns:dyn="clr-namespace:Kaenx.Creator.Models.Dynamic"
+    xmlns:dyn="clr-namespace:Kaenx.Creator.Models.Dynamic;assembly=Kaenx.Creator.Models"
     xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
     xmlns:select="clr-namespace:Kaenx.Creator.Selectors"
     mc:Ignorable="d"

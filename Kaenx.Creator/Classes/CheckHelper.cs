@@ -1115,6 +1115,13 @@ namespace Kaenx.Creator.Classes {
                 Update9((JObject)gen["Application"]);
             }
 
+            if(version < 10)
+            {
+                json = gen.ToString();
+                json = json.Replace(", Kaenx.Creator", ", Kaenx.Creator.Models");
+                gen = JObject.Parse(json);
+            }
+
             return gen.ToString();
         }
 

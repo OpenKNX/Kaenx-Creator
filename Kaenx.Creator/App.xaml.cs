@@ -40,6 +40,12 @@ namespace Kaenx.Creator
 		{
 			if(e.Args?.Length > 0)
                 FilePath = e.Args[0];
+
+            if(e.Args?.Length > 1)
+            {
+                Console.WriteLine("Starting Console Mode");
+                System.Windows.Application.Current.Shutdown();
+            }
 		}
     }
 }
