@@ -13,6 +13,7 @@
     d:DesignWidth="400"
     x:Name="ViewControl">
     <UserControl.Resources>
+        <conv:DataToImage x:Key="DataToImage" />
         <conv:EmptyToBool x:Key="EmptyToBool" />
         <conv:EnumToVisibility x:Key="EnumToVis" />
         <conv:BoolToVisibility x:Key="BoolToVis" />
@@ -91,7 +92,7 @@
 
                 <Button Content="{x:Static p:Resources.bagg_file}" Click="ClickChangeFile" />
 
-                <Image Source="{Binding Source}" Margin="5" Stretch="None" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                <Image Source="{Binding Data, Converter={StaticResource DataToImage}}" Margin="5" Stretch="None" HorizontalAlignment="Center" VerticalAlignment="Center" />
             </StackPanel>
         </ScrollViewer>
     </Grid>

@@ -7,7 +7,7 @@
     xmlns:p="clr-namespace:Kaenx.Creator.Properties"
     xmlns:System="clr-namespace:System;assembly=mscorlib"
     xmlns:conv="clr-namespace:Kaenx.Creator.Converter"
-    xmlns:models="clr-namespace:Kaenx.Creator.Models"
+    xmlns:models="clr-namespace:Kaenx.Creator.Models;assembly=Kaenx.Creator.Share"
     xmlns:dyn="clr-namespace:Kaenx.Creator.Models.Dynamic;assembly=Kaenx.Creator.Share"
     xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
     xmlns:select="clr-namespace:Kaenx.Creator.Selectors"
@@ -16,6 +16,7 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
     <UserControl.Resources>
+        <conv:DataToImage x:Key="DataToImage" />
         <conv:EmptyToBool x:Key="EmptyToBool" />
         <conv:BoolToVisibility x:Key="BoolToVis" />
         <conv:EnumToVisibility x:Key="EnumToVis" />
@@ -61,12 +62,24 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="auto" />
                             <ColumnDefinition />
-                            <ColumnDefinition Width="35" />
                         </Grid.ColumnDefinitions>
 
                         <CheckBox IsChecked="{Binding UseIcon}" VerticalAlignment="Center" />
-                        <ComboBox Grid.Column="1" Margin="0 0 5 0" VerticalAlignment="Center" IsEnabled="{Binding UseIcon}" ItemsSource="{Binding Icons, ElementName=ViewControl}" SelectedItem="{Binding IconObject}" DisplayMemberPath="Name" />
-                        <Image Grid.Column="2" Source="{Binding IconObject.Source}" />
+                        
+                        <ComboBox Grid.Column="1" VerticalAlignment="Center" IsEnabled="{Binding UseIcon}" ItemsSource="{Binding Icons, ElementName=ViewControl}" SelectedItem="{Binding IconObject}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="30" />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+                                        <Image Source="{Binding Data, Converter={StaticResource DataToImage}}" Height="20" />
+                                        <TextBlock Text="{Binding Name}" Grid.Column="1" VerticalAlignment="Center" Margin="10 0 0 0" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
                     </Grid>
                 </HeaderedContentControl>
 
@@ -202,12 +215,24 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="auto" />
                             <ColumnDefinition />
-                            <ColumnDefinition Width="35" />
                         </Grid.ColumnDefinitions>
 
                         <CheckBox IsChecked="{Binding UseIcon}" VerticalAlignment="Center" />
-                        <ComboBox Grid.Column="1" Margin="0 0 5 0" VerticalAlignment="Center" IsEnabled="{Binding UseIcon}" ItemsSource="{Binding Icons, ElementName=ViewControl}" SelectedItem="{Binding IconObject}" DisplayMemberPath="Name" />
-                        <Image Grid.Column="2" Source="{Binding IconObject.Source}" />
+                        
+                        <ComboBox Grid.Column="1" VerticalAlignment="Center" IsEnabled="{Binding UseIcon}" ItemsSource="{Binding Icons, ElementName=ViewControl}" SelectedItem="{Binding IconObject}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="30" />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+                                        <Image Source="{Binding Data, Converter={StaticResource DataToImage}}" Height="20" />
+                                        <TextBlock Text="{Binding Name}" Grid.Column="1" VerticalAlignment="Center" Margin="10 0 0 0" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
                     </Grid>
                 </HeaderedContentControl>
 
@@ -265,7 +290,6 @@
                         </StackPanel>
                     </HeaderedContentControl>
                 </StackPanel>
-                
             </StackPanel>
         </DataTemplate>
         <DataTemplate x:Key="TempDynSeparator">
@@ -293,12 +317,24 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="auto" />
                             <ColumnDefinition />
-                            <ColumnDefinition Width="35" />
                         </Grid.ColumnDefinitions>
 
                         <CheckBox IsChecked="{Binding UseIcon}" VerticalAlignment="Center" />
-                        <ComboBox Grid.Column="1" Margin="0 0 5 0" VerticalAlignment="Center" IsEnabled="{Binding UseIcon}" ItemsSource="{Binding Icons, ElementName=ViewControl}" SelectedItem="{Binding IconObject}" DisplayMemberPath="Name" />
-                        <Image Grid.Column="2" Source="{Binding IconObject.Source}" />
+                        
+                        <ComboBox Grid.Column="1" VerticalAlignment="Center" IsEnabled="{Binding UseIcon}" ItemsSource="{Binding Icons, ElementName=ViewControl}" SelectedItem="{Binding IconObject}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="30" />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+                                        <Image Source="{Binding Data, Converter={StaticResource DataToImage}}" Height="20" />
+                                        <TextBlock Text="{Binding Name}" Grid.Column="1" VerticalAlignment="Center" Margin="10 0 0 0" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
                     </Grid>
                 </HeaderedContentControl>
                 <HeaderedContentControl Header="{x:Static p:Resources.gen_text}">
@@ -343,12 +379,23 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="auto" />
                             <ColumnDefinition />
-                            <ColumnDefinition Width="35" />
                         </Grid.ColumnDefinitions>
 
                         <CheckBox IsChecked="{Binding UseIcon}" VerticalAlignment="Center" />
-                        <ComboBox Grid.Column="1" Margin="0 0 5 0" VerticalAlignment="Center" IsEnabled="{Binding UseIcon}" ItemsSource="{Binding Icons, ElementName=ViewControl}" SelectedItem="{Binding IconObject}" DisplayMemberPath="Name" />
-                        <Image Grid.Column="2" Source="{Binding IconObject.Source}" />
+                        <ComboBox Grid.Column="1" VerticalAlignment="Center" IsEnabled="{Binding UseIcon}" ItemsSource="{Binding Icons, ElementName=ViewControl}" SelectedItem="{Binding IconObject}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="30" />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+                                        <Image Source="{Binding Data, Converter={StaticResource DataToImage}}" Height="20" />
+                                        <TextBlock Text="{Binding Name}" Grid.Column="1" VerticalAlignment="Center" Margin="10 0 0 0" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
                     </Grid>
                 </HeaderedContentControl>
                 <HeaderedContentControl Header="{x:Static p:Resources.tdyn_textpara}">
@@ -481,12 +528,23 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="auto" />
                             <ColumnDefinition />
-                            <ColumnDefinition Width="35" />
                         </Grid.ColumnDefinitions>
 
                         <CheckBox IsChecked="{Binding UseIcon}" VerticalAlignment="Center" />
-                        <ComboBox Grid.Column="1" Margin="0 0 5 0" VerticalAlignment="Center" IsEnabled="{Binding UseIcon}" ItemsSource="{Binding Icons, ElementName=ViewControl}" SelectedItem="{Binding IconObject}" DisplayMemberPath="Name" />
-                        <Image Grid.Column="2" Source="{Binding IconObject.Source}" />
+                        <ComboBox Grid.Column="1" VerticalAlignment="Center" IsEnabled="{Binding UseIcon}" ItemsSource="{Binding Icons, ElementName=ViewControl}" SelectedItem="{Binding IconObject}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="30" />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+                                        <Image Source="{Binding Data, Converter={StaticResource DataToImage}}" Height="20" />
+                                        <TextBlock Text="{Binding Name}" Grid.Column="1" VerticalAlignment="Center" Margin="10 0 0 0" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
                     </Grid>
                 </HeaderedContentControl>
                 <HeaderedContentControl Header="{x:Static p:Resources.prop_online}">
@@ -769,8 +827,8 @@
             </TreeView.Resources>
         </TreeView>
 
-        <StackPanel Grid.Column="1" DataContext="{Binding ElementName=DynamicList, Path=SelectedItem}">
-            <StackPanel.Resources>
+        <ScrollViewer Grid.Column="1" DataContext="{Binding ElementName=DynamicList, Path=SelectedItem}">
+            <ScrollViewer.Resources>
                 <Style TargetType="HeaderedContentControl">
                     <Setter Property="Margin" Value="5" />
                 </Style>
@@ -786,10 +844,9 @@
                 <Style TargetType="ListView">
                     <Setter Property="Margin" Value="5" />
                 </Style>
-            </StackPanel.Resources>
-
+            </ScrollViewer.Resources>
             <ContentPresenter Content="{Binding ElementName=DynamicList, Path=SelectedItem}" ContentTemplateSelector="{StaticResource SelectorDyn}" />
-        </StackPanel>
+        </ScrollViewer>
     </Grid>
 
 </UserControl>
