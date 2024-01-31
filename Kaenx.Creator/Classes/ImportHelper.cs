@@ -138,7 +138,7 @@ namespace Kaenx.Creator.Classes
                 entry = Archive.GetEntry($"M-{manuHex}/Baggages.xml");
                 xele = XDocument.Load(entry.Open()).Root;
                 _namespace = xele.Attribute("xmlns").Value;
-                ImportBaggages(manuHex, xele, Archive);
+                ImportBaggages(xele, Archive);
             } catch (NullReferenceException) {
                 System.Diagnostics.Debug.WriteLine("Keine Baggages gefunden");
             } catch (Exception ex) {
@@ -193,9 +193,9 @@ namespace Kaenx.Creator.Classes
             Archive.Dispose();
         }
 
-        List<string> supportedExtensions = new List<string>() { ".png", ".jpg", ".jpeg" };
+        List<string> supportedExtensions = new List<string>() { ".png", ".jpg", ".jpeg", ".zip" };
 
-        public void ImportBaggages(string manuHex, XElement xele, ZipArchive archive)
+        public void ImportBaggages(XElement xele, ZipArchive archive, string tempPath = "", bool IsOpenKnxModule = false)
         {
             string tempFolder = Path.Combine(Path.GetTempPath(), "Knx.Creator");
             if(Directory.Exists(tempFolder))
@@ -216,18 +216,77 @@ namespace Kaenx.Creator.Classes
 
                 if(!supportedExtensions.Contains(bag.Extension) || _general.Baggages.Any(b => b.Name == bag.Name && b.TargetPath == bag.TargetPath)) continue;
 
+                ZipArchiveEntry entry = null;
+                string path = $"{bag.Name}{bag.Extension}";
+
+                if(bag.Extension == ".zip")
+                {
+                    if(IsOpenKnxModule)
+                    {
+                        tempPath = Path.Combine(tempPath, bag.Name);
+                        Directory.CreateDirectory(tempPath);
+                        foreach(ZipArchiveEntry ent in archive.Entries.Where(e => !string.IsNullOrEmpty(e.Name) && e.FullName.Contains($"/Baggages/{bag.Name}/")))
+                            ent.ExtractToFile(Path.Combine(tempPath, ent.Name), true);
+                    } else {
+                        throw new NotImplementedException();
+                    }
+
+                    ImportBaggageZip(tempPath);
+                    continue;
+                } else {
+                    if(!string.IsNullOrEmpty(bag.TargetPath)) path = $"{bag.TargetPath}/{path}";
+                    entry = archive.Entries.Single(e => e.FullName.EndsWith($"/Baggages/{path}"));
+                }
+
                 bag.LastModified = DateTime.Parse(xbag.Element(Get("FileInfo")).Attribute("TimeInfo").Value);
                 
-                string path = $"{bag.Name}{bag.Extension}";
-                if(!string.IsNullOrEmpty(bag.TargetPath)) path = $"{bag.TargetPath}/{path}";
-                ZipArchiveEntry entry = archive.Entries.Single(e => e.FullName.EndsWith($"/Baggages/{path}"));
-                //ZipArchiveEntry entry = Archive.GetEntry($"M-{manuHex}/Baggages/{path}");
                 string tempFile = Path.Combine(tempFolder, bag.Name + bag.Extension);
                 entry.ExtractToFile(tempFile, true);
 
                 bag.Data = AutoHelper.GetFileBytes(tempFile);
 
                 _general.Baggages.Add(bag);
+            }
+        }
+
+        private void ImportBaggageZip(string path)
+        {
+            foreach(string file in Directory.GetFiles(path))
+            {
+                string fileName = Path.GetFileName(file);
+                string extension = "";
+                if(fileName.Contains('.'))
+                    extension = fileName.Substring(fileName.LastIndexOf('.'));
+                fileName = fileName.Replace(extension, "");
+                bool add = true;
+
+                switch(extension)
+                {
+                    case ".png":
+                        Icon icon = new Icon() { Name = fileName };
+                        if(_general.Icons.Any(i => i.Name == icon.Name))
+                        {
+                            icon = _general.Icons.Single(i => i.Name == icon.Name);
+                            add = false;
+                        }
+                        icon.Data = AutoHelper.GetFileBytes(file);
+                        if(add) _general.Icons.Add(icon);
+                        break;
+
+                    case "":
+                    case ".txt":
+                    case ".md":
+                        Helptext help = new Helptext() { Name = fileName};
+                        if(_general.Application.Helptexts.Any(h => h.Name == help.Name))
+                        {
+                            help = _general.Application.Helptexts.Single(h => h.Name == help.Name);
+                            add = false;
+                        }
+                        
+                        if(add) _general.Application.Helptexts.Add(help);
+                        _general.Application.IsHelpActive = true;
+                        break;
+                }
             }
         }
 
@@ -817,6 +876,7 @@ namespace Kaenx.Creator.Classes
                         string extension = name.Substring(name.LastIndexOf('.')).ToLower();
                         name = name.Substring(0, name.LastIndexOf('.'));
                         ptype.BaggageObject = _general.Baggages.Single(b => b.Name == name && b.TargetPath == path && b.Extension == extension);
+                        ptype.UIHint = xsub.Attribute("HorizontalAlignment")?.Value ?? "";
                         break;
 
                     case "TypeColor":
@@ -861,6 +921,7 @@ namespace Kaenx.Creator.Classes
             int unionCounter = 1;
             foreach (XElement xunion in xparas.Elements(Get("Union")))
             {
+                _general.Application.IsUnionActive = true;
                 Union union = new Union()
                 {
                     Name = $"Union {unionCounter}",

@@ -1417,4 +1417,20 @@
     <value>Overwrite</value>
     <comment/>
   </data>
+  <data name="parat_bagg" xml:space="preserve">
+    <value>Baggage</value>
+    <comment/>
+  </data>
+  <data name="parat_halign" xml:space="preserve">
+    <value>Horizontal Alignment</value>
+    <comment/>
+  </data>
+  <data name="parat_display" xml:space="preserve">
+    <value>Display</value>
+    <comment/>
+  </data>
+  <data name="parat_unit" xml:space="preserve">
+    <value>Unit</value>
+    <comment/>
+  </data>
 </root>

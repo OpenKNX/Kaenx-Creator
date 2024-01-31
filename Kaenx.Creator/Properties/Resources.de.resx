@@ -1417,4 +1417,20 @@
     <value>Überschreiben</value>
     <comment/>
   </data>
+  <data name="parat_bagg" xml:space="preserve">
+    <value>Anhang</value>
+    <comment/>
+  </data>
+  <data name="parat_halign" xml:space="preserve">
+    <value>Horizontale Ausrichtung</value>
+    <comment/>
+  </data>
+  <data name="parat_display" xml:space="preserve">
+    <value>Anzeige</value>
+    <comment/>
+  </data>
+  <data name="parat_unit" xml:space="preserve">
+    <value>Einheit</value>
+    <comment/>
+  </data>
 </root>

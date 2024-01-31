@@ -176,8 +176,7 @@
                 <HeaderedContentControl Header="{x:Static p:Resources.parat_max}">
                     <TextBox Text="{Binding Max, UpdateSourceTrigger=PropertyChanged}"/>
                 </HeaderedContentControl>
-                <!--//TODO Übersetzen-->
-                <HeaderedContentControl Header="Anzeige">
+                <HeaderedContentControl Header="{x:Static p:Resources.parat_display}">
                     <ComboBox SelectedValue="{Binding UIHint}" SelectedValuePath="Tag">
                         <ComboBoxItem Content="None" Tag="" />
                         <ComboBoxItem Content="Time ss" Tag="Time_ss" />
@@ -207,7 +206,7 @@
                         <ComboBoxItem Content="Duration hhmmssfff" Tag="Duration_hhmmssfff" />
                     </ComboBox>
                 </HeaderedContentControl>
-                <HeaderedContentControl Header="Einheit">
+                <HeaderedContentControl Header="{x:Static p:Resources.parat_unit}">
                     <ComboBox SelectedValue="{Binding Increment}" SelectedValuePath="Tag">
                         <ComboBoxItem Content="Stunden" Tag="Hours" />
                         <ComboBoxItem Content="Minuten" Tag="Minutes" />
@@ -259,6 +258,17 @@
             
             <HeaderedContentControl Header="{x:Static p:Resources.parat_bagg}" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Picture, FallbackValue=Collapsed}">
                 <ComboBox ItemsSource="{Binding Baggages, ElementName=ViewControl}" SelectedItem="{Binding BaggageObject}" DisplayMemberPath="Name" Margin="0 5" />
+            </HeaderedContentControl>
+
+            <HeaderedContentControl Header="{x:Static p:Resources.parat_halign}" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Picture, FallbackValue=Collapsed}">
+                <ComboBox SelectedValuePath="Tag" SelectedValue="{Binding UIHint}" Margin="0 5">
+                    <ComboBoxItem Content="None" Tag="" />
+                    <ComboBoxItem Content="Left" Tag="Left" />
+                    <ComboBoxItem Content="Middle" Tag="Middle" />
+                    <ComboBoxItem Content="Right" Tag="Right" />
+                    <ComboBoxItem Content="Stretch" Tag="Stretch" />
+                    <ComboBoxItem Content="Repeat" Tag="Repeat" />
+                </ComboBox>
             </HeaderedContentControl>
 
             <Image Source="{Binding BaggageObject.Data, Converter={StaticResource DataToImage}}" Margin="5" Stretch="Uniform" MaxHeight="250"  Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Picture, FallbackValue=Collapsed}" />

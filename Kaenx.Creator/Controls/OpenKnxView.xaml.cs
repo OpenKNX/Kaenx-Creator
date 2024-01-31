@@ -36,6 +36,7 @@ namespace Kaenx.Creator.Controls
         }
 
         private string parameterN { get; set; } = "";
+        private string _namespace { get; set; } = "";
 
         private void ClickAdd(object sender, RoutedEventArgs e)
         {
@@ -138,6 +139,8 @@ namespace Kaenx.Creator.Controls
             MainModel gen = new MainModel();
             gen.Icons = General.Icons;
             gen.Baggages = General.Baggages;
+            gen.Application = currentVers;
+            gen.Application.Helptexts = General.Application.Helptexts;
             
             ImportHelper helper = new ImportHelper();
             helper.SetCurrentVers(currentVers);
@@ -170,6 +173,7 @@ namespace Kaenx.Creator.Controls
                     CopyFile(xele, xele2);
                 }
             
+                _namespace = xele.Name.NamespaceName;
                 DoImport(mod, "Share", xele, helper, zip);
                 //Import ParameterTypes, Parameter, ParameterRefs, Coms, ComRefs, Dynamic
             }
@@ -186,6 +190,7 @@ namespace Kaenx.Creator.Controls
                 helper.SetNamespace(xele.Name.NamespaceName);
                 xele = ChangeFile(xele, mod);
 
+                _namespace = xele.Name.NamespaceName;
                 DoImport(mod, "Templ", xele, helper, zip);
                 //helper.ImportParameter(xele.Descendants(XName.Get("Parameters", xele.Name.NamespaceName)).ElementAt(0), xmod);
             }
@@ -215,6 +220,9 @@ namespace Kaenx.Creator.Controls
                     
                 MessageBox.Show("Folgende Namen dürfen nicht geändert werden:\r\n\r\n" + string.Join("\r\n", names));
             }
+
+            General.Application.IsHelpActive = gen.Application.IsHelpActive;
+            General.Application.IsUnionActive = gen.Application.IsUnionActive;
 
             httpFile.Close();
             httpFile.Dispose();
@@ -259,6 +267,8 @@ namespace Kaenx.Creator.Controls
         private void DoImport(OpenKnxModule mod, string name, XElement xele, ImportHelper helper, ZipArchive zip)
         {
             mod.AddState("Importing " + name);
+            XElement xapp = xele.Element(Get("ManufacturerData")).Element(Get("Manufacturer")).Element(Get("ApplicationPrograms")).Element(Get("ApplicationProgram"));
+            XElement xstatic = xapp.Element(Get("Static"));
 
             string modname = mod.Name + " " + name;
             Module xmod = Version.Modules.SingleOrDefault(m => m.IsOpenKnxModule && m.Name == modname);
@@ -292,55 +302,54 @@ namespace Kaenx.Creator.Controls
                 helper.SetParas(xmod.Parameters);
             }
 
-            if(xele.Descendants(XName.Get("Baggages", xele.Name.NamespaceName)).Count() > 0)
+            if(xele.Descendants(Get("Baggages")).Count() > 0)
             {
+                string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "OpenKnxModules", mod.Name);
                 mod.AddState("  - Baggages");
-                XElement xbag = xele.Descendants(XName.Get("Baggages", xele.Name.NamespaceName)).ElementAt(0);
-                helper.ImportBaggages("", xbag, zip);
+                XElement xbag = xele.Descendants(Get("Baggages")).ElementAt(0);
+                helper.ImportBaggages(xbag, zip, path, true);
                 
                 //helper.ImportParameterTypes(xele.Descendants(XName.Get("ParameterTypes", xele.Name.NamespaceName)).ElementAt(0), Version, true);
             }
 
             if(name == "Share")
             {
-                if(xele.Descendants(XName.Get("ParameterTypes", xele.Name.NamespaceName)).Count() > 0)
+                if(xstatic.Descendants(Get("ParameterTypes")).Count() > 0)
                 {
                     mod.AddState("  - ParameterTypes");
-                    helper.ImportParameterTypes(xele.Descendants(XName.Get("ParameterTypes", xele.Name.NamespaceName)).ElementAt(0), Version, true);
+                    helper.ImportParameterTypes(xstatic.Descendants(Get("ParameterTypes")).ElementAt(0), Version, true);
                 }
             }
-            var x = xele.Descendants(XName.Get("Parameters", xele.Name.NamespaceName));
+            var x = xstatic.Descendants(Get("Parameters"));
             if(x.Count() > 0)
             {
                 mod.AddState("  - Parameters");
-                helper.ImportParameter(x?.ElementAt(0), xmod);
+                helper.ImportParameter(x.ElementAt(0), xmod);
             } else {
                 if(name != "Parts")
                     helper.ImportParameter(null, xmod);
             }
 
-            
-
-            x = xele.Descendants(XName.Get("ParameterRefs", xele.Name.NamespaceName));
+            x = xstatic.Descendants(Get("ParameterRefs"));
             if(x.Count() > 0)
             {
                 mod.AddState("  - ParameterRefs");
                 helper.ImportParameterRefs(x.ElementAt(0), xmod);
             }
             Dictionary<string, long> idMapper = new Dictionary<string, long>();
-            x = xele.Descendants(XName.Get("ComObjectTable", xele.Name.NamespaceName));
+            x = xstatic.Descendants(Get("ComObjectTable"));
             if(x.Count() > 0)
             {
                 mod.AddState("  - ComObjects");
                 helper.ImportComObjects(x.ElementAt(0), xmod, ref idMapper, false);
             }
-            x = xele.Descendants(XName.Get("ComObjectRefs", xele.Name.NamespaceName));
+            x = xstatic.Descendants(Get("ComObjectRefs"));
             if(x.Count() > 0)
             {
                 mod.AddState("  - ComObjectRefs");
                 helper.ImportComObjectRefs(x.ElementAt(0), xmod);
             }
-            x = xele.Descendants(XName.Get("Dynamic", xele.Name.NamespaceName));
+            x = xapp.Elements(Get("Dynamic"));
             if(x.Count() > 0)
             {
                 mod.AddState("  - Dynamic");
@@ -369,6 +378,10 @@ namespace Kaenx.Creator.Controls
                 int uid = Version.ParameterTypes.Count > 0 ? (Version.ParameterTypes.OrderByDescending(t => t.UId).First().UId + 1) : 1;
                 foreach(ParameterType ptype in Version.ParameterTypes)
                     ptype.UId = uid++;
+
+                //TODO increment helptexts
+                //TODO increment baggages
+                //TODO increment icons
             }
         }
 
@@ -630,6 +643,11 @@ namespace Kaenx.Creator.Controls
                 }
             } catch{}
             System.Console.WriteLine("Exited2");
+        }
+
+        private XName Get(string name)
+        {
+            return XName.Get(name, _namespace);
         }
     }
 }

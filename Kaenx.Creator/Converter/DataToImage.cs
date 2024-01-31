@@ -12,6 +12,7 @@ namespace Kaenx.Creator.Converter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
+            if(value == null) return null;
             MemoryStream ms = new MemoryStream(value as byte[]);
             BitmapImage image = new BitmapImage();
             image.BeginInit();

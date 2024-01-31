@@ -2579,5 +2579,32 @@ namespace Kaenx.Creator.Properties {
                 return ResourceManager.GetString("tcom_overwrite", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string parat_halign {
+            get {
+                return ResourceManager.GetString("parat_halign", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string parat_display {
+            get {
+                return ResourceManager.GetString("parat_display", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string parat_unit {
+            get {
+                return ResourceManager.GetString("parat_unit", resourceCulture);
+            }
+        }
     }
 }

@@ -846,34 +846,42 @@
             </TabItem>
 
             <TabItem Header="{x:Static p:Resources.tabs_pub}" Style="{StaticResource TopTabItem}">
-                <StackPanel Grid.Row="2">
-                    <StackPanel.Resources>
-                        <Style TargetType="HeaderedContentControl">
-                            <Setter Property="Margin" Value="5" />
-                        </Style>
-                        <Style TargetType="CheckBox">
-                            <Setter Property="Margin" Value="5" />
-                        </Style>
-                        <Style TargetType="ComboBox">
-                            <Setter Property="Margin" Value="5" />
-                        </Style>
-                        <Style TargetType="Button">
-                            <Setter Property="Margin" Value="5" />
-                        </Style>
-                        <Style TargetType="ListView">
-                            <Setter Property="Margin" Value="5" />
-                        </Style>
-                    </StackPanel.Resources>
-                    
-                    <HeaderedContentControl Header="{x:Static p:Resources.prop_vers}">
-                        <TextBox Text="{Binding General.Application.Number, UpdateSourceTrigger=PropertyChanged}" />
-                    </HeaderedContentControl>
-                    <HeaderedContentControl Header="{x:Static p:Resources.tpub_filename}">
-                        <TextBox Text="{Binding General.FileName}" />
-                    </HeaderedContentControl>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
 
-                    <Button Content="{x:Static p:Resources.tabs_pub}" Click="Button_Click" />
-                    <ScrollViewer Grid.Row="3">
+                    <StackPanel>
+                        <StackPanel.Resources>
+                            <Style TargetType="HeaderedContentControl">
+                                <Setter Property="Margin" Value="5" />
+                            </Style>
+                            <Style TargetType="CheckBox">
+                                <Setter Property="Margin" Value="5" />
+                            </Style>
+                            <Style TargetType="ComboBox">
+                                <Setter Property="Margin" Value="5" />
+                            </Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Margin" Value="5" />
+                            </Style>
+                            <Style TargetType="ListView">
+                                <Setter Property="Margin" Value="5" />
+                            </Style>
+                        </StackPanel.Resources>
+                        
+                        <HeaderedContentControl Header="{x:Static p:Resources.prop_vers}">
+                            <TextBox Text="{Binding General.Application.Number, UpdateSourceTrigger=PropertyChanged}" />
+                        </HeaderedContentControl>
+                        <HeaderedContentControl Header="{x:Static p:Resources.tpub_filename}">
+                            <TextBox Text="{Binding General.FileName}" />
+                        </HeaderedContentControl>
+    
+                        <Button Content="{x:Static p:Resources.tabs_pub}" Click="Button_Click" />
+                    </StackPanel>
+
+                    <ScrollViewer Grid.Row="1">
                         <ItemsControl ItemsSource="{Binding PublishActions}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
@@ -886,7 +894,7 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
                     </ScrollViewer>
-                </StackPanel>
+                </Grid>
             </TabItem>
         </TabControl>
 
