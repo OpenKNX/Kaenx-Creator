@@ -84,8 +84,6 @@ namespace Kaenx.Creator.Controls
             json = Newtonsoft.Json.Linq.JObject.Parse(content);
             mod.Commit = json["commit"]["sha"].ToString().Substring(0, 7);
 
-            https://api.github.com/repos/thewhobox/OGM-Common/branches/v1
-
             Version.OpenKnxModules.Add(mod);
             OpenKnxList.SelectedItem = mod;
         }
