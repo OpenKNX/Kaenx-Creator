@@ -251,6 +251,14 @@ namespace Kaenx.Creator.Classes
 
         private void ImportBaggageZip(string path)
         {
+            string folder = path.Substring(path.LastIndexOf('\\') + 1);
+            string[] splits = folder.Split('_');
+            string lang = _general.Application.DefaultLanguage;
+            if(splits.Length > 1 && _general.Application.Languages.Any(l => l.CultureCode.StartsWith(splits[1])))
+            {
+                lang = _general.Application.Languages.Where(l => l.CultureCode.StartsWith(splits[1])).First().CultureCode;
+            }
+
             foreach(string file in Directory.GetFiles(path))
             {
                 string fileName = Path.GetFileName(file);
@@ -282,6 +290,15 @@ namespace Kaenx.Creator.Classes
                             help = _general.Application.Helptexts.Single(h => h.Name == help.Name);
                             add = false;
                         }
+
+                        string text = File.ReadAllText(file);
+                        if(help.Text.Any(t => t.Language.CultureCode == lang))
+                        {
+                            var trans = help.Text.Single(t => t.Language.CultureCode == lang);
+                            trans.Text = text;
+                        } else {
+                            help.Text.Add(new(_general.Application.Languages.Single(l => l.CultureCode == lang), text));
+                        }
                         
                         if(add) _general.Application.Helptexts.Add(help);
                         _general.Application.IsHelpActive = true;
@@ -294,8 +311,6 @@ namespace Kaenx.Creator.Classes
         {
             string manuHex = Archive.Entries.ElementAt(1).FullName.Substring(0, 6);
             ZipArchiveEntry bagEntry = Archive.GetEntry($"{manuHex}/Baggages/{path}");
-
-
 
             ZipArchive zip = new ZipArchive(bagEntry.Open(), ZipArchiveMode.Read, false, System.Text.Encoding.GetEncoding(850));
                     
@@ -639,7 +654,6 @@ namespace Kaenx.Creator.Classes
                     }
                 }
             }
-
 
             return translations;
         }
