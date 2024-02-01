@@ -38,16 +38,17 @@ namespace Kaenx.Creator.Controls
         private string parameterN { get; set; } = "";
         private string _namespace { get; set; } = "";
 
-        private void ClickAdd(object sender, RoutedEventArgs e)
+        private async void ClickAdd(object sender, RoutedEventArgs e)
         {
             PromptDialog diag = new PromptDialog("URL", "Neues OpenKnx Modul");
             diag.ShowDialog();
             if(string.IsNullOrEmpty(diag.Answer)) return;
 
             string[] parts = diag.Answer.Split('/');
-            if(!parts[4].StartsWith("OFM-") && parts[4] != "OGM-Common")
+            if(!parts[4].StartsWith("OFM-") && !parts[4].StartsWith("OGM-"))
             {
-                MessageBox.Show("Das Repo ist kein OFM!");
+                //TODO translate
+                MessageBox.Show("Das Repo ist kein OFM/OGM!");
                 return;
             }
 
@@ -61,18 +62,29 @@ namespace Kaenx.Creator.Controls
             else 
                 mod.Url = diag.Answer;
 
-            if(parts.Length > 6)
-                mod.Branch = parts[6];
-            else
-                mod.Branch = "master";
-
             mod.Name = mod.Url.Substring(mod.Url.IndexOf('-') + 1);
             if(Version.OpenKnxModules.Any(o => o.Name == mod.Name))
             {
+                //TODO translate
                 MessageBox.Show("Es existiert bereits ein OpenKnxModul mit dem Name '" + mod.Name + "'");
                 return;
             }
-            
+
+            HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.UserAgent.TryParseAdd("request");
+            string content = await client.GetStringAsync($"https://api.github.com/repos/{parts[3]}/{parts[4]}");
+
+            Newtonsoft.Json.Linq.JObject json = Newtonsoft.Json.Linq.JObject.Parse(content);
+            mod.Branch = json["default_branch"].ToString();
+
+            if(parts.Length > 6)
+                mod.Branch = parts[6];
+
+            content = await client.GetStringAsync($"https://api.github.com/repos/{parts[3]}/{parts[4]}/branches/{mod.Branch}");
+            json = Newtonsoft.Json.Linq.JObject.Parse(content);
+            mod.Commit = json["commit"]["sha"].ToString().Substring(0, 7);
+
+            https://api.github.com/repos/thewhobox/OGM-Common/branches/v1
 
             Version.OpenKnxModules.Add(mod);
             OpenKnxList.SelectedItem = mod;
