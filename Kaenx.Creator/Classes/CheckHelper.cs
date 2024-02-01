@@ -697,6 +697,12 @@ namespace Kaenx.Creator.Classes {
                     if(!reg.IsMatch(value))  actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_date, stype, name, uid), State = PublishState.Fail, Item = item, Module = mod });
                     break;                        
                 }
+
+                case ParameterTypes.Time:
+                {
+                    //TODO implement check
+                    break;
+                }
             }
         }
 
