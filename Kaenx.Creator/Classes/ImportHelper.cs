@@ -894,6 +894,14 @@ namespace Kaenx.Creator.Classes
                         ptype.OtherValue = (xsub.Attribute("DisplayTheYear")?.Value ?? "true") == "true"; 
                         break;
 
+                    case "TypeTime":
+                        ptype.Type = ParameterTypes.Time;
+                        ptype.UIHint = xsub.Attribute("UIHint")?.Value ?? "";
+                        ptype.Increment = xsub.Attribute("Unit").Value;
+                        ptype.Min = xsub.Attribute("minInclusive").Value.Replace('.', ',');
+                        ptype.Max = xsub.Attribute("maxInclusive").Value.Replace('.', ',');
+                        break;
+
                     default:
                         throw new Exception("Unbekannter ParameterType: " + xsub.Name.LocalName);
                 }
