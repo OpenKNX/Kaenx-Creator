@@ -159,14 +159,25 @@ namespace Kaenx.Creator.Classes
                 toImport = entries.ElementAt(0);
             } else {
                 List<string> names = new();
+                List<KeyValuePair<string, object>> apps = new();
                 foreach(ZipArchiveEntry xentry in entries)
-                    names.Add(xentry.Name.Substring(0, xentry.Name.LastIndexOf('.')));
-                ListDialog diag = new ("Welche Applikation soll importiert werden?", "Import", names);
+                {
+                    string appId = xentry.Name.Substring(0, xentry.Name.LastIndexOf('.'));
+                    XElement xapp = XDocument.Load(xentry.Open()).Root;
+                    _namespace = xapp.Attribute("xmlns").Value;
+                    xapp = xapp.Element(Get("ManufacturerData")).Element(Get("Manufacturer")).Element(Get("ApplicationPrograms")).Element(Get("ApplicationProgram"));     
+                    string appName  = xapp.Attribute("Name").Value;
+
+                    apps.Add(new KeyValuePair<string, object>(appName + "   (" + appId +")", xentry));
+                    names.Add(appName + " (" + appId +")");
+                }
+
+                ListDialog diag = new ("Welche Applikation soll importiert werden?", "Import", (from app in apps select app.Key).ToList());
                 diag.ShowDialog();
 
                 if(diag.DialogResult != true) return;
 
-                toImport = entries.Single(e => e.Name.Contains(diag.Answer));
+                toImport = (ZipArchiveEntry)apps.First(app => app.Key == diag.Answer).Value;
             }
 
             using (Stream entryStream = toImport.Open())
