@@ -5,7 +5,7 @@
         Title="Eingabe" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterScreen"
         Width="250"
         Icon="/FileLogo.ico">
-    <Grid Margin="15" FocusManager.FocusedElement="{Binding ElementName=AnswerBox}">
+    <Grid Margin="15">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
