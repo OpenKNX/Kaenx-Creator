@@ -15,17 +15,19 @@
     x:Name="ViewControl">
 
     <UserControl.Resources>
+        <conv:IntToColorBrush x:Key="intToColBrush" />
+
         <DataTemplate x:Key="MemNormal">
             <StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <Rectangle Height="18" Width="18" Fill="{Binding FillColor[0]}" Margin="2" />
-                    <Rectangle Height="18" Width="18" Fill="{Binding FillColor[1]}" Margin="2" />
-                    <Rectangle Height="18" Width="18" Fill="{Binding FillColor[2]}" Margin="2" />
-                    <Rectangle Height="18" Width="18" Fill="{Binding FillColor[3]}" Margin="2" />
-                    <Rectangle Height="18" Width="18" Fill="{Binding FillColor[4]}" Margin="2" />
-                    <Rectangle Height="18" Width="18" Fill="{Binding FillColor[5]}" Margin="2" />
-                    <Rectangle Height="18" Width="18" Fill="{Binding FillColor[6]}" Margin="2" />
-                    <Rectangle Height="18" Width="18" Fill="{Binding FillColor[7]}" Margin="2" />
+                    <Rectangle Height="18" Width="18" Fill="{Binding FillColor[0], Converter={StaticResource intToColBrush}}" Margin="2" />
+                    <Rectangle Height="18" Width="18" Fill="{Binding FillColor[1], Converter={StaticResource intToColBrush}}" Margin="2" />
+                    <Rectangle Height="18" Width="18" Fill="{Binding FillColor[2], Converter={StaticResource intToColBrush}}" Margin="2" />
+                    <Rectangle Height="18" Width="18" Fill="{Binding FillColor[3], Converter={StaticResource intToColBrush}}" Margin="2" />
+                    <Rectangle Height="18" Width="18" Fill="{Binding FillColor[4], Converter={StaticResource intToColBrush}}" Margin="2" />
+                    <Rectangle Height="18" Width="18" Fill="{Binding FillColor[5], Converter={StaticResource intToColBrush}}" Margin="2" />
+                    <Rectangle Height="18" Width="18" Fill="{Binding FillColor[6], Converter={StaticResource intToColBrush}}" Margin="2" />
+                    <Rectangle Height="18" Width="18" Fill="{Binding FillColor[7], Converter={StaticResource intToColBrush}}" Margin="2" />
                 </StackPanel>
 
                 <HeaderedContentControl Header="{x:Static p:Resources.mem_para}">
@@ -116,112 +118,112 @@
                 <DataGridTemplateColumn Header="0" CellTemplate="{StaticResource CellTemplate}">
                     <DataGridTemplateColumn.CellStyle>
                         <Style TargetType="{x:Type DataGridCell}">
-                            <Setter Property="Background" Value="{Binding FillColor[0]}" />
+                            <Setter Property="Background" Value="{Binding FillColor[0], Converter={StaticResource intToColBrush}}" />
                         </Style>
                     </DataGridTemplateColumn.CellStyle>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="1">
                     <DataGridTemplateColumn.CellStyle>
                         <Style TargetType="{x:Type DataGridCell}">
-                            <Setter Property="Background" Value="{Binding FillColor[1]}" />
+                            <Setter Property="Background" Value="{Binding FillColor[1], Converter={StaticResource intToColBrush}}" />
                         </Style>
                     </DataGridTemplateColumn.CellStyle>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="2">
                     <DataGridTemplateColumn.CellStyle>
                         <Style TargetType="{x:Type DataGridCell}">
-                            <Setter Property="Background" Value="{Binding FillColor[2]}" />
+                            <Setter Property="Background" Value="{Binding FillColor[2], Converter={StaticResource intToColBrush}}" />
                         </Style>
                     </DataGridTemplateColumn.CellStyle>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="3">
                     <DataGridTemplateColumn.CellStyle>
                         <Style TargetType="{x:Type DataGridCell}">
-                            <Setter Property="Background" Value="{Binding FillColor[3]}" />
+                            <Setter Property="Background" Value="{Binding FillColor[3], Converter={StaticResource intToColBrush}}" />
                         </Style>
                     </DataGridTemplateColumn.CellStyle>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="4">
                     <DataGridTemplateColumn.CellStyle>
                         <Style TargetType="{x:Type DataGridCell}">
-                            <Setter Property="Background" Value="{Binding FillColor[4]}" />
+                            <Setter Property="Background" Value="{Binding FillColor[4], Converter={StaticResource intToColBrush}}" />
                         </Style>
                     </DataGridTemplateColumn.CellStyle>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="5">
                     <DataGridTemplateColumn.CellStyle>
                         <Style TargetType="{x:Type DataGridCell}">
-                            <Setter Property="Background" Value="{Binding FillColor[5]}" />
+                            <Setter Property="Background" Value="{Binding FillColor[5], Converter={StaticResource intToColBrush}}" />
                         </Style>
                     </DataGridTemplateColumn.CellStyle>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="6">
                     <DataGridTemplateColumn.CellStyle>
                         <Style TargetType="{x:Type DataGridCell}">
-                            <Setter Property="Background" Value="{Binding FillColor[6]}" />
+                            <Setter Property="Background" Value="{Binding FillColor[6], Converter={StaticResource intToColBrush}}" />
                         </Style>
                     </DataGridTemplateColumn.CellStyle>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="7">
                     <DataGridTemplateColumn.CellStyle>
                         <Style TargetType="{x:Type DataGridCell}">
-                            <Setter Property="Background" Value="{Binding FillColor[7]}" />
+                            <Setter Property="Background" Value="{Binding FillColor[7], Converter={StaticResource intToColBrush}}" />
                         </Style>
                     </DataGridTemplateColumn.CellStyle>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="8">
                     <DataGridTemplateColumn.CellStyle>
                         <Style TargetType="{x:Type DataGridCell}">
-                            <Setter Property="Background" Value="{Binding FillColor[8]}" />
+                            <Setter Property="Background" Value="{Binding FillColor[8], Converter={StaticResource intToColBrush}}" />
                         </Style>
                     </DataGridTemplateColumn.CellStyle>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="9">
                     <DataGridTemplateColumn.CellStyle>
                         <Style TargetType="{x:Type DataGridCell}">
-                            <Setter Property="Background" Value="{Binding FillColor[9]}" />
+                            <Setter Property="Background" Value="{Binding FillColor[9], Converter={StaticResource intToColBrush}}" />
                         </Style>
                     </DataGridTemplateColumn.CellStyle>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="A">
                     <DataGridTemplateColumn.CellStyle>
                         <Style TargetType="{x:Type DataGridCell}">
-                            <Setter Property="Background" Value="{Binding FillColor[10]}" />
+                            <Setter Property="Background" Value="{Binding FillColor[10], Converter={StaticResource intToColBrush}}" />
                         </Style>
                     </DataGridTemplateColumn.CellStyle>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="B">
                     <DataGridTemplateColumn.CellStyle>
                         <Style TargetType="{x:Type DataGridCell}">
-                            <Setter Property="Background" Value="{Binding FillColor[11]}" />
+                            <Setter Property="Background" Value="{Binding FillColor[11], Converter={StaticResource intToColBrush}}" />
                         </Style>
                     </DataGridTemplateColumn.CellStyle>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="C">
                     <DataGridTemplateColumn.CellStyle>
                         <Style TargetType="{x:Type DataGridCell}">
-                            <Setter Property="Background" Value="{Binding FillColor[12]}" />
+                            <Setter Property="Background" Value="{Binding FillColor[12], Converter={StaticResource intToColBrush}}" />
                         </Style>
                     </DataGridTemplateColumn.CellStyle>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="D">
                     <DataGridTemplateColumn.CellStyle>
                         <Style TargetType="{x:Type DataGridCell}">
-                            <Setter Property="Background" Value="{Binding FillColor[13]}" />
+                            <Setter Property="Background" Value="{Binding FillColor[13], Converter={StaticResource intToColBrush}}" />
                         </Style>
                     </DataGridTemplateColumn.CellStyle>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="E">
                     <DataGridTemplateColumn.CellStyle>
                         <Style TargetType="{x:Type DataGridCell}">
-                            <Setter Property="Background" Value="{Binding FillColor[14]}" />
+                            <Setter Property="Background" Value="{Binding FillColor[14], Converter={StaticResource intToColBrush}}" />
                         </Style>
                     </DataGridTemplateColumn.CellStyle>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="F">
                     <DataGridTemplateColumn.CellStyle>
                         <Style TargetType="{x:Type DataGridCell}">
-                            <Setter Property="Background" Value="{Binding FillColor[15]}" />
+                            <Setter Property="Background" Value="{Binding FillColor[15], Converter={StaticResource intToColBrush}}" />
                         </Style>
                     </DataGridTemplateColumn.CellStyle>
                 </DataGridTemplateColumn>
