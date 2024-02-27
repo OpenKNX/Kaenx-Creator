@@ -426,7 +426,7 @@ namespace Kaenx.Creator.Classes
                 }
             }
 
-            if(xapp.Attribute("AdditionalAddressesCount") != null)
+            if(xapp.Attribute("AdditionalAddressesCount") != null && int.Parse(xapp.Attribute("AdditionalAddressesCount").Value) != 0)
             {
                 currentVers.IsBusInterfaceActive = true;
                 IEnumerable<XElement> interfaces = xstatic.Element(Get("BusInterfaces")).Elements();
