@@ -362,8 +362,14 @@ namespace Kaenx.Creator.Classes {
                                 }
 
                                 int id = -1;
-                                if (!int.TryParse(xele.Attribute("MessageRef").Value, out id))
-                                    actions.Add(new PublishAction() { Text = "\t" + Properties.Messages.check_ver_loadprod_msgref, State = PublishState.Fail });
+                                string mref = xele.Attribute("MessageRef").Value;
+                                if (!int.TryParse(mref, out id))
+                                {
+                                    if(!General.Application.Messages.Any(m => m.Name == mref))
+                                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_loadprod_msgref, mref), State = PublishState.Fail });
+                                    else
+                                        id = -1;
+                                }
                                 if (id != -1)
                                 {
                                     if (!General.Application.Messages.Any(m => m.UId == id))

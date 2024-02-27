@@ -674,7 +674,7 @@
     <comment/>
   </data>
   <data name="check_ver_loadprod_msgref" xml:space="preserve">
-    <value>Loadprocedure: MessageRef is not an integer</value>
+    <value>Loadprocedure: MessageRef is not an integer and there is no message with name {0}</value>
     <comment/>
   </data>
   <data name="check_ver_loadprod_msgref_error" xml:space="preserve">

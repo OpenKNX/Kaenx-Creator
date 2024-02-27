@@ -674,7 +674,7 @@
     <comment/>
   </data>
   <data name="check_ver_loadprod_msgref" xml:space="preserve">
-    <value>Ladeprozedur: MessageRef ist keine Ganzzahl</value>
+    <value>Ladeprozedur: MessageRef ist keine Ganzzahl und es gibt keine Meldung mit dem Namen {0}</value>
     <comment/>
   </data>
   <data name="check_ver_loadprod_msgref_error" xml:space="preserve">
