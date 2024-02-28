@@ -139,6 +139,7 @@
                     <TextBlock Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0 0 10 14">
                         <Run Text="{Binding ParameterTypeObject.SizeInBit}" />
                         <Run Text="{x:Static p:Resources.gen_bit}" />
+                        <Hyperlink ToolTip="{x:Static p:Resources.tcheck_tooltip}" NavigateUri="https://example.com" RequestNavigate="ClickCheckHyperlink">&lt;--</Hyperlink>
                     </TextBlock>
                 </Grid>
 

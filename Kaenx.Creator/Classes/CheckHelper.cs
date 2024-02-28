@@ -189,7 +189,7 @@ namespace Kaenx.Creator.Classes {
                             ptype.SizeInBit = bin.Length;
                             maxsize = (long)Math.Pow(2, ptype.SizeInBit);
                         }
-                        if(min < 0) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_uint_min2, ptype.Name, ptype.UId), State = PublishState.Fail, Item = ptype });
+                        if(min < 0) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_uint_min2, "UInt", ptype.Name, ptype.UId), State = PublishState.Fail, Item = ptype });
                         if(min > max) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_int_minmax, "UInt", ptype.Name, ptype.UId), State = PublishState.Fail, Item = ptype });
                         if(max >= maxsize) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_int_max2, "UInt", ptype.Name, ptype.UId, maxsize-1), State = PublishState.Fail, Item = ptype });
                         break;
@@ -276,6 +276,33 @@ namespace Kaenx.Creator.Classes {
                     case ParameterTypes.Time:
                     {
                         //TODO check
+                        long min, max, temp, maxsize;
+                        if(!long.TryParse(ptype.Max, out max)) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_int_max, "Time", ptype.Name, ptype.UId), State = PublishState.Fail, Item = ptype });
+                        if(!long.TryParse(ptype.Min, out min)) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_int_min, "Time", ptype.Name, ptype.UId), State = PublishState.Fail, Item = ptype });
+                        
+                        if(!ptype.IsSizeManual)
+                        {
+                            if(ptype.Increment == "PackedSecondsAndMilliseconds") {
+                                ptype.SizeInBit = 2*8;
+                                maxsize = 64999;
+                            } else if(ptype.Increment == "PackedDaysHoursMinutesAndSeconds") {
+                                ptype.SizeInBit = 3*8;
+                                maxsize = 777599;
+                            } else if(ptype.Increment == "PackedMinutesSecondsAndMilliseconds") {
+                                ptype.SizeInBit = 3*8;
+                                maxsize = 15359999;
+                            } else {
+                                string bin = Convert.ToString(max, 2);
+                                ptype.SizeInBit = bin.Length;
+                                maxsize = (long)Math.Pow(2, ptype.SizeInBit);
+                            }
+                        }
+                        //TODO translate
+                        if(ptyoe.SizeInBit > 64) actions.Add(new PublishAction() { Text = "\t" + string.Format("ParameterType {0} {1} ({2}): SizeInBit darf nicht größer als 64 sein", "UInt", ptype.Name, ptype.UId), State = PublishState.Fail, Item = ptype });
+                        if(min < 0) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_uint_min2, "Time", ptype.Name, ptype.UId), State = PublishState.Fail, Item = ptype });
+                        if(min > max) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_int_minmax, "Time", ptype.Name, ptype.UId), State = PublishState.Fail, Item = ptype });
+                            
+                        if(max >= maxsize) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_int_max2, "Time", ptype.Name, ptype.UId, maxsize), State = PublishState.Fail, Item = ptype });
                         break;
                     }
 
@@ -632,6 +659,7 @@ namespace Kaenx.Creator.Classes {
                     break;
 
                 case ParameterTypes.Enum:
+                {
                     int paraval2;
                     if(!int.TryParse(value, out paraval2)) 
                         actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_para_enum1, stype, name, uid), State = PublishState.Fail, Item = item, Module = mod });
@@ -640,9 +668,11 @@ namespace Kaenx.Creator.Classes {
                             actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_para_enum2, stype, name, uid), State = PublishState.Fail, Item = item, Module = mod });
                     }
                     break;
+                }
 
                 case ParameterTypes.NumberUInt:
                 case ParameterTypes.NumberInt:
+                {
                     long paraval;
                     if(!long.TryParse(value, out paraval)) 
                         actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_para_number1, stype, name, uid), State = PublishState.Fail, Item = item, Module = mod });
@@ -651,6 +681,7 @@ namespace Kaenx.Creator.Classes {
                             actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_para_number2, stype, name, uid), State = PublishState.Fail, Item = item, Module = mod });
                     }
                     break;
+                }
 
                 case ParameterTypes.Float_DPT9:
                 case ParameterTypes.Float_IEEE_Single:
@@ -707,6 +738,21 @@ namespace Kaenx.Creator.Classes {
                 case ParameterTypes.Time:
                 {
                     //TODO implement check
+                    if(type.Increment == "PackedSecondsAndMilliseconds") {
+                        
+                    } else if(type.Increment == "PackedDaysHoursMinutesAndSeconds") {
+                        
+                    } else if(type.Increment == "PackedMinutesSecondsAndMilliseconds") {
+
+                    } else {
+                        long paraval;
+                        if(!long.TryParse(value, out paraval)) 
+                            actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_para_number1, stype, name, uid), State = PublishState.Fail, Item = item, Module = mod });
+                        else {
+                            if(paraval > long.Parse(type.Max) || paraval < long.Parse(type.Min))
+                                actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_para_number2, stype, name, uid), State = PublishState.Fail, Item = item, Module = mod });
+                        }
+                    }
                     break;
                 }
             }

@@ -190,6 +190,12 @@ namespace Kaenx.Creator.Controls
 
         }
 
+        private void ClickCheckHyperlink(object sender, RoutedEventArgs e)
+        {
+            Models.Parameter para = (sender as System.Windows.Documents.Hyperlink).DataContext as Models.Parameter;
+            MainWindow.Instance.GoToItem(para.ParameterTypeObject, null);
+        }
+
         private void ResetId(object sender, RoutedEventArgs e)
         {
             ((sender as Button).DataContext as Models.Parameter).Id = -1;

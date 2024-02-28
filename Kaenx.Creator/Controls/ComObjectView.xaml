@@ -136,10 +136,14 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="auto" />
                                 <ColumnDefinition />
+                                <ColumnDefinition Width="auto" />
                             </Grid.ColumnDefinitions>
 
                             <CheckBox IsChecked="{Binding UseTextParameter}" VerticalAlignment="Center" />
                             <ComboBox Grid.Column="1" IsEnabled="{Binding UseTextParameter}" ItemsSource="{Binding Module.ParameterRefs, ElementName=ViewControl}" SelectedItem="{Binding ParameterRefObject, Mode=TwoWay}" DisplayMemberPath="Name" />
+                            <TextBlock Grid.Column="2" VerticalAlignment="Center" Margin="10 0 0 4">
+                                <Hyperlink ToolTip="{x:Static p:Resources.tcheck_tooltip}" NavigateUri="https://example.com" RequestNavigate="ClickCheckHyperlink">&lt;--</Hyperlink>
+                            </TextBlock>
                         </Grid>
                     </HeaderedContentControl>
 

@@ -618,7 +618,7 @@
     <comment>UInt/Int; Name; UId</comment>
   </data>
   <data name="check_ver_parat_uint_min2" xml:space="preserve">
-    <value>ParameterType UInt {0} ({1}): Min can't be smaller than 0</value>
+    <value>ParameterType {0} {1} ({2}): Min can't be smaller than 0</value>
     <comment>UInt/Int; Name; UId</comment>
   </data>
   <data name="check_ver_parat_int_minmax" xml:space="preserve">

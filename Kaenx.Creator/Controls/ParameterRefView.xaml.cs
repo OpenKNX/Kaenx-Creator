@@ -97,6 +97,12 @@ namespace Kaenx.Creator.Controls
             ClearHelper.ClearIDs(Module.Dynamics[0], pref);
         }
 
+        private void ClickCheckHyperlink(object sender, RoutedEventArgs e)
+        {
+            Models.ParameterRef para = (sender as System.Windows.Documents.Hyperlink).DataContext as Models.ParameterRef;
+            MainWindow.Instance.GoToItem(para.ParameterObject, Module);
+        }
+
         private void ResetId(object sender, RoutedEventArgs e)
         {
             ((sender as Button).DataContext as ParameterRef).Id = -1;

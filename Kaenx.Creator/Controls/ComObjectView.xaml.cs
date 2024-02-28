@@ -149,6 +149,12 @@ namespace Kaenx.Creator.Controls
             Module.ComObjects.Remove(com);
         }
 
+        private void ClickCheckHyperlink(object sender, RoutedEventArgs e)
+        {
+            Models.ComObject com = (sender as System.Windows.Documents.Hyperlink).DataContext as Models.ComObject;
+            MainWindow.Instance.GoToItem(com.ParameterRefObject, Module);
+        }
+
         private void ResetId(object sender, RoutedEventArgs e)
         {
             ((sender as Button).DataContext as Models.ComObject).Id = -1;

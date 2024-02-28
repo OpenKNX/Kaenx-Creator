@@ -911,18 +911,21 @@ namespace Kaenx.Creator
             Models.CatalogItem item = (sender as MenuItem).DataContext as Models.CatalogItem;
             item.Parent.Items.Remove(item);
         }
-
-
-
-
-        #endregion
-
+        
         private void ClickCalcHeatmap(object sender, RoutedEventArgs e)
         {
             Models.Memory mem = (sender as Button).DataContext as Models.Memory;
             Kaenx.Creator.Classes.MemoryHelper.MemoryCalculation(General.Application, mem);
             
         }
+
+        private void ClickCheckHyperlink(object sender, RoutedEventArgs e)
+        {
+            TabsEdit.SelectedIndex = 3;
+            Models.PublishAction action = (sender as System.Windows.Documents.Hyperlink).DataContext as Models.PublishAction;
+            MainWindow.Instance.GoToItem(action.Item, action.Module);
+        }
+        #endregion
 
         private void TabChanged(object sender, SelectionChangedEventArgs e)
         {

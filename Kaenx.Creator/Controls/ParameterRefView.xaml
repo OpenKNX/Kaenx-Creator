@@ -107,9 +107,21 @@
             <HeaderedContentControl Header="{x:Static p:Resources.prop_name}">
                 <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
             </HeaderedContentControl>
-            <HeaderedContentControl Header="{x:Static p:Resources.prop_para}">
-                <ComboBox IsEditable="true" ItemsSource="{Binding Module.Parameters, ElementName=ViewControl}" DisplayMemberPath="Name" SelectedItem="{Binding ParameterObject}" />
-            </HeaderedContentControl>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="auto" />
+                </Grid.ColumnDefinitions>
+                <HeaderedContentControl Header="{x:Static p:Resources.prop_para}">
+                    <ComboBox IsEditable="true" ItemsSource="{Binding Module.Parameters, ElementName=ViewControl}" DisplayMemberPath="Name" SelectedItem="{Binding ParameterObject}" />
+                </HeaderedContentControl>
+
+                <TextBlock Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0 0 10 14">
+                    <Hyperlink ToolTip="{x:Static p:Resources.tcheck_tooltip}" NavigateUri="https://example.com" RequestNavigate="ClickCheckHyperlink">&lt;--</Hyperlink>
+                </TextBlock>
+            </Grid>
+            
             <HeaderedContentControl Header="{x:Static p:Resources.prop_value}">
                 <Grid>
                     <Grid.ColumnDefinitions>
