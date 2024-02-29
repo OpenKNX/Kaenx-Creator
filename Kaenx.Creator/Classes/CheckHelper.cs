@@ -276,7 +276,7 @@ namespace Kaenx.Creator.Classes {
                     case ParameterTypes.Time:
                     {
                         //TODO check
-                        long min, max, temp, maxsize;
+                        long min, max;
                         if(!long.TryParse(ptype.Max, out max)) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_int_max, "Time", ptype.Name, ptype.UId), State = PublishState.Fail, Item = ptype });
                         if(!long.TryParse(ptype.Min, out min)) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_int_min, "Time", ptype.Name, ptype.UId), State = PublishState.Fail, Item = ptype });
                         
@@ -298,7 +298,7 @@ namespace Kaenx.Creator.Classes {
                             }
                         }
                         //TODO translate
-                        if(ptyoe.SizeInBit > 64) actions.Add(new PublishAction() { Text = "\t" + string.Format("ParameterType {0} {1} ({2}): SizeInBit darf nicht größer als 64 sein", "UInt", ptype.Name, ptype.UId), State = PublishState.Fail, Item = ptype });
+                        if(ptype.SizeInBit > 64) actions.Add(new PublishAction() { Text = "\t" + string.Format("ParameterType {0} {1} ({2}): SizeInBit darf nicht größer als 64 sein", "UInt", ptype.Name, ptype.UId), State = PublishState.Fail, Item = ptype });
                         if(min < 0) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_uint_min2, "Time", ptype.Name, ptype.UId), State = PublishState.Fail, Item = ptype });
                         if(min > max) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_int_minmax, "Time", ptype.Name, ptype.UId), State = PublishState.Fail, Item = ptype });
                             
