@@ -60,7 +60,8 @@ namespace Kaenx.Creator
             new Models.EtsVersion(14, "ETS 5.6 (14)", "5.6"),
             new Models.EtsVersion(20, "ETS 5.7 (20)", "5.7"),
             new Models.EtsVersion(21, "ETS 6.0 (21)", "6.0"),
-            new Models.EtsVersion(22, "ETS 6.1 (22)", "6.1")
+            new Models.EtsVersion(22, "ETS 6.1 (22)", "6.1"),
+            new Models.EtsVersion(23, "ETS 6.2 (23)", "6.2")
         };
 
         public MainWindow()

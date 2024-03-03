@@ -342,13 +342,15 @@ namespace Kaenx.Creator.Controls
             (menu.Items[0] as MenuItem).IsEnabled = SubTypes[type].Contains("DynChannelIndependent");
             (menu.Items[1] as MenuItem).IsEnabled = SubTypes[type].Contains("DynChannel");
             (menu.Items[2] as MenuItem).IsEnabled = SubTypes[type].Contains("DynParaBlock");
-            (menu.Items[3] as MenuItem).IsEnabled = Version.IsModulesActive && SubTypes[type].Contains("DynModule");
+            (menu.Items[3] as MenuItem).Visibility = Version.IsModulesActive ? Visibility.Visible : Visibility.Collapsed;
+            (menu.Items[3] as MenuItem).IsEnabled = SubTypes[type].Contains("DynModule");
             (menu.Items[4] as MenuItem).IsEnabled = SubTypes[type].Contains("DynChoose");
             //Separator
             (menu.Items[6] as MenuItem).IsEnabled = SubTypes[type].Contains("DynParameter");
             (menu.Items[7] as MenuItem).IsEnabled = SubTypes[type].Contains("DynComObject");
             (menu.Items[8] as MenuItem).IsEnabled = SubTypes[type].Contains("DynSeparator");
             (menu.Items[9] as MenuItem).IsEnabled = SubTypes[type].Contains("DynAssign");
+            (menu.Items[10] as MenuItem).Visibility = Version.IsModulesActive ? Visibility.Visible : Visibility.Collapsed;
             (menu.Items[10] as MenuItem).IsEnabled = SubTypes[type].Contains("DynRepeat");
             (menu.Items[11] as MenuItem).IsEnabled = SubTypes[type].Contains("DynButton");
 
