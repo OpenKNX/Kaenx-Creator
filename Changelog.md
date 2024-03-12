@@ -1,3 +1,22 @@
+v1.7.4
+ - added: hyperlink from
+   - Parameter to ParameterType
+   - ParameterRef to Parameter
+   - ComObjectRef to ComObject
+ - added: checks for ParameterType Time
+ - added: define for ParameterType Enums
+ - fixed: DynamicView show only Modules/Repeater if activated
+
+v1.7.3
+ - fixed: Heatmap after split to Kaenx-Creator-Share [#30](https://github.com/OpenKNX/Kaenx-Creator/pull/30)
+ - added: more info for importing app [29](https://github.com/OpenKNX/Kaenx-Creator/pull/29)
+ - added: option to refer MessageRefs by name in LoadProcedure
+
+v1.7.2
+ - changed for Kaenx-Creator-Console
+ - added: ParameterType Time
+
+v1.7.1
  - feature: can import OGM-Common
  - feature: check errors have now link for dynamic item
  - changed: missing referenz will now load the file
