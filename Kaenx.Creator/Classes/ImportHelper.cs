@@ -1554,14 +1554,14 @@ namespace Kaenx.Creator.Classes
                 _general.Info.Name = xhard.Attribute("Name").Value;
                 _general.Info.SerialNumber = xhard.Attribute("SerialNumber").Value;
                 _general.Info.Version = int.Parse(xhard.Attribute("VersionNumber").Value);
-                _general.Info.HasApplicationProgram = xhard.Attribute("HasApplicationProgram")?.Value == "true";
-                _general.Info.HasIndividualAddress = xhard.Attribute("HasIndividualAddress")?.Value == "true";
+                _general.Info.HasApplicationProgram = xhard.Attribute("HasApplicationProgram")?.Value == "true" || xhard.Attribute("HasApplicationProgram")?.Value == "1";
+                _general.Info.HasIndividualAddress = xhard.Attribute("HasIndividualAddress")?.Value == "true" || xhard.Attribute("HasIndividualAddress")?.Value == "1";
                 _general.Info.BusCurrent = (int)StringToFloat(xhard.Attribute("BusCurrent")?.Value, 10);
 
                 XElement xprod = xhard.Descendants(Get("Product")).ElementAt(0);
                 _general.Info.OrderNumber = xprod.Attribute("OrderNumber").Value;
                 _general.Info.Name = xprod.Parent.Parent.Attribute("Name").Value;
-                _general.Info.IsRailMounted = xprod.Attribute("IsRailMounted")?.Value == "true";
+                _general.Info.IsRailMounted = xprod.Attribute("IsRailMounted")?.Value == "true" || xprod.Attribute("IsRailMounted")?.Value == "1";
             }
         }
 
