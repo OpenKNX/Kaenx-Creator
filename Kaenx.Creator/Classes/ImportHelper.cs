@@ -88,6 +88,10 @@ namespace Kaenx.Creator.Classes
                 }
             }
 
+            if(_general.ManufacturerId != 0xFA){
+                _general.IsOpenKnx = false;
+            }
+
             System.Diagnostics.Debug.WriteLine("XML unterstützt keine Baggages");
 
 
@@ -131,6 +135,9 @@ namespace Kaenx.Creator.Classes
                 }
             }
 
+            if(_general.ManufacturerId != 0xFA){
+                _general.IsOpenKnx = false;
+            }
             
             ZipArchiveEntry entry;
             XElement xele;
