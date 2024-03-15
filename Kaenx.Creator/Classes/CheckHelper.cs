@@ -209,14 +209,14 @@ namespace Kaenx.Creator.Classes {
                         maxsize = (long)Math.Ceiling(maxsize / 2.0);
                         if(!ptype.IsSizeManual)
                         {
-                            long z = min * (-1);
-                            if(z < (max - 1)) z = max;
-                            string y = z.ToString().Replace("-", "");
-                            string bin = Convert.ToString(long.Parse(y), 2);
-                            if(z == (min * (-1))) bin += "1";
-                            if(!z.ToString().StartsWith("-")) bin = "1" + bin;
-                            ptype.SizeInBit = bin.Length;
-                            maxsize = (long)Math.Pow(2, ptype.SizeInBit);
+                            int lmax = Convert.ToString(max, 2).Length + 1;
+                            string smin = Convert.ToString(min, 2);
+                            int pos = smin.IndexOf('0');
+                            int lmin = smin.Length - pos + 1;
+                            ptype.SizeInBit = (lmax > lmin) ? lmax : lmin;
+                            //TODO make possible to use smaller ints
+                            ptype.SizeInBit = (int)(Math.Ceiling((ptype.SizeInBit-1) / 8.0) * 8);
+                            maxsize = (long)(Math.Pow(2, ptype.SizeInBit) / 2);
                         }
                         if(min > max) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_int_minmax, "Int", ptype.Name, ptype.UId), State = PublishState.Fail, Item = ptype });
                         if(max > ((maxsize)-1)) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_int_max2, "Int", ptype.Name, ptype.UId, (maxsize/2)-1), State = PublishState.Fail, Item = ptype });
