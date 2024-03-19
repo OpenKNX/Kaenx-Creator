@@ -113,7 +113,8 @@
 
             <Button Content="{x:Static p:Resources.parat_add}" Click="ClickAddParamEnum" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Enum, FallbackValue=Collapsed}" />
         
-            <CheckBox IsChecked="{Binding ExportInHeader}" Content="In Header-Datei exportieren" Margin="10 5" /><!--//TODO translate-->
+            <!--//TODO translate-->
+            <CheckBox IsChecked="{Binding ExportInHeader}" Content="In Header-Datei exportieren" Margin="10 5" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Enum, FallbackValue=Collapsed}" />
 
             <Grid Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Enum, FallbackValue=Collapsed}">
                 <Grid.ColumnDefinitions>
