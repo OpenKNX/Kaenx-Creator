@@ -387,9 +387,14 @@ namespace Kaenx.Creator.Controls
             {
                 int uid = Version.ParameterTypes.Count > 0 ? (Version.ParameterTypes.OrderByDescending(t => t.UId).First().UId + 1) : 1;
                 foreach(ParameterType ptype in Version.ParameterTypes)
-                    ptype.UId = uid++;
+                    if(ptype.UId == -1)
+                        ptype.UId = uid++;
 
-                //TODO increment helptexts
+                uid = Version.Helptexts.Count > 0 ? (Version.Helptexts.OrderByDescending(t => t.UId).First().UId + 1) : 1;
+                foreach(Helptext help in Version.Helptexts)
+                    if(help.UId == -1)
+                        help.UId = uid++;
+                    
                 //TODO increment baggages
                 //TODO increment icons
             }
