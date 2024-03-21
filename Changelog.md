@@ -1,3 +1,12 @@
+v1.8.0
+ - fix: #35 
+ - fix: #36 
+ - fix: ParameterTyp NumberInt calculation
+ - fix: UId of imported Helptexts from OpenknxModules
+ - fix: import knxprod empty DPT of ComObjectRef
+ - fix: allocator calculation
+ - added: checkbox for parametertype to export enums in header
+
 v1.7.4
  - added: hyperlink from
    - Parameter to ParameterType
