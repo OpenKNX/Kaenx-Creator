@@ -851,7 +851,7 @@ namespace Kaenx.Creator
                 }
 
                 string assPath = Kaenx.Creator.Classes.Helper.GetAssemblyPath(ns);
-                Kaenx.Creator.Classes.ExportHelper helper = null;//todo = new Kaenx.Creator.Classes.ExportHelper(General, assPath, Path.Combine(sourcePath, "sign.knxprod"));
+                Kaenx.Creator.Classes.ExportHelper helper = new Kaenx.Creator.Classes.ExportHelper(General, assPath, Path.Combine(sourcePath, "sign.knxprod"), null);
                 helper.SetNamespace(ns);
                 helper.SignOutput(targetPath);
 
