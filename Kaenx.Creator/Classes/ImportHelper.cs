@@ -1332,7 +1332,7 @@ namespace Kaenx.Creator.Classes
                 cref.OverwriteFOI = IsFlagTypeOverwriten(xref.Attribute("ReadOnInitFlag")?.Value);
                 //if (cref.FlagOnInit == FlagType.Undefined) cref.FlagOnInit = FlagType.Disabled;
 
-                if (xref.Attribute("DatapointType") != null)
+                if (!string.IsNullOrEmpty(xref.Attribute("DatapointType")?.Value))
                 {
                     string dptstr = xref.Attribute("DatapointType").Value;
 
