@@ -47,8 +47,7 @@ namespace Kaenx.Creator.Controls
             string[] parts = diag.Answer.Split('/');
             if(!parts[4].StartsWith("OFM-") && !parts[4].StartsWith("OGM-"))
             {
-                //TODO translate
-                MessageBox.Show("Das Repo ist kein OFM/OGM!");
+                MessageBox.Show(Properties.Messages.openknx_modules_ofm, Properties.Messages.openknx_modules_title);
                 return;
             }
 
@@ -65,8 +64,7 @@ namespace Kaenx.Creator.Controls
             mod.Name = mod.Url.Substring(mod.Url.IndexOf('-') + 1);
             if(Version.OpenKnxModules.Any(o => o.Name == mod.Name))
             {
-                //TODO translate
-                MessageBox.Show("Es existiert bereits ein OpenKnxModul mit dem Name '" + mod.Name + "'");
+                MessageBox.Show(Properties.Messages.openknx_modules_duplicate, Properties.Messages.openknx_modules_title);
                 return;
             }
 
@@ -394,9 +392,16 @@ namespace Kaenx.Creator.Controls
                 foreach(Helptext help in Version.Helptexts)
                     if(help.UId == -1)
                         help.UId = uid++;
-                    
-                //TODO increment baggages
-                //TODO increment icons
+
+                uid = General.Icons.Count > 0 ? (General.Icons.OrderByDescending(t => t.UId).First().UId + 1) : 1;
+                foreach(Icon icon in General.Icons)
+                    if(icon.UId == -1)
+                        icon.UId = uid++;
+
+                uid = General.Baggages.Count > 0 ? (General.Baggages.OrderByDescending(t => t.UId).First().UId + 1) : 1;
+                foreach(Baggage bagg in General.Baggages)
+                    if(bagg.UId == -1)
+                        bagg.UId = uid++;
             }
         }
 

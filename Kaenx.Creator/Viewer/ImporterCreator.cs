@@ -105,7 +105,6 @@ namespace Kaenx.Creator.Viewer
                         {
                             AppParameterTypeEnumViewModel menum = new AppParameterTypeEnumViewModel() {
                                 TypeId = enumCounter,
-                                //TODO check if ParameterId is necessary
                                 Text = penum.Text.Single(t => t.Language.CultureCode == _version.DefaultLanguage).Text,
                                 Value = penum.Value.ToString(),
                                 Order = enumOrder++
@@ -650,7 +649,7 @@ namespace Kaenx.Creator.Viewer
                         ParamEnum penu = new ParamEnum()
                         {
                             Id = mpara.ParameterId,
-                            Text = mpara.Text, //TODO maybe save space and check overwrite again
+                            Text = mpara.Text,
                             SuffixText = GetDefaultLang(para.ParameterRefObject.ParameterObject.Suffix),
                             HasAccess = mpara.Access != AccessType.None,
                             Value = mpara.Value,
@@ -741,7 +740,7 @@ namespace Kaenx.Creator.Viewer
                     break;
                 }
 
-                case ParameterTypes.IpAddress: //TODO check if other control is better with regex
+                case ParameterTypes.IpAddress:
                 case ParameterTypes.Text:
                 {
                     if(mpara.Access == AccessType.Read){

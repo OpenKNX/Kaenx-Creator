@@ -125,7 +125,7 @@ namespace Kaenx.Creator.Classes {
 
             foreach(var x in General.Application.ParameterTypes.GroupBy(p => p.Name).Where(p => p.Count() > 1))
             {
-                actions.Add(new PublishAction() { Text = string.Format("ParameterType: Der Name '{0}' wurde {1}x verwendet. Namen müssen einzigartig sein.", x.ElementAt(0).Name, x.Count()), State = PublishState.Fail, Item = x.ElementAt(1) });
+                actions.Add(new PublishAction() { Text = string.Format(Properties.Messages.check_ver_parat_name_duplicate, x.ElementAt(0).Name, x.Count()), State = PublishState.Fail, Item = x.ElementAt(1) });
             }
 
             foreach(ParameterType ptype in General.Application.ParameterTypes)
@@ -281,7 +281,6 @@ namespace Kaenx.Creator.Classes {
 
                     case ParameterTypes.Time:
                     {
-                        //TODO check
                         long min, max;
                         if(!long.TryParse(ptype.Max, out max)) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_int_max, "Time", ptype.Name, ptype.UId), State = PublishState.Fail, Item = ptype });
                         if(!long.TryParse(ptype.Min, out min)) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_int_min, "Time", ptype.Name, ptype.UId), State = PublishState.Fail, Item = ptype });
@@ -303,8 +302,8 @@ namespace Kaenx.Creator.Classes {
                                 maxsize = (long)Math.Pow(2, ptype.SizeInBit);
                             }
                         }
-                        //TODO translate
-                        if(ptype.SizeInBit > 64) actions.Add(new PublishAction() { Text = "\t" + string.Format("ParameterType {0} {1} ({2}): SizeInBit darf nicht größer als 64 sein", "UInt", ptype.Name, ptype.UId), State = PublishState.Fail, Item = ptype });
+                        
+                        if(ptype.SizeInBit > 64) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_size, "UInt", ptype.Name, ptype.UId), State = PublishState.Fail, Item = ptype });
                         if(min < 0) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_uint_min2, "Time", ptype.Name, ptype.UId), State = PublishState.Fail, Item = ptype });
                         if(min > max) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_int_minmax, "Time", ptype.Name, ptype.UId), State = PublishState.Fail, Item = ptype });
                             
@@ -633,7 +632,6 @@ namespace Kaenx.Creator.Classes {
             {
                 actions.Add(new PublishAction() { Text = string.Format(Properties.Messages.check_ver_mods, xmod.Name) });
                 CheckVersion(ver, xmod, actions, ver.DefaultLanguage, ver.NamespaceVersion, showOnlyErrors);
-                //TODO check for Argument exist
             }
         }
 

@@ -126,7 +126,7 @@
     <comment/>
   </data>
   <data name="update_new" xml:space="preserve">
-    <value>A new version is available: v{0}\r\nWanna checkout github releases?</value>
+    <value>A new version is available: v{0} Wanna checkout github releases?</value>
     <comment>Versionstring like 1.1.2</comment>
   </data>
   <data name="update_title" xml:space="preserve">
@@ -170,7 +170,7 @@
     <comment/>
   </data>
   <data name="baggage_delete_error" xml:space="preserve">
-    <value>The baggage is being referenced by {0} ParameterTypes.\r\nDelete it anyway?</value>
+    <value>The baggage is being referenced by {0} ParameterTypes. Delete it anyway?</value>
     <comment>Count of Items</comment>
   </data>
   <data name="baggage_delete_error_title" xml:space="preserve">
@@ -314,7 +314,7 @@
     <comment/>
   </data>
   <data name="icon_delete_error" xml:space="preserve">
-    <value>The icon is being referenced by {0} ParameterType(s).\r\nDelete it anyway?</value>
+    <value>The icon is being referenced by {0} Item(s). Delete it anyway?</value>
     <comment>Count of Items</comment>
   </data>
   <data name="icon_delete_error_title" xml:space="preserve">
@@ -615,6 +615,14 @@
   </data>
   <data name="check_ver_parat_int_factor" xml:space="preserve">
     <value>ParameterType {0} {1} ({2}): Display Factor is no integer</value>
+    <comment>UInt/Int; Name; UId</comment>
+  </data>
+  <data name="check_ver_parat_name_duplicate" xml:space="preserve">
+    <value>ParameterType: The name '{0}' is used {1}x times. Names have to be unique</value>
+    <comment>Name; Count</comment>
+  </data>
+  <data name="check_ver_parat_size" xml:space="preserve">
+    <value>ParameterType {0} {1} ({2}): SizeInBit should not be greater than 64</value>
     <comment>UInt/Int; Name; UId</comment>
   </data>
   <data name="check_ver_parat_uint_min2" xml:space="preserve">
@@ -1015,6 +1023,26 @@
   </data>
   <data name="check_dyn_dr_type" xml:space="preserve">
     <value>DynRepeat {0}: ParameterType of ParameterRef has to be Enum or NumberUInt</value>
+    <comment/>
+  </data>
+  <data name="import_multiple_applications" xml:space="preserve">
+    <value>Import: Hardware contains more than one application. Only the first one will be imported.</value>
+    <comment/>
+  </data>
+  <data name="openknx_modules_duplicate" xml:space="preserve">
+    <value>An OpenKnxModule with the same name '{0}' already exists.</value>
+    <comment/>
+  </data>
+  <data name="openknx_modules_ofm" xml:space="preserve">
+    <value>The OpenKnxModule is not an OFM or OGM.</value>
+    <comment/>
+  </data>
+  <data name="openknx_modules_remove" xml:space="preserve">
+    <value>This Module is a OpenKnxModule. To remove it, delete the OpenKnxModule</value>
+    <comment/>
+  </data>
+  <data name="openknx_modules_title" xml:space="preserve">
+    <value>OpenKnxModule</value>
     <comment/>
   </data>
 </root>

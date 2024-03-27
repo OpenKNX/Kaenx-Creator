@@ -113,8 +113,7 @@
 
             <Button Content="{x:Static p:Resources.parat_add}" Click="ClickAddParamEnum" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Enum, FallbackValue=Collapsed}" />
         
-            <!--//TODO translate-->
-            <CheckBox IsChecked="{Binding ExportInHeader}" Content="In Header-Datei exportieren" Margin="10 5" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Enum, FallbackValue=Collapsed}" />
+            <CheckBox IsChecked="{Binding ExportInHeader}" Content="{x:Static p:Resources.parat_export_enum}" Margin="10 5" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Enum, FallbackValue=Collapsed}" />
 
             <Grid Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Enum, FallbackValue=Collapsed}">
                 <Grid.ColumnDefinitions>
@@ -131,7 +130,7 @@
                 </DataGrid>
 
                 <StackPanel Grid.Column="1" IsEnabled="{Binding ., Converter={StaticResource EmptyToBool}, ConverterParameter=true}" DataContext="{Binding SelectedItem, ElementName=ptypeList}">
-                    <HeaderedContentControl Header="{x:Static p:Resources.prop_icon}">
+                    <!-- <HeaderedContentControl Header="{x:Static p:Resources.prop_icon}">
                         <Grid Height="35">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="auto" />
@@ -142,6 +141,31 @@
                             <CheckBox IsChecked="{Binding UseIcon}" VerticalAlignment="Center" />
                             <ComboBox Grid.Column="1" Margin="0 0 5 0" VerticalAlignment="Center" IsEnabled="{Binding UseIcon}" ItemsSource="{Binding Icons, ElementName=ViewControl}" SelectedItem="{Binding IconObject}" DisplayMemberPath="Name" />
                             <Image Grid.Column="2" Source="{Binding IconObject.Source}" />
+                        </Grid>
+                    </HeaderedContentControl> -->
+                    <HeaderedContentControl Header="{x:Static p:Resources.prop_icon}">
+                        <Grid Height="35">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+    
+                            <CheckBox IsChecked="{Binding UseIcon}" VerticalAlignment="Center" />
+                            
+                            <ComboBox Grid.Column="1" VerticalAlignment="Center" IsEnabled="{Binding UseIcon}" ItemsSource="{Binding Icons, ElementName=ViewControl}" SelectedItem="{Binding IconObject}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="30" />
+                                                <ColumnDefinition />
+                                            </Grid.ColumnDefinitions>
+                                            <Image Source="{Binding Data, Converter={StaticResource DataToImage}}" Height="20" />
+                                            <TextBlock Text="{Binding Name}" Grid.Column="1" VerticalAlignment="Center" Margin="10 0 0 0" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
                         </Grid>
                     </HeaderedContentControl>
 

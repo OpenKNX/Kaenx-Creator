@@ -2606,5 +2606,14 @@ namespace Kaenx.Creator.Properties {
                 return ResourceManager.GetString("parat_unit", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string parat_export_enum {
+            get {
+                return ResourceManager.GetString("parat_export_enum", resourceCulture);
+            }
+        }
     }
 }

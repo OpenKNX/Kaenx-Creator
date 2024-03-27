@@ -1170,7 +1170,6 @@ namespace Kaenx.Creator.Classes
                     } else {
                         if(firstId != currId)
                         {
-                            //TODO check mapperId
                             string modName = xcoms.Parent.Parent.Attribute("Name").Value;
                             System.Windows.MessageBox.Show($"Modul '{modName}' enthält mehrere BaseOffsets für ComObjects.\r\nDas wird nicht von Kaenx-Creator unterstützt.\r\nAlle Ids werden neu zugeordnet.", "Module Warnung", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
                             idmapper = new Dictionary<string, long>();
@@ -1552,7 +1551,7 @@ namespace Kaenx.Creator.Classes
             foreach(XElement xhard in xhards.Elements())
             {
                 if(xhard.Descendants(Get("ApplicationProgramRef")).Count() > 1)
-                    System.Windows.MessageBox.Show("Hardware enthält mehrere Applikationen. Es wird nur die erste Importiert."); //todo translate
+                    System.Windows.MessageBox.Show(Properties.Messages.import_multiple_applications);
 
                 XElement appProgRef = xhard.Descendants(Get("ApplicationProgramRef")).ElementAt(0);
                 if(appProgRef.Attribute("RefId").Value != AppImportHelper)
@@ -1578,21 +1577,6 @@ namespace Kaenx.Creator.Classes
             {
                 ParseCatalogItem(xitem, _general.Catalog[0]);
             }
-
-            //todo check where to put this
-            /*foreach(Hardware hard in _general.Hardware)
-            {
-                foreach(Device dev in hard.Devices)
-                {
-                    foreach(Language lang in _general.Languages)
-                    {
-                        if(!dev.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
-                            dev.Text.Add(new Translation(lang, ""));
-                        if(!dev.Description.Any(t => t.Language.CultureCode == lang.CultureCode))
-                            dev.Description.Add(new Translation(lang, ""));
-                    }
-                }
-            }*/
 
             CheckCatalogSectionLanguages(_general.Catalog[0]);
         }

@@ -746,6 +746,18 @@ namespace Kaenx.Creator.Properties {
             }
         }
         
+        public static string check_ver_parat_name_duplicate {
+            get {
+                return ResourceManager.GetString("check_ver_parat_name_duplicate", resourceCulture);
+            }
+        }
+        
+        public static string check_ver_parat_size {
+            get {
+                return ResourceManager.GetString("check_ver_parat_size", resourceCulture);
+            }
+        }
+        
         public static string check_ver_parat_checkbox {
             get {
                 return ResourceManager.GetString("check_ver_parat_checkbox", resourceCulture);
@@ -1403,6 +1415,36 @@ namespace Kaenx.Creator.Properties {
         public static string check_dyn_dr_type {
             get {
                 return ResourceManager.GetString("check_dyn_dr_type", resourceCulture);
+            }
+        }
+        
+        public static string import_multiple_applications {
+            get {
+                return ResourceManager.GetString("import_multiple_applications", resourceCulture);
+            }
+        }
+        
+        public static string openknx_modules_duplicate {
+            get {
+                return ResourceManager.GetString("openknx_modules_duplicate", resourceCulture);
+            }
+        }
+        
+        public static string openknx_modules_ofm {
+            get {
+                return ResourceManager.GetString("openknx_modules_ofm", resourceCulture);
+            }
+        }
+        
+        public static string openknx_modules_remove {
+            get {
+                return ResourceManager.GetString("openknx_modules_remove", resourceCulture);
+            }
+        }
+        
+        public static string openknx_modules_title {
+            get {
+                return ResourceManager.GetString("openknx_modules_title", resourceCulture);
             }
         }
     }

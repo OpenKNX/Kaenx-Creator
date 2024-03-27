@@ -13,6 +13,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
 using System.Diagnostics;
+using Kaenx.Creator.Models.Dynamic;
 
 namespace Kaenx.Creator.Controls
 {
@@ -48,22 +49,96 @@ namespace Kaenx.Creator.Controls
         private void ClickDelete(object sender, System.Windows.RoutedEventArgs e)
         {   
             Icon icon = IconsList.SelectedItem as Icon;
-            List<ParameterType> types = new List<ParameterType>();
+            List<object> types = new List<object>();
 
-            /*foreach(Models.Application app in General.Applications)
-                foreach(AppVersion vers in app.Versions)
-                    foreach(ParameterType type in vers.ParameterTypes)
-                        if(type.Type == ParameterTypes.Picture && type.BaggageObject == bag)
-                            types.Add(type);
-*/
-//TODO implement
+            SearchVersion(General.Application, icon.UId, types, false);
+
             if(types.Count > 0)
             {
                 var result = MessageBox.Show(string.Format(Properties.Messages.icon_delete_error, types.Count), Properties.Messages.icon_delete_error_title, MessageBoxButton.YesNo);
                 if(result == MessageBoxResult.No) return;
+                SearchVersion(General.Application, icon.UId, types, true);
             }
 
             General.Icons.Remove(icon);
+        }
+
+        private void SearchVersion(IVersionBase vbase, int iconId, List<object> types, bool remove)
+        {
+            if(vbase is AppVersion version)
+            {
+                foreach(ParameterType ptype in version.ParameterTypes.Where(p => p.Type == ParameterTypes.Enum))
+                    foreach(ParameterTypeEnum penum in ptype.Enums)
+                        if(penum.UseIcon && penum.IconId == iconId)
+                            if(remove)
+                                penum.IconObject = null;
+                            else
+                                types.Add(penum);
+            }
+
+            SearchDynamicItem(vbase.Dynamics[0], iconId, types, remove);
+
+            foreach(Models.Module mod in vbase.Modules)
+                SearchVersion(mod, iconId, types, remove);
+        }
+
+        private void SearchDynamicItem(IDynItems item, int iconId, List<object> types, bool remove)
+        {
+            switch(item)
+            {
+                case DynButton dbtn:
+                    if(dbtn.UseIcon && dbtn.IconId == iconId)
+                    {
+                        if(remove)
+                            dbtn.IconObject = null;
+                        else
+                            types.Add(dbtn);
+                    }
+                    break;
+
+                case DynChannel dchan:
+                    if(dchan.UseIcon && dchan.IconId == iconId)
+                    {
+                        if(remove)
+                            dchan.IconObject = null;
+                        else
+                            types.Add(dchan);
+                    }
+                    break;
+
+                case DynParaBlock dparab:
+                    if(dparab.UseIcon && dparab.IconId == iconId)
+                    {
+                        if(remove)
+                            dparab.IconObject = null;
+                        else
+                            types.Add(dparab);
+                    }
+                    break;
+
+                case DynParameter dpara:
+                    if(dpara.UseIcon && dpara.IconId == iconId)
+                    {
+                        if(remove)
+                            dpara.IconObject = null;
+                        else
+                            types.Add(dpara);
+                    }
+                    break;
+
+                case DynSeparator dsep:
+                    if(dsep.UseIcon && dsep.IconId == iconId)
+                    {
+                        if(remove)
+                            dsep.IconObject = null;
+                        else
+                            types.Add(dsep);
+                    }
+                    break;
+            }
+
+            foreach(IDynItems child in item.Items)
+                SearchDynamicItem(child, iconId, types, remove);
         }
 
         private void ClickChangeFile(object sender, System.Windows.RoutedEventArgs e)

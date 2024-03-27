@@ -124,23 +124,21 @@ namespace Kaenx.Creator.Controls
             Models.Module mod = ModuleList.SelectedItem as Models.Module;
             if(mod.IsOpenKnxModule)
             {
-                MessageBox.Show("Modul ist von OpenKNX. Um es zu löschen, bitte das OpenKnx Modul löschen");
+                MessageBox.Show(Properties.Messages.openknx_modules_remove, Properties.Messages.openknx_modules_title);
                 return;
             }
             CurrentModule.Modules.Remove(mod);
-            //RemoveModule(SelectedVersion.Model.Dynamics[0], mod);
-            //TODO make it work again
+            RemoveModule(Version.Dynamics[0], mod);
         }
 
         private void RemoveModule(Models.Dynamic.IDynItems item, Models.Module mod)
-        {/*
+        {
             if(item is Models.Dynamic.DynModule dm)
                 dm.ModuleObject = null;
 
             if(item.Items != null)
                 foreach(Models.Dynamic.IDynItems ditem in item.Items)
                     RemoveModule(ditem, mod);
-            */
         }
 
         private void OnOpenSubModules(object sender, RoutedEventArgs e)
