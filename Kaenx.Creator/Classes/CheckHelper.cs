@@ -123,7 +123,13 @@ namespace Kaenx.Creator.Classes {
                 }
             }
 
-            foreach(ParameterType ptype in General.Application.ParameterTypes) {
+            foreach(var x in General.Application.ParameterTypes.GroupBy(p => p.Name).Where(p => p.Count() > 1))
+            {
+                actions.Add(new PublishAction() { Text = string.Format("ParameterType: Der Name '{0}' wurde {1}x verwendet. Namen müssen einzigartig sein.", x.ElementAt(0).Name, x.Count()), State = PublishState.Fail, Item = x.ElementAt(1) });
+            }
+
+            foreach(ParameterType ptype in General.Application.ParameterTypes)
+            {
                 long maxsize = (long)Math.Pow(2, ptype.SizeInBit);
     
                 if(ptype.UIHint == "CheckBox" && (ptype.Min != "0" || ptype.Max != "1"))
