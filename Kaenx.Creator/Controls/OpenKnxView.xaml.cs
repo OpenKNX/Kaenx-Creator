@@ -40,12 +40,23 @@ namespace Kaenx.Creator.Controls
 
         private async void ClickAdd(object sender, RoutedEventArgs e)
         {
-            PromptDialog diag = new PromptDialog("URL", "Neues OpenKnx Modul");
+            PromptDialog diag = new PromptDialog("Repo", "Neues OpenKnx Modul");
             diag.ShowDialog();
             if(string.IsNullOrEmpty(diag.Answer)) return;
 
+            string orga = "";
+            string repo = "";
             string[] parts = diag.Answer.Split('/');
-            if(!parts[4].StartsWith("OFM-") && !parts[4].StartsWith("OGM-"))
+            if(diag.Answer.StartsWith("http"))
+            {
+                orga = parts[3];
+                repo = parts[4];
+            } else {
+                orga = parts[0];
+                repo = parts[1];
+            }
+
+            if(!repo.StartsWith("OFM-") && !repo.StartsWith("OGM-"))
             {
                 MessageBox.Show(Properties.Messages.openknx_modules_ofm, Properties.Messages.openknx_modules_title);
                 return;
@@ -55,11 +66,21 @@ namespace Kaenx.Creator.Controls
             {
                 UId = Kaenx.Creator.Classes.Helper.GetNextFreeUId(Version.OpenKnxModules)
             };
-
-            if(parts.Length > 5)
-                mod.Url = string.Join('/', parts.Take(5));
-            else 
-                mod.Url = diag.Answer;
+            
+            if(diag.Answer.StartsWith("http"))
+            {
+                if(parts.Length > 5)
+                    mod.Url = string.Join('/', parts.Take(5));
+                else 
+                    mod.Url = diag.Answer;
+                    
+                if(parts.Length > 6)
+                    mod.Branch = parts[6];
+            } else {
+                mod.Url = $"https://github.com/{orga}/{repo}";
+                if(parts.Length > 2)
+                    mod.Branch = parts[2];
+            }
 
             mod.Name = mod.Url.Substring(mod.Url.IndexOf('-') + 1);
             if(Version.OpenKnxModules.Any(o => o.Name == mod.Name))
@@ -70,15 +91,13 @@ namespace Kaenx.Creator.Controls
 
             HttpClient client = new HttpClient();
             client.DefaultRequestHeaders.UserAgent.TryParseAdd("request");
-            string content = await client.GetStringAsync($"https://api.github.com/repos/{parts[3]}/{parts[4]}");
+            string content = await client.GetStringAsync($"https://api.github.com/repos/{orga}/{repo}");
 
             Newtonsoft.Json.Linq.JObject json = Newtonsoft.Json.Linq.JObject.Parse(content);
             mod.Branch = json["default_branch"].ToString();
 
-            if(parts.Length > 6)
-                mod.Branch = parts[6];
 
-            content = await client.GetStringAsync($"https://api.github.com/repos/{parts[3]}/{parts[4]}/branches/{mod.Branch}");
+            content = await client.GetStringAsync($"https://api.github.com/repos/{orga}/{repo}/branches/{mod.Branch}");
             json = Newtonsoft.Json.Linq.JObject.Parse(content);
             mod.Commit = json["commit"]["sha"].ToString().Substring(0, 7);
 
@@ -383,26 +402,27 @@ namespace Kaenx.Creator.Controls
 
             if(name == "Share")
             {
-                int uid = Version.ParameterTypes.Count > 0 ? (Version.ParameterTypes.OrderByDescending(t => t.UId).First().UId + 1) : 1;
+                int uid = 1; //Version.ParameterTypes.Count > 0 ? (Version.ParameterTypes.OrderByDescending(t => t.UId).First().UId + 1) : 1;
                 foreach(ParameterType ptype in Version.ParameterTypes)
-                    if(ptype.UId == -1)
+                    //if(ptype.UId == -1)
                         ptype.UId = uid++;
 
-                uid = Version.Helptexts.Count > 0 ? (Version.Helptexts.OrderByDescending(t => t.UId).First().UId + 1) : 1;
+                uid = 1; // Version.Helptexts.Count > 0 ? (Version.Helptexts.OrderByDescending(t => t.UId).First().UId + 1) : 1;
                 foreach(Helptext help in Version.Helptexts)
-                    if(help.UId == -1)
+                    //if(help.UId == -1)
                         help.UId = uid++;
 
-                uid = General.Icons.Count > 0 ? (General.Icons.OrderByDescending(t => t.UId).First().UId + 1) : 1;
+                uid = 1; // General.Icons.Count > 0 ? (General.Icons.OrderByDescending(t => t.UId).First().UId + 1) : 1;
                 foreach(Icon icon in General.Icons)
-                    if(icon.UId == -1)
+                    //if(icon.UId == -1)
                         icon.UId = uid++;
 
-                uid = General.Baggages.Count > 0 ? (General.Baggages.OrderByDescending(t => t.UId).First().UId + 1) : 1;
+                uid = 1; // General.Baggages.Count > 0 ? (General.Baggages.OrderByDescending(t => t.UId).First().UId + 1) : 1;
                 foreach(Baggage bagg in General.Baggages)
-                    if(bagg.UId == -1)
+                    //if(bagg.UId == -1)
                         bagg.UId = uid++;
             }
+            mod.AddState("Abgeschlossen");
         }
 
         private XElement ChangeFile(XElement xroot, OpenKnxModule mod)
