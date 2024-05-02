@@ -142,7 +142,7 @@ namespace Kaenx.Creator.Controls
             HttpClient client = new HttpClient();
 
             string response = await client.GetStringAsync(mod.Url + "/commits/" + mod.Branch + "/commits_list_item");
-            Regex regex = new Regex(" ([0-9a-f]{7})");
+            Regex regex = new Regex(">([0-9a-f]{7})<");
             Match m = regex.Match(response);
             mod.Commit = m.Groups[1].Value;
 
