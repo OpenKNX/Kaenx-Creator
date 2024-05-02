@@ -126,7 +126,7 @@
     <comment/>
   </data>
   <data name="update_new" xml:space="preserve">
-    <value>Es ist eine neue version verfügbar: v{0}\r\nJetzt zu den Github Releases gehen?</value>
+    <value>Es ist eine neue Version verfügbar: v{0}. Jetzt zu den Github Releases gehen?</value>
     <comment>Versionstring like 1.1.2</comment>
   </data>
   <data name="update_title" xml:space="preserve">
@@ -170,7 +170,7 @@
     <comment/>
   </data>
   <data name="baggage_delete_error" xml:space="preserve">
-    <value>Der Anhang wird von dem ParameterType {0} verwendet.\r\nTrotzdem löschen?</value>
+    <value>Der Anhang wird von dem ParameterType {0} verwendet. Trotzdem löschen?</value>
     <comment>Count of Items</comment>
   </data>
   <data name="baggage_delete_error_title" xml:space="preserve">
@@ -314,7 +314,7 @@
     <comment/>
   </data>
   <data name="icon_delete_error" xml:space="preserve">
-    <value>Das Icon wird von dem ParameterType {0} verwendet.\r\nTrotzdem löschen?</value>
+    <value>Das Icon wird von dem ParameterType {0} verwendet. Trotzdem löschen?</value>
     <comment>Count of Items</comment>
   </data>
   <data name="icon_delete_error_title" xml:space="preserve">
@@ -617,8 +617,16 @@
     <value>ParameterType {0} {1} ({2}): Anzeige Faktor ist keine Ganzzahl</value>
     <comment>UInt/Int; Name; UId</comment>
   </data>
+  <data name="check_ver_parat_name_duplicate" xml:space="preserve">
+    <value>ParameterType: Der Name '{0}' wurde {1}x verwendet. Namen müssen einzigartig sein</value>
+    <comment>Name; Count</comment>
+  </data>
+  <data name="check_ver_parat_size" xml:space="preserve">
+    <value>ParameterType {0} {1} ({2}): SizeInBit darf nicht größer als 64 sein</value>
+    <comment>UInt/Int; Name; UId</comment>
+  </data>
   <data name="check_ver_parat_uint_min2" xml:space="preserve">
-    <value>ParameterType {0} {1} ({2}): Minimun kann nicht kleiner als 0 sein</value>
+    <value>ParameterType {0} {1} ({2}): Min kann nicht kleiner als 0 sein</value>
     <comment>UInt/Int; Name; UId</comment>
   </data>
   <data name="check_ver_parat_int_minmax" xml:space="preserve">
@@ -989,30 +997,6 @@
     <value>Modul {0}: Prefix ist nicht gesetzt</value>
     <comment/>
   </data>
-  <data name="check_ver_com_flagComm" xml:space="preserve">
-    <value>{0} {1} ({2}): Flag Kommunikation wurde nicht gesetzt</value>
-    <comment/>
-  </data>
-  <data name="check_ver_com_flagOnInit" xml:space="preserve">
-    <value>{0} {1} ({2}): Flag LesenBeiInit wurde nicht gesetzt</value>
-    <comment/>
-  </data>
-  <data name="check_ver_com_flagRead" xml:space="preserve">
-    <value>{0} {1} ({2}): Flag Lesen wurde nicht gesetzt</value>
-    <comment/>
-  </data>
-  <data name="check_ver_com_flagTrans" xml:space="preserve">
-    <value>{0} {1} ({2}): Flag Übermitteln wurde nicht gesetzt</value>
-    <comment/>
-  </data>
-  <data name="check_ver_com_flagUpdate" xml:space="preserve">
-    <value>{0} {1} ({2}): Flag Aktualisieren wurde nicht gesetzt</value>
-    <comment/>
-  </data>
-  <data name="check_ver_com_flagWrite" xml:space="preserve">
-    <value>{0} {1} ({2}): Flag Schreiben wurde nicht gesetzt</value>
-    <comment/>
-  </data>
   <data name="check_ver_union_size" xml:space="preserve">
     <value>Union {0}: Parameter {1} ({2}) ist zu groß</value>
     <comment/>
@@ -1039,6 +1023,26 @@
   </data>
   <data name="check_dyn_dr_type" xml:space="preserve">
     <value>DynRepeat {0}: ParameterType des ParameterRefs muss Enum oder NumberUInt sein</value>
+    <comment/>
+  </data>
+  <data name="import_multiple_applications" xml:space="preserve">
+    <value>Import: Hardware enthält mehr als eine Applikation. Es wird nur die erste importiert.</value>
+    <comment/>
+  </data>
+  <data name="openknx_modules_duplicate" xml:space="preserve">
+    <value>Ein OpenKnxModule mit dem Namen '{0}' existiert bereits.</value>
+    <comment/>
+  </data>
+  <data name="openknx_modules_ofm" xml:space="preserve">
+    <value>Das OpenKnxModul ist kein OFM oder OGM.</value>
+    <comment/>
+  </data>
+  <data name="openknx_modules_remove" xml:space="preserve">
+    <value>Dieses Modul ist ein OpenKnxModul. Um es zu löschen, muss das OpenKnxModul gelöscht werden.</value>
+    <comment/>
+  </data>
+  <data name="openknx_modules_title" xml:space="preserve">
+    <value>OpenKnxModule</value>
     <comment/>
   </data>
 </root>

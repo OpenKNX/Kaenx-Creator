@@ -1433,4 +1433,8 @@
     <value>Einheit</value>
     <comment/>
   </data>
+  <data name="parat_export_enum" xml:space="preserve">
+    <value>Exportiere in knxprod.h Datei</value>
+    <comment/>
+  </data>
 </root>
