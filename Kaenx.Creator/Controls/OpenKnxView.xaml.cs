@@ -535,6 +535,8 @@ namespace Kaenx.Creator.Controls
                 if(xele.Attribute("SourceParamRefRef") != null)
                     xele.Attribute("SourceParamRefRef").Value = regex.Replace(xele.Attribute("SourceParamRefRef").Value, "1");
 
+                if(xele.Attribute("Text") != null)
+                    xele.Attribute("Text").Value = regex.Replace(xele.Attribute("Text").Value, "{{argChan}}");
                 if(xele.Attribute("FunctionText") != null)
                     xele.Attribute("FunctionText").Value = regex.Replace(xele.Attribute("FunctionText").Value, "{{argChan}}");
                 if(xele.Attribute("test") != null)
