@@ -14,7 +14,7 @@
         mc:Ignorable="d"
         Icon="FileLogo.ico"
         x:Name="ViewControl"
-        Title="Kaenx-Creator" Height="700" Width="1300">
+        Title="Kaenx-Creator" Height="720" Width="1300">
     <Window.Resources>
         <conv:IntToHex x:Key="IntToHex" />
         <conv:BoolNegation x:Key="BoolNegate" />
@@ -824,6 +824,10 @@
                         <ctrl:ComObjectRefView Version="{Binding .}" Module="{Binding .}" />
                     </TabItem>
 
+                    <!--//TODO translate-->
+                    <TabItem Header="Scripts" DataContext="{Binding General.Application}" Style="{StaticResource LeftTabItem}">
+                        <ctrl:ScriptView Version="{Binding .}" />
+                    </TabItem>
 
                     <TabItem Header="{x:Static p:Resources.tabs_msg}" DataContext="{Binding General.Application}" Visibility="{Binding IsMessagesActive, Converter={StaticResource BoolToVis}}" Style="{StaticResource LeftTabItem}">
                         <ctrl:MessagesView Version="{Binding .}" />
