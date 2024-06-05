@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Reflection;
 using System.IO;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -248,6 +249,24 @@ namespace Kaenx.Creator.Controls
 
         private void ClickEditButtonFunction(object sender, RoutedEventArgs e)
         {
+            string[] lines = Version.Script.Split("\n");
+            StringBuilder definitions = new StringBuilder();
+            definitions.AppendLine("window.x = [");
+            foreach(string line in lines)
+            {
+                if(line.Trim().StartsWith("function"))
+                {
+                    string temp = line.Trim();
+                    string declaration = "\"declare " + temp.Substring(0, temp.IndexOf(")")+1) + ";\",";
+                    definitions.AppendLine(declaration);
+                }
+            }
+            definitions.AppendLine("].join('\\n');");
+
+
+            File.WriteAllText(System.IO.Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "Data", "Monaco", "test.js"), definitions.ToString());
+
+
             Models.Dynamic.DynButton item = (sender as Button).DataContext as Models.Dynamic.DynButton;
             CodeWindow code = new CodeWindow("index_button_script.html", item.Script);
             code.ShowDialog();

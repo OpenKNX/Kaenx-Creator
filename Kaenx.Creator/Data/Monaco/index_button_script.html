@@ -18,9 +18,10 @@
      </script> 
      <script src="./editor/editor.main.nls.js"></script> 
      <script src="./editor/editor.main.js"></script> 
+     <script src="./test.js"></script> 
      <script> 
 
-       monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
+monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
 	noSemanticValidation: true,
 	noSyntaxValidation: false
 });
@@ -28,7 +29,8 @@
 // compiler options
 monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
 	target: monaco.languages.typescript.ScriptTarget.ES6,
-	allowNonTsExtensions: true
+	allowNonTsExtensions: true,
+	allowJs: true
 });
        
 // extra libraries
@@ -73,7 +75,8 @@ var libSource = [
     'const device:DeviceObject;',
     'const online:OnlineObject;',
     'const progress:ProgressObject;',
-    'const ApplicationProgram:AppObject;'
+    'const ApplicationProgram:AppObject;',
+	window.x
 ].join('\n');
 var libUri = 'ts:filename/facts.d.ts';
 monaco.languages.typescript.javascriptDefaults.addExtraLib(libSource, libUri);
