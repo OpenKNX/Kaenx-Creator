@@ -164,14 +164,22 @@ namespace Kaenx.Creator.Controls
             if(diag.ShowDialog() == true)
             {   
                 if(MessageBox.Show(Properties.Messages.icon_import_prompt, "", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                {
+                    List<object> types = new List<object>();
+                    foreach(Icon icon in General.Icons)
+                        SearchVersion(General.Application, icon.UId, null, true);
                     General.Icons.Clear();
+                }
 
                 if(diag.FileName.EndsWith(".ae-icons"))
                 {
                     var x = Newtonsoft.Json.JsonConvert.DeserializeObject<ObservableCollection<Icon>>(File.ReadAllText(diag.FileName));
                     
                     foreach(Icon icon in x)
+                    {
+                        icon.UId = Kaenx.Creator.Classes.Helper.GetNextFreeUId(General.Icons);
                         General.Icons.Add(icon);
+                    }
                 } else {
                     ZipArchive zip = ZipFile.Open(diag.FileName, ZipArchiveMode.Read, System.Text.Encoding.GetEncoding(850));
                     
