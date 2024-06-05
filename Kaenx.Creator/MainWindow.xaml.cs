@@ -667,7 +667,10 @@ namespace Kaenx.Creator
             //     File.WriteAllBytes(App.FilePath, ms.ToArray());
             // }
             // <PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.2" />
-            string general = Newtonsoft.Json.JsonConvert.SerializeObject(General, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects });
+            string general = Newtonsoft.Json.JsonConvert.SerializeObject(General, new Newtonsoft.Json.JsonSerializerSettings() { 
+                TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects ,
+                Formatting = Formatting.Indented
+            });
             System.IO.File.WriteAllText(App.FilePath, general);
         }
 
