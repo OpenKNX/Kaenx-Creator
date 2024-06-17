@@ -697,8 +697,6 @@
                                     </HeaderedContentControl>
                                 </StackPanel>
                             </Grid>
-                        
-                            <TextBox Text="{Binding Script}" AcceptsReturn="True" Height="100" />
                         </StackPanel>
                     </TabItem>
 
