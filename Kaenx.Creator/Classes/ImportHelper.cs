@@ -1563,6 +1563,7 @@ namespace Kaenx.Creator.Classes
                 _general.Info.HasApplicationProgram = xhard.Attribute("HasApplicationProgram")?.Value == "true" || xhard.Attribute("HasApplicationProgram")?.Value == "1";
                 _general.Info.HasIndividualAddress = xhard.Attribute("HasIndividualAddress")?.Value == "true" || xhard.Attribute("HasIndividualAddress")?.Value == "1";
                 _general.Info.BusCurrent = (int)StringToFloat(xhard.Attribute("BusCurrent")?.Value, 10);
+                _general.Info.IsIpEnabled = xhard.Attribute("IsIPEnabled")?.Value == "true" || xhard.Attribute("IsIPEnabled")?.Value == "1";
 
                 XElement xprod = xhard.Descendants(Get("Product")).ElementAt(0);
                 _general.Info.OrderNumber = xprod.Attribute("OrderNumber").Value;
