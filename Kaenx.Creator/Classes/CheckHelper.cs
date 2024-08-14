@@ -719,7 +719,7 @@ namespace Kaenx.Creator.Classes {
                             break;
                     }
                     if(reg != null && !reg.IsMatch(value))
-                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_color1, stype, name, uid, def), State = PublishState.Fail, Item = item, Module = mod });
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_para_color, stype, name, uid, def), State = PublishState.Fail, Item = item, Module = mod });
                     break;
                 }
 
