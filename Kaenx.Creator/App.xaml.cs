@@ -25,10 +25,16 @@ namespace Kaenx.Creator
             void OnDispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e) {
                 if (e.Exception is System.Windows.Markup.XamlParseException) return;
 
-                string errorMessage = string.Format("An unhandled exception occurred: {0}", e.Exception.Message);
+                string errorMessage = string.Format("An unhandled exception occurred:\r\n - {0}", e.Exception.Message);
 
-                if(Kaenx.Creator.Properties.Settings.Default.isDebug)
+                if(Kaenx.Creator.Properties.Settings.Default.isDebug) {
+                    Exception ex = e.Exception.InnerException;
+                    while(ex != null) {
+                        errorMessage += $"\r\n - {ex.Message}";
+                        ex = ex.InnerException;
+                    }
                     errorMessage += "\r\n\r\n" + e.Exception.StackTrace;
+                }
 
                 MessageBox.Show(errorMessage, Kaenx.Creator.Properties.Messages.global_exception_title, MessageBoxButton.OK, MessageBoxImage.Error);
                 MessageBox.Show(Kaenx.Creator.Properties.Messages.global_exception, Kaenx.Creator.Properties.Messages.global_exception_title, MessageBoxButton.OK, MessageBoxImage.Error);
