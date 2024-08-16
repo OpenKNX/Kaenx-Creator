@@ -97,6 +97,11 @@ namespace Kaenx.Creator.Classes {
 
             if(General.Application.IsHelpActive && General.Application.NamespaceVersion < 14)
                 actions.Add(new PublishAction() { Text = Properties.Messages.check_ver_helptext, State = PublishState.Fail });
+            
+            var mems = General.Application.Memories.GroupBy(m => m.Address);
+            foreach(var memg in mems.Where((c) => c.Count() > 1)) {
+                actions.Add(new PublishAction() { Text = string.Format(Properties.Messages.check_ver_mem_not_unique, memg.Key), State = PublishState.Fail });
+            }
             if(General.Application.Memories.Count > 0 && !General.Application.Memories[0].IsAutoLoad)
             {
                 XElement xtemp = XElement.Parse(General.Application.Procedure);

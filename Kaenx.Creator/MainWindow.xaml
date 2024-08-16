@@ -824,8 +824,7 @@
                         <ctrl:ComObjectRefView Version="{Binding .}" Module="{Binding .}" />
                     </TabItem>
 
-                    <!--//TODO translate-->
-                    <TabItem Header="Scripts" DataContext="{Binding General.Application}" Style="{StaticResource LeftTabItem}">
+                    <TabItem Header="{x:Static p:Resources.tabs_scripts}" DataContext="{Binding General.Application}" Style="{StaticResource LeftTabItem}">
                         <ctrl:ScriptView Version="{Binding .}" />
                     </TabItem>
 

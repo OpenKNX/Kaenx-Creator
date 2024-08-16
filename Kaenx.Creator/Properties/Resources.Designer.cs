@@ -2615,5 +2615,14 @@ namespace Kaenx.Creator.Properties {
                 return ResourceManager.GetString("parat_export_enum", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string tabs_scripts {
+            get {
+                return ResourceManager.GetString("tabs_scripts", resourceCulture);
+            }
+        }
     }
 }

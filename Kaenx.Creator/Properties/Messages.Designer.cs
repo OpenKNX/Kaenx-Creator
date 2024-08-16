@@ -1447,5 +1447,11 @@ namespace Kaenx.Creator.Properties {
                 return ResourceManager.GetString("openknx_modules_title", resourceCulture);
             }
         }
+        
+        public static string check_ver_mem_not_unique {
+            get {
+                return ResourceManager.GetString("check_ver_mem_not_unique", resourceCulture);
+            }
+        }
     }
 }

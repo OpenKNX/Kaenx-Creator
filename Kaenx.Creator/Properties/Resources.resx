@@ -1437,4 +1437,8 @@
     <value>Export in knxprod.h file</value>
     <comment/>
   </data>
+  <data name="tabs_scripts" xml:space="preserve">
+    <value>Scripts</value>
+    <comment/>
+  </data>
 </root>

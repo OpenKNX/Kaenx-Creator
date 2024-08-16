@@ -1045,4 +1045,8 @@
     <value>OpenKnxModule</value>
     <comment/>
   </data>
+  <data name="check_ver_mem_not_unique" xml:space="preserve">
+    <value>There are more than one MemorySections with address/offset '{0}'</value>
+    <comment>Address/Offset</comment>
+  </data>
 </root>
