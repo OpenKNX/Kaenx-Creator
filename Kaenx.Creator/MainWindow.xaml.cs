@@ -142,7 +142,7 @@ namespace Kaenx.Creator
 
         private void CheckEtsVersions() {
             foreach(Models.EtsVersion v in EtsVersions)
-                v.IsEnabled = !string.IsNullOrEmpty(Kaenx.Creator.Classes.Helper.GetAssemblyPath(v.Number));
+                v.IsEnabled =  Kaenx.Creator.Classes.Helper.CheckExportNamespace(v.Number);
             NamespaceSelection.ItemsSource = EtsVersions;
         }
 
@@ -853,8 +853,7 @@ namespace Kaenx.Creator
                     File.Copy(filePath, filePath.Replace(sourcePath, targetPath).Replace(".mtxml", ".xml"));
                 }
 
-                string assPath = Kaenx.Creator.Classes.Helper.GetAssemblyPath(ns);
-                Kaenx.Creator.Classes.ExportHelper helper = new Kaenx.Creator.Classes.ExportHelper(General, assPath, Path.Combine(sourcePath, "sign.knxprod"), null);
+                Kaenx.Creator.Classes.ExportHelper helper = new Kaenx.Creator.Classes.ExportHelper(General, Path.Combine(sourcePath, "sign.knxprod"), null);
                 helper.SetNamespace(ns);
                 helper.SignOutput(targetPath);
 
@@ -986,15 +985,7 @@ namespace Kaenx.Creator
             PublishActions.Clear();
             await Task.Delay(1000);
 
-            string assPath = Kaenx.Creator.Classes.Helper.GetAssemblyPath(General.Application.NamespaceVersion);
-            if(string.IsNullOrEmpty(assPath))
-            {
-                MessageBox.Show($"Für den Namespace {General.Application.NamespaceVersion} wurde keine passende ETS installation gefunden");
-                return;
-            }
-
             CheckHelper.CheckThis(General, PublishActions);
-
 
             if(PublishActions.Count(pa => pa.State == Models.PublishState.Fail) > 0)
             {
@@ -1011,15 +1002,16 @@ namespace Kaenx.Creator
             await Task.Delay(1000);
             
             string headerPath = Path.Combine(Path.GetDirectoryName(filePath), "knxprod.h");
-            Kaenx.Creator.Classes.ExportHelper helper = new Kaenx.Creator.Classes.ExportHelper(General, assPath, filePath, headerPath);
+            Kaenx.Creator.Classes.ExportHelper helper = new Kaenx.Creator.Classes.ExportHelper(General, filePath, headerPath);
             bool success = helper.ExportEts(PublishActions);
             if(!success)
             {
                 MessageBox.Show(Properties.Messages.main_export_error, Properties.Messages.main_export_title);
                 return;
             }
-            await helper.SignOutput(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Output", "Temp"));
+            helper.SignOutput(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Output", "Temp"));
             PublishActions.Add(new Models.PublishAction() { Text = Properties.Messages.main_export_success, State = Models.PublishState.Success } );
+            PublishActions.Add(new Models.PublishAction() { Text = filePath, State = Models.PublishState.Success } );
         }
 
         private void ChangeLang(object sender, RoutedEventArgs e)

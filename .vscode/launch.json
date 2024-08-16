@@ -10,7 +10,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/Kaenx.Creator/bin/Debug/net6.0-windows/Kaenx.Creator.dll",
+            "program": "${workspaceFolder}/Kaenx.Creator/bin/Debug/net8.0-windows/Kaenx.Creator.dll",
             "args": [],
             "cwd": "${workspaceFolder}/Kaenx.Creator",
             "console": "internalConsole",

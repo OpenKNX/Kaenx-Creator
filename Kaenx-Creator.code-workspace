@@ -5,6 +5,9 @@
 		},
 		{
 			"path": "../Kaenx-Creator-Share"
+		},
+		{
+			"path": "../OpenKNX.Toolbox.Sign"
 		}
 	],
 	"settings": {}

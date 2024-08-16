@@ -98,7 +98,13 @@ namespace Kaenx.Creator.Classes {
             if(General.Application.IsHelpActive && General.Application.NamespaceVersion < 14)
                 actions.Add(new PublishAction() { Text = Properties.Messages.check_ver_helptext, State = PublishState.Fail });
             
-            var mems = General.Application.Memories.GroupBy(m => m.Address);
+            
+            IEnumerable<IGrouping<int, Memory>> mems;
+            if(General.Info.Mask.Memory == MemoryTypes.Relative)
+                mems = General.Application.Memories.GroupBy(m => m.Offset);
+            else
+                mems = General.Application.Memories.GroupBy(m => m.Address);
+
             foreach(var memg in mems.Where((c) => c.Count() > 1)) {
                 actions.Add(new PublishAction() { Text = string.Format(Properties.Messages.check_ver_mem_not_unique, memg.Key), State = PublishState.Fail });
             }
