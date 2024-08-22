@@ -198,7 +198,6 @@ namespace Kaenx.Creator
                 Properties.Settings.Default.Save();
             }
 
-
             bool wasset = false;
             foreach(UIElement ele in MenuOutput.Items)
             {
@@ -416,7 +415,6 @@ namespace Kaenx.Creator
                 General.Application.Text.Remove(General.Application.Text.Single(l => l.Language.CultureCode == lang.CultureCode));
             General.Application.Languages.Remove(General.Application.Languages.Single(l => l.CultureCode == lang.CultureCode));
             
-
             foreach(Models.ParameterType type in General.Application.ParameterTypes) {
                 if(type.Type != Models.ParameterTypes.Enum) continue;
 
@@ -557,7 +555,6 @@ namespace Kaenx.Creator
                     addLangToVersion(item, lang);
         }
 
-
         private void ClickAddLanguageGen(object sender, RoutedEventArgs e)
         {
             if(LanguagesListGen.SelectedItem == null){
@@ -605,7 +602,6 @@ namespace Kaenx.Creator
                 return;
             }
             Models.Language lang = SupportedLanguagesGen.SelectedItem as Models.Language;
-
 
             _general.Languages.Remove(_general.Languages.Single(l => l.CultureCode == lang.CultureCode));
             LanguageCatalogItemRemove(_general.Catalog[0], lang);
@@ -728,7 +724,6 @@ namespace Kaenx.Creator
             window.ShowDialog();
         }
 
-
         private void DoOpen(string path)
         {
             if(!File.Exists(path)) return;
@@ -797,7 +792,6 @@ namespace Kaenx.Creator
             ClearHelper.ResetParameterIds(General.Application);
         }
 
-
         private void ClickSignFolder(object sender, RoutedEventArgs e)
         {
             var dialog = new System.Windows.Forms.FolderBrowserDialog();
@@ -820,8 +814,7 @@ namespace Kaenx.Creator
                     }
                     Directory.CreateDirectory(dirPath.Replace(sourcePath, targetPath));
                 }
-                
-                
+
                 int ns = 0;
                 foreach(string filePath in Directory.GetFiles(sourcePath, "*", SearchOption.AllDirectories))
                 {
@@ -918,8 +911,7 @@ namespace Kaenx.Creator
         private void ClickCalcHeatmap(object sender, RoutedEventArgs e)
         {
             Models.Memory mem = (sender as Button).DataContext as Models.Memory;
-            Kaenx.Creator.Classes.MemoryHelper.MemoryCalculation(General.Application, mem);
-            
+            Kaenx.Creator.Classes.MemoryHelper.MemoryCalculation(General.Application, mem);     
         }
 
         private void ClickCheckHyperlink(object sender, RoutedEventArgs e)
@@ -981,7 +973,6 @@ namespace Kaenx.Creator
                     return;
             }
 
-
             PublishActions.Clear();
             await Task.Delay(1000);
 
@@ -1009,7 +1000,7 @@ namespace Kaenx.Creator
                 MessageBox.Show(Properties.Messages.main_export_error, Properties.Messages.main_export_title);
                 return;
             }
-            helper.SignOutput(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Output", "Temp"));
+            await helper.SignOutput(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Output", "Temp"));
             PublishActions.Add(new Models.PublishAction() { Text = Properties.Messages.main_export_success, State = Models.PublishState.Success } );
             PublishActions.Add(new Models.PublishAction() { Text = filePath, State = Models.PublishState.Success } );
         }
@@ -1072,8 +1063,6 @@ namespace Kaenx.Creator
                 }
             } else 
                 MessageBox.Show(string.Format(Properties.Messages.update_uptodate, string.Join('.', System.Reflection.Assembly.GetEntryAssembly().GetName().Version.ToString().Split('.').Take(3)), Properties.Messages.update_title, MessageBoxButton.OK, MessageBoxImage.Information));
-                    
-
         }
 
         private async Task<(bool, string)> CheckUpdate()
