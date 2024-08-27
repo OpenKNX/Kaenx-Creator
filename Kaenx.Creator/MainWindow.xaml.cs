@@ -792,7 +792,7 @@ namespace Kaenx.Creator
             ClearHelper.ResetParameterIds(General.Application);
         }
 
-        private void ClickSignFolder(object sender, RoutedEventArgs e)
+        private async void ClickSignFolder(object sender, RoutedEventArgs e)
         {
             var dialog = new System.Windows.Forms.FolderBrowserDialog();
             if(dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
@@ -846,9 +846,9 @@ namespace Kaenx.Creator
                     File.Copy(filePath, filePath.Replace(sourcePath, targetPath).Replace(".mtxml", ".xml"));
                 }
 
-                Kaenx.Creator.Classes.ExportHelper helper = new Kaenx.Creator.Classes.ExportHelper(General, Path.Combine(sourcePath, "sign.knxprod"), null);
+                Kaenx.Creator.Classes.ExportHelper helper = new Kaenx.Creator.Classes.ExportHelper(General, null);
                 helper.SetNamespace(ns);
-                helper.SignOutput(targetPath);
+                await helper.SignOutput(targetPath, Path.Combine(sourcePath, "sign.knxprod"));
 
                 System.Windows.MessageBox.Show(Properties.Messages.main_export_success, Properties.Messages.main_export_title);
             }
@@ -993,14 +993,14 @@ namespace Kaenx.Creator
             await Task.Delay(1000);
             
             string headerPath = Path.Combine(Path.GetDirectoryName(filePath), "knxprod.h");
-            Kaenx.Creator.Classes.ExportHelper helper = new Kaenx.Creator.Classes.ExportHelper(General, filePath, headerPath);
+            Kaenx.Creator.Classes.ExportHelper helper = new Kaenx.Creator.Classes.ExportHelper(General, headerPath);
             bool success = helper.ExportEts(PublishActions);
             if(!success)
             {
                 MessageBox.Show(Properties.Messages.main_export_error, Properties.Messages.main_export_title);
                 return;
             }
-            await helper.SignOutput(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Output", "Temp"));
+            await helper.SignOutput(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Output", "Temp"), filePath);
             PublishActions.Add(new Models.PublishAction() { Text = Properties.Messages.main_export_success, State = Models.PublishState.Success } );
             PublishActions.Add(new Models.PublishAction() { Text = filePath, State = Models.PublishState.Success } );
         }
