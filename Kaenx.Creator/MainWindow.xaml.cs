@@ -848,6 +848,7 @@ namespace Kaenx.Creator
 
                 Kaenx.Creator.Classes.ExportHelper helper = new Kaenx.Creator.Classes.ExportHelper(General, null);
                 helper.SetNamespace(ns);
+                await OpenKNX.Toolbox.Sign.SignHelper.CheckMaster(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Output", "Temp"), ns);
                 await helper.SignOutput(targetPath, Path.Combine(sourcePath, "sign.knxprod"));
 
                 System.Windows.MessageBox.Show(Properties.Messages.main_export_success, Properties.Messages.main_export_title);
@@ -1000,6 +1001,7 @@ namespace Kaenx.Creator
                 MessageBox.Show(Properties.Messages.main_export_error, Properties.Messages.main_export_title);
                 return;
             }
+            await OpenKNX.Toolbox.Sign.SignHelper.CheckMaster(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Output", "Temp"), General.Application.NamespaceVersion);
             await helper.SignOutput(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Output", "Temp"), filePath);
             PublishActions.Add(new Models.PublishAction() { Text = Properties.Messages.main_export_success, State = Models.PublishState.Success } );
             PublishActions.Add(new Models.PublishAction() { Text = filePath, State = Models.PublishState.Success } );
