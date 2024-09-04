@@ -273,6 +273,30 @@ namespace Kaenx.Creator.Controls
             item.Script = code.CodeNew;
         }
 
+        private void DynChooseParaRefLink(object sender, RoutedEventArgs e)
+        {
+            Models.ParameterRef paraRef = ((sender as System.Windows.Documents.Hyperlink).DataContext as Models.Dynamic.DynChooseBlock).ParameterRefObject;
+            MainWindow.Instance.GoToItem(paraRef, Module);
+        }
+
+        private void DynBlockParaRefLink(object sender, RoutedEventArgs e)
+        {
+            Models.ParameterRef paraRef = ((sender as System.Windows.Documents.Hyperlink).DataContext as Models.Dynamic.DynParaBlock).ParameterRefObject;
+            MainWindow.Instance.GoToItem(paraRef, Module);
+        }
+
+        private void DynParameterParaRefLink(object sender, RoutedEventArgs e)
+        {
+            Models.ParameterRef paraRef = ((sender as System.Windows.Documents.Hyperlink).DataContext as Models.Dynamic.DynParameter).ParameterRefObject;
+            MainWindow.Instance.GoToItem(paraRef, Module);
+        }
+
+        private void DyComObjectRefLink(object sender, RoutedEventArgs e) 
+        {
+            Models.ComObjectRef comRef = ((sender as System.Windows.Documents.Hyperlink).DataContext as Models.Dynamic.DynComObject).ComObjectRefObject;
+            MainWindow.Instance.GoToItem(comRef, Module);
+        }
+
         Dictionary<string, List<string>> SubTypes = new Dictionary<string, List<string>>() {
             {"DynamicMain",
                 new List<string>() { 

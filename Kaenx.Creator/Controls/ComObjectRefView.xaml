@@ -113,7 +113,16 @@
                 </HeaderedContentControl>
 
                 <HeaderedContentControl Header="{x:Static p:Resources.prop_como}">
-                    <ComboBox IsEditable="true" ItemsSource="{Binding Module.ComObjects, ElementName=ViewControl}" DisplayMemberPath="Name" SelectedItem="{Binding ComObjectObject}" />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="auto" />
+                        </Grid.ColumnDefinitions>
+                        <ComboBox IsEditable="true" ItemsSource="{Binding Module.ComObjects, ElementName=ViewControl}" DisplayMemberPath="Name" SelectedItem="{Binding ComObjectObject}" />
+                        <TextBlock Grid.Column="1" VerticalAlignment="Center" Margin="10 0 0 4">
+                            <Hyperlink ToolTip="{x:Static p:Resources.tcheck_tooltip}" NavigateUri="https://example.com" RequestNavigate="ComObjectHyperlink">&lt;--</Hyperlink>
+                        </TextBlock>
+                    </Grid>
                 </HeaderedContentControl>
 
                 <HeaderedContentControl Header="{x:Static p:Resources.tcom_para}" Visibility="{Binding Module.IsComObjectRefAuto, ElementName=ViewControl, Converter={StaticResource BoolToVis}, ConverterParameter=true}">
@@ -127,7 +136,7 @@
                         <CheckBox IsChecked="{Binding UseTextParameter}" VerticalAlignment="Center" />
                         <ComboBox Grid.Column="1" IsEnabled="{Binding UseTextParameter}" ItemsSource="{Binding Module.ParameterRefs, ElementName=ViewControl}" SelectedItem="{Binding ParameterRefObject, Mode=TwoWay}" DisplayMemberPath="Name" />
                         <TextBlock Grid.Column="2" VerticalAlignment="Center" Margin="10 0 0 4">
-                            <Hyperlink ToolTip="{x:Static p:Resources.tcheck_tooltip}" NavigateUri="https://example.com" RequestNavigate="ClickCheckHyperlink">&lt;--</Hyperlink>
+                            <Hyperlink ToolTip="{x:Static p:Resources.tcheck_tooltip}" NavigateUri="https://example.com" RequestNavigate="ComObjParaRefHyperlink">&lt;--</Hyperlink>
                         </TextBlock>
                     </Grid>
                 </HeaderedContentControl>
