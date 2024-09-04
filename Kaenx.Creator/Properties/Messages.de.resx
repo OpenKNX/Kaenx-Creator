@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!--
     Microsoft ResX Schema
@@ -895,6 +895,10 @@
   </data>
   <data name="check_dyn_choose_no_pararef" xml:space="preserve">
     <value>DynChoose {0}: Kein ParameterRef ausgewählt</value>
+    <comment/>
+  </data>
+  <data name="check_dyn_choose_no_same_parameter" xml:space="preserve">
+    <value>DynChoose {0}: Kein Parameter mit gleicher RefId gefunden</value>
     <comment/>
   </data>
   <data name="check_dyn_when_no_cond" xml:space="preserve">

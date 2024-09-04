@@ -937,6 +937,24 @@ namespace Kaenx.Creator.Classes {
                 {
                     if(dco.ParameterRefObject == null)
                         actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_choose_no_pararef, dco.Name), Item = dco, Module = vbase, State = PublishState.Fail});
+                    
+                    // Prüfung, ob zu jedem choose ein ParameterRefRef Eintrag in der dynamic section gehört
+                    bool paraRefForChoose = false;
+                    foreach(IDynItems neighbor in dco.Parent.Items)
+                    {
+                        if(neighbor.GetType() == typeof(DynParameter))
+                        {
+                            if(dco.ParameterRefObject == (neighbor as DynParameter).ParameterRefObject)
+                            {
+                                paraRefForChoose = true;
+                                break;
+                            }
+                        }
+                    }
+                    if(!paraRefForChoose)
+                    {
+                        actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_dyn_choose_no_same_parameter, dco.Name), Item = dco, Module = vbase, State = PublishState.Fail});
+                    }
                     break;
                 }
 
