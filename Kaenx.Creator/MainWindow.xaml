@@ -17,6 +17,7 @@
         Title="Kaenx-Creator" Height="720" Width="1300">
     <Window.Resources>
         <conv:IntToHex x:Key="IntToHex" />
+        <conv:IntToVersion x:Key="IntToVersion" />
         <conv:BoolNegation x:Key="BoolNegate" />
         <conv:EmptyOListToBool x:Key="EmptyListToBool" />
         <conv:EmptyToBool x:Key="EmptyToBool" />
@@ -649,7 +650,7 @@
 
                                 <StackPanel Grid.Column="1">
                                     <HeaderedContentControl Header="{x:Static p:Resources.prop_vers}">
-                                        <TextBox Text="{Binding Number, UpdateSourceTrigger=PropertyChanged}" />
+                                        <TextBox Text="{Binding Number, Converter={StaticResource IntToVersion}, UpdateSourceTrigger=PropertyChanged}" />
                                     </HeaderedContentControl>
                                     <HeaderedContentControl Header="{x:Static p:Resources.prop_versreplace}">
                                         <TextBox Text="{Binding ReplacesVersions, UpdateSourceTrigger=PropertyChanged}" />
@@ -875,7 +876,7 @@
                         </StackPanel.Resources>
                         
                         <HeaderedContentControl Header="{x:Static p:Resources.prop_vers}">
-                            <TextBox Text="{Binding General.Application.Number, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBox Text="{Binding General.Application.Number, Converter={StaticResource IntToVersion}, UpdateSourceTrigger=PropertyChanged}" />
                         </HeaderedContentControl>
                         <HeaderedContentControl Header="{x:Static p:Resources.tpub_filename}">
                             <TextBox Text="{Binding General.FileName}" />
