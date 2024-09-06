@@ -105,7 +105,7 @@ namespace Kaenx.Creator
 
         public void GoToItem(object item, object module)
         {
-            if(module != null)
+            if(module != null && module.GetType() == typeof(Kaenx.Creator.Models.Module))
             {
                 VersionTabs.SelectedIndex = 7;
                 int index2 = item switch {
