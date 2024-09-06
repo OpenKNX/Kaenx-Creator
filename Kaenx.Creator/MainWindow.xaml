@@ -650,6 +650,9 @@
 
                                 <StackPanel Grid.Column="1">
                                     <HeaderedContentControl Header="{x:Static p:Resources.prop_vers}">
+                                        <TextBox Text="{Binding Number, UpdateSourceTrigger=PropertyChanged}" />
+                                    </HeaderedContentControl>
+                                    <HeaderedContentControl Header="{x:Static p:Resources.prop_etsvers}">
                                         <TextBox Text="{Binding Number, Converter={StaticResource IntToVersion}, UpdateSourceTrigger=PropertyChanged}" />
                                     </HeaderedContentControl>
                                     <HeaderedContentControl Header="{x:Static p:Resources.prop_versreplace}">
@@ -876,7 +879,7 @@
                         </StackPanel.Resources>
                         
                         <HeaderedContentControl Header="{x:Static p:Resources.prop_vers}">
-                            <TextBox Text="{Binding General.Application.Number, Converter={StaticResource IntToVersion}, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBox Text="{Binding General.Application.Number, UpdateSourceTrigger=PropertyChanged}" />
                         </HeaderedContentControl>
                         <HeaderedContentControl Header="{x:Static p:Resources.tpub_filename}">
                             <TextBox Text="{Binding General.FileName}" />
