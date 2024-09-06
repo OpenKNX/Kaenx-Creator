@@ -8,7 +8,6 @@ namespace Kaenx.Creator.Converter
 {
     public class IntToVersion : IValueConverter
     {
-
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             string hexString = ((int)value).ToString("X");
@@ -20,7 +19,7 @@ namespace Kaenx.Creator.Converter
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             string hexString="";
-            if(value.ToString().Contains("."))
+            if(value.ToString().Contains('.'))
             {
                 string[] versions = value.ToString().Split('.');
                 hexString = versions[0] + versions[1];
