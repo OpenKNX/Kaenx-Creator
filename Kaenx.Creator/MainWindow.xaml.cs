@@ -131,7 +131,7 @@ namespace Kaenx.Creator
                 Models.ParameterRef => 9,
                 Models.ComObject => 10,
                 Models.ComObjectRef => 11,
-                Models.Dynamic.IDynItems => 15,
+                Models.Dynamic.IDynItems => 16,
                 _ => -1
             };
 
