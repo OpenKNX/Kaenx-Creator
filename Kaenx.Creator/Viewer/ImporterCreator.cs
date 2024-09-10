@@ -144,11 +144,9 @@ namespace Kaenx.Creator.Viewer
                         if(!Baggages.Contains(ptype.BaggageObject))
                             Baggages.Add(ptype.BaggageObject);
                         break;
-
                 }
 
                 _context.AppParameterTypes.Add(mtype);
-
                 
                         /*
         -Text,
@@ -931,7 +929,6 @@ namespace Kaenx.Creator.Viewer
 
                 default:
                     throw new Exception("Not implemented copy " + item.GetType().ToString());
-
             }
 
             if(item.Items == null) return;

@@ -297,11 +297,6 @@ namespace Kaenx.Creator
                 System.Diagnostics.Debug.WriteLine("Sichtbarkeit geändert! " + para.Id + " -> " + para.IsVisible);
             }
 
-                if(para.Id == 5618)
-                {
-                    
-                }
-
             CalculateVisibilityParas(para);
             CalculateVisibilityComs(para);
         }

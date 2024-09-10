@@ -67,7 +67,6 @@ namespace Kaenx.Creator.Controls
             {
                 _filter.ChangeView((e.NewValue as IVersionBase).ParameterRefs);
             }
-
         }
         
         private void ClickAdd(object sender, RoutedEventArgs e)

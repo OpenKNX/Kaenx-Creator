@@ -104,7 +104,7 @@ namespace Kaenx.Creator.Controls
         }
 
         protected virtual void OnVersionChanged() {
-            
+            //nothing to do
         }
         
         protected virtual void OnModuleChanged(DependencyPropertyChangedEventArgs e) {

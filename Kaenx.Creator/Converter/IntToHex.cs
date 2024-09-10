@@ -8,7 +8,6 @@ namespace Kaenx.Creator.Converter
 {
     public class IntToHex : IValueConverter
     {
-
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             string length = parameter != null ? parameter.ToString() : "2";

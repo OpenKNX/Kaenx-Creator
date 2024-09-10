@@ -594,7 +594,6 @@ namespace Kaenx.Creator.Controls
                     Regex regex2 = new Regex("%[C]+%");
                     xblock.Attribute("Text").Value = regex2.Replace(xblock.Attribute("Text").Value, "{{argChan}}");
                 }
-
             }
             counter = 1;
             foreach(XElement xblock in xroot.Descendants(XName.Get("ParameterSeparator", xroot.Name.NamespaceName)))

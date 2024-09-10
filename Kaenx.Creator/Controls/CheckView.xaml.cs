@@ -80,7 +80,6 @@ namespace Kaenx.Creator.Controls
                     System.Diagnostics.Debug.WriteLine("Summe: " + sum);
                     ClearHelper.RemoveUnusedElements(Version);
                 } while(sum > 0);
-
             } else if(msgRes == MessageBoxResult.No) {
                 res = ClearHelper.ShowUnusedElements(Version);
                 countParameterTypes = res.ParameterTypes;

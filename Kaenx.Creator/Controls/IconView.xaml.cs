@@ -188,7 +188,7 @@ namespace Kaenx.Creator.Controls
                         Icon icon = new Icon()
                         {
                             UId = Kaenx.Creator.Classes.Helper.GetNextFreeUId(General.Icons),
-                            Name = entry.Name.Substring(0, entry.Name.LastIndexOf("."))
+                            Name = entry.Name.Substring(0, entry.Name.LastIndexOf('.'))
                         };
 
                         using(Stream s = entry.Open())
@@ -235,7 +235,6 @@ namespace Kaenx.Creator.Controls
                         }
                     }
                 }
-                
             }
         }
 

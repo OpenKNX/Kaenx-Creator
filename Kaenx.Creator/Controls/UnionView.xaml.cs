@@ -85,7 +85,6 @@ namespace Kaenx.Creator.Controls
         {
             DataGridCellInfo cell = (sender as DataGrid).CurrentCell;
             Models.MemorySection sec = cell.Item as Models.MemorySection;
-            
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

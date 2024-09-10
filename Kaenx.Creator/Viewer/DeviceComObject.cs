@@ -15,7 +15,7 @@ namespace Kaenx.Creator.Viewer
     {
         public DeviceComObject() 
         {
-            
+            //nothing to do
         }
 
         public DeviceComObject(AppComObject comObj)

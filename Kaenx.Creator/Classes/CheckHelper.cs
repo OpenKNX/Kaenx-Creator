@@ -12,7 +12,6 @@ using Kaenx.Creator.Models.Dynamic;
 
 
 namespace Kaenx.Creator.Classes {
-
     public class CheckHelper
     {
         public static void CheckThis(MainModel General, ObservableCollection<PublishAction> actions, bool showOnlyErrors = false)
@@ -185,7 +184,6 @@ namespace Kaenx.Creator.Classes {
 
                             if(penum.UseIcon && penum.IconObject == null)
                                 actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_parat_enum_icon, penum.Name, ptype.Name, ptype.UId), State = PublishState.Fail, Item = ptype });
-
                         }
                         break;
 
@@ -491,7 +489,6 @@ namespace Kaenx.Creator.Classes {
                             else {
                                 if(!(para.SaveObject as Memory).IsAutoPara && para.Offset == -1) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_para_save_offset, para.Name, para.UId), State = PublishState.Fail, Item = para, Module = mod });
                                 if(!(para.SaveObject as Memory).IsAutoPara && para.OffsetBit == -1) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_para_save_offsetbit, para.Name, para.UId), State = PublishState.Fail, Item = para, Module = mod });
-
                             }
                             if(para.OffsetBit > 7) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_para_save_obsolet, para.Name, para.UId), State = PublishState.Fail, Item = para, Module = mod });
                             break;
@@ -526,10 +523,8 @@ namespace Kaenx.Creator.Classes {
                     if(para.OverwriteSuffix)
                         CheckSuffix(para, showOnlyErrors, defaultLang, mod, actions);
                 }
-                
             }
-        
-            
+
             var x = vbase.ComObjects.GroupBy((c) => c.Number);
             if(x.Any((c) => c.Count() > 1))
             {
@@ -754,11 +749,11 @@ namespace Kaenx.Creator.Classes {
                 {
                     //TODO implement check
                     if(type.Increment == "PackedSecondsAndMilliseconds") {
-                        
+                        //TODO
                     } else if(type.Increment == "PackedDaysHoursMinutesAndSeconds") {
-                        
+                        //TODO
                     } else if(type.Increment == "PackedMinutesSecondsAndMilliseconds") {
-
+                        //TODO
                     } else {
                         long paraval;
                         if(!long.TryParse(value, out paraval)) 

@@ -103,11 +103,6 @@ namespace Kaenx.Creator.Controls
             }
         }
         
-        private void Failed(object sender, System.Windows.ExceptionRoutedEventArgs e)
-        {
-
-        }
-
         public event PropertyChangedEventHandler PropertyChanged;
         private void Changed(string name)
         {

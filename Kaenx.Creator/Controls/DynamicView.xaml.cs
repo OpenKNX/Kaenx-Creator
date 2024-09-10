@@ -260,7 +260,7 @@ namespace Kaenx.Creator.Controls
                 if(line.Trim().StartsWith("function"))
                 {
                     string temp = line.Trim();
-                    string declaration = "\"declare " + temp.Substring(0, temp.IndexOf(")")+1) + ";\",";
+                    string declaration = "\"declare " + temp.Substring(0, temp.IndexOf(')')+1) + ";\",";
                     definitions.AppendLine(declaration);
                 }
             }

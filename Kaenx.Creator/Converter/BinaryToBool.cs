@@ -8,7 +8,6 @@ namespace Kaenx.Creator.Converter
 {
     public class BinaryToBool : IValueConverter
     {
-
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return value.ToString() == "1";

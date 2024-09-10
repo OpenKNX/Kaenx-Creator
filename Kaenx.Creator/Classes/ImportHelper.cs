@@ -81,7 +81,7 @@ namespace Kaenx.Creator.Classes
                 var res = System.Windows.MessageBox.Show($"Hersteller der Produktdatenbank stimmt nicht mit dem Hersteller des Projekts über ein.\r\nWollen Sie ihre HerstellerId von {_general.ManufacturerId:X4} auf {manuId:X4} ändern?", "Question", System.Windows.MessageBoxButton.YesNoCancel, System.Windows.MessageBoxImage.Warning);
                 switch(res) {
                     case System.Windows.MessageBoxResult.Yes:
-                        _general.ManufacturerId = manuId;;
+                        _general.ManufacturerId = manuId;
                         break;
                     case System.Windows.MessageBoxResult.Cancel:
                         return;
@@ -104,7 +104,6 @@ namespace Kaenx.Creator.Classes
 
             xtemp = xmanu.Element(Get("Catalog"));
             ImportCatalog(xtemp);
-
         }
 
         public void StartZip(MainModel general, ObservableCollection<DataPointType> dpts)
@@ -124,7 +123,7 @@ namespace Kaenx.Creator.Classes
                         var res = System.Windows.MessageBox.Show($"Hersteller der Produktdatenbank stimmt nicht mit dem Hersteller des Projekts über ein.\r\nWollen Sie ihre HerstellerId von {_general.ManufacturerId:X4} auf {manuId:X4} ändern?", "Question", System.Windows.MessageBoxButton.YesNoCancel, System.Windows.MessageBoxImage.Warning);
                         switch(res) {
                             case System.Windows.MessageBoxResult.Yes:
-                                _general.ManufacturerId = manuId;;
+                                _general.ManufacturerId = manuId;
                                 break;
                             case System.Windows.MessageBoxResult.Cancel:
                                 Archive.Dispose();
@@ -339,7 +338,7 @@ namespace Kaenx.Creator.Classes
                 Icon icon = new Icon()
                 {
                     UId = Kaenx.Creator.Classes.Helper.GetNextFreeUId(_general.Icons),
-                    Name = entry.Name.Substring(0, entry.Name.LastIndexOf("."))
+                    Name = entry.Name.Substring(0, entry.Name.LastIndexOf('.'))
                 };
 
                 using(Stream s = entry.Open())
@@ -582,7 +581,6 @@ namespace Kaenx.Creator.Classes
                 foreach(XElement xele in xstatic.Parent.Parent.Parent.Element(Get("Languages")).Descendants(Get("TranslationElement")))
                     if(newIds.ContainsKey(xele.Attribute("RefId").Value))
                         xele.Attribute("RefId").Value = "P-x_R-" + newIds[xele.Attribute("RefId").Value];
-
             }
 
             counter = 1;
@@ -864,7 +862,6 @@ namespace Kaenx.Creator.Classes
                         ptype.SizeInBit = int.Parse(xsub.Attribute("SizeInBit").Value);
                         foreach (XElement xenum in xsub.Elements())
                         {
-
                             ParameterTypeEnum penum = new ParameterTypeEnum()
                             {
                                 Name = xenum.Attribute("Text")?.Value ?? "",
@@ -1021,7 +1018,7 @@ namespace Kaenx.Creator.Classes
                 IsUnionDefault = xpara.Attribute("DefaultUnionParameter")?.Value == "true"
             };
             string id = GetLastSplit(xpara.Attribute("Id").Value, 2);
-            if (id.StartsWith("-"))
+            if (id.StartsWith('-'))
                 id = id.Substring(1);
             para.Id = int.Parse(id);
 
@@ -1123,7 +1120,7 @@ namespace Kaenx.Creator.Classes
                     _ => throw new Exception("Unbekannter Access Typ für ParameterRef: " + xref.Attribute("Access")?.Value)
                 };
                 string id = GetLastSplit(xref.Attribute("RefId").Value, 2);
-                if (id.StartsWith("-"))
+                if (id.StartsWith('-'))
                     id = id.Substring(1);
                 long paraId = long.Parse(id);
                 if(Paras.ContainsKey(paraId))
@@ -1164,7 +1161,7 @@ namespace Kaenx.Creator.Classes
                 int firstId = -1;
                 foreach(XElement xref in xcoms.Elements())
                 {
-                    string[] id = xref.Attribute("Id").Value.Split("-");
+                    string[] id = xref.Attribute("Id").Value.Split('-');
                     int currId = int.Parse(id[id.Length - 2]);
                     if(firstId == -1)
                     {
@@ -1198,7 +1195,7 @@ namespace Kaenx.Creator.Classes
                     idmapper.Add(xcom.Attribute("Id").Value, com.Id);
                 } else {
                     string id = xcom.Attribute("Id").Value;
-                    id = id.Substring(id.LastIndexOf("-") + 1);
+                    id = id.Substring(id.LastIndexOf('-') + 1);
                     com.Id = long.Parse(id);
                 }
 
@@ -1232,7 +1229,7 @@ namespace Kaenx.Creator.Classes
                     com.HasDpt = true;
                     if (type.StartsWith("DPST-"))
                     {
-                        string[] xtype = type.Split("-");
+                        string[] xtype = type.Split('-');
                         com.Type = DPTs.Single(d => d.Number == xtype[1]);
                         com.HasDpts = com.Type.SubTypes.Any(s => s.Number == xtype[2]);
                         if(com.HasDpts)
@@ -1244,7 +1241,7 @@ namespace Kaenx.Creator.Classes
                     }
                     else if (type.StartsWith("DPT-"))
                     {
-                        string[] xtype = type.Split("-");
+                        string[] xtype = type.Split('-');
                         com.HasDpts = false;
                         com.Type = DPTs.Single(d => d.Number == xtype[1]);
                     }
@@ -1300,7 +1297,7 @@ namespace Kaenx.Creator.Classes
                     cref.ComObjectObject = Coms[refId];
                 } else {
                     string id = xref.Attribute("RefId").Value;
-                    id = id.Substring(id.LastIndexOf("-") + 1);
+                    id = id.Substring(id.LastIndexOf('-') + 1);
                     long comId = long.Parse(id);
                     cref.ComObjectObject = Coms[comId];
                 }
@@ -1571,8 +1568,8 @@ namespace Kaenx.Creator.Classes
 
             string def = xprod.Attribute("DefaultLanguage").Value;
 
-            if(!def.Contains("-")){
-                def = _langTexts.Keys.First(l => l.StartsWith(def + "-"));
+            if(!def.Contains('-')){
+                def = _langTexts.Keys.First(l => l.StartsWith(def + '-'));
             }
 
             if(!_general.Languages.Any(l => l.CultureCode == def))

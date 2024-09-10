@@ -106,7 +106,6 @@ namespace Kaenx.Creator.Controls
             //((sender as Button).DataContext as Models.Message).Id = -1;
         }
 
-
         private void ClickAddModule(object sender, RoutedEventArgs e)
         {
             Models.Module mod = new Models.Module() { UId = Kaenx.Creator.Classes.Helper.GetNextFreeUId(CurrentModule.Modules)};
@@ -195,7 +194,6 @@ namespace Kaenx.Creator.Controls
                     System.Diagnostics.Debug.WriteLine("Summe: " + sum);
                     ClearHelper.RemoveUnusedElements(model);
                 } while(sum > 0);
-
             } else if(msgRes == MessageBoxResult.No) {
                 res = ClearHelper.ShowUnusedElements(model);
                 countParameterTypes = res.ParameterTypes;
@@ -219,7 +217,6 @@ namespace Kaenx.Creator.Controls
             MessageBox.Show(msg);
         }
         
-
         public event PropertyChangedEventHandler PropertyChanged;
         private void Changed(string name)
         {

@@ -4,7 +4,6 @@ using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
 
 namespace Kaenx.Creator.Models {
-
     public class CompletionData : ICompletionData
 	{
 		public CompletionData(string text, bool prop = true)

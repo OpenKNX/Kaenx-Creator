@@ -217,12 +217,12 @@ namespace Kaenx.Creator
             General = new Models.MainModel() { ImportVersion = Kaenx.Creator.Classes.Helper.CurrentVersion, Guid = Guid.NewGuid().ToString() };
             var currentLang = System.Threading.Thread.CurrentThread.CurrentUICulture.IetfLanguageTag;
             if(!ImportHelper._langTexts.ContainsKey(currentLang))
-                if(currentLang.Contains("-"))
-                    currentLang = currentLang.Split("-")[0];
+                if(currentLang.Contains('-'))
+                    currentLang = currentLang.Split('-')[0];
 
-            if(!currentLang.Contains("-"))
+            if(!currentLang.Contains('-'))
             {
-                currentLang = ImportHelper._langTexts.Keys.FirstOrDefault(l => l.Split("-")[0] == currentLang);
+                currentLang = ImportHelper._langTexts.Keys.FirstOrDefault(l => l.Split('-')[0] == currentLang);
                 if(string.IsNullOrEmpty(currentLang)) currentLang = "en-US";
             }
             General.Languages.Add(new Models.Language(System.Threading.Thread.CurrentThread.CurrentUICulture.DisplayName, currentLang));
@@ -897,7 +897,7 @@ namespace Kaenx.Creator
                 #if DEBUG
                     fileFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Output");
                 #else
-                    fileFolder = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
+                    fileFolder = Path.GetDirectoryName(Environment.ProcessPath);
                 #endif
                     break;
 

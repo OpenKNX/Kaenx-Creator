@@ -8,7 +8,6 @@ namespace Kaenx.Creator.Controls
 {
     public partial class ListDialog : Window
     {
-
         public ListDialog(string question, string title, List<string> items)
 		{
 			InitializeComponent();
