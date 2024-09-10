@@ -20,12 +20,14 @@
         <conv:BoolNegation x:Key="BoolNegate" />
         <conv:EmptyOListToBool x:Key="EmptyListToBool" />
         <conv:EmptyToBool x:Key="EmptyToBool" />
+        <conv:EmptyToVisibility x:Key="EmptyToVis" />
         <conv:EnumToVisibility x:Key="EnumToVis" />
         <conv:EnumToVisibility x:Key="EnumToVisNeg" Negate="True" />
         <conv:BoolToVisibility x:Key="BoolToVis" />
         <conv:TypeToBool x:Key="TypeToBool" />
         <conv:StateToBrush x:Key="StateToBrush" />
         <conv:BoolToBrush x:Key="BoolToBrush" TrueValue="Red" FalseValue="Black" />
+        <conv:EmptyToBrush x:Key="EmptyToBrush" TrueValue="Red" FalseValue="Black" />
 
         <Style x:Key="TopTabControl" TargetType="TabControl">
             <Setter Property="BorderThickness" Value="0" />
@@ -454,7 +456,10 @@
                         </ScrollViewer>
                     </TabItem>
                     
-                    <TabItem Header="{x:Static p:Resources.tabs_app}" Style="{StaticResource LeftTabItem}">
+                    <TabItem Style="{StaticResource LeftTabItem}">
+                        <TabItem.Header>
+                            <TextBlock Text="{x:Static p:Resources.tabs_app}" Foreground="{Binding General.Info.Mask, Converter={StaticResource EmptyToBrush}}" />
+                        </TabItem.Header>
                         <StackPanel Grid.Column="2" Grid.Row="1" DataContext="{Binding General.Info}">
                             <StackPanel.Resources>
                                 <Style TargetType="HeaderedContentControl">
@@ -486,6 +491,8 @@
                             <HeaderedContentControl Header="{x:Static p:Resources.prop_bcu}" IsEnabled="{Binding Mask, Converter={StaticResource EmptyToBool}}">
                                 <ComboBox SelectedItem="{Binding Mask, Mode=TwoWay}" Margin="0" DisplayMemberPath="Id" ItemsSource="{Binding BCUs, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
                             </HeaderedContentControl>
+                            <!--// TODO translate-->
+                            <TextBlock Text="Bitte eine BCU auswählen, bevor Sie weiter machen können." Foreground="Red" Visibility="{Binding Mask, Converter={StaticResource EmptyToVis}, ConverterParameter=true}" Margin="5 0 0 0" />
     
                             <TextBlock Margin="5 5 0 0">
                                 <Run Text="{x:Static p:Resources.tapps_memory}" />

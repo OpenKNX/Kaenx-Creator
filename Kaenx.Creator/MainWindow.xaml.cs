@@ -248,6 +248,7 @@ namespace Kaenx.Creator
 
             SetButtons(true);
             MenuSaveBtn.IsEnabled = false;
+            TabsEdit.SelectedIndex = 0;
         }
 
         private void Changed(string name)
@@ -264,65 +265,7 @@ namespace Kaenx.Creator
             Models.Hardware hard = (sender as Button).DataContext as Models.Hardware;
             hard.Devices.Add(new Models.Device());
         }
-/*
-        private void ClickAddHardApp(object sender, RoutedEventArgs e)
-        {
-            if(InHardApp.SelectedItem == null)
-            {
-                MessageBox.Show(Properties.Messages.main_add_hard_error, Properties.Messages.main_add_hard_error_title, MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
 
-            Models.Hardware hard = (sender as Button).DataContext as Models.Hardware;
-            if(!hard.Apps.Contains(InHardApp.SelectedItem as Models.Application)) {
-                hard.Apps.Add(InHardApp.SelectedItem as Models.Application);
-            }
-            InHardApp.SelectedItem = null;
-        }
-
-        private void ClickAddVersion(object sender, RoutedEventArgs e)
-        {
-            Models.Application app = AppList.SelectedItem as Models.Application;
-            Models.AppVersion newVer = new Models.AppVersion() { Name = app.Name };
-            var currentLang = System.Threading.Thread.CurrentThread.CurrentUICulture.IetfLanguageTag;
-            if(!ImportHelper._langTexts.ContainsKey(currentLang))
-                if(currentLang.Contains("-"))
-                    currentLang = currentLang.Split("-")[0];
-
-            if(!currentLang.Contains("-"))
-            {
-                currentLang = ImportHelper._langTexts.Keys.FirstOrDefault(l => l.Split("-")[0] == currentLang);
-                if(string.IsNullOrEmpty(currentLang)) currentLang = "en-US";
-            }
-            Models.Language lang = new Models.Language(System.Threading.Thread.CurrentThread.CurrentUICulture.DisplayName, currentLang);
-            newVer.Languages.Add(lang);
-            newVer.DefaultLanguage = lang.CultureCode;
-            newVer.Text.Add(new Models.Translation(lang, "Dummy"));
-            newVer.Dynamics.Add(new Models.Dynamic.DynamicMain());
-
-            if(app.Mask.Procedure == Models.ProcedureTypes.Product)
-            {
-                newVer.Procedure = "<LoadProcedures>\r\n<LoadProcedure>\r\n<LdCtrlConnect />\r\n<LdCtrlCompareProp ObjIdx=\"0\" PropId=\"78\" InlineData=\"00000000012700000000\" />\r\n<LdCtrlUnload LsmIdx=\"1\" />\r\n<LdCtrlUnload LsmIdx=\"2\" />\r\n<LdCtrlUnload LsmIdx=\"3\" />\r\n<LdCtrlLoad LsmIdx=\"1\" />\r\n<LdCtrlAbsSegment LsmIdx=\"1\" SegType=\"0\" Address=\"16384\" Size=\"513\" Access=\"255\" MemType=\"3\" SegFlags=\"128\" />\r\n<LdCtrlTaskSegment LsmIdx=\"1\" Address=\"16384\" />\r\n<LdCtrlLoadCompleted LsmIdx=\"1\" />\r\n<LdCtrlLoad LsmIdx=\"2\" />\r\n<LdCtrlAbsSegment LsmIdx=\"2\" SegType=\"0\" Address=\"16897\" Size=\"511\" Access=\"255\" MemType=\"3\" SegFlags=\"128\" />\r\n<LdCtrlTaskSegment LsmIdx=\"2\" Address=\"16897\" />\r\n<LdCtrlLoadCompleted LsmIdx=\"2\" />\r\n<LdCtrlLoad LsmIdx=\"3\" />\r\n<LdCtrlAbsSegment LsmIdx=\"3\" SegType=\"0\" Address=\"1792\" Size=\"152\" Access=\"0\" MemType=\"2\" SegFlags=\"0\" />\r\n<LdCtrlAbsSegment LsmIdx=\"3\" SegType=\"1\" Address=\"1944\" Size=\"1\" Access=\"0\" MemType=\"2\" SegFlags=\"0\" />\r\n<LdCtrlAbsSegment LsmIdx=\"3\" SegType=\"0\" Address=\"17408\" Size=\"394\" Access=\"255\" MemType=\"3\" SegFlags=\"128\" />\r\n<LdCtrlTaskSegment LsmIdx=\"3\" Address=\"17408\" />\r\n<LdCtrlLoadCompleted LsmIdx=\"3\" />\r\n<LdCtrlRestart />\r\n<LdCtrlDisconnect />\r\n</LoadProcedure>\r\n</LoadProcedures>";
-            } else if(app.Mask.Procedure == Models.ProcedureTypes.Merged)
-            {
-                newVer.Procedure = "<LoadProcedures>\r\n<LoadProcedure MergeId=\"2\">\r\n<LdCtrlRelSegment  AppliesTo=\"full\" LsmIdx=\"4\" Size=\"1\" Mode=\"0\" Fill=\"0\" />\r\n</LoadProcedure>\r\n<LoadProcedure MergeId=\"4\">\r\n<LdCtrlWriteRelMem ObjIdx=\"4\" Offset=\"0\" Size=\"1\" Verify=\"true\" />\r\n</LoadProcedure>\r\n</LoadProcedures>";
-            }
-
-            if(app.Versions.Count > 0) {
-                Models.AppVersionModel ver = app.Versions.OrderByDescending(v => v.Number).ElementAt(0);
-                newVer.Number = ver.Number + 1;
-            }
-
-            Models.AppVersionModel model = new Models.AppVersionModel() {
-                Name = newVer.Name,
-                Number = newVer.Number,
-                Namespace = newVer.NamespaceVersion,
-                Version = Newtonsoft.Json.JsonConvert.SerializeObject(newVer, new Newtonsoft.Json.JsonSerializerSettings() { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects })
-            };
-            
-            app.Versions.Add(model);
-        }
-*/
         private void ClickAddMemory(object sender, RoutedEventArgs e)
         {
             General.Application.Memories.Add(new Models.Memory() { Type = General.Info.Mask.Memory, UId = Kaenx.Creator.Classes.Helper.GetNextFreeUId(General.Application.Memories) });
