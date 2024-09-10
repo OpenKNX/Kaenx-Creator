@@ -159,6 +159,7 @@ namespace Kaenx.Creator.Classes
 
             if(entries.Count() == 0)
             {
+                // TODO translate
                 System.Windows.MessageBox.Show("Knxprod enthält keine Applikation");
                 return;
             } else if(entries.Count() == 1)
@@ -178,7 +179,8 @@ namespace Kaenx.Creator.Classes
                     apps.Add(new KeyValuePair<string, object>(appName + "   (" + appId +")", xentry));
                     names.Add(appName + " (" + appId +")");
                 }
-
+                
+                // TODO translate
                 ListDialog diag = new ("Welche Applikation soll importiert werden?", "Import", (from app in apps select app.Key).ToList());
                 diag.ShowDialog();
 
@@ -1535,66 +1537,73 @@ namespace Kaenx.Creator.Classes
         }
 
         private void ImportHardware(XElement xhards) {
-            XElement temp = xhards.Descendants(Get("Product")).FirstOrDefault();
-            if(temp != null)
-            {
-                string def = temp.Attribute("DefaultLanguage").Value;
+            XElement temp = xhards.Descendants(Get("ApplicationProgramRef")).Single(h => h.Attribute("RefId").Value == AppImportHelper);
+            XElement xhard = temp.Parent.Parent.Parent;
 
-                if(!def.Contains("-")){
-                    def = _langTexts.Keys.First(l => l.StartsWith(def + "-"));
+            _general.Info.Name = xhard.Attribute("Name").Value;
+            _general.Info.SerialNumber = xhard.Attribute("SerialNumber").Value;
+            _general.Info.Version = int.Parse(xhard.Attribute("VersionNumber").Value);
+            _general.Info.HasApplicationProgram = xhard.Attribute("HasApplicationProgram")?.Value == "true" || xhard.Attribute("HasApplicationProgram")?.Value == "1";
+            _general.Info.HasIndividualAddress = xhard.Attribute("HasIndividualAddress")?.Value == "true" || xhard.Attribute("HasIndividualAddress")?.Value == "1";
+            _general.Info.BusCurrent = (int)StringToFloat(xhard.Attribute("BusCurrent")?.Value, 10);
+            _general.Info.IsIpEnabled = xhard.Attribute("IsIPEnabled")?.Value == "true" || xhard.Attribute("IsIPEnabled")?.Value == "1";
+
+            XElement xprods = xhard.Element(Get("Products"));
+            XElement xprod = null;
+            string toImport = "";
+            if(xprods.Elements().Count() > 1) {
+                List<KeyValuePair<string, string>> prods = [];
+                foreach(XElement xprodt in xprods.Elements()) {
+                    prods.Add(new ($"{xprodt.Attribute("Text").Value} ({xprodt.Attribute("OrderNumber").Value})", xprodt.Attribute("Id").Value));
                 }
-
-                if(!_general.Languages.Any(l => l.CultureCode == def))
-                    _general.Languages.Add(new Language(_langTexts[def], def));
+                // TODO translate
+                ListDialog diag = new ("Welches Produkt soll importiert werden?", "Import", (from prod in prods select prod.Key).ToList());
+                diag.ShowDialog();
+                if(diag.DialogResult == true) {
+                    string id = prods.First(prod => prod.Key == diag.Answer).Value;
+                    xprod = xprods.Elements().Single(p => p.Attribute("Id").Value == id);
+                }
+            }
+            
+            if(xprod == null) {
+                xprod = xprods.Elements().ElementAt(0);
             }
 
-            foreach(XElement xhard in xhards.Elements())
-            {
-                if(xhard.Descendants(Get("ApplicationProgramRef")).Count() > 1)
-                    System.Windows.MessageBox.Show(Properties.Messages.import_multiple_applications);
+            string def = xprod.Attribute("DefaultLanguage").Value;
 
-                XElement appProgRef = xhard.Descendants(Get("ApplicationProgramRef")).ElementAt(0);
-                if(appProgRef.Attribute("RefId").Value != AppImportHelper)
-                    continue;
-
-                _general.Info.Name = xhard.Attribute("Name").Value;
-                _general.Info.SerialNumber = xhard.Attribute("SerialNumber").Value;
-                _general.Info.Version = int.Parse(xhard.Attribute("VersionNumber").Value);
-                _general.Info.HasApplicationProgram = xhard.Attribute("HasApplicationProgram")?.Value == "true" || xhard.Attribute("HasApplicationProgram")?.Value == "1";
-                _general.Info.HasIndividualAddress = xhard.Attribute("HasIndividualAddress")?.Value == "true" || xhard.Attribute("HasIndividualAddress")?.Value == "1";
-                _general.Info.BusCurrent = (int)StringToFloat(xhard.Attribute("BusCurrent")?.Value, 10);
-                _general.Info.IsIpEnabled = xhard.Attribute("IsIPEnabled")?.Value == "true" || xhard.Attribute("IsIPEnabled")?.Value == "1";
-
-                XElement xprod = xhard.Descendants(Get("Product")).ElementAt(0);
-                _general.Info.OrderNumber = xprod.Attribute("OrderNumber").Value;
-                _general.Info.Name = xprod.Parent.Parent.Attribute("Name").Value;
-                _general.Info.IsRailMounted = xprod.Attribute("IsRailMounted")?.Value == "true" || xprod.Attribute("IsRailMounted")?.Value == "1";
+            if(!def.Contains("-")){
+                def = _langTexts.Keys.First(l => l.StartsWith(def + "-"));
             }
+
+            if(!_general.Languages.Any(l => l.CultureCode == def))
+                _general.Languages.Add(new Language(_langTexts[def], def));
+
+            _general.Info.OrderNumber = xprod.Attribute("OrderNumber").Value;
+            _general.Info.Name = xprod.Parent.Parent.Attribute("Name").Value;
+            _general.Info.IsRailMounted = xprod.Attribute("IsRailMounted")?.Value == "true" || xprod.Attribute("IsRailMounted")?.Value == "1";
         }
 
         private void ImportCatalog(XElement xcat)
         {
-            foreach (XElement xitem in xcat.Elements())
-            {
-                ParseCatalogItem(xitem, _general.Catalog[0]);
+            string orderNumber = ExportHelper.GetEncoded(_general.Info.OrderNumber);
+            XElement xitem = xcat.Descendants(Get("CatalogItem")).Single(c => c.Attribute("Id").Value.Contains(orderNumber));
+
+            List<XElement> parents = [xitem];
+            while(xitem.Parent.Name.LocalName != "Catalog") {
+                xitem = xitem.Parent;
+                parents.Insert(0, xitem);
             }
 
-            CheckCatalogSectionLanguages(_general.Catalog[0]);
-        }
-
-        private void CheckCatalogSectionLanguages(CatalogItem parent)
-        {
-            foreach(CatalogItem item in parent.Items)
-            {
-                if(!item.IsSection) continue;
+            CatalogItem _current = _general.Catalog[0];
+            foreach(XElement x in parents) {
+                _current = ParseCatalogItem(x, _current);
+                if(!_current.IsSection) continue;
 
                 foreach(Language lang in _general.Languages)
                 {
-                    if(!item.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
-                        item.Text.Add(new Translation(lang, ""));
+                    if(!_current.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
+                        _current.Text.Add(new Translation(lang, ""));
                 }
-
-                CheckCatalogSectionLanguages(item);
             }
         }
 
@@ -1614,7 +1623,7 @@ namespace Kaenx.Creator.Classes
             return item;
         }
 
-        private void ParseCatalogItem(XElement xitem, CatalogItem parent)
+        private CatalogItem ParseCatalogItem(XElement xitem, CatalogItem parent)
         {
             //!TODO check if section exists
             switch (xitem.Name.LocalName)
@@ -1638,21 +1647,15 @@ namespace Kaenx.Creator.Classes
                     item.IsSection = true;
                     item.Text = GetTranslation(xitem.Attribute("Id").Value, "Name", xitem, true);
 
-                    foreach (XElement xele in xitem.Elements())
-                        ParseCatalogItem(xele, item);
-                    break;
+                    return item;
                 }
 
                 case "CatalogItem":
                 {
                     string id = xitem.Attribute("Hardware2ProgramRefId").Value.Substring(xitem.Attribute("Hardware2ProgramRefId").Value.IndexOf("_HP-") + 3, 13);
-                    if(!AppImportHelper.Contains(id))
-                        break;
-
                     _general.Info.Text = GetTranslation(xitem.Attribute("Id")?.Value ?? "", "Name", xitem, true);
                     _general.Info.Description = GetTranslation(xitem.Attribute("Id")?.Value ?? "", "VisibleDescription", xitem, true);
-                    
-                    
+
                     CatalogItem item = new CatalogItem()
                     {
                         Parent = parent,
@@ -1663,10 +1666,12 @@ namespace Kaenx.Creator.Classes
                     };
                     
                     parent.Items.Add(item);
-                    break;
+                    return item;
                 }
-            }
 
+                default:
+                    throw new NotImplementedException("Not implemented CatalogType: " + xitem.Name.LocalName);
+            }
         }
 
         public void ImportDynamic(XElement xdyn, IVersionBase vbase)
@@ -2138,7 +2143,7 @@ namespace Kaenx.Creator.Classes
             input = input.Replace(".2E", ".");
             return input;
         }
-
+        
         private string GetLastSplit(string input, int offset = 0)
         {
             return input.Substring(input.LastIndexOf('_') + 1 + offset);
