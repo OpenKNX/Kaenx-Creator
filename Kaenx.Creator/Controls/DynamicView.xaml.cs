@@ -51,9 +51,10 @@ namespace Kaenx.Creator.Controls
             {
                 ditem = ditem.Parent;
                 ditem.IsExpanded = true;
-            }    
+            }
             DynamicList.Items.Refresh();
             DynamicList.UpdateLayout();
+            ((Models.Dynamic.IDynItems)item).IsSelected = true;
         }
 
         private void SetExpandedFalse(Models.Dynamic.IDynItems item)
