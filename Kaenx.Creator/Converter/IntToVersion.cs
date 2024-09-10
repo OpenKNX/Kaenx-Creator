@@ -10,33 +10,44 @@ namespace Kaenx.Creator.Converter
     public class IntToVersion : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            string hexString = ((int)value).ToString("X");
-            if(hexString.All(char.IsDigit)){
-                if(hexString.Length > 1)
-                    hexString = hexString.Insert(hexString.Length - 1, ".");
-            }else{
-                hexString = "";
-            }
-            return hexString;
+        {         
+            decimal majorVersion = Math.Floor((decimal)((int)value/16));
+            int minorVersion = (int)value % 16;
+            return $"{majorVersion}.{minorVersion}";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            string hexString="";
+            int majorVersion;
+            int minorVersion;
+
             if(value.ToString().Contains('.'))
             {
                 string[] versions = value.ToString().Split('.');
-                hexString = versions[0] + versions[1];
+                
+                if(!int.TryParse(versions[0], out majorVersion))
+                    majorVersion = 0;
+
+                if(!int.TryParse(versions[1], out minorVersion))
+                    minorVersion = 0;   
+                    
+                if(minorVersion > 15)
+                {
+                    minorVersion /= 10;
+                    if(minorVersion > 15)
+                        minorVersion = 15;
+                }             
             }else
             {
-                hexString = value.ToString();
+                if(!int.TryParse(value.ToString(), out majorVersion))
+                    majorVersion = 0;
+
+                minorVersion = 0;
             }
 
-            int number;
-            if(!int.TryParse(hexString, NumberStyles.HexNumber, null, out number))
-                return 0;
-            return number;
+            majorVersion *= 16;
+
+            return majorVersion + minorVersion;
         }
     }
 }
