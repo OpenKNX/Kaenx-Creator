@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using System.Windows.Data;
+using System.Linq;
 
 namespace Kaenx.Creator.Converter
 {
@@ -11,8 +12,12 @@ namespace Kaenx.Creator.Converter
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             string hexString = ((int)value).ToString("X");
-            if(hexString.Length > 1)
-                hexString = hexString.Insert(hexString.Length - 1, ".");
+            if(hexString.All(char.IsDigit)){
+                if(hexString.Length > 1)
+                    hexString = hexString.Insert(hexString.Length - 1, ".");
+            }else{
+                hexString = "";
+            }
             return hexString;
         }
 
