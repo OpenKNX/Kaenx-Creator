@@ -49,7 +49,16 @@
                     <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
                 </HeaderedContentControl>
                 <HeaderedContentControl Header="{x:Static p:Resources.tdyn_pararef}">
-                    <ComboBox IsEditable="true" ItemsSource="{Binding Module.ParameterRefs, ElementName=ViewControl}" SelectedItem="{Binding ParameterRefObject}" DisplayMemberPath="Name" />
+                     <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="auto" />
+                        </Grid.ColumnDefinitions>
+                        <ComboBox IsEditable="true" ItemsSource="{Binding Module.ParameterRefs, ElementName=ViewControl}" SelectedItem="{Binding ParameterRefObject}" DisplayMemberPath="Name" />
+                        <TextBlock Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10 0 0 4">
+                            <Hyperlink ToolTip="{x:Static p:Resources.tcheck_tooltip}" NavigateUri="https://example.com" RequestNavigate="DynParameterParaRefLink">&lt;--</Hyperlink>
+                        </TextBlock>
+                    </Grid>
                 </HeaderedContentControl>
                 <HeaderedContentControl Header="{x:Static p:Resources.tdyn_paraname}">
                     <TextBlock Text="{Binding ParameterRefObject.ParameterObject.Name}" />
@@ -166,7 +175,16 @@
                     <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
                 </HeaderedContentControl>
                 <HeaderedContentControl Header="{x:Static p:Resources.tdyn_comref}">
-                    <ComboBox IsEditable="true" ItemsSource="{Binding Module.ComObjectRefs, ElementName=ViewControl}" SelectedItem="{Binding ComObjectRefObject}" DisplayMemberPath="Name" />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="auto" />
+                        </Grid.ColumnDefinitions>
+                        <ComboBox IsEditable="true" ItemsSource="{Binding Module.ComObjectRefs, ElementName=ViewControl}" SelectedItem="{Binding ComObjectRefObject}" DisplayMemberPath="Name" />
+                        <TextBlock Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10 0 0 4">
+                            <Hyperlink ToolTip="{x:Static p:Resources.tcheck_tooltip}" NavigateUri="https://example.com" RequestNavigate="DyComObjectRefLink">&lt;--</Hyperlink>
+                        </TextBlock>
+                    </Grid>
                 </HeaderedContentControl>
                 <HeaderedContentControl Header="{x:Static p:Resources.tdyn_comname}">
                     <TextBlock Text="{Binding ComObjectRefObject.ComObjectObject.Name}" />
@@ -261,10 +279,13 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="auto" />
                                 <ColumnDefinition />
+                                <ColumnDefinition Width="auto" />
                             </Grid.ColumnDefinitions>
-    
                             <CheckBox IsChecked="{Binding UseParameterRef}" VerticalAlignment="Center" />
-                            <ComboBox Grid.Column="1" IsEditable="true" IsEnabled="{Binding UseParameterRef}" ItemsSource="{Binding Module.ParameterRefs, ElementName=ViewControl}" SelectedItem="{Binding ParameterRefObject, Mode=TwoWay}" DisplayMemberPath="Name" />
+                            <ComboBox Grid.Column="1" IsEditable="true" IsEnabled="{Binding UseParameterRef}" ItemsSource="{Binding Module.ParameterRefs, ElementName=ViewControl}" SelectedItem="{Binding ParameterRefObject, Mode=TwoWay}" DisplayMemberPath="Name" />    
+                            <TextBlock Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10 0 0 4">
+                                <Hyperlink ToolTip="{x:Static p:Resources.tcheck_tooltip}" NavigateUri="https://example.com" RequestNavigate="DynBlockParaRefLink">&lt;--</Hyperlink>
+                            </TextBlock>                           
                         </Grid>
                     </HeaderedContentControl>
                     <HeaderedContentControl Header="{x:Static p:Resources.tdyn_textpara}">
@@ -430,8 +451,17 @@
                 <HeaderedContentControl Header="{x:Static p:Resources.tdyn_pararef}">
                     <StackPanel>
                         <CheckBox Content="IsGlobal" IsChecked="{Binding IsGlobal}" Margin="0 3" />
-                        <ComboBox Visibility="{Binding IsGlobal, Converter={StaticResource BoolToVis}, ConverterParameter=true}" IsEditable="true" ItemsSource="{Binding Module.ParameterRefs, ElementName=ViewControl}" SelectedItem="{Binding ParameterRefObject}" DisplayMemberPath="Name"/>
-                        <ComboBox Visibility="{Binding IsGlobal, Converter={StaticResource BoolToVis}}" IsEditable="true" ItemsSource="{Binding Version.ParameterRefs, ElementName=ViewControl}" SelectedItem="{Binding ParameterRefObject}" DisplayMemberPath="Name"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="auto" />
+                            </Grid.ColumnDefinitions>
+                            <ComboBox Grid.Column="0" Visibility="{Binding IsGlobal, Converter={StaticResource BoolToVis}, ConverterParameter=true}" IsEditable="true" ItemsSource="{Binding Module.ParameterRefs, ElementName=ViewControl}" SelectedItem="{Binding ParameterRefObject}" DisplayMemberPath="Name"/>
+                            <ComboBox Grid.Column="0" Visibility="{Binding IsGlobal, Converter={StaticResource BoolToVis}}" IsEditable="true" ItemsSource="{Binding Version.ParameterRefs, ElementName=ViewControl}" SelectedItem="{Binding ParameterRefObject}" DisplayMemberPath="Name"/>
+                            <TextBlock Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10 0 0 4">
+                                <Hyperlink ToolTip="{x:Static p:Resources.tcheck_tooltip}" NavigateUri="https://example.com" RequestNavigate="DynChooseParaRefLink">&lt;--</Hyperlink>
+                            </TextBlock>
+                        </Grid>                  
                     </StackPanel>
                 </HeaderedContentControl>
             </StackPanel>

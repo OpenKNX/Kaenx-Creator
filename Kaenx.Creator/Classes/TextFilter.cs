@@ -54,7 +54,8 @@ namespace Kaenx.Creator.Classes
         public void Show()
         {
             Query = _query;
-            view.Refresh();
+            if(view != null)
+                view.Refresh();
         }
     }
 }

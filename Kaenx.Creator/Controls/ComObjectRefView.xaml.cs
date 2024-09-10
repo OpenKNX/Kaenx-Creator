@@ -92,10 +92,16 @@ namespace Kaenx.Creator.Controls
             ClearHelper.ClearIDs(Module.Dynamics[0], cref);
         }
 
-        private void ClickCheckHyperlink(object sender, RoutedEventArgs e)
+        private void ComObjParaRefHyperlink(object sender, RoutedEventArgs e)
         {
             Models.ComObjectRef com = (sender as System.Windows.Documents.Hyperlink).DataContext as Models.ComObjectRef;
             MainWindow.Instance.GoToItem(com.ParameterRefObject, Module);
+        }
+
+        private void ComObjectHyperlink(object sender, RoutedEventArgs e)
+        {
+            Models.ComObjectRef com = (sender as System.Windows.Documents.Hyperlink).DataContext as Models.ComObjectRef;
+            MainWindow.Instance.GoToItem(com.ComObjectObject, Module);
         }
 
         private void ResetId(object sender, RoutedEventArgs e)
