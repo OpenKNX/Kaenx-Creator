@@ -226,6 +226,7 @@ namespace Kaenx.Creator
                 if(string.IsNullOrEmpty(currentLang)) currentLang = "en-US";
             }
             General.Languages.Add(new Models.Language(System.Threading.Thread.CurrentThread.CurrentUICulture.DisplayName, currentLang));
+            General.Application.DefaultLanguage = currentLang;
             General.Catalog.Add(new Models.CatalogItem() { Name = Properties.Messages.main_def_cat });
 
             foreach(Models.Language lang in General.Languages)
