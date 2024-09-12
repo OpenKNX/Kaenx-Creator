@@ -1099,6 +1099,12 @@ namespace Kaenx.Creator.Properties {
                 return ResourceManager.GetString("check_ver_pararef_no_para", resourceCulture);
             }
         }
+
+        public static string check_ver_pararef_no_display_order {
+            get {
+                return ResourceManager.GetString("check_ver_pararef_no_display_order", resourceCulture);
+            }
+        }
         
         public static string check_ver_com_not_unique {
             get {
