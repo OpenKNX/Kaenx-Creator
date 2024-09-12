@@ -17,6 +17,7 @@
         Title="Kaenx-Creator" Height="720" Width="1300">
     <Window.Resources>
         <conv:IntToHex x:Key="IntToHex" />
+        <conv:IntToVersion x:Key="IntToVersion" />
         <conv:BoolNegation x:Key="BoolNegate" />
         <conv:EmptyOListToBool x:Key="EmptyListToBool" />
         <conv:EmptyToBool x:Key="EmptyToBool" />
@@ -657,6 +658,9 @@
                                 <StackPanel Grid.Column="1">
                                     <HeaderedContentControl Header="{x:Static p:Resources.prop_vers}">
                                         <TextBox Text="{Binding Number, UpdateSourceTrigger=PropertyChanged}" />
+                                    </HeaderedContentControl>
+                                    <HeaderedContentControl Header="{x:Static p:Resources.prop_etsvers}">
+                                        <TextBox Text="{Binding Number, Converter={StaticResource IntToVersion}, UpdateSourceTrigger=PropertyChanged}" />
                                     </HeaderedContentControl>
                                     <HeaderedContentControl Header="{x:Static p:Resources.prop_versreplace}">
                                         <TextBox Text="{Binding ReplacesVersions, UpdateSourceTrigger=PropertyChanged}" />

@@ -410,6 +410,15 @@ namespace Kaenx.Creator.Properties {
                 return ResourceManager.GetString("prop_vers", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string prop_etsvers {
+            get {
+                return ResourceManager.GetString("prop_etsvers", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.

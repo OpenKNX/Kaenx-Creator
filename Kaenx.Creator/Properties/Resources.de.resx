@@ -273,6 +273,10 @@
     <value>Version</value>
     <comment/>
   </data>
+  <data name="prop_etsvers" xml:space="preserve">
+    <value>ETS Version</value>
+    <comment/>
+  </data>
   <data name="prop_buscurrent" xml:space="preserve">
     <value>Busstrom</value>
     <comment/>
