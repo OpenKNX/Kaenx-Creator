@@ -997,6 +997,12 @@ namespace Kaenx.Creator.Properties {
                 return ResourceManager.GetString("check_ver_para_number2", resourceCulture);
             }
         }
+
+        public static string check_ver_para_float {
+            get {
+                return ResourceManager.GetString("check_ver_para_float", resourceCulture);
+            }
+        }
         
         public static string check_ver_para_color {
             get {

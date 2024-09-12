@@ -741,6 +741,10 @@
     <value>{0} {1} ({2}): Wert ist nicht im verfügbaren Rahmen</value>
     <comment>Parameter/Ref; Name; UId</comment>
   </data>
+  <data name="check_ver_para_float" xml:space="preserve">
+    <value>{0} {1} ({2}): Wert ist keine Gleitkommazahl</value>
+    <comment>Parameter/Ref; Name; UId</comment>
+  </data>
   <data name="check_ver_para_color" xml:space="preserve">
     <value>{0} {1} ({2}): Wert hat nicht das richtige Format {3}</value>
     <comment>Parameter/Ref; Name; UId; format</comment>

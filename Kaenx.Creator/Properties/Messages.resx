@@ -741,6 +741,10 @@
     <value>{0} {1} ({2}): Value is not in the supported range</value>
     <comment>Parameter/Ref; Name; UId</comment>
   </data>
+  <data name="check_ver_para_float" xml:space="preserve">
+    <value>{0} {1} ({2}): Value is not an floating point number</value>
+    <comment>Parameter/Ref; Name; UId</comment>
+  </data>
   <data name="check_ver_para_color" xml:space="preserve">
     <value>{0} {1} ({2}): Value is not in the given format {3}</value>
     <comment>Parameter/Ref; Name; UId; format</comment>
