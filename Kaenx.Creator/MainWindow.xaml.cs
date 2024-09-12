@@ -142,7 +142,7 @@ namespace Kaenx.Creator
 
         private void CheckEtsVersions() {
             foreach(Models.EtsVersion v in EtsVersions)
-                v.IsEnabled =  Kaenx.Creator.Classes.Helper.CheckExportNamespace(v.Number);
+                v.IsEnabled =  Kaenx.Creator.Classes.Helper.CheckExportNamespace(v.Number, true);
             NamespaceSelection.ItemsSource = EtsVersions;
         }
 
@@ -791,8 +791,9 @@ namespace Kaenx.Creator
 
                 Kaenx.Creator.Classes.ExportHelper helper = new Kaenx.Creator.Classes.ExportHelper(General, null);
                 helper.SetNamespace(ns);
-                await OpenKNX.Toolbox.Sign.SignHelper.CheckMaster(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Output", "Temp"), ns);
-                await helper.SignOutput(targetPath, Path.Combine(sourcePath, "sign.knxprod"));
+                await OpenKNX.Toolbox.Sign.SignHelper.CheckMaster(targetPath, ns);
+                await helper.SignOutput(targetPath, Path.Combine(sourcePath, "sign.knxprod"), ns, true);
+                Directory.Delete(targetPath, true);
 
                 System.Windows.MessageBox.Show(Properties.Messages.main_export_success, Properties.Messages.main_export_title);
             }
@@ -945,7 +946,7 @@ namespace Kaenx.Creator
                 return;
             }
             await OpenKNX.Toolbox.Sign.SignHelper.CheckMaster(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Output", "Temp"), General.Application.NamespaceVersion);
-            await helper.SignOutput(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Output", "Temp"), filePath);
+            await helper.SignOutput(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Output", "Temp"), filePath, General.Application.NamespaceVersion);
             PublishActions.Add(new Models.PublishAction() { Text = Properties.Messages.main_export_success, State = Models.PublishState.Success } );
             PublishActions.Add(new Models.PublishAction() { Text = filePath, State = Models.PublishState.Success } );
         }
