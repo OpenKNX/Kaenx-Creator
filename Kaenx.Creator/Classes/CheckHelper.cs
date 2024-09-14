@@ -507,6 +507,9 @@ namespace Kaenx.Creator.Classes {
             }
         
             foreach(ParameterRef para in vbase.ParameterRefs) {
+                if(ver.IsPreETS4 && para.DisplayOrder == -1)
+                    actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_pararef_no_display_order, para.Name, para.UId), State = PublishState.Fail, Item = para, Module = mod });
+                
                 if(para.ParameterObject == null) actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_pararef_no_para, para.Name, para.UId), State = PublishState.Fail, Item = para, Module = mod });
                 else {
                     if(para.ParameterObject.ParameterTypeObject == null || string.IsNullOrEmpty(para.Value))

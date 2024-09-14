@@ -813,6 +813,10 @@
     <value>ParameterRef {0} ({1}): No parameter selected</value>
     <comment>Name; UId</comment>
   </data>
+  <data name="check_ver_pararef_no_display_order" xml:space="preserve">
+    <value>ParameterRef {0} ({1}): At PreETS4 the DisplayOrder has to be set</value>
+    <comment>Name; UId</comment>
+  </data>
   <data name="check_ver_com_not_unique" xml:space="preserve">
     <value>ComObjectNumbers are not unique. IDs will be counted up</value>
     <comment>Name; UId</comment>
