@@ -86,13 +86,16 @@
         <DataTemplate x:Key="MemASTable">
             <TextBlock TextWrapping="Wrap" Text="{x:Static p:Resources.mem_ast}" />
         </DataTemplate>
-
+        <DataTemplate x:Key="MemBcu1Data">
+            <TextBlock TextWrapping="Wrap" Text="{x:Static p:Resources.mem_bcu1}" />
+        </DataTemplate>
         <select:MemorySelector x:Key="MemorySelector"
                 Normal="{StaticResource MemNormal}"
                 Module="{StaticResource MemModule}"
                 GATable="{StaticResource MemGATable}"
                 COTable="{StaticResource MemCOTable}"
                 ASTable="{StaticResource MemASTable}"
+                Bcu1Data="{StaticResource MemBcu1Data}"
                  />
     </UserControl.Resources>
     

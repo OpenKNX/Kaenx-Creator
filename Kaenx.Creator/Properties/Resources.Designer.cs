@@ -2438,6 +2438,12 @@ namespace Kaenx.Creator.Properties {
                 return ResourceManager.GetString("mem_ast", resourceCulture);
             }
         }
+
+        public static string mem_bcu1 {
+            get {
+                return ResourceManager.GetString("mem_bcu1", resourceCulture);
+            }
+        }
         
         public static string tmod_prefix {
             get {

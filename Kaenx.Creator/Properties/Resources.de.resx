@@ -1321,6 +1321,10 @@
     <value>Hier wird die Assoziationstabelle gespeichert.</value>
     <comment/>
   </data>
+  <data name="mem_bcu1" xml:space="preserve">
+    <value>Hier werden die Ladeprozedur Daten der BCU1 gespeichert.</value>
+    <comment/>
+  </data>
   <data name="tmod_prefix" xml:space="preserve">
     <value>Prefix</value>
     <comment/>
