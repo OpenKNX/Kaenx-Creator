@@ -14,6 +14,7 @@ namespace Kaenx.Creator.Selectors
         public DataTemplate COTable { get; set; }
         public DataTemplate ASTable { get; set; }
         public DataTemplate Module { get; set; }
+        public DataTemplate Bcu1Data { get; set; }
 
 
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
@@ -34,6 +35,9 @@ namespace Kaenx.Creator.Selectors
 
                 case MemoryByteUsage.Module:
                     return Module;
+
+                case MemoryByteUsage.Bcu1Data:
+                    return Bcu1Data;
             }
 
             return Normal;

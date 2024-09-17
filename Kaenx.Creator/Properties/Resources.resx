@@ -1321,6 +1321,10 @@
     <value>The AssoziationTable will be placed here.</value>
     <comment/>
   </data>
+  <data name="mem_bcu1" xml:space="preserve">
+    <value>The BCU1 load prodecure data will be placed here.</value>
+    <comment/>
+  </data>
   <data name="tmod_prefix" xml:space="preserve">
     <value>Prefix</value>
     <comment/>
