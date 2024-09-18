@@ -857,7 +857,11 @@ namespace Kaenx.Creator
         private void ClickCalcHeatmap(object sender, RoutedEventArgs e)
         {
             Models.Memory mem = (sender as Button).DataContext as Models.Memory;
-            Kaenx.Creator.Classes.MemoryHelper.MemoryCalculation(General, mem);     
+            try {
+                Kaenx.Creator.Classes.MemoryHelper.MemoryCalculation(General, mem); 
+            } catch (Exception ex) {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void ClickCheckHyperlink(object sender, RoutedEventArgs e)
@@ -940,12 +944,18 @@ namespace Kaenx.Creator
             
             string headerPath = Path.Combine(Path.GetDirectoryName(filePath), "knxprod.h");
             Kaenx.Creator.Classes.ExportHelper helper = new Kaenx.Creator.Classes.ExportHelper(General, headerPath);
-            bool success = helper.ExportEts(PublishActions);
-            if(!success)
-            {
-                MessageBox.Show(Properties.Messages.main_export_error, Properties.Messages.main_export_title);
-                return;
+            
+            try {
+                bool success = helper.ExportEts(PublishActions);
+                if(!success)
+                {
+                    MessageBox.Show(Properties.Messages.main_export_error, Properties.Messages.main_export_title);
+                    return;
+                }
+            } catch(Exception ex) {
+                MessageBox.Show(ex.Message, Properties.Messages.main_export_title, MessageBoxButton.OK, MessageBoxImage.Error);
             }
+            
             await OpenKNX.Toolbox.Sign.SignHelper.CheckMaster(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Output", "Temp"), General.Application.NamespaceVersion);
             await helper.SignOutput(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Output", "Temp"), filePath, General.Application.NamespaceVersion);
             PublishActions.Add(new Models.PublishAction() { Text = Properties.Messages.main_export_success, State = Models.PublishState.Success } );
