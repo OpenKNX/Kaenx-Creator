@@ -1,4 +1,4 @@
-﻿using Kaenx.Creator.Classes;
+using Kaenx.Creator.Classes;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using System;
@@ -859,8 +859,8 @@ namespace Kaenx.Creator
             Models.Memory mem = (sender as Button).DataContext as Models.Memory;
             try{
                 Kaenx.Creator.Classes.MemoryHelper.MemoryCalculation(General, mem);
-            }catch(Exception ex){
-                if(ex.Message is "out_of_memory")
+            }catch(OutOfMemoryException ex){
+                if(ex.Message is "bytes_used_outside_of_memory")
                     MessageBox.Show(Properties.Messages.memcalc_overflow);
             }
         }
