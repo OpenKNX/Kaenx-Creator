@@ -249,6 +249,10 @@
     <value>Assignment of memory space error</value>
     <comment/>
   </data>
+  <data name="memcalc_overflow" xml:space="preserve">
+    <value>There are data or table bytes outside the memory area.</value>
+    <comment/>
+  </data>
   <data name="comref_delete" xml:space="preserve">
     <value>This ComObjectRef is used in dynamic at least once. Continue?</value>
     <comment/>

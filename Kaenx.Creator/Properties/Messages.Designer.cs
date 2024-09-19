@@ -257,6 +257,12 @@ namespace Kaenx.Creator.Properties {
                 return ResourceManager.GetString("memcalc_title", resourceCulture);
             }
         }
+
+        public static string memcalc_overflow {
+            get {
+                return ResourceManager.GetString("memcalc_overflow", resourceCulture);
+            }
+        }
         
         public static string comref_delete {
             get {

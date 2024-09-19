@@ -249,6 +249,10 @@
     <value>Speicherbelegung Fehler</value>
     <comment/>
   </data>
+  <data name="memcalc_overflow" xml:space="preserve">
+    <value>Es sind Daten- oder Tabellenbytes ausserhalb des Speicherbereichs.</value>
+    <comment/>
+  </data>
   <data name="comref_delete" xml:space="preserve">
     <value>Das ComObjectRef wird bereits im Dynamic verwendet. Wollen Sie es wirklich löschen?</value>
     <comment/>

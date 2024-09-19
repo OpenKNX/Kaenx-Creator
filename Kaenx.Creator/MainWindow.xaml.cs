@@ -857,7 +857,12 @@ namespace Kaenx.Creator
         private void ClickCalcHeatmap(object sender, RoutedEventArgs e)
         {
             Models.Memory mem = (sender as Button).DataContext as Models.Memory;
-            Kaenx.Creator.Classes.MemoryHelper.MemoryCalculation(General, mem);     
+            try{
+                Kaenx.Creator.Classes.MemoryHelper.MemoryCalculation(General, mem);
+            }catch(Exception ex){
+                if(ex.Message is "out_of_memory")
+                    MessageBox.Show(Properties.Messages.memcalc_overflow);
+            }
         }
 
         private void ClickCheckHyperlink(object sender, RoutedEventArgs e)
