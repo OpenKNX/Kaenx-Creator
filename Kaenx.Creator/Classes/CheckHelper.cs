@@ -701,10 +701,10 @@ namespace Kaenx.Creator.Classes {
                 case ParameterTypes.Float_IEEE_Double:
                 {
                     double paraval;
-                    if(!double.TryParse(value, out paraval))
+                    if(!double.TryParse(value.Replace(".", ","), out paraval))
                         actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_para_float, stype, name, uid), State = PublishState.Fail, Item = item, Module = mod });
                     else {
-                            if(paraval > double.Parse(type.Max) || paraval < double.Parse(type.Min))
+                            if(paraval > double.Parse(type.Max.Replace(".", ",")) || paraval < double.Parse(type.Min.Replace(".", ",")))
                             actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_para_number2, stype, name, uid), State = PublishState.Fail, Item = item, Module = mod });
                     }
                     break;
