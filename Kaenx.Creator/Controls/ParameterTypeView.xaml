@@ -65,265 +65,267 @@
 
         <GridSplitter Grid.Column="1" Grid.RowSpan="3" HorizontalAlignment="Stretch" />
 
-        <StackPanel Grid.Column="3" Grid.RowSpan="3" Margin="5" DataContext="{Binding ElementName=ListParamTypes, Path=SelectedItem}" IsEnabled="{Binding Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
-            <StackPanel.Resources>
-                <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
-                    <ObjectDataProvider.MethodParameters>
-                        <x:Type TypeName="models:ParameterTypes"/>
-                    </ObjectDataProvider.MethodParameters>
-                </ObjectDataProvider>
-                <Style TargetType="HeaderedContentControl">
-                    <Setter Property="Margin" Value="5" />
-                    <Setter Property="IsTabStop" Value="false" />
-                </Style>
-                <Style TargetType="CheckBox">
-                    <Setter Property="Margin" Value="5" />
-                </Style>
-                <Style TargetType="ComboBox">
-                    <Setter Property="Margin" Value="0 5" />
-                </Style>
-                <Style TargetType="Button">
-                    <Setter Property="Margin" Value="5" />
-                </Style>
-                <Style TargetType="ListView">
-                    <Setter Property="Margin" Value="5" />
-                </Style>
-            </StackPanel.Resources>
-                
-            <TextBlock Text="{x:Static p:Resources.parat_error}" Foreground="Red" Visibility="{Binding IsNotUsed, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}" Margin="5" />
+        <ScrollViewer Grid.Column="3" Grid.RowSpan="3" Margin="5" DataContext="{Binding ElementName=ListParamTypes, Path=SelectedItem}" IsEnabled="{Binding Converter={StaticResource EmptyToBool}, ConverterParameter=true}" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <StackPanel.Resources>
+                    <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+                        <ObjectDataProvider.MethodParameters>
+                            <x:Type TypeName="models:ParameterTypes"/>
+                        </ObjectDataProvider.MethodParameters>
+                    </ObjectDataProvider>
+                    <Style TargetType="HeaderedContentControl">
+                        <Setter Property="Margin" Value="5" />
+                        <Setter Property="IsTabStop" Value="false" />
+                    </Style>
+                    <Style TargetType="CheckBox">
+                        <Setter Property="Margin" Value="5" />
+                    </Style>
+                    <Style TargetType="ComboBox">
+                        <Setter Property="Margin" Value="0 5" />
+                    </Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Margin" Value="5" />
+                    </Style>
+                    <Style TargetType="ListView">
+                        <Setter Property="Margin" Value="5" />
+                    </Style>
+                </StackPanel.Resources>
+                    
+                <TextBlock Text="{x:Static p:Resources.parat_error}" Foreground="Red" Visibility="{Binding IsNotUsed, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}" Margin="5" />
 
-            <HeaderedContentControl Header="{x:Static p:Resources.gen_uid}">
-                <TextBlock Text="{Binding UId}"/>
-            </HeaderedContentControl>
-            <HeaderedContentControl Header="{x:Static p:Resources.prop_name}">
-                <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
-            </HeaderedContentControl>
-            <HeaderedContentControl Header="{x:Static p:Resources.prop_type}">
-                <ComboBox ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding Type, Mode=TwoWay}" />
-            </HeaderedContentControl>
+                <HeaderedContentControl Header="{x:Static p:Resources.gen_uid}">
+                    <TextBlock Text="{Binding UId}"/>
+                </HeaderedContentControl>
+                <HeaderedContentControl Header="{x:Static p:Resources.prop_name}">
+                    <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+                </HeaderedContentControl>
+                <HeaderedContentControl Header="{x:Static p:Resources.prop_type}">
+                    <ComboBox ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding Type, Mode=TwoWay}" />
+                </HeaderedContentControl>
+                
+                <HeaderedContentControl Header="{x:Static p:Resources.parat_mansize}" Visibility="{Binding Type, Converter={StaticResource EnumToVisNeg}, ConverterParameter=None-IpAddress-Picture-Color-RawData-Date-Float_DPT9-Float_IEEE_Double-Float_IEEE_Single-Date}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <CheckBox IsChecked="{Binding IsSizeManual}" VerticalAlignment="Center" />
+                        <TextBox Grid.Column="1" Text="{Binding SizeInBit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" IsEnabled="{Binding IsSizeManual}"/>
+                    </Grid>
+                </HeaderedContentControl>
+
+                <Button Content="{x:Static p:Resources.parat_add}" Click="ClickAddParamEnum" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Enum, FallbackValue=Collapsed}" />
             
-            <HeaderedContentControl Header="{x:Static p:Resources.parat_mansize}" Visibility="{Binding Type, Converter={StaticResource EnumToVisNeg}, ConverterParameter=None-IpAddress-Picture-Color-RawData-Date-Float_DPT9-Float_IEEE_Double-Float_IEEE_Single-Date}">
-                <Grid>
+                <CheckBox IsChecked="{Binding ExportInHeader}" Content="{x:Static p:Resources.parat_export_enum}" Margin="10 5" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Enum, FallbackValue=Collapsed}" />
+
+                <Grid Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Enum, FallbackValue=Collapsed}">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="330" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
 
-                    <CheckBox IsChecked="{Binding IsSizeManual}" VerticalAlignment="Center" />
-                    <TextBox Grid.Column="1" Text="{Binding SizeInBit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" IsEnabled="{Binding IsSizeManual}"/>
-                </Grid>
-            </HeaderedContentControl>
-
-            <Button Content="{x:Static p:Resources.parat_add}" Click="ClickAddParamEnum" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Enum, FallbackValue=Collapsed}" />
-        
-            <CheckBox IsChecked="{Binding ExportInHeader}" Content="{x:Static p:Resources.parat_export_enum}" Margin="10 5" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Enum, FallbackValue=Collapsed}" />
-
-            <Grid Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Enum, FallbackValue=Collapsed}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="330" />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-
-                <DataGrid x:Name="ptypeList" Margin="5" ItemsSource="{Binding Enums}" AutoGenerateColumns="False" CanUserAddRows="False">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="{x:Static p:Resources.prop_name}" Binding="{Binding Name}" Width="*" />
-                        <DataGridTextColumn Header="{x:Static p:Resources.prop_value}" Binding="{Binding Value}" MinWidth="50" />
-                        <DataGridCheckBoxColumn Header="{x:Static p:Resources.prop_trans}" Binding="{Binding Translate}" MinWidth="50" />
-                    </DataGrid.Columns>
-                </DataGrid>
-
-                <StackPanel Grid.Column="1" IsEnabled="{Binding ., Converter={StaticResource EmptyToBool}, ConverterParameter=true}" DataContext="{Binding SelectedItem, ElementName=ptypeList}">
-                    <!-- <HeaderedContentControl Header="{x:Static p:Resources.prop_icon}">
-                        <Grid Height="35">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="auto" />
-                                <ColumnDefinition />
-                                <ColumnDefinition Width="35" />
-                            </Grid.ColumnDefinitions>
-
-                            <CheckBox IsChecked="{Binding UseIcon}" VerticalAlignment="Center" />
-                            <ComboBox Grid.Column="1" Margin="0 0 5 0" VerticalAlignment="Center" IsEnabled="{Binding UseIcon}" ItemsSource="{Binding Icons, ElementName=ViewControl}" SelectedItem="{Binding IconObject}" DisplayMemberPath="Name" />
-                            <Image Grid.Column="2" Source="{Binding IconObject.Source}" />
-                        </Grid>
-                    </HeaderedContentControl> -->
-                    <HeaderedContentControl Header="{x:Static p:Resources.prop_icon}">
-                        <Grid Height="35">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="auto" />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-    
-                            <CheckBox IsChecked="{Binding UseIcon}" VerticalAlignment="Center" />
-                            
-                            <ComboBox Grid.Column="1" VerticalAlignment="Center" IsEnabled="{Binding UseIcon}" ItemsSource="{Binding Icons, ElementName=ViewControl}" SelectedItem="{Binding IconObject}">
-                                <ComboBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="30" />
-                                                <ColumnDefinition />
-                                            </Grid.ColumnDefinitions>
-                                            <Image Source="{Binding Data, Converter={StaticResource DataToImage}}" Height="20" />
-                                            <TextBlock Text="{Binding Name}" Grid.Column="1" VerticalAlignment="Center" Margin="10 0 0 0" />
-                                        </Grid>
-                                    </DataTemplate>
-                                </ComboBox.ItemTemplate>
-                            </ComboBox>
-                        </Grid>
-                    </HeaderedContentControl>
-
-                    <DataGrid ItemsSource="{Binding Text}" Margin="5" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
+                    <DataGrid x:Name="ptypeList" Margin="5" ItemsSource="{Binding Enums}" AutoGenerateColumns="False" CanUserAddRows="False">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="{x:Static p:Resources.gen_lang}" Binding="{Binding Language.Text}" IsReadOnly="True" />
-                            <DataGridTextColumn Header="{x:Static p:Resources.gen_text}" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                            <DataGridTextColumn Header="{x:Static p:Resources.prop_name}" Binding="{Binding Name}" Width="*" />
+                            <DataGridTextColumn Header="{x:Static p:Resources.prop_value}" Binding="{Binding Value}" MinWidth="50" />
+                            <DataGridCheckBoxColumn Header="{x:Static p:Resources.prop_trans}" Binding="{Binding Translate}" MinWidth="50" />
                         </DataGrid.Columns>
                     </DataGrid>
+
+                    <StackPanel Grid.Column="1" IsEnabled="{Binding ., Converter={StaticResource EmptyToBool}, ConverterParameter=true}" DataContext="{Binding SelectedItem, ElementName=ptypeList}">
+                        <!-- <HeaderedContentControl Header="{x:Static p:Resources.prop_icon}">
+                            <Grid Height="35">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto" />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="35" />
+                                </Grid.ColumnDefinitions>
+
+                                <CheckBox IsChecked="{Binding UseIcon}" VerticalAlignment="Center" />
+                                <ComboBox Grid.Column="1" Margin="0 0 5 0" VerticalAlignment="Center" IsEnabled="{Binding UseIcon}" ItemsSource="{Binding Icons, ElementName=ViewControl}" SelectedItem="{Binding IconObject}" DisplayMemberPath="Name" />
+                                <Image Grid.Column="2" Source="{Binding IconObject.Source}" />
+                            </Grid>
+                        </HeaderedContentControl> -->
+                        <HeaderedContentControl Header="{x:Static p:Resources.prop_icon}">
+                            <Grid Height="35">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto" />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+        
+                                <CheckBox IsChecked="{Binding UseIcon}" VerticalAlignment="Center" />
+                                
+                                <ComboBox Grid.Column="1" VerticalAlignment="Center" IsEnabled="{Binding UseIcon}" ItemsSource="{Binding Icons, ElementName=ViewControl}" SelectedItem="{Binding IconObject}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="30" />
+                                                    <ColumnDefinition />
+                                                </Grid.ColumnDefinitions>
+                                                <Image Source="{Binding Data, Converter={StaticResource DataToImage}}" Height="20" />
+                                                <TextBlock Text="{Binding Name}" Grid.Column="1" VerticalAlignment="Center" Margin="10 0 0 0" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                            </Grid>
+                        </HeaderedContentControl>
+
+                        <DataGrid ItemsSource="{Binding Text}" Margin="5" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="{x:Static p:Resources.gen_lang}" Binding="{Binding Language.Text}" IsReadOnly="True" />
+                                <DataGridTextColumn Header="{x:Static p:Resources.gen_text}" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </StackPanel>
+                </Grid>
+    
+                <StackPanel Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=NumberUInt-NumberInt-Float_DPT9-Float_IEEE_Single-Float_IEEE_Double, FallbackValue=Collapsed}">
+                    <HeaderedContentControl Header="{x:Static p:Resources.parat_min}">
+                        <TextBox Text="{Binding Min, UpdateSourceTrigger=PropertyChanged}"/>
+                    </HeaderedContentControl>
+                    <HeaderedContentControl Header="{x:Static p:Resources.parat_max}">
+                        <TextBox Text="{Binding Max, UpdateSourceTrigger=PropertyChanged}"/>
+                    </HeaderedContentControl>
+                    <HeaderedContentControl Header="{x:Static p:Resources.parat_increment}">
+                        <TextBox Text="{Binding Increment, UpdateSourceTrigger=PropertyChanged}"/>
+                    </HeaderedContentControl>
+                    <HeaderedContentControl Header="{x:Static p:Resources.parat_doffset}">
+                        <TextBox Text="{Binding DisplayOffset, UpdateSourceTrigger=PropertyChanged}"/>
+                    </HeaderedContentControl>
+                    <HeaderedContentControl Header="{x:Static p:Resources.parat_dfactor}">
+                        <TextBox Text="{Binding DisplayFactor, UpdateSourceTrigger=PropertyChanged}"/>
+                    </HeaderedContentControl>
                 </StackPanel>
-            </Grid>
-   
-            <StackPanel Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=NumberUInt-NumberInt-Float_DPT9-Float_IEEE_Single-Float_IEEE_Double, FallbackValue=Collapsed}">
-                <HeaderedContentControl Header="{x:Static p:Resources.parat_min}">
-                    <TextBox Text="{Binding Min, UpdateSourceTrigger=PropertyChanged}"/>
-                </HeaderedContentControl>
-                <HeaderedContentControl Header="{x:Static p:Resources.parat_max}">
-                    <TextBox Text="{Binding Max, UpdateSourceTrigger=PropertyChanged}"/>
-                </HeaderedContentControl>
-                <HeaderedContentControl Header="{x:Static p:Resources.parat_increment}">
-                    <TextBox Text="{Binding Increment, UpdateSourceTrigger=PropertyChanged}"/>
-                </HeaderedContentControl>
-                <HeaderedContentControl Header="{x:Static p:Resources.parat_doffset}">
-                    <TextBox Text="{Binding DisplayOffset, UpdateSourceTrigger=PropertyChanged}"/>
-                </HeaderedContentControl>
-                <HeaderedContentControl Header="{x:Static p:Resources.parat_dfactor}">
-                    <TextBox Text="{Binding DisplayFactor, UpdateSourceTrigger=PropertyChanged}"/>
-                </HeaderedContentControl>
-            </StackPanel>
 
-            <StackPanel Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Time, FallbackValue=Collapsed}">
-                <HeaderedContentControl Header="{x:Static p:Resources.parat_min}">
-                    <TextBox Text="{Binding Min, UpdateSourceTrigger=PropertyChanged}"/>
-                </HeaderedContentControl>
-                <HeaderedContentControl Header="{x:Static p:Resources.parat_max}">
-                    <TextBox Text="{Binding Max, UpdateSourceTrigger=PropertyChanged}"/>
-                </HeaderedContentControl>
-                <HeaderedContentControl Header="{x:Static p:Resources.parat_display}">
+                <StackPanel Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Time, FallbackValue=Collapsed}">
+                    <HeaderedContentControl Header="{x:Static p:Resources.parat_min}">
+                        <TextBox Text="{Binding Min, UpdateSourceTrigger=PropertyChanged}"/>
+                    </HeaderedContentControl>
+                    <HeaderedContentControl Header="{x:Static p:Resources.parat_max}">
+                        <TextBox Text="{Binding Max, UpdateSourceTrigger=PropertyChanged}"/>
+                    </HeaderedContentControl>
+                    <HeaderedContentControl Header="{x:Static p:Resources.parat_display}">
+                        <ComboBox SelectedValue="{Binding UIHint}" SelectedValuePath="Tag">
+                            <ComboBoxItem Content="None" Tag="" />
+                            <ComboBoxItem Content="Time ss" Tag="Time_ss" />
+                            <ComboBoxItem Content="Time ssf" Tag="Time_ssf" />
+                            <ComboBoxItem Content="Time ssff" Tag="Time_ssff" />
+                            <ComboBoxItem Content="Time ssfff" Tag="Time_ssfff" />
+                            <ComboBoxItem Content="Time mmss" Tag="Time_mmss" />
+                            <ComboBoxItem Content="Time mmssf" Tag="Time_mmssf" />
+                            <ComboBoxItem Content="Time mmssff" Tag="Time_mmssff" />
+                            <ComboBoxItem Content="Time mmssfff" Tag="Time_mmssfff" />
+                            <ComboBoxItem Content="Time hhmm" Tag="Time_hhmm" />
+                            <ComboBoxItem Content="Time hhmmss" Tag="Time_hhmmss" />
+                            <ComboBoxItem Content="Time hhmmssf" Tag="Time_hhmmssf" />
+                            <ComboBoxItem Content="Time hhmmssff" Tag="Time_hhmmssff" />
+                            <ComboBoxItem Content="Time hhmmssfff" Tag="Time_hhmmssfff" />
+                            <ComboBoxItem Content="Time dhh" Tag="Time_dhh" />
+                            <ComboBoxItem Content="Time dhhmm" Tag="Time_dhhmm" />
+                            <ComboBoxItem Content="Time dhhmmss" Tag="Time_dhhmmss" />
+                            <ComboBoxItem Content="Duration mmss" Tag="Duration_mmss" />
+                            <ComboBoxItem Content="Duration mmssf" Tag="Duration_mmssf" />
+                            <ComboBoxItem Content="Duration mmssff" Tag="Duration_mmssff" />
+                            <ComboBoxItem Content="Duration mmssfff" Tag="Duration_mmssfff" />
+                            <ComboBoxItem Content="Duration hhmm" Tag="Duration_hhmm" />
+                            <ComboBoxItem Content="Duration hhmmss" Tag="Duration_hhmmss" />
+                            <ComboBoxItem Content="Duration hhmmssf" Tag="Duration_hhmmssf" />
+                            <ComboBoxItem Content="Duration hhmmssff" Tag="Duration_hhmmssff" />
+                            <ComboBoxItem Content="Duration hhmmssfff" Tag="Duration_hhmmssfff" />
+                        </ComboBox>
+                    </HeaderedContentControl>
+                    <HeaderedContentControl Header="{x:Static p:Resources.parat_unit}">
+                        <ComboBox SelectedValue="{Binding Increment}" SelectedValuePath="Tag">
+                            <ComboBoxItem Content="Stunden" Tag="Hours" />
+                            <ComboBoxItem Content="Minuten" Tag="Minutes" />
+                            <ComboBoxItem Content="Sekunden" Tag="Seconds" />
+                            <ComboBoxItem Content="100 Millisekunden" Tag="HundredMilliseconds" />
+                            <ComboBoxItem Content="10 Millisekunden" Tag="TenMilliseconds" />
+                            <ComboBoxItem Content="Millisekunden" Tag="Milliseconds" />
+                            <ComboBoxItem Content="Struktur (Sekunden/Millisekunden)" Tag="PackedSecondsAndMilliseconds" />
+                            <ComboBoxItem Content="Struktur (Tage/Stunden/Minuten/Sekunden)" Tag="PackedDaysHoursMinutesAndSeconds" />
+                            <ComboBoxItem Content="Struktur (Minuten/Sekunden/Millisekunden)" Tag="PackedMinutesSecondsAndMilliseconds" />
+                        </ComboBox>
+                    </HeaderedContentControl>
+                </StackPanel>
+
+                <HeaderedContentControl Header="{x:Static p:Resources.parat_uihint}" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=NumberUInt-NumberInt, FallbackValue=Collapsed}">
                     <ComboBox SelectedValue="{Binding UIHint}" SelectedValuePath="Tag">
-                        <ComboBoxItem Content="None" Tag="" />
-                        <ComboBoxItem Content="Time ss" Tag="Time_ss" />
-                        <ComboBoxItem Content="Time ssf" Tag="Time_ssf" />
-                        <ComboBoxItem Content="Time ssff" Tag="Time_ssff" />
-                        <ComboBoxItem Content="Time ssfff" Tag="Time_ssfff" />
-                        <ComboBoxItem Content="Time mmss" Tag="Time_mmss" />
-                        <ComboBoxItem Content="Time mmssf" Tag="Time_mmssf" />
-                        <ComboBoxItem Content="Time mmssff" Tag="Time_mmssff" />
-                        <ComboBoxItem Content="Time mmssfff" Tag="Time_mmssfff" />
-                        <ComboBoxItem Content="Time hhmm" Tag="Time_hhmm" />
-                        <ComboBoxItem Content="Time hhmmss" Tag="Time_hhmmss" />
-                        <ComboBoxItem Content="Time hhmmssf" Tag="Time_hhmmssf" />
-                        <ComboBoxItem Content="Time hhmmssff" Tag="Time_hhmmssff" />
-                        <ComboBoxItem Content="Time hhmmssfff" Tag="Time_hhmmssfff" />
-                        <ComboBoxItem Content="Time dhh" Tag="Time_dhh" />
-                        <ComboBoxItem Content="Time dhhmm" Tag="Time_dhhmm" />
-                        <ComboBoxItem Content="Time dhhmmss" Tag="Time_dhhmmss" />
-                        <ComboBoxItem Content="Duration mmss" Tag="Duration_mmss" />
-                        <ComboBoxItem Content="Duration mmssf" Tag="Duration_mmssf" />
-                        <ComboBoxItem Content="Duration mmssff" Tag="Duration_mmssff" />
-                        <ComboBoxItem Content="Duration mmssfff" Tag="Duration_mmssfff" />
-                        <ComboBoxItem Content="Duration hhmm" Tag="Duration_hhmm" />
-                        <ComboBoxItem Content="Duration hhmmss" Tag="Duration_hhmmss" />
-                        <ComboBoxItem Content="Duration hhmmssf" Tag="Duration_hhmmssf" />
-                        <ComboBoxItem Content="Duration hhmmssff" Tag="Duration_hhmmssff" />
-                        <ComboBoxItem Content="Duration hhmmssfff" Tag="Duration_hhmmssfff" />
+                        <ComboBoxItem Content="{x:Static p:Resources.parat_uihint_none}" Tag="None" />
+                        <ComboBoxItem Content="{x:Static p:Resources.parat_uihint_slider}" Tag="Slider" />
+                        <ComboBoxItem Content="{x:Static p:Resources.parat_uihint_check}" Tag="CheckBox" />
+                        <ComboBoxItem Content="{x:Static p:Resources.parat_uihint_prog}" Tag="ProgressBar" />
                     </ComboBox>
                 </HeaderedContentControl>
-                <HeaderedContentControl Header="{x:Static p:Resources.parat_unit}">
+
+                <HeaderedContentControl Header="{x:Static p:Resources.parat_uihint}" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Float_DPT9-Float_IEEE_Single-Float_IEEE_Double, FallbackValue=Collapsed}">
+                    <ComboBox SelectedValue="{Binding UIHint}" SelectedValuePath="Tag">
+                        <ComboBoxItem Content="{x:Static p:Resources.parat_uihint_none}" Tag="None" />
+                        <ComboBoxItem Content="{x:Static p:Resources.parat_uihint_slider}" Tag="Slider" />
+                    </ComboBox>
+                </HeaderedContentControl>
+
+                <HeaderedContentControl Header="{x:Static p:Resources.parat_addrt}" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=IpAddress, FallbackValue=Collapsed}">
+                    <ComboBox SelectedValue="{Binding UIHint}" SelectedValuePath="Tag">
+                        <ComboBoxItem Content="{x:Static p:Resources.parat_uihint_ha}" Tag="HostAddress" />
+                        <ComboBoxItem Content="{x:Static p:Resources.parat_uihint_ga}" Tag="GatewayAddress" />
+                        <ComboBoxItem Content="{x:Static p:Resources.parat_uihint_ua}" Tag="UnicastAddress" />
+                        <ComboBoxItem Content="{x:Static p:Resources.parat_uihint_ba}" Tag="BroadcastAddress" />
+                        <ComboBoxItem Content="{x:Static p:Resources.parat_uihint_ma}" Tag="MulticastAddress" />
+                        <ComboBoxItem Content="{x:Static p:Resources.parat_uihint_sm}" Tag="SubnetMask" />
+                    </ComboBox>
+                </HeaderedContentControl>
+                
+                <HeaderedContentControl Header="{x:Static p:Resources.parat_vers}" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=IpAddress, FallbackValue=Collapsed}">
                     <ComboBox SelectedValue="{Binding Increment}" SelectedValuePath="Tag">
-                        <ComboBoxItem Content="Stunden" Tag="Hours" />
-                        <ComboBoxItem Content="Minuten" Tag="Minutes" />
-                        <ComboBoxItem Content="Sekunden" Tag="Seconds" />
-                        <ComboBoxItem Content="100 Millisekunden" Tag="HundredMilliseconds" />
-                        <ComboBoxItem Content="10 Millisekunden" Tag="TenMilliseconds" />
-                        <ComboBoxItem Content="Millisekunden" Tag="Milliseconds" />
-                        <ComboBoxItem Content="Struktur (Sekunden/Millisekunden)" Tag="PackedSecondsAndMilliseconds" />
-                        <ComboBoxItem Content="Struktur (Tage/Stunden/Minuten/Sekunden)" Tag="PackedDaysHoursMinutesAndSeconds" />
-                        <ComboBoxItem Content="Struktur (Minuten/Sekunden/Millisekunden)" Tag="PackedMinutesSecondsAndMilliseconds" />
+                        <ComboBoxItem Content="{x:Static p:Resources.parat_uihint_none}" Tag="None" />
+                        <ComboBoxItem Content="{x:Static p:Resources.parat_uihint_ipv4}" Tag="IPv4" />
+                        <ComboBoxItem Content="{x:Static p:Resources.parat_uihint_ipv6}" Tag="IPv6" />
                     </ComboBox>
                 </HeaderedContentControl>
+                
+                <HeaderedContentControl Header="{x:Static p:Resources.parat_bagg}" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Picture, FallbackValue=Collapsed}">
+                    <ComboBox ItemsSource="{Binding Baggages, ElementName=ViewControl}" SelectedItem="{Binding BaggageObject}" DisplayMemberPath="Name" Margin="0 5" />
+                </HeaderedContentControl>
+
+                <HeaderedContentControl Header="{x:Static p:Resources.parat_halign}" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Picture, FallbackValue=Collapsed}">
+                    <ComboBox SelectedValuePath="Tag" SelectedValue="{Binding UIHint}" Margin="0 5">
+                        <ComboBoxItem Content="None" Tag="" />
+                        <ComboBoxItem Content="Left" Tag="Left" />
+                        <ComboBoxItem Content="Middle" Tag="Middle" />
+                        <ComboBoxItem Content="Right" Tag="Right" />
+                        <ComboBoxItem Content="Stretch" Tag="Stretch" />
+                        <ComboBoxItem Content="Repeat" Tag="Repeat" />
+                    </ComboBox>
+                </HeaderedContentControl>
+
+                <Image Source="{Binding BaggageObject.Data, Converter={StaticResource DataToImage}}" Margin="5" Stretch="Uniform" MaxHeight="250"  Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Picture, FallbackValue=Collapsed}" />
+
+                <HeaderedContentControl Header="{x:Static p:Resources.parat_hue}" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Color, FallbackValue=Collapsed}">
+                    <ComboBox SelectedValue="{Binding UIHint}" SelectedValuePath="Tag" Margin="0 5">
+                        <ComboBoxItem Content="{x:Static p:Resources.parat_uihint_rgb}" Tag="RGB" />
+                        <ComboBoxItem Content="{x:Static p:Resources.parat_uihint_rgbw}" Tag="RGBW" />
+                        <ComboBoxItem Content="{x:Static p:Resources.parat_uihint_hsv}" Tag="HSV" />
+                    </ComboBox>
+                </HeaderedContentControl>
+                
+                <HeaderedContentControl Header="{x:Static p:Resources.parat_max}" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=RawData, FallbackValue=Collapsed}">
+                    <TextBox Text="{Binding Max, UpdateSourceTrigger=PropertyChanged}"/>
+                </HeaderedContentControl>
+                
+                <HeaderedContentControl Header="{x:Static p:Resources.parat_date}" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Date, FallbackValue=Collapsed}">
+                    <ComboBox SelectedValue="{Binding UIHint, Mode=TwoWay}" SelectedValuePath="Tag">
+                        <ComboBoxItem Content="Leer" Tag="" />
+                        <ComboBoxItem Content="DPT 11" Tag="DPT 11" />
+                    </ComboBox>
+                </HeaderedContentControl>
+                
+                <CheckBox IsChecked="{Binding OtherValue}" Content="{x:Static p:Resources.parat_year}" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Date, FallbackValue=Collapsed}" />
             </StackPanel>
-
-            <HeaderedContentControl Header="{x:Static p:Resources.parat_uihint}" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=NumberUInt-NumberInt, FallbackValue=Collapsed}">
-                <ComboBox SelectedValue="{Binding UIHint}" SelectedValuePath="Tag">
-                    <ComboBoxItem Content="{x:Static p:Resources.parat_uihint_none}" Tag="None" />
-                    <ComboBoxItem Content="{x:Static p:Resources.parat_uihint_slider}" Tag="Slider" />
-                    <ComboBoxItem Content="{x:Static p:Resources.parat_uihint_check}" Tag="CheckBox" />
-                    <ComboBoxItem Content="{x:Static p:Resources.parat_uihint_prog}" Tag="ProgressBar" />
-                </ComboBox>
-            </HeaderedContentControl>
-
-            <HeaderedContentControl Header="{x:Static p:Resources.parat_uihint}" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Float_DPT9-Float_IEEE_Single-Float_IEEE_Double, FallbackValue=Collapsed}">
-                <ComboBox SelectedValue="{Binding UIHint}" SelectedValuePath="Tag">
-                    <ComboBoxItem Content="{x:Static p:Resources.parat_uihint_none}" Tag="None" />
-                    <ComboBoxItem Content="{x:Static p:Resources.parat_uihint_slider}" Tag="Slider" />
-                </ComboBox>
-            </HeaderedContentControl>
-
-            <HeaderedContentControl Header="{x:Static p:Resources.parat_addrt}" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=IpAddress, FallbackValue=Collapsed}">
-                <ComboBox SelectedValue="{Binding UIHint}" SelectedValuePath="Tag">
-                    <ComboBoxItem Content="{x:Static p:Resources.parat_uihint_ha}" Tag="HostAddress" />
-                    <ComboBoxItem Content="{x:Static p:Resources.parat_uihint_ga}" Tag="GatewayAddress" />
-                    <ComboBoxItem Content="{x:Static p:Resources.parat_uihint_ua}" Tag="UnicastAddress" />
-                    <ComboBoxItem Content="{x:Static p:Resources.parat_uihint_ba}" Tag="BroadcastAddress" />
-                    <ComboBoxItem Content="{x:Static p:Resources.parat_uihint_ma}" Tag="MulticastAddress" />
-                    <ComboBoxItem Content="{x:Static p:Resources.parat_uihint_sm}" Tag="SubnetMask" />
-                </ComboBox>
-            </HeaderedContentControl>
-            
-            <HeaderedContentControl Header="{x:Static p:Resources.parat_vers}" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=IpAddress, FallbackValue=Collapsed}">
-                <ComboBox SelectedValue="{Binding Increment}" SelectedValuePath="Tag">
-                    <ComboBoxItem Content="{x:Static p:Resources.parat_uihint_none}" Tag="None" />
-                    <ComboBoxItem Content="{x:Static p:Resources.parat_uihint_ipv4}" Tag="IPv4" />
-                    <ComboBoxItem Content="{x:Static p:Resources.parat_uihint_ipv6}" Tag="IPv6" />
-                </ComboBox>
-            </HeaderedContentControl>
-            
-            <HeaderedContentControl Header="{x:Static p:Resources.parat_bagg}" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Picture, FallbackValue=Collapsed}">
-                <ComboBox ItemsSource="{Binding Baggages, ElementName=ViewControl}" SelectedItem="{Binding BaggageObject}" DisplayMemberPath="Name" Margin="0 5" />
-            </HeaderedContentControl>
-
-            <HeaderedContentControl Header="{x:Static p:Resources.parat_halign}" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Picture, FallbackValue=Collapsed}">
-                <ComboBox SelectedValuePath="Tag" SelectedValue="{Binding UIHint}" Margin="0 5">
-                    <ComboBoxItem Content="None" Tag="" />
-                    <ComboBoxItem Content="Left" Tag="Left" />
-                    <ComboBoxItem Content="Middle" Tag="Middle" />
-                    <ComboBoxItem Content="Right" Tag="Right" />
-                    <ComboBoxItem Content="Stretch" Tag="Stretch" />
-                    <ComboBoxItem Content="Repeat" Tag="Repeat" />
-                </ComboBox>
-            </HeaderedContentControl>
-
-            <Image Source="{Binding BaggageObject.Data, Converter={StaticResource DataToImage}}" Margin="5" Stretch="Uniform" MaxHeight="250"  Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Picture, FallbackValue=Collapsed}" />
-
-            <HeaderedContentControl Header="{x:Static p:Resources.parat_hue}" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Color, FallbackValue=Collapsed}">
-                <ComboBox SelectedValue="{Binding UIHint}" SelectedValuePath="Tag" Margin="0 5">
-                    <ComboBoxItem Content="{x:Static p:Resources.parat_uihint_rgb}" Tag="RGB" />
-                    <ComboBoxItem Content="{x:Static p:Resources.parat_uihint_rgbw}" Tag="RGBW" />
-                    <ComboBoxItem Content="{x:Static p:Resources.parat_uihint_hsv}" Tag="HSV" />
-                </ComboBox>
-            </HeaderedContentControl>
-            
-            <HeaderedContentControl Header="{x:Static p:Resources.parat_max}" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=RawData, FallbackValue=Collapsed}">
-                <TextBox Text="{Binding Max, UpdateSourceTrigger=PropertyChanged}"/>
-            </HeaderedContentControl>
-            
-            <HeaderedContentControl Header="{x:Static p:Resources.parat_date}" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Date, FallbackValue=Collapsed}">
-                <ComboBox SelectedValue="{Binding UIHint, Mode=TwoWay}" SelectedValuePath="Tag">
-                    <ComboBoxItem Content="Leer" Tag="" />
-                    <ComboBoxItem Content="DPT 11" Tag="DPT 11" />
-                </ComboBox>
-            </HeaderedContentControl>
-            
-            <CheckBox IsChecked="{Binding OtherValue}" Content="{x:Static p:Resources.parat_year}" Visibility="{Binding Type, Converter={StaticResource EnumToVis}, ConverterParameter=Date, FallbackValue=Collapsed}" />
-        </StackPanel>
+        </ScrollViewer>
     </Grid>
 
 </UserControl>
