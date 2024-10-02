@@ -26,12 +26,12 @@ Es gibt 2 Möglichkeiten die Anwendung zu installieren:
  - Release Dateien  
     Hier werden nur größere Releases veröffentlicht
  - Selbst kompilieren  
-    Dazu dieses Repo lokal klonen und mit Visual Studio Code öffnen (Visual Studio kann die WPF Dateien nicht verarbeiten)
-    Zusätzlich werden die folgenden Repos benötigt:
-	- https://github.com/thewhobox/Kaenx.DataContext
-	- https://github.com/OpenKNX/Kaenx-Creator-Share
-	- https://github.com/OpenKNX/OpenKNX.Toolbox.Sign
-    Danach kann die Anwendung debugged oder selbst ein Release erstellt werden.
+    Dazu dieses Repo lokal klonen und mit Visual Studio Code öffnen (Visual Studio kann die WPF Dateien nicht verarbeiten)  
+    Zusätzlich werden die folgenden Repos benötigt:  
+      - https://github.com/thewhobox/Kaenx.DataContext  
+      - https://github.com/OpenKNX/Kaenx-Creator-Share  
+      - https://github.com/OpenKNX/OpenKNX.Toolbox.Sign  
+ Danach kann die Anwendung debugged oder selbst ein Release erstellt werden.
 
 ## Changelog
 Eine Übersicht über die Änderungen finden Sie [hier](/ChangeLog).
