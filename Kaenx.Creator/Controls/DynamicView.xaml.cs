@@ -278,7 +278,7 @@ namespace Kaenx.Creator.Controls
 
         private void DynChooseParaRefLink(object sender, RoutedEventArgs e)
         {
-            Models.ParameterRef paraRef = ((sender as System.Windows.Documents.Hyperlink).DataContext as Models.Dynamic.DynChooseBlock).ParameterRefObject;
+            Models.ParameterRef paraRef = ((sender as System.Windows.Documents.Hyperlink).DataContext as Models.Dynamic.IDynChoose).ParameterRefObject;
             MainWindow.Instance.GoToItem(paraRef, Module);
         }
 
