@@ -84,7 +84,7 @@ namespace Kaenx.Creator.Controls
             ComObjectRef cref = ComobjectRefList.SelectedItem as Models.ComObjectRef;
 
             List<int> uids = new List<int>();
-            ClearHelper.GetIDs(Module.Dynamics[0], uids, true);
+            ClearHelper.GetIDs(Module.Dynamics[0], uids, false);
             if(uids.Contains(cref.UId) && MessageBoxResult.No == MessageBox.Show(Properties.Messages.comref_delete, Properties.Messages.comref_delete_title, MessageBoxButton.YesNo, MessageBoxImage.Warning))
                     return;
 
