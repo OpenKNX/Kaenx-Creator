@@ -1057,4 +1057,7 @@
     <value>There are more than one MemorySections with address/offset '{0}'</value>
     <comment>Address/Offset</comment>
   </data>
+  <data name="check_app_number" xml:space="preserve">
+    <value>The AppNumber cant be higher then 0xFFFF. Was reset to 0.</value>
+  </data>
 </root>

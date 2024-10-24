@@ -1033,4 +1033,7 @@
     <value>Loadprocedure: Parsing failed, no valid xml</value>
     <comment/>
   </data>
+  <data name="check_app_number" xml:space="preserve">
+    <value>Le numéro d'application ne peut pas être supérieur à 0xFFFF. Il a été réinitialisé à 0.</value>
+  </data>
 </root>

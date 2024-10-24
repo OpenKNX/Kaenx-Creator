@@ -378,6 +378,20 @@ namespace Kaenx.Creator.Classes {
             //if(app.Mask.Memory == MemoryTypes.Relative && vers.Memories.Count > 1)
             //    actions.Add(new PublishAction() { Text = $"Die Maskenversion unterstützt nur einen Speicher", State = PublishState.Fail });
 
+            if(General.IsOpenKnx)
+            {
+                if(General.Info.AppNumber > 0xFF)
+                {
+                    actions.Add(new PublishAction() { Text = string.Format(Properties.Messages.check_app_openknx, General.Application.NameText), State = PublishState.Fail });
+                    General.Info.AppNumber = 0;
+                }
+            } else {
+                if(General.Info.AppNumber > 0xFFFF) {
+                    actions.Add(new PublishAction() { Text = string.Format(Properties.Messages.check_app_number, General.Application.NameText), State = PublishState.Fail });
+                    General.Info.AppNumber = 0;
+                }
+            }
+
             CheckVersion(General.Application, General.Application, actions, General.Application.DefaultLanguage, General.Application.NamespaceVersion, showOnlyErrors);
             if(General != null)
                 CheckLanguages(General, actions);

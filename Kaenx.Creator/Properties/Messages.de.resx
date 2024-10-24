@@ -1057,4 +1057,7 @@
     <value>Es existiert mehr als ein Speichersegment mit Adresse/Offset '{0}'</value>
     <comment>Address/Offset</comment>
   </data>
+  <data name="check_app_number" xml:space="preserve">
+    <value>Die App-Nummer darf nicht höher als 0xFFFF sein. Wurde auf 0 zurückgesetzt.</value>
+  </data>
 </root>

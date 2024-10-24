@@ -816,11 +816,12 @@ namespace Kaenx.Creator
             {
                 _general = new Models.MainModel();
                 _general.Catalog.Add(new Models.CatalogItem() { Name = Properties.Messages.main_def_cat });
+                _general.IsOpenKnx = false;
                 ImportHelper helper = new ImportHelper(dialog.FileName, Kaenx.Creator.Classes.Helper.BCUs);
                 switch(prod)
                 {
                     case "knxprod":
-                        helper.StartZip(General, Kaenx.Creator.Classes.Helper.DPTs);
+                        helper.StartZip(_general, Kaenx.Creator.Classes.Helper.DPTs);
                         SetButtons(true);
                         Changed("General");
                         break;

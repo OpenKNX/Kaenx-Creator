@@ -691,6 +691,12 @@ namespace Kaenx.Creator.Properties {
                 return ResourceManager.GetString("check_app_openknx", resourceCulture);
             }
         }
+
+        public static string check_app_number {
+            get {
+                return ResourceManager.GetString("check_app_number", resourceCulture);
+            }
+        }
         
         public static string check_baggage_no_target {
             get {
