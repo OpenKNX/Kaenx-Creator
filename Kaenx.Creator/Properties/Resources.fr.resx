@@ -1401,4 +1401,12 @@
     <value>Project</value>
     <comment/>
   </data>
+  <data name="import_diff_manu" xml:space="preserve">
+    <value>Le fabricant de la base de données produit ne correspond pas au fabricant du projet.\r\nVoulez-vous changer votre ID fabricant de {0} à {1} ?</value>
+    <comment/>
+  </data>
+  <data name="import_diff_manu_title" xml:space="preserve">
+    <value>Incohérence de fabricant</value>
+    <comment/>
+  </data>
 </root>

@@ -2639,5 +2639,23 @@ namespace Kaenx.Creator.Properties {
                 return ResourceManager.GetString("tabs_scripts", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string import_diff_manu {
+            get {
+                return ResourceManager.GetString("import_diff_manu", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string import_diff_manu_title {
+            get {
+                return ResourceManager.GetString("import_diff_manu_title", resourceCulture);
+            }
+        }
     }
 }

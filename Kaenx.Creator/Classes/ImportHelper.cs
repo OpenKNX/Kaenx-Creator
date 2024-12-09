@@ -78,7 +78,7 @@ namespace Kaenx.Creator.Classes
             int manuId = int.Parse(manuHex, System.Globalization.NumberStyles.HexNumber);
             if (_general.ManufacturerId != manuId)
             {
-                var res = System.Windows.MessageBox.Show($"Hersteller der Produktdatenbank stimmt nicht mit dem Hersteller des Projekts über ein.\r\nWollen Sie ihre HerstellerId von {_general.ManufacturerId:X4} auf {manuId:X4} ändern?", "Question", System.Windows.MessageBoxButton.YesNoCancel, System.Windows.MessageBoxImage.Warning);
+                var res = System.Windows.MessageBox.Show(string.Format(Properties.Resources.import_diff_manu, _general.ManufacturerId.ToString("X4"), manuId.ToString("X4")), Properties.Resources.import_diff_manu_title, System.Windows.MessageBoxButton.YesNoCancel, System.Windows.MessageBoxImage.Warning);
                 switch(res) {
                     case System.Windows.MessageBoxResult.Yes:
                         _general.ManufacturerId = manuId;
@@ -120,7 +120,7 @@ namespace Kaenx.Creator.Classes
                     int manuId = int.Parse(manuHex, System.Globalization.NumberStyles.HexNumber);
                     if (_general.ManufacturerId != manuId)
                     {
-                        var res = System.Windows.MessageBox.Show($"Hersteller der Produktdatenbank stimmt nicht mit dem Hersteller des Projekts über ein.\r\nWollen Sie ihre HerstellerId von {_general.ManufacturerId:X4} auf {manuId:X4} ändern?", "Question", System.Windows.MessageBoxButton.YesNoCancel, System.Windows.MessageBoxImage.Warning);
+                        var res = System.Windows.MessageBox.Show(string.Format(Properties.Resources.import_diff_manu, _general.ManufacturerId.ToString("X4"), manuId.ToString("X4")), Properties.Resources.import_diff_manu_title, System.Windows.MessageBoxButton.YesNoCancel, System.Windows.MessageBoxImage.Warning);
                         switch(res) {
                             case System.Windows.MessageBoxResult.Yes:
                                 _general.ManufacturerId = manuId;
