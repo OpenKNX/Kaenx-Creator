@@ -213,10 +213,6 @@
     <value>Projekt Name</value>
     <comment/>
   </data>
-  <data name="tgen_lang" xml:space="preserve">
-    <value>Sprache für Katalog und Hardware</value>
-    <comment/>
-  </data>
   <data name="gen_edit" xml:space="preserve">
     <value>Bearbeiten</value>
     <comment/>

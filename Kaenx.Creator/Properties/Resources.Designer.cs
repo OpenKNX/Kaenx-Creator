@@ -279,15 +279,6 @@ namespace Kaenx.Creator.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tgen_lang {
-            get {
-                return ResourceManager.GetString("tgen_lang", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
-        /// </summary>
         public static string gen_edit {
             get {
                 return ResourceManager.GetString("gen_edit", resourceCulture);
