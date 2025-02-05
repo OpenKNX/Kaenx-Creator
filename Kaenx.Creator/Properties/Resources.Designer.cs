@@ -2657,5 +2657,14 @@ namespace Kaenx.Creator.Properties {
                 return ResourceManager.GetString("import_diff_manu_title", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string gen_translate_fix {
+            get {
+                return ResourceManager.GetString("gen_translate_fix", resourceCulture);
+            }
+        }
     }
 }

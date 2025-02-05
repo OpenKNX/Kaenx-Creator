@@ -1457,4 +1457,8 @@
     <value>Manufacturer missmatch</value>
     <comment/>
   </data>
+  <data name="gen_translate_fix" xml:space="preserve">
+    <value>Fix language</value>
+    <comment/>
+  </data>
 </root>

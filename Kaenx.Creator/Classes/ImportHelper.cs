@@ -98,7 +98,7 @@ namespace Kaenx.Creator.Classes
             XElement xtemp = xmanu.Element(Get("ApplicationPrograms")).Element(Get("ApplicationProgram"));
             ImportApplication(xtemp);
 
-            ImportLanguages(xmanu.Element(Get("Languages")), _general.Languages);
+            ImportLanguages(xmanu.Element(Get("Languages")), _general.Application.Languages);
             xtemp = xmanu.Element(Get("Hardware"));
             ImportHardware(xtemp);
 
@@ -200,14 +200,14 @@ namespace Kaenx.Creator.Classes
             xele = XDocument.Load(entry.Open()).Root;
             _namespace = xele.Attribute("xmlns").Value;
             xele = xele.Element(Get("ManufacturerData")).Element(Get("Manufacturer")).Element(Get("Hardware"));
-            ImportLanguages(xele.Parent.Element(Get("Languages")), _general.Languages);
+            ImportLanguages(xele.Parent.Element(Get("Languages")), _general.Application.Languages);
             ImportHardware(xele);
 
             entry = Archive.GetEntry($"M-{manuHex}/Catalog.xml");
             xele = XDocument.Load(entry.Open()).Root;
             _namespace = xele.Attribute("xmlns").Value;
             xele = xele.Element(Get("ManufacturerData")).Element(Get("Manufacturer")).Element(Get("Catalog"));
-            ImportLanguages(xele.Parent.Element(Get("Languages")), _general.Languages);
+            ImportLanguages(xele.Parent.Element(Get("Languages")), _general.Application.Languages);
             ImportCatalog(xele);
             Archive.Dispose();
         }
@@ -663,7 +663,7 @@ namespace Kaenx.Creator.Classes
 
             if(isGeneral)
             {
-                foreach(Language lang in _general.Languages) {
+                foreach(Language lang in _general.Application.Languages) {
                     if(!translations.Any(t => t.Language.CultureCode == lang.CultureCode)) {
                         if(lang.CultureCode == currentVers.DefaultLanguage)
                             translations.Add(new Translation(lang, xele.Attribute(attr)?.Value ?? ""));
@@ -1572,8 +1572,8 @@ namespace Kaenx.Creator.Classes
                 def = _langTexts.Keys.First(l => l.StartsWith(def + '-'));
             }
 
-            if(!_general.Languages.Any(l => l.CultureCode == def))
-                _general.Languages.Add(new Language(_langTexts[def], def));
+            if(!_general.Application.Languages.Any(l => l.CultureCode == def))
+                _general.Application.Languages.Add(new Language(_langTexts[def], def));
 
             _general.Info.OrderNumber = xprod.Attribute("OrderNumber").Value;
             _general.Info.Name = xprod.Parent.Parent.Attribute("Name").Value;
@@ -1596,7 +1596,7 @@ namespace Kaenx.Creator.Classes
                 _current = ParseCatalogItem(x, _current);
                 if(!_current.IsSection) continue;
 
-                foreach(Language lang in _general.Languages)
+                foreach(Language lang in _general.Application.Languages)
                 {
                     if(!_current.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
                         _current.Text.Add(new Translation(lang, ""));

@@ -898,7 +898,7 @@ namespace Kaenx.Creator.Classes {
                         }
                     }*/
                 } else {
-                    foreach(Language lang in general.Languages)
+                    foreach(Language lang in general.Application.Languages)
                     {
                         if(!citem.Text.Any(l => l.Language.CultureCode == lang.CultureCode || string.IsNullOrEmpty(l.Text)))
                             actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_cat_cat_text_not_all, citem.Name), State = PublishState.Fail });

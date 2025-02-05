@@ -1457,4 +1457,8 @@
     <value>Hersteller unterschiedlich</value>
     <comment/>
   </data>
+  <data name="gen_translate_fix" xml:space="preserve">
+    <value>Sprache reparieren</value>
+    <comment/>
+  </data>
 </root>

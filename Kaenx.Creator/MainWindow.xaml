@@ -290,20 +290,20 @@
                             <HeaderedContentControl Header="{x:Static p:Resources.tgen_name}">
                                 <TextBox Text="{Binding General.ProjectName, UpdateSourceTrigger=PropertyChanged}" />
                             </HeaderedContentControl>
-        
-                            <HeaderedContentControl Header="{x:Static p:Resources.tgen_lang}">
+
+                            <HeaderedContentControl Header="{x:Static p:Resources.gen_langs}">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition />
                                         <ColumnDefinition MaxWidth="300" />
                                     </Grid.ColumnDefinitions>
                                     
-                                    <ListBox x:Name="SupportedLanguagesGen" ItemsSource="{Binding General.Languages}" DisplayMemberPath="Text" />
+                                    <ListBox x:Name="SupportedLanguages" ItemsSource="{Binding General.Application.Languages}" DisplayMemberPath="Text" />
                                     
                                     <StackPanel Grid.Column="1">
                                         <HeaderedContentControl Header="{x:Static p:Resources.gen_edit}">
                                             <StackPanel>
-                                                <ComboBox x:Name="LanguagesListGen" DisplayMemberPath="Text">
+                                                <ComboBox x:Name="LanguagesList" DisplayMemberPath="Text">
                                                     <models:Language Text="Tschechisch" CultureCode="cs-CZ" />
                                                     <models:Language Text="Dänisch" CultureCode="da-DK" />
                                                     <models:Language Text="Deutsch" CultureCode="de-DE" />
@@ -328,8 +328,11 @@
                                                     <models:Language Text="Türkisch" CultureCode="tr-TR" />
                                                     <models:Language Text="Chinesisch" CultureCode="zh-CN" />
                                                 </ComboBox>
-                                                <Button Content="{x:Static p:Resources.gen_add}" Click="ClickAddLanguageGen" IsEnabled="{Binding ElementName=SupportedLanguagesGen, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
-                                                <Button Content="{x:Static p:Resources.gen_remove}" Click="ClickRemoveLanguageGen" IsEnabled="{Binding ElementName=SupportedLanguagesGen, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
+                                                
+                                                <Button Content="{x:Static p:Resources.gen_add}" Click="ClickAddLanguage" IsEnabled="{Binding ElementName=LanguagesList, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
+                                                <Button  Content="{x:Static p:Resources.gen_remove}" Click="ClickRemoveLanguage" IsEnabled="{Binding ElementName=SupportedLanguages, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
+                                                <Button Content="{x:Static p:Resources.gen_translate_fix}" Click="ClickFixLanguage" />
+                                                <Button Content="{x:Static p:Resources.gen_translate}" Click="ClickOpenTranslator" />
                                             </StackPanel>
                                         </HeaderedContentControl>
                                     </StackPanel>
@@ -698,9 +701,8 @@
                                                 <models:Language Text="Türkisch" CultureCode="tr-TR" />
                                                 <models:Language Text="Chinesisch" CultureCode="zh-CN" />
                                             </ComboBox>
-                                            <Button Content="{x:Static p:Resources.gen_add}" Click="ClickAddLanguageVers" IsEnabled="{Binding ElementName=LanguagesListVers, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
-                                            <Button  Content="{x:Static p:Resources.gen_remove}" Click="ClickRemoveLanguageVers" IsEnabled="{Binding ElementName=SupportedLanguagesVers, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" />
-                                            <Button Content="{x:Static p:Resources.gen_translate}" Click="ClickOpenTranslator" />
+                                            
+                                            
                                         </StackPanel>
                                     </HeaderedContentControl>
                                     <HeaderedContentControl Header="{x:Static p:Resources.tgen_lang_def}">
