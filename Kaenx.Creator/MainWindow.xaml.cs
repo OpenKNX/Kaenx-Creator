@@ -142,7 +142,7 @@ namespace Kaenx.Creator
 
         private void CheckEtsVersions() {
             foreach(Models.EtsVersion v in EtsVersions)
-                v.IsEnabled =  Kaenx.Creator.Classes.Helper.CheckExportNamespace(v.Number, true);
+                v.IsEnabled =  Kaenx.Creator.Classes.Helper.CheckExportNamespace(v.Number);
             NamespaceSelection.ItemsSource = EtsVersions;
         }
 
@@ -779,7 +779,7 @@ namespace Kaenx.Creator
                 Kaenx.Creator.Classes.ExportHelper helper = new Kaenx.Creator.Classes.ExportHelper(General, null);
                 helper.SetNamespace(ns);
                 await OpenKNX.Toolbox.Sign.SignHelper.CheckMaster(targetPath, ns);
-                await helper.SignOutput(targetPath, Path.Combine(sourcePath, "sign.knxprod"), ns, true);
+                await helper.SignOutput(targetPath, Path.Combine(sourcePath, "sign.knxprod"), ns);
                 Directory.Delete(targetPath, true);
 
                 System.Windows.MessageBox.Show(Properties.Messages.main_export_success, Properties.Messages.main_export_title);

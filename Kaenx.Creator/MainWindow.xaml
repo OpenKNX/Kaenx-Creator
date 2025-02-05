@@ -610,6 +610,7 @@
                                     <CheckBox IsChecked="{Binding IsHelpActive}" Content="{x:Static p:Resources.vgen_help}" HorizontalAlignment="Left" />
                                     <CheckBox IsChecked="{Binding IsPreETS4}" Content="{x:Static p:Resources.vgen_ets4}" HorizontalAlignment="Left" />
                                     <CheckBox IsChecked="{Binding IsBusInterfaceActive}" Content="{x:Static p:Resources.vgen_businterface}" HorizontalAlignment="Left" />
+                                    <CheckBox IsChecked="{Binding IsSecureActive}" Content="Secure aktivieren" HorizontalAlignment="Left" /> <!-- // TODO Translate -->
                                     <CheckBox IsChecked="{Binding HasBusInterfaceRouter}" Content="{x:Static p:Resources.vgen_busrouter}" Visibility="{Binding IsBusInterfaceActive, Converter={StaticResource BoolToVis}}" HorizontalAlignment="Left" />
                                 
                                     <HeaderedContentControl Header="Anzahl an Tunneln" Visibility="{Binding IsBusInterfaceActive, Converter={StaticResource BoolToVis}}">
