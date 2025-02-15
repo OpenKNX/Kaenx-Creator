@@ -1457,4 +1457,12 @@
     <value>Fix language</value>
     <comment/>
   </data>
+  <data name="vgen_secure" xml:space="preserve">
+    <value>Activate secure</value>
+    <comment/>
+  </data>
+  <data name="vgen_businterface_count" xml:space="preserve">
+    <value>Number of tunneling interfaces</value>
+    <comment/>
+  </data>
 </root>

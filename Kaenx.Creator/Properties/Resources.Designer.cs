@@ -2657,5 +2657,23 @@ namespace Kaenx.Creator.Properties {
                 return ResourceManager.GetString("gen_translate_fix", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string vgen_secure {
+            get {
+                return ResourceManager.GetString("vgen_secure", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string vgen_businterface_count {
+            get {
+                return ResourceManager.GetString("vgen_businterface_count", resourceCulture);
+            }
+        }
     }
 }
