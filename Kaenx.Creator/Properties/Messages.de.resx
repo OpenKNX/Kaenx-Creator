@@ -314,7 +314,7 @@
     <comment/>
   </data>
   <data name="icon_delete_error" xml:space="preserve">
-    <value>Das Icon wird von dem ParameterType {0} verwendet. Trotzdem löschen?</value>
+    <value>Das Icon wird von {0} Element(en) verwendet. Trotzdem löschen?</value>
     <comment>Count of Items</comment>
   </data>
   <data name="icon_delete_error_title" xml:space="preserve">

@@ -55,12 +55,45 @@ namespace Kaenx.Creator.Controls
 
             if(types.Count > 0)
             {
+                string typeNames = string.Join(", ", types.Select(t => t.GetType().Name));
                 var result = MessageBox.Show(string.Format(Properties.Messages.icon_delete_error, types.Count), Properties.Messages.icon_delete_error_title, MessageBoxButton.YesNo);
                 if(result == MessageBoxResult.No) return;
-                SearchVersion(General.Application, icon.UId, types, true);
+                RemoveIcon(icon, types);
             }
 
             General.Icons.Remove(icon);
+        }
+
+        private void RemoveIcon(Icon icon, List<object> types)
+        {
+            foreach(object obj in types)
+            {
+                switch(obj)
+                {
+                    case DynButton dbtn:
+                        dbtn.UseIcon = false;
+                        break;
+
+                    case DynChannel dchan:
+                        dchan.UseIcon = false;
+                        break;
+
+                    case DynParaBlock dparab:
+                        dparab.UseIcon = false;
+                        break;
+
+                    case DynParameter dpara:
+                        dpara.UseIcon = false;
+                        break;
+
+                    case DynSeparator dsep:
+                        dsep.UseIcon = false;
+                        break;
+
+                    default:
+                        throw new Exception("Unknown type in RemoveIcon");
+                }
+            }
         }
 
         private void SearchVersion(IVersionBase vbase, int iconId, List<object> types, bool remove)
@@ -136,6 +169,9 @@ namespace Kaenx.Creator.Controls
                     }
                     break;
             }
+
+            if(item.Items == null)
+                return;
 
             foreach(IDynItems child in item.Items)
                 SearchDynamicItem(child, iconId, types, remove);

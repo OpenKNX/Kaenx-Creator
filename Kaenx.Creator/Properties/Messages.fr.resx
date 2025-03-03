@@ -314,7 +314,7 @@
     <comment/>
   </data>
   <data name="icon_delete_error" xml:space="preserve">
-    <value>Cette icône est référencée par {0} ParameterType(s).\r\nSupprimer?</value>
+    <value>L'icône est utilisée par {0} élément(s). Supprimer ?</value>
     <comment>Count of Items</comment>
   </data>
   <data name="icon_delete_error_title" xml:space="preserve">
