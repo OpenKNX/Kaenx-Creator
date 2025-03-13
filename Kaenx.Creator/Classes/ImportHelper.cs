@@ -284,8 +284,12 @@ namespace Kaenx.Creator.Classes
                 string extension = "";
                 if(fileName.Contains('.'))
                     extension = fileName.Substring(fileName.LastIndexOf('.'));
-                fileName = fileName.Replace(extension, "");
+                if(!string.IsNullOrEmpty(extension))
+                    fileName = fileName.Replace(extension, "");
                 bool add = true;
+
+                if(fileName == "LICENSE")
+                    continue;
 
                 switch(extension)
                 {

@@ -177,7 +177,7 @@ namespace Kaenx.Creator.Controls
 
             if(mod.HasShare)
             {
-                ZipArchiveEntry entry = zip.Entries.Single(e => e.Name.EndsWith(".share.xml"));
+                ZipArchiveEntry entry = zip.Entries.Single(e => e.Name.EndsWith(".share.xml") && !e.Name.Contains("Common.Router.share.xml"));
                 XElement xele;
 
                 using(StreamReader reader = new StreamReader(entry.Open()))
