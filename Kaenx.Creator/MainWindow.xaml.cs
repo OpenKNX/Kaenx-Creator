@@ -941,6 +941,7 @@ namespace Kaenx.Creator
                 }
             } catch(Exception ex) {
                 MessageBox.Show(ex.Message, Properties.Messages.main_export_title, MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
             }
             
             await OpenKNX.Toolbox.Sign.SignHelper.CheckMaster(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Output", "Temp"), General.Application.NamespaceVersion);
