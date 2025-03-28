@@ -88,6 +88,17 @@ namespace Kaenx.Creator
                 DoOpen(App.FilePath);
                 MenuSaveBtn.IsEnabled = true;
             }
+
+            this.Closing += MainWindow_Closing;
+        }
+
+        private void MainWindow_Closing(object sender, CancelEventArgs e)
+        {
+            if(General != null)
+                return;
+
+            if(MessageBox.Show("Projekt wirklich schließen?\r\nNicht gespeicherte Änderungen gehen verloren", "Projekt schließen", MessageBoxButton.YesNo) == MessageBoxResult.No)
+                e.Cancel = true;
         }
 
         private async void AutoCheckUpdate()
@@ -539,7 +550,6 @@ namespace Kaenx.Creator
                 LanguageCatalogItemRemove(item, lang);
             }
         }
-
         #endregion
 
         private void ClickSave(object sender, RoutedEventArgs e)

@@ -350,9 +350,10 @@ namespace Kaenx.Creator.Controls
             {"DynWhenChannel",
                 new List<string>() { 
                     "DynParaBlock",
-                    "DynComObject",
+                    "DynChannel",
                     "DynChoose",
                     "DynModule",
+                    "DynRepeat",
                     "DynRename" }
             },
             {"DynWhenBlock",
