@@ -294,24 +294,6 @@ namespace Kaenx.Creator
                 RecursiveRemoveMemory(mod, mem);
         }
 
-        private void ClickOpenViewer(object sender, RoutedEventArgs e)
-        {
-            if(MessageBoxResult.Cancel == MessageBox.Show(Properties.Messages.main_open_viewer, Properties.Messages.main_open_viewer_title, MessageBoxButton.OKCancel, MessageBoxImage.Question)) return;
-            
-            Kaenx.Creator.Classes.Helper.CheckIds(General.Application);
-
-            ObservableCollection<Models.PublishAction> actions = new ObservableCollection<Models.PublishAction>();
-            CheckHelper.CheckVersion(General, actions);
-            if(actions.Any(a => a.State == Models.PublishState.Fail))
-            {
-                MessageBox.Show(Properties.Messages.main_open_viewer_error, Properties.Messages.main_open_viewer_title, MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-
-            ViewerWindow viewer = new ViewerWindow(new Viewer.ImporterCreator(General));
-            viewer.Show();
-        }
-
         private void ClickAddLanguage(object sender, RoutedEventArgs e)
         {
             if(LanguagesList.SelectedItem == null){

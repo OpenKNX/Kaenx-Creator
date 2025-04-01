@@ -409,18 +409,6 @@
     <value>Hardware konnte nicht hinzugefügt werden</value>
     <comment/>
   </data>
-  <data name="main_open_viewer" xml:space="preserve">
-    <value>Achtung! Um den Viewer zu verwenden, werden alle IDs überprüft und eventuell geändert. Fortfahren?</value>
-    <comment/>
-  </data>
-  <data name="main_open_viewer_title" xml:space="preserve">
-    <value>ProdViewer öffnen</value>
-    <comment/>
-  </data>
-  <data name="main_open_viewer_error" xml:space="preserve">
-    <value>Die Applikation enthält Fehler. Bitte beheben Sie diese und probieren es erneut.</value>
-    <comment/>
-  </data>
   <data name="main_lang_select" xml:space="preserve">
     <value>Bitte wählen Sie eine Sprache aus.</value>
     <comment/>

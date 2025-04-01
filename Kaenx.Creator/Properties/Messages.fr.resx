@@ -409,18 +409,6 @@
     <value>L'ajout du Hardware a échoué</value>
     <comment/>
   </data>
-  <data name="main_open_viewer" xml:space="preserve">
-    <value>Attention : Pour utiliser le Viewer, tous les ID doivent être sélectionnés ou définis. Continuer ?</value>
-    <comment/>
-  </data>
-  <data name="main_open_viewer_title" xml:space="preserve">
-    <value>Ouvrir avec ProViewer</value>
-    <comment/>
-  </data>
-  <data name="main_open_viewer_error" xml:space="preserve">
-    <value>L'application contient des erreurs. Fixer les et essayer de nouveau.</value>
-    <comment/>
-  </data>
   <data name="main_lang_select" xml:space="preserve">
     <value>Veuillez sélectionner une langue.</value>
     <comment/>
