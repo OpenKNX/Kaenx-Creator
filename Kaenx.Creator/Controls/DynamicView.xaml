@@ -129,7 +129,10 @@
                         <Run Text="{x:Static p:Resources.gen_id}" />
                         <Run Text="{Binding Id}"/>
                     </TextBlock>
-                    <Button Content="{x:Static p:Resources.gen_id_reset}" HorizontalAlignment="Right" Click="ResetId" />
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 0 0 4">
+                        <Button Content="{x:Static p:Resources.gen_id_man}" Click="ManuelId" />
+                        <Button Content="{x:Static p:Resources.gen_id_reset}" Click="ResetId" />
+                    </StackPanel>
                 </Grid>      
                 <HeaderedContentControl Header="{x:Static p:Resources.prop_name}">
                     <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />

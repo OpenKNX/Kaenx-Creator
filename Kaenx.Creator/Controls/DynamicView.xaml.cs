@@ -98,7 +98,27 @@ namespace Kaenx.Creator.Controls
                     break;
             }
         }
-
+        
+        private void ManuelId(object sender, RoutedEventArgs e)
+        {
+            PromptDialog diag = new PromptDialog(Properties.Messages.comref_prompt_id, Properties.Messages.prompt_id);
+            if(diag.ShowDialog() == true)
+            {
+                int id;
+                if(!int.TryParse(diag.Answer, out id))
+                {
+                    MessageBox.Show(Properties.Messages.prompt_error, Properties.Messages.prompt_error_title);
+                    return;
+                }
+                // ComObjectRef ele = Module.ComObjectRefs.SingleOrDefault(p => p.Id == id);
+                // if(ele != null)
+                // {
+                //     MessageBox.Show(string.Format(Properties.Messages.prompt_double, id, ele.Name), Properties.Messages.prompt_double_title);
+                //     return;
+                // }
+                ((sender as Button).DataContext as Models.Dynamic.DynModule).Id = id;
+            }
+        }
 
         private void ResetId(object sender, RoutedEventArgs e)
         {
