@@ -500,24 +500,6 @@ namespace Kaenx.Creator.Properties {
             }
         }
         
-        public static string main_open_viewer {
-            get {
-                return ResourceManager.GetString("main_open_viewer", resourceCulture);
-            }
-        }
-        
-        public static string main_open_viewer_title {
-            get {
-                return ResourceManager.GetString("main_open_viewer_title", resourceCulture);
-            }
-        }
-        
-        public static string main_open_viewer_error {
-            get {
-                return ResourceManager.GetString("main_open_viewer_error", resourceCulture);
-            }
-        }
-        
         public static string main_lang_select {
             get {
                 return ResourceManager.GetString("main_lang_select", resourceCulture);

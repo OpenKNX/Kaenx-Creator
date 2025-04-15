@@ -493,6 +493,9 @@
         </DataTemplate>
         <DataTemplate x:Key="TempDynAssign">
             <StackPanel>
+                <HeaderedContentControl Header="{x:Static p:Resources.prop_name}">
+                    <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
+                </HeaderedContentControl>
                 <HeaderedContentControl Header="{x:Static p:Resources.tdyn_ass_target}">
                     <ComboBox IsEditable="true" ItemsSource="{Binding Module.ParameterRefs, ElementName=ViewControl}" SelectedItem="{Binding TargetObject}" DisplayMemberPath="Name" />
                 </HeaderedContentControl>
@@ -838,7 +841,10 @@
                             </ContextMenu>
                         </StackPanel.ContextMenu>
                         <Image Source="{svgc:SvgImage Source=/Assets/Images/Dynamic/Assign.svg, AppName=Kaenx.Creator}" Height="18" Width="18" Margin="4" />
-                        <TextBlock Text="{x:Static p:Resources.tdyn_tassign}" VerticalAlignment="Center" />
+                        <TextBlock VerticalAlignment="Center">
+                            <Run Text="{x:Static p:Resources.tdyn_tassign}" />
+                            <Run Text="{Binding Name}" />
+                        </TextBlock>
                     </StackPanel>
                 </DataTemplate>
                 <DataTemplate DataType="{x:Type dyn:DynModule}">

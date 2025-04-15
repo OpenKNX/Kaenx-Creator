@@ -409,18 +409,6 @@
     <value>Add Hardware failed</value>
     <comment/>
   </data>
-  <data name="main_open_viewer" xml:space="preserve">
-    <value>Warning! To use the Viewer all IDs will be checked or set. Continue?</value>
-    <comment/>
-  </data>
-  <data name="main_open_viewer_title" xml:space="preserve">
-    <value>Open ProdViewer</value>
-    <comment/>
-  </data>
-  <data name="main_open_viewer_error" xml:space="preserve">
-    <value>The application contains errors. Please fix them and try again.</value>
-    <comment/>
-  </data>
   <data name="main_lang_select" xml:space="preserve">
     <value>Please select a language.</value>
     <comment/>

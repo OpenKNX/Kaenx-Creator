@@ -5,7 +5,7 @@
     <TargetFramework>net8.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>FileLogo.ico</ApplicationIcon>
-    <Version>1.9.3.0</Version>
+    <Version>1.9.5.0</Version>
     <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
   </PropertyGroup>
 
@@ -25,6 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Assets\Images\Dynamic\Assign.svg" />
     <Resource Include="Assets\Images\Dynamic\Block.svg" />
     <Resource Include="Assets\Images\Dynamic\Button.svg" />
     <Resource Include="Assets\Images\Dynamic\Choose.svg" />
@@ -90,7 +91,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Kaenx.DataContext\Kaenx.DataContext.csproj" />
     <ProjectReference Include="..\..\Kaenx-Creator-Share\Kaenx.Creator.Share.csproj" />
   </ItemGroup>
 
