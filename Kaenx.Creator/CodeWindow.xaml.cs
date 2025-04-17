@@ -1,10 +1,4 @@
 using Kaenx.Creator.Classes;
-using Kaenx.Creator.Viewer;
-using Kaenx.DataContext.Catalog;
-using Kaenx.DataContext.Import;
-using Kaenx.DataContext.Import.Dynamic;
-using Kaenx.DataContext.Import.Values;
-using Kaenx.DataContext.Local;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Win32;
 using Newtonsoft.Json;

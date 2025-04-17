@@ -9,7 +9,6 @@ using Kaenx.Creator.Models.Dynamic;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows;
-using Microsoft.UI.Xaml.Controls;
 
 namespace Kaenx.Creator.Classes
 {

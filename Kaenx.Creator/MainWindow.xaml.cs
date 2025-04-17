@@ -20,7 +20,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Xml.Linq;
-using Uno.UI.Xaml;
 
 namespace Kaenx.Creator
 {
