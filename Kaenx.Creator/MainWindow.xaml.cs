@@ -641,7 +641,7 @@ namespace Kaenx.Creator
 
         private void ClickOpenTranslator(object sender, RoutedEventArgs e)
         {
-            TranslatorWindow window = new TranslatorWindow(General.Application);
+            TranslatorWindow window = new TranslatorWindow(General);
             window.ShowDialog();
         }
 

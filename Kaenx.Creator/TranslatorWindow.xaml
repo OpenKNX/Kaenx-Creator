@@ -19,6 +19,10 @@
     </Window.Resources>
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="200" />
             <ColumnDefinition />
@@ -34,7 +38,12 @@
             </ListView.ItemTemplate>
         </ListView>
 
-        <DataGrid x:Name="TranslationList" DataContext="{Binding SelectedItem, ElementName=TabList}" Grid.Column="1" ItemsSource="{Binding Items}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
+        <StackPanel Grid.Row="1">
+            <Button Content="Export" Click="DoExport" />
+            <Button Content="Import" Click="DoImport" />
+        </StackPanel>
+
+        <DataGrid x:Name="TranslationList" DataContext="{Binding SelectedItem, ElementName=TabList}" Grid.Column="1" Grid.RowSpan="2" ItemsSource="{Binding Items}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserSortColumns="False" CanUserResizeRows="False">
             <DataGrid.GroupStyle>
                 <!-- Style for groups at top level. -->
                 <GroupStyle>
