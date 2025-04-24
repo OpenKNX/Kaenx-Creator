@@ -1465,4 +1465,8 @@
     <value>Anzahl an Tunneln</value>
     <comment/>
   </data>
+  <data name="vgen_includeoffset" xml:space="preserve">
+    <value>Base definition beinhaltet das KO-Offset</value>
+    <comment/>
+  </data>
 </root>

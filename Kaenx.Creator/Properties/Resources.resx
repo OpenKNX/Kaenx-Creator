@@ -1465,4 +1465,8 @@
     <value>Number of tunneling interfaces</value>
     <comment/>
   </data>
+  <data name="vgen_includeoffset" xml:space="preserve">
+    <value>Include KO-Offset in base define</value>
+    <comment/>
+  </data>
 </root>

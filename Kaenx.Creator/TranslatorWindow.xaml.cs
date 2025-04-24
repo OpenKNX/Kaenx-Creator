@@ -231,17 +231,6 @@ namespace Kaenx.Creator
                             x.Text = trans.Text;
                         }
                     }
-                    // foreach(TranslationItem item in export.Where(ex => ex.Tab == tab.UId))
-                    // {
-                    //     foreach(Translation
-                }
-
-                foreach(TranslationExport item in export)
-                {
-                    if(!tabitems.ContainsKey(item.Tab)) continue;
-                    TranslationTab tab = tabitems[item.Tab];
-                    
-
                 }
             }
         }

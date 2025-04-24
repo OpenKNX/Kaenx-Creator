@@ -2675,5 +2675,14 @@ namespace Kaenx.Creator.Properties {
                 return ResourceManager.GetString("vgen_businterface_count", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string vgen_includeoffset {
+            get {
+                return ResourceManager.GetString("vgen_includeoffset", resourceCulture);
+            }
+        }
     }
 }

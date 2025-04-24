@@ -185,8 +185,8 @@
 
                                 <CheckBox IsChecked="{Binding IsParameterRefAuto}" Content="{x:Static p:Resources.vgen_autopara}" HorizontalAlignment="Left" />
                                 <CheckBox IsChecked="{Binding IsComObjectRefAuto}" Content="{x:Static p:Resources.vgen_autocom}" HorizontalAlignment="Left" />
-                                
-                                
+                                <CheckBox IsChecked="{Binding IncludeOffsetInKoHeader}" Content="{x:Static p:Resources.vgen_includeoffset}" HorizontalAlignment="Left" />
+
                                 <HeaderedContentControl Header="{x:Static p:Resources.tmod_pbo}" Margin="5" IsTabStop="false">
                                     <ComboBox ItemsSource="{Binding Arguments}" SelectedItem="{Binding ParameterBaseOffset}" DisplayMemberPath="Name" Margin="0 5" />
                                 </HeaderedContentControl>
