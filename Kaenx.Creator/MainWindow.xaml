@@ -498,8 +498,9 @@
                             <HeaderedContentControl Header="{x:Static p:Resources.prop_bcu}" IsEnabled="{Binding Mask, Converter={StaticResource EmptyToBool}}">
                                 <ComboBox SelectedItem="{Binding Mask, Mode=TwoWay}" Margin="0" DisplayMemberPath="Id" ItemsSource="{Binding BCUs, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
                             </HeaderedContentControl>
+                            <Button Content="{x:Static p:Resources.tapps_reset_bcu}" Margin="5" IsEnabled="{Binding Mask, Converter={StaticResource EmptyToBool}, ConverterParameter=true}" Click="ClickResetBCU" />
                             <!--// TODO translate-->
-                            <TextBlock Text="Bitte eine BCU auswählen, bevor Sie weiter machen können." Foreground="Red" Visibility="{Binding Mask, Converter={StaticResource EmptyToVis}, ConverterParameter=true}" Margin="5 0 0 0" />
+                            <TextBlock Text="{x:Static p:Resources.tapps_bcu_empty}" Foreground="Red" Visibility="{Binding Mask, Converter={StaticResource EmptyToVis}, ConverterParameter=true}" Margin="5 0 0 0" />
     
                             <TextBlock Margin="5 5 0 0">
                                 <Run Text="{x:Static p:Resources.tapps_memory}" />

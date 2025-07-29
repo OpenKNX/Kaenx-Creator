@@ -1047,5 +1047,14 @@
   </data>
   <data name="check_app_number" xml:space="preserve">
     <value>The AppNumber cant be higher then 0xFFFF. Was reset to 0.</value>
+    <comment/>
+  </data>
+  <data name="reset_bcu" xml:space="preserve">
+    <value>If you change the BCU/Mask you will have to change the LoadProcedures. YOU need to make sure the LoadProcedure are correct.</value>
+    <comment/>
+  </data>
+  <data name="reset_bcu_title" xml:space="preserve">
+    <value>Change BCU/Mask</value>
+    <comment/>
   </data>
 </root>

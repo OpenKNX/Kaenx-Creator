@@ -2684,5 +2684,23 @@ namespace Kaenx.Creator.Properties {
                 return ResourceManager.GetString("vgen_includeoffset", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string tapps_reset_bcu {
+            get {
+                return ResourceManager.GetString("tapps_reset_bcu", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string tapps_bcu_empty {
+            get {
+                return ResourceManager.GetString("tapps_bcu_empty", resourceCulture);
+            }
+        }
     }
 }

@@ -972,10 +972,18 @@ namespace Kaenx.Creator
                 CheckLangs();
             }
         }
+        
+        private void ClickResetBCU(object sender, RoutedEventArgs e)
+        {
+            if(MessageBoxResult.Yes == MessageBox.Show(Properties.Messages.reset_bcu, Properties.Messages.reset_bcu_title, MessageBoxButton.YesNo, MessageBoxImage.Question))
+            {
+                General.Info.Mask = null;
+            }
+        }
 
         private void ClickToggleDebug(object sender, RoutedEventArgs e)
         {
-            if(sender is MenuItem)
+            if (sender is MenuItem)
             {
                 bool tag = (sender as MenuItem).IsChecked;
                 Properties.Settings.Default.isDebug = tag;

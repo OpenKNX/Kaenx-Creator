@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!--
     Microsoft ResX Schema
@@ -1467,6 +1467,14 @@
   </data>
   <data name="vgen_includeoffset" xml:space="preserve">
     <value>Include KO-Offset in base define</value>
+    <comment/>
+  </data>
+  <data name="tapps_reset_bcu" xml:space="preserve">
+    <value>Reset BCU/Mask</value>
+    <comment/>
+  </data>
+  <data name="tapps_bcu_empty" xml:space="preserve">
+    <value>Please select a BCU/Mask to continue.</value>
     <comment/>
   </data>
 </root>

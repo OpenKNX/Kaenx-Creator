@@ -1453,5 +1453,17 @@ namespace Kaenx.Creator.Properties {
                 return ResourceManager.GetString("check_ver_mem_not_unique", resourceCulture);
             }
         }
+        
+        public static string reset_bcu {
+            get {
+                return ResourceManager.GetString("reset_bcu", resourceCulture);
+            }
+        }
+        
+        public static string reset_bcu_title {
+            get {
+                return ResourceManager.GetString("reset_bcu_title", resourceCulture);
+            }
+        }
     }
 }

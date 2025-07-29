@@ -1469,4 +1469,12 @@
     <value>Base definition beinhaltet das KO-Offset</value>
     <comment/>
   </data>
+  <data name="tapps_reset_bcu" xml:space="preserve">
+    <value>BCU/Maske zurücksetzen</value>
+    <comment/>
+  </data>
+  <data name="tapps_bcu_empty" xml:space="preserve">
+    <value>Bitte eine BCU auswählen, bevor Sie weiter machen können.</value>
+    <comment/>
+  </data>
 </root>
