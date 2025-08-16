@@ -393,6 +393,7 @@ namespace Kaenx.Creator.Classes
             currentVers.IsParameterRefAuto = false;
             currentVers.IsComObjectRefAuto = false;
             currentVers.IsMemSizeAuto = false;
+            currentVers.IsSecureActive = xapp.Attribute("IsSecureEnabled") != null && xapp.Attribute("IsSecureEnabled").Value == "true";
             currentVers.ReplacesVersions = xapp.Attribute("ReplacesVersions")?.Value;
 
             string ns = xapp.Name.NamespaceName;
