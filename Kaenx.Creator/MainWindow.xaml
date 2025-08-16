@@ -674,6 +674,12 @@
                                     <HeaderedContentControl Header="{x:Static p:Resources.prop_ns}">
                                         <ComboBox x:Name="NamespaceSelection" DisplayMemberPath="DisplayName" SelectedValue="{Binding NamespaceVersion}" SelectedIndex="3" SelectedValuePath="Number" />
                                     </HeaderedContentControl>
+                                    <HeaderedContentControl Header="{x:Static p:Resources.prop_ipconfig}" Visibility="{Binding General.Info.IsIpEnabled, ElementName=ViewControl, Converter={StaticResource BoolToVis}}">
+                                        <ComboBox SelectedValue="{Binding IpConfig}" SelectedValuePath="Tag">
+                                            <ComboBoxItem Content="{x:Static p:Resources.prop_ipconfig_tool}" Tag="Tool" />
+                                            <ComboBoxItem Content="{x:Static p:Resources.prop_ipconfig_custom}" Tag="Custom" />
+                                        </ComboBox>
+                                    </HeaderedContentControl>
                                 </StackPanel>
                             </Grid>
                         </StackPanel>
@@ -859,7 +865,9 @@
                         <HeaderedContentControl Header="{x:Static p:Resources.tpub_filename}">
                             <TextBox Text="{Binding General.FileName}" />
                         </HeaderedContentControl>
-    
+
+                        <CheckBox x:Name="DevelopCheckBox" Content="Develop" />
+
                         <Button Content="{x:Static p:Resources.tabs_pub}" Click="Button_Click" />
                     </StackPanel>
 

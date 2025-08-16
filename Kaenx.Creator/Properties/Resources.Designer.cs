@@ -2702,5 +2702,32 @@ namespace Kaenx.Creator.Properties {
                 return ResourceManager.GetString("tapps_bcu_empty", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string prop_ipconfig {
+            get {
+                return ResourceManager.GetString("prop_ipconfig", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string prop_ipconfig_tool {
+            get {
+                return ResourceManager.GetString("prop_ipconfig_tool", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string prop_ipconfig_custom {
+            get {
+                return ResourceManager.GetString("prop_ipconfig_custom", resourceCulture);
+            }
+        }
     }
 }

@@ -1477,4 +1477,16 @@
     <value>Bitte eine BCU auswählen, bevor Sie weiter machen können.</value>
     <comment/>
   </data>
+  <data name="prop_ipconfig_tool" xml:space="preserve">
+    <value>Tool (verwaltet durch ETS)</value>
+    <comment/>
+  </data>
+  <data name="prop_ipconfig_custom" xml:space="preserve">
+    <value>Custom (verwaltet durch Gerät)</value>
+    <comment/>
+  </data>
+  <data name="prop_ipconfig" xml:space="preserve">
+    <value>IPConfig</value>
+    <comment/>
+  </data>
 </root>

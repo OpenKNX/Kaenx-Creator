@@ -1477,4 +1477,16 @@
     <value>Please select a BCU/Mask to continue.</value>
     <comment/>
   </data>
+  <data name="prop_ipconfig_tool" xml:space="preserve">
+    <value>Tool (managed in ETS)</value>
+    <comment/>
+  </data>
+  <data name="prop_ipconfig_custom" xml:space="preserve">
+    <value>Custom (managed by device)</value>
+    <comment/>
+  </data>
+  <data name="prop_ipconfig" xml:space="preserve">
+    <value>IPConfig</value>
+    <comment/>
+  </data>
 </root>

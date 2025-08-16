@@ -924,7 +924,7 @@ namespace Kaenx.Creator
             Kaenx.Creator.Classes.ExportHelper helper = new Kaenx.Creator.Classes.ExportHelper(General, headerPath);
             
             try {
-                bool success = helper.ExportEts(PublishActions);
+                bool success = helper.ExportEts(PublishActions, DevelopCheckBox.IsChecked == true);
                 if(!success)
                 {
                     MessageBox.Show(Properties.Messages.main_export_error, Properties.Messages.main_export_title);
