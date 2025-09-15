@@ -459,20 +459,34 @@ namespace Kaenx.Creator.Classes {
         {
             Module mod = vbase as Module;
 
-            if(mod != null)
+            if (mod != null)
             {
-                if(ver.NamespaceVersion < 20 && mod.Allocators.Count > 0)
-                    actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_mod_allocs, mod.Name), State = PublishState.Fail });
-                if(!mod.IsOpenKnxModule && string.IsNullOrEmpty(mod.Prefix))
-                    actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_mod_noprefix, mod.Name), State = PublishState.Fail });
-                if(mod.ParameterBaseOffset == null)
+                if (ver.NamespaceVersion < 20 && mod.Allocators.Count > 0)
+                    actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_mod_allocs, mod.Name), Item = mod, State = PublishState.Fail });
+                if (!mod.IsOpenKnxModule && string.IsNullOrEmpty(mod.Prefix))
+                    actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_mod_noprefix, mod.Name), Item = mod, State = PublishState.Fail });
+                if (mod.ParameterBaseOffset == null)
                     actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_mod_paraoff_null, mod.Name), Item = mod, State = PublishState.Fail });
-                else if(mod.ParameterBaseOffset.Type != ArgumentTypes.Numeric)
+                else if (mod.ParameterBaseOffset.Type != ArgumentTypes.Numeric)
                     actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_mod_paraoff, mod.Name), Item = mod, State = PublishState.Fail });
-                if(mod.ComObjectBaseNumber == null)
+                if (mod.ComObjectBaseNumber == null)
                     actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_mod_combase_null, mod.Name), Item = mod, State = PublishState.Fail });
-                else if(mod.ComObjectBaseNumber.Type != ArgumentTypes.Numeric)
+                else if (mod.ComObjectBaseNumber.Type != ArgumentTypes.Numeric)
                     actions.Add(new PublishAction() { Text = "\t" + string.Format(Properties.Messages.check_ver_mod_combase, mod.Name), Item = mod, State = PublishState.Fail });
+            }
+            else
+            {
+                if (ver.IsSecureActive)
+                {
+                    if (!ver.Options.SupportsExtendedMemoryServices)
+                        actions.Add(new PublishAction() { Text = "\t" + Properties.Messages.check_ver_secure_ext_mem, State = PublishState.Fail });
+                    if (!ver.Options.SupportsExtendedPropertyServices)
+                        actions.Add(new PublishAction() { Text = "\t" + Properties.Messages.check_ver_secure_ext_prop, State = PublishState.Fail });
+                    if (ver.IsBusInterfaceActive && ver.BusInterfaceCounter != ver.Security.MaxTunnelingUserEntries)
+                        actions.Add(new PublishAction() { Text = string.Format("\t" + Properties.Messages.check_ver_secure_tunnel, ver.Security.MaxTunnelingUserEntries, ver.BusInterfaceCounter), State = PublishState.Fail });
+                    if (ver.Security.MaxSecurityGroupKeyTableEntries == 0)
+                        actions.Add(new PublishAction() { Text = "\t" + Properties.Messages.check_ver_secure_groups, State = PublishState.Fail });
+                }
             }
 
             if(vbase.Dynamics[0].Items.Count == 0)

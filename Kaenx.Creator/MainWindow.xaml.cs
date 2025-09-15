@@ -117,7 +117,7 @@ namespace Kaenx.Creator
         {
             if(module != null && module.GetType() == typeof(Kaenx.Creator.Models.Module))
             {
-                VersionTabs.SelectedIndex = 7;
+                VersionTabs.SelectedIndex = 8;
                 int index2 = item switch {
                     Models.Union => 4,
                     Models.Parameter => 7,
@@ -134,14 +134,14 @@ namespace Kaenx.Creator
             }
 
             int index = item switch{
-                Models.ParameterType => 4,
-                Models.Union => 5,
-                Models.Module => 7,
-                Models.Parameter => 8,
-                Models.ParameterRef => 9,
-                Models.ComObject => 10,
-                Models.ComObjectRef => 11,
-                Models.Dynamic.IDynItems => 16,
+                Models.ParameterType => 5,
+                Models.Union => 6,
+                Models.Module => 8,
+                Models.Parameter => 9,
+                Models.ParameterRef => 10,
+                Models.ComObject => 11,
+                Models.ComObjectRef => 12,
+                Models.Dynamic.IDynItems => 17,
                 _ => -1
             };
 

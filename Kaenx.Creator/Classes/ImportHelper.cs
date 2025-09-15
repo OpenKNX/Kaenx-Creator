@@ -396,6 +396,22 @@ namespace Kaenx.Creator.Classes
             currentVers.IsSecureActive = xapp.Attribute("IsSecureEnabled") != null && xapp.Attribute("IsSecureEnabled").Value == "true";
             currentVers.ReplacesVersions = xapp.Attribute("ReplacesVersions")?.Value;
 
+            if (currentVers.IsSecureActive)
+            {
+                if (xapp.Attribute("MaxUserEntries") != null)
+                    currentVers.Security.MaxUserEntries = int.Parse(xapp.Attribute("MaxUserEntries").Value);
+                if (xapp.Attribute("MaxTunnelingUserEntries") != null)
+                    currentVers.Security.MaxTunnelingUserEntries = int.Parse(xapp.Attribute("MaxTunnelingUserEntries").Value);
+                if (xapp.Attribute("MaxSecurityProxyGroupKeyTableEntries") != null)
+                    currentVers.Security.MaxSecurityProxyGroupKeyTableEntries = int.Parse(xapp.Attribute("MaxSecurityProxyGroupKeyTableEntries").Value);
+                if (xapp.Attribute("MaxSecurityP2PKeyTableEntries") != null)
+                    currentVers.Security.MaxSecurityP2PKeyTableEntries = int.Parse(xapp.Attribute("MaxSecurityP2PKeyTableEntries").Value);
+                if (xapp.Attribute("MaxSecurityIndividualAddressEntries") != null)
+                    currentVers.Security.MaxSecurityIndividualAddressEntries = int.Parse(xapp.Attribute("MaxSecurityIndividualAddressEntries").Value);
+                if (xapp.Attribute("MaxSecurityGroupKeyTableEntries") != null)
+                    currentVers.Security.MaxSecurityGroupKeyTableEntries = int.Parse(xapp.Attribute("MaxSecurityGroupKeyTableEntries").Value);
+            }
+
             string ns = xapp.Name.NamespaceName;
             ns = ns.Substring(ns.LastIndexOf('/') + 1);
             currentVers.NamespaceVersion = int.Parse(ns);
@@ -448,6 +464,7 @@ namespace Kaenx.Creator.Classes
             }
 
             ImportHelpFile(xapp);
+            ImportOptions(xstatic.Element(Get("Options")));
             ImportSegments(xstatic.Element(Get("Code")));
             ImportScript(xstatic.Element(Get("Script")));
             ImportAllocators(xstatic.Element(Get("Allocators")), currentVers);
@@ -607,25 +624,56 @@ namespace Kaenx.Creator.Classes
             //TODO rename translationelement
         }
 
-        private void ImportLanguages(XElement xlangs, ObservableCollection<Language> langs) {
+        private void ImportOptions(XElement xopts)
+        {
+            if (xopts == null) return;
+
+            foreach (XAttribute xopt in xopts.Attributes())
+            {
+                switch (xopt.Name.LocalName)
+                {
+                    case "SupportsExtendedMemoryServices":
+                        currentVers.Options.SupportsExtendedMemoryServices = xopt.Value == "true";
+                        break;
+
+                    case "SupportsExtendedPropertyServices":
+                        currentVers.Options.SupportsExtendedPropertyServices = xopt.Value == "true";
+                        break;
+
+                    case "SupportsIPSystemBroadcast":
+                        currentVers.Options.SupportsIPSystemBroadcast = xopt.Value == "true";
+                        break;
+
+                    case "PromptBeforeFullDownload":
+                        currentVers.Options.PromptBeforeFullDownload = xopt.Value == "true";
+                        break;
+                }
+            }
+        }
+
+        private void ImportLanguages(XElement xlangs, ObservableCollection<Language> langs)
+        {
             _translations.Clear();
-            if(xlangs == null || xlangs.Elements().Count() == 0) return;
-            
+            if (xlangs == null || xlangs.Elements().Count() == 0) return;
+
             Stopwatch sw = new Stopwatch();
             sw.Start();
 
 
-            foreach(XElement xlang in xlangs.Elements()) {
+            foreach (XElement xlang in xlangs.Elements())
+            {
                 string cultureCode = xlang.Attribute("Identifier").Value;
 
                 XElement firstUnit = xlang.Elements().ElementAt(0);
                 string firstId = firstUnit.Attribute("RefId").Value;
 
-                if(!langs.Any(l => l.CultureCode == cultureCode))
+                if (!langs.Any(l => l.CultureCode == cultureCode))
                     langs.Add(new Language(_langTexts[cultureCode], cultureCode));
 
-                foreach(XElement xtele in xlang.Descendants(Get("TranslationElement"))) {
-                    foreach(XElement xattr in xtele.Elements()) {
+                foreach (XElement xtele in xlang.Descendants(Get("TranslationElement")))
+                {
+                    foreach (XElement xattr in xtele.Elements())
+                    {
                         AddTranslation(xtele.Attribute("RefId").Value,
                             xattr.Attribute("AttributeName").Value,
                             cultureCode,

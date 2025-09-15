@@ -1465,5 +1465,49 @@ namespace Kaenx.Creator.Properties {
                 return ResourceManager.GetString("reset_bcu_title", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string check_ver_secure_ext_mem
+        {
+            get
+            {
+                return ResourceManager.GetString("check_ver_secure_ext_mem", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string check_ver_secure_ext_prop
+        {
+            get
+            {
+                return ResourceManager.GetString("check_ver_secure_ext_prop", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string check_ver_secure_tunnel
+        {
+            get
+            {
+                return ResourceManager.GetString("check_ver_secure_tunnel", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string check_ver_secure_groups
+        {
+            get
+            {
+                return ResourceManager.GetString("check_ver_secure_groups", resourceCulture);
+            }
+        }
     }
 }

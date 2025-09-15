@@ -1489,4 +1489,8 @@
     <value>IPConfig</value>
     <comment/>
   </data>
+  <data name="tabs_opt" xml:space="preserve">
+    <value>Optionen</value>
+    <comment/>
+  </data>
 </root>

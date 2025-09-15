@@ -1057,4 +1057,20 @@
     <value>BCU/Maske zurücksetzen</value>
     <comment/>
   </data>
+  <data name="check_ver_secure_ext_mem" xml:space="preserve">
+    <value>Secure benötigt die Option 'SupportsExtendedMemoryServices'</value>
+    <comment/>
+  </data>
+  <data name="check_ver_secure_ext_prop" xml:space="preserve">
+    <value>Secure benötigt die Option 'SupportsExtendedPropertyServices'</value>
+    <comment/>
+  </data>
+  <data name="check_ver_secure_tunnel" xml:space="preserve">
+    <value>MaxTunnelingUserEntries ({0}) entspricht nicht den verfügbaren BusInterfaces ({1})</value>
+    <comment/>
+  </data>
+  <data name="check_ver_secure_groups" xml:space="preserve">
+    <value>MaxTunnelingUserEntries ({0}) entspricht nicht den verfügbaren BusInterfaces ({1})</value>
+    <comment/>
+  </data>
 </root>

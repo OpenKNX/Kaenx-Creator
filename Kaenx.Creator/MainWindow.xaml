@@ -659,6 +659,41 @@
                                             </HeaderedContentControl>
                                         </StackPanel>
                                     </Grid>
+                                
+                                    <Grid Visibility="{Binding IsSecureActive, Converter={StaticResource BoolToVis}}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition />
+                                            <ColumnDefinition />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+
+                                        <StackPanel>
+                                            <HeaderedContentControl Header="MaxUserEntries">
+                                                <TextBox Text="{Binding Security.MaxUserEntries, UpdateSourceTrigger=PropertyChanged}" />
+                                            </HeaderedContentControl>
+                                            <HeaderedContentControl Header="MaxTunnelingUserEntries">
+                                                <TextBox Text="{Binding Security.MaxTunnelingUserEntries, UpdateSourceTrigger=PropertyChanged}" />
+                                            </HeaderedContentControl>
+                                        </StackPanel>
+                                        
+                                        <StackPanel Grid.Column="1">
+                                            <HeaderedContentControl Header="MaxSecurityProxyGroupKeyTableEntries">
+                                                <TextBox Text="{Binding Security.MaxSecurityProxyGroupKeyTableEntries, UpdateSourceTrigger=PropertyChanged}" />
+                                            </HeaderedContentControl>
+                                            <HeaderedContentControl Header="MaxSecurityP2PKeyTableEntries">
+                                                <TextBox Text="{Binding Security.MaxSecurityP2PKeyTableEntries, UpdateSourceTrigger=PropertyChanged}" />
+                                            </HeaderedContentControl>
+                                        </StackPanel>
+                                        
+                                        <StackPanel Grid.Column="2">
+                                            <HeaderedContentControl Header="MaxSecurityIndividualAddressEntries">
+                                                <TextBox Text="{Binding Security.MaxSecurityIndividualAddressEntries, UpdateSourceTrigger=PropertyChanged}" />
+                                            </HeaderedContentControl>
+                                            <HeaderedContentControl Header="MaxSecurityGroupKeyTableEntries">
+                                                <TextBox Text="{Binding Security.MaxSecurityGroupKeyTableEntries, UpdateSourceTrigger=PropertyChanged}" />
+                                            </HeaderedContentControl>
+                                        </StackPanel>
+                                    </Grid>
                                 </StackPanel>
 
                                 <StackPanel Grid.Column="1">
@@ -689,6 +724,10 @@
                         <ctrl:CheckView General="{Binding General}" Version="{Binding General.Application}" />
                     </TabItem>
 
+                    <TabItem Header="{x:Static p:Resources.tabs_opt}" DataContext="{Binding General.Application}" Style="{StaticResource LeftTabItem}">
+                        <ctrl:OptionsView Version="{Binding .}" />
+                    </TabItem>
+                    
                     <TabItem Header="{x:Static p:Resources.tabs_mem}" DataContext="{Binding General.Application}" Style="{StaticResource LeftTabItem}">
                         <Grid>
                             <Grid.ColumnDefinitions>

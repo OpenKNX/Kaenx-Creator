@@ -10,8 +10,8 @@
 
 namespace Kaenx.Creator.Properties {
     using System;
-    
-    
+
+
     /// <summary>
     ///   Eine stark typisierte Ressourcenklasse zum Suchen von lokalisierten Zeichenfolgen usw.
     /// </summary>
@@ -22,355 +22,433 @@ namespace Kaenx.Creator.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class Resources {
-        
+    public class Resources
+    {
+
         private static global::System.Resources.ResourceManager resourceMan;
-        
+
         private static global::System.Globalization.CultureInfo resourceCulture;
-        
+
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Resources() {
+        internal Resources()
+        {
         }
-        
+
         /// <summary>
         ///   Gibt die zwischengespeicherte ResourceManager-Instanz zurück, die von dieser Klasse verwendet wird.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Resources.ResourceManager ResourceManager {
-            get {
-                if (object.ReferenceEquals(resourceMan, null)) {
+        public static global::System.Resources.ResourceManager ResourceManager
+        {
+            get
+            {
+                if (object.ReferenceEquals(resourceMan, null))
+                {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Kaenx.Creator.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
             }
         }
-        
+
         /// <summary>
         ///   Überschreibt die CurrentUICulture-Eigenschaft des aktuellen Threads für alle
         ///   Ressourcenzuordnungen, die diese stark typisierte Ressourcenklasse verwenden.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Globalization.CultureInfo Culture {
-            get {
+        public static global::System.Globalization.CultureInfo Culture
+        {
+            get
+            {
                 return resourceCulture;
             }
-            set {
+            set
+            {
                 resourceCulture = value;
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Importieren ähnelt.
         /// </summary>
-        public static string menu_impo {
-            get {
+        public static string menu_impo
+        {
+            get
+            {
                 return ResourceManager.GetString("menu_impo", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die ETS Produktdatenbank ähnelt.
         /// </summary>
-        public static string menu_impo_ets {
-            get {
+        public static string menu_impo_ets
+        {
+            get
+            {
                 return ResourceManager.GetString("menu_impo_ets", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Sprache/Language ähnelt.
         /// </summary>
-        public static string menu_lang {
-            get {
+        public static string menu_lang
+        {
+            get
+            {
                 return ResourceManager.GetString("menu_lang", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Systemeinstellung ähnelt.
         /// </summary>
-        public static string menu_lang_default {
-            get {
+        public static string menu_lang_default
+        {
+            get
+            {
                 return ResourceManager.GetString("menu_lang_default", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Projekt ähnelt.
         /// </summary>
-        public static string menu_proj {
-            get {
+        public static string menu_proj
+        {
+            get
+            {
                 return ResourceManager.GetString("menu_proj", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Schließen ähnelt.
         /// </summary>
-        public static string menu_proj_close {
-            get {
+        public static string menu_proj_close
+        {
+            get
+            {
                 return ResourceManager.GetString("menu_proj_close", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Neu ähnelt.
         /// </summary>
-        public static string menu_proj_new {
-            get {
+        public static string menu_proj_new
+        {
+            get
+            {
                 return ResourceManager.GetString("menu_proj_new", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Öffnen ähnelt.
         /// </summary>
-        public static string menu_proj_open {
-            get {
+        public static string menu_proj_open
+        {
+            get
+            {
                 return ResourceManager.GetString("menu_proj_open", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Speichern ähnelt.
         /// </summary>
-        public static string menu_proj_save {
-            get {
+        public static string menu_proj_save
+        {
+            get
+            {
                 return ResourceManager.GetString("menu_proj_save", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Applikationen ähnelt.
         /// </summary>
-        public static string tabs_apps {
-            get {
+        public static string tabs_apps
+        {
+            get
+            {
                 return ResourceManager.GetString("tabs_apps", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Katalog ähnelt.
         /// </summary>
-        public static string tabs_cat {
-            get {
+        public static string tabs_cat
+        {
+            get
+            {
                 return ResourceManager.GetString("tabs_cat", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Allgemeins ähnelt.
         /// </summary>
-        public static string tabs_gen {
-            get {
+        public static string tabs_gen
+        {
+            get
+            {
                 return ResourceManager.GetString("tabs_gen", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Hardware/Geräte ähnelt.
         /// </summary>
-        public static string tabs_hard {
-            get {
+        public static string tabs_hard
+        {
+            get
+            {
                 return ResourceManager.GetString("tabs_hard", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Hardware/Geräte ähnelt.
         /// </summary>
-        public static string tabs_app {
-            get {
+        public static string tabs_app
+        {
+            get
+            {
                 return ResourceManager.GetString("tabs_app", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tabs_pub {
-            get {
+        public static string tabs_pub
+        {
+            get
+            {
                 return ResourceManager.GetString("tabs_pub", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tabs_bagg {
-            get {
+        public static string tabs_bagg
+        {
+            get
+            {
                 return ResourceManager.GetString("tabs_bagg", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string menu_impo_xml {
-            get {
+        public static string menu_impo_xml
+        {
+            get
+            {
                 return ResourceManager.GetString("menu_impo_xml", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string menu_save_template {
-            get {
+        public static string menu_save_template
+        {
+            get
+            {
                 return ResourceManager.GetString("menu_save_template", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string menu_save_as {
-            get {
+        public static string menu_save_as
+        {
+            get
+            {
                 return ResourceManager.GetString("menu_save_as", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string menu_save {
-            get {
+        public static string menu_save
+        {
+            get
+            {
                 return ResourceManager.GetString("menu_save", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string menu_temp_empty {
-            get {
+        public static string menu_temp_empty
+        {
+            get
+            {
                 return ResourceManager.GetString("menu_temp_empty", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string menu_info_vers {
-            get {
+        public static string menu_info_vers
+        {
+            get
+            {
                 return ResourceManager.GetString("menu_info_vers", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tgen_manu {
-            get {
+        public static string tgen_manu
+        {
+            get
+            {
                 return ResourceManager.GetString("tgen_manu", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tgen_name {
-            get {
+        public static string tgen_name
+        {
+            get
+            {
                 return ResourceManager.GetString("tgen_name", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string gen_edit {
-            get {
+        public static string gen_edit
+        {
+            get
+            {
                 return ResourceManager.GetString("gen_edit", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string gen_add {
-            get {
+        public static string gen_add
+        {
+            get
+            {
                 return ResourceManager.GetString("gen_add", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string gen_remove {
-            get {
+        public static string gen_remove
+        {
+            get
+            {
                 return ResourceManager.GetString("gen_remove", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tgen_lang_def {
-            get {
+        public static string tgen_lang_def
+        {
+            get
+            {
                 return ResourceManager.GetString("tgen_lang_def", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tcat_add_sub {
-            get {
+        public static string tcat_add_sub
+        {
+            get
+            {
                 return ResourceManager.GetString("tcat_add_sub", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string prop_name {
-            get {
+        public static string prop_name
+        {
+            get
+            {
                 return ResourceManager.GetString("prop_name", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string prop_number {
-            get {
+        public static string prop_number
+        {
+            get
+            {
                 return ResourceManager.GetString("prop_number", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tcat_iscat {
-            get {
+        public static string tcat_iscat
+        {
+            get
+            {
                 return ResourceManager.GetString("tcat_iscat", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string gen_text {
-            get {
+        public static string gen_text
+        {
+            get
+            {
                 return ResourceManager.GetString("gen_text", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string gen_lang {
-            get {
+        public static string gen_lang
+        {
+            get
+            {
                 return ResourceManager.GetString("gen_lang", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string gen_hard {
-            get {
+        public static string gen_hard
+        {
+            get
+            {
                 return ResourceManager.GetString("gen_hard", resourceCulture);
             }
         }
@@ -378,26 +456,32 @@ namespace Kaenx.Creator.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string gen_gen {
-            get {
+        public static string gen_gen
+        {
+            get
+            {
                 return ResourceManager.GetString("gen_gen", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string prop_serial {
-            get {
+        public static string prop_serial
+        {
+            get
+            {
                 return ResourceManager.GetString("prop_serial", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string prop_vers {
-            get {
+        public static string prop_vers
+        {
+            get
+            {
                 return ResourceManager.GetString("prop_vers", resourceCulture);
             }
         }
@@ -405,2183 +489,2767 @@ namespace Kaenx.Creator.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string prop_etsvers {
-            get {
+        public static string prop_etsvers
+        {
+            get
+            {
                 return ResourceManager.GetString("prop_etsvers", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string prop_buscurrent {
-            get {
+        public static string prop_buscurrent
+        {
+            get
+            {
                 return ResourceManager.GetString("prop_buscurrent", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string prop_haspa {
-            get {
+        public static string prop_haspa
+        {
+            get
+            {
                 return ResourceManager.GetString("prop_haspa", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string prop_ispower {
-            get {
+        public static string prop_ispower
+        {
+            get
+            {
                 return ResourceManager.GetString("prop_ispower", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string prop_iscoupler {
-            get {
+        public static string prop_iscoupler
+        {
+            get
+            {
                 return ResourceManager.GetString("prop_iscoupler", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string prop_ip {
-            get {
+        public static string prop_ip
+        {
+            get
+            {
                 return ResourceManager.GetString("prop_ip", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string prop_hasapp {
-            get {
+        public static string prop_hasapp
+        {
+            get
+            {
                 return ResourceManager.GetString("prop_hasapp", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string prop_hasapp2 {
-            get {
+        public static string prop_hasapp2
+        {
+            get
+            {
                 return ResourceManager.GetString("prop_hasapp2", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string prop_ordernumber {
-            get {
+        public static string prop_ordernumber
+        {
+            get
+            {
                 return ResourceManager.GetString("prop_ordernumber", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string prop_isreg {
-            get {
+        public static string prop_isreg
+        {
+            get
+            {
                 return ResourceManager.GetString("prop_isreg", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string gen_desc {
-            get {
+        public static string gen_desc
+        {
+            get
+            {
                 return ResourceManager.GetString("gen_desc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string gen_import {
-            get {
+        public static string gen_import
+        {
+            get
+            {
                 return ResourceManager.GetString("gen_import", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string gen_export {
-            get {
+        public static string gen_export
+        {
+            get
+            {
                 return ResourceManager.GetString("gen_export", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string bagg_error {
-            get {
+        public static string bagg_error
+        {
+            get
+            {
                 return ResourceManager.GetString("bagg_error", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string bagg_targetpath {
-            get {
+        public static string bagg_targetpath
+        {
+            get
+            {
                 return ResourceManager.GetString("bagg_targetpath", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string bagg_file {
-            get {
+        public static string bagg_file
+        {
+            get
+            {
                 return ResourceManager.GetString("bagg_file", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string bagg_timestamp {
-            get {
+        public static string bagg_timestamp
+        {
+            get
+            {
                 return ResourceManager.GetString("bagg_timestamp", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string gen_uid {
-            get {
+        public static string gen_uid
+        {
+            get
+            {
                 return ResourceManager.GetString("gen_uid", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string prop_bcu {
-            get {
+        public static string prop_bcu
+        {
+            get
+            {
                 return ResourceManager.GetString("prop_bcu", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tapps_info {
-            get {
+        public static string tapps_info
+        {
+            get
+            {
                 return ResourceManager.GetString("tapps_info", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tapps_memory {
-            get {
+        public static string tapps_memory
+        {
+            get
+            {
                 return ResourceManager.GetString("tapps_memory", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tapps_loadp {
-            get {
+        public static string tapps_loadp
+        {
+            get
+            {
                 return ResourceManager.GetString("tapps_loadp", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string gen_copy {
-            get {
+        public static string gen_copy
+        {
+            get
+            {
                 return ResourceManager.GetString("gen_copy", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tapps_openv {
-            get {
+        public static string tapps_openv
+        {
+            get
+            {
                 return ResourceManager.GetString("tapps_openv", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tver_addrmem {
-            get {
+        public static string tver_addrmem
+        {
+            get
+            {
                 return ResourceManager.GetString("tver_addrmem", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tver_addroff {
-            get {
+        public static string tver_addroff
+        {
+            get
+            {
                 return ResourceManager.GetString("tver_addroff", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tver_addrmax {
-            get {
+        public static string tver_addrmax
+        {
+            get
+            {
                 return ResourceManager.GetString("tver_addrmax", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tver_assomem {
-            get {
+        public static string tver_assomem
+        {
+            get
+            {
                 return ResourceManager.GetString("tver_assomem", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tver_assooff {
-            get {
+        public static string tver_assooff
+        {
+            get
+            {
                 return ResourceManager.GetString("tver_assooff", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tver_assomax {
-            get {
+        public static string tver_assomax
+        {
+            get
+            {
                 return ResourceManager.GetString("tver_assomax", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tver_commem {
-            get {
+        public static string tver_commem
+        {
+            get
+            {
                 return ResourceManager.GetString("tver_commem", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tver_comoff {
-            get {
+        public static string tver_comoff
+        {
+            get
+            {
                 return ResourceManager.GetString("tver_comoff", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string prop_versreplace {
-            get {
+        public static string prop_versreplace
+        {
+            get
+            {
                 return ResourceManager.GetString("prop_versreplace", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string prop_ns {
-            get {
+        public static string prop_ns
+        {
+            get
+            {
                 return ResourceManager.GetString("prop_ns", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string gen_langs {
-            get {
+        public static string gen_langs
+        {
+            get
+            {
                 return ResourceManager.GetString("gen_langs", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tabs_check {
-            get {
+        public static string tabs_check
+        {
+            get
+            {
                 return ResourceManager.GetString("tabs_check", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tabs_mem {
-            get {
+        public static string tabs_mem
+        {
+            get
+            {
                 return ResourceManager.GetString("tabs_mem", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string vgen_autopara {
-            get {
+        public static string vgen_autopara
+        {
+            get
+            {
                 return ResourceManager.GetString("vgen_autopara", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string vgen_autocom {
-            get {
+        public static string vgen_autocom
+        {
+            get
+            {
                 return ResourceManager.GetString("vgen_autocom", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string vgen_union {
-            get {
+        public static string vgen_union
+        {
+            get
+            {
                 return ResourceManager.GetString("vgen_union", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string vgen_mods {
-            get {
+        public static string vgen_mods
+        {
+            get
+            {
                 return ResourceManager.GetString("vgen_mods", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string vgen_msg {
-            get {
+        public static string vgen_msg
+        {
+            get
+            {
                 return ResourceManager.GetString("vgen_msg", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string prop_address {
-            get {
+        public static string prop_address
+        {
+            get
+            {
                 return ResourceManager.GetString("prop_address", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string prop_size {
-            get {
+        public static string prop_size
+        {
+            get
+            {
                 return ResourceManager.GetString("prop_size", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string vgen_autosize {
-            get {
+        public static string vgen_autosize
+        {
+            get
+            {
                 return ResourceManager.GetString("vgen_autosize", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string prop_offset {
-            get {
+        public static string prop_offset
+        {
+            get
+            {
                 return ResourceManager.GetString("prop_offset", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string vgen_mautopara {
-            get {
+        public static string vgen_mautopara
+        {
+            get
+            {
                 return ResourceManager.GetString("vgen_mautopara", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string vgen_mautoorder {
-            get {
+        public static string vgen_mautoorder
+        {
+            get
+            {
                 return ResourceManager.GetString("vgen_mautoorder", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string vgen_heatmap {
-            get {
+        public static string vgen_heatmap
+        {
+            get
+            {
                 return ResourceManager.GetString("vgen_heatmap", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tabs_parat {
-            get {
+        public static string tabs_parat
+        {
+            get
+            {
                 return ResourceManager.GetString("tabs_parat", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tabs_union {
-            get {
+        public static string tabs_union
+        {
+            get
+            {
                 return ResourceManager.GetString("tabs_union", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tabs_module {
-            get {
+        public static string tabs_module
+        {
+            get
+            {
                 return ResourceManager.GetString("tabs_module", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string gen_reset {
-            get {
+        public static string gen_reset
+        {
+            get
+            {
                 return ResourceManager.GetString("gen_reset", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string gen_id {
-            get {
+        public static string gen_id
+        {
+            get
+            {
                 return ResourceManager.GetString("gen_id", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tabs_paras {
-            get {
+        public static string tabs_paras
+        {
+            get
+            {
                 return ResourceManager.GetString("tabs_paras", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tabs_pararefs {
-            get {
+        public static string tabs_pararefs
+        {
+            get
+            {
                 return ResourceManager.GetString("tabs_pararefs", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tabs_coms {
-            get {
+        public static string tabs_coms
+        {
+            get
+            {
                 return ResourceManager.GetString("tabs_coms", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tabs_comrefs {
-            get {
+        public static string tabs_comrefs
+        {
+            get
+            {
                 return ResourceManager.GetString("tabs_comrefs", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tabs_loadp {
-            get {
+        public static string tabs_loadp
+        {
+            get
+            {
                 return ResourceManager.GetString("tabs_loadp", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tabs_dyn {
-            get {
+        public static string tabs_dyn
+        {
+            get
+            {
                 return ResourceManager.GetString("tabs_dyn", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tabs_msg {
-            get {
+        public static string tabs_msg
+        {
+            get
+            {
                 return ResourceManager.GetString("tabs_msg", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tabs_arg {
-            get {
+        public static string tabs_arg
+        {
+            get
+            {
                 return ResourceManager.GetString("tabs_arg", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tmod_pbo {
-            get {
+        public static string tmod_pbo
+        {
+            get
+            {
                 return ResourceManager.GetString("tmod_pbo", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tmod_cbn {
-            get {
+        public static string tmod_cbn
+        {
+            get
+            {
                 return ResourceManager.GetString("tmod_cbn", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tmod_autocbn {
-            get {
+        public static string tmod_autocbn
+        {
+            get
+            {
                 return ResourceManager.GetString("tmod_autocbn", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string gen_filter {
-            get {
+        public static string gen_filter
+        {
+            get
+            {
                 return ResourceManager.GetString("gen_filter", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string parat_error {
-            get {
+        public static string parat_error
+        {
+            get
+            {
                 return ResourceManager.GetString("parat_error", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string prop_type {
-            get {
+        public static string prop_type
+        {
+            get
+            {
                 return ResourceManager.GetString("prop_type", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string parat_mansize {
-            get {
+        public static string parat_mansize
+        {
+            get
+            {
                 return ResourceManager.GetString("parat_mansize", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string prop_value {
-            get {
+        public static string prop_value
+        {
+            get
+            {
                 return ResourceManager.GetString("prop_value", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string prop_trans {
-            get {
+        public static string prop_trans
+        {
+            get
+            {
                 return ResourceManager.GetString("prop_trans", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string parat_add {
-            get {
+        public static string parat_add
+        {
+            get
+            {
                 return ResourceManager.GetString("parat_add", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string parat_min {
-            get {
+        public static string parat_min
+        {
+            get
+            {
                 return ResourceManager.GetString("parat_min", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string parat_max {
-            get {
+        public static string parat_max
+        {
+            get
+            {
                 return ResourceManager.GetString("parat_max", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string parat_increment {
-            get {
+        public static string parat_increment
+        {
+            get
+            {
                 return ResourceManager.GetString("parat_increment", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string parat_uihint {
-            get {
+        public static string parat_uihint
+        {
+            get
+            {
                 return ResourceManager.GetString("parat_uihint", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string parat_uihint_none {
-            get {
+        public static string parat_uihint_none
+        {
+            get
+            {
                 return ResourceManager.GetString("parat_uihint_none", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string parat_uihint_slider {
-            get {
+        public static string parat_uihint_slider
+        {
+            get
+            {
                 return ResourceManager.GetString("parat_uihint_slider", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string parat_uihint_check {
-            get {
+        public static string parat_uihint_check
+        {
+            get
+            {
                 return ResourceManager.GetString("parat_uihint_check", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string parat_uihint_prog {
-            get {
+        public static string parat_uihint_prog
+        {
+            get
+            {
                 return ResourceManager.GetString("parat_uihint_prog", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string parat_uihint_ha {
-            get {
+        public static string parat_uihint_ha
+        {
+            get
+            {
                 return ResourceManager.GetString("parat_uihint_ha", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string parat_uihint_ga {
-            get {
+        public static string parat_uihint_ga
+        {
+            get
+            {
                 return ResourceManager.GetString("parat_uihint_ga", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string parat_uihint_ua {
-            get {
+        public static string parat_uihint_ua
+        {
+            get
+            {
                 return ResourceManager.GetString("parat_uihint_ua", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string parat_uihint_ba {
-            get {
+        public static string parat_uihint_ba
+        {
+            get
+            {
                 return ResourceManager.GetString("parat_uihint_ba", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string parat_uihint_ma {
-            get {
+        public static string parat_uihint_ma
+        {
+            get
+            {
                 return ResourceManager.GetString("parat_uihint_ma", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string parat_uihint_sm {
-            get {
+        public static string parat_uihint_sm
+        {
+            get
+            {
                 return ResourceManager.GetString("parat_uihint_sm", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string parat_uihint_ipv4 {
-            get {
+        public static string parat_uihint_ipv4
+        {
+            get
+            {
                 return ResourceManager.GetString("parat_uihint_ipv4", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string parat_uihint_ipv6 {
-            get {
+        public static string parat_uihint_ipv6
+        {
+            get
+            {
                 return ResourceManager.GetString("parat_uihint_ipv6", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string parat_uihint_rgb {
-            get {
+        public static string parat_uihint_rgb
+        {
+            get
+            {
                 return ResourceManager.GetString("parat_uihint_rgb", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string parat_uihint_rgbw {
-            get {
+        public static string parat_uihint_rgbw
+        {
+            get
+            {
                 return ResourceManager.GetString("parat_uihint_rgbw", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string parat_uihint_hsv {
-            get {
+        public static string parat_uihint_hsv
+        {
+            get
+            {
                 return ResourceManager.GetString("parat_uihint_hsv", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string parat_addrt {
-            get {
+        public static string parat_addrt
+        {
+            get
+            {
                 return ResourceManager.GetString("parat_addrt", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string parat_vers {
-            get {
+        public static string parat_vers
+        {
+            get
+            {
                 return ResourceManager.GetString("parat_vers", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string parat_bagg {
-            get {
+        public static string parat_bagg
+        {
+            get
+            {
                 return ResourceManager.GetString("parat_bagg", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string parat_hue {
-            get {
+        public static string parat_hue
+        {
+            get
+            {
                 return ResourceManager.GetString("parat_hue", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string uni_error {
-            get {
+        public static string uni_error
+        {
+            get
+            {
                 return ResourceManager.GetString("uni_error", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string prop_sizebit {
-            get {
+        public static string prop_sizebit
+        {
+            get
+            {
                 return ResourceManager.GetString("prop_sizebit", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string prop_savepath {
-            get {
+        public static string prop_savepath
+        {
+            get
+            {
                 return ResourceManager.GetString("prop_savepath", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string prop_mem {
-            get {
+        public static string prop_mem
+        {
+            get
+            {
                 return ResourceManager.GetString("prop_mem", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string prop_offsetbit {
-            get {
+        public static string prop_offsetbit
+        {
+            get
+            {
                 return ResourceManager.GetString("prop_offsetbit", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string uni_error2 {
-            get {
+        public static string uni_error2
+        {
+            get
+            {
                 return ResourceManager.GetString("uni_error2", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string uni_addrauto {
-            get {
+        public static string uni_addrauto
+        {
+            get
+            {
                 return ResourceManager.GetString("uni_addrauto", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string prodv_text {
-            get {
+        public static string prodv_text
+        {
+            get
+            {
                 return ResourceManager.GetString("prodv_text", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string prodv_settings {
-            get {
+        public static string prodv_settings
+        {
+            get
+            {
                 return ResourceManager.GetString("prodv_settings", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string prodv_value {
-            get {
+        public static string prodv_value
+        {
+            get
+            {
                 return ResourceManager.GetString("prodv_value", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string prodv_id {
-            get {
+        public static string prodv_id
+        {
+            get
+            {
                 return ResourceManager.GetString("prodv_id", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string prop_function {
-            get {
+        public static string prop_function
+        {
+            get
+            {
                 return ResourceManager.GetString("prop_function", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string prodv_getval {
-            get {
+        public static string prodv_getval
+        {
+            get
+            {
                 return ResourceManager.GetString("prodv_getval", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string menu_info_debug {
-            get {
+        public static string menu_info_debug
+        {
+            get
+            {
                 return ResourceManager.GetString("menu_info_debug", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tcheck_tooltip {
-            get {
+        public static string tcheck_tooltip
+        {
+            get
+            {
                 return ResourceManager.GetString("tcheck_tooltip", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tcheck_check {
-            get {
+        public static string tcheck_check
+        {
+            get
+            {
                 return ResourceManager.GetString("tcheck_check", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tcheck_clean1 {
-            get {
+        public static string tcheck_clean1
+        {
+            get
+            {
                 return ResourceManager.GetString("tcheck_clean1", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tcheck_clean2 {
-            get {
+        public static string tcheck_clean2
+        {
+            get
+            {
                 return ResourceManager.GetString("tcheck_clean2", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string gen_clone {
-            get {
+        public static string gen_clone
+        {
+            get
+            {
                 return ResourceManager.GetString("gen_clone", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string gen_id_man {
-            get {
+        public static string gen_id_man
+        {
+            get
+            {
                 return ResourceManager.GetString("gen_id_man", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string gen_id_auto {
-            get {
+        public static string gen_id_auto
+        {
+            get
+            {
                 return ResourceManager.GetString("gen_id_auto", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string gen_id_reset {
-            get {
+        public static string gen_id_reset
+        {
+            get
+            {
                 return ResourceManager.GetString("gen_id_reset", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tpara_error {
-            get {
+        public static string tpara_error
+        {
+            get
+            {
                 return ResourceManager.GetString("tpara_error", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string prop_suffix {
-            get {
+        public static string prop_suffix
+        {
+            get
+            {
                 return ResourceManager.GetString("prop_suffix", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string prop_access {
-            get {
+        public static string prop_access
+        {
+            get
+            {
                 return ResourceManager.GetString("prop_access", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string gen_bit {
-            get {
+        public static string gen_bit
+        {
+            get
+            {
                 return ResourceManager.GetString("gen_bit", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tpara_union {
-            get {
+        public static string tpara_union
+        {
+            get
+            {
                 return ResourceManager.GetString("tpara_union", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string gen_union {
-            get {
+        public static string gen_union
+        {
+            get
+            {
                 return ResourceManager.GetString("gen_union", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tpara_infoauto {
-            get {
+        public static string tpara_infoauto
+        {
+            get
+            {
                 return ResourceManager.GetString("tpara_infoauto", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string prop_propid {
-            get {
+        public static string prop_propid
+        {
+            get
+            {
                 return ResourceManager.GetString("prop_propid", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string prop_objectindex {
-            get {
+        public static string prop_objectindex
+        {
+            get
+            {
                 return ResourceManager.GetString("prop_objectindex", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string gen_onlydeflang {
-            get {
+        public static string gen_onlydeflang
+        {
+            get
+            {
                 return ResourceManager.GetString("gen_onlydeflang", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tpara_error2 {
-            get {
+        public static string tpara_error2
+        {
+            get
+            {
                 return ResourceManager.GetString("tpara_error2", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string prop_para {
-            get {
+        public static string prop_para
+        {
+            get
+            {
                 return ResourceManager.GetString("prop_para", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string prop_order {
-            get {
+        public static string prop_order
+        {
+            get
+            {
                 return ResourceManager.GetString("prop_order", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tcom_error {
-            get {
+        public static string tcom_error
+        {
+            get
+            {
                 return ResourceManager.GetString("tcom_error", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tcom_para {
-            get {
+        public static string tcom_para
+        {
+            get
+            {
                 return ResourceManager.GetString("tcom_para", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tcom_func {
-            get {
+        public static string tcom_func
+        {
+            get
+            {
                 return ResourceManager.GetString("tcom_func", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tcom_dpt {
-            get {
+        public static string tcom_dpt
+        {
+            get
+            {
                 return ResourceManager.GetString("tcom_dpt", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tcom_dpst {
-            get {
+        public static string tcom_dpst
+        {
+            get
+            {
                 return ResourceManager.GetString("tcom_dpst", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tcom_size {
-            get {
+        public static string tcom_size
+        {
+            get
+            {
                 return ResourceManager.GetString("tcom_size", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tcom_flag_com {
-            get {
+        public static string tcom_flag_com
+        {
+            get
+            {
                 return ResourceManager.GetString("tcom_flag_com", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tcom_flag_read {
-            get {
+        public static string tcom_flag_read
+        {
+            get
+            {
                 return ResourceManager.GetString("tcom_flag_read", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tcom_flag_write {
-            get {
+        public static string tcom_flag_write
+        {
+            get
+            {
                 return ResourceManager.GetString("tcom_flag_write", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tcom_flag_trans {
-            get {
+        public static string tcom_flag_trans
+        {
+            get
+            {
                 return ResourceManager.GetString("tcom_flag_trans", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tcom_flag_update {
-            get {
+        public static string tcom_flag_update
+        {
+            get
+            {
                 return ResourceManager.GetString("tcom_flag_update", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tcom_flag_oninit {
-            get {
+        public static string tcom_flag_oninit
+        {
+            get
+            {
                 return ResourceManager.GetString("tcom_flag_oninit", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tcom_error2 {
-            get {
+        public static string tcom_error2
+        {
+            get
+            {
                 return ResourceManager.GetString("tcom_error2", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string prop_como {
-            get {
+        public static string prop_como
+        {
+            get
+            {
                 return ResourceManager.GetString("prop_como", resourceCulture);
             }
         }
-        
-        public static string tdyn_tmain {
-            get {
+
+        public static string tdyn_tmain
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_tmain", resourceCulture);
             }
         }
-        
-        public static string tdyn_tindchan {
-            get {
+
+        public static string tdyn_tindchan
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_tindchan", resourceCulture);
             }
         }
-        
-        public static string tdyn_troot {
-            get {
+
+        public static string tdyn_troot
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_troot", resourceCulture);
             }
         }
-        
-        public static string tdyn_pararef {
-            get {
+
+        public static string tdyn_pararef
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_pararef", resourceCulture);
             }
         }
-        
-        public static string tdyn_paraname {
-            get {
+
+        public static string tdyn_paraname
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_paraname", resourceCulture);
             }
         }
-        
-        public static string tdyn_paracell {
-            get {
+
+        public static string tdyn_paracell
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_paracell", resourceCulture);
             }
         }
-        
-        public static string tdyn_paratext {
-            get {
+
+        public static string tdyn_paratext
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_paratext", resourceCulture);
             }
         }
-        
-        public static string tdyn_parareftext {
-            get {
+
+        public static string tdyn_parareftext
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_parareftext", resourceCulture);
             }
         }
-        
-        public static string tdyn_mods {
-            get {
+
+        public static string tdyn_mods
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_mods", resourceCulture);
             }
         }
-        
-        public static string tdyn_args {
-            get {
+
+        public static string tdyn_args
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_args", resourceCulture);
             }
         }
-        
-        public static string tdyn_type {
-            get {
+
+        public static string tdyn_type
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_type", resourceCulture);
             }
         }
-        
-        public static string tdyn_comref {
-            get {
+
+        public static string tdyn_comref
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_comref", resourceCulture);
             }
         }
-        
-        public static string tdyn_comname {
-            get {
+
+        public static string tdyn_comname
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_comname", resourceCulture);
             }
         }
-        
-        public static string tdyn_comtext {
-            get {
+
+        public static string tdyn_comtext
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_comtext", resourceCulture);
             }
         }
-        
-        public static string tdyn_comreftext {
-            get {
+
+        public static string tdyn_comreftext
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_comreftext", resourceCulture);
             }
         }
-        
-        public static string tdyn_pb_showtree {
-            get {
+
+        public static string tdyn_pb_showtree
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_pb_showtree", resourceCulture);
             }
         }
-        
-        public static string tdyn_pb_inline {
-            get {
+
+        public static string tdyn_pb_inline
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_pb_inline", resourceCulture);
             }
         }
-        
-        public static string tdyn_pb_layout {
-            get {
+
+        public static string tdyn_pb_layout
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_pb_layout", resourceCulture);
             }
         }
-        
-        public static string tdyn_pb_cells {
-            get {
+
+        public static string tdyn_pb_cells
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_pb_cells", resourceCulture);
             }
         }
-        
-        public static string tdyn_pb_rows {
-            get {
+
+        public static string tdyn_pb_rows
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_pb_rows", resourceCulture);
             }
         }
-        
-        public static string tdyn_id {
-            get {
+
+        public static string tdyn_id
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_id", resourceCulture);
             }
         }
-        
-        public static string tdyn_pb_width {
-            get {
+
+        public static string tdyn_pb_width
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_pb_width", resourceCulture);
             }
         }
-        
-        public static string tdyn_textpara {
-            get {
+
+        public static string tdyn_textpara
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_textpara", resourceCulture);
             }
         }
-        
-        public static string tdyn_uihint {
-            get {
+
+        public static string tdyn_uihint
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_uihint", resourceCulture);
             }
         }
-        
-        public static string tdyn_cond {
-            get {
+
+        public static string tdyn_cond
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_cond", resourceCulture);
             }
         }
-        
-        public static string tdyn_ass_target {
-            get {
+
+        public static string tdyn_ass_target
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_ass_target", resourceCulture);
             }
         }
-        
-        public static string tdyn_ass_source {
-            get {
+
+        public static string tdyn_ass_source
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_ass_source", resourceCulture);
             }
         }
-        
-        public static string tdyn_ass_value {
-            get {
+
+        public static string tdyn_ass_value
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_ass_value", resourceCulture);
             }
         }
-        
-        public static string tdyn_ass_warning1 {
-            get {
+
+        public static string tdyn_ass_warning1
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_ass_warning1", resourceCulture);
             }
         }
-        
-        public static string tdyn_ass_warning2 {
-            get {
+
+        public static string tdyn_ass_warning2
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_ass_warning2", resourceCulture);
             }
         }
-        
-        public static string tdyn_tchan {
-            get {
+
+        public static string tdyn_tchan
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_tchan", resourceCulture);
             }
         }
-        
-        public static string tdyn_tblock {
-            get {
+
+        public static string tdyn_tblock
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_tblock", resourceCulture);
             }
         }
-        
-        public static string tdyn_tseparator {
-            get {
+
+        public static string tdyn_tseparator
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_tseparator", resourceCulture);
             }
         }
-        
-        public static string tdyn_tassign {
-            get {
+
+        public static string tdyn_tassign
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_tassign", resourceCulture);
             }
         }
-        
-        public static string tdyn_tmod {
-            get {
+
+        public static string tdyn_tmod
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_tmod", resourceCulture);
             }
         }
-        
-        public static string tdyn_tselection {
-            get {
+
+        public static string tdyn_tselection
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_tselection", resourceCulture);
             }
         }
-        
-        public static string tdyn_tcond {
-            get {
+
+        public static string tdyn_tcond
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_tcond", resourceCulture);
             }
         }
-        
-        public static string tdyn_tpara {
-            get {
+
+        public static string tdyn_tpara
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_tpara", resourceCulture);
             }
         }
-        
-        public static string tdyn_tcom {
-            get {
+
+        public static string tdyn_tcom
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_tcom", resourceCulture);
             }
         }
-        
-        public static string gen_cut {
-            get {
+
+        public static string gen_cut
+        {
+            get
+            {
                 return ResourceManager.GetString("gen_cut", resourceCulture);
             }
         }
-        
-        public static string gen_put {
-            get {
+
+        public static string gen_put
+        {
+            get
+            {
                 return ResourceManager.GetString("gen_put", resourceCulture);
             }
         }
-        
-        public static string gen_unfold {
-            get {
+
+        public static string gen_unfold
+        {
+            get
+            {
                 return ResourceManager.GetString("gen_unfold", resourceCulture);
             }
         }
-        
-        public static string gen_collapse {
-            get {
+
+        public static string gen_collapse
+        {
+            get
+            {
                 return ResourceManager.GetString("gen_collapse", resourceCulture);
             }
         }
-        
-        public static string tdyn_add_ichan {
-            get {
+
+        public static string tdyn_add_ichan
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_add_ichan", resourceCulture);
             }
         }
-        
-        public static string tdyn_add_chan {
-            get {
+
+        public static string tdyn_add_chan
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_add_chan", resourceCulture);
             }
         }
-        
-        public static string tdyn_add_block {
-            get {
+
+        public static string tdyn_add_block
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_add_block", resourceCulture);
             }
         }
-        
-        public static string tdyn_add_mod {
-            get {
+
+        public static string tdyn_add_mod
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_add_mod", resourceCulture);
             }
         }
-        
-        public static string tdyn_add_choose {
-            get {
+
+        public static string tdyn_add_choose
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_add_choose", resourceCulture);
             }
         }
-        
-        public static string tdyn_add_para {
-            get {
+
+        public static string tdyn_add_para
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_add_para", resourceCulture);
             }
         }
-        
-        public static string tdyn_add_com {
-            get {
+
+        public static string tdyn_add_com
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_add_com", resourceCulture);
             }
         }
-        
-        public static string tdyn_add_sepa {
-            get {
+
+        public static string tdyn_add_sepa
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_add_sepa", resourceCulture);
             }
         }
-        
-        public static string tdyn_add_assign {
-            get {
+
+        public static string tdyn_add_assign
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_add_assign", resourceCulture);
             }
         }
-        
-        public static string tdyn_add_btn {
-            get {
+
+        public static string tdyn_add_btn
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_add_btn", resourceCulture);
             }
         }
-        
-        public static string tdyn_when_def{
-            get {
+
+        public static string tdyn_when_def
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_when_def", resourceCulture);
             }
         }
-        
-        public static string tdyn_when1 {
-            get {
+
+        public static string tdyn_when1
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_when1", resourceCulture);
             }
         }
-        
-        public static string tdyn_when2 {
-            get {
+
+        public static string tdyn_when2
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_when2", resourceCulture);
             }
         }
-        
-        public static string tdyn_when3 {
-            get {
+
+        public static string tdyn_when3
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_when3", resourceCulture);
             }
         }
-        
-        public static string tdyn_when4 {
-            get {
+
+        public static string tdyn_when4
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_when4", resourceCulture);
             }
         }
-        
-        public static string tdyn_when5 {
-            get {
+
+        public static string tdyn_when5
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_when5", resourceCulture);
             }
         }
-        
-        public static string vgen_ets4 {
-            get {
+
+        public static string vgen_ets4
+        {
+            get
+            {
                 return ResourceManager.GetString("vgen_ets4", resourceCulture);
             }
         }
-        
-        public static string tdyn_add_cond {
-            get {
+
+        public static string tdyn_add_cond
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_add_cond", resourceCulture);
             }
         }
-        
-        public static string vgen_help {
-            get {
+
+        public static string vgen_help
+        {
+            get
+            {
                 return ResourceManager.GetString("vgen_help", resourceCulture);
             }
         }
-        
-        public static string tdyn_help {
-            get {
+
+        public static string tdyn_help
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_help", resourceCulture);
             }
         }
-        
-        public static string tabs_help {
-            get {
+
+        public static string tabs_help
+        {
+            get
+            {
                 return ResourceManager.GetString("tabs_help", resourceCulture);
             }
         }
-        
-        public static string help_edit {
-            get {
+
+        public static string help_edit
+        {
+            get
+            {
                 return ResourceManager.GetString("help_edit", resourceCulture);
             }
         }
-        
-        public static string help_preview {
-            get {
+
+        public static string help_preview
+        {
+            get
+            {
                 return ResourceManager.GetString("help_preview", resourceCulture);
             }
         }
-        
-        public static string tapps_medium {
-            get {
+
+        public static string tapps_medium
+        {
+            get
+            {
                 return ResourceManager.GetString("tapps_medium", resourceCulture);
             }
         }
-        
-        public static string menu_info_help {
-            get {
+
+        public static string menu_info_help
+        {
+            get
+            {
                 return ResourceManager.GetString("menu_info_help", resourceCulture);
             }
         }
-        
-        public static string vgen_autoload {
-            get {
+
+        public static string vgen_autoload
+        {
+            get
+            {
                 return ResourceManager.GetString("vgen_autoload", resourceCulture);
             }
         }
-        
-        public static string tdyn_add_repeat {
-            get {
+
+        public static string tdyn_add_repeat
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_add_repeat", resourceCulture);
             }
         }
-        
-        public static string tdyn_trepe {
-            get {
+
+        public static string tdyn_trepe
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_trepe", resourceCulture);
             }
         }
-        
-        public static string prop_count {
-            get {
+
+        public static string prop_count
+        {
+            get
+            {
                 return ResourceManager.GetString("prop_count", resourceCulture);
             }
         }
-        
-        public static string prop_start {
-            get {
+
+        public static string prop_start
+        {
+            get
+            {
                 return ResourceManager.GetString("prop_start", resourceCulture);
             }
         }
-        
-        public static string prop_max {
-            get {
+
+        public static string prop_max
+        {
+            get
+            {
                 return ResourceManager.GetString("prop_max", resourceCulture);
             }
         }
-        
-        public static string tabs_alloc {
-            get {
+
+        public static string tabs_alloc
+        {
+            get
+            {
                 return ResourceManager.GetString("tabs_alloc", resourceCulture);
             }
         }
-        
-        public static string tdyn_usealloc {
-            get {
+
+        public static string tdyn_usealloc
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_usealloc", resourceCulture);
             }
         }
-        
-        public static string tabs_icon {
-            get {
+
+        public static string tabs_icon
+        {
+            get
+            {
                 return ResourceManager.GetString("tabs_icon", resourceCulture);
             }
         }
-        
-        public static string parat_year {
-            get {
+
+        public static string parat_year
+        {
+            get
+            {
                 return ResourceManager.GetString("parat_year", resourceCulture);
             }
         }
-        
-        public static string parat_date {
-            get {
+
+        public static string parat_date
+        {
+            get
+            {
                 return ResourceManager.GetString("parat_date", resourceCulture);
             }
         }
-        
-        public static string prop_icon {
-            get {
+
+        public static string prop_icon
+        {
+            get
+            {
                 return ResourceManager.GetString("prop_icon", resourceCulture);
             }
         }
-        
-        public static string menu_info_check {
-            get {
+
+        public static string menu_info_check
+        {
+            get
+            {
                 return ResourceManager.GetString("menu_info_check", resourceCulture);
             }
         }
-        
-        public static string menu_info_auto {
-            get {
+
+        public static string menu_info_auto
+        {
+            get
+            {
                 return ResourceManager.GetString("menu_info_auto", resourceCulture);
             }
         }
-        
-        public static string tdyn_tbutton {
-            get {
+
+        public static string tdyn_tbutton
+        {
+            get
+            {
                 return ResourceManager.GetString("tdyn_tbutton", resourceCulture);
             }
         }
-        
-        public static string prop_online {
-            get {
+
+        public static string prop_online
+        {
+            get
+            {
                 return ResourceManager.GetString("prop_online", resourceCulture);
             }
         }
-        
-        public static string prop_offline {
-            get {
+
+        public static string prop_offline
+        {
+            get
+            {
                 return ResourceManager.GetString("prop_offline", resourceCulture);
             }
         }
-        
-        public static string prop_connless {
-            get {
+
+        public static string prop_connless
+        {
+            get
+            {
                 return ResourceManager.GetString("prop_connless", resourceCulture);
             }
         }
-        
-        public static string prop_connoriented {
-            get {
+
+        public static string prop_connoriented
+        {
+            get
+            {
                 return ResourceManager.GetString("prop_connoriented", resourceCulture);
             }
         }
-        
-        public static string prop_handlerparas {
-            get {
+
+        public static string prop_handlerparas
+        {
+            get
+            {
                 return ResourceManager.GetString("prop_handlerparas", resourceCulture);
             }
         }
-        
-        public static string parat_doffset {
-            get {
+
+        public static string parat_doffset
+        {
+            get
+            {
                 return ResourceManager.GetString("parat_doffset", resourceCulture);
             }
         }
-        
-        public static string parat_dfactor {
-            get {
+
+        public static string parat_dfactor
+        {
+            get
+            {
                 return ResourceManager.GetString("parat_dfactor", resourceCulture);
             }
         }
-        
-        public static string tgen_guid {
-            get {
+
+        public static string tgen_guid
+        {
+            get
+            {
                 return ResourceManager.GetString("tgen_guid", resourceCulture);
             }
         }
-        
-        public static string tgen_openknxid {
-            get {
+
+        public static string tgen_openknxid
+        {
+            get
+            {
                 return ResourceManager.GetString("tgen_openknxid", resourceCulture);
             }
         }
-        
-        public static string bagg_changed {
-            get {
+
+        public static string bagg_changed
+        {
+            get
+            {
                 return ResourceManager.GetString("bagg_changed", resourceCulture);
             }
         }
-        
-        public static string vgen_businterface {
-            get {
+
+        public static string vgen_businterface
+        {
+            get
+            {
                 return ResourceManager.GetString("vgen_businterface", resourceCulture);
             }
         }
-        
-        public static string vgen_busrouter {
-            get {
+
+        public static string vgen_busrouter
+        {
+            get
+            {
                 return ResourceManager.GetString("vgen_busrouter", resourceCulture);
             }
         }
-        
-        public static string vmem_mod {
-            get {
+
+        public static string vmem_mod
+        {
+            get
+            {
                 return ResourceManager.GetString("vmem_mod", resourceCulture);
             }
         }
-        
-        public static string vmem_gat {
-            get {
+
+        public static string vmem_gat
+        {
+            get
+            {
                 return ResourceManager.GetString("vmem_gat", resourceCulture);
             }
         }
-        
-        public static string vmem_cot {
-            get {
+
+        public static string vmem_cot
+        {
+            get
+            {
                 return ResourceManager.GetString("vmem_cot", resourceCulture);
             }
         }
-        
-        public static string vmem_ast {
-            get {
+
+        public static string vmem_ast
+        {
+            get
+            {
                 return ResourceManager.GetString("vmem_ast", resourceCulture);
             }
         }
-        
-        public static string submod_open {
-            get {
+
+        public static string submod_open
+        {
+            get
+            {
                 return ResourceManager.GetString("submod_open", resourceCulture);
             }
         }
-        
-        public static string tpub_filename {
-            get {
+
+        public static string tpub_filename
+        {
+            get
+            {
                 return ResourceManager.GetString("tpub_filename", resourceCulture);
             }
         }
-        
-        public static string menu_info {
-            get {
+
+        public static string menu_info
+        {
+            get
+            {
                 return ResourceManager.GetString("menu_info", resourceCulture);
             }
         }
-        
-        public static string main_l1 {
-            get {
+
+        public static string main_l1
+        {
+            get
+            {
                 return ResourceManager.GetString("main_l1", resourceCulture);
             }
         }
-        
-        public static string main_l2 {
-            get {
+
+        public static string main_l2
+        {
+            get
+            {
                 return ResourceManager.GetString("main_l2", resourceCulture);
             }
         }
-        
-        public static string main_l3 {
-            get {
+
+        public static string main_l3
+        {
+            get
+            {
                 return ResourceManager.GetString("main_l3", resourceCulture);
             }
         }
-        
-        public static string main_l4 {
-            get {
+
+        public static string main_l4
+        {
+            get
+            {
                 return ResourceManager.GetString("main_l4", resourceCulture);
             }
         }
-        
-        public static string main_l5 {
-            get {
+
+        public static string main_l5
+        {
+            get
+            {
                 return ResourceManager.GetString("main_l5", resourceCulture);
             }
         }
-        
-        public static string editor_save {
-            get {
+
+        public static string editor_save
+        {
+            get
+            {
                 return ResourceManager.GetString("editor_save", resourceCulture);
             }
         }
-        
-        public static string editor_cancel {
-            get {
+
+        public static string editor_cancel
+        {
+            get
+            {
                 return ResourceManager.GetString("editor_cancel", resourceCulture);
             }
         }
-        
-        public static string tprod_own {
-            get {
+
+        public static string tprod_own
+        {
+            get
+            {
                 return ResourceManager.GetString("tprod_own", resourceCulture);
             }
         }
-        
-        public static string tprod_mask {
-            get {
+
+        public static string tprod_mask
+        {
+            get
+            {
                 return ResourceManager.GetString("tprod_mask", resourceCulture);
             }
         }
-        
-        public static string tprod_edit {
-            get {
+
+        public static string tprod_edit
+        {
+            get
+            {
                 return ResourceManager.GetString("tprod_edit", resourceCulture);
             }
         }
-        
-        public static string tmem_settings {
-            get {
+
+        public static string tmem_settings
+        {
+            get
+            {
                 return ResourceManager.GetString("tmem_settings", resourceCulture);
             }
         }
-        
-        public static string tmem_heatmap {
-            get {
+
+        public static string tmem_heatmap
+        {
+            get
+            {
                 return ResourceManager.GetString("tmem_heatmap", resourceCulture);
             }
         }
-        
-        public static string prop_allocs {
-            get {
+
+        public static string prop_allocs
+        {
+            get
+            {
                 return ResourceManager.GetString("prop_allocs", resourceCulture);
             }
         }
-        
-        public static string tabs_sm {
-            get {
+
+        public static string tabs_sm
+        {
+            get
+            {
                 return ResourceManager.GetString("tabs_sm", resourceCulture);
             }
         }
-        
-        public static string mem_para {
-            get {
+
+        public static string mem_para
+        {
+            get
+            {
                 return ResourceManager.GetString("mem_para", resourceCulture);
             }
         }
-        
-        public static string mem_union {
-            get {
+
+        public static string mem_union
+        {
+            get
+            {
                 return ResourceManager.GetString("mem_union", resourceCulture);
             }
         }
-        
-        public static string mem_module {
-            get {
+
+        public static string mem_module
+        {
+            get
+            {
                 return ResourceManager.GetString("mem_module", resourceCulture);
             }
         }
-        
-        public static string mem_gat {
-            get {
+
+        public static string mem_gat
+        {
+            get
+            {
                 return ResourceManager.GetString("mem_gat", resourceCulture);
             }
         }
-        
-        public static string mem_cot {
-            get {
+
+        public static string mem_cot
+        {
+            get
+            {
                 return ResourceManager.GetString("mem_cot", resourceCulture);
             }
         }
-        
-        public static string mem_ast {
-            get {
+
+        public static string mem_ast
+        {
+            get
+            {
                 return ResourceManager.GetString("mem_ast", resourceCulture);
             }
         }
 
-        public static string mem_bcu1 {
-            get {
+        public static string mem_bcu1
+        {
+            get
+            {
                 return ResourceManager.GetString("mem_bcu1", resourceCulture);
             }
         }
-        
-        public static string tmod_prefix {
-            get {
+
+        public static string tmod_prefix
+        {
+            get
+            {
                 return ResourceManager.GetString("tmod_prefix", resourceCulture);
             }
         }
-        
-        public static string topen_url {
-            get {
+
+        public static string topen_url
+        {
+            get
+            {
                 return ResourceManager.GetString("topen_url", resourceCulture);
             }
         }
-        
-        public static string topen_branch {
-            get {
+
+        public static string topen_branch
+        {
+            get
+            {
                 return ResourceManager.GetString("topen_branch", resourceCulture);
             }
         }
-        
-        public static string topen_commit {
-            get {
+
+        public static string topen_commit
+        {
+            get
+            {
                 return ResourceManager.GetString("topen_commit", resourceCulture);
             }
         }
-        
-        public static string topen_numchannels {
-            get {
+
+        public static string topen_numchannels
+        {
+            get
+            {
                 return ResourceManager.GetString("topen_numchannels", resourceCulture);
             }
         }
-        
-        public static string topen_update {
-            get {
+
+        public static string topen_update
+        {
+            get
+            {
                 return ResourceManager.GetString("topen_update", resourceCulture);
             }
         }
-        
-        public static string topen_haspart {
-            get {
+
+        public static string topen_haspart
+        {
+            get
+            {
                 return ResourceManager.GetString("topen_haspart", resourceCulture);
             }
         }
-        
-        public static string topen_hasshare {
-            get {
+
+        public static string topen_hasshare
+        {
+            get
+            {
                 return ResourceManager.GetString("topen_hasshare", resourceCulture);
             }
         }
-        
-        public static string topen_hastempl {
-            get {
+
+        public static string topen_hastempl
+        {
+            get
+            {
                 return ResourceManager.GetString("topen_hastempl", resourceCulture);
             }
         }
-        
-        public static string tcom_flag_enable {
-            get {
+
+        public static string tcom_flag_enable
+        {
+            get
+            {
                 return ResourceManager.GetString("tcom_flag_enable", resourceCulture);
             }
         }
-        
-        public static string tcom_flag_disable {
-            get {
+
+        public static string tcom_flag_disable
+        {
+            get
+            {
                 return ResourceManager.GetString("tcom_flag_disable", resourceCulture);
             }
         }
-        
-        public static string menu_sign {
-            get {
+
+        public static string menu_sign
+        {
+            get
+            {
                 return ResourceManager.GetString("menu_sign", resourceCulture);
             }
         }
-        
-        public static string menu_sign_folder {
-            get {
+
+        public static string menu_sign_folder
+        {
+            get
+            {
                 return ResourceManager.GetString("menu_sign_folder", resourceCulture);
             }
         }
-        
-        public static string gen_translate {
-            get {
+
+        public static string gen_translate
+        {
+            get
+            {
                 return ResourceManager.GetString("gen_translate", resourceCulture);
             }
         }
-        
-        public static string menu_options {
-            get {
+
+        public static string menu_options
+        {
+            get
+            {
                 return ResourceManager.GetString("menu_options", resourceCulture);
             }
         }
-        
-        public static string menu_out {
-            get {
+
+        public static string menu_out
+        {
+            get
+            {
                 return ResourceManager.GetString("menu_out", resourceCulture);
             }
         }
-        
-        public static string menu_out_exe {
-            get {
+
+        public static string menu_out_exe
+        {
+            get
+            {
                 return ResourceManager.GetString("menu_out_exe", resourceCulture);
             }
         }
-        
-        public static string menu_out_ae {
-            get {
+
+        public static string menu_out_ae
+        {
+            get
+            {
                 return ResourceManager.GetString("menu_out_ae", resourceCulture);
             }
         }
-        
-        public static string tuni_settings {
-            get {
+
+        public static string tuni_settings
+        {
+            get
+            {
                 return ResourceManager.GetString("tuni_settings", resourceCulture);
             }
         }
-        
-        public static string tuni_heatmap {
-            get {
+
+        public static string tuni_heatmap
+        {
+            get
+            {
                 return ResourceManager.GetString("tuni_heatmap", resourceCulture);
             }
         }
-        
-        public static string tabs_proj {
-            get {
+
+        public static string tabs_proj
+        {
+            get
+            {
                 return ResourceManager.GetString("tabs_proj", resourceCulture);
             }
         }
-        
-        public static string tcom_flags {
-            get {
+
+        public static string tcom_flags
+        {
+            get
+            {
                 return ResourceManager.GetString("tcom_flags", resourceCulture);
             }
         }
-        
-        public static string tcom_trans {
-            get {
+
+        public static string tcom_trans
+        {
+            get
+            {
                 return ResourceManager.GetString("tcom_trans", resourceCulture);
             }
         }
-        
-        public static string tcom_recv {
-            get {
+
+        public static string tcom_recv
+        {
+            get
+            {
                 return ResourceManager.GetString("tcom_recv", resourceCulture);
             }
         }
-        
-        public static string tcom_overwrite {
-            get {
+
+        public static string tcom_overwrite
+        {
+            get
+            {
                 return ResourceManager.GetString("tcom_overwrite", resourceCulture);
             }
         }
@@ -2589,8 +3257,10 @@ namespace Kaenx.Creator.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string parat_halign {
-            get {
+        public static string parat_halign
+        {
+            get
+            {
                 return ResourceManager.GetString("parat_halign", resourceCulture);
             }
         }
@@ -2598,8 +3268,10 @@ namespace Kaenx.Creator.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string parat_display {
-            get {
+        public static string parat_display
+        {
+            get
+            {
                 return ResourceManager.GetString("parat_display", resourceCulture);
             }
         }
@@ -2607,8 +3279,10 @@ namespace Kaenx.Creator.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string parat_unit {
-            get {
+        public static string parat_unit
+        {
+            get
+            {
                 return ResourceManager.GetString("parat_unit", resourceCulture);
             }
         }
@@ -2616,8 +3290,10 @@ namespace Kaenx.Creator.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string parat_export_enum {
-            get {
+        public static string parat_export_enum
+        {
+            get
+            {
                 return ResourceManager.GetString("parat_export_enum", resourceCulture);
             }
         }
@@ -2625,8 +3301,10 @@ namespace Kaenx.Creator.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tabs_scripts {
-            get {
+        public static string tabs_scripts
+        {
+            get
+            {
                 return ResourceManager.GetString("tabs_scripts", resourceCulture);
             }
         }
@@ -2634,8 +3312,10 @@ namespace Kaenx.Creator.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string import_diff_manu {
-            get {
+        public static string import_diff_manu
+        {
+            get
+            {
                 return ResourceManager.GetString("import_diff_manu", resourceCulture);
             }
         }
@@ -2643,8 +3323,10 @@ namespace Kaenx.Creator.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string import_diff_manu_title {
-            get {
+        public static string import_diff_manu_title
+        {
+            get
+            {
                 return ResourceManager.GetString("import_diff_manu_title", resourceCulture);
             }
         }
@@ -2652,8 +3334,10 @@ namespace Kaenx.Creator.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string gen_translate_fix {
-            get {
+        public static string gen_translate_fix
+        {
+            get
+            {
                 return ResourceManager.GetString("gen_translate_fix", resourceCulture);
             }
         }
@@ -2661,8 +3345,10 @@ namespace Kaenx.Creator.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string vgen_secure {
-            get {
+        public static string vgen_secure
+        {
+            get
+            {
                 return ResourceManager.GetString("vgen_secure", resourceCulture);
             }
         }
@@ -2670,8 +3356,10 @@ namespace Kaenx.Creator.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string vgen_businterface_count {
-            get {
+        public static string vgen_businterface_count
+        {
+            get
+            {
                 return ResourceManager.GetString("vgen_businterface_count", resourceCulture);
             }
         }
@@ -2679,8 +3367,10 @@ namespace Kaenx.Creator.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string vgen_includeoffset {
-            get {
+        public static string vgen_includeoffset
+        {
+            get
+            {
                 return ResourceManager.GetString("vgen_includeoffset", resourceCulture);
             }
         }
@@ -2688,8 +3378,10 @@ namespace Kaenx.Creator.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tapps_reset_bcu {
-            get {
+        public static string tapps_reset_bcu
+        {
+            get
+            {
                 return ResourceManager.GetString("tapps_reset_bcu", resourceCulture);
             }
         }
@@ -2697,8 +3389,10 @@ namespace Kaenx.Creator.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string tapps_bcu_empty {
-            get {
+        public static string tapps_bcu_empty
+        {
+            get
+            {
                 return ResourceManager.GetString("tapps_bcu_empty", resourceCulture);
             }
         }
@@ -2706,8 +3400,10 @@ namespace Kaenx.Creator.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string prop_ipconfig {
-            get {
+        public static string prop_ipconfig
+        {
+            get
+            {
                 return ResourceManager.GetString("prop_ipconfig", resourceCulture);
             }
         }
@@ -2715,8 +3411,10 @@ namespace Kaenx.Creator.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string prop_ipconfig_tool {
-            get {
+        public static string prop_ipconfig_tool
+        {
+            get
+            {
                 return ResourceManager.GetString("prop_ipconfig_tool", resourceCulture);
             }
         }
@@ -2724,9 +3422,22 @@ namespace Kaenx.Creator.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
         /// </summary>
-        public static string prop_ipconfig_custom {
-            get {
+        public static string prop_ipconfig_custom
+        {
+            get
+            {
                 return ResourceManager.GetString("prop_ipconfig_custom", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Veröffentlichen ähnelt.
+        /// </summary>
+        public static string tabs_opt
+        {
+            get
+            {
+                return ResourceManager.GetString("tabs_opt", resourceCulture);
             }
         }
     }
