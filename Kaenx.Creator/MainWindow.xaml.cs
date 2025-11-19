@@ -764,7 +764,36 @@ namespace Kaenx.Creator
                         }
                         ns = int.Parse(m.Groups[1].Value);
                     }
-                    File.Copy(filePath, filePath.Replace(sourcePath, targetPath).Replace(".mtxml", ".xml"));
+                    if(filePath.Contains("Hardware."))
+                    {
+                        // xreginfo.SetAttributeValue("RegistrationNumber", "0001/" + general.Info.Version + ver.Number);
+                        XDocument xhard = XDocument.Load(filePath);
+                        var xhards = xhard.Root.Descendants().Where(e => e.Name.LocalName == "Hardware2Program");
+
+                        foreach(var xhardtoprog in xhards)
+                        {
+                            var xreginfo = xhardtoprog.Descendants().FirstOrDefault(e => e.Name.LocalName == "RegistrationInfo");
+                            if(xreginfo == null)
+                            {
+                                // M-02DC_H-1-3_HP-0000-11-0000
+                                string[] splits = xhardtoprog.Attribute("Id")?.Value.Split('-') ?? new string[0];
+                                if(splits.Length < 7) continue;
+                                int appversionInt = int.Parse(splits[5], System.Globalization.NumberStyles.HexNumber);
+                                string appversion = appversionInt.ToString();
+                                string hardversion = splits[3].Substring(0, splits[3].IndexOf('_'));
+                                
+                                XElement xreg = new XElement(XName.Get("RegistrationInfo", xhard.Root.Name.NamespaceName));
+                                xreg.SetAttributeValue("RegistrationStatus", "Registered");
+                                xreg.SetAttributeValue("RegistrationNumber", "0001/" + hardversion + appversion);
+                                xhardtoprog.Add(xreg);
+                                // <RegistrationInfo RegistrationStatus="Registered" RegistrationNumber="0001/317" />
+                            }
+                        }
+                        xhard.Save(filePath.Replace(sourcePath, targetPath).Replace(".mtxml", ".xml"));
+                    } else
+                    {
+                        File.Copy(filePath, filePath.Replace(sourcePath, targetPath).Replace(".mtxml", ".xml"));
+                    }
                 }
 
                 Kaenx.Creator.Classes.ExportHelper helper = new Kaenx.Creator.Classes.ExportHelper(General, null);
