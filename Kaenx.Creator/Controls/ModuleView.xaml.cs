@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -121,6 +122,9 @@ namespace Kaenx.Creator.Controls
         private void ClickRemoveModule(object sender, RoutedEventArgs e)
         {
             Models.Module mod = ModuleList.SelectedItem as Models.Module;
+            if (mod == null)
+                return;
+
             if(mod.IsOpenKnxModule)
             {
                 MessageBox.Show(Properties.Messages.openknx_modules_remove, Properties.Messages.openknx_modules_title);
@@ -221,6 +225,22 @@ namespace Kaenx.Creator.Controls
         private void Changed(string name)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+
+        private void ClickExportModule(object sender, RoutedEventArgs e)
+        {
+            Models.Module mod = ModuleList.SelectedItem as Models.Module;
+            if (mod == null)
+                return;
+
+            OpenFolderDialog ofd = new OpenFolderDialog();
+            if (ofd.ShowDialog() != true)
+                return;
+
+            ExportHelper helper = new ExportHelper(MainWindow.Instance.General, null);
+            helper.ExportModuleToProducer(mod, Version, ofd.FolderName);
+        
+            MessageBox.Show("Export war erfolgreich!", "Producer Export", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }

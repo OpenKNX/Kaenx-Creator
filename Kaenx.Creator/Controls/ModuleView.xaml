@@ -113,8 +113,9 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="100" />
-            <ColumnDefinition Width="100" />
+            <ColumnDefinition Width="80" />
+            <ColumnDefinition Width="80" />
+            <ColumnDefinition Width="50" />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
 
@@ -134,8 +135,9 @@
 
         <Button Grid.Row="1" Content="{x:Static p:Resources.gen_add}" Click="ClickAddModule" Margin="0 0 1 2" />
         <Button Grid.Row="1" Grid.Column="1" Content="{x:Static p:Resources.gen_remove}" Click="ClickRemoveModule" Margin="1 0 0 2" />
+        <Button Grid.Row="1" Grid.Column="2" Content="Exp." Click="ClickExportModule" Margin="1 0 0 2" />
 
-        <ListView x:Name="ModuleList" Grid.Row="2" Grid.ColumnSpan="2" ItemsSource="{Binding CurrentModule.Modules, ElementName=ViewControl}" DisplayMemberPath="Name" />
+        <ListView x:Name="ModuleList" Grid.Row="2" Grid.ColumnSpan="3" ItemsSource="{Binding CurrentModule.Modules, ElementName=ViewControl}" DisplayMemberPath="Name" />
 
         <TabControl x:Name="ModuleTabs" Grid.Row="1" Grid.RowSpan="2" Grid.Column="3" TabStripPlacement="Left" Style="{StaticResource LeftTabControl}" IsEnabled="{Binding ElementName=ModuleList, Path=SelectedItem, Converter={StaticResource EmptyToBool}, ConverterParameter=true}">
             <TabItem Header="{x:Static p:Resources.gen_gen}" Style="{StaticResource LeftTabItem2}" DataContext="{Binding SelectedItem, ElementName=ModuleList}"> 
