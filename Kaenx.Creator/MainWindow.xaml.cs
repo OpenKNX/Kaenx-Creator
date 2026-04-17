@@ -1,4 +1,5 @@
 ﻿using Kaenx.Creator.Classes;
+using Kaenx.Creator.Models;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using System;
@@ -772,23 +773,51 @@ namespace Kaenx.Creator
 
                         foreach(var xhardtoprog in xhards)
                         {
-                            var xreginfo = xhardtoprog.Descendants().FirstOrDefault(e => e.Name.LocalName == "RegistrationInfo");
-                            if(xreginfo == null)
+                            var xreginfos = xhardtoprog.Descendants().Where(e => e.Name.LocalName == "RegistrationInfo");
+                            foreach( var xreginfo in xreginfos)
+                                xreginfo.Remove();
+
+                            string hardware2progid = xhardtoprog.Attribute("Id")?.Value;
+                            string hardwareid = hardware2progid.Substring(0, hardware2progid.IndexOf("_HP"));
+                            var xhardware = xhard.Root.Descendants().Single(e => e.Attribute("Id")?.Value == hardwareid);
+                            string hardversion = xhardware.Attribute("VersionNumber")?.Value ?? "0";
+
+                            List<int> appNumbers = new();
+                            var xappinfos = xhardtoprog.Descendants().Where(e => e.Name.LocalName == "ApplicationProgramRef");
+                            foreach( var xappinfo in xappinfos)
                             {
-                                // M-02DC_H-1-3_HP-0000-11-0000
-                                string[] splits = xhardtoprog.Attribute("Id")?.Value.Split('-') ?? new string[0];
-                                if(splits.Length < 7) continue;
-                                int appversionInt = int.Parse(splits[5], System.Globalization.NumberStyles.HexNumber);
-                                string appversion = appversionInt.ToString();
-                                string hardversion = splits[3].Substring(0, splits[3].IndexOf('_'));
-                                
+                                string[] splits = xappinfo.Attribute("RefId")?.Value.Split('-') ?? new string[0];
+                                if(splits.Length == 0)
+                                    continue;
+
+                                int appnumberInt = int.Parse(splits[2], System.Globalization.NumberStyles.HexNumber);
+                                if (appNumbers.Contains(appnumberInt))
+                                    continue;
+                                appNumbers.Add(appnumberInt);
+                                string appnumber = appnumberInt.ToString();
+
                                 XElement xreg = new XElement(XName.Get("RegistrationInfo", xhard.Root.Name.NamespaceName));
                                 xreg.SetAttributeValue("RegistrationStatus", "Registered");
-                                xreg.SetAttributeValue("RegistrationNumber", "0001/" + hardversion + appversion);
+                                xreg.SetAttributeValue("RegistrationNumber", "0001/" + hardversion + appnumber);
                                 xhardtoprog.Add(xreg);
                                 // <RegistrationInfo RegistrationStatus="Registered" RegistrationNumber="0001/317" />
                             }
                         }
+
+                        var xprods = xhard.Root.Descendants().Where(e => e.Name.LocalName == "Product");
+                        foreach(var xprod in xprods)
+                        {
+                            var xreginfos = xprod.Descendants().Where(e => e.Name.LocalName == "RegistrationInfo");
+                            foreach( var xreginfo in xreginfos)
+                                xreginfo.Remove();
+                            string prodid = xprod.Attribute("Id")?.Value;
+                            string prodversion = xprod.Attribute("VersionNumber")?.Value ?? "0";
+                            XElement xreg = new XElement(XName.Get("RegistrationInfo", xhard.Root.Name.NamespaceName));
+                            xreg.SetAttributeValue("RegistrationStatus", "Registered");
+                            xprod.Add(xreg);
+                        }
+
+
                         xhard.Save(filePath.Replace(sourcePath, targetPath).Replace(".mtxml", ".xml"));
                     } else
                     {
