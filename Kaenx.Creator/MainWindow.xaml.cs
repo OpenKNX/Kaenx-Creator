@@ -225,7 +225,7 @@ namespace Kaenx.Creator
 
         private void ClickNew(object sender, RoutedEventArgs e)
         {
-            General = new Models.MainModel() { ImportVersion = Kaenx.Creator.Classes.Helper.CurrentVersion, Guid = Guid.NewGuid().ToString() };
+            MainModel model = new Models.MainModel() { ImportVersion = Kaenx.Creator.Classes.Helper.CurrentVersion, Guid = Guid.NewGuid().ToString() };
             var currentLang = System.Threading.Thread.CurrentThread.CurrentUICulture.IetfLanguageTag;
             if(!ImportHelper._langTexts.ContainsKey(currentLang))
                 if(currentLang.Contains('-'))
@@ -236,22 +236,24 @@ namespace Kaenx.Creator
                 currentLang = ImportHelper._langTexts.Keys.FirstOrDefault(l => l.Split('-')[0] == currentLang);
                 if(string.IsNullOrEmpty(currentLang)) currentLang = "en-US";
             }
-            General.Application.DefaultLanguage = currentLang;
-            General.Catalog.Add(new Models.CatalogItem() { Name = Properties.Messages.main_def_cat });
+            model.Application.DefaultLanguage = currentLang;
+            model.Catalog.Add(new Models.CatalogItem() { Name = Properties.Messages.main_def_cat });
 
-            General.Application.Languages.Add(new Models.Language(System.Threading.Thread.CurrentThread.CurrentUICulture.DisplayName, currentLang));
-            foreach(Models.Language lang in General.Application.Languages)
+            model.Application.Languages.Add(new Models.Language(System.Threading.Thread.CurrentThread.CurrentUICulture.DisplayName, currentLang));
+            foreach(Models.Language lang in model.Application.Languages)
             {
-                if(!General.Info.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
-                    General.Info.Text.Add(new Models.Translation(lang, ""));
-                if(!General.Info.Description.Any(t => t.Language.CultureCode == lang.CultureCode))
-                    General.Info.Description.Add(new Models.Translation(lang, ""));
-                if(!General.Application.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
-                    General.Application.Text.Add(new Models.Translation(lang, ""));
+                if(!model.Info.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
+                    model.Info.Text.Add(new Models.Translation(lang, ""));
+                if(!model.Info.Description.Any(t => t.Language.CultureCode == lang.CultureCode))
+                    model.Info.Description.Add(new Models.Translation(lang, ""));
+                if(!model.Application.Text.Any(t => t.Language.CultureCode == lang.CultureCode))
+                    model.Application.Text.Add(new Models.Translation(lang, ""));
             }
-            
 
-            General.Application.Dynamics.Add(new Models.Dynamic.DynamicMain());
+
+            model.Application.Dynamics.Add(new Models.Dynamic.DynamicMain());
+
+            General = model;
 
             SetButtons(true);
             MenuSaveBtn.IsEnabled = false;
