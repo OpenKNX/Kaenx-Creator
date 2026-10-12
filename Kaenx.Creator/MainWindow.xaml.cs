@@ -776,7 +776,7 @@ namespace Kaenx.Creator
                         foreach(var xhardtoprog in xhards)
                         {
                             var xreginfos = xhardtoprog.Descendants().Where(e => e.Name.LocalName == "RegistrationInfo");
-                            foreach( var xreginfo in xreginfos)
+                            foreach( var xreginfo in xreginfos.ToList())
                                 xreginfo.Remove();
 
                             string hardware2progid = xhardtoprog.Attribute("Id")?.Value;
@@ -810,8 +810,9 @@ namespace Kaenx.Creator
                         foreach(var xprod in xprods)
                         {
                             var xreginfos = xprod.Descendants().Where(e => e.Name.LocalName == "RegistrationInfo");
-                            foreach( var xreginfo in xreginfos)
-                                xreginfo.Remove();
+                            if(xreginfos.Any())
+                                foreach(var xreginfo in xreginfos.ToList())
+                                    xreginfo.Remove();
                             string prodid = xprod.Attribute("Id")?.Value;
                             string prodversion = xprod.Attribute("VersionNumber")?.Value ?? "0";
                             XElement xreg = new XElement(XName.Get("RegistrationInfo", xhard.Root.Name.NamespaceName));
@@ -825,6 +826,25 @@ namespace Kaenx.Creator
                     {
                         File.Copy(filePath, filePath.Replace(sourcePath, targetPath).Replace(".mtxml", ".xml"));
                     }
+                }
+
+                if(ns == 0)
+                {
+                    string? app_file = Directory.GetFiles(sourcePath, "*", SearchOption.AllDirectories).FirstOrDefault(f => !f.Contains("knx_master.") && !f.Contains("Hardware.") && !f.Contains("Catalog.") && !f.Contains("Baggages") && (f.EndsWith(".xml") || f.EndsWith(".mtxml")));
+                    if(app_file == null)
+                    {
+                        throw new Exception("Could not determine App xml to get namespace version");
+                    }
+
+                    string content = File.ReadAllText(app_file);
+                    System.Text.RegularExpressions.Regex reg = new System.Text.RegularExpressions.Regex("xmlns=\"http://knx\\.org/xml/project/([0-9]{2})");
+                    System.Text.RegularExpressions.Match m = reg.Match(content);
+                    if (!m.Success)
+                    {
+                        MessageBox.Show("NamespaceVersion konnte nicht ermittelt werden");
+                        return;
+                    }
+                    ns = int.Parse(m.Groups[1].Value);
                 }
 
                 Kaenx.Creator.Classes.ExportHelper helper = new Kaenx.Creator.Classes.ExportHelper(General, null);
