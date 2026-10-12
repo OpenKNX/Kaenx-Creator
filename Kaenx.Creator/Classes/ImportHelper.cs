@@ -458,9 +458,16 @@ namespace Kaenx.Creator.Classes
             if(xapp.Attribute("AdditionalAddressesCount") != null && int.Parse(xapp.Attribute("AdditionalAddressesCount").Value) != 0)
             {
                 currentVers.IsBusInterfaceActive = true;
-                IEnumerable<XElement> interfaces = xstatic.Element(Get("BusInterfaces")).Elements();
-                currentVers.BusInterfaceCounter = interfaces.Count(i => i.Attribute("AccessType")?.Value == "Tunneling");
-                currentVers.HasBusInterfaceRouter = interfaces.Any(i => i.Attribute("AccessType")?.Value == "Routing");
+                if (xstatic.Element(Get("BusInterfaces")) != null)
+                {
+                    IEnumerable<XElement> interfaces = xstatic.Element(Get("BusInterfaces")).Elements();
+                    currentVers.BusInterfaceCounter = interfaces.Count(i => i.Attribute("AccessType")?.Value == "Tunneling");
+                    currentVers.HasBusInterfaceRouter = interfaces.Any(i => i.Attribute("AccessType")?.Value == "Routing");
+                } else
+                {
+                    currentVers.BusInterfaceCounter = 0;
+                    currentVers.HasBusInterfaceRouter = false;
+                }
             }
 
             ImportHelpFile(xapp);
@@ -838,6 +845,9 @@ namespace Kaenx.Creator.Classes
 
         public void ImportParameterTypes(XElement xparatypes, AppVersion vers, bool removeExisting = false)
         {
+            if (xparatypes == null)
+                return;
+                
             Stopwatch sw = new Stopwatch();
             sw.Start();
             System.Console.Write("ImportParameterTypes: ");
