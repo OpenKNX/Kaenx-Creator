@@ -395,6 +395,8 @@ namespace Kaenx.Creator.Classes
             currentVers.IsMemSizeAuto = false;
             currentVers.IsSecureActive = xapp.Attribute("IsSecureEnabled") != null && xapp.Attribute("IsSecureEnabled").Value == "true";
             currentVers.ReplacesVersions = xapp.Attribute("ReplacesVersions")?.Value;
+            if (xapp.Attribute("IPConfig") != null)
+                currentVers.IpConfig = xapp.Attribute("IPConfig").Value;
 
             if (currentVers.IsSecureActive)
             {
@@ -1611,10 +1613,11 @@ namespace Kaenx.Creator.Classes
             _general.Info.HasIndividualAddress = xhard.Attribute("HasIndividualAddress")?.Value == "true" || xhard.Attribute("HasIndividualAddress")?.Value == "1";
             _general.Info.BusCurrent = (int)StringToFloat(xhard.Attribute("BusCurrent")?.Value, 10);
             _general.Info.IsIpEnabled = xhard.Attribute("IsIPEnabled")?.Value == "true" || xhard.Attribute("IsIPEnabled")?.Value == "1";
+            _general.Info.IsCoppler = xhard.Attribute("IsCoupler")?.Value == "true" || xhard.Attribute("IsCoupler")?.Value == "1";
+            _general.Info.IsPowerSupply = xhard.Attribute("IsPowerSupply")?.Value == "true" || xhard.Attribute("IsPowerSupply")?.Value == "1";
 
             XElement xprods = xhard.Element(Get("Products"));
             XElement xprod = null;
-            string toImport = "";
             if(xprods.Elements().Count() > 1) {
                 List<KeyValuePair<string, string>> prods = [];
                 foreach(XElement xprodt in xprods.Elements()) {
