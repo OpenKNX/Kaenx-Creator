@@ -654,6 +654,10 @@ namespace Kaenx.Creator.Classes
                     case "PromptBeforeFullDownload":
                         currentVers.Options.PromptBeforeFullDownload = xopt.Value == "true";
                         break;
+
+                    case "LineCoupler0912NewProgrammingStyle":
+                        currentVers.Options.LineCoupler0912NewProgrammingStyle = xopt.Value == "true";
+                        break;
                 }
             }
         }
@@ -847,7 +851,7 @@ namespace Kaenx.Creator.Classes
         {
             if (xparatypes == null)
                 return;
-                
+
             Stopwatch sw = new Stopwatch();
             sw.Start();
             System.Console.Write("ImportParameterTypes: ");

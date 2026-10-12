@@ -45,6 +45,7 @@
         <CheckBox Content="Supports Extended Property Services" IsChecked="{Binding Path=Version.Options.SupportsExtendedPropertyServices, ElementName=ViewControl}" />
         <CheckBox Content="Supports IPSystemBroadcast" IsChecked="{Binding Path=Version.Options.SupportsIPSystemBroadcast, ElementName=ViewControl}" />
         <CheckBox Content="Prompt Before Full Download" IsChecked="{Binding Path=Version.Options.PromptBeforeFullDownload, ElementName=ViewControl}" />
+        <CheckBox Content="Line Coupler 0912 New Programming Style" IsChecked="{Binding Path=Version.Options.LineCoupler0912NewProgrammingStyle, ElementName=ViewControl}" />
     </StackPanel>
 
 </UserControl>
